@@ -1,0 +1,37 @@
+<!DOCTYPE html>
+<html lang="pt">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Gestão</title>
+    <link rel="stylesheet" href="styles.css">
+
+</head>
+<body>
+
+    
+
+    <div class="menu-container">
+        <button class="menu-button" onclick="toggleMenu()">☰</button>
+        <div id="menu" class="menu-content">
+            <a href="loguin.html">Entrar</a>
+            <a href="home.html">Home</a>
+            <a href="gestao-diaria.html">Gestão Diária</a>
+            <a href="gestao-mensal.html">Gestão Mensal</a>
+            <a href="gestao-anual.html">Gestão Anual</a>
+            <a href="painel-controle.html">Painel de Controle</a>
+            
+        </div>
+    </div>
+
+    <script>
+        function toggleMenu() {
+            var menu = document.getElementById("menu");
+            menu.style.display = menu.style.display === "block" ? "none" : "block";
+        }
+    </script>
+
+
+
+</body>
+</html>
