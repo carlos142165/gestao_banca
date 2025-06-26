@@ -1,3 +1,15 @@
+
+
+<?php
+session_start();
+if (!isset($_SESSION['usuario_id'])) {
+    echo "<script>alert('ÁREA DE MEMBROS – Faça já seu cadastro'); window.location.href = 'login.html';</script>";
+    exit();
+}
+?>
+
+
+
 <!DOCTYPE html>
 <html lang="pt-br">
   <head>
