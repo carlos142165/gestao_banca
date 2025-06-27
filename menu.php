@@ -1,6 +1,7 @@
 <!DOCTYPE html>
 <html lang="pt">
   <head>
+
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>Gestão</title>
@@ -17,14 +18,21 @@
         align-items: center;
         box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
         font-size: 14px;
+        height: 60px;
+        
+        
+        
       }
 
       .menu-button {
         background: none;
         color: #eff1f1;
         border: none;
-        font-size: 16px;
+        font-size: 25px;
         cursor: pointer;
+        padding: 5px;
+        line-height: 1;
+        
       }
 
       #menu {
@@ -73,7 +81,17 @@
       }
 
       .top-link {
-        color: white;
+        color:rgb(233, 198, 45);
+        text-decoration: none;
+        font-weight: 500;
+        border: 1px solid white;
+        padding: 6px 12px;
+        border-radius: 4px;
+        transition: background 0.3s;
+      }
+
+      .top-link-entrar {
+        color:rgb(235, 235, 235);
         text-decoration: none;
         font-weight: 500;
         border: 1px solid white;
@@ -87,10 +105,20 @@
         color: #113647;
       }
 
+      .top-link-entrar:hover {
+        background-color: white;
+        color: #113647;
+      }
+
       @media (max-width: 600px) {
         .top-link {
           font-size: 14px;
-          padding: 4px 8px;
+          padding: 5px 8px;
+        }
+
+        .top-link-entrar {
+          font-size: 14px;
+          padding: 5px 8px;
         }
 
         .top-buttons {
@@ -102,28 +130,83 @@
         }
       }
 
+      .logo-img {
+      width: 30vw;
+      max-width: 100px;
+      min-width: 80px;
+      height: auto;
+      object-fit: contain;
+      transition: width 0.3s ease;
+      margin-left: 60px;
+      }
+
+      /* Ajuste especial para telas menores que 600px */
+      @media (max-width: 600px) {
+     .logo-img {
+      width: 50vw;
+      max-width: 70px;
+      min-width: 70px;
+      flex-direction: row;
+      margin-left: 50px;
+      
+     }
+
+     .top-buttons {
+     flex-direction: row;
+     align-items: center;
+     gap: 8px;
+     }
+    }
+
       /*  AQUI FINALIZA OS CODIGOS DOS BOTOES REGISTRE-SE E ENTRAR*/
+    </style>
+
+
+
+
+  </head>
+<?php
+ session_start();
+?>
+<!DOCTYPE html>
+<html lang="pt">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Gestão</title>
+    <style>
+      /* ... (seus estilos permanecem os mesmos) ... */
     </style>
   </head>
   <body>
     <div class="menu-container">
       <button class="menu-button" onclick="toggleMenu()">☰</button>
       <div id="menu" class="menu-content">
-        <a href="home.html">Home</a>
+        <a href="home.php">Home</a>
         <a href="gestao-diaria.php">Gestão do Dia</a>
         <a href="gestao-mensal.php">Gestão Mensal</a>
         <a href="gestao-anual.php">Gestão Anual</a>
-        <a href="estatisticas.php">Estatisticas</a>
+        <a href="estatisticas.php">Estatísticas</a>
         <a href="painel-controle.php">Painel de Controle</a>
-        <a href="logout.php">Sair</a>
-      </div>
+        <?php if (isset($_SESSION['usuario_id'])): ?>
+         <a href="logout.php">Sair</a>
+         <?php endif; ?>
+        </div>
+    </div>
+
+    <div id="top-logo">
+       <div class="logo-wrapper">
+       <img src="img/logo.png" alt="Logomarca" class="logo-img" />
+       </div>
     </div>
 
     <div id="top-bar">
-      <div class="top-buttons">
-        <a href="formulario.php" class="top-link">Registre-se</a>
-        <a href="login.php" class="top-link">Entrar</a>
-      </div>
+      <?php if (!isset($_SESSION['usuario_id'])): ?>
+        <div class="top-buttons">
+          <a href="formulario.php" class="top-link">Registre-se</a>
+          <a href="login.php" class="top-link-entrar">Entrar</a>
+        </div>
+      <?php endif; ?>
     </div>
 
     <script>

@@ -1,46 +1,79 @@
 
 
-
-<?php
-session_start();
-include_once('config.php');
-
-$id = $_SESSION['id'] ?? null;
-
-if (!$id) {
-    header("Location: login.html");
-    exit;
-}
-
-$result = mysqli_query($conexao, "SELECT data_cadastro, status_assinatura, data_fim_assinatura FROM usuarios WHERE id = '$id'");
-$usuario = mysqli_fetch_assoc($result);
-
-$agora = time();
-$cadastro = strtotime($usuario['data_cadastro']);
-$assinaturaAtiva = $usuario['status_assinatura'] === 'ativa' && strtotime($usuario['data_fim_assinatura']) > $agora;
-$dentroDoTrial = $usuario['status_assinatura'] === 'trial' && ($agora - $cadastro < 86400);
-
-if (!$assinaturaAtiva && !$dentroDoTrial) {
-    echo "<script>
-        alert('Seu acesso expirou! Faça uma assinatura para continuar.');
-        window.location.href = 'assinatura.php';
-    </script>";
-    exit;
-}
-?>
-
-
-
 <!DOCTYPE html>
-<html lang="en">
+<html lang="pt-br">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Document</title>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Gestão Anual</title>
+  <style>
+    body {
+      background-color: #eff1f1;
+      font-family: Arial, sans-serif;
+    }
+
+    .auth-buttons {
+      position: absolute;
+      top: 10px;
+      right: 20px;
+    }
+
+    .auth-buttons a {
+      margin-left: 10px;
+      text-decoration: none;
+      background-color: #008cba;
+      color: white;
+      padding: 8px 12px;
+      border-radius: 5px;
+      font-weight: bold;
+    }
+
+    .auth-buttons a:hover {
+      background-color: #006d98;
+    }
+  </style>
 </head>
 <body>
+  <!-- Botões de autenticação (exibidos apenas para usuários não logados) -->
+  <?php if (!isset($_SESSION['usuario_id'])): ?>
+    <div class="auth-buttons">
 
-    <h1>Area dos Usuarios Assinantes</h1>
-    
+    </div>
+  <?php endif; ?>
+
+  <div id="data-container"></div>
+
+  <div id="menu-placeholder"></div>
+
+  <script>
+    // Carrega o menu externo
+    fetch("menu.php")
+      .then((response) => response.text())
+      .then((data) => {
+        document.getElementById("menu-placeholder").innerHTML = data;
+
+        const menuButton = document.querySelector(".menu-button");
+        const menu = document.getElementById("menu");
+
+        if (menuButton && menu) {
+          menuButton.addEventListener("click", () => {
+            menu.style.display = menu.style.display === "block" ? "none" : "block";
+          });
+
+          document.addEventListener("click", (event) => {
+            if (
+              menu.style.display === "block" &&
+              !menu.contains(event.target) &&
+              !menuButton.contains(event.target)
+            ) {
+              menu.style.display = "none";
+            }
+          });
+        }
+      })
+      .catch((error) => console.error("Erro ao carregar o menu:", error));
+  </script>
+
+  <script src="scripts.js"></script>
 </body>
 </html>

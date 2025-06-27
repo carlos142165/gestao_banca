@@ -1,3 +1,13 @@
+
+<?php
+session_start();
+if (!isset($_SESSION['usuario_id'])) {
+    echo "<script>alert('ÁREA DE MEMBROS – Faça Já Seu Cadastro Gratuito'); window.location.href = 'home.php';</script>";
+    exit();
+}
+?>
+
+
 <!DOCTYPE html>
 <html lang="pt-br">
   <head>
@@ -20,7 +30,7 @@
 
     <script>
       // 📌 Carrega o menu externo (menu.html) dentro do menu-placeholder
-      fetch("menu.html")
+      fetch("menu.php")
         .then((response) => response.text()) // Converte a resposta em texto
         .then((data) => {
           document.getElementById("menu-placeholder").innerHTML = data; // Insere o menu na página

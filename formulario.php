@@ -195,7 +195,7 @@
     <div class="box">
         <form action="formulario.php" method="POST" >
             <fieldset>
-                <legend><b>Cadastre-se Já</b></legend>
+                <legend><b>Cadastro</b></legend>
                 <br>
 
                 <div class="inputbox">

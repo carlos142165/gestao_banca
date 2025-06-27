@@ -1,3 +1,4 @@
+
 <!DOCTYPE html>
 <html lang="pt-br">
   <head>
@@ -165,8 +166,14 @@
         <button type="submit">Entrar</button>
       </form>
 
+
+
+
+
+    
+
       <div class="links-container">
-        <a href="formulario.php" class="link-custom">Cadastre-se já</a>
+        <a href="formulario.php" class="link-custom">Registre-se já</a>
         <a href="recuperar_senha.php" class="link-custom">Recuperar senha</a>
       </div>
     </div>
@@ -230,5 +237,11 @@
         }
       });
     </script>
+
+      
   </body>
+
+  
+
+
 </html>
