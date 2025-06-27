@@ -1,3 +1,14 @@
+
+<?php
+session_start();
+if (!isset($_SESSION['usuario_id'])) {
+    echo "<script>alert('ÁREA DE MEMBROS – Faça Já Seu Cadastro Gratuito'); window.location.href = 'formulario.php';</script>";
+    exit();
+}
+?>
+
+
+
 <!DOCTYPE html>
 <html lang="pt-br">
   <head>
@@ -7,7 +18,7 @@
 
     <style>
       body {
-        background-color: #eff1f1;
+       background-color: #eff1f1;
       }
     </style>
   </head>

@@ -34,7 +34,7 @@
 
         echo "<script>
         alert('Cadastro efetuado com sucesso!');
-        window.location.href = 'login.html';
+        window.location.href = 'login.php';
         </script>";
         exit;
 

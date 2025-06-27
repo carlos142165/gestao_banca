@@ -86,7 +86,7 @@ if ($_SERVER["REQUEST_METHOD"] === "POST" && isset($_POST["email"])) {
         echo "Link de recuperação:<br><a href='$link'>$link</a><br>(simulando envio de email)";
         echo "</div>";
     } else {
-        echo "<div class='form-container'>Email não encontrado.</div>";
+        echo "<div class='form-container'>Email não Cadastrado.</div>";
     }
     exit;
 }
