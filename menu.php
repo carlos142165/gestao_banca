@@ -1,3 +1,29 @@
+
+<?php
+session_start();
+include_once('config.php');
+
+$soma_depositos = 0;
+
+if (isset($_SESSION['usuario_id'])) {
+    $id_usuario = $_SESSION['usuario_id'];
+
+    $stmt = mysqli_prepare($conexao, "SELECT SUM(deposito) FROM controle WHERE id_usuario = ?");
+    mysqli_stmt_bind_param($stmt, "i", $id_usuario);
+    mysqli_stmt_execute($stmt);
+    mysqli_stmt_bind_result($stmt, $soma_depositos);
+    mysqli_stmt_fetch($stmt);
+    mysqli_stmt_close($stmt);
+}
+?>
+
+
+
+
+
+
+
+
 <!DOCTYPE html>
 <html lang="pt">
   <head>
@@ -158,6 +184,21 @@
      }
     }
 
+     .usuario-saldo {
+      margin-left: 15px;
+      font-weight: bold;
+      display: flex;
+      align-items: center;
+      color: white; /* ou a cor que combine com seu topo */
+      font-family: Arial, sans-serif;
+     }
+
+     .usuario-saldo img {
+     width: 20px;
+     height: 20px;
+     margin-right: 6px;
+     }
+
       /*  AQUI FINALIZA OS CODIGOS DOS BOTOES REGISTRE-SE E ENTRAR*/
     </style>
 
@@ -165,9 +206,7 @@
 
 
   </head>
-<?php
- session_start();
-?>
+
 <!DOCTYPE html>
 <html lang="pt">
   <head>
@@ -178,7 +217,12 @@
       /* ... (seus estilos permanecem os mesmos) ... */
     </style>
   </head>
+
+
+
+  
   <body>
+
     <div class="menu-container">
       <button class="menu-button" onclick="toggleMenu()">☰</button>
       <div id="menu" class="menu-content">
@@ -209,6 +253,14 @@
       <?php endif; ?>
     </div>
 
+   <?php if (isset($_SESSION['usuario_id'])): ?>
+     <div class="usuario-saldo">
+     <img src="img/user-bank.png" alt="Usuário">
+     Banca: R$ <?php echo number_format($soma_depositos, 2, ',', '.'); ?>
+  </div>
+    <?php endif; ?>
+
+
     <script>
       function toggleMenu() {
         var menu = document.getElementById("menu");
@@ -216,4 +268,5 @@
       }
     </script>
   </body>
+  
 </html>

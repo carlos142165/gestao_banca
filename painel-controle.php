@@ -3,75 +3,85 @@
 <?php
 session_start();
 if (!isset($_SESSION['usuario_id'])) {
-    echo "<script>
-        alert('ÁREA DE MEMBROS – Faça Já Seu Cadastro Gratuito');
-        window.location.href = 'home.php';
-    </script>";
-    exit();
+  echo "<script>
+    alert('ÁREA DE MEMBROS – Faça Já Seu Cadastro Gratuito');
+    window.location.href = 'home.php';
+  </script>";
+  exit();
 }
 
 function limpar_valor($valor) {
-    $valor = preg_replace('/[^0-9,]/', '', $valor); // Remove tudo menos números e vírgula
-    $valor = str_replace(',', '.', $valor);         // Troca vírgula por ponto
-    return is_numeric($valor) ? (float)$valor : 0;
+  $valor = preg_replace('/[^0-9,]/', '', $valor);
+  $valor = str_replace(',', '.', $valor);
+  return is_numeric($valor) ? (float)$valor : 0;
 }
-
 
 if (isset($_POST['submit'])) {
-    include_once('config.php');
+  include_once('config.php');
 
-    $deposito = limpar_valor($_POST['deposito']);
-    $diaria   = limpar_valor($_POST['diaria']);
-    $mensal   = limpar_valor($_POST['mensal']);
-    $id_usuario = $_SESSION['usuario_id'];
+  $id_usuario = $_SESSION['usuario_id'];
+  $acao = $_POST['acao'];
+  $valor = limpar_valor($_POST['valor']);
 
-    // Aqui entra o teste:
-
-
-    // Verificar se o usuário existe na tabela
-    $verifica = mysqli_prepare($conexao, "SELECT id FROM usuarios WHERE id = ?");
-    mysqli_stmt_bind_param($verifica, "i", $id_usuario);
-    mysqli_stmt_execute($verifica);
-    mysqli_stmt_store_result($verifica);
-
-    if (mysqli_stmt_num_rows($verifica) === 0) {
-        echo "<script>
-            alert('Usuário não encontrado. Faça login novamente.');
-            window.location.href = 'home.php';
-        </script>";
-        exit();
-    }
-
-    if (is_numeric($deposito) && is_numeric($diaria) && is_numeric($mensal)) {
-        $stmt = mysqli_prepare($conexao, "INSERT INTO controle (id_usuario, deposito, diaria, mensal) VALUES (?, ?, ?, ?)");
-        if ($stmt) {
-            mysqli_stmt_bind_param($stmt, "iddd", $id_usuario, $deposito, $diaria, $mensal);
-            if (mysqli_stmt_execute($stmt)) {
-                echo "<script>
-                    alert('Cadastro efetuado com sucesso!');
-                    window.location.href = 'painel-controle.php';
-                </script>";
-            } else {
-                echo "<script>
-                    alert('Erro ao cadastrar. Tente novamente.');
-                    window.history.back();
-                </script>";
-            }
-        } else {
-            echo "<script>
-                alert('Erro na preparação da consulta.');
-                window.history.back();
-            </script>";
-        }
-    } else {
-        echo "<script>
-            alert('Por favor, insira valores válidos.');
-            window.history.back();
-        </script>";
-    }
+  // Valida ação
+  if (!in_array($acao, ['deposito', 'diaria', 'mensal'])) {
+    echo "<script>
+      alert('Ação inválida.');
+      window.history.back();
+    </script>";
     exit();
+  }
+
+  // Valida valor
+  if (!is_numeric($valor) || $valor <= 0) {
+    echo "<script>
+      alert('Por favor, insira um valor válido.');
+      window.history.back();
+    </script>";
+    exit();
+  }
+
+  // Verifica se o usuário ainda existe
+  $verifica = mysqli_prepare($conexao, "SELECT id FROM usuarios WHERE id = ?");
+  mysqli_stmt_bind_param($verifica, "i", $id_usuario);
+  mysqli_stmt_execute($verifica);
+  mysqli_stmt_store_result($verifica);
+
+  if (mysqli_stmt_num_rows($verifica) === 0) {
+    echo "<script>
+      alert('Usuário não encontrado. Faça login novamente.');
+      window.location.href = 'home.php';
+    </script>";
+    exit();
+  }
+
+  // Monta a query dinâmica com base na ação
+  $query = "INSERT INTO controle (id_usuario, $acao) VALUES (?, ?)";
+  $stmt = mysqli_prepare($conexao, $query);
+
+  if ($stmt) {
+    mysqli_stmt_bind_param($stmt, "id", $id_usuario, $valor);
+    if (mysqli_stmt_execute($stmt)) {
+      echo "<script>
+        alert('Valor cadastrado com sucesso!');
+        window.location.href = 'painel-controle.php';
+      </script>";
+    } else {
+      echo "<script>
+        alert('Erro ao cadastrar.');
+        window.history.back();
+      </script>";
+    }
+  } else {
+    echo "<script>
+      alert('Erro ao preparar a consulta.');
+      window.history.back();
+    </script>";
+  }
+  exit();
 }
 ?>
+
 
 
 
@@ -276,39 +286,76 @@ if (isset($_POST['submit'])) {
       // Carregando o script de data global
     </script>
 
-        <div class="box">
-        <form action="painel-controle.php" method="POST" >
-            <fieldset>
-                <legend><b>Painel de Controle</b></legend>
-                <br><br><br>
+  <div class="box">
+  <form action="painel-controle.php" method="POST">
+    <fieldset>
+      <legend><b>Selecione a Opção!</b></legend>
+      <br><br>
 
-                <div class="inputbox">
-                    <input type="text" name="deposito" id="deposito" class="inputUser">
-                    <label for="deposito" class="labelinput">Valor da Sua Banca</label>
-                </div>
-                <br><br>
+      <div class="inputbox">
+        
+        <select name="acao" id="acao" class="inputUser" required>
+          <option value="">Selecione</option>
+          <option value="deposito">Depositar na Banca</option>
+          <option value="diaria">Percentual Diário</option>
+          <option value="mensal">Percentual Mensal</option>
+        </select>
+      </div>
+      <br><br>
+
+      <div class="inputbox">
+        <input type="text" name="valor" id="valor" class="inputUser" required>
+        <label for="valor" class="labelinput">Valor</label>
+      </div>
+      <br><br>
+
+      <input type="submit" name="submit" id="submit" value="Salvar" />
+    </fieldset>
+  </form>
+</div>
 
 
-               <div class="inputbox">
-                    <input type="text" name="diaria" id="diaria" class="inputUser">
-                    <label for="diaria"class="labelinput">% Diaria Sobre a Banca </label>
-                </div>
-                <br><br>
+<script>
+document.addEventListener("DOMContentLoaded", function () {
+  const acaoSelect = document.getElementById("acao");
+  const valorInput = document.getElementById("valor");
 
-                <div class="inputbox">
-                    <input type="text" name="mensal" id="mensal" class="inputUser">
-                    <label for="mensal"class="labelinput">% Mensal Sobre a Banca </label>
-                </div>
-                <br><br>
+  function limparFormatacao(valor) {
+    return valor.replace(/[^\d,\.]/g, "").replace(",", ".");
+  }
+
+  acaoSelect.addEventListener("change", function () {
+    valorInput.value = ""; // limpa o campo ao mudar opção
+    valorInput.placeholder = "";
+
+    valorInput.removeEventListener("input", formatarMoeda);
+    valorInput.removeEventListener("input", formatarPorcentagem);
+
+    if (acaoSelect.value === "deposito") {
+      valorInput.addEventListener("input", formatarMoeda);
+    } else if (acaoSelect.value === "diaria" || acaoSelect.value === "mensal") {
+      valorInput.addEventListener("input", formatarPorcentagem);
+    }
+  });
+
+  function formatarMoeda(e) {
+    let valor = e.target.value.replace(/\D/g, "");
+    valor = (valor / 100).toLocaleString("pt-BR", {
+      style: "currency",
+      currency: "BRL"
+    });
+    e.target.value = valor;
+  }
+
+  function formatarPorcentagem(e) {
+    let valor = e.target.value.replace(/[^\d]/g, "");
+    valor = (parseFloat(valor) / 100).toFixed(2);
+    e.target.value = valor + "%";
+  }
+});
+</script>
 
 
-                <input type="submit" name="submit" id="submit" value="Salvar">
-                <br>
-
-
-            </fieldset>    
-        </form>  
-        </div>
 
 
 
@@ -316,84 +363,4 @@ if (isset($_POST['submit'])) {
 
 
 
-  <script> // TRATA OS VALORES PORCENTUAIS
-      const campoDiaria = document.getElementById("diaria"); 
-
-      campoDiaria.addEventListener("focus", function () {
-        // Ao focar, remove o % e deixa só o número puro
-        this.value = this.value.replace("%", "").replace(",", ".");
-      });
-
-      campoDiaria.addEventListener("blur", function () {
-        let valor = this.value.replace(",", ".").trim();
-        let numero = parseFloat(valor);
-
-        // Verifica se é um número válido diferente de zero
-        if (!isNaN(numero) && numero !== 0) {
-            this.value = valor + "%";
-        } else {
-            this.value = "";
-        }
-      });
-    </script>
-
-    <script>
-      const campoMensal = document.getElementById("mensal");
-
-      campoMensal.addEventListener("focus", function () {
-        // Ao focar, remove o % e deixa só o número puro
-        this.value = this.value.replace("%", "").replace(",", ".");
-      });
-
-      campoMensal.addEventListener("blur", function () {
-        let valor = this.value.replace(",", ".").trim();
-        let numero = parseFloat(valor);
-
-        // Verifica se é um número válido diferente de zero
-        if (!isNaN(numero) && numero !== 0) {
-            this.value = valor + "%";
-        } else {
-            this.value = "";
-        }
-      });//// FIM DO CODIGO DE TRATAMENTO DOS  OS VALORES PORCENTUAIS
-    </script>
-
-
-
-    <script>
-  // Seleciona todos os inputs do tipo number dentro do formulário
-  const camposNumericos = document.querySelectorAll('input[type="text"]');
-
-  camposNumericos.forEach(function (campo) {
-    campo.addEventListener("blur", function () {
-      let valor = parseFloat(this.value.replace(",", "."));
-      
-      if (!isNaN(valor) && valor !== 0) {
-        // Formata o valor como moeda BRL
-        this.value = valor.toLocaleString("pt-BR", {
-          style: "currency",
-          currency: "BRL",
-        });
-      } else {
-        this.value = "";
-      }
-    });
-
-    campo.addEventListener("focus", function () {
-      // Ao focar, remove a formatação para permitir edição numérica
-      this.value = this.value
-        .replace("R$", "")
-        .replace(".", "")
-        .replace(",", ".")
-        .trim();
-    });
-  });
-</script>
-
-
-
-
-
-
-
-</html>
+  
