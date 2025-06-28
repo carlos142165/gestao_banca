@@ -255,7 +255,7 @@ if (isset($_SESSION['usuario_id'])) {
 
    <?php if (isset($_SESSION['usuario_id'])): ?>
      <div class="usuario-saldo">
-     <img src="img/user-bank.png" alt="Usuário">
+     <img src="img/" alt="Usuário">
      Banca: R$ <?php echo number_format($soma_depositos, 2, ',', '.'); ?>
   </div>
     <?php endif; ?>

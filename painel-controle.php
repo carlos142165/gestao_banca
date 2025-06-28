@@ -104,7 +104,7 @@ if (isset($_POST['submit'])) {
         .box{
             color: #eeeded;
             position: absolute;
-            top: 50%;
+            top: 35%;
             left: 50%;
             transform: translate(-50%,-50%);
             background-color: #113647;
