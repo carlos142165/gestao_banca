@@ -328,6 +328,88 @@ if (isset($_POST['submit'])) {
 
            }
 
+
+
+.valor-unidade {
+  margin: 20px 0;
+  font-family: Arial, sans-serif;
+  margin-top: 30px;
+  
+}
+
+.titulo-unidade {
+  font-weight: bold;
+  margin-bottom: 8px;
+  display: inline-block;
+}
+
+.linha-unidade {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  flex-wrap: wrap;
+}
+
+
+
+.resultado {
+  background-color: #113647;
+  color: #d5d6d6;
+}
+
+.operador {
+  font-weight: bold;
+  font-size: 1.2em;
+}
+
+.linha-unidade {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  justify-content: center;
+}
+
+.bloco-com-label {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  text-align: center;
+  width: 80px; /* defina um tamanho fixo */
+  flex-shrink: 0; /* impede encolhimento */
+}
+
+.bloco {
+  background-color: #113647;
+  padding: 8px 12px;
+  border-radius: 7px;
+  font-weight: bold;
+  font-size: 14px;
+  width: 100%; /* ocupa toda a largura do container */
+  text-align: center;
+}
+
+.subtitulo {
+  font-size: 0.9em;
+  margin-bottom: 4px;
+  color: #d5d6d6;
+}
+
+
+.sinal-central {
+  font-size: 1.2em;
+  padding: 6px;
+  font-weight: bold;
+  color: #d5d6d6;
+  position: relative;
+  top: 8px; /* Ajuste esse valor até ficar do jeitinho que quiser */
+}
+
+
+
+
+
+
+
         
 
 
@@ -440,20 +522,42 @@ if (isset($_POST['submit'])) {
        </div>
      <?php endif; ?>
 
+     
+
 
      <?php if (isset($_SESSION['usuario_id']) && $ultima_diaria > 0 && $soma_depositos > 0): 
-       $resultado = ($ultima_diaria / 100) * $soma_depositos;
-       ?>
-        <div class="valor-unidade">
-        <label>Valor da Unidade</label>
-         <pre>
+  $resultado = ($ultima_diaria / 100) * $soma_depositos;
+?>
+  <div class="valor-unidade">
+    
+    <div class="linha-unidade">
 
-        <?php echo number_format($ultima_diaria, 2, ',', '.'); ?>%     x   R$ <?php echo number_format($soma_depositos, 2, ',', '.'); 
-        ?> = R$ <?php echo number_format($resultado, 2, ',', '.'); ?>
+      <div class="bloco-com-label">
+        <label class="subtitulo">Banca</label>
+        <span class="bloco">R$ <?php echo number_format($soma_depositos, 2, ',', '.'); ?></span>
+      </div>
 
-         </pre>
-         </div>
-     <?php endif; ?>
+      <div class="sinal-central">×</div>
+
+      <div class="bloco-com-label">
+        <label class="subtitulo">Porcentagem</label>
+        <span class="bloco"><?php echo number_format($ultima_diaria, 2, ',', '.'); ?>%</span>
+      </div>
+
+      <div class="sinal-central">=</div>
+
+      <div class="bloco-com-label">
+        <label class="subtitulo">$Unidade</label>
+        <span class="bloco resultado">R$ <?php echo number_format($resultado, 2, ',', '.'); ?></span>
+      </div>
+
+    </div>
+  </div>
+<?php endif; ?>
+
+
+
+
 
 
 
