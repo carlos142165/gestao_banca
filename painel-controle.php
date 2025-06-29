@@ -1,7 +1,77 @@
+<?php
+session_start();
+include_once('config.php');
+
+// Soma de depósitos
+$soma_depositos = 0;
+if (isset($_SESSION['usuario_id'])) {
+    $id_usuario = $_SESSION['usuario_id'];
+
+    $stmt = mysqli_prepare($conexao, "SELECT SUM(deposito) FROM controle WHERE id_usuario = ?");
+    mysqli_stmt_bind_param($stmt, "i", $id_usuario);
+    mysqli_stmt_execute($stmt);
+    mysqli_stmt_bind_result($stmt, $soma_depositos);
+    mysqli_stmt_fetch($stmt);
+    if (is_null($soma_depositos)) {
+        $soma_depositos = 0;
+    }
+    mysqli_stmt_close($stmt);
+}
+
+// Última diária válida (diferente de NULL e diferente de 0)
+$ultima_diaria = 0;
+if (isset($_SESSION['usuario_id'])) {
+    $stmt = mysqli_prepare($conexao, "
+        SELECT diaria
+        FROM controle
+        WHERE id_usuario = ? AND diaria IS NOT NULL AND diaria != 0
+        ORDER BY id DESC
+        LIMIT 1
+    ");
+    mysqli_stmt_bind_param($stmt, "i", $id_usuario);
+    mysqli_stmt_execute($stmt);
+    mysqli_stmt_bind_result($stmt, $ultima_diaria);
+    mysqli_stmt_fetch($stmt);
+    if (is_null($ultima_diaria)) {
+        $ultima_diaria = 0;
+    }
+    mysqli_stmt_close($stmt);
+}
+
+// Soma de saques
+$soma_saque = 0;
+if (isset($_SESSION['usuario_id'])) {
+    $stmt = mysqli_prepare($conexao, "
+        SELECT SUM(saque)
+        FROM controle
+        WHERE id_usuario = ?
+    ");
+    mysqli_stmt_bind_param($stmt, "i", $id_usuario);
+    mysqli_stmt_execute($stmt);
+    mysqli_stmt_bind_result($stmt, $soma_saque);
+    mysqli_stmt_fetch($stmt);
+    if (is_null($soma_saque)) {
+        $soma_saque = 0;
+    }
+    mysqli_stmt_close($stmt);
+}
+?>
+
+
+
+
+
+
+
+
+
+
+
+
 
 
 <?php
-session_start();
+
 if (!isset($_SESSION['usuario_id'])) {
   echo "<script>
     alert('ÁREA DE MEMBROS – Faça Já Seu Cadastro Gratuito');
@@ -24,7 +94,7 @@ if (isset($_POST['submit'])) {
   $valor = limpar_valor($_POST['valor']);
 
   // Valida ação
-  if (!in_array($acao, ['deposito', 'diaria', 'mensal'])) {
+  if (!in_array($acao, ['deposito', 'diaria', 'saque'])) {
     echo "<script>
       alert('Ação inválida.');
       window.history.back();
@@ -224,6 +294,40 @@ if (isset($_POST['submit'])) {
             height: 16px; /* reserva espaço */
         }
 
+           .banca {
+            text-align: center;
+            font-size: 15px;
+            color:rgb(230, 229, 227); /* opcional: tom dourado para manter o estilo anterior */
+            margin-top: 360px;
+            
+           }
+
+           .porcent{
+
+            text-align: center;
+            font-size: 15px;
+            color:rgb(230, 229, 227); /* opcional: tom dourado para manter o estilo anterior */
+            margin-top: 8px;
+
+
+           }
+
+           .saque{
+            text-align: center;
+            font-size: 15px;
+            color:rgb(230, 229, 227); /* opcional: tom dourado para manter o estilo anterior */
+            margin-top: 8px;
+
+           }
+
+           .valor-unidade{
+            text-align: center;
+            font-size: 15px;
+            color:rgb(230, 229, 227); /* opcional: tom dourado para manter o estilo anterior */
+            margin-top: 8px;
+
+           }
+
         
 
 
@@ -297,8 +401,8 @@ if (isset($_POST['submit'])) {
         <select name="acao" id="acao" class="inputUser" required>
           <option value="">Selecione</option>
           <option value="deposito">Depositar na Banca</option>
-          <option value="diaria">Percentual Diário</option>
-          <option value="mensal">Percentual Mensal</option>
+          <option value="diaria">Porcentagem Sobre a Banca</option>
+          <option value="saque">Sacar</option>
         </select>
       </div>
       <br><br>
@@ -310,57 +414,100 @@ if (isset($_POST['submit'])) {
       <br><br>
 
       <input type="submit" name="submit" id="submit" value="Salvar" />
+
+      
     </fieldset>
-  </form>
-</div>
+    </form>
+    </div>
 
 
-<script>
-document.addEventListener("DOMContentLoaded", function () {
-  const acaoSelect = document.getElementById("acao");
-  const valorInput = document.getElementById("valor");
-
-  function limparFormatacao(valor) {
-    return valor.replace(/[^\d,\.]/g, "").replace(",", ".");
-  }
-
-  acaoSelect.addEventListener("change", function () {
-    valorInput.value = ""; // limpa o campo ao mudar opção
-    valorInput.placeholder = "";
-
-    valorInput.removeEventListener("input", formatarMoeda);
-    valorInput.removeEventListener("input", formatarPorcentagem);
-
-    if (acaoSelect.value === "deposito") {
-      valorInput.addEventListener("input", formatarMoeda);
-    } else if (acaoSelect.value === "diaria" || acaoSelect.value === "mensal") {
-      valorInput.addEventListener("input", formatarPorcentagem);
-    }
-  });
-
-  function formatarMoeda(e) {
-    let valor = e.target.value.replace(/\D/g, "");
-    valor = (valor / 100).toLocaleString("pt-BR", {
-      style: "currency",
-      currency: "BRL"
-    });
-    e.target.value = valor;
-  }
-
-  function formatarPorcentagem(e) {
-    let valor = e.target.value.replace(/[^\d]/g, "");
-    valor = (parseFloat(valor) / 100).toFixed(2);
-    e.target.value = valor + "%";
-  }
-});
-</script>
+     <?php if (isset($_SESSION['usuario_id'])): ?>
+      <div class="banca">
+       Depositado na Banca----------R$ <?php echo number_format($soma_depositos, 2, ',', '.'); ?>
+      </div>
+     <?php endif; ?>
 
 
+     <?php if ($ultima_diaria !== null): ?>
+      <div class="porcent">
+      <label>Porcentagem da Banca------- <?php echo number_format($ultima_diaria, 2, ',', '.'); ?>%</label>
+      </div>
+     <?php endif; ?>
+
+     <?php if ($soma_saque !== null): ?>
+      <div class="saque">
+       <label>Total de Saques: R$ <?php echo number_format($soma_saque, 2, ',', '.'); ?></label>
+       </div>
+     <?php endif; ?>
+
+
+     <?php if (isset($_SESSION['usuario_id']) && $ultima_diaria > 0 && $soma_depositos > 0): 
+       $resultado = ($ultima_diaria / 100) * $soma_depositos;
+       ?>
+        <div class="valor-unidade">
+        <label>Valor da Unidade</label>
+         <pre>
+
+        <?php echo number_format($ultima_diaria, 2, ',', '.'); ?>%     x   R$ <?php echo number_format($soma_depositos, 2, ',', '.'); 
+        ?> = R$ <?php echo number_format($resultado, 2, ',', '.'); ?>
+
+         </pre>
+         </div>
+     <?php endif; ?>
+
+
+
+    
 
 
 
   </body>
 
 
+<script>
+document.addEventListener("DOMContentLoaded", function () {
+  const acao = document.getElementById("acao");
+  const valor = document.getElementById("valor");
 
-  
+  function formatarMoeda(valorStr) {
+    const numero = parseFloat(valorStr.replace(/[^\d,.-]/g, "").replace(",", "."));
+    if (isNaN(numero)) return "";
+    return numero.toLocaleString("pt-BR", {
+      style: "currency",
+      currency: "BRL"
+    });
+  }
+
+  function formatarPorcentagem(valorStr) {
+    let limpo = valorStr.replace(",", ".").replace(/[^\d.]/g, "");
+    if (limpo === "") return "";
+    const numero = parseFloat(limpo);
+    return isNaN(numero) ? "" : numero.toString().replace(".", ",") + "%";
+  }
+
+  // 👇 Sempre que trocar a ação, limpa o campo
+  acao.addEventListener("change", function () {
+    valor.value = "";
+  });
+
+  valor.addEventListener("focus", function () {
+    this.value = ""; // Limpa o campo para nova digitação
+  });
+
+  valor.addEventListener("blur", function () {
+    const acaoSelecionada = acao.value;
+    const valorAtual = valor.value;
+
+    if (!valorAtual) return;
+
+    if (acaoSelecionada === "deposito" || acaoSelecionada === "saque") {
+      this.value = formatarMoeda(valorAtual);
+    } else if (acaoSelecionada === "diaria") {
+      this.value = formatarPorcentagem(valorAtual);
+    }
+
+
+  });
+});
+</script>
+
