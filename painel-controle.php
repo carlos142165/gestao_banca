@@ -171,36 +171,92 @@ if (isset($_POST['submit'])) {
             font-family: Arial, Helvetica, sans-serif;
             background-image: linear-gradient(to right, #255f75, #1d4d5f);
         }
+
+        /* RESPONSAVEL PELO CAMPO DO FORMULARIO DE OPÇÕES*/
         .box{
             color: #eeeded;
             position: absolute;
-            top: 35%;
+            top: 30%;
             left: 50%;
-            transform: translate(-50%,-50%);
+            transform: translate(-50%,-50%);   /* RESPONSAVEL PELA ESTRUTURA TOTAL*/
             background-color: #113647;
-            padding: 15px;
+            padding: 10px;
             border-radius: 15px;
             width: 80%;
             max-width: 400px; 
-            
-
         }
 
+          .labelinput{
+            position: absolute;
+            top: 0px;
+            left: 0px;
+            pointer-events: none;              /* RESPONSAVEL PELO TEXTO VALOR*/
+            transition: .5s;
+            font-size: 12px;
+            font-weight: bold;
+            color: #f5f3f3;
+        }
+
+        .dropdown-header {
+            background-color: #113647;
+            color: #f5f3f3;
+            border-radius: 6px;
+            cursor: pointer;                     /* RESPONSAVEL PELO TEXTO SELECIONAR */
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            font-weight: bold;
+            font-size: 13px;
+        }
+        
+
         fieldset{
-            border: 3px solid #255f75;
+            border: 3px solid #255f75;         /* RESPONSAVEL PELA BORDA AO REDOR  */
         }
 
         legend{
-            border: 1px solid #255f75;
-            padding: 10px;
+              
+            padding: 7px;
             text-align: center;
-            background-color: #255f75;
-            border-radius: 5px;
+            background-color: #255f75;          /* RESPONSAVEL PELA COR DO FUNDO DO TEXTO DE OPÇÕES  */
+            border-radius: 3px;
+            font-size: 15px;
             
         }
 
+        #submit:hover{
+            background-color: #1e5165;          /* RESPONSAVEL PELA COR AO PASAR O MOUSE NO BOTÃO  */
+
+        }
+
+        #submit{
+            background-color: #255f75;
+            width: 100%;
+            border: none;
+            padding: 10px;
+            border-radius: 10px;                  /* RESPONSAVEL PELO  BOTÃO  */
+            color: #eeeded;
+            font-size: 12px;
+            cursor: pointer;
+
+        }
+
+
+
+
+
+
+
+
+
+
+
+
+        
+
         .inputbox{
             position: relative;
+            
 
         }
         .inputUser{
@@ -210,19 +266,17 @@ if (isset($_POST['submit'])) {
             width: 100%;
             outline: none;
             color: #eeeded;
-            font-size: 15px;
+            font-size: 12px;
             letter-spacing: 1px;
             box-sizing: border-box;
         }
 
-        .labelinput{
-            position: absolute;
-            top: 0px;
-            left: 0px;
-            pointer-events: none;
-            transition: .5s;
-            font-size: 15px;
-        }
+         .inputUser option {
+           background-color: #0e2a38;
+          color: #ffffff;
+         }
+
+        
 
         .inputUser:focus ~ .labelinput,
         .inputUser:valid ~ .labelinput{
@@ -231,23 +285,10 @@ if (isset($_POST['submit'])) {
             color: #2d7592;
         }
 
-        #submit{
-            background-color: #255f75;
-            width: 100%;
-            border: none;
-            padding: 15px;
-            border-radius: 10px;
-            color: #eeeded;
-            font-size: 15px;
-            cursor: pointer;
-
-        }
+        
         
         /* CODIGO RESPONSAVEL AO PASSAR O MOUSE MUDA A COR */
-        #submit:hover{
-            background-color: #1e5165;
-
-        }
+        
 
         /* CODIGO RESPONSAVEL EM DEIXAR MAIUCULA E MINUSCULA */
         #nome{
@@ -260,19 +301,10 @@ if (isset($_POST['submit'])) {
         .inputbox {
              position: relative;
              cursor: pointer;
+             font-size: 12px;
         }
 
-        .toggle-password {
-             position: absolute;
-             top: 50%;
-             right: 0px;
-             transform: translateY(-125%);
-             cursor: pointer;
-             font-size: 18px;
-             color: #ccc;
-             user-select: none;
-             max-height: -125%;
-        }
+        
 
          .inputSenha {
              padding-right: 30px; /* espaço para o ícone */
@@ -283,29 +315,20 @@ if (isset($_POST['submit'])) {
         
 
 
-        .caps-aviso {
-            position: absolute;
-            top: 100%;
-            left: 0;
-            font-size: 12px;
-            color: rgb(137, 137, 29);
-            margin-top: -21px;
-            visibility: hidden;
-            height: 16px; /* reserva espaço */
-        }
+        
 
            .banca {
             text-align: center;
-            font-size: 15px;
+            font-size: 12px;
             color:rgb(230, 229, 227); /* opcional: tom dourado para manter o estilo anterior */
-            margin-top: 360px;
+            margin-top: 370px;
             
            }
 
            .porcent{
 
             text-align: center;
-            font-size: 15px;
+            font-size: 12px;
             color:rgb(230, 229, 227); /* opcional: tom dourado para manter o estilo anterior */
             margin-top: 8px;
 
@@ -314,7 +337,7 @@ if (isset($_POST['submit'])) {
 
            .saque{
             text-align: center;
-            font-size: 15px;
+            font-size: 12px;
             color:rgb(230, 229, 227); /* opcional: tom dourado para manter o estilo anterior */
             margin-top: 8px;
 
@@ -322,7 +345,7 @@ if (isset($_POST['submit'])) {
 
            .valor-unidade{
             text-align: center;
-            font-size: 15px;
+            font-size: 12px;
             color:rgb(230, 229, 227); /* opcional: tom dourado para manter o estilo anterior */
             margin-top: 8px;
 
@@ -374,29 +397,40 @@ if (isset($_POST['submit'])) {
   flex-direction: column;
   align-items: center;
   text-align: center;
-  width: 80px; /* defina um tamanho fixo */
+  width: 70px; /* defina um tamanho fixo */
   flex-shrink: 0; /* impede encolhimento */
 }
+
+.bloco-com-label-banca {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  text-align: center;
+  
+  flex-shrink: 0; /* impede encolhimento */
+}
+
+
 
 .bloco {
   background-color: #113647;
   padding: 8px 12px;
   border-radius: 7px;
   font-weight: bold;
-  font-size: 14px;
+  font-size: 12px;
   width: 100%; /* ocupa toda a largura do container */
   text-align: center;
 }
 
 .subtitulo {
-  font-size: 0.9em;
+  font-size: 12px;
   margin-bottom: 4px;
   color: #d5d6d6;
 }
 
 
 .sinal-central {
-  font-size: 1.2em;
+  font-size: 1.1em;
   padding: 6px;
   font-weight: bold;
   color: #d5d6d6;
@@ -406,8 +440,44 @@ if (isset($_POST['submit'])) {
 
 
 
+/* MENU SUSPENSO  */
+.dropdown {
+  position: relative;
+  width: 100%;
+  font-family: Arial, sans-serif;
+}
 
 
+
+.dropdown-options {
+  list-style: none;
+  padding: 0;
+  margin: 6px 0 0 0;
+  background-color: #0e2a38;
+  border-radius: 6px;
+  position: absolute;
+  width: 100%;
+  display: none;
+  z-index: 10;
+  box-shadow: 0 4px 12px rgba(0,0,0,0.15);
+  font-size: 13px;
+}
+
+.dropdown-options li {
+  padding: 10px 14px;
+  color: #d5d6d6;
+  cursor: pointer;
+  transition: background 0.3s;
+}
+
+.dropdown-options li:hover {
+  background-color: #1e4a5a;
+}
+
+.arrow {
+  font-size: 12px;
+}
+/*FIM DO CODIGO MENU SUSPENSO  */
 
 
         
@@ -478,15 +548,18 @@ if (isset($_POST['submit'])) {
       <legend><b>Selecione a Opção!</b></legend>
       <br><br>
 
-      <div class="inputbox">
-        
-        <select name="acao" id="acao" class="inputUser" required>
-          <option value="">Selecione</option>
-          <option value="deposito">Depositar na Banca</option>
-          <option value="diaria">Porcentagem Sobre a Banca</option>
-          <option value="saque">Sacar</option>
-        </select>
-      </div>
+      <div class="dropdown">
+        <div class="dropdown-header" onclick="toggleDropdown()">
+    <span id="dropdown-selected">Selecione</span>
+    <span class="arrow">&#9662;</span>
+  </div>
+  <ul class="dropdown-options" id="dropdown-options">
+    <li onclick="selectOption('Depositar na Banca', 'deposito')">Depositar na Banca</li>
+    <li onclick="selectOption('Porcentagem Sobre a Banca', 'diaria')">Porcentagem Sobre a Banca</li>
+    <li onclick="selectOption('Sacar', 'saque')">Sacar</li>
+  </ul>
+  <input type="hidden" name="acao" id="acao">
+</div>
       <br><br>
 
       <div class="inputbox">
@@ -532,7 +605,7 @@ if (isset($_POST['submit'])) {
     
     <div class="linha-unidade">
 
-      <div class="bloco-com-label">
+      <div class="bloco-com-label-banca">
         <label class="subtitulo">Banca</label>
         <span class="bloco">R$ <?php echo number_format($soma_depositos, 2, ',', '.'); ?></span>
       </div>
@@ -614,4 +687,29 @@ document.addEventListener("DOMContentLoaded", function () {
   });
 });
 </script>
+
+
+
+
+<script>
+  function toggleDropdown() {
+    const options = document.getElementById('dropdown-options');
+    options.style.display = options.style.display === 'block' ? 'none' : 'block';
+  }
+
+  function selectOption(texto, valor) {
+    document.getElementById('dropdown-selected').innerText = texto;
+    document.getElementById('acao').value = valor;
+    document.getElementById('dropdown-options').style.display = 'none';
+  }
+
+  // Fecha dropdown se clicar fora
+  window.addEventListener('click', function (e) {
+    const dropdown = document.querySelector('.dropdown');
+    if (!dropdown.contains(e.target)) {
+      document.getElementById('dropdown-options').style.display = 'none';
+    }
+  });
+</script>
+
 
