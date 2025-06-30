@@ -165,12 +165,22 @@ if (isset($_POST['submit'])) {
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>Gestão</title>
 
+
+
+
+
+
+
     <style>
      
        body{
             font-family: Arial, Helvetica, sans-serif;
-            background-image: linear-gradient(to right, #255f75, #1d4d5f);
+            background-image: linear-gradient(to right, #255f75, #1d4d5f);      /* RESPONSAVEL PELO CORPO DA PAGINA*/
         }
+
+
+
+
 
         /* RESPONSAVEL PELO CAMPO DO FORMULARIO DE OPÇÕES*/
         .box{
@@ -181,7 +191,7 @@ if (isset($_POST['submit'])) {
             transform: translate(-50%,-50%);   /* RESPONSAVEL PELA ESTRUTURA TOTAL*/
             background-color: #113647;
             padding: 10px;
-            border-radius: 15px;
+            border-radius: 8px;
             width: 80%;
             max-width: 400px; 
         }
@@ -208,61 +218,47 @@ if (isset($_POST['submit'])) {
             font-weight: bold;
             font-size: 13px;
         }
-        
 
-        fieldset{
-            border: 3px solid #255f75;         /* RESPONSAVEL PELA BORDA AO REDOR  */
-        }
-
-        legend{
-              
-            padding: 7px;
-            text-align: center;
-            background-color: #255f75;          /* RESPONSAVEL PELA COR DO FUNDO DO TEXTO DE OPÇÕES  */
-            border-radius: 3px;
-            font-size: 15px;
-            
-        }
-
-        #submit:hover{
-            background-color: #1e5165;          /* RESPONSAVEL PELA COR AO PASAR O MOUSE NO BOTÃO  */
-
-        }
-
-        #submit{
-            background-color: #255f75;
-            width: 100%;
-            border: none;
-            padding: 10px;
-            border-radius: 10px;                  /* RESPONSAVEL PELO  BOTÃO  */
-            color: #eeeded;
-            font-size: 12px;
-            cursor: pointer;
-
-        }
-
-
-
-
-
-
-
-
-
-
-
-
-        
-
-        .inputbox{
+        .dropdown {
             position: relative;
-            
-
+            width: 100%;                        /* RESPONSAVEL PELO TEXTO E PELO TAMANHO DO CAMPO DE SELEÇÃO */
+            font-family: Arial, sans-serif;
         }
+
+        .dropdown-options {
+            list-style: none;
+            padding: 0;
+            margin: 6px 0 0 0;
+            background-color: #0e2a38;
+            border-radius: 6px;                  /* RESPONSAVEL PELO CAMPO DO FUNDO DA SELEÇÃO E PELOS TEXTOS */
+            position: absolute;
+            width: 100%;
+            display: none;
+            z-index: 10;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.15);
+            font-size: 13px;
+          }
+
+        .dropdown-options li {
+            padding: 10px 14px;
+            color:rgb(218, 223, 223);     /* RESPONSAVEL PELOS TEXTOS COR E MOUSE AO PASSAR */
+            cursor: pointer;
+            transition: background 0.3s;
+        }
+
+        .dropdown-options li:hover {
+            background-color: #1e4a5a;   /* RESPONSAVEL PELOS TEXTOS COR E MOUSE AO PASSAR */
+        }
+
+        .arrow {
+            
+        }
+
+
         .inputUser{
             background: none;
             border: none;
-            border-bottom: 1px solid #255f75;
+            border-bottom: 1px solid #255f75;   /* RESPONSAVEL PELO TEXTO E CAMPO  DIGITADO NO CAMPO DO VALOR */
             width: 100%;
             outline: none;
             color: #eeeded;
@@ -271,230 +267,178 @@ if (isset($_POST['submit'])) {
             box-sizing: border-box;
         }
 
-         .inputUser option {
-           background-color: #0e2a38;
+        .inputbox {
+             position: relative;      
+             cursor: pointer;         /* RESPONSAVEL PELA POSIÇÃO DO TEXTO DO CAMPO VALOR E TAMANHO  */
+             font-size: 12px;
+        }
+
+        .inputUser option {
+           background-color: #0e2a38;  /* RESPONSAVEL PELO TEXTO AO CLICAR DENTRO DO CAMPO VALOR MUDAR PRA COR AZUL */
           color: #ffffff;
          }
 
         
 
         .inputUser:focus ~ .labelinput,
-        .inputUser:valid ~ .labelinput{
+        .inputUser:valid ~ .labelinput{   /* RESPONSAVEL PELO TEXTO AO CLICAR DENTRO DO CAMPO VALOR REDUZIR O TAMANHO  */
             top: -20px;
             font-size: 12px;
             color: #2d7592;
         }
-
-        
-        
-        /* CODIGO RESPONSAVEL AO PASSAR O MOUSE MUDA A COR */
         
 
-        /* CODIGO RESPONSAVEL EM DEIXAR MAIUCULA E MINUSCULA */
-        #nome{
-            text-transform: capitalize;
+        fieldset{
+            border: 3px solid #255f75;   /* RESPONSAVEL PELA BORDA AO REDOR  */
         }
 
-
-
-         /* CODIGO RESPONSAVEL EM DAR ESTILO A VISUALIZAÇÃO DA SENHA */
-        .inputbox {
-             position: relative;
-             cursor: pointer;
-             font-size: 12px;
-        }
-
-        
-
-         .inputSenha {
-             padding-right: 30px; /* espaço para o ícone */
-        }
-        /* FIM DO CODIGO RESPONSAVEL EM DAR ESTILO A VISUALIZAÇÃO DA SENHA */
-
-
-        
-
-
-        
-
-           .banca {
+        legend{
+              
+            padding: 7px;
             text-align: center;
-            font-size: 12px;
-            color:rgb(230, 229, 227); /* opcional: tom dourado para manter o estilo anterior */
-            margin-top: 370px;
+            background-color: #255f75;     /* RESPONSAVEL PELA COR DO FUNDO DO TEXTO DE OPÇÕES  */
+            border-radius: 3px;
+            font-size: 15px;
             
-           }
+        }
 
-           .porcent{
+        #submit:hover{
+            background-color: #1e5165;       /* RESPONSAVEL PELA COR AO PASAR O MOUSE NO BOTÃO  */
 
-            text-align: center;
+        }
+
+        #submit{
+            background-color: #255f75;
+            width: 100%;
+            border: none;
+            padding: 10px;
+            border-radius: 10px;   /* RESPONSAVEL PELO  BOTÃO  */
+            color: #eeeded;
             font-size: 12px;
-            color:rgb(230, 229, 227); /* opcional: tom dourado para manter o estilo anterior */
-            margin-top: 8px;
+            cursor: pointer;
+
+        }  /* FIM DO CODIGO RESPONSAVEL PELO CAMPO DO FORMULARIO DE OPÇÕES*/
 
 
-           }
+         
 
-           .saque{
-            text-align: center;
+
+
+
+
+
+
+
+
+
+
+        /* RESPONSAVEL PELO CODIGO DOS TEXTOS LABEL DE RETORNO DA BANCA*/
+        .centralizar {
+           display: flex;
+           justify-content: center;
+           align-items: center;
+           min-height: 100vh; /* ocupa altura total da tela */
+    
+        }
+
+        .text-resultado {
             font-size: 12px;
-            color:rgb(230, 229, 227); /* opcional: tom dourado para manter o estilo anterior */
-            margin-top: 8px;
-
-           }
-
-           .valor-unidade{
-            text-align: center;
-            font-size: 12px;
-            color:rgb(230, 229, 227); /* opcional: tom dourado para manter o estilo anterior */
-            margin-top: 8px;
-
-           }
-
-
-
-.valor-unidade {
-  margin: 20px 0;
-  font-family: Arial, sans-serif;
-  margin-top: 30px;
-  
-}
-
-.titulo-unidade {
-  font-weight: bold;
-  margin-bottom: 8px;
-  display: inline-block;
-}
-
-.linha-unidade {
-  display: flex;
-  align-items: center;
-  gap: 10px;
-  flex-wrap: wrap;
-}
-
-
-
-.resultado {
-  background-color: #113647;
-  color: #d5d6d6;
-}
-
-.operador {
-  font-weight: bold;
-  font-size: 1.2em;
-}
-
-.linha-unidade {
-  display: flex;
-  align-items: center;
-  gap: 12px;
-  justify-content: center;
-}
-
-.bloco-com-label {
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  text-align: center;
-  width: 70px; /* defina um tamanho fixo */
-  flex-shrink: 0; /* impede encolhimento */
-}
-
-.bloco-com-label-banca {
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  text-align: center;
-  
-  flex-shrink: 0; /* impede encolhimento */
-}
-
-
-
-.bloco {
-  background-color: #113647;
-  padding: 8px 12px;
-  border-radius: 7px;
-  font-weight: bold;
-  font-size: 12px;
-  width: 100%; /* ocupa toda a largura do container */
-  text-align: center;
-}
-
-.subtitulo {
-  font-size: 12px;
-  margin-bottom: 4px;
-  color: #d5d6d6;
-}
-
-
-.sinal-central {
-  font-size: 1.1em;
-  padding: 6px;
-  font-weight: bold;
-  color: #d5d6d6;
-  position: relative;
-  top: 8px; /* Ajuste esse valor até ficar do jeitinho que quiser */
-}
-
-
-
-/* MENU SUSPENSO  */
-.dropdown {
-  position: relative;
-  width: 100%;
-  font-family: Arial, sans-serif;
-}
-
-
-
-.dropdown-options {
-  list-style: none;
-  padding: 0;
-  margin: 6px 0 0 0;
-  background-color: #0e2a38;
-  border-radius: 6px;
-  position: absolute;
-  width: 100%;
-  display: none;
-  z-index: 10;
-  box-shadow: 0 4px 12px rgba(0,0,0,0.15);
-  font-size: 13px;
-}
-
-.dropdown-options li {
-  padding: 10px 14px;
-  color: #d5d6d6;
-  cursor: pointer;
-  transition: background 0.3s;
-}
-
-.dropdown-options li:hover {
-  background-color: #1e4a5a;
-}
-
-.arrow {
-  font-size: 12px;
-}
-/*FIM DO CODIGO MENU SUSPENSO  */
-
-
-        
+            padding: 20px;
+            border-radius: 8px;
+            background-color: #113647;
+            color: #e6e5e3; 
+            width: 80%;
+            max-width: 400px;
+            font-family: Arial, sans-serif;
+            text-align: left;
+        }
+        /* FIM DO CODIGO RESPONSAVEL PELO CODIGO DOS TEXTOS LABEL DE RETORNO DA BANCA*/
 
 
 
 
 
 
-    </style>
 
 
 
-  </head>
+
+         /* RESPONSAVEL PELOS CODIGO DOS BLOCOS DE VALORES DA GESTÃO DA BANCA */
+        .valor-unidade{
+          text-align: center;
+          font-size: 12px;
+          color: #e2b14d;   /* RESPONSAVEL PELOS TXTOS DOS 2 BLOCOS BANCA E PORCENTAGEM */
+          margin-top: 8px;
+          margin: 20px 0;
+          font-family: Arial, sans-serif;
+          margin-top: 40px;
+
+          } 
+
+        .resultado {
+          background-color: #113647;    /* RESPONSAVEL PELOS TXTOS DO  BLOCO VALOR DA UNDADE*/
+          color: #e2b14d;
+          }
+
+        .linha-unidade {
+          display: flex;
+          align-items: center;      /* RESPONSAVEL PELOS ALINHAMENTO DOS TXTOS DOS  BLOCO VALOR DA UNDADE*/
+          gap: 12px;
+          justify-content: center;
+         
+        }
+
+        .bloco-com-label {
+          display: flex;
+          flex-direction: column;
+          align-items: center;      /* RESPONSAVEL PELOS ALINHAMENTO DOS  DOS  BLOCO PORCENTAGEM E UNIDADE*/
+          text-align: center;
+          width: 70px; 
+          flex-shrink: 0; 
+        }
+
+        .bloco-com-label-banca {
+          display: flex;
+          flex-direction: column;
+          align-items: center;      /* RESPONSAVEL PELOS ALINHAMENTO DO BLOCO DA BANCA*/
+          text-align: center;
+          flex-shrink: 0;
+        }
+
+        .bloco {
+          background-color: #113647;
+          padding: 8px 12px;
+          border-radius: 7px;
+          font-weight: bold;       /* RESPONSAVEL PELO FUNDO E ELEMENTO DE CADA BLOCO*/
+          font-size: 12px;
+          width: 100%; 
+          text-align: center;
+        }
+
+        .subtitulo {
+          font-size: 12px;
+          margin-bottom: 4px;   /* RESPONSAVEL PELO TITULO DOS BLOCOS*/
+          color: #d5d6d6;
+        }
+
+        .sinal-central {
+          font-size: 1.1em;
+          padding: 6px;
+          font-weight: bold;   /* RESPONSAVEL PELOS SINAIS DOS BLOCOS*/
+          color: #d5d6d6;
+          position: relative;
+          top: 8px; 
+        }
+        /* FIM DO CODIGO RESPONSAVEL PELOS CODIGO DOS BLOCOS DE VALORES DA GESTÃO DA BANCA */
+
+</style>
 
 
-  <body>
+
+</head>
+
+
+<body>
 
     <div id="data-container"></div>
     <!-- A data será carregada aqui -->
@@ -556,7 +500,7 @@ if (isset($_POST['submit'])) {
   <ul class="dropdown-options" id="dropdown-options">
     <li onclick="selectOption('Depositar na Banca', 'deposito')">Depositar na Banca</li>
     <li onclick="selectOption('Porcentagem Sobre a Banca', 'diaria')">Porcentagem Sobre a Banca</li>
-    <li onclick="selectOption('Sacar', 'saque')">Sacar</li>
+    <li onclick="selectOption('Sacar', 'saque')">Sacar da Banca</li>
   </ul>
   <input type="hidden" name="acao" id="acao">
 </div>
@@ -575,30 +519,32 @@ if (isset($_POST['submit'])) {
     </form>
     </div>
 
+  <div class="centralizar">
+    <div class="text-resultado">
 
-     <?php if (isset($_SESSION['usuario_id'])): ?>
-      <div class="banca">
-       Depositado na Banca----------R$ <?php echo number_format($soma_depositos, 2, ',', '.'); ?>
-      </div>
-     <?php endif; ?>
+        <?php if (isset($_SESSION['usuario_id'])): ?>
+            Depositado na Banca----------R$ <?php echo number_format($soma_depositos, 2, ',', '.'); ?>
+        <?php endif; ?>
+        <br><br>
 
+        <?php if ($ultima_diaria !== null): ?>
+            <label>Porcentagem da Banca------- <?php echo number_format($ultima_diaria, 2, ',', '.'); ?>%</label>
+        <?php endif; ?>
+        <br><br>
 
-     <?php if ($ultima_diaria !== null): ?>
-      <div class="porcent">
-      <label>Porcentagem da Banca------- <?php echo number_format($ultima_diaria, 2, ',', '.'); ?>%</label>
-      </div>
-     <?php endif; ?>
+        <?php if ($soma_saque !== null): ?>
+            <label>Total de Saques-------- R$ <?php echo number_format($soma_saque, 2, ',', '.'); ?></label>
+        <?php endif; ?>
 
-     <?php if ($soma_saque !== null): ?>
-      <div class="saque">
-       <label>Total de Saques: R$ <?php echo number_format($soma_saque, 2, ',', '.'); ?></label>
-       </div>
-     <?php endif; ?>
+    </div>
+</div>
+
+    
 
      
 
 
-     <?php if (isset($_SESSION['usuario_id']) && $ultima_diaria > 0 && $soma_depositos > 0): 
+<?php if (isset($_SESSION['usuario_id']) && $ultima_diaria > 0 && $soma_depositos > 0): 
   $resultado = ($ultima_diaria / 100) * $soma_depositos;
 ?>
   <div class="valor-unidade">
