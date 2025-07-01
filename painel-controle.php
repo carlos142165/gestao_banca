@@ -171,267 +171,223 @@ if (isset($_POST['submit'])) {
 
 
 
-    <style>
-     
-       body{
-            font-family: Arial, Helvetica, sans-serif;
-            background-image: linear-gradient(to right, #255f75, #1d4d5f);      /* RESPONSAVEL PELO CORPO DA PAGINA*/
-        }
+  
+  <style>
+    body, html {
+      margin: 0;
+      padding: 0;
+      height: 100%;
+      font-family: Arial, Helvetica, sans-serif;
+      background-image: linear-gradient(to right, #255f75, #1d4d5f);  /* CODIGO RESPONSAVEL POR TODA ESTRUTURA DO CORPO DO SITE */
+    }
+
+    .container-principal {
+      display: flex;
+      flex-direction: column;  /* CODIGO RESPONSAVEL POR TODA ESTRUTURA DO CORPO DO SITE */
+      align-items: center;
+      gap: 24px;
+      padding-top: 30px;
+    }
 
 
 
+     /* CODIGO RESPONSAVEL PELO FORMULARIO DE CADASTRO" */
+    .box {
+      background-color: #113647;
+      padding: 10px;
+      border-radius: 8px;               /* RESPONSAVEL PELA COR FUNDO FORMULARIO E DO TEXTO TITULO "SELECIONE A OPÇÃO" */
+      width: 320px;
+      color: #eeeded;
+    }
 
+    fieldset {
+      border: 3px solid #255f75;      /* RESPONSAVEL PELA COR DA" */
+    }
 
-        /* RESPONSAVEL PELO CAMPO DO FORMULARIO DE OPÇÕES*/
-        .box{
-            color: #eeeded;
-            position: absolute;
-            top: 30%;
-            left: 50%;
-            transform: translate(-50%,-50%);   /* RESPONSAVEL PELA ESTRUTURA TOTAL*/
-            background-color: #113647;
-            padding: 10px;
-            border-radius: 8px;
-            width: 80%;
-            max-width: 400px; 
-        }
+    legend {
+      padding: 7px;
+      text-align: center;
+      background-color: #255f75;     /* RESPONSAVEL PELA COR DO CAMPO DO TITULO E DO TAMANHO TO TEXTO */
+      border-radius: 3px;
+      font-size: 13px;
+    }
 
-          .labelinput{
-            position: absolute;
-            top: 0px;
-            left: 0px;
-            pointer-events: none;              /* RESPONSAVEL PELO TEXTO VALOR*/
-            transition: .5s;
-            font-size: 12px;
-            font-weight: bold;
-            color: #f5f3f3;
-        }
+    .inputbox {
+      position: relative;     /* RESPONSAVEL PELA TEXTO "VALOR" */
+      font-size: 12px;
+    }
 
-        .dropdown-header {
-            background-color: #113647;
-            color: #f5f3f3;
-            border-radius: 6px;
-            cursor: pointer;                     /* RESPONSAVEL PELO TEXTO SELECIONAR */
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            font-weight: bold;
-            font-size: 13px;
-        }
+    .inputUser {
+      background: none;
+      border: none;
+      border-bottom: 1px solid #255f75;    /* RESPONSAVEL PELA COR DO TEXTO DE DENTRO DO CAMPO INPUT VALOR E DA COR DA LINHA  */
+      width: 100%;
+      outline: none;
+      color: #eeeded;
+      font-size: 12px;
+    }
 
-        .dropdown {
-            position: relative;
-            width: 100%;                        /* RESPONSAVEL PELO TEXTO E PELO TAMANHO DO CAMPO DE SELEÇÃO */
-            font-family: Arial, sans-serif;
-        }
+    .labelinput {
+      position: absolute;
+      top: 0px;
+      left: 0px;
+      pointer-events: none;       /* RESPONSAVEL PELA COR DO TEXTO LABEL "VALOR" E DO TAMANHO   */
+      transition: .5s;
+      font-size: 12px;
+      font-weight: bold;
+      color: #f5f3f3;
+    }
 
-        .dropdown-options {
-            list-style: none;
-            padding: 0;
-            margin: 6px 0 0 0;
-            background-color: #0e2a38;
-            border-radius: 6px;                  /* RESPONSAVEL PELO CAMPO DO FUNDO DA SELEÇÃO E PELOS TEXTOS */
-            position: absolute;
-            width: 100%;
-            display: none;
-            z-index: 10;
-            box-shadow: 0 4px 12px rgba(0,0,0,0.15);
-            font-size: 13px;
-          }
+    .inputUser:focus ~ .labelinput,
+    .inputUser:valid ~ .labelinput {    /* RESPONSAVEL PELA COR DO TEXTO DE DENTRO DO CAMPO VALOR QUANDO DIMINUI*/
+      top: -20px;
+      font-size: 12px;
+      color: #2d7592;
+    }
 
-        .dropdown-options li {
-            padding: 10px 14px;
-            color:rgb(218, 223, 223);     /* RESPONSAVEL PELOS TEXTOS COR E MOUSE AO PASSAR */
-            cursor: pointer;
-            transition: background 0.3s;
-        }
+    .dropdown {
+      position: relative;    /* RESPONSAVEL PELO TAMANHO DO CAMPO DE SELEÇÃO */
+      width: 100%;
+    }
 
-        .dropdown-options li:hover {
-            background-color: #1e4a5a;   /* RESPONSAVEL PELOS TEXTOS COR E MOUSE AO PASSAR */
-        }
+    .dropdown-header {
+      background-color: #113647;
+      color: #f5f3f3;
+      border-radius: 6px;
+      cursor: pointer;
+      display: flex;
+      justify-content: space-between;    /* RESPONSAVEL PELA COR DO TEXTO "SELECIONE" TAMANHO DA FONTE COR DO CAMPO */
+      align-items: center;
+      font-weight: bold;
+      font-size: 13px;
+    }
 
-        .arrow {
-            
-        }
+    .dropdown-options {
+      list-style: none;
+      padding: 0;
+      margin: 6px 0 0 0;
+      background-color: #0e2a38;      /* RESPONSAVEL PELA COR DO FUNDO DO TEXTO DO CAMPO "SELECIONE" TAMANHO DA FONTE DE DENTRO COR DO CAMPO */
+      border-radius: 6px; 
+      position: absolute;
+      width: 100%;
+      display: none;
+      z-index: 10;
+      box-shadow: 0 4px 12px rgba(0,0,0,0.15);
+      font-size: 13px;
+    }
 
+    .dropdown-options li {
+      padding: 10px 14px;
+      color: rgb(218, 223, 223);    /* RESPONSAVEL PELA DO TEXTO DE DENTRO DA ABA  "SELECIONE" */
+      cursor: pointer;
+    }
 
-        .inputUser{
-            background: none;
-            border: none;
-            border-bottom: 1px solid #255f75;   /* RESPONSAVEL PELO TEXTO E CAMPO  DIGITADO NO CAMPO DO VALOR */
-            width: 100%;
-            outline: none;
-            color: #eeeded;
-            font-size: 12px;
-            letter-spacing: 1px;
-            box-sizing: border-box;
-        }
+    .dropdown-options li:hover {
+      background-color: #1e4a5a;   /* RESPONSAVEL PELA COR AO PASSAR O MOUSE NOS ITENS DA ABA "SELECIONE" */
+    }
 
-        .inputbox {
-             position: relative;      
-             cursor: pointer;         /* RESPONSAVEL PELA POSIÇÃO DO TEXTO DO CAMPO VALOR E TAMANHO  */
-             font-size: 12px;
-        }
+    #submit {
+      background-color: #255f75;
+      width: 100%;
+      border: none;
+      padding: 10px;
+      border-radius: 10px;    /* RESPONSAVEL PELA COR DO BOTÃO E PELO TEXTO E TAMANHO */
+      color: #eeeded;
+      font-size: 12px;
+      cursor: pointer;
+    }
 
-        .inputUser option {
-           background-color: #0e2a38;  /* RESPONSAVEL PELO TEXTO AO CLICAR DENTRO DO CAMPO VALOR MUDAR PRA COR AZUL */
-          color: #ffffff;
-         }
-
-        
-
-        .inputUser:focus ~ .labelinput,
-        .inputUser:valid ~ .labelinput{   /* RESPONSAVEL PELO TEXTO AO CLICAR DENTRO DO CAMPO VALOR REDUZIR O TAMANHO  */
-            top: -20px;
-            font-size: 12px;
-            color: #2d7592;
-        }
-        
-
-        fieldset{
-            border: 3px solid #255f75;   /* RESPONSAVEL PELA BORDA AO REDOR  */
-        }
-
-        legend{
-              
-            padding: 7px;
-            text-align: center;
-            background-color: #255f75;     /* RESPONSAVEL PELA COR DO FUNDO DO TEXTO DE OPÇÕES  */
-            border-radius: 3px;
-            font-size: 15px;
-            
-        }
-
-        #submit:hover{
-            background-color: #1e5165;       /* RESPONSAVEL PELA COR AO PASAR O MOUSE NO BOTÃO  */
-
-        }
-
-        #submit{
-            background-color: #255f75;
-            width: 100%;
-            border: none;
-            padding: 10px;
-            border-radius: 10px;   /* RESPONSAVEL PELO  BOTÃO  */
-            color: #eeeded;
-            font-size: 12px;
-            cursor: pointer;
-
-        }  /* FIM DO CODIGO RESPONSAVEL PELO CAMPO DO FORMULARIO DE OPÇÕES*/
-
-
-         
+    #submit:hover {
+      background-color: #1e5165;   /* RESPONSAVEL PELA COR DO BOTÃO AO PASSAR O MOUSE */
+    }
+    /* FIM DO CODIGO RESPONSAVEL PELO FORMULARIO DE CADASTRO" */
 
 
 
 
 
 
-
-
-
-
-
-        /* RESPONSAVEL PELO CODIGO DOS TEXTOS LABEL DE RETORNO DA BANCA*/
-        .centralizar {
-           display: flex;
-           justify-content: center;
-           align-items: center;
-           min-height: 100vh; /* ocupa altura total da tela */
     
-        }
 
-        .text-resultado {
-            font-size: 12px;
-            padding: 20px;
-            border-radius: 8px;
-            background-color: #113647;
-            color: #e6e5e3; 
-            width: 80%;
-            max-width: 400px;
-            font-family: Arial, sans-serif;
-            text-align: left;
-        }
-        /* FIM DO CODIGO RESPONSAVEL PELO CODIGO DOS TEXTOS LABEL DE RETORNO DA BANCA*/
-
-
+    /* CODIGO RESPONSAVEL PELO VALOR PUXADO DO BANCO DE DADOS */
+    .text-resultado {
+      font-size: 12px;
+      padding: 20px;
+      border-radius: 8px;
+      background-color: #113647;   /* RESPONSAVEL PELA COR DO FUNDO TAMANHO E COR DO TEXTO  */
+      color: #e6e5e3;
+      width: 300px;
+      text-align: left;
+      margin-top: 5px;
+      
+    }
+    /* FIM DO CODIGO RESPONSAVEL PELO VALOR PUXADO DO BANCO DE DADOS */
 
 
 
 
 
 
+     /* CODIGO RESPONSAVEL PELO CALCULO DOS VALORES PARA GESTÃO */
+    .valor-unidade {
+      text-align: center;
+      font-size: 13px;
+      color:rgb(209, 206, 199);       /* RESPONSAVEL PELA COR DO TEXTO DO CAMMPO BANCA E PORCENTAGEM E TAMANHO DO SINAL */
+      font-family: Arial, sans-serif;
+      margin-bottom: 100px;
+      margin-top: 15px;
+    }
+
+    .resultado {
+      background-color: #113647;  /* RESPONSAVEL PELA COR DO TEXTO DO CAMMPO UNIDADE*/
+      color: #e2b14d;
+    }
+
+    .linha-unidade {
+      display: flex;
+      align-items: center;       /* RESPONSAVEL PELA CDISTANCIA ENTRE SINAIS E OS CAMPOS*/
+      gap: 10px;
+      justify-content: center;
+    }
+
+    .bloco-com-label,
+    .bloco-com-label-banca {
+      display: flex;
+      flex-direction: column;    /* RESPONSAVEL PELO TAMANHO DOS BLOCOS*/
+      align-items: center;
+      width: 79px;
+    }
+
+    .bloco {
+      background-color: #113647;
+      padding: 8px 12px;
+      border-radius: 7px;
+      font-weight: bold;     /* RESPONSAVEL PELA TAMANHO DA FONTE COR DO FUNDO */
+      font-size: 12px;
+      width: 100%;
+      text-align: center;
+    }
+
+    .subtitulo {
+      font-size: 12px;
+      margin-bottom: 4px;   /* RESPONSAVEL PELA  COR DO TITULO */
+      color: #d5d6d6;
+    }
+
+    .sinal-central {
+      font-size: 1.1em;
+      padding: 7px;
+      font-weight: bold;   /* RESPONSAVEL PELA TAMANHO DOS SINAIS E PELA COR  */
+      color: #d5d6d6;
+      position: relative;
+      top: 8px;
+    }
+    /* FIM DO CODIGO RESPONSAVEL PELO CALCULO DOS VALORES PARA GESTÃO */
 
 
-         /* RESPONSAVEL PELOS CODIGO DOS BLOCOS DE VALORES DA GESTÃO DA BANCA */
-        .valor-unidade{
-          text-align: center;
-          font-size: 12px;
-          color: #e2b14d;   /* RESPONSAVEL PELOS TXTOS DOS 2 BLOCOS BANCA E PORCENTAGEM */
-          margin-top: 8px;
-          margin: 20px 0;
-          font-family: Arial, sans-serif;
-          margin-top: 40px;
+    
 
-          } 
-
-        .resultado {
-          background-color: #113647;    /* RESPONSAVEL PELOS TXTOS DO  BLOCO VALOR DA UNDADE*/
-          color: #e2b14d;
-          }
-
-        .linha-unidade {
-          display: flex;
-          align-items: center;      /* RESPONSAVEL PELOS ALINHAMENTO DOS TXTOS DOS  BLOCO VALOR DA UNDADE*/
-          gap: 12px;
-          justify-content: center;
-         
-        }
-
-        .bloco-com-label {
-          display: flex;
-          flex-direction: column;
-          align-items: center;      /* RESPONSAVEL PELOS ALINHAMENTO DOS  DOS  BLOCO PORCENTAGEM E UNIDADE*/
-          text-align: center;
-          width: 70px; 
-          flex-shrink: 0; 
-        }
-
-        .bloco-com-label-banca {
-          display: flex;
-          flex-direction: column;
-          align-items: center;      /* RESPONSAVEL PELOS ALINHAMENTO DO BLOCO DA BANCA*/
-          text-align: center;
-          flex-shrink: 0;
-        }
-
-        .bloco {
-          background-color: #113647;
-          padding: 8px 12px;
-          border-radius: 7px;
-          font-weight: bold;       /* RESPONSAVEL PELO FUNDO E ELEMENTO DE CADA BLOCO*/
-          font-size: 12px;
-          width: 100%; 
-          text-align: center;
-        }
-
-        .subtitulo {
-          font-size: 12px;
-          margin-bottom: 4px;   /* RESPONSAVEL PELO TITULO DOS BLOCOS*/
-          color: #d5d6d6;
-        }
-
-        .sinal-central {
-          font-size: 1.1em;
-          padding: 6px;
-          font-weight: bold;   /* RESPONSAVEL PELOS SINAIS DOS BLOCOS*/
-          color: #d5d6d6;
-          position: relative;
-          top: 8px; 
-        }
-        /* FIM DO CODIGO RESPONSAVEL PELOS CODIGO DOS BLOCOS DE VALORES DA GESTÃO DA BANCA */
-
-</style>
+  </style>
 
 
 
@@ -486,6 +442,14 @@ if (isset($_POST['submit'])) {
       // Carregando o script de data global
     </script>
 
+
+
+
+
+
+
+<div class="container-principal">
+
   <div class="box">
   <form action="painel-controle.php" method="POST">
     <fieldset>
@@ -503,7 +467,7 @@ if (isset($_POST['submit'])) {
     <li onclick="selectOption('Sacar', 'saque')">Sacar da Banca</li>
   </ul>
   <input type="hidden" name="acao" id="acao">
-</div>
+ </div>
       <br><br>
 
       <div class="inputbox">
@@ -537,16 +501,16 @@ if (isset($_POST['submit'])) {
         <?php endif; ?>
 
     </div>
-</div>
+ </div>
 
     
 
      
 
 
-<?php if (isset($_SESSION['usuario_id']) && $ultima_diaria > 0 && $soma_depositos > 0): 
+ <?php if (isset($_SESSION['usuario_id']) && $ultima_diaria > 0 && $soma_depositos > 0): 
   $resultado = ($ultima_diaria / 100) * $soma_depositos;
-?>
+ ?>
   <div class="valor-unidade">
     
     <div class="linha-unidade">
@@ -572,19 +536,11 @@ if (isset($_POST['submit'])) {
 
     </div>
   </div>
-<?php endif; ?>
+  <?php endif; ?>
 
-
-
-
-
-
-
-    
-
-
-
+</div>
   </body>
+
 
 
 <script>
