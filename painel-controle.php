@@ -196,8 +196,8 @@ if (isset($_POST['submit'])) {
       background-color: #113647;
       padding: 10px;
       border-radius: 8px;               /* RESPONSAVEL PELA COR FUNDO FORMULARIO E DO TEXTO TITULO "SELECIONE A OPÇÃO" */
-      width: 320px;
-      color: #eeeded;
+      width: 345px;
+      color: #d5d6d6;
     }
 
     fieldset {
@@ -223,7 +223,7 @@ if (isset($_POST['submit'])) {
       border-bottom: 1px solid #255f75;    /* RESPONSAVEL PELA COR DO TEXTO DE DENTRO DO CAMPO INPUT VALOR E DA COR DA LINHA  */
       width: 100%;
       outline: none;
-      color: #eeeded;
+      color: #86da9b;
       font-size: 12px;
     }
 
@@ -235,7 +235,7 @@ if (isset($_POST['submit'])) {
       transition: .5s;
       font-size: 12px;
       font-weight: bold;
-      color: #f5f3f3;
+      color: #d5d6d6;
     }
 
     .inputUser:focus ~ .labelinput,
@@ -252,7 +252,7 @@ if (isset($_POST['submit'])) {
 
     .dropdown-header {
       background-color: #113647;
-      color: #f5f3f3;
+      color: #d5d6d6;
       border-radius: 6px;
       cursor: pointer;
       display: flex;
@@ -278,7 +278,7 @@ if (isset($_POST['submit'])) {
 
     .dropdown-options li {
       padding: 10px 14px;
-      color: rgb(218, 223, 223);    /* RESPONSAVEL PELA DO TEXTO DE DENTRO DA ABA  "SELECIONE" */
+      color: #d5d6d6;    /* RESPONSAVEL PELA DO TEXTO DE DENTRO DA ABA  "SELECIONE" */
       cursor: pointer;
     }
 
@@ -292,7 +292,7 @@ if (isset($_POST['submit'])) {
       border: none;
       padding: 10px;
       border-radius: 10px;    /* RESPONSAVEL PELA COR DO BOTÃO E PELO TEXTO E TAMANHO */
-      color: #eeeded;
+      color: #d5d6d6;
       font-size: 12px;
       cursor: pointer;
     }
@@ -312,13 +312,13 @@ if (isset($_POST['submit'])) {
     /* CODIGO RESPONSAVEL PELO VALOR PUXADO DO BANCO DE DADOS */
     .text-resultado {
       font-size: 12px;
-      padding: 20px;
+      padding: 10px;
       border-radius: 8px;
       background-color: #113647;   /* RESPONSAVEL PELA COR DO FUNDO TAMANHO E COR DO TEXTO  */
       color: #e6e5e3;
       width: 300px;
       text-align: left;
-      margin-top: 5px;
+      margin-top: 30px;
       
     }
     /* FIM DO CODIGO RESPONSAVEL PELO VALOR PUXADO DO BANCO DE DADOS */
@@ -335,17 +335,17 @@ if (isset($_POST['submit'])) {
       color:rgb(209, 206, 199);       /* RESPONSAVEL PELA COR DO TEXTO DO CAMMPO BANCA E PORCENTAGEM E TAMANHO DO SINAL */
       font-family: Arial, sans-serif;
       margin-bottom: 100px;
-      margin-top: 15px;
+      margin-top: -5px;
     }
 
     .resultado {
       background-color: #113647;  /* RESPONSAVEL PELA COR DO TEXTO DO CAMMPO UNIDADE*/
-      color: #e2b14d;
+      color: #86da9b;
     }
 
     .linha-unidade {
       display: flex;
-      align-items: center;       /* RESPONSAVEL PELA CDISTANCIA ENTRE SINAIS E OS CAMPOS*/
+      align-items: center;       /* RESPONSAVEL PELA DISTANCIA ENTRE SINAIS E OS CAMPOS*/
       gap: 10px;
       justify-content: center;
     }
@@ -359,10 +359,9 @@ if (isset($_POST['submit'])) {
     }
 
     .bloco {
-      background-color: #113647;
+      background-color:rgb(18, 64, 82);
       padding: 8px 12px;
-      border-radius: 7px;
-      font-weight: bold;     /* RESPONSAVEL PELA TAMANHO DA FONTE COR DO FUNDO */
+      border-radius: 7px;   /* RESPONSAVEL PELO TAMANHO DA FONTE COR DO FUNDO */
       font-size: 12px;
       width: 100%;
       text-align: center;
@@ -380,11 +379,27 @@ if (isset($_POST['submit'])) {
       font-weight: bold;   /* RESPONSAVEL PELA TAMANHO DOS SINAIS E PELA COR  */
       color: #d5d6d6;
       position: relative;
-      top: 8px;
+      top: 4px;
+    }
+    
+     
+    .unidade-especial {
+      height: 50px;
+      background-color:  #113647;   
+      padding: 20px;
+      margin-top: 8px;
+      border-radius: 7px;
+      margin-top: -5px;
+    }
+
+    .unidade-especial legend {
+      font-weight: bold; 
+     color:rgb(10, 40, 54);
+     font-size: 12px;
     }
     /* FIM DO CODIGO RESPONSAVEL PELO CALCULO DOS VALORES PARA GESTÃO */
 
-
+    
     
 
   </style>
@@ -454,7 +469,7 @@ if (isset($_POST['submit'])) {
   <form action="painel-controle.php" method="POST">
     <fieldset>
       <legend><b>Selecione a Opção!</b></legend>
-      <br><br>
+      <br>
 
       <div class="dropdown">
         <div class="dropdown-header" onclick="toggleDropdown()">
@@ -483,31 +498,10 @@ if (isset($_POST['submit'])) {
     </form>
     </div>
 
-  <div class="centralizar">
-    <div class="text-resultado">
-
-        <?php if (isset($_SESSION['usuario_id'])): ?>
-            Depositado na Banca----------R$ <?php echo number_format($soma_depositos, 2, ',', '.'); ?>
-        <?php endif; ?>
-        <br><br>
-
-        <?php if ($ultima_diaria !== null): ?>
-            <label>Porcentagem da Banca------- <?php echo number_format($ultima_diaria, 2, ',', '.'); ?>%</label>
-        <?php endif; ?>
-        <br><br>
-
-        <?php if ($soma_saque !== null): ?>
-            <label>Total de Saques-------- R$ <?php echo number_format($soma_saque, 2, ',', '.'); ?></label>
-        <?php endif; ?>
-
-    </div>
- </div>
-
-    
 
      
-
-
+<fieldset class="traco-unidade unidade-especial">
+  <legend>Valor da Sua Unidade</legend>
  <?php if (isset($_SESSION['usuario_id']) && $ultima_diaria > 0 && $soma_depositos > 0): 
   $resultado = ($ultima_diaria / 100) * $soma_depositos;
  ?>
@@ -516,27 +510,155 @@ if (isset($_POST['submit'])) {
     <div class="linha-unidade">
 
       <div class="bloco-com-label-banca">
-        <label class="subtitulo">Banca</label>
+        <label class="subtitulo"></label>
         <span class="bloco">R$ <?php echo number_format($soma_depositos, 2, ',', '.'); ?></span>
       </div>
 
       <div class="sinal-central">×</div>
 
       <div class="bloco-com-label">
-        <label class="subtitulo">Porcentagem</label>
+        <label class="subtitulo"></label>
         <span class="bloco"><?php echo number_format($ultima_diaria, 2, ',', '.'); ?>%</span>
       </div>
 
       <div class="sinal-central">=</div>
 
       <div class="bloco-com-label">
-        <label class="subtitulo">$Unidade</label>
+        <label class="subtitulo"></label>
         <span class="bloco resultado">R$ <?php echo number_format($resultado, 2, ',', '.'); ?></span>
+      </div>
+    </div>
+  </div>
+  <?php endif; ?>
+</fieldset>
+
+
+<?php if (isset($resultado)): 
+  $meia_unidade = $resultado * 0.5;
+?>
+<fieldset class="traco-unidade unidade-especial">
+  <legend>Valor da Sua Meta Diária</legend>
+  <div class="valor-unidade">
+    <div class="linha-unidade">
+
+      <div class="bloco-com-label">
+        <label class="subtitulo"></label>
+        <span class="bloco">R$ <?php echo number_format($resultado, 2, ',', '.'); ?></span>
+      </div>
+
+      <div class="sinal-central">×</div>
+
+      <div class="bloco-com-label">
+        <label class="subtitulo"></label>
+        <span class="bloco">50%</span>
+      </div>
+
+      <div class="sinal-central">=</div>
+
+      <div class="bloco-com-label">
+        <label class="subtitulo"></label>
+        <span class="bloco resultado">R$ <?php echo number_format($meia_unidade, 2, ',', '.'); ?></span>
       </div>
 
     </div>
   </div>
   <?php endif; ?>
+</fieldset>
+
+
+<?php if (isset($meia_unidade)): 
+  $meia_unidade_mensal = $meia_unidade * 30;
+?>
+<fieldset class="traco-unidade unidade-especial">
+  <legend>Valor da Sua Meta Mensal</legend>
+  <div class="valor-unidade">
+    <div class="linha-unidade">
+
+      <div class="bloco-com-label">
+        <label class="subtitulo"></label>
+        <span class="bloco">R$ <?php echo number_format($meia_unidade, 2, ',', '.'); ?></span>
+      </div>
+
+      <div class="sinal-central">×</div>
+
+      <div class="bloco-com-label">
+        <label class="subtitulo"></label>
+        <span class="bloco">30</span>
+      </div>
+
+      <div class="sinal-central">=</div>
+
+      <div class="bloco-com-label">
+        <label class="subtitulo"></label>
+        <span class="bloco resultado">R$ <?php echo number_format($meia_unidade_mensal, 2, ',', '.'); ?></span>
+      </div>
+
+    </div>
+  </div>
+</fieldset>
+<?php endif; ?>
+
+
+<?php if (isset($meia_unidade_mensal)): 
+  $resultado_anual = $meia_unidade_mensal * 12;
+?>
+<fieldset class="traco-unidade unidade-especial">
+  <legend>Valor da Sua Meta Anual</legend>
+  <div class="valor-unidade">
+    <div class="linha-unidade">
+
+      <div class="bloco-com-label">
+        <label class="subtitulo"></label>
+        <span class="bloco">R$ <?php echo number_format($meia_unidade_mensal, 2, ',', '.'); ?></span>
+      </div>
+
+      <div class="sinal-central">×</div>
+
+      <div class="bloco-com-label">
+        <label class="subtitulo"></label>
+        <span class="bloco">12</span>
+      </div>
+
+      <div class="sinal-central">=</div>
+
+      <div class="bloco-com-label">
+        <label class="subtitulo"></label>
+        <span class="bloco resultado">R$ <?php echo number_format($resultado_anual, 2, ',', '.'); ?></span>
+      </div>
+
+    </div>
+  </div>
+</fieldset>
+<?php endif; ?>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  <div class="centralizar">
+    <div class="text-resultado">
+
+        <?php if ($soma_saque !== null): ?>
+            <label>Total de Saques-------- R$ <?php echo number_format($soma_saque, 2, ',', '.'); ?></label>
+        <?php endif; ?>
+
+    </div>
+ </div>
+
+
+  
 
 </div>
   </body>
