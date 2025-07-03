@@ -1,3 +1,4 @@
+
 <?php
 session_start();
 include_once('config.php');
@@ -56,6 +57,18 @@ if (isset($_SESSION['usuario_id'])) {
     mysqli_stmt_close($stmt);
 }
 ?>
+
+
+
+
+
+
+
+
+
+
+
+
 
 
 
@@ -174,11 +187,14 @@ if (isset($_POST['submit'])) {
   
   <style>
     body, html {
+      overflow: visible;
+      position: relative;
       margin: 0;
       padding: 0;
+      z-index: 0;
       height: 100%;
       font-family: Arial, Helvetica, sans-serif;
-      background-image: linear-gradient(to right, #255f75, #1d4d5f);  /* CODIGO RESPONSAVEL POR TODA ESTRUTURA DO CORPO DO SITE */
+      background-image: linear-gradient(to right, #f5f5f5, #f5f5f5);  /* CODIGO RESPONSAVEL POR TODA ESTRUTURA DO CORPO DO SITE */
     }
 
     .container-principal {
@@ -193,38 +209,51 @@ if (isset($_POST['submit'])) {
 
      /* CODIGO RESPONSAVEL PELO FORMULARIO DE CADASTRO" */
     .box {
-      background-color: #113647;
+      position: static;
+      overflow: visible;
+      background-color: #e6e6e6;
       padding: 10px;
       border-radius: 8px;               /* RESPONSAVEL PELA COR FUNDO FORMULARIO E DO TEXTO TITULO "SELECIONE A OPÇÃO" */
       width: 345px;
-      color: #d5d6d6;
+      color: #113647;
+      margin-top: -8px;
+      z-index: auto;
+      
     }
 
-    fieldset {
-      border: 3px solid #255f75;      /* RESPONSAVEL PELA COR DA" */
-    }
+    .titulo-bloco {
+    text-align: center;
+    font-weight: bold; /* opcional, só para dar destaque */
+  }
 
-    legend {
-      padding: 7px;
-      text-align: center;
-      background-color: #255f75;     /* RESPONSAVEL PELA COR DO CAMPO DO TITULO E DO TAMANHO TO TEXTO */
-      border-radius: 3px;
-      font-size: 13px;
-    }
+  fieldset {
+  border: 2px solid #dcdcdc;
+  border-radius: 8px;
+  padding: 1.4em 1.1em 1.1em;
+  position: relative;
+  background-color: #ffffff;
+  overflow: hidden;
+  
+}
+
+  
 
     .inputbox {
       position: relative;     /* RESPONSAVEL PELA TEXTO "VALOR" */
       font-size: 12px;
+      margin-top: 10px;
     }
 
     .inputUser {
       background: none;
       border: none;
-      border-bottom: 1px solid #255f75;    /* RESPONSAVEL PELA COR DO TEXTO DE DENTRO DO CAMPO INPUT VALOR E DA COR DA LINHA  */
-      width: 100%;
+      border-bottom: 2px solid #aaaaaa;    /* RESPONSAVEL PELA COR DO TEXTO DE DENTRO DO CAMPO INPUT VALOR E DA COR DA LINHA  */
+      width: 295px;
       outline: none;
-      color: #86da9b;
+      color: #113647;
       font-size: 12px;
+      font-weight: bold;
+      
     }
 
     .labelinput {
@@ -235,24 +264,27 @@ if (isset($_POST['submit'])) {
       transition: .5s;
       font-size: 12px;
       font-weight: bold;
-      color: #d5d6d6;
+      color: #113647;
+     
     }
 
     .inputUser:focus ~ .labelinput,
     .inputUser:valid ~ .labelinput {    /* RESPONSAVEL PELA COR DO TEXTO DE DENTRO DO CAMPO VALOR QUANDO DIMINUI*/
       top: -20px;
       font-size: 12px;
-      color: #2d7592;
+      color:rgb(164, 165, 165);
     }
 
     .dropdown {
       position: relative;    /* RESPONSAVEL PELO TAMANHO DO CAMPO DE SELEÇÃO */
-      width: 100%;
+      width: 300px;
+      margin-top: -15px;
+      z-index: 1;
     }
 
     .dropdown-header {
-      background-color: #113647;
-      color: #d5d6d6;
+      background-color: #dfdede;
+      color: #113647;
       border-radius: 6px;
       cursor: pointer;
       display: flex;
@@ -260,45 +292,51 @@ if (isset($_POST['submit'])) {
       align-items: center;
       font-weight: bold;
       font-size: 13px;
+      padding: 7px;
+      border: 1px solid #ccc;
     }
 
     .dropdown-options {
-      list-style: none;
-      padding: 0;
-      margin: 6px 0 0 0;
-      background-color: #0e2a38;      /* RESPONSAVEL PELA COR DO FUNDO DO TEXTO DO CAMPO "SELECIONE" TAMANHO DA FONTE DE DENTRO COR DO CAMPO */
-      border-radius: 6px; 
-      position: absolute;
-      width: 100%;
+      position: fixed;
+      z-index: 99999;
+      background-color: #f5f5f5;
+      border: 1px solid #ccc;
+      width: 259px; /* mesma largura da .dropdown */
+      max-height: 200px;
+      overflow-y: auto;
       display: none;
-      z-index: 10;
-      box-shadow: 0 4px 12px rgba(0,0,0,0.15);
+      box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
       font-size: 13px;
+      border-radius: 6px;
+      margin-top: 2px;
     }
 
     .dropdown-options li {
       padding: 10px 14px;
-      color: #d5d6d6;    /* RESPONSAVEL PELA DO TEXTO DE DENTRO DA ABA  "SELECIONE" */
+      color: #113647;    /* RESPONSAVEL PELA DO TEXTO DE DENTRO DA ABA  "SELECIONE" */
       cursor: pointer;
+      font-weight: bold;
     }
 
     .dropdown-options li:hover {
-      background-color: #1e4a5a;   /* RESPONSAVEL PELA COR AO PASSAR O MOUSE NOS ITENS DA ABA "SELECIONE" */
+      background-color:rgb(227, 236, 236);
+      border-radius: 6px;   /* RESPONSAVEL PELA COR AO PASSAR O MOUSE NOS ITENS DA ABA "SELECIONE" */
     }
 
     #submit {
-      background-color: #255f75;
+      background-color: #1e5165;
       width: 100%;
       border: none;
       padding: 10px;
       border-radius: 10px;    /* RESPONSAVEL PELA COR DO BOTÃO E PELO TEXTO E TAMANHO */
-      color: #d5d6d6;
+      color:rgb(232, 235, 235);
       font-size: 12px;
       cursor: pointer;
+      font-weight: bold;
     }
 
     #submit:hover {
-      background-color: #1e5165;   /* RESPONSAVEL PELA COR DO BOTÃO AO PASSAR O MOUSE */
+      background-color: #113647;   /* RESPONSAVEL PELA COR DO BOTÃO AO PASSAR O MOUSE */
     }
     /* FIM DO CODIGO RESPONSAVEL PELO FORMULARIO DE CADASTRO" */
 
@@ -329,77 +367,136 @@ if (isset($_POST['submit'])) {
 
 
      /* CODIGO RESPONSAVEL PELO CALCULO DOS VALORES PARA GESTÃO */
-    .valor-unidade {
-      text-align: center;
-      font-size: 13px;
-      color:rgb(209, 206, 199);       /* RESPONSAVEL PELA COR DO TEXTO DO CAMMPO BANCA E PORCENTAGEM E TAMANHO DO SINAL */
-      font-family: Arial, sans-serif;
-      margin-bottom: 100px;
-      margin-top: -5px;
-    }
 
-    .resultado {
-      background-color: #113647;  /* RESPONSAVEL PELA COR DO TEXTO DO CAMMPO UNIDADE*/
-      color: #86da9b;
-    }
+  .valor-unidade {
+  margin-bottom: 0px;
+  margin-top: -8px;
+  font-size: 13px;
+  text-align: center;
+  color: #113647;
+  font-weight: bold;
+}
 
-    .linha-unidade {
-      display: flex;
-      align-items: center;       /* RESPONSAVEL PELA DISTANCIA ENTRE SINAIS E OS CAMPOS*/
-      gap: 10px;
-      justify-content: center;
-    }
+.linha-unidade {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  flex-wrap: wrap;
+  margin-top: 5px;
+  
+}
 
-    .bloco-com-label,
-    .bloco-com-label-banca {
-      display: flex;
-      flex-direction: column;    /* RESPONSAVEL PELO TAMANHO DOS BLOCOS*/
-      align-items: center;
-      width: 79px;
-    }
+.bloco-com-label,
+.bloco-com-label-banca {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  width: 78px; /* Reduzindo um pouco */
+  align-items: center;
+}
 
-    .bloco {
-      background-color:rgb(18, 64, 82);
-      padding: 8px 12px;
-      border-radius: 7px;   /* RESPONSAVEL PELO TAMANHO DA FONTE COR DO FUNDO */
-      font-size: 12px;
-      width: 100%;
-      text-align: center;
-    }
+.bloco {
+  background-color: rgb(224, 233, 236);
+  padding: 10px; /* Reduz altura interna */
+  border-radius: 6px;
+  font-size: 11px;
+  width: 100%;
+  text-align: center;
+  align-items: center;
+}
 
-    .subtitulo {
-      font-size: 12px;
-      margin-bottom: 4px;   /* RESPONSAVEL PELA  COR DO TITULO */
-      color: #d5d6d6;
-    }
+.sinal-central {
+  font-size: 1em;
+  padding: 4px;
+  font-weight: bold;
+  color: #113647;
+  position: relative;
+  top: 2px;
+}
 
-    .sinal-central {
-      font-size: 1.1em;
-      padding: 7px;
-      font-weight: bold;   /* RESPONSAVEL PELA TAMANHO DOS SINAIS E PELA COR  */
-      color: #d5d6d6;
-      position: relative;
-      top: 4px;
-    }
+.bloco-unidade {
+  background-color:rgb(233, 220, 232); 
+  border: 2px solid #dcdcdc;
+  border-radius: 10px;
+  padding: 10px;
+  align-items: center;
+  box-shadow: 0 2px 6px rgba(0,0,0,0.05);
+  margin-top: -5px;
+}
+
+.bloco-valor-diaria{
+  background-color: rgb(220, 233, 226);
+  border: 0px solid #dcdcdc;
+  border-radius: 10px;
+  padding: 10px;
+  box-shadow: 0 2px 6px rgba(0,0,0,0.05);
+  align-items: center;
+  margin-top: -5px;
+}
+
+.bloco-valor-mensal{
+  background-color: rgb(233, 225, 220);
+  border: 0px solid #dcdcdc;
+  border-radius: 10px;
+  padding: 10px;
+  box-shadow: 0 2px 6px rgba(0,0,0,0.05);
+  align-items: center;
+  margin-top: -5px;
+}
+
+.bloco-valor-anual{
+  background-color: rgb(220, 226, 233);
+  border: 0px solid #dcdcdc;
+  border-radius: 10px;
+  padding: 10px;
+  box-shadow: 0 2px 6px rgba(0,0,0,0.05);
+  align-items: center;
+  margin-top: -5px;
+}
+
+.titulo-bloco-uidade {
+  text-align: center;
+  font-size: 13px;
+  font-weight: bold;
+  color: #113647;
+  padding: 3px 0;
+  margin-bottom: 0.2em; /* Reduz o espaço entre o título e o fieldset */
+  margin-top: -4px; /* Sobe ligeiramente em relação ao elemento anterior */
+}
+
+/* Títulos adicionais com mesmo estilo */
+.titulo-valor-diaria,
+.titulo-valor-mensal,
+.titulo-valor-anual {
+  text-align: center;
+  font-size: 13px;
+  font-weight: bold;
+  color: #113647;
+  padding: 3px 0;
+  margin-bottom: 0.2em;
+  margin-top: -4px;
+  align-items: center;
+}
+
+
+.unidade-diaria,
+.unidade-mensal,
+.unidade-valor,
+.unidade-anual {
+  padding: 15px 15px; 
+}
+
+
+ /* FIM DO CODIGO RESPONSAVEL PELO CALCULO DOS VALORES PARA GESTÃO */
+
     
-     
-    .unidade-especial {
-      height: 50px;
-      background-color:  #113647;   
-      padding: 20px;
-      margin-top: 8px;
-      border-radius: 7px;
-      margin-top: -5px;
-    }
-
-    .unidade-especial legend {
-      font-weight: bold; 
-     color:rgb(10, 40, 54);
-     font-size: 12px;
-    }
-    /* FIM DO CODIGO RESPONSAVEL PELO CALCULO DOS VALORES PARA GESTÃO */
-
     
+
+
+
+
+
     
 
   </style>
@@ -466,80 +563,91 @@ if (isset($_POST['submit'])) {
 <div class="container-principal">
 
   <div class="box">
+  <div class="titulo-bloco">Selecione Uma Opção</div>
+  <br>
   <form action="painel-controle.php" method="POST">
     <fieldset>
-      <legend><b>Selecione a Opção!</b></legend>
       <br>
-
       <div class="dropdown">
         <div class="dropdown-header" onclick="toggleDropdown()">
-    <span id="dropdown-selected">Selecione</span>
-    <span class="arrow">&#9662;</span>
-  </div>
-  <ul class="dropdown-options" id="dropdown-options">
-    <li onclick="selectOption('Depositar na Banca', 'deposito')">Depositar na Banca</li>
-    <li onclick="selectOption('Porcentagem Sobre a Banca', 'diaria')">Porcentagem Sobre a Banca</li>
-    <li onclick="selectOption('Sacar', 'saque')">Sacar da Banca</li>
-  </ul>
-  <input type="hidden" name="acao" id="acao">
- </div>
-      <br><br>
+          <span id="dropdown-selected">Selecione</span>
+          <span class="arrow">&#9662;</span>
+        </div>
+        <ul class="dropdown-options" id="dropdown-options">
+          <li onclick="selectOption('Depositar na Banca', 'deposito')">Depositar na Banca</li>
+          <li onclick="selectOption('Porcentagem Sobre a Banca', 'diaria')">Porcentagem Sobre a Banca</li>
+          <li onclick="selectOption('Sacar da Banca', 'saque')">Sacar da Banca</li>
+          <li onclick="selectOption('Limpar Banca', 'limpar')">Limpar Banca</li>
+        </ul>
+        <input type="hidden" name="acao" id="acao">
+      </div><br>
 
       <div class="inputbox">
         <input type="text" name="valor" id="valor" class="inputUser" required>
         <label for="valor" class="labelinput">Valor</label>
-      </div>
-      <br><br>
+      </div><br>
 
-      <input type="submit" name="submit" id="submit" value="Salvar" />
-
-      
+      <input type="submit" name="submit" id="submit" value="Enviar">
     </fieldset>
-    </form>
+  </form>
+</div>
+
+
+
+
+
+
+
+  <div class="bloco-unidade">
+    <div class="titulo-bloco-uidade">Valor da Sua Unidade</div>
+
+    <fieldset class="traco-unidade unidade-especial unidade-valor">
+  
+    <?php
+    if (isset($_SESSION['usuario_id']) && $ultima_diaria > 0 && $soma_depositos > 0):
+        $resultado = ($ultima_diaria / 100) * $soma_depositos;
+        
+        // Formatação da porcentagem com ou sem casa decimal
+        $percentualFormatado = (intval($ultima_diaria) == $ultima_diaria)
+            ? intval($ultima_diaria) . '%'
+            : number_format($ultima_diaria, 1, ',', '.') . '%';
+    ?>
+    <div class="valor-unidade">
+        <div class="linha-unidade">
+            <div class="bloco-com-label-banca">
+                <label class="subtitulo"></label>
+                <span class="bloco">R$ <?= number_format($soma_depositos, 2, ',', '.') ?></span>
+            </div>
+
+            <div class="sinal-central">×</div>
+
+            <div class="bloco-com-label">
+                <label class="subtitulo"></label>
+                <span class="bloco"><?= $percentualFormatado ?></span>
+            </div>
+
+            <div class="sinal-central">=</div>
+
+            <div class="bloco-com-label">
+                <label class="subtitulo"></label>
+                <span class="bloco resultado">R$ <?= number_format($resultado, 2, ',', '.') ?></span>
+            </div>
+        </div>
     </div>
+    <?php endif; ?>
+    </fieldset>
+</div>
 
 
-     
-<fieldset class="traco-unidade unidade-especial">
-  <legend>Valor da Sua Unidade</legend>
- <?php if (isset($_SESSION['usuario_id']) && $ultima_diaria > 0 && $soma_depositos > 0): 
-  $resultado = ($ultima_diaria / 100) * $soma_depositos;
- ?>
-  <div class="valor-unidade">
-    
-    <div class="linha-unidade">
-
-      <div class="bloco-com-label-banca">
-        <label class="subtitulo"></label>
-        <span class="bloco">R$ <?php echo number_format($soma_depositos, 2, ',', '.'); ?></span>
-      </div>
-
-      <div class="sinal-central">×</div>
-
-      <div class="bloco-com-label">
-        <label class="subtitulo"></label>
-        <span class="bloco"><?php echo number_format($ultima_diaria, 2, ',', '.'); ?>%</span>
-      </div>
-
-      <div class="sinal-central">=</div>
-
-      <div class="bloco-com-label">
-        <label class="subtitulo"></label>
-        <span class="bloco resultado">R$ <?php echo number_format($resultado, 2, ',', '.'); ?></span>
-      </div>
-    </div>
-  </div>
-  <?php endif; ?>
-</fieldset>
-
-
-<?php if (isset($resultado)): 
+<div class="bloco-valor-diaria">
+   <div class="titulo-valor-diaria">Valor da Sua Meta Diária</div>
+  <?php if (isset($resultado)): 
   $meia_unidade = $resultado * 0.5;
-?>
-<fieldset class="traco-unidade unidade-especial">
-  <legend>Valor da Sua Meta Diária</legend>
+   ?>
+   <fieldset class="traco-unidade unidade-especial unidade-diaria">
+  
   <div class="valor-unidade">
-    <div class="linha-unidade">
+     <div class="linha-unidade">
 
       <div class="bloco-com-label">
         <label class="subtitulo"></label>
@@ -559,18 +667,19 @@ if (isset($_POST['submit'])) {
         <label class="subtitulo"></label>
         <span class="bloco resultado">R$ <?php echo number_format($meia_unidade, 2, ',', '.'); ?></span>
       </div>
+       </div>
+      </div>
+       <?php endif; ?>
+       </fieldset>
+</div>
 
-    </div>
-  </div>
-  <?php endif; ?>
-</fieldset>
-
-
-<?php if (isset($meia_unidade)): 
-  $meia_unidade_mensal = $meia_unidade * 30;
-?>
-<fieldset class="traco-unidade unidade-especial">
-  <legend>Valor da Sua Meta Mensal</legend>
+<div class="bloco-valor-mensal">
+  <div class="titulo-valor-mensal">Valor da Sua Meta Mensal</div>
+   <?php if (isset($meia_unidade)): 
+   $meia_unidade_mensal = $meia_unidade * 30;
+  ?>
+  <fieldset class="traco-unidade unidade-especial unidade-mensal">
+  
   <div class="valor-unidade">
     <div class="linha-unidade">
 
@@ -593,17 +702,21 @@ if (isset($_POST['submit'])) {
         <span class="bloco resultado">R$ <?php echo number_format($meia_unidade_mensal, 2, ',', '.'); ?></span>
       </div>
 
-    </div>
-  </div>
-</fieldset>
-<?php endif; ?>
+       </div>
+      </div>
+      </fieldset>
+      <?php endif; ?>
+</div>
 
 
-<?php if (isset($meia_unidade_mensal)): 
-  $resultado_anual = $meia_unidade_mensal * 12;
-?>
-<fieldset class="traco-unidade unidade-especial">
-  <legend>Valor da Sua Meta Anual</legend>
+
+<div class="bloco-valor-anual">
+  <div class="titulo-valor-anual">Valor da Sua Meta Anual</div>
+   <?php if (isset($meia_unidade_mensal)): 
+   $resultado_anual = $meia_unidade_mensal * 12;
+   ?>
+    <fieldset class="traco-unidade unidade-especial unidade-anual">
+   
   <div class="valor-unidade">
     <div class="linha-unidade">
 
@@ -626,10 +739,11 @@ if (isset($_POST['submit'])) {
         <span class="bloco resultado">R$ <?php echo number_format($resultado_anual, 2, ',', '.'); ?></span>
       </div>
 
-    </div>
-  </div>
-</fieldset>
-<?php endif; ?>
+      </div>
+     </div>
+     </fieldset>
+    <?php endif; ?>
+</div>
 
 
 
@@ -639,15 +753,7 @@ if (isset($_POST['submit'])) {
 
 
 
-
-
-
-
-
-
-
-
-  <div class="centralizar">
+<div class="centralizar">
     <div class="text-resultado">
 
         <?php if ($soma_saque !== null): ?>
@@ -656,11 +762,11 @@ if (isset($_POST['submit'])) {
 
     </div>
  </div>
-
-
-  
-
 </div>
+
+
+
+
   </body>
 
 
