@@ -2,6 +2,8 @@
 
 
 
+
+
 <?php
 session_start();
 include_once('config.php');
@@ -12,7 +14,6 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         $id_usuario = $_SESSION['usuario_id'];
 
         if ($acao === 'limpar') {
-            // Executa limpeza no banco de dados
             $stmt = mysqli_prepare($conexao, "DELETE FROM controle WHERE id_usuario = ?");
             mysqli_stmt_bind_param($stmt, "i", $id_usuario);
             mysqli_stmt_execute($stmt);
@@ -25,12 +26,35 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             exit;
         }
 
-        // Se for deposito, saque ou diária
         if (in_array($acao, ['deposito', 'saque', 'diaria']) && isset($_POST['valor'])) {
             $valor = $_POST['valor'];
             $valor = preg_replace('/[^0-9,]/', '', $valor);
             $valor = str_replace(',', '.', $valor);
             $valorFloat = is_numeric($valor) ? (float)$valor : 0;
+
+            // 🔒 Verificação de saldo antes do saque
+            if ($acao === 'saque') {
+                $saldo_banca = 0;
+                $stmt = mysqli_prepare($conexao, "
+                    SELECT 
+                        COALESCE(SUM(deposito), 0) - COALESCE(SUM(saque), 0) 
+                    FROM controle 
+                    WHERE id_usuario = ?
+                ");
+                mysqli_stmt_bind_param($stmt, "i", $id_usuario);
+                mysqli_stmt_execute($stmt);
+                mysqli_stmt_bind_result($stmt, $saldo_banca);
+                mysqli_stmt_fetch($stmt);
+                mysqli_stmt_close($stmt);
+
+                if ($valorFloat > $saldo_banca) {
+                    echo "<script>
+                        alert('Saldo insuficiente. Você só pode sacar até R$ " . number_format($saldo_banca, 2, ',', '.') . "');
+                        window.history.back();
+                    </script>";
+                    exit;
+                }
+            }
 
             if ($valorFloat > 0) {
                 $query = "INSERT INTO controle (id_usuario, $acao) VALUES (?, ?)";
@@ -61,6 +85,9 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     }
 }
 ?>
+
+
+
 
 
 
@@ -235,6 +262,14 @@ if (isset($_POST['submit'])) {
   exit();
 }
 ?>
+
+
+
+
+
+
+
+
 
 
 
@@ -440,7 +475,7 @@ if (isset($_POST['submit'])) {
 
 .bloco-unidade {
   width: 300px;
-  background-color: #19475a;
+  background-color: #19475a;                
   border-radius: 12px;
   padding: 15px;
   font-family: 'Segoe UI', sans-serif;
@@ -455,7 +490,7 @@ if (isset($_POST['submit'])) {
 .valor-item {
   display: flex;
   align-items: center;
-  background: linear-gradient(145deg, #f5f7fa, #dce1e7);
+  background: linear-gradient(145deg,rgb(231, 232, 233),rgb(216, 216, 218));    
   border-radius: 8px;
   padding: 8px 10px;
   gap: 10px;
@@ -503,6 +538,9 @@ if (isset($_POST['submit'])) {
 
 
 </head>
+
+
+
 
 
 <body>
@@ -618,13 +656,21 @@ if (isset($_POST['submit'])) {
     $resultado_anual = $meia_unidade_mensal * 12;
  ?>
 
- <div class="bloco-unidade">
+<div class="bloco-unidade">
+
   <div class="valor-item">
-    <i class="valor-icone fa fa-piggy-bank"></i>
-    <div>
-      <span class="valor-bold">R$ <?= number_format($soma_depositos, 2, ',', '.') ?></span><br>
-      <span class="valor-desc">Depositado na Banca</span>
-    </div>
+
+  
+  <i class="valor-icone fa fa-piggy-bank"></i>
+  <div>
+    <?php
+      // Subtrai os saques do total de depósitos, se houver
+      $saldo_banca = isset($soma_saque) ? $soma_depositos - $soma_saque : $soma_depositos;
+    ?>
+    <span class="valor-bold">R$ <?= number_format($saldo_banca, 2, ',', '.') ?></span><br>
+    <span class="valor-desc">Banca</span>
+  
+ </div>
   </div>
 
   <?php if ($soma_saque !== null): ?>
