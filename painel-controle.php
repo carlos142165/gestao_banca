@@ -1,45 +1,60 @@
 
 
 <?php
+// Inicia a sessão PHP para acessar variáveis de sessão
 session_start();
+
+// Verifica se o usuário está logado, ou seja, se existe o ID na sessão
 if (!isset($_SESSION['usuario_id'])) {
+    // Se não estiver logado, alerta e redireciona para a página 'home.php'
     echo "<script>alert('ÁREA DE MEMBROS – Faça Já Seu Cadastro Gratuito'); window.location.href = 'home.php';</script>";
-    exit();
+    exit(); // Interrompe a execução do script
 }
 ?>
 
-
-
 <?php
-
+// Inclui o arquivo de configuração do banco de dados
 include_once('config.php');
 
+// Verifica se a requisição foi feita via método POST
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
+    
+    // Verifica se há uma ação definida e se o usuário está logado
     if (isset($_POST['acao']) && isset($_SESSION['usuario_id'])) {
-        $acao = $_POST['acao'];
-        $id_usuario = $_SESSION['usuario_id'];
+        $acao = $_POST['acao']; // Ação recebida (deposito, saque, etc.)
+        $id_usuario = $_SESSION['usuario_id']; // ID do usuário logado
 
+        // Se a ação for 'limpar', remove todos os registros de controle desse usuário
         if ($acao === 'limpar') {
             $stmt = mysqli_prepare($conexao, "DELETE FROM controle WHERE id_usuario = ?");
             mysqli_stmt_bind_param($stmt, "i", $id_usuario);
             mysqli_stmt_execute($stmt);
             mysqli_stmt_close($stmt);
 
+            // Define mensagem de sucesso e redireciona
             $_SESSION['mensagem'] = 'Banca Limpa Com Sucesso!';
             header('Location: painel-controle.php');
             exit;
-
         }
 
+        // Se a ação for uma das permitidas (deposito, saque, diaria)
         if (in_array($acao, ['deposito', 'saque', 'diaria']) && isset($_POST['valor'])) {
-            $valor = $_POST['valor'];
+            $valor = $_POST['valor']; // Valor informado pelo usuário
+
+            // Remove caracteres não numéricos exceto vírgula
             $valor = preg_replace('/[^0-9,]/', '', $valor);
+
+            // Substitui vírgula por ponto para formato float
             $valor = str_replace(',', '.', $valor);
+
+            // Converte para float caso seja um número válido
             $valorFloat = is_numeric($valor) ? (float)$valor : 0;
 
-            // 🔒 Verificação de saldo antes do saque
+            // 🔒 Se for saque, verifica se há saldo suficiente
             if ($acao === 'saque') {
                 $saldo_banca = 0;
+
+                // Calcula saldo: total de depósitos menos saques
                 $stmt = mysqli_prepare($conexao, "
                     SELECT 
                         COALESCE(SUM(deposito), 0) - COALESCE(SUM(saque), 0) 
@@ -52,44 +67,45 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                 mysqli_stmt_fetch($stmt);
                 mysqli_stmt_close($stmt);
 
+                // Se saldo for zero ou negativo, bloqueia o saque
                 if ($saldo_banca <= 0) {
                     $_SESSION['mensagem'] = 'Saldo Insuficiente';
-                     header('Location: painel-controle.php');
-                     exit;
+                    header('Location: painel-controle.php');
+                    exit;
                 }
 
+                // Se o valor solicitado for maior que o saldo, bloqueia
                 if ($valorFloat > $saldo_banca) {
-
-                     $_SESSION['mensagem'] = 'Saldo Insuficiente. Você Só Pode Sacar Até R$ ' . number_format($saldo_banca, 2, ',', '.');
-                     header('Location: painel-controle.php');
+                    $_SESSION['mensagem'] = 'Saldo Insuficiente. Você Só Pode Sacar Até R$ ' . number_format($saldo_banca, 2, ',', '.');
+                    header('Location: painel-controle.php');
                     exit;
-
                 }
             }
 
+            // Se o valor for positivo, insere no banco de dados
             if ($valorFloat > 0) {
-               $query = "INSERT INTO controle (id_usuario, $acao) VALUES (?, ?)";
-               $stmt = mysqli_prepare($conexao, $query);
-                  mysqli_stmt_bind_param($stmt, "id", $id_usuario, $valorFloat);
-                 mysqli_stmt_execute($stmt);
-                 mysqli_stmt_close($stmt);
+                $query = "INSERT INTO controle (id_usuario, $acao) VALUES (?, ?)";
+                $stmt = mysqli_prepare($conexao, $query);
+                mysqli_stmt_bind_param($stmt, "id", $id_usuario, $valorFloat);
+                mysqli_stmt_execute($stmt);
+                mysqli_stmt_close($stmt);
 
-               // 🎯 Mensagens específicas por ação
+                // 🎯 Define mensagens específicas para cada tipo de ação
                 if ($acao === 'deposito') {
-               $_SESSION['mensagem'] = 'Depósito Feito com Sucesso!';
-               } elseif ($acao === 'saque') {
-               $_SESSION['mensagem'] = 'Saque Feito com Sucesso!';
-               } elseif ($acao === 'diaria') {
-               $_SESSION['mensagem'] = 'Porcentagem Cadastrada com Sucesso!';
-             }
+                    $_SESSION['mensagem'] = 'Depósito Feito com Sucesso!';
+                } elseif ($acao === 'saque') {
+                    $_SESSION['mensagem'] = 'Saque Feito com Sucesso!';
+                } elseif ($acao === 'diaria') {
+                    $_SESSION['mensagem'] = 'Porcentagem Cadastrada com Sucesso!';
+                }
 
+                // Redireciona para o painel
                 header('Location: painel-controle.php');
                 exit;
             }
-
-
         }
     } else {
+        // Se ação ou sessão inválida, alerta e redireciona para login
         echo "<script>
             alert('Sessão inválida ou ação não definida.');
             window.location.href='login.php';
@@ -106,29 +122,38 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 
 
 
-<?php
 
+<?php
+// Inclui o arquivo de configuração, que provavelmente estabelece a conexão com o banco de dados
 include_once('config.php');
 
-// Soma de depósitos
+// Inicializa a variável que armazenará a soma dos depósitos
 $soma_depositos = 0;
-if (isset($_SESSION['usuario_id'])) {
-    $id_usuario = $_SESSION['usuario_id'];
 
+// Verifica se a sessão do usuário está ativa
+if (isset($_SESSION['usuario_id'])) {
+    $id_usuario = $_SESSION['usuario_id']; // Obtém o ID do usuário logado
+
+    // Prepara a consulta para somar todos os depósitos do usuário
     $stmt = mysqli_prepare($conexao, "SELECT SUM(deposito) FROM controle WHERE id_usuario = ?");
-    mysqli_stmt_bind_param($stmt, "i", $id_usuario);
-    mysqli_stmt_execute($stmt);
-    mysqli_stmt_bind_result($stmt, $soma_depositos);
-    mysqli_stmt_fetch($stmt);
+    mysqli_stmt_bind_param($stmt, "i", $id_usuario); // Associa o ID à consulta
+    mysqli_stmt_execute($stmt); // Executa a consulta
+    mysqli_stmt_bind_result($stmt, $soma_depositos); // Armazena o resultado na variável
+    mysqli_stmt_fetch($stmt); // Busca o resultado da consulta
+
+    // Se o resultado for nulo, define como zero
     if (is_null($soma_depositos)) {
         $soma_depositos = 0;
     }
-    mysqli_stmt_close($stmt);
+    mysqli_stmt_close($stmt); // Fecha a consulta
 }
 
-// Última diária válida (diferente de NULL e diferente de 0)
+// Inicializa a variável da última diária válida como 0
 $ultima_diaria = 0;
+
+// Verifica se a sessão do usuário ainda está ativa
 if (isset($_SESSION['usuario_id'])) {
+    // Prepara a consulta para buscar a última diária válida (diferente de NULL e de 0)
     $stmt = mysqli_prepare($conexao, "
         SELECT diaria
         FROM controle
@@ -136,34 +161,42 @@ if (isset($_SESSION['usuario_id'])) {
         ORDER BY id DESC
         LIMIT 1
     ");
-    mysqli_stmt_bind_param($stmt, "i", $id_usuario);
-    mysqli_stmt_execute($stmt);
-    mysqli_stmt_bind_result($stmt, $ultima_diaria);
-    mysqli_stmt_fetch($stmt);
+    mysqli_stmt_bind_param($stmt, "i", $id_usuario); // Associa o ID à consulta
+    mysqli_stmt_execute($stmt); // Executa a consulta
+    mysqli_stmt_bind_result($stmt, $ultima_diaria); // Armazena o resultado na variável
+    mysqli_stmt_fetch($stmt); // Busca o resultado
+
+    // Se o valor da diária for nulo, define como zero
     if (is_null($ultima_diaria)) {
         $ultima_diaria = 0;
     }
-    mysqli_stmt_close($stmt);
+    mysqli_stmt_close($stmt); // Fecha a consulta
 }
 
-// Soma de saques
+// Inicializa a variável da soma de saques como 0
 $soma_saque = 0;
+
+// Verifica novamente se a sessão do usuário está ativa
 if (isset($_SESSION['usuario_id'])) {
+    // Prepara a consulta para somar todos os saques feitos pelo usuário
     $stmt = mysqli_prepare($conexao, "
         SELECT SUM(saque)
         FROM controle
         WHERE id_usuario = ?
     ");
-    mysqli_stmt_bind_param($stmt, "i", $id_usuario);
-    mysqli_stmt_execute($stmt);
-    mysqli_stmt_bind_result($stmt, $soma_saque);
-    mysqli_stmt_fetch($stmt);
+    mysqli_stmt_bind_param($stmt, "i", $id_usuario); // Associa o ID à consulta
+    mysqli_stmt_execute($stmt); // Executa a consulta
+    mysqli_stmt_bind_result($stmt, $soma_saque); // Armazena o resultado
+    mysqli_stmt_fetch($stmt); // Busca os dados
+
+    // Se o valor for nulo, define como zero
     if (is_null($soma_saque)) {
         $soma_saque = 0;
     }
-    mysqli_stmt_close($stmt);
+    mysqli_stmt_close($stmt); // Fecha a consulta
 }
 ?>
+
 
 
 
