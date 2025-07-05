@@ -68,23 +68,26 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             }
 
             if ($valorFloat > 0) {
-                $query = "INSERT INTO controle (id_usuario, $acao) VALUES (?, ?)";
-                $stmt = mysqli_prepare($conexao, $query);
-                mysqli_stmt_bind_param($stmt, "id", $id_usuario, $valorFloat);
-                mysqli_stmt_execute($stmt);
-                mysqli_stmt_close($stmt);
+               $query = "INSERT INTO controle (id_usuario, $acao) VALUES (?, ?)";
+               $stmt = mysqli_prepare($conexao, $query);
+                  mysqli_stmt_bind_param($stmt, "id", $id_usuario, $valorFloat);
+                 mysqli_stmt_execute($stmt);
+                 mysqli_stmt_close($stmt);
 
-                $_SESSION['mensagem'] = 'Cadastrado Com Suceso';
+               // 🎯 Mensagens específicas por ação
+                if ($acao === 'deposito') {
+               $_SESSION['mensagem'] = 'Depósito Feito com Sucesso!';
+               } elseif ($acao === 'saque') {
+               $_SESSION['mensagem'] = 'Saque Feito com Sucesso!';
+               } elseif ($acao === 'diaria') {
+               $_SESSION['mensagem'] = 'Porcentagem Cadastrada com Sucesso!';
+             }
+
                 header('Location: painel-controle.php');
                 exit;
-
-            } else {
-                echo "<script>
-                    alert('Valor inválido.');
-                    window.history.back();
-                </script>";
-                exit;
             }
+
+
         }
     } else {
         echo "<script>
@@ -255,6 +258,7 @@ if (isset($_SESSION['usuario_id'])) {
     }
 
     .dropdown-options li {
+      
       padding: 10px 14px;
       color: #dfdede;
       cursor: pointer;
