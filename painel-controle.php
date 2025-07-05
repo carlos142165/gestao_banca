@@ -51,14 +51,19 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['acao'], $_POST['valor
 
     // 💾 Insere valor (depósito, saque, diária)
     if (in_array($acao, ['deposito', 'saque', 'diaria']) && $valorFloat > 0) {
-        $query = "INSERT INTO controle (id_usuario, $acao) VALUES (?, ?)";
-        $stmt = mysqli_prepare($conexao, $query);
-        mysqli_stmt_bind_param($stmt, "id", $id_usuario, $valorFloat);
-        mysqli_stmt_execute($stmt);
-        mysqli_stmt_close($stmt);
-        $_SESSION['mensagem'] = ucfirst($acao) . ' Feito com Sucesso!';
-        header('Location: painel-controle.php');
-        exit;
+    $query = "INSERT INTO controle (id_usuario, $acao) VALUES (?, ?)";
+    $stmt = mysqli_prepare($conexao, $query);
+    mysqli_stmt_bind_param($stmt, "id", $id_usuario, $valorFloat);
+    mysqli_stmt_execute($stmt);
+    mysqli_stmt_close($stmt);
+
+    // ✅ Mensagem personalizada para "diaria"
+    $_SESSION['mensagem'] = ($acao === 'diaria')
+        ? 'Porcentagem Definida com Sucesso!'
+        : ucfirst($acao) . ' Feito com Sucesso!';
+
+    header('Location: painel-controle.php');
+    exit;
     }
 }
 
@@ -595,6 +600,7 @@ if ($ultima_diaria > 0 && $saldo_reais > 0) {
 
 
 
+
 <script>
 document.addEventListener("DOMContentLoaded", function () {
   const acao = document.getElementById("acao");
@@ -727,23 +733,28 @@ document.addEventListener("DOMContentLoaded", function () {
   document.addEventListener("DOMContentLoaded", function () {
     const valor = document.getElementById("valor");
 
+    // Permite número, vírgula e ponto — mas só um separador
     valor.addEventListener("keypress", function (e) {
       const char = e.key;
       const value = valor.value;
-      // Permite números e um único ponto
-      if (!/[0-9.]/.test(char) || (char === '.' && value.includes('.'))) {
+
+      // Permite números e UM separador (vírgula ou ponto)
+      if (!/[0-9.,]/.test(char) || ((char === '.' || char === ',') && (value.includes('.') || value.includes(',')))) {
         e.preventDefault();
       }
     });
 
+    // Valida o valor digitado, convertendo vírgula para ponto
     valor.addEventListener("input", function () {
       const value = valor.value;
-      // Impede valores inválidos como apenas ponto
-      if (value === '.' || isNaN(Number(value))) {
+      const numero = parseFloat(value.replace(',', '.'));
+
+      if (value === '.' || value === ',' || isNaN(numero)) {
         valor.value = '';
       }
     });
   });
 </script>
+
 
 
