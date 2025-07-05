@@ -514,7 +514,7 @@ if ($ultima_diaria > 0 && $saldo_reais > 0) {
 
 
 
-<?php if ($ultima_diaria > 0 && $saldo_reais > 0): ?>
+<!-- ✅ Bloco de valores SEM condicional de exibição -->
 <div class="bloco-unidade">
 
   <!-- 💰 Saldo da Banca -->
@@ -527,7 +527,6 @@ if ($ultima_diaria > 0 && $saldo_reais > 0) {
   </div>
 
   <!-- 📤 Total de Saques -->
-  <?php if ($soma_saque > 0): ?>
   <div class="valor-item">
     <i class="valor-icone fa fa-hand-holding-usd"></i>
     <div>
@@ -535,7 +534,6 @@ if ($ultima_diaria > 0 && $saldo_reais > 0) {
       <span class="valor-desc">Total de Saques</span>
     </div>
   </div>
-  <?php endif; ?>
 
   <!-- 📉 Porcentagem -->
   <div class="valor-item">
@@ -550,7 +548,7 @@ if ($ultima_diaria > 0 && $saldo_reais > 0) {
   <div class="valor-item">
     <i class="valor-icone fa fa-database"></i>
     <div>
-      <span class="valor-bold">R$ <?= number_format($resultado, 2, ',', '.') ?></span><br>
+      <span class="valor-bold">R$ <?= number_format($resultado ?? 0, 2, ',', '.') ?></span><br>
       <span class="valor-desc">Unidade de Entrada</span>
     </div>
   </div>
@@ -559,7 +557,7 @@ if ($ultima_diaria > 0 && $saldo_reais > 0) {
   <div class="valor-item">
     <i class="valor-icone fa fa-balance-scale"></i>
     <div>
-      <span class="valor-bold">R$ <?= number_format($meia_unidade, 2, ',', '.') ?></span><br>
+      <span class="valor-bold">R$ <?= number_format($meia_unidade ?? 0, 2, ',', '.') ?></span><br>
       <span class="valor-desc">Meta Diária</span>
     </div>
   </div>
@@ -568,7 +566,7 @@ if ($ultima_diaria > 0 && $saldo_reais > 0) {
   <div class="valor-item">
     <i class="valor-icone fa fa-calendar-day"></i>
     <div>
-      <span class="valor-bold">R$ <?= number_format($meia_unidade_mensal, 2, ',', '.') ?></span><br>
+      <span class="valor-bold">R$ <?= number_format($meia_unidade_mensal ?? 0, 2, ',', '.') ?></span><br>
       <span class="valor-desc">Meta Mensal</span>
     </div>
   </div>
@@ -577,13 +575,13 @@ if ($ultima_diaria > 0 && $saldo_reais > 0) {
   <div class="valor-item">
     <i class="valor-icone fa fa-calendar-alt"></i>
     <div>
-      <span class="valor-bold">R$ <?= number_format($resultado_anual, 2, ',', '.') ?></span><br>
+      <span class="valor-bold">R$ <?= number_format($resultado_anual ?? 0, 2, ',', '.') ?></span><br>
       <span class="valor-desc">Meta Anual</span>
     </div>
   </div>
 
 </div>
-<?php endif; ?>
+
 
 
 

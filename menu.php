@@ -274,6 +274,8 @@ if (isset($_SESSION['usuario_id'])) {
   display: flex;
   align-items: center; /* Garante centralização do ícone dentro do espaço */
   justify-content: center;
+  max-width: 100%;
+  white-space: nowrap;
   
 }
 
@@ -313,7 +315,8 @@ if (isset($_SESSION['usuario_id'])) {
 @media (max-width: 767px) {
   .saldo-topo-ajustado {
     top: 5px;
-    left: 270px;
+    right: 5px;
+    left: auto; /* remove o posicionamento fixo que pode causar problemas */
   }
 }
 /* aqui finaliza o codigo responsavel pelo saldo da banca e icone */
