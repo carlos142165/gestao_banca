@@ -1,11 +1,17 @@
 
 
-
+<?php
+session_start();
+if (!isset($_SESSION['usuario_id'])) {
+    echo "<script>alert('ÁREA DE MEMBROS – Faça Já Seu Cadastro Gratuito'); window.location.href = 'home.php';</script>";
+    exit();
+}
+?>
 
 
 
 <?php
-session_start();
+
 include_once('config.php');
 
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
@@ -19,11 +25,10 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             mysqli_stmt_execute($stmt);
             mysqli_stmt_close($stmt);
 
-            echo "<script>
-                alert('Todos os dados foram apagados com sucesso.');
-                window.location.href='painel-controle.php';
-            </script>";
+            $_SESSION['mensagem'] = 'Banca Limpa Com Sucesso!';
+            header('Location: painel-controle.php');
             exit;
+
         }
 
         if (in_array($acao, ['deposito', 'saque', 'diaria']) && isset($_POST['valor'])) {
@@ -47,12 +52,18 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                 mysqli_stmt_fetch($stmt);
                 mysqli_stmt_close($stmt);
 
+                if ($saldo_banca <= 0) {
+                    $_SESSION['mensagem'] = 'Saldo Insuficiente';
+                     header('Location: painel-controle.php');
+                     exit;
+                }
+
                 if ($valorFloat > $saldo_banca) {
-                    echo "<script>
-                        alert('Saldo insuficiente. Você só pode sacar até R$ " . number_format($saldo_banca, 2, ',', '.') . "');
-                        window.history.back();
-                    </script>";
+
+                     $_SESSION['mensagem'] = 'Saldo Insuficiente. Você Só Pode Sacar Até R$ ' . number_format($saldo_banca, 2, ',', '.');
+                     header('Location: painel-controle.php');
                     exit;
+
                 }
             }
 
@@ -63,11 +74,10 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                 mysqli_stmt_execute($stmt);
                 mysqli_stmt_close($stmt);
 
-                echo "<script>
-                    alert('Valor registrado com sucesso!');
-                    window.location.href='painel-controle.php';
-                </script>";
+                $_SESSION['mensagem'] = 'Cadastrado Com Suceso';
+                header('Location: painel-controle.php');
                 exit;
+
             } else {
                 echo "<script>
                     alert('Valor inválido.');
@@ -85,10 +95,6 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     }
 }
 ?>
-
-
-
-
 
 
 
@@ -162,121 +168,6 @@ if (isset($_SESSION['usuario_id'])) {
 
 
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-<?php
-
-if (!isset($_SESSION['usuario_id'])) {
-  echo "<script>
-    alert('ÁREA DE MEMBROS – Faça Já Seu Cadastro Gratuito');
-    window.location.href = 'home.php';
-  </script>";
-  exit();
-}
-
-function limpar_valor($valor) {
-  $valor = preg_replace('/[^0-9,]/', '', $valor);
-  $valor = str_replace(',', '.', $valor);
-  return is_numeric($valor) ? (float)$valor : 0;
-}
-
-if (isset($_POST['submit'])) {
-  include_once('config.php');
-
-  $id_usuario = $_SESSION['usuario_id'];
-  $acao = $_POST['acao'];
-  $valor = limpar_valor($_POST['valor']);
-
-  // Valida ação
-  if (!in_array($acao, ['deposito', 'diaria', 'saque'])) {
-    echo "<script>
-      alert('Ação inválida.');
-      window.history.back();
-    </script>";
-    exit();
-  }
-
-  // Valida valor
-  if (!is_numeric($valor) || $valor <= 0) {
-    echo "<script>
-      alert('Por favor, insira um valor válido.');
-      window.history.back();
-    </script>";
-    exit();
-  }
-
-  // Verifica se o usuário ainda existe
-  $verifica = mysqli_prepare($conexao, "SELECT id FROM usuarios WHERE id = ?");
-  mysqli_stmt_bind_param($verifica, "i", $id_usuario);
-  mysqli_stmt_execute($verifica);
-  mysqli_stmt_store_result($verifica);
-
-  if (mysqli_stmt_num_rows($verifica) === 0) {
-    echo "<script>
-      alert('Usuário não encontrado. Faça login novamente.');
-      window.location.href = 'home.php';
-    </script>";
-    exit();
-  }
-
-  // Monta a query dinâmica com base na ação
-  $query = "INSERT INTO controle (id_usuario, $acao) VALUES (?, ?)";
-  $stmt = mysqli_prepare($conexao, $query);
-
-  if ($stmt) {
-    mysqli_stmt_bind_param($stmt, "id", $id_usuario, $valor);
-    if (mysqli_stmt_execute($stmt)) {
-      echo "<script>
-        alert('Valor cadastrado com sucesso!');
-        window.location.href = 'painel-controle.php';
-      </script>";
-    } else {
-      echo "<script>
-        alert('Erro ao cadastrar.');
-        window.history.back();
-      </script>";
-    }
-  } else {
-    echo "<script>
-      alert('Erro ao preparar a consulta.');
-      window.history.back();
-    </script>";
-  }
-  exit();
-}
-?>
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 <!DOCTYPE html>
 <html lang="pt-br">
   <head>
@@ -284,13 +175,6 @@ if (isset($_POST['submit'])) {
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>Gestão</title>
 
-
-
-
-
-
-
-  
   <style>
     body, html {
       height: 100%;
@@ -449,17 +333,6 @@ if (isset($_POST['submit'])) {
 
 
 
-    
-
-    /* CODIGO RESPONSAVEL PELO VALOR PUXADO DO BANCO DE DADOS */
-   
-    /* FIM DO CODIGO RESPONSAVEL PELO VALOR PUXADO DO BANCO DE DADOS */
-
-
-
-
-
-
      /* CODIGO RESPONSAVEL PELO CALCULO DOS VALORES PARA GESTÃO */
 
     @keyframes fadeSlide {
@@ -525,6 +398,29 @@ if (isset($_POST['submit'])) {
   font-size: 12px;
   color: #666;
   margin: 0;
+}
+
+.mensagem-status {
+  color:rgb(224, 193, 13);
+  padding: 10px 16px;
+  border-radius: 8px;
+  margin-bottom: 15px;
+  text-align: center;
+  box-shadow: 0 2px 6px rgba(0,0,0,0.2);
+  animation: fadeSlide 0.5s ease;
+  font-size: 12px;
+}
+
+.btn-fechar{
+  margin-left: 12px;
+  background-color: #ffc107;
+  color: #1d1d1d;
+  font-size: 12px;
+  border: none;
+  border-radius: 6px;
+  padding: 4px 10px;
+  cursor: pointer;
+  transition: background-color 0.3s ease;
 }
 
 
@@ -594,6 +490,16 @@ if (isset($_POST['submit'])) {
     </script>
 
 
+
+
+<?php if (isset($_SESSION['mensagem'])): ?>
+  <div class="mensagem-status" id="mensagemStatus">
+    <i class="fa-solid fa-triangle-exclamation"></i>
+    <span><?= $_SESSION['mensagem'] ?></span>
+    <button class="btn-fechar" onclick="document.getElementById('mensagemStatus').style.display='none'">OK</button>
+  </div>
+  <?php unset($_SESSION['mensagem']); ?>
+<?php endif; ?>
 
 
 
@@ -865,6 +771,30 @@ document.addEventListener("DOMContentLoaded", function () {
     if (!dropdown.contains(e.target)) {
       document.getElementById('dropdown-options').style.display = 'none';
     }
+  });
+</script>
+
+
+<script>
+  document.addEventListener("DOMContentLoaded", function () {
+    const valor = document.getElementById("valor");
+
+    valor.addEventListener("keypress", function (e) {
+      const char = e.key;
+      const value = valor.value;
+      // Permite números e um único ponto
+      if (!/[0-9.]/.test(char) || (char === '.' && value.includes('.'))) {
+        e.preventDefault();
+      }
+    });
+
+    valor.addEventListener("input", function () {
+      const value = valor.value;
+      // Impede valores inválidos como apenas ponto
+      if (value === '.' || isNaN(Number(value))) {
+        valor.value = '';
+      }
+    });
   });
 </script>
 
