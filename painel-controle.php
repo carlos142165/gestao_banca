@@ -1,201 +1,118 @@
 
 
 <?php
-// Inicia a sessão PHP para acessar variáveis de sessão
 session_start();
-
-// Verifica se o usuário está logado, ou seja, se existe o ID na sessão
-if (!isset($_SESSION['usuario_id'])) {
-    // Se não estiver logado, alerta e redireciona para a página 'home.php'
-    echo "<script>alert('ÁREA DE MEMBROS – Faça Já Seu Cadastro Gratuito'); window.location.href = 'home.php';</script>";
-    exit(); // Interrompe a execução do script
-}
-?>
-
-<?php
-// Inclui o arquivo de configuração do banco de dados
 include_once('config.php');
 
-// Verifica se a requisição foi feita via método POST
-if ($_SERVER['REQUEST_METHOD'] === 'POST') {
-    
-    // Verifica se há uma ação definida e se o usuário está logado
-    if (isset($_POST['acao']) && isset($_SESSION['usuario_id'])) {
-        $acao = $_POST['acao']; // Ação recebida (deposito, saque, etc.)
-        $id_usuario = $_SESSION['usuario_id']; // ID do usuário logado
+// 🔐 Verifica login
+if (!isset($_SESSION['usuario_id'])) {
+    echo "<script>alert('ÁREA DE MEMBROS – Faça Já Seu Cadastro Gratuito'); window.location.href = 'home.php';</script>";
+    exit();
+}
 
-        // Se a ação for 'limpar', remove todos os registros de controle desse usuário
-        if ($acao === 'limpar') {
-            $stmt = mysqli_prepare($conexao, "DELETE FROM controle WHERE id_usuario = ?");
-            mysqli_stmt_bind_param($stmt, "i", $id_usuario);
-            mysqli_stmt_execute($stmt);
-            mysqli_stmt_close($stmt);
+// 🧠 ID do usuário
+$id_usuario = $_SESSION['usuario_id'];
 
-            // Define mensagem de sucesso e redireciona
-            $_SESSION['mensagem'] = 'Banca Limpa Com Sucesso!';
+// 🔁 Processa ações (POST)
+if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['acao'], $_POST['valor'])) {
+    $acao = $_POST['acao'];
+    $valor = preg_replace('/[^0-9,]/', '', $_POST['valor']);
+    $valor = str_replace(',', '.', $valor);
+    $valorFloat = is_numeric($valor) ? (float)$valor : 0;
+
+    // 🧹 Limpar banca
+    if ($acao === 'limpar') {
+        $stmt = mysqli_prepare($conexao, "DELETE FROM controle WHERE id_usuario = ?");
+        mysqli_stmt_bind_param($stmt, "i", $id_usuario);
+        mysqli_stmt_execute($stmt);
+        mysqli_stmt_close($stmt);
+        $_SESSION['mensagem'] = 'Banca Limpa Com Sucesso!';
+        header('Location: painel-controle.php');
+        exit;
+    }
+
+    // 🔒 Bloqueia saque sem saldo
+    if ($acao === 'saque') {
+        $stmt = mysqli_prepare($conexao, "
+            SELECT COALESCE(SUM(deposito), 0) - COALESCE(SUM(saque), 0)
+            FROM controle WHERE id_usuario = ?");
+        mysqli_stmt_bind_param($stmt, "i", $id_usuario);
+        mysqli_stmt_execute($stmt);
+        mysqli_stmt_bind_result($stmt, $saldo_banca);
+        mysqli_stmt_fetch($stmt);
+        mysqli_stmt_close($stmt);
+
+        if ($valorFloat > $saldo_banca || $saldo_banca <= 0) {
+            $_SESSION['mensagem'] = 'Saldo Insuficiente. Você Só Pode Sacar Até R$ ' . number_format($saldo_banca, 2, ',', '.');
             header('Location: painel-controle.php');
             exit;
         }
+    }
 
-        // Se a ação for uma das permitidas (deposito, saque, diaria)
-        if (in_array($acao, ['deposito', 'saque', 'diaria']) && isset($_POST['valor'])) {
-            $valor = $_POST['valor']; // Valor informado pelo usuário
-
-            // Remove caracteres não numéricos exceto vírgula
-            $valor = preg_replace('/[^0-9,]/', '', $valor);
-
-            // Substitui vírgula por ponto para formato float
-            $valor = str_replace(',', '.', $valor);
-
-            // Converte para float caso seja um número válido
-            $valorFloat = is_numeric($valor) ? (float)$valor : 0;
-
-            // 🔒 Se for saque, verifica se há saldo suficiente
-            if ($acao === 'saque') {
-                $saldo_banca = 0;
-
-                // Calcula saldo: total de depósitos menos saques
-                $stmt = mysqli_prepare($conexao, "
-                    SELECT 
-                        COALESCE(SUM(deposito), 0) - COALESCE(SUM(saque), 0) 
-                    FROM controle 
-                    WHERE id_usuario = ?
-                ");
-                mysqli_stmt_bind_param($stmt, "i", $id_usuario);
-                mysqli_stmt_execute($stmt);
-                mysqli_stmt_bind_result($stmt, $saldo_banca);
-                mysqli_stmt_fetch($stmt);
-                mysqli_stmt_close($stmt);
-
-                // Se saldo for zero ou negativo, bloqueia o saque
-                if ($saldo_banca <= 0) {
-                    $_SESSION['mensagem'] = 'Saldo Insuficiente';
-                    header('Location: painel-controle.php');
-                    exit;
-                }
-
-                // Se o valor solicitado for maior que o saldo, bloqueia
-                if ($valorFloat > $saldo_banca) {
-                    $_SESSION['mensagem'] = 'Saldo Insuficiente. Você Só Pode Sacar Até R$ ' . number_format($saldo_banca, 2, ',', '.');
-                    header('Location: painel-controle.php');
-                    exit;
-                }
-            }
-
-            // Se o valor for positivo, insere no banco de dados
-            if ($valorFloat > 0) {
-                $query = "INSERT INTO controle (id_usuario, $acao) VALUES (?, ?)";
-                $stmt = mysqli_prepare($conexao, $query);
-                mysqli_stmt_bind_param($stmt, "id", $id_usuario, $valorFloat);
-                mysqli_stmt_execute($stmt);
-                mysqli_stmt_close($stmt);
-
-                // 🎯 Define mensagens específicas para cada tipo de ação
-                if ($acao === 'deposito') {
-                    $_SESSION['mensagem'] = 'Depósito Feito com Sucesso!';
-                } elseif ($acao === 'saque') {
-                    $_SESSION['mensagem'] = 'Saque Feito com Sucesso!';
-                } elseif ($acao === 'diaria') {
-                    $_SESSION['mensagem'] = 'Porcentagem Cadastrada com Sucesso!';
-                }
-
-                // Redireciona para o painel
-                header('Location: painel-controle.php');
-                exit;
-            }
-        }
-    } else {
-        // Se ação ou sessão inválida, alerta e redireciona para login
-        echo "<script>
-            alert('Sessão inválida ou ação não definida.');
-            window.location.href='login.php';
-        </script>";
+    // 💾 Insere valor (depósito, saque, diária)
+    if (in_array($acao, ['deposito', 'saque', 'diaria']) && $valorFloat > 0) {
+        $query = "INSERT INTO controle (id_usuario, $acao) VALUES (?, ?)";
+        $stmt = mysqli_prepare($conexao, $query);
+        mysqli_stmt_bind_param($stmt, "id", $id_usuario, $valorFloat);
+        mysqli_stmt_execute($stmt);
+        mysqli_stmt_close($stmt);
+        $_SESSION['mensagem'] = ucfirst($acao) . ' Feito com Sucesso!';
+        header('Location: painel-controle.php');
         exit;
     }
 }
-?>
 
+// 🔎 Consulta depósitos
+$stmt = mysqli_prepare($conexao, "SELECT SUM(deposito) FROM controle WHERE id_usuario = ?");
+mysqli_stmt_bind_param($stmt, "i", $id_usuario);
+mysqli_stmt_execute($stmt);
+mysqli_stmt_bind_result($stmt, $soma_depositos);
+mysqli_stmt_fetch($stmt);
+mysqli_stmt_close($stmt);
+$soma_depositos = $soma_depositos ?: 0;
 
+// 🔎 Consulta saques
+$stmt = mysqli_prepare($conexao, "SELECT SUM(saque) FROM controle WHERE id_usuario = ?");
+mysqli_stmt_bind_param($stmt, "i", $id_usuario);
+mysqli_stmt_execute($stmt);
+mysqli_stmt_bind_result($stmt, $soma_saque);
+mysqli_stmt_fetch($stmt);
+mysqli_stmt_close($stmt);
+$soma_saque = $soma_saque ?: 0;
 
+// 🔎 Consulta última diária (porcentagem)
+$stmt = mysqli_prepare($conexao, "
+    SELECT diaria FROM controle
+    WHERE id_usuario = ? AND diaria IS NOT NULL AND diaria != 0
+    ORDER BY id DESC LIMIT 1
+");
+mysqli_stmt_bind_param($stmt, "i", $id_usuario);
+mysqli_stmt_execute($stmt);
+mysqli_stmt_bind_result($stmt, $ultima_diaria);
+mysqli_stmt_fetch($stmt);
+mysqli_stmt_close($stmt);
+$ultima_diaria = $ultima_diaria ?: 0;
 
+// 🧮 Conversões e cálculos
+$depositos_reais = $soma_depositos; 
+$saques_reais = $soma_saque; 
+$saldo_reais = $depositos_reais - $saques_reais;
 
+$percentualFormatado = (intval($ultima_diaria) == $ultima_diaria)
+    ? intval($ultima_diaria) . '%'
+    : number_format($ultima_diaria, 2, ',', '.') . '%';
 
-
-
-
-<?php
-// Inclui o arquivo de configuração, que provavelmente estabelece a conexão com o banco de dados
-include_once('config.php');
-
-// Inicializa a variável que armazenará a soma dos depósitos
-$soma_depositos = 0;
-
-// Verifica se a sessão do usuário está ativa
-if (isset($_SESSION['usuario_id'])) {
-    $id_usuario = $_SESSION['usuario_id']; // Obtém o ID do usuário logado
-
-    // Prepara a consulta para somar todos os depósitos do usuário
-    $stmt = mysqli_prepare($conexao, "SELECT SUM(deposito) FROM controle WHERE id_usuario = ?");
-    mysqli_stmt_bind_param($stmt, "i", $id_usuario); // Associa o ID à consulta
-    mysqli_stmt_execute($stmt); // Executa a consulta
-    mysqli_stmt_bind_result($stmt, $soma_depositos); // Armazena o resultado na variável
-    mysqli_stmt_fetch($stmt); // Busca o resultado da consulta
-
-    // Se o resultado for nulo, define como zero
-    if (is_null($soma_depositos)) {
-        $soma_depositos = 0;
-    }
-    mysqli_stmt_close($stmt); // Fecha a consulta
-}
-
-// Inicializa a variável da última diária válida como 0
-$ultima_diaria = 0;
-
-// Verifica se a sessão do usuário ainda está ativa
-if (isset($_SESSION['usuario_id'])) {
-    // Prepara a consulta para buscar a última diária válida (diferente de NULL e de 0)
-    $stmt = mysqli_prepare($conexao, "
-        SELECT diaria
-        FROM controle
-        WHERE id_usuario = ? AND diaria IS NOT NULL AND diaria != 0
-        ORDER BY id DESC
-        LIMIT 1
-    ");
-    mysqli_stmt_bind_param($stmt, "i", $id_usuario); // Associa o ID à consulta
-    mysqli_stmt_execute($stmt); // Executa a consulta
-    mysqli_stmt_bind_result($stmt, $ultima_diaria); // Armazena o resultado na variável
-    mysqli_stmt_fetch($stmt); // Busca o resultado
-
-    // Se o valor da diária for nulo, define como zero
-    if (is_null($ultima_diaria)) {
-        $ultima_diaria = 0;
-    }
-    mysqli_stmt_close($stmt); // Fecha a consulta
-}
-
-// Inicializa a variável da soma de saques como 0
-$soma_saque = 0;
-
-// Verifica novamente se a sessão do usuário está ativa
-if (isset($_SESSION['usuario_id'])) {
-    // Prepara a consulta para somar todos os saques feitos pelo usuário
-    $stmt = mysqli_prepare($conexao, "
-        SELECT SUM(saque)
-        FROM controle
-        WHERE id_usuario = ?
-    ");
-    mysqli_stmt_bind_param($stmt, "i", $id_usuario); // Associa o ID à consulta
-    mysqli_stmt_execute($stmt); // Executa a consulta
-    mysqli_stmt_bind_result($stmt, $soma_saque); // Armazena o resultado
-    mysqli_stmt_fetch($stmt); // Busca os dados
-
-    // Se o valor for nulo, define como zero
-    if (is_null($soma_saque)) {
-        $soma_saque = 0;
-    }
-    mysqli_stmt_close($stmt); // Fecha a consulta
+if ($ultima_diaria > 0 && $saldo_reais > 0) {
+    $resultado = ($ultima_diaria / 100) * $saldo_reais;
+    $meia_unidade = $resultado * 0.5;
+    $meia_unidade_mensal = $meia_unidade * 30;
+    $resultado_anual = $meia_unidade_mensal * 12;
 }
 ?>
+
+
+
+
 
 
 
@@ -555,8 +472,8 @@ if (isset($_SESSION['usuario_id'])) {
             <li onclick="selectOption('Depositar na Banca', 'deposito')">
               <i class="fa-solid fa-money-bill-wave"></i> Depositar na Banca
             </li>
-            <li onclick="selectOption('Porcentagem Sobre a Banca', 'diaria')">
-              <i class="fa-solid fa-chart-line"></i> Porcentagem Sobre a Banca
+            <li onclick="selectOption('Defina a porcentagem', 'diaria')">
+              <i class="fa-solid fa-chart-line"></i> Defina a porcentagem
             </li>
             <li onclick="selectOption('Sacar da Banca', 'saque')">
               <i class="fa-solid fa-arrow-down"></i> Sacar da Banca
@@ -588,44 +505,34 @@ if (isset($_SESSION['usuario_id'])) {
 
 
 
-  <?php if (isset($_SESSION['usuario_id']) && $ultima_diaria > 0 && $soma_depositos > 0): 
-    $resultado = ($ultima_diaria / 100) * $soma_depositos;
-    $percentualFormatado = (intval($ultima_diaria) == $ultima_diaria)
-        ? intval($ultima_diaria) . '%'
-        : number_format($ultima_diaria, 1, ',', '.') . '%';
 
-    $meia_unidade = $resultado * 0.5;
-    $meia_unidade_mensal = $meia_unidade * 30;
-    $resultado_anual = $meia_unidade_mensal * 12;
- ?>
 
+
+
+<?php if ($ultima_diaria > 0 && $saldo_reais > 0): ?>
 <div class="bloco-unidade">
 
+  <!-- 💰 Saldo da Banca -->
   <div class="valor-item">
-
-  
-  <i class="valor-icone fa fa-piggy-bank"></i>
-  <div>
-    <?php
-      // Subtrai os saques do total de depósitos, se houver
-      $saldo_banca = isset($soma_saque) ? $soma_depositos - $soma_saque : $soma_depositos;
-    ?>
-    <span class="valor-bold">R$ <?= number_format($saldo_banca, 2, ',', '.') ?></span><br>
-    <span class="valor-desc">Banca</span>
-  
- </div>
+    <i class="valor-icone fa fa-piggy-bank"></i>
+    <div>
+      <span class="valor-bold">R$ <?= number_format($saldo_reais, 2, ',', '.') ?></span><br>
+      <span class="valor-desc">Banca</span>
+    </div>
   </div>
 
-  <?php if ($soma_saque !== null): ?>
+  <!-- 📤 Total de Saques -->
+  <?php if ($soma_saque > 0): ?>
   <div class="valor-item">
     <i class="valor-icone fa fa-hand-holding-usd"></i>
     <div>
-      <span class="valor-bold">R$ <?= number_format($soma_saque, 2, ',', '.') ?></span><br>
+      <span class="valor-bold">R$ <?= number_format($saques_reais, 2, ',', '.') ?></span><br>
       <span class="valor-desc">Total de Saques</span>
     </div>
   </div>
   <?php endif; ?>
 
+  <!-- 📉 Porcentagem -->
   <div class="valor-item">
     <i class="valor-icone fa fa-chart-line"></i>
     <div>
@@ -634,6 +541,7 @@ if (isset($_SESSION['usuario_id'])) {
     </div>
   </div>
 
+  <!-- 🎯 Unidade de Entrada -->
   <div class="valor-item">
     <i class="valor-icone fa fa-database"></i>
     <div>
@@ -642,14 +550,16 @@ if (isset($_SESSION['usuario_id'])) {
     </div>
   </div>
 
+  <!-- 🕐 Meta Diária -->
   <div class="valor-item">
     <i class="valor-icone fa fa-balance-scale"></i>
     <div>
       <span class="valor-bold">R$ <?= number_format($meia_unidade, 2, ',', '.') ?></span><br>
-      <span class="valor-desc">Meta Diaria</span>
+      <span class="valor-desc">Meta Diária</span>
     </div>
   </div>
 
+  <!-- 📅 Meta Mensal -->
   <div class="valor-item">
     <i class="valor-icone fa fa-calendar-day"></i>
     <div>
@@ -658,6 +568,7 @@ if (isset($_SESSION['usuario_id'])) {
     </div>
   </div>
 
+  <!-- 📈 Meta Anual -->
   <div class="valor-item">
     <i class="valor-icone fa fa-calendar-alt"></i>
     <div>
@@ -665,8 +576,8 @@ if (isset($_SESSION['usuario_id'])) {
       <span class="valor-desc">Meta Anual</span>
     </div>
   </div>
-</div>
 
+</div>
 <?php endif; ?>
 
 
