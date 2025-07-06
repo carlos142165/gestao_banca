@@ -305,6 +305,10 @@ if ($ultima_diaria > 0 && $saldo_reais > 0) {
   }
 }
 
+
+
+
+/* CODIGO RESPONSAVEL PELO CALCULO DOS VALORES PARA GESTÃO */
 .bloco-unidade {
   width: 300px;
   background-color: #19475a;                
@@ -535,18 +539,9 @@ if ($ultima_diaria > 0 && $saldo_reais > 0) {
     </div>
   </div>
 
-  <!-- 📤 Total de Saques -->
-  <div class="valor-item">
-    <i class="valor-icone fa fa-hand-holding-usd"></i>
-    <div>
-      <span class="valor-bold">R$ <?= number_format($saques_reais, 2, ',', '.') ?></span><br>
-      <span class="valor-desc">Total de Saques</span>
-    </div>
-  </div>
-
   
 
-  <!-- 🎯 Unidade de Entrada -->
+    <!-- 🎯 Unidade de Entrada -->
   <div class="valor-item">
     <i class="valor-icone fa fa-database"></i>
     <div>
@@ -579,6 +574,15 @@ if ($ultima_diaria > 0 && $saldo_reais > 0) {
     <div>
       <span class="valor-bold">R$ <?= number_format($resultado_anual ?? 0, 2, ',', '.') ?></span><br>
       <span class="valor-desc">Meta Anual</span>
+    </div>
+  </div>
+
+  <!-- 📤 Total de Saques -->
+  <div class="valor-item">
+    <i class="valor-icone fa fa-hand-holding-usd"></i>
+    <div>
+      <span class="valor-bold">R$ <?= number_format($saques_reais, 2, ',', '.') ?></span><br>
+      <span class="valor-desc">Total de Saques</span>
     </div>
   </div>
 
