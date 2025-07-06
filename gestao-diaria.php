@@ -11,17 +11,44 @@ if (!isset($_SESSION['usuario_id'])) {
 
 <!DOCTYPE html>
 <html lang="pt-br">
+
+
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Gestão</title>
+    <title>Gestão do Dia</title>
 
     <style>
+
+      body, html {
+      height: 100%;
+      font-family: 'Poppins', sans-serif;
+      background: linear-gradient(135deg, #0f2e3a, #295a6f, #4e8b9e);
+      margin: 0;
+      padding: 0;
+      color: #f5f5f5;
+    }
+
       body {
        background-color: #eff1f1;
       }
+
+
+
+
     </style>
+
+     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+
   </head>
+
+
+
+
+
+
+
+
   <body>
     <div id="data-container"></div>
     <!-- A data será carregada aqui -->
@@ -68,5 +95,17 @@ if (!isset($_SESSION['usuario_id'])) {
     <script src="scripts.js">
       // Carregando o script de data global
     </script>
+
+    <div>
+
+
+
+
+
+
+
+
+
+
   </body>
 </html>

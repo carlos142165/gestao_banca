@@ -325,7 +325,7 @@ if ($ultima_diaria > 0 && $saldo_reais > 0) {
   background: linear-gradient(145deg,rgb(231, 232, 233),rgb(216, 216, 218));    
   border-radius: 8px;
   padding: 8px 10px;
-  gap: 10px;
+  gap: 7px;
   box-shadow: 0 4px 6px rgba(0,0,0,0.08);
   transition: transform 0.2s ease, box-shadow 0.2s ease;
 }
@@ -526,6 +526,15 @@ if ($ultima_diaria > 0 && $saldo_reais > 0) {
     </div>
   </div>
 
+  <!-- 📉 Porcentagem -->
+  <div class="valor-item">
+    <i class="valor-icone fa fa-chart-line"></i>
+    <div>
+      <span class="valor-bold"><?= $percentualFormatado ?></span><br>
+      <span class="valor-desc">Porcentagem</span>
+    </div>
+  </div>
+
   <!-- 📤 Total de Saques -->
   <div class="valor-item">
     <i class="valor-icone fa fa-hand-holding-usd"></i>
@@ -535,14 +544,7 @@ if ($ultima_diaria > 0 && $saldo_reais > 0) {
     </div>
   </div>
 
-  <!-- 📉 Porcentagem -->
-  <div class="valor-item">
-    <i class="valor-icone fa fa-chart-line"></i>
-    <div>
-      <span class="valor-bold"><?= $percentualFormatado ?></span><br>
-      <span class="valor-desc">Porcentagem</span>
-    </div>
-  </div>
+  
 
   <!-- 🎯 Unidade de Entrada -->
   <div class="valor-item">
