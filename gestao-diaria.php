@@ -79,10 +79,11 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
       body, html {
       height: 100%;
       font-family: 'Poppins', sans-serif;
-      background: linear-gradient(135deg, #eeeeee, #eeeeee,rgb(255, 255, 255));
+      background-color:rgb(235, 235, 235);
       margin: 0;
       padding: 0;
       color: #f5f5f5;
+      
 
     }
 
@@ -94,12 +95,14 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 
 /* Container geral */
 .container-valores {
-  background-color: #eeeeee; /* cinza claro elegante */
+  background-color: #f7f6f6; /* cinza claro elegante */
   padding: 20px;
   border-radius: 12px;
   box-sizing: border-box;
   max-width: 400px;
   margin: 0 auto;
+  margin-top: 15px;
+  width: 390px;
 }
 
 /* Placar interno */
@@ -229,76 +232,23 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 
 
 /* AQUI VAI O CODIGO RESPONSAVEL PELO CAMPO ONDE OS USUARIOS VÃO FICAR  */
-.add-user{  
-  background-color: #f7f6f6;
-  box-shadow: 0 2px 3px rgba(0,0,0,0.1);
-  padding: 8px;
-  border-radius: 5px;
-  box-sizing: border-box;
-  max-width: 400px;
-  margin-top: 15px;
-  height: 350px;
-
-}
-
-.user-01{
-  background-color:rgb(243, 242, 242);
-  box-shadow: 0 2px 3px rgba(0,0,0,0.1);
-  border-radius: 5px;
-  box-sizing: border-box;
-  max-width: 400px;
-  margin-top: 5px;
-  height: 60px;
-}
-
-.user-02{
-  background-color:rgb(243, 242, 242);
-  box-shadow: 0 2px 3px rgba(0,0,0,0.1);
-  border-radius: 5px;
-  box-sizing: border-box;
-  max-width: 400px;
-  margin-top: 13px;
-  height: 60px;
-}
-
-.user-03{
-  background-color:rgb(243, 242, 242);
-  box-shadow: 0 2px 3px rgba(0,0,0,0.1);
-  border-radius: 5px;
-  box-sizing: border-box;
-  max-width: 400px;
-  margin-top: 13px;
-  height: 60px;
-}
-
-.user-04{
-  background-color:rgb(243, 242, 242);
-  box-shadow: 0 2px 3px rgba(0,0,0,0.1);
-  border-radius: 5px;
-  box-sizing: border-box;
-  max-width: 400px;
-  margin-top: 13px;
-  height: 60px;
-}
 
 
 
 .btn-add-usuario {
- 
+  height: 30px;
   color: #8a8a8a;
-  background-color: #f7f6f6;
-  display: flex;
-  align-items: center;
-  gap: 0px;
+  background-color: #f7f6f6;  
+  
   cursor: pointer;
   border-radius: 8px;
   font-size: 12px;
-  width: 100%;
-  margin-top: 25px;
-  justify-content: center;
+  width: 390px;
+  margin-top: 300px;
+  
   border: none;
   border-bottom: none; /* se quiser tirar o contorno inferior também */
-  box-shadow: none;
+  
 }
 
 /* Ícone "+" com destaque verde */
@@ -306,7 +256,30 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
   color: #00a651;
   font-weight: bold;
   font-size: 18px;
+  
 }
+
+.add-user {
+  
+      
+  
+  
+}
+
+.campo_mentores {
+  background-color: #f7f6f6;
+  height: 40px;
+  align-items: center;
+  width: 390px;
+  display: flex;
+  justify-content: center;
+  margin: 0 auto;         /* <-- Isso é o segredo! */
+  margin-top: 5px;
+  height: 350px;
+  border-radius: 8px;
+}
+
+
 /* AQUI FIM DO CODIGO RESPONSAVEL PELO CAMPO ONDE OS USUARIOS VÃO FICAR  */
 
 
@@ -323,13 +296,14 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 .user{
   max-width: 400px;
   margin: 30px auto;
-  margin-top: 15px;
+  margin-top: 5px;
   padding: 12px;
   background-color: #f7f6f6;
   border-radius: 12px;
-  box-shadow: 0 4px 10px rgba(0,0,0,0.08);
+ 
   font-family: 'Segoe UI', sans-serif;
   height: 155px;
+  width: 370px;
 }
 
 /* Estrutura horizontal das linhas */
@@ -561,16 +535,18 @@ input.red {
 
 
 
+
+
       
 
 
 
 
-    </style>
+</style>
 
      <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
 
-  </head>
+</head>
 
 
 
@@ -647,11 +623,11 @@ input.red {
     <span class="separador">x</span>
     <span class="placar-red">0</span>
 
-</div>
+  </div>
 
 
 
-<div class="informacoes-row">
+  <div class="informacoes-row">
 
    <div class="info-item">
 
@@ -660,9 +636,10 @@ input.red {
       <span class="rotulo-meta">Meta do Dia</span>
     </div>
 
-   </div>
+  </div>
 
-   <div class="info-item">
+
+  <div class="info-item">
 
      <div>
       <span class="valor-saldo">R$ 0,00</span>
@@ -680,22 +657,7 @@ input.red {
 
 
 
-<!-- CODIGO RESPONSAVEL PELO CAMPO ONDE OS MENTORES VAO FICAR -->
-<div class="add-user">
 
-  <div class="user-01">
-  </div>
-
-  <div class="user-02">
-  </div>
-
-  <div class="user-03">
-  </div>
-
-  <div class="user-04">
-  
-</div>
-<!-- FIM DO CODIGO RESPONSAVEL PELO CAMPO ONDE OS MENTORES VAO FICAR -->
 
 
 
@@ -705,10 +667,6 @@ input.red {
 
 
 <!-- CODIGO RESPONSAVEL PELO FORMULARIO QUE ADICIONA NOVO USUARIO -->
-
-<button class="btn-add-usuario" onclick="abrirModal()">
-  <span>+</span> Adicionar Mentoria
-</button>
 
 <!-- Modal -->
 <div id="modal-form" class="modal">
@@ -747,6 +705,38 @@ input.red {
 </div>
 <!-- FIM DO CODIGO RESPONSAVEL PELO FORMULARIO QUE ADICIONA NOVO USUARIO -->
 
+
+
+
+
+
+
+
+
+
+
+<!-- CODIGO RESPONSAVEL PELO CAMPO ONDE OS MENTORES VAO FICAR -->
+
+
+<div class="campo_mentores">
+
+
+
+
+
+<div class="add-user">
+
+ <button class="btn-add-usuario" onclick="abrirModal()">
+  <span>+</span> Adicionar Mentoria
+ </button> 
+
+</div>
+
+</div>
+  
+  
+
+<!-- FIM DO CODIGO RESPONSAVEL PELO CAMPO ONDE OS MENTORES VAO FICAR -->
 
 
 
