@@ -1,4 +1,5 @@
 
+
 <?php
 session_start();
 if (!isset($_SESSION['usuario_id'])) {
@@ -6,6 +7,61 @@ if (!isset($_SESSION['usuario_id'])) {
     exit();
 }
 ?>
+
+
+<?php
+
+include("config.php"); // Inclui a conexão existente
+
+if ($_SERVER['REQUEST_METHOD'] === 'POST') {
+    if (!isset($_SESSION['usuario_id'])) {
+        die("Usuário não está logado.");
+    }
+
+    $usuario_id = $_SESSION['usuario_id'];
+    $nome = $_POST['nome'];
+
+    $foto_nome = null;
+    if (isset($_FILES['foto']) && $_FILES['foto']['error'] === UPLOAD_ERR_OK) {
+        $extensao = pathinfo($_FILES['foto']['name'], PATHINFO_EXTENSION);
+        $foto_nome = uniqid() . '.' . $extensao;
+        $caminho_destino = 'uploads/' . $foto_nome;
+
+
+        if (!move_uploaded_file($_FILES['foto']['tmp_name'], $caminho_destino)) {
+            die("Erro ao fazer o upload da imagem.");
+        }
+    }
+
+   $stmt = $conexao->prepare("INSERT INTO mentores (id_usuario, foto, nome,data_criacao) VALUES (?, ?, ?, NOW())");
+
+
+    $stmt->bind_param("iss", $usuario_id, $foto_nome, $nome);
+
+    if ($stmt->execute()) {
+    echo "<script>
+        alert('Cadastro de mentor efetuado com sucesso!');
+        window.location.href = 'gestao-diaria.php'; // ou outra página que desejar
+        </script>";
+    exit;
+} else {
+    echo "<script>
+        alert('Erro ao cadastrar: " . $stmt->error . "');
+        window.location.href = 'index.php'; // ou uma página de retorno
+        </script>";
+    exit;
+}
+}
+?>
+
+
+
+
+
+
+
+
+
 
 
 
@@ -29,9 +85,6 @@ if (!isset($_SESSION['usuario_id'])) {
       color: #f5f5f5;
 
     }
-
-
-
 
 
 
@@ -365,63 +418,83 @@ input.red {
 
 
 /* AQUI VAI O CODIGO PARA O FORMULARIO DE ADICIONAR UM NOVO USUARIO */
+/* Modal geral */
 .modal {
   display: none;
   position: fixed;
   z-index: 1000;
-  left: 0; top: 0;
-  width: 100%; height: 100%;
-  background-color: rgba(0,0,0,0.5);
-}
-
-.modal-conteudo {
-  background-color: #fff;
-  margin: 10% auto;
-  padding: 20px;
-  border-radius: 10px;
-  width: 400px;
-  box-shadow: 0 0 10px #555;
-  animation: fadeIn 0.3s ease-in-out;
-}
-
-.fechar {
-  float: right;
-  font-size: 24px;
-  cursor: pointer;
-}
-
-.modal input, .modal button {
+  left: 0;
+  top: 0;
   width: 100%;
-  padding: 10px;
-  margin-top: 10px;
+  height: 100%;
+  background-color: rgba(0,0,0,0.6);
 }
 
+/* Conteúdo do modal centralizado */
+.modal-conteudo {
+  position: relative; /* ← isso é fundamental */
+  background-color: #fff;
+  margin: 5% auto;
+  padding: 30px 25px;
+  border-radius: 12px;
+  max-width: 400px;
+  width: 70%;
+  box-shadow: 0 0 15px rgba(0,0,0,0.3);
+  animation: fadeIn 0.3s ease-in-out;
+  font-family: 'Segoe UI', sans-serif;
+  top: 100px;
+}
+
+/* Título e botão de fechar */
+.fechar {
+  position: absolute;
+  top: 2px;
+  right: 15px;
+  font-size: 26px;
+  cursor: pointer;
+  color: #888;
+  font-weight: bold;
+  background: none;
+  border: none;
+}
+
+/* Labels e campos */
+.modal label {
+  display: block;
+  margin-top: 15px;
+  font-weight: 500;
+  color: #333;
+}
+
+.modal input[type="text"],
+.modal input[type="file"],
+.modal button[type="submit"],
+.modal input[type="number"] {
+  width: 100%;
+  padding: 10px 12px;
+  margin-top: 8px;
+  border: 1px solid #ccc;
+  border-radius: 8px;
+  box-sizing: border-box;
+  font-size: 14px;
+}
+
+/* Botão customizado para upload */
 .botao-upload {
   display: inline-block;
-  padding: 10px;
+  padding: 10px 15px;
+  margin-top: 15px;
   background-color: #4CAF50;
   color: white;
   cursor: pointer;
-  border-radius: 5px;
-  margin-top: 10px;
+  border-radius: 8px;
+  font-weight: bold;
+  text-align: center;
 }
 
-#nome-arquivo {
-  display: block;
-  margin-top: 5px;
-  font-style: italic;
-  color: #555;
-}
-
-@keyframes fadeIn {
-  from { opacity: 0; transform: translateY(-20px); }
-  to { opacity: 1; transform: translateY(0); }
-}
-
-
-
+/* Pré-visualização da imagem */
 #preview-container {
-  margin-top: 10px;
+  margin-top: 15px;
   text-align: center;
 }
 
@@ -430,11 +503,57 @@ input.red {
   height: 120px;
   border-radius: 50%;
   object-fit: cover;
-  border: 2px solid #4CAF50;
-  display: block;
-  margin: 0 auto;
-  transition: 0.3s ease;
+  border: 3px solid #4CAF50;
+  box-shadow: 0 0 8px rgba(0,0,0,0.2);
+  transition: 0.3s ease-in-out;
 }
+
+/* Botão remover imagem */
+#remover-foto {
+  background-color: #f44336;
+  color: white;
+  border: none;
+  padding: 8px 12px;
+  border-radius: 8px;
+  cursor: pointer;
+  margin-top: 10px;
+  font-size: 14px;
+  display: inline-block;
+}
+
+/* Botão de envio */
+.modal button[type="submit"] {
+  background-color: #2196F3;
+  color: white;
+  border: none;
+  padding: 10px 0;
+  margin-top: 20px;
+  border-radius: 8px;
+  font-size: 15px;
+  font-weight: bold;
+  transition: background-color 0.3s ease;
+}
+
+.modal button[type="submit"]:hover {
+  background-color: #1976D2;
+}
+
+/* Nome do arquivo */
+#nome-arquivo {
+  display: block;
+  margin-top: 8px;
+  font-style: italic;
+  font-size: 13px;
+  color: #666;
+  text-align: center;
+}
+
+/* Animação */
+@keyframes fadeIn {
+  from { opacity: 0; transform: translateY(-20px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
 
 
 /* AQUI O FIM DO CODIGO PARA O FORMULARIO DE ADICIONAR UM NOVO USUARIO */
@@ -462,6 +581,9 @@ input.red {
 
   <body>
 
+
+
+    <!-- CODIGO RESPONSAVEL PELOS VALORES DO TOPO PUXADO DA PAGINA MENU.PHP -->
 
     <div id="data-container"></div>
     <!-- A data será carregada aqui -->
@@ -509,13 +631,14 @@ input.red {
       // Carregando o script de data global
     </script>
 
+<!-- FIM CODIGO RESPONSAVEL PELOS VALORES DO TOPO PUXADO DA PAGINA MENU.PHP -->
 
 
 
 
 
 
-
+<!-- CODIGO RESPONSAVEL PELO VALOR  PLACAR E META DIARIA E SALDO -->
 <div class="container-valores">
     
   <div class="pontuacao">
@@ -524,11 +647,11 @@ input.red {
     <span class="separador">x</span>
     <span class="placar-red">0</span>
 
-  </div>
+</div>
 
 
 
- <div class="informacoes-row">
+<div class="informacoes-row">
 
    <div class="info-item">
 
@@ -550,34 +673,41 @@ input.red {
 
 
 </div>
+<!-- FIM DO CODIGO RESPONSAVEL PELO VALOR  PLACAR E META DIARIA E SALDO -->
 
 
 
 
 
+
+<!-- CODIGO RESPONSAVEL PELO CAMPO ONDE OS MENTORES VAO FICAR -->
 <div class="add-user">
 
+  <div class="user-01">
+  </div>
 
+  <div class="user-02">
+  </div>
+
+  <div class="user-03">
+  </div>
+
+  <div class="user-04">
   
+</div>
+<!-- FIM DO CODIGO RESPONSAVEL PELO CAMPO ONDE OS MENTORES VAO FICAR -->
 
- <div class="user-01">
- </div>
 
- <div class="user-02">
- </div>
 
- <div class="user-03">
- </div>
 
- <div class="user-04">
- </div>
+
 
 
 
 <!-- CODIGO RESPONSAVEL PELO FORMULARIO QUE ADICIONA NOVO USUARIO -->
 
 <button class="btn-add-usuario" onclick="abrirModal()">
-  <span>+</span> Adicionar Usuário
+  <span>+</span> Adicionar Mentoria
 </button>
 
 <!-- Modal -->
@@ -590,7 +720,7 @@ input.red {
       <!-- Pré-visualização da imagem -->
         
 
-      <label for="foto" class="botao-upload">📸 Escolha sua foto</label>
+      <label for="foto" class="botao-upload">📸 Escolha a Foto do Mentor</label>
         <input type="file" id="foto" name="foto" accept="image/*" style="display:none" onchange="mostrarNomeArquivo(this)">
       <span id="nome-arquivo">Nenhum arquivo selecionado</span>
 
@@ -598,6 +728,7 @@ input.red {
            <img id="preview-img" src="https://cdn-icons-png.flaticon.com/512/847/847969.png" alt="Avatar padrão">
       </div>
 
+      
       <button type="button" id="remover-foto" onclick="removerImagem()" style="display:none; margin-top:10px;">
          Remover imagem
       </button>
@@ -610,19 +741,18 @@ input.red {
       <button type="submit">Enviar</button>
     </form>
   </div>
+ </div>
+
+ 
 </div>
-
- <!-- FIM DO CODIGO RESPONSAVEL PELO FORMULARIO QUE ADICIONA NOVO USUARIO -->
-
-
-</div>
+<!-- FIM DO CODIGO RESPONSAVEL PELO FORMULARIO QUE ADICIONA NOVO USUARIO -->
 
 
 
 
 
 
-
+<!-- CODIGO RESPONSAVEL PELO FORMULARIO QUE BUSCA USUARIO E CADASTRA VALORES REFERENTE  -->
 
 <div class="user">
 
@@ -652,6 +782,13 @@ input.red {
   </div>
 
 </div>
+
+<!-- FIM DO CODIGO RESPONSAVEL PELO FORMULARIO QUE BUSCA USUARIO E CADASTRA VALORES REFERENTE  -->
+
+
+
+
+
 
 
 
