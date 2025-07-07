@@ -65,6 +65,10 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 
 
 
+
+
+
+
 <!DOCTYPE html>
 <html lang="pt-br">
 
@@ -537,13 +541,63 @@ input.red {
 
 
 
+
+
+
+
+
+.campo_mentores2{
+  background-color:rgb(16, 42, 68);
+}
+
+
+
+/* AQUI O CODIGO DA FOTO PERFIL */
+.mentor-card {
+  border: 1px solid #ddd;
+  padding: 15px;
+  margin-bottom: 20px;
+  border-radius: 8px;
+  box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+  max-width: 250px;
+  text-align: center;
+  background-color:rgb(227, 228, 230);
+}
+
+.mentor-card h3 {
+  margin-top: 0;
+  font-size: 12px;
+  color: #333;
+}
+
+.mentor-card p {
+  font-size: 14px;
+  margin: 5px 0;
+}
+
+.mentor-img {
+  width: 60px;
+  height: 60px;
+  border-radius: 50%;
+  object-fit: cover;
+  margin-bottom: 10px;
+}
+
+/* FIM CODIGO DA FOTO PERFIL */
+
+
+
+
+
+
+
       
 
 
 
 
 </style>
-
+     
      <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
 
 </head>
@@ -721,16 +775,93 @@ input.red {
 <div class="campo_mentores">
 
 
+<div class="campo_mentores2">
+    <?php
+
+    // Conexão com o banco
+    $conn = new mysqli("localhost", "root", "", "formulario-carlos");
+
+    if ($conn->connect_error) {
+        die("Erro na conexão: " . $conn->connect_error);
+    }
+
+    // Garante que a sessão esteja ativa
+    if (session_status() === PHP_SESSION_NONE) {
+        session_start();
+    }
+
+    $id_usuario_logado = $_SESSION['usuario_id'];
+
+    // Buscar mentores associados ao usuário logado
+    $sql_mentores = "SELECT id, nome, foto FROM mentores WHERE id_usuario = ?";
+    $stmt_mentores = $conn->prepare($sql_mentores);
+    $stmt_mentores->bind_param("i", $id_usuario_logado);
+    $stmt_mentores->execute();
+    $result_mentores = $stmt_mentores->get_result();
+
+    while ($mentor = $result_mentores->fetch_assoc()) {
+        $id_mentor = $mentor['id'];
+
+        // Buscar valores agregados da tabela valor_mentores
+        $sql_valores = "SELECT 
+            COALESCE(SUM(green), 0) AS total_green,
+            COALESCE(SUM(red), 0) AS total_red,
+            COALESCE(SUM(valor_green), 0) AS total_valor_green,
+            COALESCE(SUM(valor_red), 0) AS total_valor_red
+            FROM valor_mentores
+            WHERE id_mentores = ?";
+
+        $stmt_valores = $conn->prepare($sql_valores);
+        $stmt_valores->bind_param("i", $id_mentor);
+        $stmt_valores->execute();
+        $result_valores = $stmt_valores->get_result();
+        $valores = $result_valores->fetch_assoc();
+
+        // Calcula a subtração
+        $total_subtraido = $valores['total_valor_green'] - $valores['total_valor_red'];
+
+
+
+    // Exibir HTML com todas as informações
+    echo "
+    <div class='mentor-card'>
+       <img src='uploads/{$mentor['foto']}' alt='Foto de {$mentor['nome']}' class='mentor-img' />
+       <h3>{$mentor['nome']}</h3>
+       <p><strong>Green:</strong> {$valores['total_green']}</p>
+       <p><strong>Red:</strong> {$valores['total_red']}</p>
+       <p><strong>Saldo:</strong> R$ {$total_subtraido}</p>
+    </div>
+    ";
+    
+    }
+    ?>
+</div>
+
 
 
 
 <div class="add-user">
-
- <button class="btn-add-usuario" onclick="abrirModal()">
-  <span>+</span> Adicionar Mentoria
- </button> 
-
+        <button class="btn-add-usuario" onclick="abrirModal()">
+          <span>+</span> Adicionar Mentoria
+        </button>
 </div>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 </div>
   
