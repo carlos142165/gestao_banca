@@ -9,7 +9,7 @@ if (!isset($_SESSION['usuario_id'])) {
 ?>
 
 
-<?php
+<?php // CODIGO RESPONSAVEL PELO CADASTRO DA FOTO E O NOME
 
 include("config.php"); // Inclui a conexão existente
 
@@ -51,8 +51,8 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         </script>";
     exit;
 }
-}
-?>
+} // FIM DO CODIGO RESPONSAVEL PELO CADASTRO DA FOTO E O NOME
+?> 
 
 
 
