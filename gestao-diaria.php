@@ -2,11 +2,13 @@
 
 <?php
 session_start();
+
 if (!isset($_SESSION['usuario_id'])) {
     echo "<script>alert('ÁREA DE MEMBROS – Faça Já Seu Cadastro Gratuito'); window.location.href = 'home.php';</script>";
     exit();
 }
 ?>
+
 
 
 <?php // CODIGO RESPONSAVEL PELO CADASTRO DA FOTO E O NOME
@@ -53,6 +55,11 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 }
 } // FIM DO CODIGO RESPONSAVEL PELO CADASTRO DA FOTO E O NOME
 ?> 
+
+
+
+
+
 
 
 
@@ -227,64 +234,6 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
   color: #555;
 }
 /* FIM CODIGO PARA OS VALORES E PLACAR */
-
-
-
-
-
-
-
-
-/* AQUI VAI O CODIGO RESPONSAVEL PELO CAMPO ONDE OS USUARIOS VÃO FICAR  */
-
-
-
-.btn-add-usuario {
-  height: 30px;
-  color: #8a8a8a;
-  background-color: #f7f6f6;  
-  
-  cursor: pointer;
-  border-radius: 8px;
-  font-size: 12px;
-  width: 390px;
-  margin-top: 300px;
-  
-  border: none;
-  border-bottom: none; /* se quiser tirar o contorno inferior também */
-  
-}
-
-/* Ícone "+" com destaque verde */
-.btn-add-usuario span {
-  color: #00a651;
-  font-weight: bold;
-  font-size: 18px;
-  
-}
-
-.add-user {
-  
-      
-  
-  
-}
-
-.campo_mentores {
-  background-color: #f7f6f6;
-  height: 40px;
-  align-items: center;
-  width: 390px;
-  display: flex;
-  justify-content: center;
-  margin: 0 auto;         /* <-- Isso é o segredo! */
-  margin-top: 5px;
-  height: 350px;
-  border-radius: 8px;
-}
-
-
-/* AQUI FIM DO CODIGO RESPONSAVEL PELO CAMPO ONDE OS USUARIOS VÃO FICAR  */
 
 
 
@@ -546,47 +495,157 @@ input.red {
 
 
 
-.campo_mentores2{
-  background-color:rgb(16, 42, 68);
-}
+
 
 
 
 /* AQUI O CODIGO DA FOTO PERFIL */
 .mentor-card {
-  border: 1px solid #ddd;
-  padding: 15px;
-  margin-bottom: 20px;
-  border-radius: 8px;
-  box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
-  max-width: 250px;
-  text-align: center;
-  background-color:rgb(227, 228, 230);
+    display: flex;
+    align-items: center;
+    border: 1px solid #dcdcdc;
+    border-radius: 8px;
+    padding: 6px 10px;
+    background-color: #fff;
+    width: 330px;
+    height: 58px;
+    font-family: Arial, sans-serif;
+    margin-top: 2px;
+    box-shadow: 0 1px 2px rgba(0,0,0,0.05);
+    gap: 8px;
 }
 
-.mentor-card h3 {
-  margin-top: 0;
-  font-size: 12px;
-  color: #333;
-}
-
-.mentor-card p {
-  font-size: 14px;
-  margin: 5px 0;
+.mentor-left {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    width: 60px;
+    flex-shrink: 0;
 }
 
 .mentor-img {
-  width: 60px;
-  height: 60px;
-  border-radius: 50%;
-  object-fit: cover;
-  margin-bottom: 10px;
+    width: 45px;
+    height: 45px;
+    border-radius: 50%;
+    object-fit: cover;
 }
+
+.mentor-nome {
+    font-size: 11px;
+    margin-top: 4px;
+    color: #333;
+    text-align: center;
+    font-weight: normal;
+    line-height: 1.2;
+}
+
+.mentor-right {
+    flex: 1;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    height: 100%;
+}
+
+.mentor-values-inline {
+    display: flex;
+    gap: 20px;
+    align-items: center;
+    justify-content: center;
+    height: 100%;
+    color:rgb(95, 93, 93);
+    
+}
+
+.value-box {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    text-align: center;
+    width: 60px;
+    font-size: 13px;
+}
+
+.value-box p {
+    margin: 1px 0;
+    line-height: 1.2;
+}
+
+.value-box p:first-child {
+    font-weight: bold;
+}
+
+.value-box.green p:first-child {
+    color: #00a651;
+}
+
+.value-box.red p:first-child {
+    color: #ff4d4d;
+}
+
+.value-box.saldo p:first-child {
+    color:rgb(95, 93, 93);
+}
+
+
+
 
 /* FIM CODIGO DA FOTO PERFIL */
 
 
+/* AQUI VAI O CODIGO RESPONSAVEL PELO CAMPO ONDE OS USUARIOS VÃO FICAR  */
 
+
+
+.btn-add-usuario {
+  height: 30px;
+  color: #8a8a8a;
+  background-color: #f7f6f6;  
+  margin-top: 15px;
+  cursor: pointer;
+  border-radius: 8px;
+  font-size: 12px;
+  width: 390px;
+  margin-top: 10px; 
+  border: none;
+  border-bottom: none; /* se quiser tirar o contorno inferior também */
+  
+}
+
+/* Ícone "+" com destaque verde */
+.btn-add-usuario span {
+  color: #00a651;
+  font-weight: bold;
+  font-size: 18px;
+  
+}
+
+.add-user {
+  display: flex;
+  justify-content: center;
+  width: 100%;
+  margin-top: 20px;
+}
+
+
+.campo_mentores {
+  background-color: #f7f6f6;
+  display: flex;
+  flex-direction: column;    /* <-- organiza em coluna */
+  align-items: center;       /* <-- centraliza horizontalmente */
+  justify-content: flex-start;
+  width: 390px;
+  margin: 0 auto;
+  margin-top: 5px;
+  height: 350px;              /* <-- permite crescer conforme conteúdo */
+  border-radius: 8px;
+  padding: 20px;
+  box-sizing: border-box;
+}
+
+
+/* AQUI FIM DO CODIGO RESPONSAVEL PELO CAMPO ONDE OS USUARIOS VÃO FICAR  */
 
 
 
@@ -775,91 +834,102 @@ input.red {
 <div class="campo_mentores">
 
 
-<div class="campo_mentores2">
-    <?php
+ <div class="campo_mentores2">
+    <div class="mentor-wrapper">
+        <?php
 
-    // Conexão com o banco
-    $conn = new mysqli("localhost", "root", "", "formulario-carlos");
+        // Conexão com o banco
+        $conn = new mysqli("localhost", "root", "", "formulario-carlos");
 
-    if ($conn->connect_error) {
-        die("Erro na conexão: " . $conn->connect_error);
-    }
+        if ($conn->connect_error) {
+            die("Erro na conexão: " . $conn->connect_error);
+        }
 
-    // Garante que a sessão esteja ativa
-    if (session_status() === PHP_SESSION_NONE) {
-        session_start();
-    }
+        // Garante que a sessão esteja ativa
+        if (session_status() === PHP_SESSION_NONE) {
+            session_start();
+        }
 
-    $id_usuario_logado = $_SESSION['usuario_id'];
+        $id_usuario_logado = $_SESSION['usuario_id'];
 
-    // Buscar mentores associados ao usuário logado
-    $sql_mentores = "SELECT id, nome, foto FROM mentores WHERE id_usuario = ?";
-    $stmt_mentores = $conn->prepare($sql_mentores);
-    $stmt_mentores->bind_param("i", $id_usuario_logado);
-    $stmt_mentores->execute();
-    $result_mentores = $stmt_mentores->get_result();
+        // Buscar mentores associados ao usuário logado
+        $sql_mentores = "SELECT id, nome, foto FROM mentores WHERE id_usuario = ?";
+        $stmt_mentores = $conn->prepare($sql_mentores);
+        $stmt_mentores->bind_param("i", $id_usuario_logado);
+        $stmt_mentores->execute();
+        $result_mentores = $stmt_mentores->get_result();
 
-    while ($mentor = $result_mentores->fetch_assoc()) {
-        $id_mentor = $mentor['id'];
+        while ($mentor = $result_mentores->fetch_assoc()) {
+            $id_mentor = $mentor['id'];
 
-        // Buscar valores agregados da tabela valor_mentores
-        $sql_valores = "SELECT 
-            COALESCE(SUM(green), 0) AS total_green,
-            COALESCE(SUM(red), 0) AS total_red,
-            COALESCE(SUM(valor_green), 0) AS total_valor_green,
-            COALESCE(SUM(valor_red), 0) AS total_valor_red
-            FROM valor_mentores
-            WHERE id_mentores = ?";
+            // Buscar valores agregados
+            $sql_valores = "SELECT 
+                COALESCE(SUM(green), 0) AS total_green,
+                COALESCE(SUM(red), 0) AS total_red,
+                COALESCE(SUM(valor_green), 0) AS total_valor_green,
+                COALESCE(SUM(valor_red), 0) AS total_valor_red
+                FROM valor_mentores
+                WHERE id_mentores = ?";
 
-        $stmt_valores = $conn->prepare($sql_valores);
-        $stmt_valores->bind_param("i", $id_mentor);
-        $stmt_valores->execute();
-        $result_valores = $stmt_valores->get_result();
-        $valores = $result_valores->fetch_assoc();
+            $stmt_valores = $conn->prepare($sql_valores);
+            $stmt_valores->bind_param("i", $id_mentor);
+            $stmt_valores->execute();
+            $result_valores = $stmt_valores->get_result();
+            $valores = $result_valores->fetch_assoc();
 
-        // Calcula a subtração
-        $total_subtraido = $valores['total_valor_green'] - $valores['total_valor_red'];
+            $total_subtraido = $valores['total_valor_green'] - $valores['total_valor_red'];
 
-
-
-    // Exibir HTML com todas as informações
-    echo "
-    <div class='mentor-card'>
-       <img src='uploads/{$mentor['foto']}' alt='Foto de {$mentor['nome']}' class='mentor-img' />
-       <h3>{$mentor['nome']}</h3>
-       <p><strong>Green:</strong> {$valores['total_green']}</p>
-       <p><strong>Red:</strong> {$valores['total_red']}</p>
-       <p><strong>Saldo:</strong> R$ {$total_subtraido}</p>
+            // Card do mentor
+            echo "
+<div class='mentor-card'>
+    <div class='mentor-left'>
+        <img src='uploads/{$mentor['foto']}' alt='Foto de {$mentor['nome']}' class='mentor-img' />
+        <h3 class='mentor-nome'>{$mentor['nome']}</h3>
     </div>
-    ";
-    
-    }
-    ?>
+    <div class='mentor-right'>
+        <div class='mentor-values-inline'>
+            <div class='value-box green'>
+                <p>Green</p>
+                <p>{$valores['total_green']}</p>
+            </div>
+            <div class='value-box red'>
+                <p>Red</p>
+                <p>{$valores['total_red']}</p>
+            </div>
+            <div class='value-box saldo'>
+                <p>G/P</p>
+                <p>R$ {$total_subtraido}</p>
+            </div>
+        </div>
+    </div>
 </div>
 
+";
 
 
 
-<div class="add-user">
+
+        }
+
+        ?>
+    </div>
+  </div>
+
+
+
+
+
+
+
+
+
+
+
+ <div class="add-user">
         <button class="btn-add-usuario" onclick="abrirModal()">
           <span>+</span> Adicionar Mentoria
         </button>
-</div>
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
+ </div>
 
 
 
@@ -878,13 +948,14 @@ input.red {
 <div class="user">
 
   <!-- Linha de adicionar e buscar usuário -->
-  <div class="row">
-      <select id="buscar">
-      <option value="">Buscar Usuário</option>
-      <option value="usuario1">Usuário 1</option>
-      <option value="usuario2">Usuário 2</option>
-    </select>
-  </div>
+<div class="row">
+  <label for="buscar">Buscar Usuário</label>
+  <select id="buscar">
+    <option value="">Buscar Usuário</option>
+  </select>
+</div>
+
+
 
   <!-- Linha de checkboxes com input de valor -->
   <div class="row checkbox-row">
@@ -969,14 +1040,34 @@ function removerImagem() {
 <!-- FIM DO CODIGO RESPONSAVEL PELO FORMULARIO QUE ADICIONA NOVO USUARIO -->
 
 
-  
 
 
-    
+
+
+
+<!-- CODIGO PARA PEGAR DA PAGINA BUSCAR_MENTORES.PHP E ABRIR NO MENU DE SELEÇÃO  -->
+<script>
+document.addEventListener("DOMContentLoaded", function() {
+  fetch("buscar_mentores.php")
+    .then(response => response.json())
+    .then(data => {
+      const select = document.getElementById("buscar");
+      select.innerHTML = '<option value="">Buscar Usuário</option>';
+
+      data.forEach(nome => {
+        const option = document.createElement("option");
+        option.value = nome;
+        option.textContent = nome;
+        select.appendChild(option);
+      });
+    })
+    .catch(error => console.error("Erro ao carregar mentores:", error));
+});
+</script>
+<!-- FIM DO CODIGO PARA PEGAR DA PAGINA BUSCAR_MENTORES.PHP E ABRIR NO MENU DE SELEÇÃO  -->
+
  
-     
-
-
+    
 
 
 
