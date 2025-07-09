@@ -2,59 +2,51 @@
 
 <?php
 session_start();
+require_once 'config.php';
+mysqli_report(MYSQLI_REPORT_ERROR | MYSQLI_REPORT_STRICT);
 
-if (!isset($_SESSION['usuario_id'])) {
-    echo "<script>alert('ÁREA DE MEMBROS – Faça Já Seu Cadastro Gratuito'); window.location.href = 'home.php';</script>";
+// ✅ Verificação de sessão
+if (!isset($_SESSION['usuario_id']) || empty($_SESSION['usuario_id'])) {
+    echo "<script>alert('Área de membros — faça seu login!'); window.location.href = 'home.php';</script>";
     exit();
+}
+
+// ✅ PROCESSAMENTO DAS AÇÕES
+if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['acao'])) {
+
+    // 📌 Cadastro de Mentor
+    if ($_POST['acao'] === 'cadastrar_mentor') {
+        $usuario_id = $_SESSION['usuario_id'];
+        $nome = $_POST['nome'];
+
+        $foto_nome = null;
+        if (isset($_FILES['foto']) && $_FILES['foto']['error'] === UPLOAD_ERR_OK) {
+            $extensao = pathinfo($_FILES['foto']['name'], PATHINFO_EXTENSION);
+            $foto_nome = uniqid() . '.' . $extensao;
+            $caminho_destino = 'uploads/' . $foto_nome;
+            if (!move_uploaded_file($_FILES['foto']['tmp_name'], $caminho_destino)) {
+                die("Erro ao fazer upload da imagem.");
+            }
+        }
+
+        $stmt = $conexao->prepare("INSERT INTO mentores (id_usuario, foto, nome, data_criacao) VALUES (?, ?, ?, NOW())");
+        $stmt->bind_param("iss", $usuario_id, $foto_nome, $nome);
+
+        if ($stmt->execute()) {
+            echo "<script>alert('✅ Mentor cadastrado com sucesso!'); window.location.href = 'gestao-diaria.php';</script>";
+            exit;
+        } else {
+            echo "<script>alert('Erro ao cadastrar mentor'); window.location.href = 'gestao-diaria.php';</script>";
+            exit;
+        }
+    }
+
+    
 }
 ?>
 
 
 
-<?php // CODIGO RESPONSAVEL PELO CADASTRO DA FOTO E O NOME
-
-include("config.php"); // Inclui a conexão existente
-
-if ($_SERVER['REQUEST_METHOD'] === 'POST') {
-    if (!isset($_SESSION['usuario_id'])) {
-        die("Usuário não está logado.");
-    }
-
-    $usuario_id = $_SESSION['usuario_id'];
-    $nome = $_POST['nome'];
-
-    $foto_nome = null;
-    if (isset($_FILES['foto']) && $_FILES['foto']['error'] === UPLOAD_ERR_OK) {
-        $extensao = pathinfo($_FILES['foto']['name'], PATHINFO_EXTENSION);
-        $foto_nome = uniqid() . '.' . $extensao;
-        $caminho_destino = 'uploads/' . $foto_nome;
-
-
-        if (!move_uploaded_file($_FILES['foto']['tmp_name'], $caminho_destino)) {
-            die("Erro ao fazer o upload da imagem.");
-        }
-    }
-
-   $stmt = $conexao->prepare("INSERT INTO mentores (id_usuario, foto, nome,data_criacao) VALUES (?, ?, ?, NOW())");
-
-
-    $stmt->bind_param("iss", $usuario_id, $foto_nome, $nome);
-
-    if ($stmt->execute()) {
-    echo "<script>
-        alert('Cadastro de mentor efetuado com sucesso!');
-        window.location.href = 'gestao-diaria.php'; // ou outra página que desejar
-        </script>";
-    exit;
-} else {
-    echo "<script>
-        alert('Erro ao cadastrar: " . $stmt->error . "');
-        window.location.href = 'index.php'; // ou uma página de retorno
-        </script>";
-    exit;
-}
-} // FIM DO CODIGO RESPONSAVEL PELO CADASTRO DA FOTO E O NOME
-?> 
 
 
 
@@ -242,108 +234,6 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 
 
 
-
-
-
-/* AQUI VAI O CODIGO PARA O FORMULARIO DE CADASTRO USUARIO */
-.user{
-  max-width: 400px;
-  margin: 30px auto;
-  margin-top: 5px;
-  padding: 12px;
-  background-color: #f7f6f6;
-  border-radius: 12px;
- 
-  font-family: 'Segoe UI', sans-serif;
-  height: 155px;
-  width: 370px;
-}
-
-/* Estrutura horizontal das linhas */
-.row {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  gap: 15px;
-  margin-bottom: 20px;
-  flex-wrap: wrap;
-}
-
-/* Estilo dos botões e campos */
-select,
-input[type="number"],
-.btn-add,
-.btn-submit {
-  padding: 10px 14px;
-  font-size: 14px;
-  border-radius: 8px;
-  border: 1px solid #ccc;
-  flex: 1;
-  min-width: 120px;
-  transition: all 0.3s ease;
-}
-
-select:hover,
-input[type="number"]:hover {
-  border-color: #888;
-}
-
-
-.btn-add:hover {
-  background-color: #43a047;
-}
-
-/* Botão enviar */
-.btn-submit {
-  background-color: #00a651;
-  color: white;
-  border: none;
-  cursor: pointer;
-}
-
-.btn-submit:hover {
-  background-color:rgb(6, 150, 76);
-}
-
-/* Checkboxes e valor lado a lado */
-.checkbox-row {
-  justify-content: flex-start;
-  gap: 20px;
-  flex-wrap: wrap;
-}
-
-.checkbox-row label {
-  display: flex;
-  align-items: center;
-  gap: 6px;
-  font-weight: bold;
-}
-
-input[type="checkbox"] {
-  width: 18px;
-  height: 18px;
-  accent-color: #00a651;
-}
-
-input.red {
-  accent-color: #f82008;
-}
-
-.checkbox-row label:first-child {
-  color: #00a651; /* Green */
-}
-
-.checkbox-row label:nth-child(2) {
-  color: #f82008; /* Red */
-}
-/* AQUI É O FIM  DO CODIGO PARA O FORMULARIO DE CADASTRO USUARIO */
-
-
-
-
-
-
-
 /* AQUI VAI O CODIGO PARA O FORMULARIO DE ADICIONAR UM NOVO USUARIO */
 /* Modal geral */
 .modal {
@@ -481,12 +371,23 @@ input.red {
   to { opacity: 1; transform: translateY(0); }
 }
 
-
-
 /* AQUI O FIM DO CODIGO PARA O FORMULARIO DE ADICIONAR UM NOVO USUARIO */
 
 
 
+/* CODIGO DO FORMULARIO COM FOTO PARA CADASTRO */
+.formulario-mentor {
+  display: none;
+  background-color: #ffffff;
+  padding: 20px;
+  border-radius: 10px;
+  box-shadow: 0 6px 12px rgba(0,0,0,0.15);
+  width: 390px;
+  margin: 10px auto;
+  text-align: center;
+  position: relative;
+  z-index: 1000;
+}
 
 
 
@@ -499,44 +400,107 @@ input.red {
 
 
 
-/* AQUI O CODIGO DA FOTO PERFIL */
+/* AQUI O CODIGO DO PERFIL DE CADA MENTORES*/
 .mentor-card {
     display: flex;
     align-items: center;
     border: 1px solid #dcdcdc;
     border-radius: 8px;
-    padding: 6px 10px;
+    padding: 6px 15px;
     background-color: #fff;
-    width: 330px;
-    height: 58px;
+    width: 300px;
+    height: 65px;
     font-family: Arial, sans-serif;
-    margin-top: 2px;
+    margin-top: 12px;
     box-shadow: 0 1px 2px rgba(0,0,0,0.05);
-    gap: 8px;
+    gap: 0px;
+    background-color: #f7f6f6;
+    border-radius: 10px;
+    padding: 8px;
+    
+    margin: 20px auto;
+    box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+    cursor: pointer;
+    transition: transform 0.3s ease, box-shadow 0.3s ease;
+}
+
+.mentor-card:hover {
+  transform: scale(1.03);
+  box-shadow: 0 8px 12px rgba(0,0,0,0.15);
+}
+
+
+.formulario-mentor {
+  position: fixed;               /* fixo na tela */
+  top: 50%;                      /* 50% da altura da tela */
+  left: 50%;                     /* 50% da largura da tela */
+  transform: translate(-50%, -50%); /* ajusta para centro exato */
+  background-color: #ffffff;
+  padding: 20px;
+  border-radius: 10px;
+  box-shadow: 0 6px 12px rgba(0,0,0,0.15);
+  width: 390px;
+  text-align: center;
+  z-index: 1000;
+  display: none;
+}
+
+
+.mentor-foto-preview {
+  width: 60px;
+  height: 60px;
+  border-radius: 50%;
+  object-fit: cover;
+  border: 2px solid #00a651;
+  margin-bottom: 10px;
+}
+
+.mentor-nome-preview {
+  font-size: 18px;
+  font-weight: bold;
+  margin-bottom: 15px;
+}
+
+.overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100vh;
+  background-color: rgba(0, 0, 0, 0.5); /* fundo escuro */
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 999;
 }
 
 .mentor-left {
     display: flex;
     flex-direction: column;
     align-items: center;
-    width: 60px;
-    flex-shrink: 0;
+    width: 30px;
+    
 }
 
 .mentor-img {
-    width: 45px;
-    height: 45px;
     border-radius: 50%;
     object-fit: cover;
+    margin-top: 15px;
+    width: 50px;
+    height: 50px;
+    border-radius: 50%;
+    object-fit: cover;
+    border: 2px solid #00a651;
 }
 
 .mentor-nome {
     font-size: 11px;
-    margin-top: 4px;
+    margin-top: 2px;
     color: #333;
     text-align: center;
     font-weight: normal;
-    line-height: 1.2;
+    
+    
 }
 
 .mentor-right {
@@ -549,7 +513,7 @@ input.red {
 
 .mentor-values-inline {
     display: flex;
-    gap: 20px;
+    gap: 15px;
     align-items: center;
     justify-content: center;
     height: 100%;
@@ -568,8 +532,13 @@ input.red {
 }
 
 .value-box p {
-    margin: 1px 0;
-    line-height: 1.2;
+    margin: 2px 1;
+    line-height: 0.2;    /* margem de altura entre os valores e os nomes */
+}
+
+.value-box p:nth-child(2) {
+  font-size: 15px;   /* aumenta o tamanho da fonte dos valores */
+  color: #333;       /* cor mais forte para visibilidade */
 }
 
 .value-box p:first-child {
@@ -578,6 +547,7 @@ input.red {
 
 .value-box.green p:first-child {
     color: #00a651;
+    
 }
 
 .value-box.red p:first-child {
@@ -588,34 +558,43 @@ input.red {
     color:rgb(95, 93, 93);
 }
 
+/* FIM DO CODIGO DO PERFIL DE CADA MENTORES */
 
 
 
-/* FIM CODIGO DA FOTO PERFIL */
+
+
 
 
 /* AQUI VAI O CODIGO RESPONSAVEL PELO CAMPO ONDE OS USUARIOS VÃO FICAR  */
 
-
-
 .btn-add-usuario {
-  height: 30px;
-  color: #8a8a8a;
-  background-color: #f7f6f6;  
-  margin-top: 15px;
+  position: fixed;
+  top: 93vh;
+  left: 50%;
+  transform: translateX(-50%);
+  height: 45px;
+  width: 390px;
+  color: white;
+  background: linear-gradient(to right, #00a651, #3ac77b); /* Degradê verde */
   cursor: pointer;
   border-radius: 8px;
-  font-size: 12px;
-  width: 390px;
-  margin-top: 10px; 
+  font-size: 14px;
   border: none;
-  border-bottom: none; /* se quiser tirar o contorno inferior também */
+  z-index: 9999;
+  transition: background 0.3s ease, transform 0.2s ease;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.15); /* Sombra leve */
+}
+
+.btn-add-usuario:hover {
+  background: linear-gradient(to right, #3ac77b, #00a651); /* Inverte o degradê no hover */
   
 }
 
+
 /* Ícone "+" com destaque verde */
 .btn-add-usuario span {
-  color: #00a651;
+  color:rgb(235, 236, 236);
   font-weight: bold;
   font-size: 18px;
   
@@ -632,17 +611,26 @@ input.red {
 .campo_mentores {
   background-color: #f7f6f6;
   display: flex;
-  flex-direction: column;    /* <-- organiza em coluna */
-  align-items: center;       /* <-- centraliza horizontalmente */
+  flex-direction: column;
+  align-items: center;
   justify-content: flex-start;
   width: 390px;
   margin: 0 auto;
   margin-top: 5px;
-  height: 350px;              /* <-- permite crescer conforme conteúdo */
   border-radius: 8px;
   padding: 20px;
   box-sizing: border-box;
+  height: 600px; /* altura padrão para telas maiores */
 }
+
+/* Estilo para dispositivos com largura até 768px (ex: celulares) */
+@media (max-width: 768px) {
+  .campo_mentores {
+    height: 500px; /* altura menor para celular */
+    width: 390px;    /* ajusta a largura também para adaptar melhor */
+  }
+}
+
 
 
 /* AQUI FIM DO CODIGO RESPONSAVEL PELO CAMPO ONDE OS USUARIOS VÃO FICAR  */
@@ -650,7 +638,145 @@ input.red {
 
 
 
-      
+
+
+/* CODIGO FORMULARIO CADASTRO DOS VALORES DOS MEMBROS  */
+  .formulario-mentor {
+    background: white;
+    padding: 30px;
+    border-radius: 15px;
+    box-shadow: 0 8px 20px rgba(0, 0, 0, 0.15);
+    max-width: 400px;
+    width: 100%;
+    text-align: center;
+  }
+
+  .mentor-foto-preview {
+    width: 100px;
+    height: 100px;
+    background: #e2e8f0;
+    border-radius: 50%;
+    margin-bottom: 10px;
+    object-fit: cover;
+  }
+
+  .mentor-nome-preview {
+    font-size: 22px;
+    color: #333;
+    margin-bottom: 20px;
+  }
+
+  form {
+    display: flex;
+    flex-direction: column;
+    gap: 20px;
+  }
+
+  .checkbox-container {
+    display: flex;
+    justify-content: center;
+    gap: 30px;
+    margin-top: 10px;
+  }
+
+  .checkbox-wrapper {
+    display: flex;
+    align-items: center;
+    flex-direction: column;
+  }
+
+  input[type="checkbox"] {
+    appearance: none;
+    width: 30px;
+    height: 30px;
+    border-radius: 8px;
+    border: 2px solid #ccc;
+    transition: background-color 0.3s, transform 0.2s;
+    cursor: pointer;
+  }
+
+  #green:checked {
+    background-color: green;
+    border-color: green;
+  }
+
+  #red:checked {
+    background-color: red;
+    border-color: red;
+  }
+
+  .checkbox-span {
+    margin-top: 8px;
+    font-weight: bold;
+    font-size: 16px;
+    color: #555;
+  }
+
+  input[type="text"] {
+    padding: 10px;
+    border-radius: 8px;
+    border: 1px solid #ccc;
+    font-size: 16px;
+    text-align: center;
+  }
+
+  button {
+    padding: 10px 16px;
+    border: none;
+    border-radius: 8px;
+    font-size: 16px;
+    font-weight: bold;
+    cursor: pointer;
+    transition: transform 0.2s;
+  }
+
+  button[type="submit"] {
+    background-color: #4f46e5;
+    color: white;
+  }
+
+  button[type="submit"]:hover {
+    transform: scale(1.05);
+    background-color: #4338ca;
+  }
+
+  button[type="button"] {
+    background-color: #e11d48;
+    color: white;
+  }
+
+  button[type="button"]:hover {
+    transform: scale(1.05);
+    background-color: #be123c;
+  }
+/* FIM CODIGO FORMULARIO CADASTRO DOS VALORES DOS MEMBROS  */
+
+
+
+/* teste  */
+.toast {
+  position: fixed;
+  bottom: 30px;
+  right: 30px;
+  background-color: #4CAF50;
+  color: white;
+  padding: 16px 24px;
+  border-radius: 8px;
+  font-size: 16px;
+  z-index: 9999;
+  animation: fadeIn 0.5s, fadeOut 0.5s 4s;
+}
+
+@keyframes fadeIn {
+  from { opacity: 0; transform: translateY(40px); }
+  to   { opacity: 1; transform: translateY(0); }
+}
+
+@keyframes fadeOut {
+  from { opacity: 1; }
+  to   { opacity: 0; }
+}
+
 
 
 
@@ -786,36 +912,40 @@ input.red {
   <div class="modal-conteudo">
     <span class="fechar" onclick="fecharModal()">&times;</span>
     
-    <form action="gestao-diaria.php" method="POST" enctype="multipart/form-data">
-      
-      <!-- Pré-visualização da imagem -->
-        
+  <form method="POST" enctype="multipart/form-data" action="gestao-diaria.php" class="formulario-mentor-completo">
+  <input type="hidden" name="acao" value="cadastrar_mentor">
 
-      <label for="foto" class="botao-upload">📸 Escolha a Foto do Mentor</label>
-        <input type="file" id="foto" name="foto" accept="image/*" style="display:none" onchange="mostrarNomeArquivo(this)">
-      <span id="nome-arquivo">Nenhum arquivo selecionado</span>
+  <div class="mentor-form-header">
+    <h3 class="mentor-titulo">Cadastrar Mentor</h3>
+  </div>
 
-      <div id="preview-container">
-           <img id="preview-img" src="https://cdn-icons-png.flaticon.com/512/847/847969.png" alt="Avatar padrão">
-      </div>
+  <div class="input-group">
+    <label for="nome" class="label-form">Nome do Mentor:</label>
+    <input type="text" name="nome" id="nome" class="input-text" placeholder="Nome do Mentor" required>
+  </div>
 
-      
-      <button type="button" id="remover-foto" onclick="removerImagem()" style="display:none; margin-top:10px;">
-         Remover imagem
-      </button>
+  <div class="input-group">
+    <label for="foto" class="label-form">Foto do Mentor:</label>
+    <input type="file" name="foto" id="foto" class="input-file" onchange="mostrarNomeArquivo(this)" required>
+    <span id="nome-arquivo" class="nome-arquivo">Nenhum arquivo selecionado</span>
+  </div>
 
-      <!-- Nome do usuário -->
-      <label for="nome">Nome:</label>
-      <input type="text" id="nome" name="nome" required>
+  <div class="preview-foto-wrapper">
+    <img id="preview-img" src="https://cdn-icons-png.flaticon.com/512/847/847969.png" class="preview-img" alt="Pré-visualização">
+    <button type="button" id="remover-foto" class="btn-remover-foto" onclick="removerImagem()" style="display:none;">Remover Foto</button>
+  </div>
 
-      <!-- Botão de envio -->
-      <button type="submit">Enviar</button>
-    </form>
+  <div class="botoes-formulario">
+    <button type="submit" class="btn-enviar">Cadastrar Mentor</button>
+  </div>
+</form>
+
   </div>
  </div>
 
  
 </div>
+
 <!-- FIM DO CODIGO RESPONSAVEL PELO FORMULARIO QUE ADICIONA NOVO USUARIO -->
 
 
@@ -831,89 +961,129 @@ input.red {
 <!-- CODIGO RESPONSAVEL PELO CAMPO ONDE OS MENTORES VAO FICAR -->
 
 
+<!-- Lista de Mentores -->
+<!-- Lista de Mentores -->
 <div class="campo_mentores">
+  <div class="mentor-wrapper">
+    <?php
+    $id_usuario_logado = $_SESSION['usuario_id'];
+    $sql_mentores = "SELECT id, nome, foto FROM mentores WHERE id_usuario = ?";
+    $stmt_mentores = $conexao->prepare($sql_mentores);
+    $stmt_mentores->bind_param("i", $id_usuario_logado);
+    $stmt_mentores->execute();
+    $result_mentores = $stmt_mentores->get_result();
 
+    while ($mentor = $result_mentores->fetch_assoc()) {
+        $id_mentor = $mentor['id'];
 
- <div class="campo_mentores2">
-    <div class="mentor-wrapper">
-        <?php
+        $sql_valores = "SELECT 
+          COALESCE(SUM(green), 0) AS total_green,
+          COALESCE(SUM(red), 0) AS total_red,
+          COALESCE(SUM(valor_green), 0) AS total_valor_green,
+          COALESCE(SUM(valor_red), 0) AS total_valor_red
+        FROM valor_mentores WHERE id_mentores = ?";
+        $stmt_valores = $conexao->prepare($sql_valores);
+        $stmt_valores->bind_param("i", $id_mentor);
+        $stmt_valores->execute();
+        $valores = $stmt_valores->get_result()->fetch_assoc();
 
-        // Conexão com o banco
-        $conn = new mysqli("localhost", "root", "", "formulario-carlos");
+        $total_subtraido = $valores['total_valor_green'] - $valores['total_valor_red'];
 
-        if ($conn->connect_error) {
-            die("Erro na conexão: " . $conn->connect_error);
-        }
-
-        // Garante que a sessão esteja ativa
-        if (session_status() === PHP_SESSION_NONE) {
-            session_start();
-        }
-
-        $id_usuario_logado = $_SESSION['usuario_id'];
-
-        // Buscar mentores associados ao usuário logado
-        $sql_mentores = "SELECT id, nome, foto FROM mentores WHERE id_usuario = ?";
-        $stmt_mentores = $conn->prepare($sql_mentores);
-        $stmt_mentores->bind_param("i", $id_usuario_logado);
-        $stmt_mentores->execute();
-        $result_mentores = $stmt_mentores->get_result();
-
-        while ($mentor = $result_mentores->fetch_assoc()) {
-            $id_mentor = $mentor['id'];
-
-            // Buscar valores agregados
-            $sql_valores = "SELECT 
-                COALESCE(SUM(green), 0) AS total_green,
-                COALESCE(SUM(red), 0) AS total_red,
-                COALESCE(SUM(valor_green), 0) AS total_valor_green,
-                COALESCE(SUM(valor_red), 0) AS total_valor_red
-                FROM valor_mentores
-                WHERE id_mentores = ?";
-
-            $stmt_valores = $conn->prepare($sql_valores);
-            $stmt_valores->bind_param("i", $id_mentor);
-            $stmt_valores->execute();
-            $result_valores = $stmt_valores->get_result();
-            $valores = $result_valores->fetch_assoc();
-
-            $total_subtraido = $valores['total_valor_green'] - $valores['total_valor_red'];
-
-            // Card do mentor
-            echo "
-<div class='mentor-card'>
-    <div class='mentor-left'>
-        <img src='uploads/{$mentor['foto']}' alt='Foto de {$mentor['nome']}' class='mentor-img' />
-        <h3 class='mentor-nome'>{$mentor['nome']}</h3>
-    </div>
-    <div class='mentor-right'>
-        <div class='mentor-values-inline'>
-            <div class='value-box green'>
-                <p>Green</p>
-                <p>{$valores['total_green']}</p>
+        echo "
+          <div class='mentor-card' 
+               data-nome='{$mentor['nome']}'
+               data-foto='uploads/{$mentor['foto']}'
+               data-id='{$mentor['id']}'>
+            <div class='mentor-header'>
+              <img src='uploads/{$mentor['foto']}' class='mentor-img' />
+              <h3 class='mentor-nome'>{$mentor['nome']}</h3>
             </div>
-            <div class='value-box red'>
-                <p>Red</p>
-                <p>{$valores['total_red']}</p>
+            <div class='mentor-right'>
+              <div class='mentor-values-inline'>
+                <div class='value-box green'><p>Green</p><p>{$valores['total_green']}</p></div>
+                <div class='value-box red'><p>Red</p><p>{$valores['total_red']}</p></div>
+                <div class='value-box saldo'><p>Saldo</p><p>R$ {$total_subtraido}</p></div>
+              </div>
             </div>
-            <div class='value-box saldo'>
-                <p>G/P</p>
-                <p>R$ {$total_subtraido}</p>
-            </div>
-        </div>
-    </div>
+          </div>
+        ";
+    }
+    ?>
+  </div>
 </div>
 
-";
+
+
+<div class="formulario-mentor">
+  <img src="" class="mentor-foto-preview" width="100" />
+  <h3 class="mentor-nome-preview">Nome do Mentor</h3>
+  <form id="form-mentor" method="POST">
+    <input type="hidden" name="id_mentor" class="mentor-id-hidden">
+    <label><input type="checkbox" name="green"> Green</label>
+    <label><input type="checkbox" name="red"> Red</label>
+    <input type="text" name="valor" placeholder="Digite o valor" required>
+    <button type="submit">Enviar</button>
+    <button type="button" onclick="fecharFormulario()">❌ Fechar</button>
+  </form>
+</div>
+
+<div id="mensagem-status" class="toast" style="display:none;"></div>
+
+<script>
+document.addEventListener("DOMContentLoaded", function () {
+  const cards = document.querySelectorAll(".mentor-card");
+  const formulario = document.querySelector(".formulario-mentor");
+  const nomePreview = document.querySelector(".mentor-nome-preview");
+  const fotoPreview = document.querySelector(".mentor-foto-preview");
+  const idHidden = document.querySelector(".mentor-id-hidden");
+  const form = document.getElementById("form-mentor");
+
+  function mostrarToast(mensagem) {
+    const toast = document.getElementById("mensagem-status");
+    toast.textContent = mensagem;
+    toast.style.display = "block";
+    setTimeout(() => {
+      toast.style.display = "none";
+    }, 5000);
+  }
+
+  cards.forEach(card => {
+    card.addEventListener("click", function () {
+      nomePreview.textContent = card.dataset.nome;
+      fotoPreview.src = card.dataset.foto;
+      idHidden.value = card.dataset.id;
+      formulario.style.display = "block";
+    });
+  });
+
+  window.fecharFormulario = function () {
+    formulario.style.display = "none";
+  };
+
+  form.addEventListener("submit", function (e) {
+    e.preventDefault();
+    const formData = new FormData(this);
+
+    fetch("cadastrar-valor.php", {
+      method: "POST",
+      body: formData
+    })
+    .then(res => res.text())
+    .then(msg => {
+      mostrarToast(msg);
+      form.reset();
+      formulario.style.display = "none";
+    })
+    .catch(err => {
+      mostrarToast("❌ Erro: " + err);
+    });
+  });
+});
+</script>
 
 
 
 
-        }
-
-        ?>
-    </div>
-  </div>
 
 
 
@@ -925,58 +1095,16 @@ input.red {
 
 
 
- <div class="add-user">
+
+
+
+
+<!-- BOTÃO ADICIONAR USUARIO -->
+<div class="add-user">
         <button class="btn-add-usuario" onclick="abrirModal()">
           <span>+</span> Adicionar Mentoria
         </button>
  </div>
-
-
-
-</div>
-  
-  
-
-<!-- FIM DO CODIGO RESPONSAVEL PELO CAMPO ONDE OS MENTORES VAO FICAR -->
-
-
-
-
-
-<!-- CODIGO RESPONSAVEL PELO FORMULARIO QUE BUSCA USUARIO E CADASTRA VALORES REFERENTE  -->
-
-<div class="user">
-
-  <!-- Linha de adicionar e buscar usuário -->
-<div class="row">
-  <label for="buscar">Buscar Usuário</label>
-  <select id="buscar">
-    <option value="">Buscar Usuário</option>
-  </select>
-</div>
-
-
-
-  <!-- Linha de checkboxes com input de valor -->
-  <div class="row checkbox-row">
-    <label>
-      <input type="checkbox" id="green" />Green</label>
-
-    <label>
-      <input type="checkbox" class="red" id="red" />Red</label>
-
-    <input type="number" id="valor" placeholder="Valor" />
-  </div>
-
-  <!-- Botão de envio -->
-  <div class="row">
-    <button class="btn-submit">Enviar</button>
-  </div>
-
-</div>
-
-<!-- FIM DO CODIGO RESPONSAVEL PELO FORMULARIO QUE BUSCA USUARIO E CADASTRA VALORES REFERENTE  -->
-
 
 
 
@@ -1038,40 +1166,6 @@ function removerImagem() {
 </script>
 
 <!-- FIM DO CODIGO RESPONSAVEL PELO FORMULARIO QUE ADICIONA NOVO USUARIO -->
-
-
-
-
-
-
-
-<!-- CODIGO PARA PEGAR DA PAGINA BUSCAR_MENTORES.PHP E ABRIR NO MENU DE SELEÇÃO  -->
-<script>
-document.addEventListener("DOMContentLoaded", function() {
-  fetch("buscar_mentores.php")
-    .then(response => response.json())
-    .then(data => {
-      const select = document.getElementById("buscar");
-      select.innerHTML = '<option value="">Buscar Usuário</option>';
-
-      data.forEach(nome => {
-        const option = document.createElement("option");
-        option.value = nome;
-        option.textContent = nome;
-        select.appendChild(option);
-      });
-    })
-    .catch(error => console.error("Erro ao carregar mentores:", error));
-});
-</script>
-<!-- FIM DO CODIGO PARA PEGAR DA PAGINA BUSCAR_MENTORES.PHP E ABRIR NO MENU DE SELEÇÃO  -->
-
- 
-    
-
-
-
-
 
 
 

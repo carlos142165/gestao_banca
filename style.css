@@ -2,35 +2,94 @@ body {
   background-color: #a52a2a;
 }
 
-/* AQUI O CODIGO DA FOTO PERFIL */
-.mentor-card {
-  border: 1px solid #ddd;
-  padding: 15px;
+/* AQUI VAI O CODIGO PARA O FORMULARIO DE CADASTRO USUARIO */
+.user {
+  max-width: 400px;
+  margin: 30px auto;
+  margin-top: 5px;
+  padding: 12px;
+  background-color: #f7f6f6;
+  border-radius: 12px;
+
+  font-family: "Segoe UI", sans-serif;
+  height: 155px;
+  width: 370px;
+}
+
+/* Estrutura horizontal das linhas */
+.row {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 15px;
   margin-bottom: 20px;
-  border-radius: 8px;
-  box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
-  max-width: 250px;
-  text-align: center;
-  background-color: #fff;
+  flex-wrap: wrap;
 }
 
-.mentor-card h3 {
-  margin-top: 0;
-  font-size: 18px;
-  color: #333;
-}
-
-.mentor-card p {
+/* Estilo dos botões e campos */
+select,
+input[type="number"],
+.btn-add,
+.btn-submit {
+  padding: 10px 14px;
   font-size: 14px;
-  margin: 5px 0;
+  border-radius: 8px;
+  border: 1px solid #ccc;
+  flex: 1;
+  min-width: 120px;
+  transition: all 0.3s ease;
 }
 
-.mentor-img {
-  width: 100px;
-  height: 100px;
-  border-radius: 50%;
-  object-fit: cover;
-  margin-bottom: 10px;
+select:hover,
+input[type="number"]:hover {
+  border-color: #888;
 }
 
-/* FIM CODIGO DA FOTO PERFIL */
+.btn-add:hover {
+  background-color: #43a047;
+}
+
+/* Botão enviar */
+.btn-submit {
+  background-color: #00a651;
+  color: white;
+  border: none;
+  cursor: pointer;
+}
+
+.btn-submit:hover {
+  background-color: rgb(6, 150, 76);
+}
+
+/* Checkboxes e valor lado a lado */
+.checkbox-row {
+  justify-content: flex-start;
+  gap: 20px;
+  flex-wrap: wrap;
+}
+
+.checkbox-row label {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  font-weight: bold;
+}
+
+input[type="checkbox"] {
+  width: 18px;
+  height: 18px;
+  accent-color: #00a651;
+}
+
+input.red {
+  accent-color: #f82008;
+}
+
+.checkbox-row label:first-child {
+  color: #00a651; /* Green */
+}
+
+.checkbox-row label:nth-child(2) {
+  color: #f82008; /* Red */
+}
+/* AQUI É O FIM  DO CODIGO PARA O FORMULARIO DE CADASTRO USUARIO */
