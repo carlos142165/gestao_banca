@@ -1,5 +1,3 @@
-
-
 <?php
 session_start();
 require_once 'config.php';
@@ -45,756 +43,33 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['acao'])) {
 }
 ?>
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 <!DOCTYPE html>
 <html lang="pt-br">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>Gestão do Dia</title>
+<style>
 
-
-  <head>
-    <meta charset="UTF-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Gestão do Dia</title>
-
-    <style>
-
-      body, html {
-      height: 100%;
-      font-family: 'Poppins', sans-serif;
-      background-color:rgb(235, 235, 235);
-      margin: 0;
-      padding: 0;
-      color: #f5f5f5;
-      
-
-    }
-
-
-
-
-
-/*AQUI CODIGO PARA OS VALORES E PLACAR*/
-
-/* Container geral */
-.container-valores {
-  background-color: #f7f6f6; /* cinza claro elegante */
-  padding: 20px;
-  border-radius: 12px;
-  box-sizing: border-box;
-  max-width: 400px;
-  margin: 0 auto;
-  margin-top: 15px;
-  width: 390px;
-}
-
-/* Placar interno */
-.placar {
-  display: flex;
-  flex-direction: column;
-  width: 100%;
-  font-family: 'Segoe UI', Arial, sans-serif;
-}
-
-/* Pontuação */
-.pontuacao {
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  font-size: 2.8em;
-  margin-bottom: 20px;
-}
-
-.pontos {
-  font-weight: bold;
-  margin: 0 12px;
-}
-
-.placar-green {
-  color: #00a651;
-  font-size: 1.2em;
-  gap: 30px;
-  margin-right: 60px;
-  font-weight: bold;
- 
-}
-
-.placar-red {
-  color: #f82008;
-  font-size: 1.2em;
-  margin-left: 60px;
-  font-weight: bold;
-  
-}
-
-.separador {
-  font-size: 1.2em;
-  margin: 0 8px;
-  color:rgb(105, 104, 104);
-  font-weight: bold;
-  margin-top: -10px;
-}
-
-.informacoes-row {
-  display: flex;
-  justify-content: space-between; /* ou use center para centralizar */
-  gap: 30px; /* espaço entre os blocos */
-  
-}
-
-
-.info-item {
-  display: flex;
-  flex-direction: column;
-  align-items: flex-start;
-  background-color: #f7f6f6;
-  padding: 12px;
-  border-radius: 10px;
-  text-align: left;
-  box-shadow: 0 2px 5px rgba(0,0,0,0.1);
-  justify-content: center; /* alinha verticalmente ao centro */
-  align-items: center;     /* alinha horizontalmente ao centro */
-  width: 200px;
-  
-  
-}
-
-.rotulo-meta {
-  display: block;
-  font-size: 12px;
-  color:rgb(172, 167, 167);
-  margin-bottom: 6px;
-  margin-left: 0px;
-  margin: 0;
-  margin-left: 0;
-  font-weight: bold;
-  margin-top: 3px;
-  
-}
-
-.rotulo-saldo {
-  display: block;
-  font-size: 12px;
-  color:rgb(172, 167, 167);
-  margin-bottom: 6px;
-  margin-left:-3px;
-  margin: 0;
-  margin-left: 0px;
-  font-weight: bold;
-  margin-top: 3px;
-  
-  
-}
-
-.valor-meta {
-  font-size: 1.4em;
-  font-weight: bold;
-  color:rgb(161, 158, 158);
-  margin-bottom: 2px;
-  margin-left: 0px;
-}
-
-.valor-saldo {
-  font-size: 1.4em;
-  font-weight: bold;
-  color:rgb(161, 158, 158);
-  margin-bottom: 2px;
-  margin-left: 0px;
-}
-
-.cinza {
-  color: #555;
-}
-/* FIM CODIGO PARA OS VALORES E PLACAR */
-
-
-
-
-
-
-
-
-/* AQUI VAI O CODIGO PARA O FORMULARIO DE ADICIONAR UM NOVO USUARIO */
-/* Modal geral */
-.modal {
-  display: none;
-  position: fixed;
-  z-index: 1000;
-  left: 0;
-  top: 0;
-  width: 100%;
+body, html {
   height: 100%;
-  background-color: rgba(0,0,0,0.6);
+  font-family: 'Poppins', sans-serif;
+  background-color:rgb(235, 235, 235);
+  margin: 0;
+  padding: 0;
+  color: #f5f5f5;
+      
 }
-
-/* Conteúdo do modal centralizado */
-.modal-conteudo {
-  position: relative; /* ← isso é fundamental */
-  background-color: #fff;
-  margin: 5% auto;
-  padding: 30px 25px;
-  border-radius: 12px;
-  max-width: 400px;
-  width: 70%;
-  box-shadow: 0 0 15px rgba(0,0,0,0.3);
-  animation: fadeIn 0.3s ease-in-out;
-  font-family: 'Segoe UI', sans-serif;
-  top: 100px;
-}
-
-/* Título e botão de fechar */
-.fechar {
-  position: absolute;
-  top: 2px;
-  right: 15px;
-  font-size: 26px;
-  cursor: pointer;
-  color: #888;
-  font-weight: bold;
-  background: none;
-  border: none;
-}
-
-/* Labels e campos */
-.modal label {
-  display: block;
-  margin-top: 15px;
-  font-weight: 500;
-  color: #333;
-}
-
-.modal input[type="text"],
-.modal input[type="file"],
-.modal button[type="submit"],
-.modal input[type="number"] {
-  width: 100%;
-  padding: 10px 12px;
-  margin-top: 8px;
-  border: 1px solid #ccc;
-  border-radius: 8px;
-  box-sizing: border-box;
-  font-size: 14px;
-}
-
-/* Botão customizado para upload */
-.botao-upload {
-  display: inline-block;
-  padding: 10px 15px;
-  margin-top: 15px;
-  background-color: #4CAF50;
-  color: white;
-  cursor: pointer;
-  border-radius: 8px;
-  font-weight: bold;
-  text-align: center;
-}
-
-/* Pré-visualização da imagem */
-#preview-container {
-  margin-top: 15px;
-  text-align: center;
-}
-
-#preview-img {
-  width: 120px;
-  height: 120px;
-  border-radius: 50%;
-  object-fit: cover;
-  border: 3px solid #4CAF50;
-  box-shadow: 0 0 8px rgba(0,0,0,0.2);
-  transition: 0.3s ease-in-out;
-}
-
-/* Botão remover imagem */
-#remover-foto {
-  background-color: #f44336;
-  color: white;
-  border: none;
-  padding: 8px 12px;
-  border-radius: 8px;
-  cursor: pointer;
-  margin-top: 10px;
-  font-size: 14px;
-  display: inline-block;
-}
-
-/* Botão de envio */
-.modal button[type="submit"] {
-  background-color: #2196F3;
-  color: white;
-  border: none;
-  padding: 10px 0;
-  margin-top: 20px;
-  border-radius: 8px;
-  font-size: 15px;
-  font-weight: bold;
-  transition: background-color 0.3s ease;
-}
-
-.modal button[type="submit"]:hover {
-  background-color: #1976D2;
-}
-
-/* Nome do arquivo */
-#nome-arquivo {
-  display: block;
-  margin-top: 8px;
-  font-style: italic;
-  font-size: 13px;
-  color: #666;
-  text-align: center;
-}
-
-/* Animação */
-@keyframes fadeIn {
-  from { opacity: 0; transform: translateY(-20px); }
-  to { opacity: 1; transform: translateY(0); }
-}
-
-/* AQUI O FIM DO CODIGO PARA O FORMULARIO DE ADICIONAR UM NOVO USUARIO */
-
-
-
-/* CODIGO DO FORMULARIO COM FOTO PARA CADASTRO */
-.formulario-mentor {
-  display: none;
-  background-color: #ffffff;
-  padding: 20px;
-  border-radius: 10px;
-  box-shadow: 0 6px 12px rgba(0,0,0,0.15);
-  width: 390px;
-  margin: 10px auto;
-  text-align: center;
-  position: relative;
-  z-index: 1000;
-}
-
-
-
-
-
-
-
-
-
-
-
-
-/* AQUI O CODIGO DO PERFIL DE CADA MENTORES*/
-.mentor-card {
-    display: flex;
-    align-items: center;
-    border: 1px solid #dcdcdc;
-    border-radius: 8px;
-    padding: 6px 15px;
-    background-color: #fff;
-    width: 300px;
-    height: 65px;
-    font-family: Arial, sans-serif;
-    margin-top: 12px;
-    box-shadow: 0 1px 2px rgba(0,0,0,0.05);
-    gap: 0px;
-    background-color: #f7f6f6;
-    border-radius: 10px;
-    padding: 8px;
-    
-    margin: 20px auto;
-    box-shadow: 0 4px 6px rgba(0,0,0,0.1);
-    cursor: pointer;
-    transition: transform 0.3s ease, box-shadow 0.3s ease;
-}
-
-.mentor-card:hover {
-  transform: scale(1.03);
-  box-shadow: 0 8px 12px rgba(0,0,0,0.15);
-}
-
-
-.formulario-mentor {
-  position: fixed;               /* fixo na tela */
-  top: 50%;                      /* 50% da altura da tela */
-  left: 50%;                     /* 50% da largura da tela */
-  transform: translate(-50%, -50%); /* ajusta para centro exato */
-  background-color: #ffffff;
-  padding: 20px;
-  border-radius: 10px;
-  box-shadow: 0 6px 12px rgba(0,0,0,0.15);
-  width: 390px;
-  text-align: center;
-  z-index: 1000;
-  display: none;
-}
-
-
-.mentor-foto-preview {
-  width: 60px;
-  height: 60px;
-  border-radius: 50%;
-  object-fit: cover;
-  border: 2px solid #00a651;
-  margin-bottom: 10px;
-}
-
-.mentor-nome-preview {
-  font-size: 18px;
-  font-weight: bold;
-  margin-bottom: 15px;
-}
-
-.overlay {
-  position: fixed;
-  top: 0;
-  left: 0;
-  width: 100%;
-  height: 100vh;
-  background-color: rgba(0, 0, 0, 0.5); /* fundo escuro */
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  z-index: 999;
-}
-
-.mentor-left {
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    width: 30px;
-    
-}
-
-.mentor-img {
-    border-radius: 50%;
-    object-fit: cover;
-    margin-top: 15px;
-    width: 50px;
-    height: 50px;
-    border-radius: 50%;
-    object-fit: cover;
-    border: 2px solid #00a651;
-}
-
-.mentor-nome {
-    font-size: 11px;
-    margin-top: 2px;
-    color: #333;
-    text-align: center;
-    font-weight: normal;
-    
-    
-}
-
-.mentor-right {
-    flex: 1;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    height: 100%;
-}
-
-.mentor-values-inline {
-    display: flex;
-    gap: 15px;
-    align-items: center;
-    justify-content: center;
-    height: 100%;
-    color:rgb(95, 93, 93);
-    
-}
-
-.value-box {
-    display: flex;
-    flex-direction: column;
-    justify-content: center;
-    align-items: center;
-    text-align: center;
-    width: 60px;
-    font-size: 13px;
-}
-
-.value-box p {
-    margin: 2px 1;
-    line-height: 0.2;    /* margem de altura entre os valores e os nomes */
-}
-
-.value-box p:nth-child(2) {
-  font-size: 15px;   /* aumenta o tamanho da fonte dos valores */
-  color: #333;       /* cor mais forte para visibilidade */
-}
-
-.value-box p:first-child {
-    font-weight: bold;
-}
-
-.value-box.green p:first-child {
-    color: #00a651;
-    
-}
-
-.value-box.red p:first-child {
-    color: #ff4d4d;
-}
-
-.value-box.saldo p:first-child {
-    color:rgb(95, 93, 93);
-}
-
-/* FIM DO CODIGO DO PERFIL DE CADA MENTORES */
-
-
-
-
-
-
-
-/* AQUI VAI O CODIGO RESPONSAVEL PELO CAMPO ONDE OS USUARIOS VÃO FICAR  */
-
-.btn-add-usuario {
-  position: fixed;
-  top: 93vh;
-  left: 50%;
-  transform: translateX(-50%);
-  height: 45px;
-  width: 390px;
-  color: white;
-  background: linear-gradient(to right, #00a651, #3ac77b); /* Degradê verde */
-  cursor: pointer;
-  border-radius: 8px;
-  font-size: 14px;
-  border: none;
-  z-index: 9999;
-  transition: background 0.3s ease, transform 0.2s ease;
-  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.15); /* Sombra leve */
-}
-
-.btn-add-usuario:hover {
-  background: linear-gradient(to right, #3ac77b, #00a651); /* Inverte o degradê no hover */
-  
-}
-
-
-/* Ícone "+" com destaque verde */
-.btn-add-usuario span {
-  color:rgb(235, 236, 236);
-  font-weight: bold;
-  font-size: 18px;
-  
-}
-
-.add-user {
-  display: flex;
-  justify-content: center;
-  width: 100%;
-  margin-top: 20px;
-}
-
-
-.campo_mentores {
-  background-color: #f7f6f6;
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  justify-content: flex-start;
-  width: 390px;
-  margin: 0 auto;
-  margin-top: 5px;
-  border-radius: 8px;
-  padding: 20px;
-  box-sizing: border-box;
-  height: 600px; /* altura padrão para telas maiores */
-}
-
-/* Estilo para dispositivos com largura até 768px (ex: celulares) */
-@media (max-width: 768px) {
-  .campo_mentores {
-    height: 500px; /* altura menor para celular */
-    width: 390px;    /* ajusta a largura também para adaptar melhor */
-  }
-}
-
-
-
-/* AQUI FIM DO CODIGO RESPONSAVEL PELO CAMPO ONDE OS USUARIOS VÃO FICAR  */
-
-
-
-
-
-
-/* CODIGO FORMULARIO CADASTRO DOS VALORES DOS MEMBROS  */
-  .formulario-mentor {
-    background: white;
-    padding: 30px;
-    border-radius: 15px;
-    box-shadow: 0 8px 20px rgba(0, 0, 0, 0.15);
-    max-width: 400px;
-    width: 100%;
-    text-align: center;
-  }
-
-  .mentor-foto-preview {
-    width: 100px;
-    height: 100px;
-    background: #e2e8f0;
-    border-radius: 50%;
-    margin-bottom: 10px;
-    object-fit: cover;
-  }
-
-  .mentor-nome-preview {
-    font-size: 22px;
-    color: #333;
-    margin-bottom: 20px;
-  }
-
-  form {
-    display: flex;
-    flex-direction: column;
-    gap: 20px;
-  }
-
-  .checkbox-container {
-    display: flex;
-    justify-content: center;
-    gap: 30px;
-    margin-top: 10px;
-  }
-
-  .checkbox-wrapper {
-    display: flex;
-    align-items: center;
-    flex-direction: column;
-  }
-
-  input[type="checkbox"] {
-    appearance: none;
-    width: 30px;
-    height: 30px;
-    border-radius: 8px;
-    border: 2px solid #ccc;
-    transition: background-color 0.3s, transform 0.2s;
-    cursor: pointer;
-  }
-
-  #green:checked {
-    background-color: green;
-    border-color: green;
-  }
-
-  #red:checked {
-    background-color: red;
-    border-color: red;
-  }
-
-  .checkbox-span {
-    margin-top: 8px;
-    font-weight: bold;
-    font-size: 16px;
-    color: #555;
-  }
-
-  input[type="text"] {
-    padding: 10px;
-    border-radius: 8px;
-    border: 1px solid #ccc;
-    font-size: 16px;
-    text-align: center;
-  }
-
-  button {
-    padding: 10px 16px;
-    border: none;
-    border-radius: 8px;
-    font-size: 16px;
-    font-weight: bold;
-    cursor: pointer;
-    transition: transform 0.2s;
-  }
-
-  button[type="submit"] {
-    background-color: #4f46e5;
-    color: white;
-  }
-
-  button[type="submit"]:hover {
-    transform: scale(1.05);
-    background-color: #4338ca;
-  }
-
-  button[type="button"] {
-    background-color: #e11d48;
-    color: white;
-  }
-
-  button[type="button"]:hover {
-    transform: scale(1.05);
-    background-color: #be123c;
-  }
-/* FIM CODIGO FORMULARIO CADASTRO DOS VALORES DOS MEMBROS  */
-
-
-
-/* teste  */
-.toast {
-  position: fixed;
-  bottom: 30px;
-  right: 30px;
-  background-color: #4CAF50;
-  color: white;
-  padding: 16px 24px;
-  border-radius: 8px;
-  font-size: 16px;
-  z-index: 9999;
-  animation: fadeIn 0.5s, fadeOut 0.5s 4s;
-}
-
-@keyframes fadeIn {
-  from { opacity: 0; transform: translateY(40px); }
-  to   { opacity: 1; transform: translateY(0); }
-}
-
-@keyframes fadeOut {
-  from { opacity: 1; }
-  to   { opacity: 0; }
-}
-
-
-
 
 
 </style>
      
      <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
-
+     <link rel="stylesheet" href="css/arqui.css">
+     <script src="script.js" defer></script>
+     
 </head>
-
-
-
-
-
-
-
-
-  <body>
+<body>
 
 
 
@@ -972,16 +247,23 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['acao'])) {
     $stmt_mentores->bind_param("i", $id_usuario_logado);
     $stmt_mentores->execute();
     $result_mentores = $stmt_mentores->get_result();
+    
+    $hoje = date('Y-m-d'); // Pegando a data no formato YYYY-MM-DD
 
     while ($mentor = $result_mentores->fetch_assoc()) {
         $id_mentor = $mentor['id'];
 
         $sql_valores = "SELECT 
-          COALESCE(SUM(green), 0) AS total_green,
-          COALESCE(SUM(red), 0) AS total_red,
-          COALESCE(SUM(valor_green), 0) AS total_valor_green,
-          COALESCE(SUM(valor_red), 0) AS total_valor_red
-        FROM valor_mentores WHERE id_mentores = ?";
+        COALESCE(SUM(green), 0) AS total_green,
+        COALESCE(SUM(red), 0) AS total_red,
+        COALESCE(SUM(valor_green), 0) AS total_valor_green,
+        COALESCE(SUM(valor_red), 0) AS total_valor_red
+        FROM valor_mentores 
+        WHERE id_mentores = ? 
+        AND DATE(data_criacao) = ?";
+        $stmt_valores = $conexao->prepare($sql_valores);
+        $stmt_valores->bind_param("is", $id_mentor, $hoje);
+
         $stmt_valores = $conexao->prepare($sql_valores);
         $stmt_valores->bind_param("i", $id_mentor);
         $stmt_valores->execute();
@@ -1012,15 +294,19 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['acao'])) {
   </div>
 </div>
 
-
-
 <div class="formulario-mentor">
   <img src="" class="mentor-foto-preview" width="100" />
   <h3 class="mentor-nome-preview">Nome do Mentor</h3>
   <form id="form-mentor" method="POST">
     <input type="hidden" name="id_mentor" class="mentor-id-hidden">
-    <label><input type="checkbox" name="green"> Green</label>
-    <label><input type="checkbox" name="red"> Red</label>
+      <label>
+    <input type="checkbox" name="green" style="display:none" onchange="toggleColor(this, 'green')">
+    <span class="green">Green</span>
+    </label>
+    <label>
+    <input type="checkbox" name="red" style="display:none" onchange="toggleColor(this, 'red')">
+    <span class="red">Red</span>
+    </label>
     <input type="text" name="valor" placeholder="Digite o valor" required>
     <button type="submit">Enviar</button>
     <button type="button" onclick="fecharFormulario()">❌ Fechar</button>
@@ -1047,6 +333,24 @@ document.addEventListener("DOMContentLoaded", function () {
     }, 5000);
   }
 
+
+function atualizarCards() {
+  fetch("carregar-mentores.php")
+    .then(res => res.text())
+    .then(html => {
+      document.querySelector(".mentor-wrapper").innerHTML = html;
+      // Reatribuir eventos aos novos cards
+      document.querySelectorAll(".mentor-card").forEach(card => {
+        card.addEventListener("click", function () {
+          nomePreview.textContent = card.dataset.nome;
+          fotoPreview.src = card.dataset.foto;
+          idHidden.value = card.dataset.id;
+          formulario.style.display = "block";
+        });
+      });
+    });
+}
+
   cards.forEach(card => {
     card.addEventListener("click", function () {
       nomePreview.textContent = card.dataset.nome;
@@ -1068,12 +372,12 @@ document.addEventListener("DOMContentLoaded", function () {
       method: "POST",
       body: formData
     })
-    .then(res => res.text())
     .then(msg => {
-      mostrarToast(msg);
-      form.reset();
-      formulario.style.display = "none";
-    })
+     mostrarToast(msg);
+     form.reset();
+     formulario.style.display = "none";
+     atualizarCards(); // ⬅️ Atualiza os cards dinamicamente
+   })
     .catch(err => {
       mostrarToast("❌ Erro: " + err);
     });
@@ -1087,28 +391,12 @@ document.addEventListener("DOMContentLoaded", function () {
 
 
 
-
-
-
-
-
-
-
-
-
-
-
-
 <!-- BOTÃO ADICIONAR USUARIO -->
 <div class="add-user">
         <button class="btn-add-usuario" onclick="abrirModal()">
           <span>+</span> Adicionar Mentoria
         </button>
  </div>
-
-
-
-
 
 
 
@@ -1167,7 +455,15 @@ function removerImagem() {
 
 <!-- FIM DO CODIGO RESPONSAVEL PELO FORMULARIO QUE ADICIONA NOVO USUARIO -->
 
-
+<script>
+  function toggleColor(checkbox, color) {
+    const span = checkbox.nextElementSibling;
+    span.style.backgroundColor = checkbox.checked
+      ? (color === 'green' ? '#4CAF50' : '#F44336')
+      : '#fff';
+    span.style.color = checkbox.checked ? '#fff' : '#000';
+  }
+</script>
 
 
 </body>

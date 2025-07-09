@@ -40,3 +40,74 @@ document
   });
 
 // AQUI
+
+
+<script>
+document.addEventListener("DOMContentLoaded", function () {
+  const cards = document.querySelectorAll(".mentor-card");
+  const formulario = document.querySelector(".formulario-mentor");
+  const nomePreview = document.querySelector(".mentor-nome-preview");
+  const fotoPreview = document.querySelector(".mentor-foto-preview");
+  const idHidden = document.querySelector(".mentor-id-hidden");
+  const form = document.getElementById("form-mentor");
+
+  function mostrarToast(mensagem) {
+    const toast = document.getElementById("mensagem-status");
+    toast.textContent = mensagem;
+    toast.style.display = "block";
+    setTimeout(() => {
+      toast.style.display = "none";
+    }, 5000);
+  }
+
+
+function atualizarCards() {
+  fetch("carregar-mentores.php")
+    .then(res => res.text())
+    .then(html => {
+      document.querySelector(".mentor-wrapper").innerHTML = html;
+      // Reatribuir eventos aos novos cards
+      document.querySelectorAll(".mentor-card").forEach(card => {
+        card.addEventListener("click", function () {
+          nomePreview.textContent = card.dataset.nome;
+          fotoPreview.src = card.dataset.foto;
+          idHidden.value = card.dataset.id;
+          formulario.style.display = "block";
+        });
+      });
+    });
+}
+
+  cards.forEach(card => {
+    card.addEventListener("click", function () {
+      nomePreview.textContent = card.dataset.nome;
+      fotoPreview.src = card.dataset.foto;
+      idHidden.value = card.dataset.id;
+      formulario.style.display = "block";
+    });
+  });
+
+  window.fecharFormulario = function () {
+    formulario.style.display = "none";
+  };
+
+  form.addEventListener("submit", function (e) {
+    e.preventDefault();
+    const formData = new FormData(this);
+
+    fetch("cadastrar-valor.php", {
+      method: "POST",
+      body: formData
+    })
+    .then(msg => {
+     mostrarToast(msg);
+     form.reset();
+     formulario.style.display = "none";
+     atualizarCards(); // ⬅️ Atualiza os cards dinamicamente
+   })
+    .catch(err => {
+      mostrarToast("❌ Erro: " + err);
+    });
+  });
+});
+</script>
