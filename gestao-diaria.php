@@ -372,7 +372,7 @@ body, html {
     height: 65px;
     font-family: Arial, sans-serif;
     margin-top: 12px;
-    box-shadow: 0 1px 2px rgba(0,0,0,0.05);
+    box-shadow: 0 2px 5px rgba(0,0,0,0.1);
     gap: 0px;
     background-color: #f7f6f6;
     border-radius: 10px;
@@ -556,46 +556,48 @@ body, html {
 /* AQUI VAI O CODIGO RESPONSAVEL PELO CAMPO ONDE OS USUARIOS VÃO FICAR  */
 
 .btn-add-usuario {
-  position: fixed;
-  top: 93vh;
-  left: 50%;
-  transform: translateX(-50%);
-  height: 45px;
-  width: 390px;
+  width: 100%;
+  height: 35px;
   color: white;
-  background: linear-gradient(to right, #00a651, #3ac77b); /* Degradê verde */
+  background-color:rgb(245, 245, 245);
+  box-shadow: 0 10px 25px rgba(0, 0, 0, 0.01);
   cursor: pointer;
-  border-radius: 8px;
-  font-size: 14px;
+  border-radius: 0;
+  font-size: 13px;
   border: none;
-  z-index: 9999;
   transition: background 0.3s ease, transform 0.2s ease;
-  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.15); /* Sombra leve */
+  border-radius: 8px;
+  margin-top: -15px;
+  color: rgb(11, 131, 61);
 }
 
 .btn-add-usuario:hover {
-  background: linear-gradient(to right, #3ac77b, #00a651); /* Inverte o degradê no hover */
+  background-color:rgb(234, 243, 238);
   
 }
 
 
 /* Ícone "+" com destaque verde */
 .btn-add-usuario span {
-  color:rgb(235, 236, 236);
+  color: rgb(11, 131, 61);
   font-weight: bold;
   font-size: 18px;
-  
 }
 
 .add-user {
   display: flex;
   justify-content: center;
+  align-items: center;
   width: 100%;
-  margin-top: 20px;
+  margin-top: 0; /* Remove o espaçamento do topo */
+  padding-top: 0;
 }
 
 
 .campo_mentores {
+  position: relative; /* Certifique-se de que pode posicionar elementos internos */
+  padding: 0;
+  margin: 0;
   background-color: #f7f6f6;
   display: flex;
   flex-direction: column;
@@ -603,9 +605,9 @@ body, html {
   justify-content: flex-start;
   width: 390px;
   margin: 0 auto;
-  margin-top: 5px;
+  margin-top: 22px;
   border-radius: 8px;
-  padding: 20px;
+  padding: 0px;
   box-sizing: border-box;
   height: 600px; /* altura padrão para telas maiores */
 }
@@ -1008,6 +1010,13 @@ input[type="text"] {
 <!-- Lista de Mentores -->
 <!-- Lista de Mentores -->
 <div class="campo_mentores">
+
+  <div class="add-user">
+        <button class="btn-add-usuario" onclick="abrirModal()">
+          <span>+</span> Adicionar Mentoria
+        </button>
+  </div>
+
   <div class="mentor-wrapper">
     <?php
     $id_usuario_logado = $_SESSION['usuario_id'];
@@ -1054,6 +1063,9 @@ input[type="text"] {
     }
     ?>
   </div>
+
+<!-- BOTÃO ADICIONAR USUARIO -->
+
 </div>
 
 
@@ -1242,12 +1254,7 @@ document.addEventListener("DOMContentLoaded", function () {
 
 
 
-<!-- BOTÃO ADICIONAR USUARIO -->
-<div class="add-user">
-        <button class="btn-add-usuario" onclick="abrirModal()">
-          <span>+</span> Adicionar Mentoria
-        </button>
- </div>
+
 
 
 
