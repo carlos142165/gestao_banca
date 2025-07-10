@@ -496,6 +496,20 @@ body, html {
     line-height: 0.2;    /* margem de altura entre os valores e os nomes */
 }
 
+.value-box.saldo p:last-child {
+  white-space: nowrap;        /* Evita quebra de linha no valor */
+            /* Oculta transbordamentos (se quiser) */
+  text-overflow: ellipsis;    /* Adiciona "..." se for muito longo */
+            /* Garante que use o espaço disponível */
+  display: inline-block;
+}
+
+.value-box.saldo {
+            /* Aumenta espaço mínimo da caixa */
+  flex-grow: 1;               /* Permite que ela cresça no flex container */
+}
+
+
 .value-box p:nth-child(2) {
   font-size: 15px;   /* aumenta o tamanho da fonte dos valores */
   color: #333;       /* cor mais forte para visibilidade */
@@ -556,23 +570,23 @@ body, html {
 /* AQUI VAI O CODIGO RESPONSAVEL PELO CAMPO ONDE OS USUARIOS VÃO FICAR  */
 
 .btn-add-usuario {
-  width: 100%;
-  height: 35px;
+  width: 390px;
+  height: 40px;
   color: white;
-  background-color:rgb(245, 245, 245);
+  background-color:rgb(234, 243, 238);
   box-shadow: 0 10px 25px rgba(0, 0, 0, 0.01);
   cursor: pointer;
   border-radius: 0;
   font-size: 13px;
   border: none;
   transition: background 0.3s ease, transform 0.2s ease;
-  border-radius: 8px;
-  margin-top: -15px;
+  border-radius: 0px;
+  margin-top: 8px;
   color: rgb(11, 131, 61);
 }
 
 .btn-add-usuario:hover {
-  background-color:rgb(234, 243, 238);
+  background-color:rgb(225, 240, 232);
   
 }
 
@@ -582,6 +596,7 @@ body, html {
   color: rgb(11, 131, 61);
   font-weight: bold;
   font-size: 18px;
+  
 }
 
 .add-user {
@@ -591,6 +606,8 @@ body, html {
   width: 100%;
   margin-top: 0; /* Remove o espaçamento do topo */
   padding-top: 0;
+  gap: 6px; 
+  
 }
 
 
@@ -605,11 +622,23 @@ body, html {
   justify-content: flex-start;
   width: 390px;
   margin: 0 auto;
-  margin-top: 22px;
-  border-radius: 8px;
+  margin-top: 0px;
+  border-radius: 0px;
   padding: 0px;
   box-sizing: border-box;
-  height: 600px; /* altura padrão para telas maiores */
+  max-height: 550px;
+  overflow-y: auto;
+
+}
+
+.campo_mentores::-webkit-scrollbar {
+  display: none;     /* Oculta totalmente a barra no Chrome/Safari */
+}
+
+
+
+.mentor-wrapper{
+  margin-top: 15px;
 }
 
 /* Estilo para dispositivos com largura até 768px (ex: celulares) */
@@ -635,8 +664,8 @@ body, html {
   padding: 30px 25px;
   border-radius: 16px;
   box-shadow: 0 10px 25px rgba(0,0,0,0.2);
-  width: 250px;
-  height: 340px;
+  width: 270px;
+  height: 320px;
   text-align: center;
   font-family: 'Poppins', sans-serif;
   z-index: 1000;
@@ -817,6 +846,11 @@ input[type="text"] {
 
 
 
+.mentor-rank {
+  font-weight: bold;
+  color:rgb(29, 29, 28);
+  margin-left: 10px;
+}
 
 
 
@@ -897,8 +931,6 @@ input[type="text"] {
 
 
 
-
-
 <!-- CODIGO RESPONSAVEL PELO VALOR  PLACAR E META DIARIA E SALDO -->
 <div class="container-valores">
     
@@ -943,51 +975,46 @@ input[type="text"] {
 
 
 
-
-
-
-
-
-
-
-
 <!-- CODIGO RESPONSAVEL PELO FORMULARIO QUE ADICIONA NOVO USUARIO -->
 
 <!-- Modal -->
 <div id="modal-form" class="modal">
   <div class="modal-conteudo">
     <span class="fechar" onclick="fecharModal()">&times;</span>
-    
-  <form method="POST" enctype="multipart/form-data" action="gestao-diaria.php" class="formulario-mentor-completo">
-  <input type="hidden" name="acao" value="cadastrar_mentor">
 
-  <div class="mentor-form-header">
-    <h3 class="mentor-titulo">Cadastrar Mentor</h3>
-  </div>
+    <form method="POST" enctype="multipart/form-data" action="gestao-diaria.php" class="formulario-mentor-completo">
+      <input type="hidden" name="acao" value="cadastrar_mentor">
 
-  <div class="input-group">
-    <label for="nome" class="label-form">Nome do Mentor:</label>
-    <input type="text" name="nome" id="nome" class="input-text" placeholder="Nome do Mentor" required>
-  </div>
+      <!-- Botão para selecionar a foto -->
+      <div class="input-group">
+        <label for="foto" class="label-form">Foto do Mentor:</label>
+        <input type="file" name="foto" id="foto" class="input-file" onchange="mostrarNomeArquivo(this)" required>
+        <span id="nome-arquivo" class="nome-arquivo">Nenhum arquivo selecionado</span>
+      </div>
 
-  <div class="input-group">
-    <label for="foto" class="label-form">Foto do Mentor:</label>
-    <input type="file" name="foto" id="foto" class="input-file" onchange="mostrarNomeArquivo(this)" required>
-    <span id="nome-arquivo" class="nome-arquivo">Nenhum arquivo selecionado</span>
-  </div>
+      <!-- Pré-visualização da imagem -->
+      <div class="preview-foto-wrapper">
+        <img id="preview-img" src="https://cdn-icons-png.flaticon.com/512/847/847969.png" class="preview-img" alt="Pré-visualização">
+        <button type="button" id="remover-foto" class="btn-remover-foto" onclick="removerImagem()" style="display:none;">Remover Foto</button>
+      </div>
 
-  <div class="preview-foto-wrapper">
-    <img id="preview-img" src="https://cdn-icons-png.flaticon.com/512/847/847969.png" class="preview-img" alt="Pré-visualização">
-    <button type="button" id="remover-foto" class="btn-remover-foto" onclick="removerImagem()" style="display:none;">Remover Foto</button>
-  </div>
+      <!-- Nome abaixo da foto -->
+      <h3 class="mentor-nome-preview" style="text-align: center; margin-top: 14px;">Nome do Mentor</h3>
 
-  <div class="botoes-formulario">
-    <button type="submit" class="btn-enviar">Cadastrar Mentor</button>
-  </div>
-</form>
+      <!-- Campo para digitar o nome -->
+      <div class="input-group">
+        <label for="nome" class="label-form">Nome do Mentor:</label>
+        <input type="text" name="nome" id="nome" class="input-text" placeholder="Nome do Mentor" required>
+      </div>
 
+      <!-- Botão de envio -->
+      <div class="botoes-formulario">
+        <button type="submit" class="btn-enviar">Cadastrar Mentor</button>
+      </div>
+    </form>
   </div>
  </div>
+
 
  
 </div>
@@ -999,78 +1026,100 @@ input[type="text"] {
 
 
 
-
-
-
-
-
 <!-- CODIGO RESPONSAVEL PELO CAMPO ONDE OS MENTORES VAO FICAR -->
 
 
-<!-- Lista de Mentores -->
-<!-- Lista de Mentores -->
-<div class="campo_mentores">
 
-  <div class="add-user">
+
+<div class="add-user">
         <button class="btn-add-usuario" onclick="abrirModal()">
           <span>+</span> Adicionar Mentoria
         </button>
   </div>
 
+
+
+
+
+<!-- AQUI FILTRA OS DADOS DOS MENTORES NO BANCO DE DADOS PRA MOSTRAR NA TELA  -->
+<div class="campo_mentores">
+
+  <!-- BOTÃO ADICIONAR USUARIO -->
+  
   <div class="mentor-wrapper">
-    <?php
-    $id_usuario_logado = $_SESSION['usuario_id'];
-    $sql_mentores = "SELECT id, nome, foto FROM mentores WHERE id_usuario = ?";
-    $stmt_mentores = $conexao->prepare($sql_mentores);
-    $stmt_mentores->bind_param("i", $id_usuario_logado);
-    $stmt_mentores->execute();
-    $result_mentores = $stmt_mentores->get_result();
+  <?php
+  $id_usuario_logado = $_SESSION['usuario_id'];
+  $sql_mentores = "SELECT id, nome, foto FROM mentores WHERE id_usuario = ?";
+  $stmt_mentores = $conexao->prepare($sql_mentores);
+  $stmt_mentores->bind_param("i", $id_usuario_logado);
+  $stmt_mentores->execute();
+  $result_mentores = $stmt_mentores->get_result();
 
-    while ($mentor = $result_mentores->fetch_assoc()) {
-        $id_mentor = $mentor['id'];
+  $lista_mentores = [];
 
-        $sql_valores = "SELECT 
-          COALESCE(SUM(green), 0) AS total_green,
-          COALESCE(SUM(red), 0) AS total_red,
-          COALESCE(SUM(valor_green), 0) AS total_valor_green,
-          COALESCE(SUM(valor_red), 0) AS total_valor_red
-        FROM valor_mentores WHERE id_mentores = ?";
-        $stmt_valores = $conexao->prepare($sql_valores);
-        $stmt_valores->bind_param("i", $id_mentor);
-        $stmt_valores->execute();
-        $valores = $stmt_valores->get_result()->fetch_assoc();
+  while ($mentor = $result_mentores->fetch_assoc()) {
+      $id_mentor = $mentor['id'];
 
-        $total_subtraido = $valores['total_valor_green'] - $valores['total_valor_red'];
+      $sql_valores = "SELECT 
+        COALESCE(SUM(green), 0) AS total_green,
+        COALESCE(SUM(red), 0) AS total_red,
+        COALESCE(SUM(valor_green), 0) AS total_valor_green,
+        COALESCE(SUM(valor_red), 0) AS total_valor_red
+      FROM valor_mentores WHERE id_mentores = ?";
+      $stmt_valores = $conexao->prepare($sql_valores);
+      $stmt_valores->bind_param("i", $id_mentor);
+      $stmt_valores->execute();
+      $valores = $stmt_valores->get_result()->fetch_assoc();
 
-        echo "
-          <div class='mentor-card' 
-               data-nome='{$mentor['nome']}'
-               data-foto='uploads/{$mentor['foto']}'
-               data-id='{$mentor['id']}'>
-            <div class='mentor-header'>
-              <img src='uploads/{$mentor['foto']}' class='mentor-img' />
-              <h3 class='mentor-nome'>{$mentor['nome']}</h3>
-            </div>
-            <div class='mentor-right'>
-              <div class='mentor-values-inline'>
-                <div class='value-box green'><p>Green</p><p>{$valores['total_green']}</p></div>
-                <div class='value-box red'><p>Red</p><p>{$valores['total_red']}</p></div>
-                <div class='value-box saldo'><p>Saldo</p><p>R$ {$total_subtraido}</p></div>
-              </div>
+      $total_subtraido = $valores['total_valor_green'] - $valores['total_valor_red'];
+
+      // Armazena dados no array para ordenação
+      $mentor['valores'] = $valores;
+      $mentor['saldo'] = $total_subtraido;
+      $lista_mentores[] = $mentor;
+  }
+
+  // Ordena pela maior pontuação de saldo
+  usort($lista_mentores, function($a, $b) {
+    return $b['saldo'] <=> $a['saldo'];
+  });
+
+  // Exibe classificados
+  foreach ($lista_mentores as $posicao => $mentor) {
+      $rank = $posicao + 1;
+      $valores = $mentor['valores'];
+      $saldo_formatado = number_format($mentor['saldo'], 2, ',', '.');
+
+      echo "
+        <div class='mentor-card' 
+             data-nome='{$mentor['nome']}'
+             data-foto='uploads/{$mentor['foto']}'
+             data-id='{$mentor['id']}'>
+          <div class='mentor-header'>
+            <img src='uploads/{$mentor['foto']}' class='mentor-img' />
+            <h3 class='mentor-nome'>{$mentor['nome']}</h3>
+            <span class='mentor-rank'>{$rank}º </span> <!-- ✅ Classificação adicionada -->
+          </div>
+          <div class='mentor-right'>
+            <div class='mentor-values-inline'>
+              <div class='value-box green'><p>Green</p><p>{$valores['total_green']}</p></div>
+              <div class='value-box red'><p>Red</p><p>{$valores['total_red']}</p></div>
+              <div class='value-box saldo'><p>Saldo</p><p>R$ {$saldo_formatado}</p></div>
             </div>
           </div>
-        ";
-    }
-    ?>
-  </div>
-
-<!-- BOTÃO ADICIONAR USUARIO -->
-
+        </div>
+      ";
+  }
+  ?>
 </div>
 
+   
+
+</div>
+<!-- FIM DO CODIGO QUE FILTRA OS DADOS DOS MENTORES NO BANCO DE DADOS PRA MOSTRAR NA TELA  -->
 
 
-<!-- Toast de mensagens -->
+
 
 
 <!-- Formulário do mentor -->
@@ -1231,31 +1280,6 @@ document.addEventListener("DOMContentLoaded", function () {
 });
 
 </script>
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 
 
 
