@@ -376,12 +376,49 @@ body, html {
     gap: 0px;
     background-color: #f7f6f6;
     border-radius: 10px;
-    padding: 8px;
-    
+    padding: 8px;    
     margin: 20px auto;
     box-shadow: 0 4px 6px rgba(0,0,0,0.1);
     cursor: pointer;
     transition: transform 0.3s ease, box-shadow 0.3s ease;
+    margin-left: -30px;
+    
+}
+
+
+
+.card-positivo {
+  border-color: #2ecc71; /* verde */
+  
+}
+
+.card-negativo {
+  border-color: #e74c3c; /* vermelho */
+ 
+}
+
+
+
+
+
+
+.mentor-right.reorganizado {
+  display: flex;
+  justify-content: space-between;
+  gap: 20px;
+}
+
+.mentor-values-esquerda {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  align-items: flex-start;
+}
+
+.mentor-values-direita {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-end;
 }
 
 .mentor-card:hover {
@@ -481,7 +518,7 @@ body, html {
     
 }
 
-.value-box {
+.value-box-green {
     display: flex;
     flex-direction: column;
     justify-content: center;
@@ -491,12 +528,12 @@ body, html {
     font-size: 13px;
 }
 
-.value-box p {
+.value-box-green p {
     margin: 2px 1;
     line-height: 0.2;    /* margem de altura entre os valores e os nomes */
 }
 
-.value-box.saldo p:last-child {
+.value-box-green.saldo p:last-child {
   white-space: nowrap;        /* Evita quebra de linha no valor */
             /* Oculta transbordamentos (se quiser) */
   text-overflow: ellipsis;    /* Adiciona "..." se for muito longo */
@@ -504,31 +541,134 @@ body, html {
   display: inline-block;
 }
 
-.value-box.saldo {
+.value-box-green.saldo {
             /* Aumenta espaço mínimo da caixa */
   flex-grow: 1;               /* Permite que ela cresça no flex container */
 }
 
 
-.value-box p:nth-child(2) {
-  font-size: 15px;   /* aumenta o tamanho da fonte dos valores */
+.value-box-green p:nth-child(2) {
+  font-size: 13px;   /* aumenta o tamanho da fonte dos valores */
   color: #333;       /* cor mais forte para visibilidade */
 }
 
-.value-box p:first-child {
+.value-box-green p:first-child {
     font-weight: bold;
 }
 
-.value-box.green p:first-child {
+.value-box-green.green p:first-child {
     color: #00a651;
     
 }
 
-.value-box.red p:first-child {
+.value-box-green.red p:first-child {
     color: #ff4d4d;
 }
 
-.value-box.saldo p:first-child {
+.value-box-green.saldo p:first-child {
+    color:rgb(95, 93, 93);
+}
+
+.value-box-red {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    text-align: center;
+    width: 60px;
+    font-size: 13px;
+    margin-left: -25px;
+}
+
+.value-box-red p {
+    margin: 2px 1;
+    line-height: 0.2;    /* margem de altura entre os valores e os nomes */
+}
+
+.value-box-red.saldo p:last-child {
+  white-space: nowrap;        /* Evita quebra de linha no valor */
+            /* Oculta transbordamentos (se quiser) */
+  text-overflow: ellipsis;    /* Adiciona "..." se for muito longo */
+            /* Garante que use o espaço disponível */
+  display: inline-block;
+}
+
+.value-box-red.saldo {
+            /* Aumenta espaço mínimo da caixa */
+  flex-grow: 1;               /* Permite que ela cresça no flex container */
+}
+
+
+.value-box-red p:nth-child(2) {
+  font-size: 13px;   /* aumenta o tamanho da fonte dos valores */
+  color: #333;       /* cor mais forte para visibilidade */
+}
+
+.value-box-red p:first-child {
+    font-weight: bold;
+}
+
+.value-box-red.green p:first-child {
+    color: #00a651;
+    
+}
+
+.value-box-red.red p:first-child {
+    color: #ff4d4d;
+}
+
+.value-box-red.saldo p:first-child {
+    color:rgb(95, 93, 93);
+}
+
+.value-box-saldo {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    text-align: center;
+    width: 60px;
+    font-size: 13px;
+}
+
+.value-box-saldo p {
+    margin: 2px 1;
+    line-height: 0.2;    /* margem de altura entre os valores e os nomes */
+}
+
+.value-box-saldo.saldo p:last-child {
+  white-space: nowrap;        /* Evita quebra de linha no valor */
+            /* Oculta transbordamentos (se quiser) */
+  text-overflow: ellipsis;    /* Adiciona "..." se for muito longo */
+            /* Garante que use o espaço disponível */
+  display: inline-block;
+}
+
+.value-box-saldo.saldo {
+            /* Aumenta espaço mínimo da caixa */
+  flex-grow: 1;               /* Permite que ela cresça no flex container */
+}
+
+
+.value-box-saldo p:nth-child(2) {
+  font-size: 13px;   /* aumenta o tamanho da fonte dos valores */
+  color: #333;       /* cor mais forte para visibilidade */
+}
+
+.value-box-saldo p:first-child {
+    font-weight: bold;
+}
+
+.value-box-saldo.green p:first-child {
+    color: #00a651;
+    
+}
+
+.value-box-saldo.red p:first-child {
+    color: #ff4d4d;
+}
+
+.value-box-saldo.saldo p:first-child {
     color:rgb(95, 93, 93);
 }
 
@@ -846,13 +986,35 @@ input[type="text"] {
 
 
 
+
+/* RESPONSAVEL PELO CODIGO DO RANKIG  */
 .mentor-rank {
   font-weight: bold;
-  color:rgb(29, 29, 28);
-  margin-left: 10px;
+  color:rgb(71, 71, 70);
+  margin-left: 0px;
 }
 
+.mentor-item {
+  display: flex;
+  align-items: center;
+  margin-bottom: -5px;
+  gap: 10px;
+}
 
+.mentor-rank-externo {
+  font-size: 1.0em;
+  font-weight: bold;
+  color:rgb(102, 102, 30);
+  width: 50px;
+  text-align: left;
+  margin-left: -10px;
+  
+}
+
+.mentor-card {
+  flex: 1;
+}
+/* FIM CODIGO RESPONSAVEL PELO CODIGO DO RANKIG  */
 
 
 
@@ -1089,26 +1251,32 @@ input[type="text"] {
       $rank = $posicao + 1;
       $valores = $mentor['valores'];
       $saldo_formatado = number_format($mentor['saldo'], 2, ',', '.');
+      $classe_borda = $mentor['saldo'] >= 0 ? 'item-positivo' : 'item-negativo';
+      $classe_borda = $mentor['saldo'] >= 0 ? 'card-positivo' : 'card-negativo';
+
 
       echo "
-        <div class='mentor-card' 
-             data-nome='{$mentor['nome']}'
-             data-foto='uploads/{$mentor['foto']}'
-             data-id='{$mentor['id']}'>
-          <div class='mentor-header'>
-            <img src='uploads/{$mentor['foto']}' class='mentor-img' />
-            <h3 class='mentor-nome'>{$mentor['nome']}</h3>
-            <span class='mentor-rank'>{$rank}º </span> <!-- ✅ Classificação adicionada -->
-          </div>
-          <div class='mentor-right'>
-            <div class='mentor-values-inline'>
-              <div class='value-box green'><p>Green</p><p>{$valores['total_green']}</p></div>
-              <div class='value-box red'><p>Red</p><p>{$valores['total_red']}</p></div>
-              <div class='value-box saldo'><p>Saldo</p><p>R$ {$saldo_formatado}</p></div>
-            </div>
-          </div>
+  <div class='mentor-item'>
+    <div class='mentor-rank-externo'>{$rank}º</div> <!-- 🏅 Classificação fora do card -->
+    <div class='mentor-card {$classe_borda}' 
+         data-nome='{$mentor['nome']}'
+         data-foto='uploads/{$mentor['foto']}'
+         data-id='{$mentor['id']}'>
+      <div class='mentor-header'>
+        <img src='uploads/{$mentor['foto']}' alt='Foto de {$mentor['nome']}' class='mentor-img' />
+        <h3 class='mentor-nome'>{$mentor['nome']}</h3>
+      </div>
+      <div class='mentor-right'>
+        <div class='mentor-values-inline'>
+          <div class='value-box-green green'><p>Green</p><p>{$valores['total_green']}</p></div>
+          <div class='value-box-red red'><p>Red</p><p>{$valores['total_red']}</p></div>
+          <div class='value-box-saldo saldo'><p>Saldo</p><p>R$ {$saldo_formatado}</p></div>
         </div>
-      ";
+      </div>
+    </div>
+  </div>
+";
+
   }
   ?>
 </div>
@@ -1154,6 +1322,7 @@ input[type="text"] {
 
 
 
+
 <script>
 document.addEventListener("DOMContentLoaded", function () {
   const cards = document.querySelectorAll(".mentor-card");
@@ -1185,7 +1354,7 @@ document.addEventListener("DOMContentLoaded", function () {
     });
   });
 
-  // Atualiza os cards dinamicamente após cadastro
+  // ATUALIZA AUTOMATICAMENTE OS VALORES E HANKING SEM PRECISAR ATUALIZAR A PAGINA
   function atualizarCards() {
     fetch("carregar-mentores.php")
       .then(res => res.text())
