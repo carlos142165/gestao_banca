@@ -1290,6 +1290,8 @@ input[type="text"] {
 
 
 
+
+
 <!-- Formulário do mentor -->
 <div class="formulario-mentor">
   <button type="button" class="botao-fechar" onclick="fecharFormulario()">❌</button>
@@ -1323,75 +1325,78 @@ input[type="text"] {
 
 
 
+
+
+
 <script>
 document.addEventListener("DOMContentLoaded", function () {
-  const cards = document.querySelectorAll(".mentor-card");
   const formulario = document.querySelector(".formulario-mentor");
-  const nomePreview = document.querySelector(".mentor-nome-preview");
-  const fotoPreview = document.querySelector(".mentor-foto-preview");
-  const idHidden = document.querySelector(".mentor-id-hidden");
+  const nomePreview = formulario.querySelector(".mentor-nome-preview");
+  const fotoPreview = formulario.querySelector(".mentor-foto-preview");
+  const idHidden = formulario.querySelector(".mentor-id-hidden");
   const formMentor = document.getElementById("form-mentor");
   const botaoFechar = document.querySelector(".botao-fechar");
+  const campoValor = document.getElementById("valor");
 
-  // Toast dinâmico
-  function mostrarToast(mensagem, tipo = "aviso") {
-    const toast = document.getElementById("mensagem-status");
-    toast.className = "toast " + tipo;
-    toast.textContent = mensagem;
-    toast.style.display = "block";
-    setTimeout(() => {
-      toast.style.display = "none";
-    }, 4000);
+  // 🔎 Exibir dados do mentor ao clicar
+  function exibirFormularioMentor(card) {
+    nomePreview.textContent = card.getAttribute("data-nome");
+    fotoPreview.src = card.getAttribute("data-foto");
+    idHidden.value = card.getAttribute("data-id");
+    formulario.style.display = "block";
   }
 
-  // Exibir formulário ao clicar em um card
-  cards.forEach(card => {
-    card.addEventListener("click", function () {
-      nomePreview.textContent = card.dataset.nome;
-      fotoPreview.src = card.dataset.foto;
-      idHidden.value = card.dataset.id;
-      formulario.style.display = "block";
+  // 🎯 Aplica eventos nos cards
+  function atribuirEventosAoCards() {
+    document.querySelectorAll(".mentor-card").forEach(card => {
+      card.addEventListener("click", () => exibirFormularioMentor(card));
     });
-  });
+  }
 
-  // ATUALIZA AUTOMATICAMENTE OS VALORES E HANKING SEM PRECISAR ATUALIZAR A PAGINA
+  // 🔄 Atualiza cards via fetch
   function atualizarCards() {
     fetch("carregar-mentores.php")
       .then(res => res.text())
       .then(html => {
         document.querySelector(".mentor-wrapper").innerHTML = html;
-        // Reatribuir eventos aos novos cards
-        document.querySelectorAll(".mentor-card").forEach(card => {
-          card.addEventListener("click", function () {
-            nomePreview.textContent = card.dataset.nome;
-            fotoPreview.src = card.dataset.foto;
-            idHidden.value = card.dataset.id;
-            formulario.style.display = "block";
-          });
-        });
+        atribuirEventosAoCards(); // reaplica eventos nos novos cards
       });
   }
 
-  // Botão ❌ fechar
-  window.fecharFormulario = function () {
-    formMentor.reset();
-    formulario.style.display = "none";
-  };
+  // 📦 Formatação automática do campo de valor (R$)
+  campoValor.addEventListener("input", function () {
+  let valor = this.value.replace(/\D/g, "");
 
-  botaoFechar.addEventListener("click", () => {
-    formMentor.reset();
-    formulario.style.display = "none";
-  });
+  if (valor === "") {
+    this.value = "R$ 0,00";
+    return;
+  }
 
-  // Envio do formulário via fetch
+  // Garante pelo menos dois dígitos
+  if (valor.length < 3) {
+    valor = valor.padStart(3, "0");
+  }
+
+  const reais = valor.slice(0, -2);
+  const centavos = valor.slice(-2);
+  this.value = `R$ ${parseInt(reais).toLocaleString("pt-BR")},${centavos}`;
+});
+
+
+  // 📩 Envio do formulário
   formMentor.addEventListener("submit", function (e) {
-    e.preventDefault(); // Impede envio padrão
+    e.preventDefault();
 
     const opcaoSelecionada = document.querySelector("input[name='opcao']:checked");
     if (!opcaoSelecionada) {
-      mostrarToast("⚠️ Por favor, selecione Green ou Red.", "aviso");
+      mostrarToast("⚠️ Por favor, selecione Green ou Red.");
       return;
     }
+
+    let valor = campoValor.value.replace(/\D/g, "").padStart(3, "0");
+    const reais = valor.slice(0, -2);
+    const centavos = valor.slice(-2);
+    campoValor.value = `${reais}.${centavos}`; // formato decimal
 
     const formData = new FormData(this);
 
@@ -1400,55 +1405,42 @@ document.addEventListener("DOMContentLoaded", function () {
       body: formData
     })
     .then(response => response.text())
-    .then(mensagem => {
-      mostrarToast(mensagem.includes("✅") ? mensagem : "⚠️ " + mensagem, "sucesso");
-      formMentor.reset();
-      formulario.style.display = "none";
-      atualizarCards();
-    })
+.then(mensagem => {
+  mostrarToast(mensagem, "sucesso"); // ✅ aqui entra sua função estilizada
+  formMentor.reset();
+  formulario.style.display = "none";
+  atualizarCards();
+})
     .catch(error => {
-      mostrarToast("❌ Erro ao enviar: " + error, "erro");
+      alert("❌ Erro ao enviar: " + error);
     });
   });
+
+  // ❌ Fechar formulário
+  window.fecharFormulario = function () {
+    formMentor.reset();
+    formulario.style.display = "none";
+  };
+
+  botaoFechar.addEventListener("click", fecharFormulario);
+
+  // ▶️ Inicializar
+  atribuirEventosAoCards();
 });
 
-
-// aqui coloca o valor digitado no input como numero 
-document.addEventListener("DOMContentLoaded", function () {
-  const campoValor = document.getElementById("valor");
-
-  campoValor.addEventListener("input", function () {
-    let valor = this.value.replace(/\D/g, ""); // remove tudo que não for dígito
-    valor = (parseInt(valor) || 0).toString();
-
-    // aplica formato moeda com centavos
-    if (valor.length < 3) {
-      valor = valor.padStart(3, "0");
-    }
-
-    const reais = valor.slice(0, -2);
-    const centavos = valor.slice(-2);
-    this.value = `R$ ${reais.replace(/\B(?=(\d{3})+(?!\d))/g, ".")},${centavos}`;
-  });
-
-  // Opcional: remove máscara ao enviar para o servidor
-  const formMentor = document.getElementById("form-mentor");
-  formMentor.addEventListener("submit", function () {
-  const campo = document.getElementById("valor");
-  let valor = campo.value.replace(/\D/g, "");
-
-  if (valor.length < 3) {
-    valor = valor.padStart(3, "0");
-  }
-
-  const reais = valor.slice(0, -2);
-  const centavos = valor.slice(-2);
-
-  campo.value = `${reais}.${centavos}`; // ✅ envia como número decimal ex: "2050.75"
-});
-});
+function mostrarToast(mensagem, tipo = "aviso") {
+  const toast = document.getElementById("mensagem-status");
+  toast.className = "toast " + tipo;
+  toast.textContent = mensagem;
+  toast.style.display = "block";
+  setTimeout(() => {
+    toast.style.display = "none";
+  }, 4000);
+}
 
 </script>
+
+
 
 
 
@@ -1509,6 +1501,8 @@ function removerImagem() {
 </script>
 
 <!-- FIM DO CODIGO RESPONSAVEL PELO FORMULARIO QUE ADICIONA NOVO USUARIO -->
+
+
 
 
 

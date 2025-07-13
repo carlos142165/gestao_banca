@@ -45,11 +45,13 @@ foreach ($lista_mentores as $posicao => $mentor) {
     $rank = $posicao + 1;
     $valores = $mentor['valores'];
     $saldo_formatado = number_format($mentor['saldo'], 2, ',', '.');
+    $classe_borda = $mentor['saldo'] >= 0 ? 'card-positivo' : 'card-negativo';
 
-    echo "
+
+      echo "
   <div class='mentor-item'>
     <div class='mentor-rank-externo'>{$rank}º</div> <!-- 🏅 Classificação fora do card -->
-    <div class='mentor-card' 
+    <div class='mentor-card {$classe_borda}' 
          data-nome='{$mentor['nome']}'
          data-foto='uploads/{$mentor['foto']}'
          data-id='{$mentor['id']}'>
