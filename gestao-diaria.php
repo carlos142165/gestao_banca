@@ -369,24 +369,26 @@ body, html {
     padding: 6px 15px;
     background-color: #fff;
     width: 300px;
-    height: 65px;
+    height: 67px;
     font-family: Arial, sans-serif;
-    margin-top: 12px;
+    margin-top: 0px;
     box-shadow: 0 2px 5px rgba(0,0,0,0.1);
     gap: 0px;
     background-color: #f7f6f6;
     border-radius: 10px;
     padding: 8px;    
-    margin: 20px auto;
+    margin: 10px auto;
     box-shadow: 0 4px 6px rgba(0,0,0,0.1);
     cursor: pointer;
     transition: transform 0.3s ease, box-shadow 0.3s ease;
-    margin-left: -30px;
+    margin-left: 12px;
     
 }
 
 
-
+.card-neutro {
+  border-color: #999; /* Ou qualquer cinza que combine com seu tema */
+}
 .card-positivo {
   border-color: #2ecc71; /* verde */
   
@@ -453,7 +455,7 @@ body, html {
 }
 
 .mentor-nome-preview {
-  font-size: 18px;
+  font-size: 14px;
   font-weight: bold;
   margin-bottom: 15px;
 }
@@ -990,24 +992,24 @@ input[type="text"] {
 /* RESPONSAVEL PELO CODIGO DO RANKIG  */
 .mentor-rank {
   font-weight: bold;
-  color:rgb(71, 71, 70);
   margin-left: 0px;
 }
 
 .mentor-item {
   display: flex;
   align-items: center;
-  margin-bottom: -5px;
-  gap: 10px;
+  margin-bottom: 0px;
+  gap: 0px;
+  margin-left: 0px;
 }
 
 .mentor-rank-externo {
-  font-size: 1.0em;
+  font-size: 15px;
   font-weight: bold;
-  color:rgb(102, 102, 30);
+  color:rgb(90, 90, 90);
   width: 50px;
-  text-align: left;
-  margin-left: -10px;
+  text-align: right;
+  margin-left: -12px;
   
 }
 
@@ -1020,12 +1022,187 @@ input[type="text"] {
 
 
 
+/* CODIGO RESPONSAVEL PELOS 3 PONTINHOS DO MENU  */
+.mentor-item {
+  display: flex;
+  align-items: center;
+  position: relative;
+  margin-bottom: 12px;
+}
+
+.mentor-card {
+  flex: 1;
+  position: relative;
+  margin-right: 38px; /* espaço para o menu externo */
+}
+
+.mentor-menu-externo {
+  position: absolute;
+  right: 23px;
+  top: 50%;
+  transform: translateY(-50%);
+  z-index: 10;
+}
+
+.menu-toggle {
+  font-size: 22px;
+  font-weight: bold;
+  cursor: pointer;
+  user-select: none;
+  padding: 0px;
+  color: #333;
+}
+
+.menu-opcoes {
+  display: none;
+  position: absolute;
+  top: 28px;
+  right: 0;
+  background-color: #fff;
+  border: 1px solid #ccc;
+  border-radius: 6px;
+  box-shadow: 0 2px 8px rgba(0,0,0,0.2);
+  min-width: 160px;
+  padding: 6px;
+}
+
+.menu-opcoes button {
+  display: block;
+  width: 100%;
+  background: none;
+  border: none;
+  text-align: left;
+  font-size: 14px;
+  padding: 6px 10px;
+  cursor: pointer;
+}
+
+.menu-opcoes button:hover {
+  background-color: #f0f0f0;
+}
+/* FIM CODIGO RESPONSAVEL PELOS 3 PONTINHOS DO MENU  */
+
+
+
+
+
+
+/* TESTE  */
+/* Tela geral */
+.tela-edicao {
+  position: fixed;
+  top: 5%;
+  left: 10%;
+  right: 10%;
+  max-height: 85vh;
+  overflow-y: auto;
+  background: #ffffff;
+  border-radius: 16px;
+  padding: 20px 25px;
+  box-shadow: 0 20px 40px rgba(0, 0, 0, 0.2);
+  z-index: 9999;
+  font-family: 'Segoe UI', sans-serif;
+  color: #333;
+}
+
+/* Botão de fechar */
+.tela-edicao button {
+  background: none;
+  border: none;
+  font-size: 1.4rem;
+  color: #888;
+  cursor: pointer;
+}
+
+.tela-edicao button:hover {
+  color: #e74c3c;
+}
+
+/* Imagem do mentor */
+.mentor-img-edicao {
+  display: block;
+  margin: 15px auto 5px;
+  width: 80px;
+  height: 80px;
+  border-radius: 50%;
+  object-fit: cover;
+  box-shadow: 0 0 10px rgba(0,0,0,0.1);
+}
+
+/* Título */
+.tela-edicao h3 {
+  text-align: center;
+  margin-bottom: 20px;
+  font-size: 1.4rem;
+  color: #2c3e50;
+  font-weight: 600;
+}
+
+/* Entradas */
+.entrada-card {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  background: #f5f9ff;
+  border-left: 6px solid #4CAF50;
+  border-radius: 10px;
+  padding: 12px 16px;
+  margin-bottom: 12px;
+  box-shadow: 0 2px 6px rgba(0,0,0,0.06);
+}
+
+.entrada-info p {
+  margin: 4px 0;
+  font-size: 0.95rem;
+  color: #34495e;
+}
+
+.entrada-acoes {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.btn-icon {
+  background: none;
+  border: none;
+  font-size: 1.2rem;
+  cursor: pointer;
+  transition: transform 0.2s ease;
+}
+
+.btn-icon i {
+  pointer-events: none; /* evita duplo clique em ícone */
+}
+
+.btn-icon.editar i {
+  color: #4CAF50;
+}
+
+.btn-icon.excluir i {
+  color: #e74c3c;
+}
+
+.btn-icon:hover {
+  transform: scale(1.2);
+}
+
+
+
+
+
+
+
+
+
 
 
 
 </style>
      
      <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+     
+
 
 </head>
 
@@ -1247,37 +1424,70 @@ input[type="text"] {
   });
 
   // Exibe classificados
-  foreach ($lista_mentores as $posicao => $mentor) {
-      $rank = $posicao + 1;
-      $valores = $mentor['valores'];
-      $saldo_formatado = number_format($mentor['saldo'], 2, ',', '.');
-      $classe_borda = $mentor['saldo'] >= 0 ? 'item-positivo' : 'item-negativo';
-      $classe_borda = $mentor['saldo'] >= 0 ? 'card-positivo' : 'card-negativo';
+ foreach ($lista_mentores as $posicao => $mentor) {
+  $rank = $posicao + 1;
+  $valores = $mentor['valores'];
+  $saldo_formatado = number_format($mentor['saldo'], 2, ',', '.');
 
+  // 🟩 Verde se saldo > 0
+  // 🟥 Vermelho se saldo < 0
+  // ⚪ Cinza se saldo == 0
+  if ($mentor['saldo'] == 0) {
+    $classe_borda = 'card-neutro';
+  } elseif ($mentor['saldo'] > 0) {
+    $classe_borda = 'card-positivo';
+  } else {
+    $classe_borda = 'card-negativo';
+  }
 
-      echo "
+  echo "
   <div class='mentor-item'>
-    <div class='mentor-rank-externo'>{$rank}º</div> <!-- 🏅 Classificação fora do card -->
+    <div class='mentor-rank-externo'>{$rank}º</div>
+
     <div class='mentor-card {$classe_borda}' 
          data-nome='{$mentor['nome']}'
          data-foto='uploads/{$mentor['foto']}'
          data-id='{$mentor['id']}'>
+      
       <div class='mentor-header'>
         <img src='uploads/{$mentor['foto']}' alt='Foto de {$mentor['nome']}' class='mentor-img' />
         <h3 class='mentor-nome'>{$mentor['nome']}</h3>
       </div>
+      
       <div class='mentor-right'>
         <div class='mentor-values-inline'>
-          <div class='value-box-green green'><p>Green</p><p>{$valores['total_green']}</p></div>
-          <div class='value-box-red red'><p>Red</p><p>{$valores['total_red']}</p></div>
-          <div class='value-box-saldo saldo'><p>Saldo</p><p>R$ {$saldo_formatado}</p></div>
+          <div class='value-box-green green'>
+            <p>Green</p><p>{$valores['total_green']}</p>
+          </div>
+          <div class='value-box-red red'>
+            <p>Red</p><p>{$valores['total_red']}</p>
+          </div>
+          <div class='value-box-saldo saldo'>
+            <p>Saldo</p><p>R$ {$saldo_formatado}</p>
+          </div>
         </div>
       </div>
     </div>
+
+    <!-- 🔘 Menu lateral flutuante com 3 pontinhos -->
+    <div class='mentor-menu-externo'>
+      <span class='menu-toggle' title='Mais opções'>⋮</span>
+
+      <div class='menu-opcoes'>
+        <button onclick='editarAposta({$mentor["id"]})'>
+        <i class='fas fa-pen-to-square'></i> Editar Entrada
+        </button>
+        
+        <button onclick='editarMentor({$mentor["id"]})'>
+        <i class='fas fa-user-edit'></i> Editar Mentor
+        </button>
+      </div>
+
+
+    </div>
   </div>
 ";
-
-  }
+}
   ?>
 </div>
 
@@ -1321,6 +1531,22 @@ input[type="text"] {
 
 
 <div id="mensagem-status" class="toast" style="display:none;"></div>
+
+
+
+
+<!-- FILTRO PARA EXCLUIR OU EDITAR MENTOR  -->
+<div id="tela-edicao" class="tela-edicao" style="display:none;">
+  <button onclick="fecharTelaEdicao()" style="float:right;">❌</button>
+  <img id="fotoMentorEdicao" class="mentor-img-edicao" />
+  <h3>Entradas de Hoje - <span id="nomeMentorEdicao"></span></h3>
+  <div id="resultado-filtro"></div>
+</div>
+
+
+<!-- FIM FILTRO PARA EXCLUIR OU EDITAR MENTOR  -->
+
+
 
 
 
@@ -1438,6 +1664,31 @@ function mostrarToast(mensagem, tipo = "aviso") {
   }, 4000);
 }
 
+
+// ▶️ TESTANDO PARA 3 PONTOS MENU
+document.addEventListener("click", function (e) {
+  const isToggle = e.target.classList.contains("menu-toggle");
+
+  document.querySelectorAll(".menu-opcoes").forEach(menu => {
+    menu.style.display = "none";
+  });
+
+  if (isToggle) {
+    const opcoes = e.target.nextElementSibling;
+    if (opcoes) {
+      opcoes.style.display = "block";
+      e.stopPropagation();
+    }
+  }
+});
+
+
+
+
+
+
+
+
 </script>
 
 
@@ -1498,12 +1749,120 @@ function removerImagem() {
   document.getElementById("nome-arquivo").textContent = "Nenhum arquivo selecionado";
   removerBtn.style.display = "none";
 }
-</script>
 
+</script>
 <!-- FIM DO CODIGO RESPONSAVEL PELO FORMULARIO QUE ADICIONA NOVO USUARIO -->
 
 
 
+
+<!-- TESTE-->
+<script>
+let mentorAtualId = null;
+
+function editarAposta(idMentor) {
+  mentorAtualId = idMentor;
+
+  const card = document.querySelector(`[data-id='${idMentor}']`);
+  const nome = card.getAttribute("data-nome");
+  const foto = card.getAttribute("data-foto");
+
+  document.getElementById("nomeMentorEdicao").textContent = nome;
+  document.getElementById("fotoMentorEdicao").src = foto;
+  document.getElementById("tela-edicao").style.display = "block";
+
+  fetch(`filtrar-entradas.php?id=${idMentor}&tipo=hoje`)
+    .then(res => res.json())
+    .then(entradas => mostrarResultados(entradas));
+}
+
+function mostrarResultados(entradas) {
+  const container = document.getElementById("resultado-filtro");
+  container.innerHTML = "";
+
+  if (!entradas || entradas.length === 0) {
+    container.innerHTML = "<p style='color:gray;'>Nenhuma Entrada Cadastrada Hoje.</p>";
+    return;
+  }
+
+  entradas.forEach(e => {
+    const valorGreen = parseFloat(e.valor_green);
+    const valorRed = parseFloat(e.valor_red);
+
+    let infoHTML = "";
+
+    if (e.green > 0) {
+      infoHTML += `<p><strong>Green:</strong> ${e.green}</p>`;
+    }
+
+    if (e.red > 0) {
+      infoHTML += `<p><strong>Red:</strong> ${e.red}</p>`;
+    }
+
+    if (!isNaN(valorGreen) && valorGreen > 0) {
+      infoHTML += `<p><strong>Saldo:</strong> R$ ${valorGreen.toFixed(2)}</p>`;
+    }
+
+    if (!isNaN(valorRed) && valorRed > 0) {
+      infoHTML += `<p><strong>Débito:</strong> R$ ${valorRed.toFixed(2)}</p>`;
+    }
+
+    container.innerHTML += `
+      <div class="entrada-card">
+        <div class="entrada-info">
+          ${infoHTML}
+        </div>
+        <div class="entrada-acoes">
+          <button onclick="editarEntrada(${e.id})" title="Editar" class="btn-icon editar">
+            <i class="fas fa-pen"></i>
+          </button>
+          <button onclick="excluirEntrada(${e.id})" title="Excluir" class="btn-icon excluir">
+            <i class="fas fa-trash"></i>
+          </button>
+        </div>
+      </div>
+    `;
+  });
+}
+
+
+function editarEntrada(idEntrada) {
+  alert("Abrir tela de edição para entrada ID " + idEntrada);
+  // Aqui você pode abrir formulário com valores atuais para editar
+}
+
+function excluirEntrada(idEntrada) {
+  if (confirm("Tem certeza que deseja excluir esta entrada?")) {
+    fetch("excluir-entrada.php", {
+      method: "POST",
+      body: new URLSearchParams({ id: idEntrada })
+    })
+    .then(res => res.text())
+    .then(msg => {
+      alert(msg);
+      editarAposta(mentorAtualId); // recarrega os dados após excluir
+    });
+  }
+}
+
+function salvarEdicao(event, idEntrada) {
+  event.preventDefault();
+  const formData = new FormData(event.target);
+  formData.append("id", idEntrada);
+
+  fetch("editar-entrada.php", {
+    method: "POST",
+    body: formData
+  })
+  .then(res => res.text())
+  .then(msg => alert(msg))
+  .catch(err => alert("Erro ao salvar: " + err));
+}
+
+function fecharTelaEdicao() {
+  document.getElementById("tela-edicao").style.display = "none";
+}
+</script>
 
 
 

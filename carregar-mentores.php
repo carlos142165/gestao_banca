@@ -42,30 +42,65 @@ while ($mentor = $result_mentores->fetch_assoc()) {
 usort($lista_mentores, fn($a, $b) => $b['saldo'] <=> $a['saldo']);
 
 foreach ($lista_mentores as $posicao => $mentor) {
-    $rank = $posicao + 1;
-    $valores = $mentor['valores'];
-    $saldo_formatado = number_format($mentor['saldo'], 2, ',', '.');
-    $classe_borda = $mentor['saldo'] >= 0 ? 'card-positivo' : 'card-negativo';
+  $rank = $posicao + 1;
+  $valores = $mentor['valores'];
+  $saldo_formatado = number_format($mentor['saldo'], 2, ',', '.');
 
+  // 🟩 Verde se saldo > 0
+  // 🟥 Vermelho se saldo < 0
+  // ⚪ Cinza se saldo == 0
+  if ($mentor['saldo'] == 0) {
+    $classe_borda = 'card-neutro';
+  } elseif ($mentor['saldo'] > 0) {
+    $classe_borda = 'card-positivo';
+  } else {
+    $classe_borda = 'card-negativo';
+  }
 
-      echo "
+  echo "
   <div class='mentor-item'>
-    <div class='mentor-rank-externo'>{$rank}º</div> <!-- 🏅 Classificação fora do card -->
+    <div class='mentor-rank-externo'>{$rank}º</div>
+
     <div class='mentor-card {$classe_borda}' 
          data-nome='{$mentor['nome']}'
          data-foto='uploads/{$mentor['foto']}'
          data-id='{$mentor['id']}'>
+      
       <div class='mentor-header'>
         <img src='uploads/{$mentor['foto']}' alt='Foto de {$mentor['nome']}' class='mentor-img' />
         <h3 class='mentor-nome'>{$mentor['nome']}</h3>
       </div>
+      
       <div class='mentor-right'>
         <div class='mentor-values-inline'>
-          <div class='value-box-green green'><p>Green</p><p>{$valores['total_green']}</p></div>
-          <div class='value-box-red red'><p>Red</p><p>{$valores['total_red']}</p></div>
-          <div class='value-box-saldo saldo'><p>Saldo</p><p>R$ {$saldo_formatado}</p></div>
+          <div class='value-box-green green'>
+            <p>Green</p><p>{$valores['total_green']}</p>
+          </div>
+          <div class='value-box-red red'>
+            <p>Red</p><p>{$valores['total_red']}</p>
+          </div>
+          <div class='value-box-saldo saldo'>
+            <p>Saldo</p><p>R$ {$saldo_formatado}</p>
+          </div>
         </div>
       </div>
+    </div>
+
+    <!-- 🔘 Menu lateral flutuante com 3 pontinhos -->
+    <div class='mentor-menu-externo'>
+      <span class='menu-toggle' title='Mais opções'>⋮</span>
+
+      <div class='menu-opcoes'>
+        <button onclick='editarAposta({$mentor["id"]})'>
+        <i class='fas fa-pen-to-square'></i> Editar Entrada
+        </button>
+        
+        <button onclick='editarMentor({$mentor["id"]})'>
+        <i class='fas fa-user-edit'></i> Editar Mentor
+        </button>
+      </div>
+
+
     </div>
   </div>
 ";
