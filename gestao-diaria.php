@@ -1542,8 +1542,6 @@ input[type="text"] {
   <h3>Entradas de Hoje - <span id="nomeMentorEdicao"></span></h3>
   <div id="resultado-filtro"></div>
 </div>
-
-
 <!-- FIM FILTRO PARA EXCLUIR OU EDITAR MENTOR  -->
 
 
