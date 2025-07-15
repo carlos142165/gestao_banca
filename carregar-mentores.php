@@ -91,7 +91,7 @@ foreach ($lista_mentores as $posicao => $mentor) {
 
           <div class='menu-opcoes'>
             <button onclick='editarAposta({$mentor["id"]})'>
-              <i class='fas fa-pen-to-square'></i> Editar Entrada
+             <i class='fas fa-trash'></i> Excluir Entrada
             </button>
             
             <button onclick='editarMentor({$mentor["id"]})'>

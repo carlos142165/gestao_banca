@@ -403,7 +403,6 @@ body, html {
 
 
 
-
 .mentor-right.reorganizado {
   display: flex;
   justify-content: space-between;
@@ -434,7 +433,7 @@ body, html {
   top: 50%;                      /* 50% da altura da tela */
   left: 50%;                     /* 50% da largura da tela */
   transform: translate(-50%, -50%); /* ajusta para centro exato */
-  background-color: #ffffff;
+  background-color: #f7f7f7ff;
   padding: 20px;
   border-radius: 10px;
   box-shadow: 0 6px 12px rgba(0,0,0,0.15);
@@ -493,8 +492,8 @@ body, html {
 }
 
 .mentor-nome {
-    font-size: 11px;
-    margin-top: 2px;
+    font-size: 12px;
+    margin-top: 1px;
     color: #333;
     text-align: center;
     font-weight: normal;
@@ -675,6 +674,8 @@ body, html {
 }
 
 /* FIM DO CODIGO DO PERFIL DE CADA MENTORES */
+
+
 
 
 .checkbox-green {
@@ -992,10 +993,9 @@ input[type="text"] {
   font-weight: 500;
 }
 
-
-
-
 /* FIM DO CODIGO DA MENSAGEM DE ALERTA OU CADASTRO  */
+
+
 
 
 
@@ -1111,7 +1111,7 @@ input[type="text"] {
 
 
 
-/* TELA DE EDIÇÃO DA ENTRADA DE APOSTA */
+/* TELA DE EDIÇÃO PARA EXCLUIR APOSTA */
 /* Tela geral */
 .tela-edicao {
   top: 50%;
@@ -1151,9 +1151,11 @@ input[type="text"] {
   right: 10px;
   background: transparent;
   border: none;
-  font-size: 13px;
+  font-size: 18px;
   cursor: pointer;
   z-index: 1000;
+  font-weight: bold;
+  color: #6d6d6dff; 
 }
 
 
@@ -1188,13 +1190,15 @@ input[type="text"] {
   padding: 12px 16px;
   margin-bottom: 12px;
   box-shadow: 0 2px 6px rgba(0,0,0,0.06);
+  height: 50PX;
   
 }
 
 .entrada-info p {
   margin: 4px 0;
-  font-size: 0.95rem;
+  font-size: 14px;
   color: #34495e;
+  margin-top: -4px;
 }
 
 .entrada-acoes {
@@ -1220,9 +1224,9 @@ input[type="text"] {
 
 
 .btn-lixeira {
-  color: #e74c3c;
-  font-size: 18px;
-  margin-top: 25px; 
+  color: #b4b4b4ff;
+  font-size: 15px;
+  margin-top: 15px; 
 }
 
 .btn-icon:hover {
@@ -1265,7 +1269,7 @@ input[type="text"] {
   to { transform: rotate(360deg); }
 }
 
-/* FIM TELA DE EDIÇÃO DA ENTRADA DE APOSTA */
+/* FIM TELA DE EDIÇÃO PARA EXCLUIR APOSTA */
 
 
 
@@ -1589,7 +1593,7 @@ input[type="text"] {
 
           <div class='menu-opcoes'>
             <button onclick='editarAposta({$mentor["id"]})'>
-              <i class='fas fa-pen-to-square'></i> Editar Entrada
+             <i class='fas fa-trash'></i> Excluir Entrada
             </button>
             
             <button onclick='editarMentor({$mentor["id"]})'>
@@ -1618,7 +1622,10 @@ input[type="text"] {
 
 <!-- Formulário do mentor -->
 <div class="formulario-mentor">
-  <button type="button" class="botao-fechar" onclick="fecharFormulario()">❌</button>
+  <button type="button" class="btn-fechar" onclick="fecharFormulario()">
+  <i class="fas fa-times"></i>
+</button>
+
   <img src="" class="mentor-foto-preview" width="100" />
   <h3 class="mentor-nome-preview">Nome do Mentor</h3>
   <form id="form-mentor" method="POST">
@@ -1657,10 +1664,14 @@ input[type="text"] {
 
 
 
-<!-- FILTRO PARA EXCLUIR O MENTOR  -->
+<!-- FORMULARIO PARA EXCLUIR O MENTOR  -->
 
   <div id="tela-edicao" class="tela-edicao" style="display:none;">
-  <button class="btn-fechar" onclick="fecharTelaEdicao()">❌</button>
+ 
+  <button type="button" class="btn-fechar" onclick="fecharTelaEdicao()">
+  <i class="fas fa-times"></i>
+  </button>
+
   <img id="fotoMentorEdicao" class="mentor-img-edicao" />
   <h3>Histórico do Mentor - <span id="nomeMentorEdicao"></span></h3>
 
@@ -1677,7 +1688,7 @@ input[type="text"] {
   </div>
 </div>
 
-<!-- FILTRO PARA EXCLUIR O MENTOR  -->
+<!-- FORMULARIO PARA EXCLUIR O MENTOR  -->
 
 
 
@@ -1769,11 +1780,12 @@ function mostrarResultados(entradas) {
     }
 
     if (!isNaN(valorGreen) && valorGreen > 0)
-      infoHTML += `<p><strong>Valor:</strong> R$ ${valorGreen.toFixed(2)}</p>`;
+     infoHTML += `<p class="info-pequena"><strong>Valor:</strong> R$ ${valorGreen.toFixed(2)}</p>`;
     if (!isNaN(valorRed) && valorRed > 0)
-      infoHTML += `<p><strong>Valor:</strong> R$ ${valorRed.toFixed(2)}</p>`;
+    infoHTML += `<p class="info-pequena"><strong>Valor:</strong> R$ ${valorRed.toFixed(2)}</p>`;
 
-    infoHTML += `<p><strong>Data:</strong> ${dataFormatada} às ${horaFormatada}</p>`;
+    infoHTML += `<p class="info-pequena"><strong>Data:</strong> ${dataFormatada} às ${horaFormatada}</p>`;
+
 
     container.innerHTML += `
       <div class="entrada-card" style="border-left: 6px solid ${bordaCor};">
