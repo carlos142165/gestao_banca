@@ -58,52 +58,49 @@ foreach ($lista_mentores as $posicao => $mentor) {
   }
 
   echo "
-  <div class='mentor-item'>
-    <div class='mentor-rank-externo'>{$rank}º</div>
+      <div class='mentor-item'>
+        <div class='mentor-rank-externo'>{$rank}º</div>
 
-    <div class='mentor-card {$classe_borda}' 
-         data-nome='{$mentor['nome']}'
-         data-foto='uploads/{$mentor['foto']}'
-         data-id='{$mentor['id']}'>
-      
-      <div class='mentor-header'>
-        <img src='uploads/{$mentor['foto']}' alt='Foto de {$mentor['nome']}' class='mentor-img' />
-        <h3 class='mentor-nome'>{$mentor['nome']}</h3>
-      </div>
-      
-      <div class='mentor-right'>
-        <div class='mentor-values-inline'>
-          <div class='value-box-green green'>
-            <p>Green</p><p>{$valores['total_green']}</p>
+        <div class='mentor-card {$classe_borda}' 
+             data-nome='{$mentor['nome']}'
+             data-foto='uploads/{$mentor['foto']}'
+             data-id='{$mentor['id']}'>
+          
+          <div class='mentor-header'>
+            <img src='uploads/{$mentor['foto']}' alt='Foto de {$mentor['nome']}' class='mentor-img' />
+            <h3 class='mentor-nome'>{$mentor['nome']}</h3>
           </div>
-          <div class='value-box-red red'>
-            <p>Red</p><p>{$valores['total_red']}</p>
+          
+          <div class='mentor-right'>
+            <div class='mentor-values-inline'>
+              <div class='value-box-green green'>
+                <p>Green</p><p>{$valores['total_green']}</p>
+              </div>
+              <div class='value-box-red red'>
+                <p>Red</p><p>{$valores['total_red']}</p>
+              </div>
+              <div class='value-box-saldo saldo'>
+                <p>Saldo</p><p>R$ {$saldo_formatado}</p>
+              </div>
+            </div>
           </div>
-          <div class='value-box-saldo saldo'>
-            <p>Saldo</p><p>R$ {$saldo_formatado}</p>
+        </div>
+
+        <div class='mentor-menu-externo'>
+          <span class='menu-toggle' title='Mais opções'>⋮</span>
+
+          <div class='menu-opcoes'>
+            <button onclick='editarAposta({$mentor["id"]})'>
+              <i class='fas fa-pen-to-square'></i> Editar Entrada
+            </button>
+            
+            <button onclick='editarMentor({$mentor["id"]})'>
+              <i class='fas fa-user-edit'></i> Editar Mentor
+            </button>
           </div>
         </div>
       </div>
-    </div>
-
-    <!-- 🔘 Menu lateral flutuante com 3 pontinhos -->
-    <div class='mentor-menu-externo'>
-      <span class='menu-toggle' title='Mais opções'>⋮</span>
-
-      <div class='menu-opcoes'>
-        <button onclick='editarAposta({$mentor["id"]})'>
-        <i class='fas fa-pen-to-square'></i> Editar Entrada
-        </button>
-        
-        <button onclick='editarMentor({$mentor["id"]})'>
-        <i class='fas fa-user-edit'></i> Editar Mentor
-        </button>
-      </div>
-
-
-    </div>
-  </div>
-";
+      ";
 }
 ?>
 

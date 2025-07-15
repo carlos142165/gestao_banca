@@ -1023,6 +1023,26 @@ input[type="text"] {
 
 
 /* CODIGO RESPONSAVEL PELOS 3 PONTINHOS DO MENU  */
+
+.menu-toggle {
+  font-family: 'Font Awesome 6 Free';
+  font-weight: 900;
+  color: #8f8e8eff;
+  background-color: transparent;
+  border: none;
+  cursor: pointer;
+  padding: 5px 10px;
+  transition: color 0.3s ease;
+  font-size: 22px;
+  cursor: pointer;
+  user-select: none;
+  padding: 0px;
+}
+
+.menu-toggle:hover {
+  color: #4CAF50; /* azul elegante no hover */
+}
+
 .mentor-item {
   display: flex;
   align-items: center;
@@ -1044,14 +1064,7 @@ input[type="text"] {
   z-index: 10;
 }
 
-.menu-toggle {
-  font-size: 22px;
-  font-weight: bold;
-  cursor: pointer;
-  user-select: none;
-  padding: 0px;
-  color: #333;
-}
+
 
 .menu-opcoes {
   display: none;
@@ -1087,13 +1100,12 @@ input[type="text"] {
 
 
 
-/* TESTE  */
+/* TELA DE EDIÇÃO DA ENTRADA DE APOSTA */
 /* Tela geral */
 .tela-edicao {
-  position: fixed;
-  top: 5%;
-  left: 10%;
-  right: 10%;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
   max-height: 85vh;
   overflow-y: auto;
   background: #ffffff;
@@ -1103,20 +1115,36 @@ input[type="text"] {
   z-index: 9999;
   font-family: 'Segoe UI', sans-serif;
   color: #333;
+  width: 300px;
+  display: flex;
+  flex-direction: column;   /* Organiza conteúdo em coluna */
+  justify-content: center;
+  align-items: center;
+  position: fixed;
+  opacity: 1;
+  transition: opacity 0.3s ease;
 }
+
+
+.tela-edicao.oculta {
+  opacity: 0;
+  pointer-events: none;
+}
+
+
 
 /* Botão de fechar */
-.tela-edicao button {
-  background: none;
+.btn-fechar {
+  position: absolute;
+  top: 10px;
+  right: 10px;
+  background: transparent;
   border: none;
-  font-size: 1.4rem;
-  color: #888;
+  font-size: 13px;
   cursor: pointer;
+  z-index: 1000;
 }
 
-.tela-edicao button:hover {
-  color: #e74c3c;
-}
 
 /* Imagem do mentor */
 .mentor-img-edicao {
@@ -1133,7 +1161,7 @@ input[type="text"] {
 .tela-edicao h3 {
   text-align: center;
   margin-bottom: 20px;
-  font-size: 1.4rem;
+  font-size: 15px;
   color: #2c3e50;
   font-weight: 600;
 }
@@ -1143,12 +1171,13 @@ input[type="text"] {
   display: flex;
   justify-content: space-between;
   align-items: flex-start;
-  background: #f5f9ff;
+  background: #f8f8f8ff;
   border-left: 6px solid #4CAF50;
   border-radius: 10px;
   padding: 12px 16px;
   margin-bottom: 12px;
   box-shadow: 0 2px 6px rgba(0,0,0,0.06);
+  
 }
 
 .entrada-info p {
@@ -1159,9 +1188,12 @@ input[type="text"] {
 
 .entrada-acoes {
   display: flex;
-  flex-direction: column;
-  gap: 8px;
+  justify-content: center;  /* Centraliza horizontalmente */
+  align-items: center;      /* Centraliza verticalmente */
+  
+  
 }
+
 
 .btn-icon {
   background: none;
@@ -1175,21 +1207,52 @@ input[type="text"] {
   pointer-events: none; /* evita duplo clique em ícone */
 }
 
-.btn-icon.editar i {
-  color: #4CAF50;
-}
 
-.btn-icon.excluir i {
+.btn-lixeira {
   color: #e74c3c;
+  font-size: 18px;
+  margin-top: 25px; 
 }
 
 .btn-icon:hover {
   transform: scale(1.2);
 }
+/* FIM TELA DE EDIÇÃO DA ENTRADA DE APOSTA */
+
+.data-hora-edicao {
+  margin-top: 8px;
+  font-size: 16px;
+  color: #555;
+}
 
 
 
+#loader {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: rgba(255,255,255,0.7);
+  z-index: 9999;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
 
+#loader::after {
+  content: "";
+  width: 50px;
+  height: 50px;
+  border: 6px solid #3498db;
+  border-top-color: transparent;
+  border-radius: 50%;
+  animation: girar 1s linear infinite;
+}
+
+@keyframes girar {
+  to { transform: rotate(360deg); }
+}
 
 
 
@@ -1384,19 +1447,19 @@ input[type="text"] {
 <div class="campo_mentores">
 
   <!-- BOTÃO ADICIONAR USUARIO -->
-  
-  <div class="mentor-wrapper">
-  <?php
-  $id_usuario_logado = $_SESSION['usuario_id'];
-  $sql_mentores = "SELECT id, nome, foto FROM mentores WHERE id_usuario = ?";
-  $stmt_mentores = $conexao->prepare($sql_mentores);
-  $stmt_mentores->bind_param("i", $id_usuario_logado);
-  $stmt_mentores->execute();
-  $result_mentores = $stmt_mentores->get_result();
 
-  $lista_mentores = [];
+  <div id="listaMentores" class="mentor-wrapper">
+    <?php
+    $id_usuario_logado = $_SESSION['usuario_id'];
+    $sql_mentores = "SELECT id, nome, foto FROM mentores WHERE id_usuario = ?";
+    $stmt_mentores = $conexao->prepare($sql_mentores);
+    $stmt_mentores->bind_param("i", $id_usuario_logado);
+    $stmt_mentores->execute();
+    $result_mentores = $stmt_mentores->get_result();
 
-  while ($mentor = $result_mentores->fetch_assoc()) {
+    $lista_mentores = [];
+
+    while ($mentor = $result_mentores->fetch_assoc()) {
       $id_mentor = $mentor['id'];
 
       $sql_valores = "SELECT 
@@ -1412,88 +1475,81 @@ input[type="text"] {
 
       $total_subtraido = $valores['total_valor_green'] - $valores['total_valor_red'];
 
-      // Armazena dados no array para ordenação
       $mentor['valores'] = $valores;
       $mentor['saldo'] = $total_subtraido;
       $lista_mentores[] = $mentor;
-  }
+    }
 
-  // Ordena pela maior pontuação de saldo
-  usort($lista_mentores, function($a, $b) {
-    return $b['saldo'] <=> $a['saldo'];
-  });
+    usort($lista_mentores, function($a, $b) {
+      return $b['saldo'] <=> $a['saldo'];
+    });
 
-  // Exibe classificados
- foreach ($lista_mentores as $posicao => $mentor) {
-  $rank = $posicao + 1;
-  $valores = $mentor['valores'];
-  $saldo_formatado = number_format($mentor['saldo'], 2, ',', '.');
+    foreach ($lista_mentores as $posicao => $mentor) {
+      $rank = $posicao + 1;
+      $valores = $mentor['valores'];
+      $saldo_formatado = number_format($mentor['saldo'], 2, ',', '.');
 
-  // 🟩 Verde se saldo > 0
-  // 🟥 Vermelho se saldo < 0
-  // ⚪ Cinza se saldo == 0
-  if ($mentor['saldo'] == 0) {
-    $classe_borda = 'card-neutro';
-  } elseif ($mentor['saldo'] > 0) {
-    $classe_borda = 'card-positivo';
-  } else {
-    $classe_borda = 'card-negativo';
-  }
+      if ($mentor['saldo'] == 0) {
+        $classe_borda = 'card-neutro';
+      } elseif ($mentor['saldo'] > 0) {
+        $classe_borda = 'card-positivo';
+      } else {
+        $classe_borda = 'card-negativo';
+      }
 
-  echo "
-  <div class='mentor-item'>
-    <div class='mentor-rank-externo'>{$rank}º</div>
+      echo "
+      <div class='mentor-item'>
+        <div class='mentor-rank-externo'>{$rank}º</div>
 
-    <div class='mentor-card {$classe_borda}' 
-         data-nome='{$mentor['nome']}'
-         data-foto='uploads/{$mentor['foto']}'
-         data-id='{$mentor['id']}'>
-      
-      <div class='mentor-header'>
-        <img src='uploads/{$mentor['foto']}' alt='Foto de {$mentor['nome']}' class='mentor-img' />
-        <h3 class='mentor-nome'>{$mentor['nome']}</h3>
-      </div>
-      
-      <div class='mentor-right'>
-        <div class='mentor-values-inline'>
-          <div class='value-box-green green'>
-            <p>Green</p><p>{$valores['total_green']}</p>
+        <div class='mentor-card {$classe_borda}' 
+             data-nome='{$mentor['nome']}'
+             data-foto='uploads/{$mentor['foto']}'
+             data-id='{$mentor['id']}'>
+          
+          <div class='mentor-header'>
+            <img src='uploads/{$mentor['foto']}' alt='Foto de {$mentor['nome']}' class='mentor-img' />
+            <h3 class='mentor-nome'>{$mentor['nome']}</h3>
           </div>
-          <div class='value-box-red red'>
-            <p>Red</p><p>{$valores['total_red']}</p>
+          
+          <div class='mentor-right'>
+            <div class='mentor-values-inline'>
+              <div class='value-box-green green'>
+                <p>Green</p><p>{$valores['total_green']}</p>
+              </div>
+              <div class='value-box-red red'>
+                <p>Red</p><p>{$valores['total_red']}</p>
+              </div>
+              <div class='value-box-saldo saldo'>
+                <p>Saldo</p><p>R$ {$saldo_formatado}</p>
+              </div>
+            </div>
           </div>
-          <div class='value-box-saldo saldo'>
-            <p>Saldo</p><p>R$ {$saldo_formatado}</p>
+        </div>
+
+        <div class='mentor-menu-externo'>
+          <span class='menu-toggle' title='Mais opções'>⋮</span>
+
+          <div class='menu-opcoes'>
+            <button onclick='editarAposta({$mentor["id"]})'>
+              <i class='fas fa-pen-to-square'></i> Editar Entrada
+            </button>
+            
+            <button onclick='editarMentor({$mentor["id"]})'>
+              <i class='fas fa-user-edit'></i> Editar Mentor
+            </button>
           </div>
         </div>
       </div>
-    </div>
-
-    <!-- 🔘 Menu lateral flutuante com 3 pontinhos -->
-    <div class='mentor-menu-externo'>
-      <span class='menu-toggle' title='Mais opções'>⋮</span>
-
-      <div class='menu-opcoes'>
-        <button onclick='editarAposta({$mentor["id"]})'>
-        <i class='fas fa-pen-to-square'></i> Editar Entrada
-        </button>
-        
-        <button onclick='editarMentor({$mentor["id"]})'>
-        <i class='fas fa-user-edit'></i> Editar Mentor
-        </button>
-      </div>
-
-
-    </div>
+      ";
+    }
+    ?>
   </div>
-";
-}
-  ?>
 </div>
+
 
    
 
-</div>
+
 <!-- FIM DO CODIGO QUE FILTRA OS DADOS DOS MENTORES NO BANCO DE DADOS PRA MOSTRAR NA TELA  -->
 
 
@@ -1536,23 +1592,214 @@ input[type="text"] {
 
 
 <!-- FILTRO PARA EXCLUIR OU EDITAR MENTOR  -->
-<div id="tela-edicao" class="tela-edicao" style="display:none;">
-  <button onclick="fecharTelaEdicao()" style="float:right;">❌</button>
+
+  <div id="tela-edicao" class="tela-edicao" style="display:none;">
+  <button class="btn-fechar" onclick="fecharTelaEdicao()">❌</button>
   <img id="fotoMentorEdicao" class="mentor-img-edicao" />
-  <h3>Entradas de Hoje - <span id="nomeMentorEdicao"></span></h3>
+  <h3>Histórico do Mentor - <span id="nomeMentorEdicao"></span></h3>
+
   <div id="resultado-filtro"></div>
 </div>
-<!-- FIM FILTRO PARA EXCLUIR OU EDITAR MENTOR  -->
 
 
 
 
 
-
-
-
-
+<!-- TESTE-->
 <script>
+let mentorAtualId = null;
+let ultimoCardClicado = null;
+
+// ✅ Exibe loader
+function mostrarLoader() {
+  const loader = document.getElementById("loader");
+  if (loader) loader.style.display = "flex";
+}
+
+// ✅ Oculta loader
+function ocultarLoader() {
+  const loader = document.getElementById("loader");
+  if (loader) loader.style.display = "none";
+}
+
+// ✅ Abre tela de edição com efeito
+function abrirTelaEdicao() {
+  const tela = document.getElementById("tela-edicao");
+  tela.style.display = "block";
+  setTimeout(() => tela.classList.remove("oculta"), 10);
+}
+
+// ✅ Fecha tela de edição
+function fecharTelaEdicao() {
+  const tela = document.getElementById("tela-edicao");
+  tela.classList.add("oculta");
+  setTimeout(() => {
+    tela.style.display = "none";
+    tela.classList.remove("oculta");
+  }, 300);
+}
+
+// ✅ Renderiza histórico do mentor
+function editarAposta(idMentor) {
+  mentorAtualId = idMentor;
+
+  const card = document.querySelector(`[data-id='${idMentor}']`);
+  if (!card) return;
+
+  document.getElementById("nomeMentorEdicao").textContent = card.getAttribute("data-nome");
+  document.getElementById("fotoMentorEdicao").src = card.getAttribute("data-foto");
+  abrirTelaEdicao();
+
+  fetch(`filtrar-entradas.php?id=${idMentor}&tipo=hoje`)
+    .then(res => res.json())
+    .then(mostrarResultados)
+    .catch(err => {
+      console.error("Erro ao carregar histórico:", err);
+      document.getElementById("resultado-filtro").innerHTML = "<p style='color:red;'>Erro ao carregar dados.</p>";
+    });
+}
+
+// ✅ Exibe dados de cada entrada
+function mostrarResultados(entradas) {
+  const container = document.getElementById("resultado-filtro");
+  container.innerHTML = "";
+
+  if (!entradas || entradas.length === 0) {
+    container.innerHTML = "<p style='color:gray;'>Nenhuma Entrada Cadastrada Hoje.</p>";
+    return;
+  }
+
+  entradas.forEach(e => {
+    const valorGreen = parseFloat(e.valor_green);
+    const valorRed = parseFloat(e.valor_red);
+    const dataCriacao = new Date(e.data_criacao);
+    const dataFormatada = dataCriacao.toLocaleDateString('pt-BR');
+    const horaFormatada = dataCriacao.toLocaleTimeString('pt-BR', { hour: '2-digit', minute: '2-digit' });
+
+    let infoHTML = "";
+    let bordaCor = "#ccc";
+
+    if (e.green > 0) {
+      infoHTML += `<p><strong>Green:</strong> ${e.green}</p>`;
+      bordaCor = "#4CAF50";
+    }
+
+    if (e.red > 0) {
+      infoHTML += `<p><strong>Red:</strong> ${e.red}</p>`;
+      bordaCor = "#e74c3c";
+    }
+
+    if (!isNaN(valorGreen) && valorGreen > 0)
+      infoHTML += `<p><strong>Valor:</strong> R$ ${valorGreen.toFixed(2)}</p>`;
+    if (!isNaN(valorRed) && valorRed > 0)
+      infoHTML += `<p><strong>Valor:</strong> R$ ${valorRed.toFixed(2)}</p>`;
+
+    infoHTML += `<p><strong>Data:</strong> ${dataFormatada} às ${horaFormatada}</p>`;
+
+    container.innerHTML += `
+      <div class="entrada-card" style="border-left: 6px solid ${bordaCor};">
+        <div class="entrada-info">${infoHTML}</div>
+        <div class="entrada-acoes">
+          <button onclick="excluirEntrada(${e.id})" class="btn-icon btn-lixeira" title="Excluir">
+            <i class="fas fa-trash"></i>
+          </button>
+        </div>
+      </div>
+    `;
+  });
+}
+
+// ✅ Função global para abrir formulário de cadastro
+function exibirFormularioMentor(card) {
+  const nomePreview = document.querySelector(".mentor-nome-preview");
+  const fotoPreview = document.querySelector(".mentor-foto-preview");
+  const idHidden = document.querySelector(".mentor-id-hidden");
+  const formulario = document.querySelector(".formulario-mentor");
+
+  nomePreview.textContent = card.getAttribute("data-nome");
+  fotoPreview.src = card.getAttribute("data-foto");
+  idHidden.value = card.getAttribute("data-id");
+  formulario.style.display = "block";
+}
+
+// ✅ Recarrega mentores e reaplica eventos corretamente
+function recarregarMentores() {
+  return fetch("carregar-mentores.php")
+    .then(res => res.text())
+    .then(html => {
+      const container = document.getElementById("listaMentores");
+      container.innerHTML = html;
+
+      container.querySelectorAll(".mentor-card").forEach(oldCard => {
+        const cloned = oldCard.cloneNode(true);
+        oldCard.replaceWith(cloned);
+
+        cloned.addEventListener("click", function(event) {
+          const alvo = event.target;
+          const clicouEmBotao = alvo.closest(".btn-icon") ||
+                                alvo.closest(".menu-opcoes") ||
+                                ["BUTTON", "I", "SPAN"].includes(alvo.tagName);
+          if (clicouEmBotao) return;
+
+          mentorAtualId = null;
+          ultimoCardClicado = cloned;
+          exibirFormularioMentor(cloned);
+        });
+      });
+    });
+}
+
+// ✅ Exclusão com controle pós-ação
+function excluirEntrada(idEntrada) {
+  if (!confirm("Tem certeza que deseja excluir esta entrada?")) return;
+
+  const idMentorBackup = mentorAtualId;
+  const tela = document.getElementById("tela-edicao");
+  const estaAberta = tela.style.display === "block";
+
+  mostrarLoader();
+
+  fetch("excluir-entrada.php", {
+    method: "POST",
+    headers: { "Content-Type": "application/x-www-form-urlencoded" },
+    body: `id=${encodeURIComponent(idEntrada)}`
+  })
+    .then(res => res.text())
+    .then(msg => {
+      alert(msg);
+      return recarregarMentores();
+    })
+    .then(() => {
+      fecharTelaEdicao();
+
+      setTimeout(() => {
+        if (estaAberta && idMentorBackup) {
+          editarAposta(idMentorBackup);
+        } else if (!estaAberta && ultimoCardClicado) {
+          exibirFormularioMentor(ultimoCardClicado);
+        }
+      }, 300);
+    })
+    .catch(err => {
+      console.error("Erro:", err);
+      alert("Falha ao excluir. Verifique o ID ou tente novamente.");
+    })
+    .finally(() => {
+      ocultarLoader();
+    });
+}
+</script>
+
+
+<!-- TESTE-->
+
+
+
+
+
+<!-- RESPONSAVEL PELO CADASTRO DOS VALORES DOS MENRORES-->
+<script>
+
 document.addEventListener("DOMContentLoaded", function () {
   const formulario = document.querySelector(".formulario-mentor");
   const nomePreview = formulario.querySelector(".mentor-nome-preview");
@@ -1562,7 +1809,7 @@ document.addEventListener("DOMContentLoaded", function () {
   const botaoFechar = document.querySelector(".botao-fechar");
   const campoValor = document.getElementById("valor");
 
-  // 🔎 Exibir dados do mentor ao clicar
+  // ✅ Exibe dados no formulário de cadastro
   function exibirFormularioMentor(card) {
     nomePreview.textContent = card.getAttribute("data-nome");
     fotoPreview.src = card.getAttribute("data-foto");
@@ -1570,44 +1817,56 @@ document.addEventListener("DOMContentLoaded", function () {
     formulario.style.display = "block";
   }
 
-  // 🎯 Aplica eventos nos cards
-  function atribuirEventosAoCards() {
-    document.querySelectorAll(".mentor-card").forEach(card => {
-      card.addEventListener("click", () => exibirFormularioMentor(card));
-    });
-  }
+  // ✅ Recarrega mentor cards e adiciona cliques
+  function recarregarMentores() {
+  fetch("carregar-mentores.php")
+    .then(res => res.text())
+    .then(html => {
+      const container = document.getElementById("listaMentores");
+      container.innerHTML = html;
 
-  // 🔄 Atualiza cards via fetch
-  function atualizarCards() {
-    fetch("carregar-mentores.php")
-      .then(res => res.text())
-      .then(html => {
-        document.querySelector(".mentor-wrapper").innerHTML = html;
-        atribuirEventosAoCards(); // reaplica eventos nos novos cards
+      container.querySelectorAll(".mentor-card").forEach(card => {
+        const idMentor = card.getAttribute("data-id");
+
+        card.addEventListener("click", function (event) {
+          const alvo = event.target;
+
+          const clicouEmBotao =
+            alvo.closest(".btn-icon") ||
+            alvo.closest(".menu-opcoes") ||
+            ["BUTTON", "I", "SPAN"].includes(alvo.tagName);
+
+          if (clicouEmBotao) return;
+
+          // ✅ Corrigido: salva o card clicado e abre formulário corretamente
+          ultimoCardClicado = card;       // 🧠 Salva para reabrir depois se necessário
+          mentorAtualId = null;           // 🔄 Garante modo cadastro
+          exibirFormularioMentor(card);   // 🟢 Abre formulário de cadastro
+        });
       });
-  }
+    });
+}
 
-  // 📦 Formatação automática do campo de valor (R$)
+
+  // ✅ Inicializa mentor cards no carregamento
+  recarregarMentores(); // 🛠️ Correção embutida para funcionar logo após a página carregar
+
+  // ✅ Formatação automática do valor
   campoValor.addEventListener("input", function () {
-  let valor = this.value.replace(/\D/g, "");
+    let valor = this.value.replace(/\D/g, "");
+    if (valor === "") {
+      this.value = "R$ 0,00";
+      return;
+    }
+    if (valor.length < 3) {
+      valor = valor.padStart(3, "0");
+    }
+    const reais = valor.slice(0, -2);
+    const centavos = valor.slice(-2);
+    this.value = `R$ ${parseInt(reais).toLocaleString("pt-BR")},${centavos}`;
+  });
 
-  if (valor === "") {
-    this.value = "R$ 0,00";
-    return;
-  }
-
-  // Garante pelo menos dois dígitos
-  if (valor.length < 3) {
-    valor = valor.padStart(3, "0");
-  }
-
-  const reais = valor.slice(0, -2);
-  const centavos = valor.slice(-2);
-  this.value = `R$ ${parseInt(reais).toLocaleString("pt-BR")},${centavos}`;
-});
-
-
-  // 📩 Envio do formulário
+  // ✅ Submete o formulário
   formMentor.addEventListener("submit", function (e) {
     e.preventDefault();
 
@@ -1620,7 +1879,7 @@ document.addEventListener("DOMContentLoaded", function () {
     let valor = campoValor.value.replace(/\D/g, "").padStart(3, "0");
     const reais = valor.slice(0, -2);
     const centavos = valor.slice(-2);
-    campoValor.value = `${reais}.${centavos}`; // formato decimal
+    campoValor.value = `${reais}.${centavos}`;
 
     const formData = new FormData(this);
 
@@ -1629,30 +1888,28 @@ document.addEventListener("DOMContentLoaded", function () {
       body: formData
     })
     .then(response => response.text())
-.then(mensagem => {
-  mostrarToast(mensagem, "sucesso"); // ✅ aqui entra sua função estilizada
-  formMentor.reset();
-  formulario.style.display = "none";
-  atualizarCards();
-})
+    .then(mensagem => {
+      mostrarToast(mensagem, "sucesso");
+      formMentor.reset();
+      formulario.style.display = "none";
+      recarregarMentores(); // ✅ Atualiza cards depois do envio
+    })
     .catch(error => {
       alert("❌ Erro ao enviar: " + error);
     });
   });
 
-  // ❌ Fechar formulário
+  // ✅ Fecha formulário
   window.fecharFormulario = function () {
     formMentor.reset();
     formulario.style.display = "none";
   };
 
   botaoFechar.addEventListener("click", fecharFormulario);
+ });
 
-  // ▶️ Inicializar
-  atribuirEventosAoCards();
-});
-
-function mostrarToast(mensagem, tipo = "aviso") {
+ // ✅ Toast de alerta
+ function mostrarToast(mensagem, tipo = "aviso") {
   const toast = document.getElementById("mensagem-status");
   toast.className = "toast " + tipo;
   toast.textContent = mensagem;
@@ -1660,11 +1917,10 @@ function mostrarToast(mensagem, tipo = "aviso") {
   setTimeout(() => {
     toast.style.display = "none";
   }, 4000);
-}
+ }
 
-
-// ▶️ TESTANDO PARA 3 PONTOS MENU
-document.addEventListener("click", function (e) {
+ // ✅ Menu três pontinhos
+ document.addEventListener("click", function (e) {
   const isToggle = e.target.classList.contains("menu-toggle");
 
   document.querySelectorAll(".menu-opcoes").forEach(menu => {
@@ -1678,16 +1934,11 @@ document.addEventListener("click", function (e) {
       e.stopPropagation();
     }
   }
-});
-
-
-
-
-
-
-
-
+ });
 </script>
+
+<!-- FIM RESPONSAVEL PELO CADASTRO DOS VALORES DOS MENRORES-->
+
 
 
 
@@ -1754,113 +2005,11 @@ function removerImagem() {
 
 
 
-<!-- TESTE-->
-<script>
-let mentorAtualId = null;
-
-function editarAposta(idMentor) {
-  mentorAtualId = idMentor;
-
-  const card = document.querySelector(`[data-id='${idMentor}']`);
-  const nome = card.getAttribute("data-nome");
-  const foto = card.getAttribute("data-foto");
-
-  document.getElementById("nomeMentorEdicao").textContent = nome;
-  document.getElementById("fotoMentorEdicao").src = foto;
-  document.getElementById("tela-edicao").style.display = "block";
-
-  fetch(`filtrar-entradas.php?id=${idMentor}&tipo=hoje`)
-    .then(res => res.json())
-    .then(entradas => mostrarResultados(entradas));
-}
-
-function mostrarResultados(entradas) {
-  const container = document.getElementById("resultado-filtro");
-  container.innerHTML = "";
-
-  if (!entradas || entradas.length === 0) {
-    container.innerHTML = "<p style='color:gray;'>Nenhuma Entrada Cadastrada Hoje.</p>";
-    return;
-  }
-
-  entradas.forEach(e => {
-    const valorGreen = parseFloat(e.valor_green);
-    const valorRed = parseFloat(e.valor_red);
-
-    let infoHTML = "";
-
-    if (e.green > 0) {
-      infoHTML += `<p><strong>Green:</strong> ${e.green}</p>`;
-    }
-
-    if (e.red > 0) {
-      infoHTML += `<p><strong>Red:</strong> ${e.red}</p>`;
-    }
-
-    if (!isNaN(valorGreen) && valorGreen > 0) {
-      infoHTML += `<p><strong>Saldo:</strong> R$ ${valorGreen.toFixed(2)}</p>`;
-    }
-
-    if (!isNaN(valorRed) && valorRed > 0) {
-      infoHTML += `<p><strong>Débito:</strong> R$ ${valorRed.toFixed(2)}</p>`;
-    }
-
-    container.innerHTML += `
-      <div class="entrada-card">
-        <div class="entrada-info">
-          ${infoHTML}
-        </div>
-        <div class="entrada-acoes">
-          <button onclick="editarEntrada(${e.id})" title="Editar" class="btn-icon editar">
-            <i class="fas fa-pen"></i>
-          </button>
-          <button onclick="excluirEntrada(${e.id})" title="Excluir" class="btn-icon excluir">
-            <i class="fas fa-trash"></i>
-          </button>
-        </div>
-      </div>
-    `;
-  });
-}
 
 
-function editarEntrada(idEntrada) {
-  alert("Abrir tela de edição para entrada ID " + idEntrada);
-  // Aqui você pode abrir formulário com valores atuais para editar
-}
 
-function excluirEntrada(idEntrada) {
-  if (confirm("Tem certeza que deseja excluir esta entrada?")) {
-    fetch("excluir-entrada.php", {
-      method: "POST",
-      body: new URLSearchParams({ id: idEntrada })
-    })
-    .then(res => res.text())
-    .then(msg => {
-      alert(msg);
-      editarAposta(mentorAtualId); // recarrega os dados após excluir
-    });
-  }
-}
 
-function salvarEdicao(event, idEntrada) {
-  event.preventDefault();
-  const formData = new FormData(event.target);
-  formData.append("id", idEntrada);
 
-  fetch("editar-entrada.php", {
-    method: "POST",
-    body: formData
-  })
-  .then(res => res.text())
-  .then(msg => alert(msg))
-  .catch(err => alert("Erro ao salvar: " + err));
-}
-
-function fecharTelaEdicao() {
-  document.getElementById("tela-edicao").style.display = "none";
-}
-</script>
 
 
 
