@@ -950,40 +950,51 @@ input[type="text"] {
 /* CODIGO DA MENSAGEM DE ALERTA OU CADASTRO  */
 .toast {
   position: fixed;
-  top: 60px;
+  top: 30px;
   left: 50%;
   transform: translateX(-50%);
   min-width: 280px;
-  padding: 10px 15px;
+  max-width: 90%;
+  padding: 12px 20px;
   border-radius: 8px;
-  font-size: 13px;
+  font-size: 14px;
   font-weight: bold;
-  z-index: 9999;
-  display: none;
+  font-family: 'Segoe UI', sans-serif;
   text-align: center;
   box-shadow: 0 4px 12px rgba(0,0,0,0.2);
+  z-index: 99999;
   opacity: 0;
   transition: opacity 0.3s ease;
 }
-.toast.sucesso,
-.toast.aviso,
-.toast.erro {
-  opacity: 1;
-}
-
 
 .toast.sucesso {
   background-color: #4CAF50;
-  color: white;
+  color: #fff;
 }
+
 .toast.erro {
   background-color: #f44336;
-  color: white;
+  color: #fff;
 }
+
 .toast.aviso {
   background-color: #ffc107;
   color: #333;
 }
+
+.toast.ativo {
+  display: block;
+  opacity: 1;
+}
+.modal-texto {
+  color: #2c3e50; /* ou qualquer cor desejada */
+  font-size: 16px;
+  font-weight: 500;
+}
+
+
+
+
 /* FIM DO CODIGO DA MENSAGEM DE ALERTA OU CADASTRO  */
 
 
@@ -1217,7 +1228,7 @@ input[type="text"] {
 .btn-icon:hover {
   transform: scale(1.2);
 }
-/* FIM TELA DE EDIÇÃO DA ENTRADA DE APOSTA */
+
 
 .data-hora-edicao {
   margin-top: 8px;
@@ -1254,9 +1265,56 @@ input[type="text"] {
   to { transform: rotate(360deg); }
 }
 
+/* FIM TELA DE EDIÇÃO DA ENTRADA DE APOSTA */
 
 
 
+
+
+.modal-confirmacao {
+  position: fixed;
+  top: 0; left: 0;
+  width: 100%; height: 100%;
+  background: rgba(0,0,0,0.5);
+  z-index: 9999;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.modal-content {
+  background: #fff;
+  padding: 25px;
+  border-radius: 10px;
+  text-align: center;
+  box-shadow: 0 4px 12px rgba(0,0,0,0.2);
+  font-family: 'Segoe UI', sans-serif;
+}
+
+.botoes-modal {
+  margin-top: 15px;
+  display: flex;
+  justify-content: center;
+  gap: 10px;
+}
+
+.botao-confirmar {
+  background: #e74c3c;
+  color: white;
+  border: none;
+  padding: 8px 16px;
+  border-radius: 6px;
+  cursor: pointer;
+}
+
+.botao-cancelar {
+  background: #ccc;
+  color: black;
+  border: none;
+  padding: 8px 16px;
+  border-radius: 6px;
+  cursor: pointer;
+}
 
 
 
@@ -1586,12 +1644,20 @@ input[type="text"] {
 
 
 
-<div id="mensagem-status" class="toast" style="display:none;"></div>
+<div id="mensagem-status" class="toast"></div>
 
 
 
 
-<!-- FILTRO PARA EXCLUIR OU EDITAR MENTOR  -->
+
+
+
+
+
+
+
+
+<!-- FILTRO PARA EXCLUIR O MENTOR  -->
 
   <div id="tela-edicao" class="tela-edicao" style="display:none;">
   <button class="btn-fechar" onclick="fecharTelaEdicao()">❌</button>
@@ -1600,6 +1666,19 @@ input[type="text"] {
 
   <div id="resultado-filtro"></div>
 </div>
+
+<div id="modal-confirmacao" class="modal-confirmacao" style="display:none;">
+  <div class="modal-content">
+    <p class="modal-texto">Tem certeza que deseja excluir esta entrada?</p>
+    <div class="botoes-modal">
+      <button id="btnConfirmar" class="botao-confirmar">Sim, excluir</button>
+      <button id="btnCancelar" class="botao-cancelar">Cancelar</button>
+    </div>
+  </div>
+</div>
+
+<!-- FILTRO PARA EXCLUIR O MENTOR  -->
+
 
 
 
@@ -1751,43 +1830,59 @@ function recarregarMentores() {
 
 // ✅ Exclusão com controle pós-ação
 function excluirEntrada(idEntrada) {
-  if (!confirm("Tem certeza que deseja excluir esta entrada?")) return;
+  const modal = document.getElementById("modal-confirmacao");
+  const btnConfirmar = document.getElementById("btnConfirmar");
+  const btnCancelar = document.getElementById("btnCancelar");
 
-  const idMentorBackup = mentorAtualId;
-  const tela = document.getElementById("tela-edicao");
-  const estaAberta = tela.style.display === "block";
+  // Exibe o modal de confirmação
+  modal.style.display = "flex";
 
-  mostrarLoader();
+  // Remove event listeners anteriores para evitar duplicações
+  btnConfirmar.onclick = null;
+  btnCancelar.onclick = null;
 
-  fetch("excluir-entrada.php", {
-    method: "POST",
-    headers: { "Content-Type": "application/x-www-form-urlencoded" },
-    body: `id=${encodeURIComponent(idEntrada)}`
-  })
-    .then(res => res.text())
-    .then(msg => {
-      alert(msg);
-      return recarregarMentores();
+  btnCancelar.onclick = () => {
+    modal.style.display = "none";
+  };
+
+  btnConfirmar.onclick = () => {
+    modal.style.display = "none";
+    const idMentorBackup = mentorAtualId;
+    const tela = document.getElementById("tela-edicao");
+    const estaAberta = tela.style.display === "block";
+
+    mostrarLoader();
+
+    fetch("excluir-entrada.php", {
+      method: "POST",
+      headers: { "Content-Type": "application/x-www-form-urlencoded" },
+      body: `id=${encodeURIComponent(idEntrada)}`
     })
-    .then(() => {
-      fecharTelaEdicao();
-
-      setTimeout(() => {
-        if (estaAberta && idMentorBackup) {
-          editarAposta(idMentorBackup);
-        } else if (!estaAberta && ultimoCardClicado) {
-          exibirFormularioMentor(ultimoCardClicado);
-        }
-      }, 300);
-    })
-    .catch(err => {
-      console.error("Erro:", err);
-      alert("Falha ao excluir. Verifique o ID ou tente novamente.");
-    })
-    .finally(() => {
-      ocultarLoader();
-    });
+      .then(res => res.text())
+      .then(msg => {
+        mostrarToast(msg.trim(), msg.includes("sucesso") ? "sucesso" : "aviso");
+        return recarregarMentores();
+      })
+      .then(() => {
+        fecharTelaEdicao();
+        setTimeout(() => {
+          if (estaAberta && idMentorBackup) {
+            editarAposta(idMentorBackup);
+          } else if (!estaAberta && ultimoCardClicado) {
+            exibirFormularioMentor(ultimoCardClicado);
+          }
+        }, 300);
+      })
+      .catch(err => {
+        console.error("Erro:", err);
+        mostrarToast("❌ Falha ao excluir. Verifique o ID ou tente novamente.");
+      })
+      .finally(() => {
+        ocultarLoader();
+      });
+  };
 }
+
 </script>
 
 
@@ -1911,13 +2006,16 @@ document.addEventListener("DOMContentLoaded", function () {
  // ✅ Toast de alerta
  function mostrarToast(mensagem, tipo = "aviso") {
   const toast = document.getElementById("mensagem-status");
-  toast.className = "toast " + tipo;
+  toast.className = `toast ${tipo} ativo`;
   toast.textContent = mensagem;
-  toast.style.display = "block";
+
   setTimeout(() => {
-    toast.style.display = "none";
+    toast.classList.remove("ativo");
+    toast.classList.remove(tipo);
   }, 4000);
- }
+}
+
+
 
  // ✅ Menu três pontinhos
  document.addEventListener("click", function (e) {

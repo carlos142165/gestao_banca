@@ -1,13 +1,13 @@
 <?php
 $dbHost = 'localhost';
 $dbUsername = 'root';
-$dbPassword = ''; // Sem senha
+$dbPassword = '';
 $dbname = 'formulario-carlos';
 
 $conexao = new mysqli($dbHost, $dbUsername, $dbPassword, $dbname);
 
 if ($conexao->connect_error) {
-  die("Falha na conexão: " . $conexao->connect_error);
+  exit("❌ Falha na conexão.");
 }
 
 $id = $_POST['id'] ?? null;
@@ -17,15 +17,16 @@ if ($id) {
   $stmt->bind_param("i", $id);
 
   if ($stmt->execute()) {
-    echo "Entrada excluída com sucesso.";
+    echo "✅ Entrada excluída com sucesso.";
   } else {
-    echo "Erro ao excluir: " . $stmt->error;
+    echo "❌ Erro ao excluir: " . $stmt->error;
   }
 
   $stmt->close();
 } else {
-  echo "ID não recebido.";
+  echo "⚠️ ID não recebido.";
 }
 
 $conexao->close();
 ?>
+
