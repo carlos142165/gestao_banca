@@ -819,19 +819,24 @@ body, html {
 
 .btn-add-usuario {
   width: 390px;
-  height: 40px;
-  color: white;
-  background-color:rgb(234, 243, 238);
-  box-shadow: 0 10px 25px rgba(0, 0, 0, 0.01);
-  cursor: pointer;
-  border-radius: 0;
-  font-size: 13px;
-  border: none;
-  transition: background 0.3s ease, transform 0.2s ease;
-  border-radius: 0px;
-  margin-top: 8px;
+  height: 45px;
+  background-color: #eaf3eeff;
   color: rgb(11, 131, 61);
+  box-shadow: 0 10px 25px rgba(0, 0, 0, 0.01);
+  border: none;
+  border-radius: 15;
+  font-size: 13px;
+  cursor: pointer;
+  margin-top: 15px;
+  margin-left: -20px;   /* 👈 remove espaço da esquerda */
+  margin-right: 0;  /* 👈 remove espaço da direita */
+  padding-left: 0;  /* 👈 remove preenchimento lateral se existir */
+  padding-right: 0;
+  transition: background 0.3s ease, transform 0.2s ease;
+  display: block;   /* 👈 garante que o botão se comporte como um bloco */
+  align-items: center;
 }
+
 
 .btn-add-usuario:hover {
   background-color:rgb(225, 240, 232);
@@ -868,7 +873,7 @@ body, html {
   flex-direction: column;
   align-items: center;
   justify-content: flex-start;
-  width: 380px;
+  width: 385px;
   margin: 0 auto;
   margin-top: 0px;
   border-radius: 0px;
@@ -877,6 +882,7 @@ body, html {
   max-height: 550px;
   overflow-y: auto;
   margin-left: -18px;
+  margin-right: 0px;
 
 }
 
@@ -888,13 +894,14 @@ body, html {
 
 .mentor-wrapper{
   margin-top: 15px;
+  align-items: center;
 }
 
 /* Estilo para dispositivos com largura até 768px (ex: celulares) */
 @media (max-width: 768px) {
   .campo_mentores {
     height: 500px; /* altura menor para celular */
-    width: 390px;    /* ajusta a largura também para adaptar melhor */
+    width: 385px;    /* ajusta a largura também para adaptar melhor */
   }
 }
 
@@ -1650,12 +1657,12 @@ input[type="text"] {
 
 
  <!-- BOTÃO ADICIONAR USUARIO -->
-<div class="add-user">
-        <button class="btn-add-usuario" onclick="abrirModal()">
-         <i class="fas fa-user-plus"></i> Adicionar Mentor
-        </button>
+<button class="btn-add-usuario" onclick="prepararFormularioNovoMentor()">
+  <i class="fas fa-user-plus"></i> Adicionar Mentor
+</button>
 
-  </div>
+
+
  <!-- FIM CODIGO BOTÃO ADICIONAR USUARIO -->
 
 
@@ -2276,27 +2283,65 @@ function removerImagem() {
 
 <!-- CODIGO RESPONSAVE EM EXIBIR OS DADOS DOS MENTORES PARA SER EXCLUIDOS OU EDITADOS  -->
 <script>
-function editarMentor(id) {
-  const card = document.querySelector(`[data-id='${id}']`);
-  const nome = card.getAttribute('data-nome');
-  const foto = card.getAttribute('data-foto');
+// 👉 Abre o modal
+function abrirModal() {
+  const modal = document.getElementById("modal-form");
+  if (modal) {
+    modal.style.display = "block";
+  } else {
+    console.warn("Modal não encontrado");
+  }
+}
+
+// 👉 Fecha o modal
+function fecharModal() {
+  const modal = document.getElementById("modal-form");
+  if (modal) {
+    modal.style.display = "none";
+  }
+}
+
+// 👉 Prepara o formulário para cadastrar novo mentor
+function prepararFormularioNovoMentor() {
+  document.getElementById("mentor-id").value = "";
+  document.getElementById("nome").value = "";
+  document.getElementById("preview-img").src = "https://cdn-icons-png.flaticon.com/512/847/847969.png";
+  document.getElementById("nome-arquivo").textContent = "";
+  document.querySelector(".mentor-nome-preview").textContent = "";
+  document.getElementById("foto-atual").value = "avatar-padrao.png";
+  document.getElementById("acao-form").value = "cadastrar_mentor";
+  document.querySelector(".btn-enviar").innerHTML = "<i class='fas fa-user-plus'></i> Cadastrar Mentor";
+  document.getElementById("btn-excluir").style.display = "none";
 
   abrirModal();
+}
 
+// 👉 Preenche formulário para editar mentor existente
+function editarMentor(id) {
+  const card = document.querySelector(`[data-id='${id}']`);
+  if (!card) {
+    console.warn("Card do mentor não encontrado");
+    return;
+  }
+
+  const nome = card.getAttribute('data-nome') || "";
+  const foto = card.getAttribute('data-foto') || "https://cdn-icons-png.flaticon.com/512/847/847969.png";
+
+  document.getElementById("mentor-id").value = id;
   document.getElementById("nome").value = nome;
   document.getElementById("preview-img").src = foto;
   document.getElementById("nome-arquivo").textContent = "Foto atual";
   document.querySelector(".mentor-nome-preview").textContent = nome;
-
-  document.getElementById("mentor-id").value = id;
   document.getElementById("foto-atual").value = foto.split('/').pop();
+
   document.getElementById("acao-form").value = "editar_mentor";
   document.querySelector(".btn-enviar").innerHTML = "<i class='fas fa-save'></i> Salvar Alterações";
-
-
   document.getElementById("btn-excluir").style.display = "inline-block";
+
+  abrirModal();
 }
 </script>
+
 
 
 <script>
