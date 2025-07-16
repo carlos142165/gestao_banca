@@ -1,3 +1,6 @@
+
+
+
 <?php
 session_start();
 require_once 'config.php';
@@ -9,39 +12,62 @@ if (!isset($_SESSION['usuario_id']) || empty($_SESSION['usuario_id'])) {
     exit();
 }
 
-// ✅ PROCESSAMENTO DAS AÇÕES
+// ✅ Exclusão de mentor
+if (isset($_GET['excluir_mentor'])) {
+    $id = intval($_GET['excluir_mentor']);
+    $stmt = $conexao->prepare("DELETE FROM mentores WHERE id = ?");
+    $stmt->bind_param("i", $id);
+    $stmt->execute();
+    echo "<script>alert('Mentor excluído com sucesso!'); window.location.href = 'gestao-diaria.php';</script>";
+    exit();
+}
+
+// ✅ Cadastro e edição de mentor
 if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['acao'])) {
+    $usuario_id = $_SESSION['usuario_id'];
+    $nome = $_POST['nome'];
+    $mentor_id = $_POST['mentor_id'] ?? null;
 
-    // 📌 Cadastro de Mentor
-    if ($_POST['acao'] === 'cadastrar_mentor') {
-        $usuario_id = $_SESSION['usuario_id'];
-        $nome = $_POST['nome'];
-
-        $foto_nome = null;
-        if (isset($_FILES['foto']) && $_FILES['foto']['error'] === UPLOAD_ERR_OK) {
-            $extensao = pathinfo($_FILES['foto']['name'], PATHINFO_EXTENSION);
-            $foto_nome = uniqid() . '.' . $extensao;
-            $caminho_destino = 'uploads/' . $foto_nome;
-            if (!move_uploaded_file($_FILES['foto']['tmp_name'], $caminho_destino)) {
-                die("Erro ao fazer upload da imagem.");
-            }
-        }
-
-        $stmt = $conexao->prepare("INSERT INTO mentores (id_usuario, foto, nome, data_criacao) VALUES (?, ?, ?, NOW())");
-        $stmt->bind_param("iss", $usuario_id, $foto_nome, $nome);
-
-        if ($stmt->execute()) {
-            echo "<script>alert('✅ Mentor cadastrado com sucesso!'); window.location.href = 'gestao-diaria.php';</script>";
-            exit;
-        } else {
-            echo "<script>alert('Erro ao cadastrar mentor'); window.location.href = 'gestao-diaria.php';</script>";
-            exit;
-        }
+    // 📷 Processamento da imagem
+    if (isset($_FILES['foto']) && $_FILES['foto']['error'] === UPLOAD_ERR_OK) {
+        $extensao = pathinfo($_FILES['foto']['name'], PATHINFO_EXTENSION);
+        $foto_nome = uniqid() . '.' . $extensao;
+        move_uploaded_file($_FILES['foto']['tmp_name'], "uploads/$foto_nome");
+    } else {
+        $foto_nome = $_POST['foto_atual'] ?? 'avatar-padrao.png';
     }
 
-    
+    if ($_POST['acao'] === 'cadastrar_mentor') {
+        $stmt = $conexao->prepare("INSERT INTO mentores (id_usuario, foto, nome, data_criacao) VALUES (?, ?, ?, NOW())");
+        $stmt->bind_param("iss", $usuario_id, $foto_nome, $nome);
+    }
+
+    if ($_POST['acao'] === 'editar_mentor' && $mentor_id) {
+        $stmt = $conexao->prepare("UPDATE mentores SET nome = ?, foto = ? WHERE id = ?");
+        $stmt->bind_param("ssi", $nome, $foto_nome, $mentor_id);
+    }
+
+    if ($stmt->execute()) {
+        echo "<script>alert('Mentor salvo com sucesso!'); window.location.href = 'gestao-diaria.php';</script>";
+        exit();
+    } else {
+        echo "<script>alert('Erro ao salvar mentor'); window.location.href = 'gestao-diaria.php';</script>";
+        exit();
+    }
 }
 ?>
+
+
+ 
+
+
+
+
+
+
+
+
+
 
 
 
@@ -213,87 +239,66 @@ body, html {
   width: 100%;
   height: 100%;
   background-color: rgba(0,0,0,0.6);
+  justify-content: center;
+  align-items: center;
+  font-family: 'Segoe UI', sans-serif;
 }
 
 /* Conteúdo do modal centralizado */
 .modal-conteudo {
-  position: relative; /* ← isso é fundamental */
+  position: relative;
   background-color: #fff;
   margin: 5% auto;
-  padding: 30px 25px;
-  border-radius: 12px;
-  max-width: 400px;
+  padding: 20px 25px;
+  border-radius: 15px;
+  max-width: 450px;
   width: 70%;
-  box-shadow: 0 0 15px rgba(0,0,0,0.3);
+  box-shadow: 0 0 20px rgba(0,0,0,0.3);
   animation: fadeIn 0.3s ease-in-out;
-  font-family: 'Segoe UI', sans-serif;
-  top: 100px;
-}
-
-/* Título e botão de fechar */
-.fechar {
-  position: absolute;
-  top: 2px;
-  right: 15px;
-  font-size: 26px;
-  cursor: pointer;
-  color: #888;
-  font-weight: bold;
-  background: none;
-  border: none;
-}
-
-/* Labels e campos */
-.modal label {
-  display: block;
-  margin-top: 15px;
-  font-weight: 500;
-  color: #333;
-}
-
-.modal input[type="text"],
-.modal input[type="file"],
-.modal button[type="submit"],
-.modal input[type="number"] {
-  width: 100%;
-  padding: 10px 12px;
-  margin-top: 8px;
-  border: 1px solid #ccc;
-  border-radius: 8px;
-  box-sizing: border-box;
-  font-size: 14px;
-}
-
-/* Botão customizado para upload */
-.botao-upload {
-  display: inline-block;
-  padding: 10px 15px;
-  margin-top: 15px;
-  background-color: #4CAF50;
-  color: white;
-  cursor: pointer;
-  border-radius: 8px;
-  font-weight: bold;
+  top: 80px;
   text-align: center;
 }
 
-/* Pré-visualização da imagem */
+/* Botão de fechar no canto superior direito */
+.fechar {
+  position: absolute;
+  top: 2px;
+  right: 10px;
+  font-size: 26px;
+  cursor: pointer;
+  color: #888;
+  background: none;
+  border: none;
+  transition: color 0.3s ease;
+}
+
+.fechar:hover {
+  color: #f44336;
+}
+
+/* Container da pré-visualização + campos logo abaixo */
 #preview-container {
-  margin-top: 15px;
+  margin-top: 5px;
   text-align: center;
 }
 
 #preview-img {
+  display: block;
   width: 120px;
+  max-width: 100%;
   height: 120px;
+  aspect-ratio: 1 / 1;
   border-radius: 50%;
   object-fit: cover;
+  object-position: center;
   border: 3px solid #4CAF50;
   box-shadow: 0 0 8px rgba(0,0,0,0.2);
-  transition: 0.3s ease-in-out;
+  margin: 0 auto;
 }
 
-/* Botão remover imagem */
+
+
+
 #remover-foto {
   background-color: #f44336;
   color: white;
@@ -301,43 +306,143 @@ body, html {
   padding: 8px 12px;
   border-radius: 8px;
   cursor: pointer;
-  margin-top: 10px;
   font-size: 14px;
-  display: inline-block;
+  display: inline-flex;
+  align-items: center;
+  gap: 0px;
+  margin-bottom: 0px;
 }
 
-/* Botão de envio */
+#remover-foto:hover {
+  background-color: #d32f2f;
+}
+
+/* Campos mais próximos da imagem */
+.modal input[type="text"],
+.modal input[type="file"],
+.modal input[type="number"],
+.modal button[type="submit"] {
+  width: 100%;
+  padding: 10px 14px;
+  border: 1px solid #ccc;
+  border-radius: 8px;
+  font-size: 15px;
+  box-sizing: border-box;
+  transition: border 0.3s ease;
+  margin-bottom: 0px;
+}
+
+.modal input:focus {
+  border-color: #2196F3;
+  outline: none;
+}
+
+/* Botão de envio próximo à imagem */
 .modal button[type="submit"] {
   background-color: #2196F3;
   color: white;
   border: none;
-  padding: 10px 0;
-  margin-top: 20px;
+  padding: 12px 0;
   border-radius: 8px;
-  font-size: 15px;
+  font-size: 16px;
   font-weight: bold;
   transition: background-color 0.3s ease;
+  display: inline-flex;
+  justify-content: center;
+  align-items: center;
+  gap: 8px;
 }
 
 .modal button[type="submit"]:hover {
   background-color: #1976D2;
 }
 
-/* Nome do arquivo */
+
+.botoes-formulario {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 10px;
+  width: 100%; /* mantêm alinhamento */
+  margin-top: 10px;
+  text-align: center;
+}
+
+.btn-excluir {
+  width: 100%;
+  font-size: 16px;
+  font-weight: bold;
+  box-sizing: border-box;
+  background-color: #e64135ff;
+  border-radius: 8px;
+  padding: 12px 0;
+  border: none;
+  color: white;
+}
+
+
+
 #nome-arquivo {
   display: block;
-  margin-top: 8px;
+  margin-bottom: 8px;
   font-style: italic;
   font-size: 13px;
   color: #666;
   text-align: center;
 }
 
-/* Animação */
+/* Upload estilizado */
+.botao-upload {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  padding: 10px 16px;
+  background-color: #4CAF50;
+  color: white;
+  cursor: pointer;
+  border-radius: 8px;
+  font-weight: bold;
+  font-size: 14px;
+  border: none;
+  transition: background-color 0.3s ease;
+}
+
+.botao-upload:hover {
+  background-color: #388E3C;
+}
+
 @keyframes fadeIn {
   from { opacity: 0; transform: translateY(-20px); }
   to { opacity: 1; transform: translateY(0); }
 }
+
+.label-arquivo {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  font-weight: bold;
+  font-size: 15px;
+  color: #fff;
+  background-color: #4A90E2;
+  border-radius: 8px;
+  padding: 10px 16px;
+  cursor: pointer;
+  box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+  transition: background-color 0.3s ease, transform 0.2s ease;
+  margin-top: 8px;
+}
+
+.label-arquivo:hover {
+  background-color: #357ABD;
+  transform: scale(1.03);
+}
+
+.label-arquivo i {
+  font-size: 18px;
+}
+
+
 
 /* AQUI O FIM DO CODIGO PARA O FORMULARIO DE ADICIONAR UM NOVO USUARIO */
 
@@ -763,7 +868,7 @@ body, html {
   flex-direction: column;
   align-items: center;
   justify-content: flex-start;
-  width: 390px;
+  width: 380px;
   margin: 0 auto;
   margin-top: 0px;
   border-radius: 0px;
@@ -771,6 +876,7 @@ body, html {
   box-sizing: border-box;
   max-height: 550px;
   overflow-y: auto;
+  margin-left: -18px;
 
 }
 
@@ -1274,7 +1380,7 @@ input[type="text"] {
 
 
 
-
+/* RESPONSAVEL PELA PARTE DA MENSAGEM DE CONFIRMAÇÃO DE EXCLUSAO DO CADASTRO DE VALOR */
 .modal-confirmacao {
   position: fixed;
   top: 0; left: 0;
@@ -1323,6 +1429,34 @@ input[type="text"] {
 
 
 
+
+
+/* FIM RESPONSAVEL PELA PARTE DA MENSAGEM DE CONFIRMAÇÃO DE EXCLUSAO DO CADASTRO DE VALOR */
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 </style>
      
      <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
@@ -1330,7 +1464,6 @@ input[type="text"] {
 
 
 </head>
-
 
 
 
@@ -1441,20 +1574,36 @@ input[type="text"] {
 
 <!-- CODIGO RESPONSAVEL PELO FORMULARIO QUE ADICIONA NOVO USUARIO -->
 
+
+
+
+
+
+
 <!-- Modal -->
 <div id="modal-form" class="modal">
   <div class="modal-conteudo">
     <span class="fechar" onclick="fecharModal()">&times;</span>
 
     <form method="POST" enctype="multipart/form-data" action="gestao-diaria.php" class="formulario-mentor-completo">
-      <input type="hidden" name="acao" value="cadastrar_mentor">
+      <input type="hidden" name="acao" id="acao-form" value="cadastrar_mentor">
+      <input type="hidden" name="mentor_id" id="mentor-id" value="">
+      <input type="hidden" name="foto_atual" id="foto-atual" value="avatar-padrao.png">
+
 
       <!-- Botão para selecionar a foto -->
-      <div class="input-group">
-        <label for="foto" class="label-form">Foto do Mentor:</label>
-        <input type="file" name="foto" id="foto" class="input-file" onchange="mostrarNomeArquivo(this)" required>
-        <span id="nome-arquivo" class="nome-arquivo">Nenhum arquivo selecionado</span>
-      </div>
+     <div class="input-group">
+        <label for="foto" class="label-form"></label>
+        <!-- Botão visual para o input -->
+        <label for="foto" class="label-arquivo">
+        <i class="fas fa-image"></i> Selecionar Foto
+        </label>
+        <!-- Input real oculto -->
+        <input type="file" name="foto" id="foto" class="input-file" onchange="mostrarNomeArquivo(this)" hidden>
+        <span id="nome-arquivo" class="nome-arquivo"></span>
+     </div>
+
+
 
       <!-- Pré-visualização da imagem -->
       <div class="preview-foto-wrapper">
@@ -1463,25 +1612,30 @@ input[type="text"] {
       </div>
 
       <!-- Nome abaixo da foto -->
-      <h3 class="mentor-nome-preview" style="text-align: center; margin-top: 14px;">Nome do Mentor</h3>
+      <h3 class="mentor-nome-preview" style="text-align: center; margin-top: 14px;"></h3>
 
       <!-- Campo para digitar o nome -->
       <div class="input-group">
-        <label for="nome" class="label-form">Nome do Mentor:</label>
+        <label for="nome" class="label-form"></label>
         <input type="text" name="nome" id="nome" class="input-text" placeholder="Nome do Mentor" required>
       </div>
 
       <!-- Botão de envio -->
       <div class="botoes-formulario">
-        <button type="submit" class="btn-enviar">Cadastrar Mentor</button>
+        <button type="submit" class="btn-enviar">
+        <i class="fas fa-user-plus"></i> Cadastrar Mentor</button>
+
+
+        <!-- Botão de exclusão (aparece só no modo edição) -->
+        <button type="button" class="btn-excluir" id="btn-excluir" onclick="excluirMentorDireto()" style="display: none;">
+          <i class="fas fa-user-times"></i> Excluir Mentor
+        </button>
+        
       </div>
     </form>
   </div>
- </div>
-
-
- 
 </div>
+
 
 <!-- FIM DO CODIGO RESPONSAVEL PELO FORMULARIO QUE ADICIONA NOVO USUARIO -->
 
@@ -1490,16 +1644,20 @@ input[type="text"] {
 
 
 
-<!-- CODIGO RESPONSAVEL PELO CAMPO ONDE OS MENTORES VAO FICAR -->
 
 
 
 
+
+ <!-- BOTÃO ADICIONAR USUARIO -->
 <div class="add-user">
         <button class="btn-add-usuario" onclick="abrirModal()">
-          <span>+</span> Adicionar Mentoria
+         <i class="fas fa-user-plus"></i> Adicionar Mentor
         </button>
+
   </div>
+ <!-- FIM CODIGO BOTÃO ADICIONAR USUARIO -->
+
 
 
 
@@ -1508,7 +1666,7 @@ input[type="text"] {
 <!-- AQUI FILTRA OS DADOS DOS MENTORES NO BANCO DE DADOS PRA MOSTRAR NA TELA  -->
 <div class="campo_mentores">
 
-  <!-- BOTÃO ADICIONAR USUARIO -->
+ 
 
   <div id="listaMentores" class="mentor-wrapper">
     <?php
@@ -2057,7 +2215,7 @@ document.addEventListener("DOMContentLoaded", function () {
 
 
 
-<!-- CODIGO RESPONSAVEL PELO FORMULARIO QUE ADICIONA NOVO USUARIO -->
+<!-- CODIGO RESPONSAVEL POR MOSTRAR NA TELA OS MENTORES -->
 
 <script>
 function abrirModal() {
@@ -2110,15 +2268,46 @@ function removerImagem() {
 }
 
 </script>
-<!-- FIM DO CODIGO RESPONSAVEL PELO FORMULARIO QUE ADICIONA NOVO USUARIO -->
+<!-- FIM DO CODIGO RESPONSAVEL POR MOSTRAR NA TELA OS MENTORES  -->
 
 
 
 
 
+<!-- CODIGO RESPONSAVE EM EXIBIR OS DADOS DOS MENTORES PARA SER EXCLUIDOS OU EDITADOS  -->
+<script>
+function editarMentor(id) {
+  const card = document.querySelector(`[data-id='${id}']`);
+  const nome = card.getAttribute('data-nome');
+  const foto = card.getAttribute('data-foto');
+
+  abrirModal();
+
+  document.getElementById("nome").value = nome;
+  document.getElementById("preview-img").src = foto;
+  document.getElementById("nome-arquivo").textContent = "Foto atual";
+  document.querySelector(".mentor-nome-preview").textContent = nome;
+
+  document.getElementById("mentor-id").value = id;
+  document.getElementById("foto-atual").value = foto.split('/').pop();
+  document.getElementById("acao-form").value = "editar_mentor";
+  document.querySelector(".btn-enviar").innerHTML = "<i class='fas fa-save'></i> Salvar Alterações";
 
 
+  document.getElementById("btn-excluir").style.display = "inline-block";
+}
+</script>
 
+
+<script>
+function excluirMentorDireto() {
+  const id = document.getElementById("mentor-id").value;
+  if (confirm("Tem certeza que deseja excluir este mentor?")) {
+    window.location.href = "gestao-diaria.php?excluir_mentor=" + id;
+  }
+}
+</script>
+<!-- FIM CODIGO RESPONSAVE EM EXIBIR OS DADOS DOS MENTORES PARA SER EXCLUIDOS OU EDITADOS  -->
 
 
 
