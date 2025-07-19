@@ -1,4 +1,6 @@
-// CODIGO FORMULARIO DE EDIÇÃO DOS MENTORES
+// CODIGO RESPONSAVEL PELO CADASTRO DOS MENTORES E VALORES DOS
+
+// ✅ FUNÇÕES DE MODAL E PREPARAÇÃO DO FORMULÁRIO
 function abrirModal() {
   const modal = document.getElementById("modal-form");
   if (modal) modal.style.display = "block";
@@ -25,6 +27,7 @@ function prepararFormularioNovoMentor() {
   abrirModal();
 }
 
+// ✅ EDIÇÃO DE MENTOR
 function editarMentor(id) {
   const card = document.querySelector(`[data-id='${id}']`);
   if (!card) return;
@@ -40,7 +43,6 @@ function editarMentor(id) {
   document.getElementById("nome-arquivo").textContent = "Foto atual";
   document.querySelector(".mentor-nome-preview").textContent = nome;
   document.getElementById("foto-atual").value = foto.split("/").pop();
-
   document.getElementById("acao-form").value = "editar_mentor";
   document.querySelector(".btn-enviar").innerHTML =
     "<i class='fas fa-save'></i> Salvar Alterações";
@@ -48,23 +50,16 @@ function editarMentor(id) {
 
   abrirModal();
 }
-// aqui mensagem de confirmação
-function excluirMentorDireto() {
+
+// ✅ CONFIRMAÇÃO SIMPLES DE EXCLUSÃO
+function excluirMentorDiretoConfirmacaoSimples() {
   const id = document.getElementById("mentor-id").value;
   if (confirm("Tem certeza que deseja excluir este mentor?")) {
     window.location.href = "gestao-diaria.php?excluir_mentor=" + id;
   }
 }
-// aqui o tempo de 3 segundos que a mensagem fica na tela
-document.addEventListener("DOMContentLoaded", function () {
-  const toast = document.getElementById("toast");
-  if (toast && toast.classList.contains("ativo")) {
-    setTimeout(() => {
-      toast.classList.remove("ativo");
-    }, 3000);
-  }
-});
-// aqui modal onde faz a pergunta se sim ounão para deletar o mentor
+
+// ✅ MODAL DE CONFIRMAÇÃO VISUAL
 function excluirMentorDireto() {
   const modal = document.getElementById("modal-confirmacao-exclusao");
   if (modal) modal.style.display = "block";
@@ -79,9 +74,51 @@ function confirmarExclusaoMentor() {
   const id = document.getElementById("mentor-id").value;
   window.location.href = "gestao-diaria.php?excluir_mentor=" + id;
 }
-// CODIGO FORMULARIO DE EDIÇÃO DOS MENTORES
 
-// RESPONSAVEL PELO CADASTRO DOS VALORES DOS MENRORES-->
+// ✅ TOAST + FORMATADOR DE NOMES COM ESPAÇO PRESERVADO
+document.addEventListener("DOMContentLoaded", function () {
+  const toast = document.getElementById("toast");
+  if (toast && toast.classList.contains("ativo")) {
+    setTimeout(() => {
+      toast.classList.remove("ativo");
+    }, 3000);
+  }
+
+  const campoNome = document.getElementById("nome");
+  const nomePreview = document.querySelector(".mentor-nome-preview");
+
+  const limiteCaracteres = 17; // 🧢 Limite máximo incluindo espaços
+
+  if (campoNome && nomePreview) {
+    // Atualiza preview ao digitar e aplica limite
+    campoNome.addEventListener("input", function () {
+      if (this.value.length > limiteCaracteres) {
+        this.value = this.value.slice(0, limiteCaracteres); // corta o excedente
+      }
+
+      nomePreview.textContent = this.value; // mostra texto atual
+    });
+
+    // Aplica capitalização ao sair do campo
+    campoNome.addEventListener("blur", function () {
+      const nomeFormatado = this.value
+        .replace(/\s+/g, " ")
+        .trim()
+        .split(" ")
+        .map((palavra) =>
+          palavra
+            ? palavra.charAt(0).toUpperCase() + palavra.slice(1).toLowerCase()
+            : ""
+        )
+        .join(" ");
+
+      this.value = nomeFormatado;
+      nomePreview.textContent = nomeFormatado;
+    });
+  }
+});
+
+// ✅ FORMULÁRIO DE VALOR DO MENTOR
 document.addEventListener("DOMContentLoaded", function () {
   const formulario = document.querySelector(".formulario-mentor");
   const nomePreview = formulario.querySelector(".mentor-nome-preview");
@@ -91,7 +128,6 @@ document.addEventListener("DOMContentLoaded", function () {
   const botaoFechar = document.querySelector(".botao-fechar");
   const campoValor = document.getElementById("valor");
 
-  // ✅ Exibe dados no formulário de cadastro
   function exibirFormularioMentor(card) {
     nomePreview.textContent = card.getAttribute("data-nome");
     fotoPreview.src = card.getAttribute("data-foto");
@@ -99,7 +135,6 @@ document.addEventListener("DOMContentLoaded", function () {
     formulario.style.display = "block";
   }
 
-  // ✅ Recarrega mentor cards e adiciona cliques
   function recarregarMentores() {
     fetch("carregar-mentores.php")
       .then((res) => res.text())
@@ -108,31 +143,24 @@ document.addEventListener("DOMContentLoaded", function () {
         container.innerHTML = html;
 
         container.querySelectorAll(".mentor-card").forEach((card) => {
-          const idMentor = card.getAttribute("data-id");
-
           card.addEventListener("click", function (event) {
             const alvo = event.target;
-
             const clicouEmBotao =
               alvo.closest(".btn-icon") ||
               alvo.closest(".menu-opcoes") ||
               ["BUTTON", "I", "SPAN"].includes(alvo.tagName);
-
             if (clicouEmBotao) return;
 
-            // ✅ Corrigido: salva o card clicado e abre formulário corretamente
-            ultimoCardClicado = card; // 🧠 Salva para reabrir depois se necessário
-            mentorAtualId = null; // 🔄 Garante modo cadastro
-            exibirFormularioMentor(card); // 🟢 Abre formulário de cadastro
+            ultimoCardClicado = card;
+            mentorAtualId = null;
+            exibirFormularioMentor(card);
           });
         });
       });
   }
 
-  // ✅ Inicializa mentor cards no carregamento
-  recarregarMentores(); // 🛠️ Correção embutida para funcionar logo após a página carregar
+  recarregarMentores();
 
-  // ✅ Formatação automática do valor
   campoValor.addEventListener("input", function () {
     let valor = this.value.replace(/\D/g, "");
     if (valor === "") {
@@ -147,7 +175,6 @@ document.addEventListener("DOMContentLoaded", function () {
     this.value = `R$ ${parseInt(reais).toLocaleString("pt-BR")},${centavos}`;
   });
 
-  // ✅ Submete o formulário
   formMentor.addEventListener("submit", function (e) {
     e.preventDefault();
 
@@ -175,14 +202,13 @@ document.addEventListener("DOMContentLoaded", function () {
         mostrarToast(mensagem, "sucesso");
         formMentor.reset();
         formulario.style.display = "none";
-        recarregarMentores(); // ✅ Atualiza cards depois do envio
+        recarregarMentores();
       })
       .catch((error) => {
         alert("❌ Erro ao enviar: " + error);
       });
   });
 
-  // ✅ Fecha formulário
   window.fecharFormulario = function () {
     formMentor.reset();
     formulario.style.display = "none";
@@ -191,7 +217,7 @@ document.addEventListener("DOMContentLoaded", function () {
   botaoFechar.addEventListener("click", fecharFormulario);
 });
 
-// ✅ Toast de alerta
+// ✅ TOAST DE ALERTA
 function mostrarToast(mensagem, tipo = "aviso") {
   const toast = document.getElementById("mensagem-status");
   toast.className = `toast ${tipo} ativo`;
@@ -203,10 +229,11 @@ function mostrarToast(mensagem, tipo = "aviso") {
   }, 4000);
 }
 
-// ✅ Menu três pontinhos
+// ✅ MENU TRÊS PONTINHOS
 document.addEventListener("click", function (e) {
   const isToggle = e.target.classList.contains("menu-toggle");
 
+  // Oculta todos os menus antes de verificar o clique
   document.querySelectorAll(".menu-opcoes").forEach((menu) => {
     menu.style.display = "none";
   });
@@ -215,11 +242,12 @@ document.addEventListener("click", function (e) {
     const opcoes = e.target.nextElementSibling;
     if (opcoes) {
       opcoes.style.display = "block";
-      e.stopPropagation();
+      e.stopPropagation(); // Evita propagação para fechamento instantâneo
     }
   }
 });
-// FIM DO CODIGO RESPONSAVEL PELO CADASTRO DOS VALORES DOS MENRORES-->
+
+// FIM DO CODIGO RESPONSAVEL PELO CADASTRO DOS MENTORES E VALORES -->
 
 //CODIGO RESPONSAVEL POR MOSTRAR NA TELA OS MENTORES -->
 function abrirModal() {
@@ -486,3 +514,78 @@ function excluirEntrada(idEntrada) {
   };
 }
 // FIM DO CODIGO RESPONSAVEL PELOS VALOR DE ENTRADA E A AREA DOS 3 PONTINHOS PARA EXCLUIR-->
+
+// TESTE-->
+// ✅ Aguarda o carregamento completo do DOM
+document.addEventListener("DOMContentLoaded", () => {
+  atualizarTudo(); // Atualiza assim que a página carrega
+
+  // ⏱️ Atualiza automaticamente a cada 10 segundos
+  setInterval(atualizarTudo, 10000);
+});
+
+/**
+ * 🔄 Atualiza o saldo geral do usuário via 'get-saldo.php'
+ */
+function atualizarSaldoUsuario() {
+  fetch("get-saldo.php")
+    .then((response) => response.json())
+    .then((data) => {
+      if (data.saldo) {
+        const saldoEl = document.querySelector(".valor-saldo");
+        if (saldoEl) {
+          saldoEl.textContent = `R$ ${data.saldo}`;
+        } else {
+          console.warn("Elemento .valor-saldo não encontrado no DOM.");
+        }
+      } else {
+        console.warn("Resposta recebida sem campo 'saldo':", data);
+      }
+    })
+    .catch((error) => console.error("Erro ao buscar saldo do usuário:", error));
+}
+
+/**
+ * ♻️ Recarrega os mentores atualizados via 'carregar-mentores.php'
+ */
+function recarregarMentores() {
+  return fetch("carregar-mentores.php")
+    .then((res) => res.text())
+    .then((html) => {
+      const container = document.getElementById("listaMentores");
+      if (!container) {
+        console.warn("Elemento #listaMentores não encontrado no DOM.");
+        return;
+      }
+
+      container.innerHTML = html;
+
+      container.querySelectorAll(".mentor-card").forEach((oldCard) => {
+        const cloned = oldCard.cloneNode(true);
+        oldCard.replaceWith(cloned);
+
+        cloned.addEventListener("click", function (event) {
+          const alvo = event.target;
+          const clicouEmBotao =
+            alvo.closest(".btn-icon") ||
+            alvo.closest(".menu-opcoes") ||
+            ["BUTTON", "I", "SPAN"].includes(alvo.tagName);
+          if (clicouEmBotao) return;
+
+          mentorAtualId = null;
+          ultimoCardClicado = cloned;
+          exibirFormularioMentor(cloned);
+        });
+      });
+    })
+    .catch((error) => console.error("Erro ao recarregar mentores:", error));
+}
+
+/**
+ * 🚀 Atualiza saldo e mentores numa tacada só
+ */
+function atualizarTudo() {
+  atualizarSaldoUsuario();
+  recarregarMentores();
+}
+// TESTE-->

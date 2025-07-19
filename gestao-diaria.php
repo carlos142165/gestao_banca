@@ -68,6 +68,36 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['acao'])) {
 ?>
 <!-- FIM CODIGO RESPONSAVEL PELA EDIÇÃO E EXCLUSÃO DO MENTOR  --> 
 
+
+
+
+<!-- CODIGO RESPONSAVEL PELO SALDO DO DIA  --> 
+<?php
+// Verifique se o usuário está logado
+if (!isset($_SESSION['usuario_id'])) {
+    echo "Usuário não logado.";
+    exit;
+}
+$idUsuario = $_SESSION['usuario_id'];
+
+$sql = "SELECT SUM(valor_green) AS total_green, SUM(valor_red) AS total_red 
+        FROM valor_mentores 
+        WHERE id_usuario = ?";
+$stmt = $conexao->prepare($sql);
+$stmt->bind_param("i", $idUsuario);
+$stmt->execute();
+$resultado = $stmt->get_result();
+$row = $resultado->fetch_assoc();
+
+$saldo = $row['total_green'] - $row['total_red'];
+$saldoFormatado = number_format($saldo, 2, ',', '.');
+?>
+<!-- FIM CODIGO RESPONSAVEL PELO SALDO DO DIA  -->
+
+
+
+
+
 <!DOCTYPE html>
 <html lang="pt-br">
 <head>
@@ -87,11 +117,10 @@ body, html {
 }
 </style>
      
-<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
-<link rel="stylesheet" href="style.css">
+     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+     <link rel="stylesheet" href="style.css">
 
 </head>
-
 <body>
 
 <!-- CODIGO RESPONSAVEL PELA MENSAGEM TOAST -->  
@@ -188,14 +217,14 @@ if (isset($_SESSION['toast'])) {
   </div>
 
 
-  <div class="info-item">
-
-     <div>
-      <span class="valor-saldo">R$ 0,00</span>
-      <span class="rotulo-saldo">Saldo do Dia</span>
-     </div>
-
+<div class="info-item">
+  <div>
+    <span class="valor-saldo">R$ <?= $saldoFormatado ?></span>
+    <span class="rotulo-saldo">Saldo do Dia</span>
   </div>
+</div>
+
+
 
 
 </div>
@@ -216,20 +245,15 @@ if (isset($_SESSION['toast'])) {
       <input type="hidden" name="mentor_id" id="mentor-id" value="">
       <input type="hidden" name="foto_atual" id="foto-atual" value="avatar-padrao.png">
 
-
       <!-- Botão para selecionar a foto -->
-     <div class="input-group">
+      <div class="input-group">
         <label for="foto" class="label-form"></label>
-        <!-- Botão visual para o input -->
         <label for="foto" class="label-arquivo">
-        <i class="fas fa-image"></i> Selecionar Foto
+          <i class="fas fa-image"></i> Selecionar Foto
         </label>
-        <!-- Input real oculto -->
         <input type="file" name="foto" id="foto" class="input-file" onchange="mostrarNomeArquivo(this)" hidden>
         <span id="nome-arquivo" class="nome-arquivo"></span>
-     </div>
-
-
+      </div>
 
       <!-- Pré-visualização da imagem -->
       <div class="preview-foto-wrapper">
@@ -246,21 +270,20 @@ if (isset($_SESSION['toast'])) {
         <input type="text" name="nome" id="nome" class="input-text" placeholder="Nome do Mentor" required>
       </div>
 
-      <!-- Botão de envio -->
+      <!-- Botões -->
       <div class="botoes-formulario">
         <button type="submit" class="btn-enviar">
-        <i class="fas fa-user-plus"></i> Cadastrar Mentor</button>
+          <i class="fas fa-user-plus"></i> Cadastrar Mentor
+        </button>
 
-
-        <!-- Botão de exclusão (aparece só no modo edição) -->
         <button type="button" class="btn-excluir" id="btn-excluir" onclick="excluirMentorDireto()" style="display: none;">
           <i class="fas fa-user-times"></i> Excluir Mentor
         </button>
-        
       </div>
     </form>
   </div>
 </div>
+
 <!-- FIM DO CODIGO FORMULARIO QUE ADICIONA E EDITA MENTOR -->
 
 
@@ -271,7 +294,7 @@ if (isset($_SESSION['toast'])) {
 
 <!-- BOTÃO ADICIONAR USUARIO -->
 <button class="btn-add-usuario" onclick="prepararFormularioNovoMentor()">
-  <i class="fas fa-user-plus"></i> Adicionar Mentor
+  <i class="fas fa-user-plus"></i> 
 </button>
 <!-- FIM CODIGO BOTÃO ADICIONAR USUARIO -->
 
