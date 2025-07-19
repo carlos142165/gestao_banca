@@ -9,6 +9,10 @@ if (!$id_usuario_logado) {
   exit;
 }
 
+// META diária (vinda do painel-controle.php)
+$meia_unidade = $_SESSION['meta_meia_unidade'] ?? 0; // ✅ valor salvo na sessão anteriormente
+$meta_formatado = number_format($meia_unidade, 2, ',', '.');
+
 $sql_mentores = "SELECT id, nome, foto FROM mentores WHERE id_usuario = ?";
 $stmt_mentores = $conexao->prepare($sql_mentores);
 $stmt_mentores->bind_param("i", $id_usuario_logado);
@@ -16,6 +20,7 @@ $stmt_mentores->execute();
 $result_mentores = $stmt_mentores->get_result();
 
 $lista_mentores = [];
+$total_geral_saldo = 0;
 
 while ($mentor = $result_mentores->fetch_assoc()) {
     $id_mentor = $mentor['id'];
@@ -36,19 +41,19 @@ while ($mentor = $result_mentores->fetch_assoc()) {
     $mentor['valores'] = $valores;
     $mentor['saldo'] = $saldo;
     $lista_mentores[] = $mentor;
+
+    $total_geral_saldo += $saldo;
 }
 
 // Ordena pelo saldo
 usort($lista_mentores, fn($a, $b) => $b['saldo'] <=> $a['saldo']);
 
+// Mostra os mentores
 foreach ($lista_mentores as $posicao => $mentor) {
   $rank = $posicao + 1;
   $valores = $mentor['valores'];
   $saldo_formatado = number_format($mentor['saldo'], 2, ',', '.');
 
-  // 🟩 Verde se saldo > 0
-  // 🟥 Vermelho se saldo < 0
-  // ⚪ Cinza se saldo == 0
   if ($mentor['saldo'] == 0) {
     $classe_borda = 'card-neutro';
   } elseif ($mentor['saldo'] > 0) {
@@ -103,5 +108,17 @@ foreach ($lista_mentores as $posicao => $mentor) {
       ";
 }
 
+// Valor total formatado
+$total_geral_formatado = number_format($total_geral_saldo, 2, ',', '.');
+
+// ✅ Linha oculta com saldo total
+echo "<div id='saldo-dia' data-total='R$ {$total_geral_formatado}' style='display:none;'></div>";
+
+// ✅ Nova linha oculta com meta diária ($meia_unidade)
+echo "<div id='meta-meia-unidade' data-meta='R$ {$meta_formatado}' style='display:none;'></div>";
+
 ?>
+
+
+
 

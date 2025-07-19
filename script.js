@@ -118,6 +118,24 @@ document.addEventListener("DOMContentLoaded", function () {
   }
 });
 
+function exibirFormularioMentor(card) {
+  const formulario = document.querySelector(".formulario-mentor");
+  const nomePreview = document.querySelector(".mentor-nome-preview");
+  const fotoPreview = document.querySelector(".mentor-foto-preview");
+  const idHidden = document.querySelector(".mentor-id-hidden");
+
+  if (!formulario || !nomePreview || !fotoPreview || !idHidden) {
+    console.error("❌ Elementos do formulário não encontrados.");
+    return;
+  }
+
+  nomePreview.textContent = card.getAttribute("data-nome");
+  fotoPreview.src = card.getAttribute("data-foto");
+  idHidden.value = card.getAttribute("data-id");
+
+  formulario.style.display = "block";
+}
+
 // ✅ FORMULÁRIO DE VALOR DO MENTOR
 document.addEventListener("DOMContentLoaded", function () {
   const formulario = document.querySelector(".formulario-mentor");
@@ -128,13 +146,6 @@ document.addEventListener("DOMContentLoaded", function () {
   const botaoFechar = document.querySelector(".botao-fechar");
   const campoValor = document.getElementById("valor");
 
-  function exibirFormularioMentor(card) {
-    nomePreview.textContent = card.getAttribute("data-nome");
-    fotoPreview.src = card.getAttribute("data-foto");
-    idHidden.value = card.getAttribute("data-id");
-    formulario.style.display = "block";
-  }
-
   function recarregarMentores() {
     fetch("carregar-mentores.php")
       .then((res) => res.text())
@@ -142,6 +153,73 @@ document.addEventListener("DOMContentLoaded", function () {
         const container = document.getElementById("listaMentores");
         container.innerHTML = html;
 
+        // 🔄 Atualiza saldo geral
+        const totalMetaEl = container.querySelector("#saldo-dia");
+        const valorSpan = document.querySelector(".valor-saldo");
+        const rotuloSpan = document.querySelector(".rotulo-saldo");
+        const infoItemDiv = document
+          .querySelector(".valor-saldo")
+          ?.closest(".info-item");
+
+        if (totalMetaEl && valorSpan && rotuloSpan && infoItemDiv) {
+          const valorTexto = totalMetaEl.dataset.total
+            .replace("R$", "")
+            .replace(/\./g, "")
+            .replace(",", ".")
+            .trim();
+          const valorNumerico = parseFloat(valorTexto);
+
+          valorSpan.textContent = totalMetaEl.dataset.total;
+
+          let cor;
+          if (valorNumerico > 0) {
+            cor = "#00a651";
+          } else if (valorNumerico < 0) {
+            cor = "#f82008";
+          } else {
+            cor = "#aca7a7";
+          }
+
+          valorSpan.style.color = cor;
+          rotuloSpan.style.color = cor;
+          infoItemDiv.style.border = `1px solid ${cor}`;
+        }
+
+        // ✅ Atualiza meta diária e calcula diferença com saldo
+        const metaDiv = container.querySelector("#meta-meia-unidade");
+        const metaSpan = document.querySelector("#meta-dia");
+        if (metaDiv && totalMetaEl && metaSpan) {
+          const valorMeta = parseFloat(
+            metaDiv.dataset.meta
+              .replace("R$", "")
+              .replace(/\./g, "")
+              .replace(",", ".")
+          );
+          const valorSaldo = parseFloat(
+            totalMetaEl.dataset.total
+              .replace("R$", "")
+              .replace(/\./g, "")
+              .replace(",", ".")
+          );
+
+          const resultado = valorMeta - valorSaldo;
+          const resultadoFormatado = `R$ ${resultado
+            .toFixed(2)
+            .replace(".", ",")}`;
+
+          // 🧾 Atualiza o valor exibido
+          metaSpan.textContent = resultadoFormatado;
+          metaSpan.title = `Diferença entre Saldo (${totalMetaEl.dataset.total}) e Meta (${metaDiv.dataset.meta})`;
+
+          const corResultado =
+            resultado > 0 ? "#00a651" : resultado < 0 ? "#f82008" : "#aca7a7";
+          metaSpan.style.color = corResultado;
+
+          const rotuloMetaSpan = document.querySelector(".rotulo-meta");
+          if (rotuloMetaSpan) rotuloMetaSpan.textContent = "Meta do Dia";
+        }
+
+        // 🧠 Reativa eventos nos cards
         container.querySelectorAll(".mentor-card").forEach((card) => {
           card.addEventListener("click", function (event) {
             const alvo = event.target;
@@ -156,6 +234,9 @@ document.addEventListener("DOMContentLoaded", function () {
             exibirFormularioMentor(card);
           });
         });
+      })
+      .catch((error) => {
+        console.error("Erro ao recarregar mentores:", error);
       });
   }
 
@@ -419,31 +500,82 @@ function mostrarResultados(entradas) {
 }
 
 // ✅ Função global para abrir formulário de cadastro
-function exibirFormularioMentor(card) {
-  const nomePreview = document.querySelector(".mentor-nome-preview");
-  const fotoPreview = document.querySelector(".mentor-foto-preview");
-  const idHidden = document.querySelector(".mentor-id-hidden");
-  const formulario = document.querySelector(".formulario-mentor");
-
-  nomePreview.textContent = card.getAttribute("data-nome");
-  fotoPreview.src = card.getAttribute("data-foto");
-  idHidden.value = card.getAttribute("data-id");
-  formulario.style.display = "block";
-}
-
-// ✅ Recarrega mentores e reaplica eventos corretamente
 function recarregarMentores() {
-  return fetch("carregar-mentores.php")
+  fetch("carregar-mentores.php")
     .then((res) => res.text())
     .then((html) => {
       const container = document.getElementById("listaMentores");
       container.innerHTML = html;
 
-      container.querySelectorAll(".mentor-card").forEach((oldCard) => {
-        const cloned = oldCard.cloneNode(true);
-        oldCard.replaceWith(cloned);
+      // 🔄 Atualiza saldo geral
+      const totalMetaEl = container.querySelector("#saldo-dia");
+      const valorSpan = document.querySelector(".valor-saldo");
+      const rotuloSpan = document.querySelector(".rotulo-saldo");
+      const infoItemDiv = document
+        .querySelector(".valor-saldo")
+        ?.closest(".info-item");
 
-        cloned.addEventListener("click", function (event) {
+      if (totalMetaEl && valorSpan && rotuloSpan && infoItemDiv) {
+        const valorTexto = totalMetaEl.dataset.total
+          .replace("R$", "")
+          .replace(/\./g, "")
+          .replace(",", ".")
+          .trim();
+        const valorNumerico = parseFloat(valorTexto);
+
+        valorSpan.textContent = totalMetaEl.dataset.total;
+
+        let cor;
+        if (valorNumerico > 0) {
+          cor = "#00a651";
+        } else if (valorNumerico < 0) {
+          cor = "#f82008";
+        } else {
+          cor = "#aca7a7";
+        }
+
+        valorSpan.style.color = cor;
+        rotuloSpan.style.color = cor;
+        infoItemDiv.style.border = `1px solid ${cor}`;
+      }
+
+      // ✅ Atualiza meta diária e calcula diferença com saldo
+      const metaDiv = container.querySelector("#meta-meia-unidade");
+      const metaSpan = document.querySelector("#meta-dia");
+      if (metaDiv && totalMetaEl && metaSpan) {
+        const valorMeta = parseFloat(
+          metaDiv.dataset.meta
+            .replace("R$", "")
+            .replace(/\./g, "")
+            .replace(",", ".")
+        );
+        const valorSaldo = parseFloat(
+          totalMetaEl.dataset.total
+            .replace("R$", "")
+            .replace(/\./g, "")
+            .replace(",", ".")
+        );
+
+        const resultado = valorMeta - valorSaldo;
+        const resultadoFormatado = `R$ ${resultado
+          .toFixed(2)
+          .replace(".", ",")}`;
+
+        // 🧾 Atualiza o valor exibido
+        metaSpan.textContent = resultadoFormatado;
+        metaSpan.title = `Diferença entre Saldo (${totalMetaEl.dataset.total}) e Meta (${metaDiv.dataset.meta})`;
+
+        const corResultado =
+          resultado > 0 ? "#00a651" : resultado < 0 ? "#f82008" : "#aca7a7";
+        metaSpan.style.color = corResultado;
+
+        const rotuloMetaSpan = document.querySelector(".rotulo-meta");
+        if (rotuloMetaSpan) rotuloMetaSpan.textContent = "Meta do Dia";
+      }
+
+      // 🧠 Reativa eventos nos cards
+      container.querySelectorAll(".mentor-card").forEach((card) => {
+        card.addEventListener("click", function (event) {
           const alvo = event.target;
           const clicouEmBotao =
             alvo.closest(".btn-icon") ||
@@ -451,11 +583,14 @@ function recarregarMentores() {
             ["BUTTON", "I", "SPAN"].includes(alvo.tagName);
           if (clicouEmBotao) return;
 
+          ultimoCardClicado = card;
           mentorAtualId = null;
-          ultimoCardClicado = cloned;
-          exibirFormularioMentor(cloned);
+          exibirFormularioMentor(card);
         });
       });
+    })
+    .catch((error) => {
+      console.error("Erro ao recarregar mentores:", error);
     });
 }
 
@@ -516,76 +651,5 @@ function excluirEntrada(idEntrada) {
 // FIM DO CODIGO RESPONSAVEL PELOS VALOR DE ENTRADA E A AREA DOS 3 PONTINHOS PARA EXCLUIR-->
 
 // TESTE-->
-// ✅ Aguarda o carregamento completo do DOM
-document.addEventListener("DOMContentLoaded", () => {
-  atualizarTudo(); // Atualiza assim que a página carrega
 
-  // ⏱️ Atualiza automaticamente a cada 10 segundos
-  setInterval(atualizarTudo, 10000);
-});
-
-/**
- * 🔄 Atualiza o saldo geral do usuário via 'get-saldo.php'
- */
-function atualizarSaldoUsuario() {
-  fetch("get-saldo.php")
-    .then((response) => response.json())
-    .then((data) => {
-      if (data.saldo) {
-        const saldoEl = document.querySelector(".valor-saldo");
-        if (saldoEl) {
-          saldoEl.textContent = `R$ ${data.saldo}`;
-        } else {
-          console.warn("Elemento .valor-saldo não encontrado no DOM.");
-        }
-      } else {
-        console.warn("Resposta recebida sem campo 'saldo':", data);
-      }
-    })
-    .catch((error) => console.error("Erro ao buscar saldo do usuário:", error));
-}
-
-/**
- * ♻️ Recarrega os mentores atualizados via 'carregar-mentores.php'
- */
-function recarregarMentores() {
-  return fetch("carregar-mentores.php")
-    .then((res) => res.text())
-    .then((html) => {
-      const container = document.getElementById("listaMentores");
-      if (!container) {
-        console.warn("Elemento #listaMentores não encontrado no DOM.");
-        return;
-      }
-
-      container.innerHTML = html;
-
-      container.querySelectorAll(".mentor-card").forEach((oldCard) => {
-        const cloned = oldCard.cloneNode(true);
-        oldCard.replaceWith(cloned);
-
-        cloned.addEventListener("click", function (event) {
-          const alvo = event.target;
-          const clicouEmBotao =
-            alvo.closest(".btn-icon") ||
-            alvo.closest(".menu-opcoes") ||
-            ["BUTTON", "I", "SPAN"].includes(alvo.tagName);
-          if (clicouEmBotao) return;
-
-          mentorAtualId = null;
-          ultimoCardClicado = cloned;
-          exibirFormularioMentor(cloned);
-        });
-      });
-    })
-    .catch((error) => console.error("Erro ao recarregar mentores:", error));
-}
-
-/**
- * 🚀 Atualiza saldo e mentores numa tacada só
- */
-function atualizarTudo() {
-  atualizarSaldoUsuario();
-  recarregarMentores();
-}
 // TESTE-->

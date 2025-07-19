@@ -112,6 +112,9 @@ if ($ultima_diaria > 0 && $saldo_reais > 0) {
     $meia_unidade = $resultado * 0.5;
     $meia_unidade_mensal = $meia_unidade * 30;
     $resultado_anual = $meia_unidade_mensal * 12;
+
+    // ✅ Salvar na sessão
+    $_SESSION['meta_meia_unidade'] = $meia_unidade;
 }
 ?>
 
@@ -653,6 +656,7 @@ document.addEventListener("DOMContentLoaded", function () {
 </script>
 
 
+<div id="meta-meia-unidade" data-meta="R$ <?= number_format($meia_unidade ?? 0, 2, ',', '.') ?>" style="display:none;"></div>
 
 
 </body>

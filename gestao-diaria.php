@@ -68,31 +68,11 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['acao'])) {
 ?>
 <!-- FIM CODIGO RESPONSAVEL PELA EDIÇÃO E EXCLUSÃO DO MENTOR  --> 
 
-
-
-
-<!-- CODIGO RESPONSAVEL PELO SALDO DO DIA  --> 
 <?php
-// Verifique se o usuário está logado
-if (!isset($_SESSION['usuario_id'])) {
-    echo "Usuário não logado.";
-    exit;
-}
-$idUsuario = $_SESSION['usuario_id'];
-
-$sql = "SELECT SUM(valor_green) AS total_green, SUM(valor_red) AS total_red 
-        FROM valor_mentores 
-        WHERE id_usuario = ?";
-$stmt = $conexao->prepare($sql);
-$stmt->bind_param("i", $idUsuario);
-$stmt->execute();
-$resultado = $stmt->get_result();
-$row = $resultado->fetch_assoc();
-
-$saldo = $row['total_green'] - $row['total_red'];
-$saldoFormatado = number_format($saldo, 2, ',', '.');
+$meta_diaria = $_SESSION['meta_meia_unidade'] ?? 0;
 ?>
-<!-- FIM CODIGO RESPONSAVEL PELO SALDO DO DIA  -->
+
+
 
 
 
@@ -113,12 +93,13 @@ body, html {
   background-color:rgb(235, 235, 235);
   margin: 0;
   padding: 0;
-  color: #f5f5f5;
+  
 }
 </style>
      
      <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
-     <link rel="stylesheet" href="style.css">
+     <link rel="stylesheet" href="style.css?v=2">
+
 
 </head>
 <body>
@@ -209,20 +190,26 @@ if (isset($_SESSION['toast'])) {
 
    <div class="info-item">
 
-    <div>
-      <span class="valor-meta">R$ 1.000,00</span>
-      <span class="rotulo-meta">Meta do Dia</span>
-    </div>
+  <div>
+<div>
+  <span class="valor-meta" id="meta-dia">R$ <?= number_format($meta_diaria, 2, ',', '.') ?></span>
+  <span class="rotulo-meta">Meta do Dia</span>
+</div>
+
+
 
   </div>
 
 
-<div class="info-item">
+  </div>
+
+
+ <div class="info-item">
   <div>
-    <span class="valor-saldo">R$ <?= $saldoFormatado ?></span>
+    <span class="valor-saldo">R$0,00</span>
     <span class="rotulo-saldo">Saldo do Dia</span>
   </div>
-</div>
+ </div>
 
 
 
@@ -304,8 +291,6 @@ if (isset($_SESSION['toast'])) {
 
 <!-- AQUI FILTRA OS DADOS DOS MENTORES NO BANCO DE DADOS PRA MOSTRAR NA TELA  -->
 <div class="campo_mentores">
-
- 
   <div id="listaMentores" class="mentor-wrapper">
     <?php
     $id_usuario_logado = $_SESSION['usuario_id'];
@@ -316,6 +301,7 @@ if (isset($_SESSION['toast'])) {
     $result_mentores = $stmt_mentores->get_result();
 
     $lista_mentores = [];
+    $total_geral_saldo = 0;
 
     while ($mentor = $result_mentores->fetch_assoc()) {
       $id_mentor = $mentor['id'];
@@ -336,6 +322,8 @@ if (isset($_SESSION['toast'])) {
       $mentor['valores'] = $valores;
       $mentor['saldo'] = $total_subtraido;
       $lista_mentores[] = $mentor;
+
+      $total_geral_saldo += $total_subtraido;
     }
 
     usort($lista_mentores, function($a, $b) {
@@ -400,9 +388,13 @@ if (isset($_SESSION['toast'])) {
       </div>
       ";
     }
+    
+
     ?>
+    
   </div>
 </div>
+
 <!-- FIM DO CODIGO QUE FILTRA OS DADOS DOS MENTORES NO BANCO DE DADOS PRA MOSTRAR NA TELA  -->
 
 
