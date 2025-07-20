@@ -181,8 +181,6 @@ document.addEventListener("DOMContentLoaded", function () {
           }
 
           valorSpan.style.color = cor;
-          rotuloSpan.style.color = cor;
-          infoItemDiv.style.border = `1px solid ${cor}`;
         }
 
         // ✅ Atualiza meta diária e calcula diferença com saldo
@@ -201,22 +199,69 @@ document.addEventListener("DOMContentLoaded", function () {
               .replace(/\./g, "")
               .replace(",", ".")
           );
-
+          // codigo responsavel pelo valor da meta
           const resultado = valorMeta - valorSaldo;
-          const resultadoFormatado = `R$ ${resultado
-            .toFixed(2)
-            .replace(".", ",")}`;
+          let corResultado;
+          const rotuloMetaSpan = document.querySelector(".rotulo-meta");
+          let resultadoFormatado;
 
-          // 🧾 Atualiza o valor exibido
-          metaSpan.textContent = resultadoFormatado;
-          metaSpan.title = `Diferença entre Saldo (${totalMetaEl.dataset.total}) e Meta (${metaDiv.dataset.meta})`;
+          if (resultado <= 0) {
+            corResultado = "#DAA520"; // Dourado
 
-          const corResultado =
-            resultado > 0 ? "#00a651" : resultado < 0 ? "#f82008" : "#aca7a7";
+            if (resultado < 0) {
+              // Remove sinal negativo, adiciona "+" e formata valor como moeda
+              const valorPositivo = Math.abs(resultado).toLocaleString(
+                "pt-BR",
+                {
+                  style: "currency",
+                  currency: "BRL",
+                }
+              );
+
+              resultadoFormatado = `+ ${valorPositivo}`; // Sem ícone de troféu no valor
+
+              // Novo cálculo para rótulo: saldo - resultado
+              const sobraMeta = (valorSaldo + resultado).toLocaleString(
+                "pt-BR",
+                {
+                  style: "currency",
+                  currency: "BRL",
+                }
+              );
+
+              if (rotuloMetaSpan)
+                rotuloMetaSpan.innerHTML = `Meta: ${sobraMeta} <span style="font-size: 0.8em;">🏆</span>`;
+            } else {
+              // Resultado igual a zero
+              const valorZero = resultado.toLocaleString("pt-BR", {
+                style: "currency",
+                currency: "BRL",
+              });
+
+              resultadoFormatado = `${valorZero}`; // Sem ícone de troféu no valor
+              if (rotuloMetaSpan)
+                rotuloMetaSpan.innerHTML = `Meta Batida! <span style="font-size: 0.8em;">🏆</span>`;
+            }
+          } else {
+            corResultado = "#00a651"; // Verde
+
+            resultadoFormatado = resultado.toLocaleString("pt-BR", {
+              style: "currency",
+              currency: "BRL",
+            });
+
+            if (valorSaldo === 0 && rotuloMetaSpan) {
+              rotuloMetaSpan.textContent = "Meta do Dia";
+            } else if (rotuloMetaSpan) {
+              rotuloMetaSpan.textContent = "Restando P/ Meta";
+            }
+          }
+
+          metaSpan.innerHTML = resultadoFormatado;
+          metaSpan.title = `Restante (${totalMetaEl.dataset.total}) e Meta (${metaDiv.dataset.meta})`;
           metaSpan.style.color = corResultado;
 
-          const rotuloMetaSpan = document.querySelector(".rotulo-meta");
-          if (rotuloMetaSpan) rotuloMetaSpan.textContent = "Meta do Dia";
+          // final do codigo responsavel pelo valor da meta
         }
 
         // 🧠 Reativa eventos nos cards
@@ -501,21 +546,23 @@ function mostrarResultados(entradas) {
 
 // ✅ Função global para abrir formulário de cadastro
 function recarregarMentores() {
+  // Faz uma requisição para o servidor e busca o HTML dos mentores
   fetch("carregar-mentores.php")
-    .then((res) => res.text())
+    .then((res) => res.text()) // Converte a resposta em texto
     .then((html) => {
-      const container = document.getElementById("listaMentores");
-      container.innerHTML = html;
+      const container = document.getElementById("listaMentores"); // Seleciona o contêiner dos mentores
+      container.innerHTML = html; // Insere o HTML carregado no contêiner
 
       // 🔄 Atualiza saldo geral
-      const totalMetaEl = container.querySelector("#saldo-dia");
-      const valorSpan = document.querySelector(".valor-saldo");
-      const rotuloSpan = document.querySelector(".rotulo-saldo");
+      const totalMetaEl = container.querySelector("#saldo-dia"); // Seleciona o elemento com o saldo
+      const valorSpan = document.querySelector(".valor-saldo"); // Local onde será exibido o valor
+      const rotuloSpan = document.querySelector(".rotulo-saldo"); // Rótulo do saldo
       const infoItemDiv = document
         .querySelector(".valor-saldo")
-        ?.closest(".info-item");
+        ?.closest(".info-item"); // Encontra o contêiner pai para aplicar borda
 
       if (totalMetaEl && valorSpan && rotuloSpan && infoItemDiv) {
+        // Extrai o valor e converte para número
         const valorTexto = totalMetaEl.dataset.total
           .replace("R$", "")
           .replace(/\./g, "")
@@ -523,26 +570,28 @@ function recarregarMentores() {
           .trim();
         const valorNumerico = parseFloat(valorTexto);
 
-        valorSpan.textContent = totalMetaEl.dataset.total;
+        valorSpan.textContent = totalMetaEl.dataset.total; // Exibe o valor
 
+        // Determina a cor com base no valor: positivo, negativo ou neutro
         let cor;
         if (valorNumerico > 0) {
-          cor = "#00a651";
+          cor = "#00a651"; // Verde
         } else if (valorNumerico < 0) {
-          cor = "#f82008";
+          cor = "#f82008"; // Vermelho
         } else {
-          cor = "#aca7a7";
+          cor = "#aca7a7"; // Cinza
         }
 
+        // Aplica cor ao texto e à borda
         valorSpan.style.color = cor;
-        rotuloSpan.style.color = cor;
-        infoItemDiv.style.border = `1px solid ${cor}`;
       }
 
       // ✅ Atualiza meta diária e calcula diferença com saldo
-      const metaDiv = container.querySelector("#meta-meia-unidade");
-      const metaSpan = document.querySelector("#meta-dia");
+      const metaDiv = container.querySelector("#meta-meia-unidade"); // Meta diária
+      const metaSpan = document.querySelector("#meta-dia"); // Onde será exibido a diferença
+
       if (metaDiv && totalMetaEl && metaSpan) {
+        // Converte meta e saldo para número
         const valorMeta = parseFloat(
           metaDiv.dataset.meta
             .replace("R$", "")
@@ -556,33 +605,77 @@ function recarregarMentores() {
             .replace(",", ".")
         );
 
+        // codigo responsavel pelo valor da meta
         const resultado = valorMeta - valorSaldo;
-        const resultadoFormatado = `R$ ${resultado
-          .toFixed(2)
-          .replace(".", ",")}`;
+        let corResultado;
+        const rotuloMetaSpan = document.querySelector(".rotulo-meta");
+        let resultadoFormatado;
 
-        // 🧾 Atualiza o valor exibido
-        metaSpan.textContent = resultadoFormatado;
-        metaSpan.title = `Diferença entre Saldo (${totalMetaEl.dataset.total}) e Meta (${metaDiv.dataset.meta})`;
+        if (resultado <= 0) {
+          corResultado = "#DAA520"; // Dourado
 
-        const corResultado =
-          resultado > 0 ? "#00a651" : resultado < 0 ? "#f82008" : "#aca7a7";
+          if (resultado < 0) {
+            // Remove sinal negativo, adiciona "+" e formata valor como moeda
+            const valorPositivo = Math.abs(resultado).toLocaleString("pt-BR", {
+              style: "currency",
+              currency: "BRL",
+            });
+
+            resultadoFormatado = `+ ${valorPositivo}`; // Sem ícone de troféu no valor
+
+            // Novo cálculo para rótulo: saldo - resultado
+            const sobraMeta = (valorSaldo + resultado).toLocaleString("pt-BR", {
+              style: "currency",
+              currency: "BRL",
+            });
+
+            if (rotuloMetaSpan)
+              rotuloMetaSpan.innerHTML = `Meta: ${sobraMeta} <span style="font-size: 0.8em;">🏆</span>`;
+          } else {
+            // Resultado igual a zero
+            const valorZero = resultado.toLocaleString("pt-BR", {
+              style: "currency",
+              currency: "BRL",
+            });
+
+            resultadoFormatado = `${valorZero}`; // Sem ícone de troféu no valor
+            if (rotuloMetaSpan)
+              rotuloMetaSpan.innerHTML = `Meta Batida! <span style="font-size: 0.8em;">🏆</span>`;
+          }
+        } else {
+          corResultado = "#00a651"; // Verde
+
+          resultadoFormatado = resultado.toLocaleString("pt-BR", {
+            style: "currency",
+            currency: "BRL",
+          });
+
+          if (valorSaldo === 0 && rotuloMetaSpan) {
+            rotuloMetaSpan.textContent = "Meta do Dia";
+          } else if (rotuloMetaSpan) {
+            rotuloMetaSpan.textContent = "Restando P/ Meta";
+          }
+        }
+
+        metaSpan.innerHTML = resultadoFormatado;
+        metaSpan.title = `Restante (${totalMetaEl.dataset.total}) e Meta (${metaDiv.dataset.meta})`;
         metaSpan.style.color = corResultado;
 
-        const rotuloMetaSpan = document.querySelector(".rotulo-meta");
-        if (rotuloMetaSpan) rotuloMetaSpan.textContent = "Meta do Dia";
+        // final do codigo responsavel pelo valor da meta
       }
 
-      // 🧠 Reativa eventos nos cards
+      // 🧠 Reativa eventos nos cards dos mentores
       container.querySelectorAll(".mentor-card").forEach((card) => {
         card.addEventListener("click", function (event) {
           const alvo = event.target;
+          // Impede ação se o clique foi em botão ou ícone
           const clicouEmBotao =
             alvo.closest(".btn-icon") ||
             alvo.closest(".menu-opcoes") ||
             ["BUTTON", "I", "SPAN"].includes(alvo.tagName);
           if (clicouEmBotao) return;
 
+          // Define o card clicado e exibe formulário
           ultimoCardClicado = card;
           mentorAtualId = null;
           exibirFormularioMentor(card);
@@ -590,6 +683,7 @@ function recarregarMentores() {
       });
     })
     .catch((error) => {
+      // Exibe erro no console se falhar ao carregar mentores
       console.error("Erro ao recarregar mentores:", error);
     });
 }

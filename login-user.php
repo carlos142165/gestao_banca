@@ -30,7 +30,7 @@ if ($result->num_rows > 0) {
     if (password_verify($senha, $usuario['senha'])) {
         // 5. Salva o ID do usuário na sessão
         $_SESSION['usuario_id'] = $usuario['id'];
-        header("Location: gestao-diaria.php"); // Redirecione conforme preferir
+        header("Location: painel-controle.php"); // Redirecione conforme preferir
         exit();
     } else {
         // Senha incorreta

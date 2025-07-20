@@ -50,7 +50,7 @@
 }
 
 .separador {
-  font-size: 1.2em;
+  font-size: 1.1em;
   margin: 0 8px;
   color: rgb(105, 104, 104);
   font-weight: bold;
@@ -59,22 +59,25 @@
 
 .informacoes-row {
   display: flex;
-  justify-content: space-between; /* ou use center para centralizar */
-  gap: 30px; /* espaço entre os blocos */
+  justify-content: center; /* Centraliza horizontalmente */
+  align-items: center; /* Centraliza verticalmente */
+  text-align: center;
+  flex-wrap: wrap;
 }
 
 .info-item {
   display: flex;
   flex-direction: column;
-  align-items: flex-start;
+  align-items: center; /* Alinha horizontalmente ao centro */
+  justify-content: center; /* Alinha verticalmente ao centro */
   background-color: #f7f6f6;
-  padding: 12px;
+  padding: 15px;
   border-radius: 10px;
   text-align: left;
   box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
-  justify-content: center; /* alinha verticalmente ao centro */
-  align-items: center; /* alinha horizontalmente ao centro */
-  width: 200px;
+  width: 120px; /* Largura fixa */
+  height: 48px; /* Altura fixa definida */
+  margin-top: 18px;
 }
 
 .rotulo-meta {
@@ -101,19 +104,12 @@
   margin-top: 3px;
 }
 
-.valor-meta {
-  font-size: 18px;
-  font-weight: bold;
-  color: #aca7a7;
-  margin-bottom: 2px;
-  margin-left: 0px;
-}
-
+.valor-meta,
 .valor-saldo {
-  font-size: 18px;
+  font-size: 16px;
   font-weight: bold;
   color: #aca7a7;
-  margin-bottom: 2px;
+  margin-bottom: 0px;
   margin-left: 0px;
 }
 
@@ -666,37 +662,31 @@
 
 /* AQUI VAI O CODIGO RESPONSAVEL PELO CAMPO ONDE OS USUARIOS VÃO FICAR  */
 
-.btn-add-usuario {
-  width: 390px;
-  height: 40px;
-  background-color: #f7f6f6;
-  color: rgb(11, 131, 61);
-  box-shadow: 0 10px 25px rgba(0, 0, 0, 0.01);
-  border: none;
-  border-radius: 15;
-  font-size: 16px;
-  cursor: pointer;
-  margin-top: 22px;
-  margin-left: -20px; /* 👈 remove espaço da esquerda */
-  margin-right: 0; /* 👈 remove espaço da direita */
-  padding-left: 0; /* 👈 remove preenchimento lateral se existir */
-  padding-right: 0;
-  transition: background 0.3s ease, transform 0.2s ease;
-  display: block; /* 👈 garante que o botão se comporte como um bloco */
+.area-central-botao {
+  display: flex;
+  justify-content: center;
   align-items: center;
-  cursor: pointer;
+  margin: 0 auto; /* Centraliza horizontalmente */
+  background-color: #f7f6f6;
+  width: 385px; /* Largura alinhada aos elementos próximos */
+  height: 35px;
+  position: relative;
+  z-index: 15;
+  border-radius: 15px;
+  margin-top: 15px;
 }
 
-.btn-add-usuario:hover {
-  background-color: rgb(243, 243, 243);
-}
-
-/* Ícone "+" com destaque verde */
-.btn-add-usuario span {
-  color: rgb(11, 131, 61);
-  font-weight: bold;
-  font-size: 18px;
+.btn-add-usuario {
+  font-size: 15px;
+  padding: 14px 22px;
+  width: auto; /* Garante que o botão se ajuste ao conteúdo */
+  max-width: 200px; /* Limite opcional de largura */
+  background: none !important;
+  color: #009043;
+  border: none;
+  border-radius: 10px;
   cursor: pointer;
+  z-index: 15;
 }
 
 .add-user {
@@ -717,17 +707,14 @@
   display: flex;
   flex-direction: column;
   align-items: center;
-  justify-content: flex-start;
   width: 385px;
   margin: 0 auto;
-  margin-top: 0px;
-  border-radius: 0px;
+  margin-top: -35px;
+  border-radius: 15px;
   padding: 0px;
   box-sizing: border-box;
-  max-height: 550px;
+  max-height: 570px;
   overflow-y: auto;
-  margin-left: -18px;
-  margin-right: 0px;
 }
 
 .campo_mentores::-webkit-scrollbar {
@@ -735,7 +722,7 @@
 }
 
 .mentor-wrapper {
-  margin-top: 15px;
+  margin-top: 37px;
   align-items: center;
 }
 
