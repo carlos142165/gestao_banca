@@ -350,18 +350,28 @@ if (isset($_SESSION['toast'])) {
   </div>
 </div>
 
+
+
 <div class="informacoes-row">
+
   <div class="info-item">
+  <div class="grupo-valor">
     <span class="valor-meta" id="meta-dia">
-      R$ <?= number_format($meta_diaria, 2, ',', '.') ?>
+       <?= number_format($meta_diaria, 2, ',', '.') ?>
     </span>
     <span class="rotulo-meta">Meta do Dia</span>
   </div>
+</div>
 
-  <div class="info-item">
+<div class="info-item">
+  <div class="grupo-valor">
     <span class="valor-saldo">R$0,00</span>
     <span class="rotulo-saldo">Saldo do Dia</span>
   </div>
+</div>
+
+
+
 </div>
 
 <!-- FIM DO CODIGO RESPONSAVEL PELO VALOR  PLACAR E META DIARIA E SALDO -->

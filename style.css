@@ -8,7 +8,7 @@
   box-sizing: border-box;
   max-width: 400px;
   margin: 0 auto;
-  margin-top: 15px;
+  margin-top: 18px;
   width: 390px;
 }
 
@@ -27,6 +27,7 @@
   align-items: center;
   font-size: 2.8em;
   margin-bottom: 20px;
+  margin-top: 16px;
 }
 
 .pontos {
@@ -50,19 +51,21 @@
 }
 
 .separador {
-  font-size: 1.1em;
+  font-size: 45px;
   margin: 0 8px;
   color: rgb(105, 104, 104);
   font-weight: bold;
-  margin-top: -10px;
+  margin-top: -8px;
 }
 
 .informacoes-row {
   display: flex;
   justify-content: center; /* Centraliza horizontalmente */
   align-items: center; /* Centraliza verticalmente */
-  text-align: center;
+  text-align: left;
   flex-wrap: wrap;
+  gap: 10px;
+  margin-top: -5px;
 }
 
 .info-item {
@@ -74,8 +77,7 @@
   padding: 15px;
   border-radius: 10px;
   text-align: left;
-  box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
-  width: 120px; /* Largura fixa */
+  width: 160px; /* Largura fixa */
   height: 48px; /* Altura fixa definida */
   margin-top: 18px;
 }
@@ -106,7 +108,7 @@
 
 .valor-meta,
 .valor-saldo {
-  font-size: 16px;
+  font-size: 18px;
   font-weight: bold;
   color: #aca7a7;
   margin-bottom: 0px;

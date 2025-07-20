@@ -147,11 +147,12 @@ document.addEventListener("DOMContentLoaded", function () {
   const campoValor = document.getElementById("valor");
 
   function recarregarMentores() {
+    // Faz uma requisição para o servidor e busca o HTML dos mentores
     fetch("carregar-mentores.php")
-      .then((res) => res.text())
+      .then((res) => res.text()) // Converte a resposta em texto
       .then((html) => {
-        const container = document.getElementById("listaMentores");
-        container.innerHTML = html;
+        const container = document.getElementById("listaMentores"); // Seleciona o contêiner dos mentores
+        container.innerHTML = html; // Insere o HTML carregado no contêiner
 
         // 🔄 Atualiza saldo geral
         const totalMetaEl = container.querySelector("#saldo-dia");
@@ -186,6 +187,7 @@ document.addEventListener("DOMContentLoaded", function () {
         // ✅ Atualiza meta diária e calcula diferença com saldo
         const metaDiv = container.querySelector("#meta-meia-unidade");
         const metaSpan = document.querySelector("#meta-dia");
+
         if (metaDiv && totalMetaEl && metaSpan) {
           const valorMeta = parseFloat(
             metaDiv.dataset.meta
@@ -199,17 +201,16 @@ document.addEventListener("DOMContentLoaded", function () {
               .replace(/\./g, "")
               .replace(",", ".")
           );
-          // codigo responsavel pelo valor da meta
+
           const resultado = valorMeta - valorSaldo;
           let corResultado;
           const rotuloMetaSpan = document.querySelector(".rotulo-meta");
           let resultadoFormatado;
 
           if (resultado <= 0) {
-            corResultado = "#DAA520"; // Dourado
+            corResultado = "#DAA520";
 
             if (resultado < 0) {
-              // Remove sinal negativo, adiciona "+" e formata valor como moeda
               const valorPositivo = Math.abs(resultado).toLocaleString(
                 "pt-BR",
                 {
@@ -218,9 +219,8 @@ document.addEventListener("DOMContentLoaded", function () {
                 }
               );
 
-              resultadoFormatado = `+ ${valorPositivo}`; // Sem ícone de troféu no valor
+              resultadoFormatado = `+ ${valorPositivo}`;
 
-              // Novo cálculo para rótulo: saldo - resultado
               const sobraMeta = (valorSaldo + resultado).toLocaleString(
                 "pt-BR",
                 {
@@ -232,18 +232,17 @@ document.addEventListener("DOMContentLoaded", function () {
               if (rotuloMetaSpan)
                 rotuloMetaSpan.innerHTML = `Meta: ${sobraMeta} <span style="font-size: 0.8em;">🏆</span>`;
             } else {
-              // Resultado igual a zero
               const valorZero = resultado.toLocaleString("pt-BR", {
                 style: "currency",
                 currency: "BRL",
               });
 
-              resultadoFormatado = `${valorZero}`; // Sem ícone de troféu no valor
+              resultadoFormatado = `${valorZero}`;
               if (rotuloMetaSpan)
                 rotuloMetaSpan.innerHTML = `Meta Batida! <span style="font-size: 0.8em;">🏆</span>`;
             }
           } else {
-            corResultado = "#00a651"; // Verde
+            corResultado = "#00a651";
 
             resultadoFormatado = resultado.toLocaleString("pt-BR", {
               style: "currency",
@@ -260,11 +259,25 @@ document.addEventListener("DOMContentLoaded", function () {
           metaSpan.innerHTML = resultadoFormatado;
           metaSpan.title = `Restante (${totalMetaEl.dataset.total}) e Meta (${metaDiv.dataset.meta})`;
           metaSpan.style.color = corResultado;
-
-          // final do codigo responsavel pelo valor da meta
         }
 
-        // 🧠 Reativa eventos nos cards
+        // ✅ NOVO: atualiza placar de Green 💚
+        const greenEl = container.querySelector("#total-green-dia"); // ← elemento oculto no HTML
+        const placarGreen = document.querySelector(".placar-green"); // ← alvo do placar na tela
+
+        if (greenEl && placarGreen) {
+          placarGreen.textContent = greenEl.dataset.green;
+        }
+
+        // ✅ NOVO: atualiza placar de Red ❤️
+        const redEl = container.querySelector("#total-red-dia"); // ← elemento oculto no HTML
+        const placarRed = document.querySelector(".placar-red"); // ← alvo do placar na tela
+
+        if (redEl && placarRed) {
+          placarRed.textContent = redEl.dataset.red;
+        }
+
+        // 🧠 Reativa eventos nos cards dos mentores
         container.querySelectorAll(".mentor-card").forEach((card) => {
           card.addEventListener("click", function (event) {
             const alvo = event.target;
@@ -554,15 +567,14 @@ function recarregarMentores() {
       container.innerHTML = html; // Insere o HTML carregado no contêiner
 
       // 🔄 Atualiza saldo geral
-      const totalMetaEl = container.querySelector("#saldo-dia"); // Seleciona o elemento com o saldo
-      const valorSpan = document.querySelector(".valor-saldo"); // Local onde será exibido o valor
-      const rotuloSpan = document.querySelector(".rotulo-saldo"); // Rótulo do saldo
+      const totalMetaEl = container.querySelector("#saldo-dia");
+      const valorSpan = document.querySelector(".valor-saldo");
+      const rotuloSpan = document.querySelector(".rotulo-saldo");
       const infoItemDiv = document
         .querySelector(".valor-saldo")
-        ?.closest(".info-item"); // Encontra o contêiner pai para aplicar borda
+        ?.closest(".info-item");
 
       if (totalMetaEl && valorSpan && rotuloSpan && infoItemDiv) {
-        // Extrai o valor e converte para número
         const valorTexto = totalMetaEl.dataset.total
           .replace("R$", "")
           .replace(/\./g, "")
@@ -570,28 +582,25 @@ function recarregarMentores() {
           .trim();
         const valorNumerico = parseFloat(valorTexto);
 
-        valorSpan.textContent = totalMetaEl.dataset.total; // Exibe o valor
+        valorSpan.textContent = totalMetaEl.dataset.total;
 
-        // Determina a cor com base no valor: positivo, negativo ou neutro
         let cor;
         if (valorNumerico > 0) {
-          cor = "#00a651"; // Verde
+          cor = "#00a651";
         } else if (valorNumerico < 0) {
-          cor = "#f82008"; // Vermelho
+          cor = "#f82008";
         } else {
-          cor = "#aca7a7"; // Cinza
+          cor = "#aca7a7";
         }
 
-        // Aplica cor ao texto e à borda
         valorSpan.style.color = cor;
       }
 
       // ✅ Atualiza meta diária e calcula diferença com saldo
-      const metaDiv = container.querySelector("#meta-meia-unidade"); // Meta diária
-      const metaSpan = document.querySelector("#meta-dia"); // Onde será exibido a diferença
+      const metaDiv = container.querySelector("#meta-meia-unidade");
+      const metaSpan = document.querySelector("#meta-dia");
 
       if (metaDiv && totalMetaEl && metaSpan) {
-        // Converte meta e saldo para número
         const valorMeta = parseFloat(
           metaDiv.dataset.meta
             .replace("R$", "")
@@ -605,25 +614,22 @@ function recarregarMentores() {
             .replace(",", ".")
         );
 
-        // codigo responsavel pelo valor da meta
         const resultado = valorMeta - valorSaldo;
         let corResultado;
         const rotuloMetaSpan = document.querySelector(".rotulo-meta");
         let resultadoFormatado;
 
         if (resultado <= 0) {
-          corResultado = "#DAA520"; // Dourado
+          corResultado = "#DAA520";
 
           if (resultado < 0) {
-            // Remove sinal negativo, adiciona "+" e formata valor como moeda
             const valorPositivo = Math.abs(resultado).toLocaleString("pt-BR", {
               style: "currency",
               currency: "BRL",
             });
 
-            resultadoFormatado = `+ ${valorPositivo}`; // Sem ícone de troféu no valor
+            resultadoFormatado = `+ ${valorPositivo}`;
 
-            // Novo cálculo para rótulo: saldo - resultado
             const sobraMeta = (valorSaldo + resultado).toLocaleString("pt-BR", {
               style: "currency",
               currency: "BRL",
@@ -632,18 +638,17 @@ function recarregarMentores() {
             if (rotuloMetaSpan)
               rotuloMetaSpan.innerHTML = `Meta: ${sobraMeta} <span style="font-size: 0.8em;">🏆</span>`;
           } else {
-            // Resultado igual a zero
             const valorZero = resultado.toLocaleString("pt-BR", {
               style: "currency",
               currency: "BRL",
             });
 
-            resultadoFormatado = `${valorZero}`; // Sem ícone de troféu no valor
+            resultadoFormatado = `${valorZero}`;
             if (rotuloMetaSpan)
               rotuloMetaSpan.innerHTML = `Meta Batida! <span style="font-size: 0.8em;">🏆</span>`;
           }
         } else {
-          corResultado = "#00a651"; // Verde
+          corResultado = "#00a651";
 
           resultadoFormatado = resultado.toLocaleString("pt-BR", {
             style: "currency",
@@ -660,22 +665,34 @@ function recarregarMentores() {
         metaSpan.innerHTML = resultadoFormatado;
         metaSpan.title = `Restante (${totalMetaEl.dataset.total}) e Meta (${metaDiv.dataset.meta})`;
         metaSpan.style.color = corResultado;
+      }
 
-        // final do codigo responsavel pelo valor da meta
+      // ✅ NOVO: atualiza placar de Green 💚
+      const greenEl = container.querySelector("#total-green-dia"); // ← elemento oculto no HTML
+      const placarGreen = document.querySelector(".placar-green"); // ← alvo do placar na tela
+
+      if (greenEl && placarGreen) {
+        placarGreen.textContent = greenEl.dataset.green;
+      }
+
+      // ✅ NOVO: atualiza placar de Red ❤️
+      const redEl = container.querySelector("#total-red-dia"); // ← elemento oculto no HTML
+      const placarRed = document.querySelector(".placar-red"); // ← alvo do placar na tela
+
+      if (redEl && placarRed) {
+        placarRed.textContent = redEl.dataset.red;
       }
 
       // 🧠 Reativa eventos nos cards dos mentores
       container.querySelectorAll(".mentor-card").forEach((card) => {
         card.addEventListener("click", function (event) {
           const alvo = event.target;
-          // Impede ação se o clique foi em botão ou ícone
           const clicouEmBotao =
             alvo.closest(".btn-icon") ||
             alvo.closest(".menu-opcoes") ||
             ["BUTTON", "I", "SPAN"].includes(alvo.tagName);
           if (clicouEmBotao) return;
 
-          // Define o card clicado e exibe formulário
           ultimoCardClicado = card;
           mentorAtualId = null;
           exibirFormularioMentor(card);
@@ -683,7 +700,6 @@ function recarregarMentores() {
       });
     })
     .catch((error) => {
-      // Exibe erro no console se falhar ao carregar mentores
       console.error("Erro ao recarregar mentores:", error);
     });
 }

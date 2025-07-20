@@ -110,6 +110,12 @@ foreach ($lista_mentores as $posicao => $mentor) {
 
 // Valor total formatado
 $total_geral_formatado = number_format($total_geral_saldo, 2, ',', '.');
+$total_geral_green = array_reduce($lista_mentores, fn($carry, $mentor) => $carry + $mentor['valores']['total_green'], 0);
+$total_geral_red = array_reduce($lista_mentores, fn($carry, $mentor) => $carry + $mentor['valores']['total_red'], 0);
+
+echo "<div id='total-green-dia' data-green='{$total_geral_green}' style='display:none;'></div>";
+
+echo "<div id='total-red-dia' data-red='{$total_geral_red}' style='display:none;'></div>";
 
 // ✅ Linha oculta com saldo total
 echo "<div id='saldo-dia' data-total='R$ {$total_geral_formatado}' style='display:none;'></div>";
