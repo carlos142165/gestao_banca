@@ -118,6 +118,31 @@ document.addEventListener("DOMContentLoaded", function () {
   }
 });
 
+function aplicarMascaraValor(input) {
+  let bloqueioInicial = true;
+
+  input.addEventListener("input", function () {
+    if (bloqueioInicial) {
+      bloqueioInicial = false;
+      return;
+    }
+
+    let valor = this.value.replace(/\D/g, "");
+    if (valor === "") {
+      this.value = "R$ 0,00";
+      return;
+    }
+
+    if (valor.length < 3) {
+      valor = valor.padStart(3, "0");
+    }
+
+    const reais = valor.slice(0, -2);
+    const centavos = valor.slice(-2);
+    this.value = `R$ ${parseInt(reais).toLocaleString("pt-BR")},${centavos}`;
+  });
+}
+
 function exibirFormularioMentor(card) {
   const formulario = document.querySelector(".formulario-mentor");
   const nomePreview = document.querySelector(".mentor-nome-preview");
@@ -132,8 +157,38 @@ function exibirFormularioMentor(card) {
   nomePreview.textContent = card.getAttribute("data-nome");
   fotoPreview.src = card.getAttribute("data-foto");
   idHidden.value = card.getAttribute("data-id");
-
   formulario.style.display = "block";
+
+  setTimeout(() => {
+    const campoValor = document.getElementById("valor");
+    const unidadeEntrada = document.querySelector(
+      "#listaMentores #unidade-entrada"
+    );
+
+    if (!campoValor) {
+      console.error("❌ Campo #valor não encontrado.");
+      return;
+    }
+
+    if (!unidadeEntrada) {
+      console.warn("⚠️ Elemento #unidade-entrada não encontrado.");
+      return;
+    }
+
+    const valorTexto = unidadeEntrada.textContent.trim();
+
+    console.log("✅ Valor capturado da unidade:", valorTexto);
+
+    campoValor.value = valorTexto;
+    campoValor.placeholder = valorTexto;
+
+    // Aplica máscara de valor se função estiver disponível
+    if (typeof aplicarMascaraValor === "function") {
+      aplicarMascaraValor(campoValor);
+    } else {
+      console.warn("⚠️ Função aplicarMascaraValor não disponível.");
+    }
+  }, 600); // ⏱️ Tempo ajustado para garantir que formulário já esteja visível
 }
 
 // ✅ FORMULÁRIO DE VALOR DO MENTOR
@@ -147,29 +202,24 @@ document.addEventListener("DOMContentLoaded", function () {
   const campoValor = document.getElementById("valor");
 
   function recarregarMentores() {
-    // Faz uma requisição para o servidor e busca o HTML dos mentores
     fetch("carregar-mentores.php")
-      .then((res) => res.text()) // Converte a resposta em texto
+      .then((res) => res.text())
       .then((html) => {
-        const container = document.getElementById("listaMentores"); // Seleciona o contêiner dos mentores
-        container.innerHTML = html; // Insere o HTML carregado no contêiner
+        const container = document.getElementById("listaMentores");
+        container.innerHTML = html;
 
         // 🔄 Atualiza saldo geral
         const totalMetaEl = container.querySelector("#saldo-dia");
         const valorSpan = document.querySelector(".valor-saldo");
         const rotuloSpan = document.querySelector(".rotulo-saldo");
-        const infoItemDiv = document
-          .querySelector(".valor-saldo")
-          ?.closest(".info-item");
 
-        if (totalMetaEl && valorSpan && rotuloSpan && infoItemDiv) {
+        if (totalMetaEl && valorSpan && rotuloSpan) {
           const valorTexto = totalMetaEl.dataset.total
             .replace("R$", "")
             .replace(/\./g, "")
             .replace(",", ".")
             .trim();
           const valorNumerico = parseFloat(valorTexto);
-
           valorSpan.textContent = totalMetaEl.dataset.total;
 
           let cor;
@@ -180,13 +230,13 @@ document.addEventListener("DOMContentLoaded", function () {
           } else {
             cor = "#aca7a7";
           }
-
           valorSpan.style.color = cor;
         }
 
         // ✅ Atualiza meta diária e calcula diferença com saldo
         const metaDiv = container.querySelector("#meta-meia-unidade");
         const metaSpan = document.querySelector("#meta-dia");
+        const rotuloMetaSpan = document.querySelector(".rotulo-meta");
 
         if (metaDiv && totalMetaEl && metaSpan) {
           const valorMeta = parseFloat(
@@ -204,7 +254,6 @@ document.addEventListener("DOMContentLoaded", function () {
 
           const resultado = valorMeta - valorSaldo;
           let corResultado;
-          const rotuloMetaSpan = document.querySelector(".rotulo-meta");
           let resultadoFormatado;
 
           if (resultado <= 0) {
@@ -218,7 +267,6 @@ document.addEventListener("DOMContentLoaded", function () {
                   currency: "BRL",
                 }
               );
-
               resultadoFormatado = `+ ${valorPositivo}`;
 
               const sobraMeta = (valorSaldo + resultado).toLocaleString(
@@ -228,7 +276,6 @@ document.addEventListener("DOMContentLoaded", function () {
                   currency: "BRL",
                 }
               );
-
               if (rotuloMetaSpan)
                 rotuloMetaSpan.innerHTML = `Meta: ${sobraMeta} <span style="font-size: 0.8em;">🏆</span>`;
             } else {
@@ -236,19 +283,16 @@ document.addEventListener("DOMContentLoaded", function () {
                 style: "currency",
                 currency: "BRL",
               });
-
               resultadoFormatado = `${valorZero}`;
               if (rotuloMetaSpan)
                 rotuloMetaSpan.innerHTML = `Meta Batida! <span style="font-size: 0.8em;">🏆</span>`;
             }
           } else {
             corResultado = "#00a651";
-
             resultadoFormatado = resultado.toLocaleString("pt-BR", {
               style: "currency",
               currency: "BRL",
             });
-
             if (valorSaldo === 0 && rotuloMetaSpan) {
               rotuloMetaSpan.textContent = "Meta do Dia";
             } else if (rotuloMetaSpan) {
@@ -261,37 +305,49 @@ document.addEventListener("DOMContentLoaded", function () {
           metaSpan.style.color = corResultado;
         }
 
-        // ✅ NOVO: atualiza placar de Green 💚
-        const greenEl = container.querySelector("#total-green-dia"); // ← elemento oculto no HTML
-        const placarGreen = document.querySelector(".placar-green"); // ← alvo do placar na tela
+        // ✅ Atualiza valor da Unidade de Entrada
+        const unidadeEl = container.querySelector("#resultado-unidade");
+        const entradaSpan = document.querySelector(".valor-entrada");
 
+        if (unidadeEl && entradaSpan) {
+          const valorUnidade = unidadeEl.getAttribute("data-resultado");
+          entradaSpan.textContent = valorUnidade;
+        }
+
+        // ✅ Placar de Green 💚
+        const greenEl = container.querySelector("#total-green-dia");
+        const placarGreen = document.querySelector(".placar-green");
         if (greenEl && placarGreen) {
           placarGreen.textContent = greenEl.dataset.green;
         }
 
-        // ✅ NOVO: atualiza placar de Red ❤️
-        const redEl = container.querySelector("#total-red-dia"); // ← elemento oculto no HTML
-        const placarRed = document.querySelector(".placar-red"); // ← alvo do placar na tela
-
+        // ✅ Placar de Red ❤️
+        const redEl = container.querySelector("#total-red-dia");
+        const placarRed = document.querySelector(".placar-red");
         if (redEl && placarRed) {
           placarRed.textContent = redEl.dataset.red;
         }
 
-        // 🧠 Reativa eventos nos cards dos mentores
-        container.querySelectorAll(".mentor-card").forEach((card) => {
-          card.addEventListener("click", function (event) {
-            const alvo = event.target;
-            const clicouEmBotao =
-              alvo.closest(".btn-icon") ||
-              alvo.closest(".menu-opcoes") ||
-              ["BUTTON", "I", "SPAN"].includes(alvo.tagName);
-            if (clicouEmBotao) return;
+        // 🧠 Reativa eventos nos cards dos mentores (com proteção extra)
+        const mentorCards = container.querySelectorAll(".mentor-card");
+        if (mentorCards.length > 0) {
+          mentorCards.forEach((card) => {
+            if (card) {
+              card.addEventListener("click", function (event) {
+                const alvo = event.target;
+                const clicouEmBotao =
+                  alvo.closest(".btn-icon") ||
+                  alvo.closest(".menu-opcoes") ||
+                  ["BUTTON", "I", "SPAN"].includes(alvo.tagName);
+                if (clicouEmBotao) return;
 
-            ultimoCardClicado = card;
-            mentorAtualId = null;
-            exibirFormularioMentor(card);
+                ultimoCardClicado = card;
+                mentorAtualId = null;
+                exibirFormularioMentor(card);
+              });
+            }
           });
-        });
+        }
       })
       .catch((error) => {
         console.error("Erro ao recarregar mentores:", error);
@@ -559,29 +615,24 @@ function mostrarResultados(entradas) {
 
 // ✅ Função global para abrir formulário de cadastro
 function recarregarMentores() {
-  // Faz uma requisição para o servidor e busca o HTML dos mentores
   fetch("carregar-mentores.php")
-    .then((res) => res.text()) // Converte a resposta em texto
+    .then((res) => res.text())
     .then((html) => {
-      const container = document.getElementById("listaMentores"); // Seleciona o contêiner dos mentores
-      container.innerHTML = html; // Insere o HTML carregado no contêiner
+      const container = document.getElementById("listaMentores");
+      container.innerHTML = html;
 
       // 🔄 Atualiza saldo geral
       const totalMetaEl = container.querySelector("#saldo-dia");
       const valorSpan = document.querySelector(".valor-saldo");
       const rotuloSpan = document.querySelector(".rotulo-saldo");
-      const infoItemDiv = document
-        .querySelector(".valor-saldo")
-        ?.closest(".info-item");
 
-      if (totalMetaEl && valorSpan && rotuloSpan && infoItemDiv) {
+      if (totalMetaEl && valorSpan && rotuloSpan) {
         const valorTexto = totalMetaEl.dataset.total
           .replace("R$", "")
           .replace(/\./g, "")
           .replace(",", ".")
           .trim();
         const valorNumerico = parseFloat(valorTexto);
-
         valorSpan.textContent = totalMetaEl.dataset.total;
 
         let cor;
@@ -592,13 +643,13 @@ function recarregarMentores() {
         } else {
           cor = "#aca7a7";
         }
-
         valorSpan.style.color = cor;
       }
 
       // ✅ Atualiza meta diária e calcula diferença com saldo
       const metaDiv = container.querySelector("#meta-meia-unidade");
       const metaSpan = document.querySelector("#meta-dia");
+      const rotuloMetaSpan = document.querySelector(".rotulo-meta");
 
       if (metaDiv && totalMetaEl && metaSpan) {
         const valorMeta = parseFloat(
@@ -616,7 +667,6 @@ function recarregarMentores() {
 
         const resultado = valorMeta - valorSaldo;
         let corResultado;
-        const rotuloMetaSpan = document.querySelector(".rotulo-meta");
         let resultadoFormatado;
 
         if (resultado <= 0) {
@@ -627,14 +677,12 @@ function recarregarMentores() {
               style: "currency",
               currency: "BRL",
             });
-
             resultadoFormatado = `+ ${valorPositivo}`;
 
             const sobraMeta = (valorSaldo + resultado).toLocaleString("pt-BR", {
               style: "currency",
               currency: "BRL",
             });
-
             if (rotuloMetaSpan)
               rotuloMetaSpan.innerHTML = `Meta: ${sobraMeta} <span style="font-size: 0.8em;">🏆</span>`;
           } else {
@@ -642,19 +690,16 @@ function recarregarMentores() {
               style: "currency",
               currency: "BRL",
             });
-
             resultadoFormatado = `${valorZero}`;
             if (rotuloMetaSpan)
               rotuloMetaSpan.innerHTML = `Meta Batida! <span style="font-size: 0.8em;">🏆</span>`;
           }
         } else {
           corResultado = "#00a651";
-
           resultadoFormatado = resultado.toLocaleString("pt-BR", {
             style: "currency",
             currency: "BRL",
           });
-
           if (valorSaldo === 0 && rotuloMetaSpan) {
             rotuloMetaSpan.textContent = "Meta do Dia";
           } else if (rotuloMetaSpan) {
@@ -667,37 +712,49 @@ function recarregarMentores() {
         metaSpan.style.color = corResultado;
       }
 
-      // ✅ NOVO: atualiza placar de Green 💚
-      const greenEl = container.querySelector("#total-green-dia"); // ← elemento oculto no HTML
-      const placarGreen = document.querySelector(".placar-green"); // ← alvo do placar na tela
+      // ✅ Atualiza valor da Unidade de Entrada
+      const unidadeEl = container.querySelector("#resultado-unidade");
+      const entradaSpan = document.querySelector(".valor-entrada");
 
+      if (unidadeEl && entradaSpan) {
+        const valorUnidade = unidadeEl.getAttribute("data-resultado");
+        entradaSpan.textContent = valorUnidade;
+      }
+
+      // ✅ Placar de Green 💚
+      const greenEl = container.querySelector("#total-green-dia");
+      const placarGreen = document.querySelector(".placar-green");
       if (greenEl && placarGreen) {
         placarGreen.textContent = greenEl.dataset.green;
       }
 
-      // ✅ NOVO: atualiza placar de Red ❤️
-      const redEl = container.querySelector("#total-red-dia"); // ← elemento oculto no HTML
-      const placarRed = document.querySelector(".placar-red"); // ← alvo do placar na tela
-
+      // ✅ Placar de Red ❤️
+      const redEl = container.querySelector("#total-red-dia");
+      const placarRed = document.querySelector(".placar-red");
       if (redEl && placarRed) {
         placarRed.textContent = redEl.dataset.red;
       }
 
-      // 🧠 Reativa eventos nos cards dos mentores
-      container.querySelectorAll(".mentor-card").forEach((card) => {
-        card.addEventListener("click", function (event) {
-          const alvo = event.target;
-          const clicouEmBotao =
-            alvo.closest(".btn-icon") ||
-            alvo.closest(".menu-opcoes") ||
-            ["BUTTON", "I", "SPAN"].includes(alvo.tagName);
-          if (clicouEmBotao) return;
+      // 🧠 Reativa eventos nos cards dos mentores (com proteção extra)
+      const mentorCards = container.querySelectorAll(".mentor-card");
+      if (mentorCards.length > 0) {
+        mentorCards.forEach((card) => {
+          if (card) {
+            card.addEventListener("click", function (event) {
+              const alvo = event.target;
+              const clicouEmBotao =
+                alvo.closest(".btn-icon") ||
+                alvo.closest(".menu-opcoes") ||
+                ["BUTTON", "I", "SPAN"].includes(alvo.tagName);
+              if (clicouEmBotao) return;
 
-          ultimoCardClicado = card;
-          mentorAtualId = null;
-          exibirFormularioMentor(card);
+              ultimoCardClicado = card;
+              mentorAtualId = null;
+              exibirFormularioMentor(card);
+            });
+          }
         });
-      });
+      }
     })
     .catch((error) => {
       console.error("Erro ao recarregar mentores:", error);

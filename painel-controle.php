@@ -287,6 +287,8 @@ if ($ultima_diaria > 0 && $saldo_reais > 0) {
 
     // ✅ Salvar na sessão
     $_SESSION['meta_meia_unidade'] = $meia_unidade;
+    // ✅ Salvar na sessão
+    $_SESSION['resultado_entrada'] = $resultado; // 👈 NOVO!
 }
 ?>
 
@@ -834,6 +836,8 @@ document.addEventListener("DOMContentLoaded", function () {
 
 
 <div id="meta-meia-unidade" data-meta="R$ <?= number_format($meia_unidade ?? 0, 2, ',', '.') ?>" style="display:none;"></div>
+<div id="resultado-unidade" data-resultado="R$ <?= number_format($resultado ?? 0, 2, ',', '.') ?>" style="display:none;"></div>
+
 
 
 </body>

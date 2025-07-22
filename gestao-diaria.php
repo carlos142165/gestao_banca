@@ -229,6 +229,8 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['acao'])) {
     header('Location: gestao-diaria.php');
     exit();
 }
+
+
 ?>
 <!-- FIM CODIGO RESPONSAVEL PELA EDIÇÃO E EXCLUSÃO DO MENTOR  --> 
 
@@ -236,6 +238,11 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['acao'])) {
 <!-- FIM CODIGO RESPONSAVEL PUXAR O VALOR DA META DIARIA DO PAINEL DE CONTROLE --> 
 <?php
 $meta_diaria = $_SESSION['meta_meia_unidade'] ?? 0;
+?>
+
+<?php
+ $resultado_entrada = $_SESSION['resultado_entrada'] ?? 0;
+ $resultado_formatado = number_format($resultado_entrada, 2, ',', '.');
 ?>
 
 
@@ -443,7 +450,17 @@ if (isset($_SESSION['toast'])) {
   <button class="btn-add-usuario" onclick="prepararFormularioNovoMentor()">
     <i class="fas fa-user-plus"></i>
   </button>
+
+  <div class="grupo-entrada">
+  <span class="rotulo-entrada">Entrada:</span>
+  <span class="valor-entrada">R$ <?= number_format($resultado_entrada, 2, ',', '.') ?></span>
+ </div>
+
 </div>
+
+
+
+
 
 <!-- FIM CODIGO BOTÃO ADICIONAR USUARIO -->
 
@@ -505,6 +522,8 @@ if (isset($_SESSION['toast'])) {
         $classe_borda = 'card-negativo';
       }
 
+    
+
       echo "
       <div class='mentor-item'>
         <div class='mentor-rank-externo'>{$rank}º</div>
@@ -551,6 +570,8 @@ if (isset($_SESSION['toast'])) {
       ";
     }
     
+   echo "<div id='entrada-unidade' data-resultado='R$ {$resultado_formatado}' style='display:none;'></div>";
+
 
 
     ?>
@@ -589,6 +610,11 @@ if (isset($_SESSION['toast'])) {
     </div>
 
     <input type="text" name="valor" id="valor" class="input-valor" placeholder="R$ 0,00" required>
+
+
+
+
+
 
     <button type="submit" class="botao-enviar">Enviar</button>
   </form>
@@ -650,6 +676,18 @@ if (isset($_SESSION['toast'])) {
 
 <!-- PUXA O SCRIPT -->
 <script src="script.js"></script>
+
+
+
+
+
+
+
+
+
+
+
+
 
 
 </body>

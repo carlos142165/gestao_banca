@@ -352,7 +352,7 @@ if (isset($_SESSION['usuario_id'])) {
   <button class="menu-button" onclick="toggleMenu()">☰</button>
   <div id="menu" class="menu-content">
     <a href="home.php"><i class="fas fa-home menu-icon"></i><span>Home</span></a>
-    <a href="gestao-diaria.php"><i class="fas fa-calendar-day menu-icon"></i><span>Gestão do Dia</span></a>
+    <a href="gestao-diaria.php"><i class="fas fa-university menu-icon"></i><span>Gestão de Banca</span></a>
     <a href="gestao-mensal.php"><i class="fas fa-calendar-alt menu-icon"></i><span>Gestão Mensal</span></a>
     <a href="gestao-anual.php"><i class="fas fa-calendar menu-icon"></i><span>Gestão Anual</span></a>
     <a href="estatisticas.php"><i class="fas fa-chart-bar menu-icon"></i><span>Estatísticas</span></a>
@@ -371,6 +371,8 @@ if (isset($_SESSION['usuario_id'])) {
        <img src="img/logo.png" alt="Logomarca" class="logo-img" />
        </div>
     </div>
+
+    
 
 
 

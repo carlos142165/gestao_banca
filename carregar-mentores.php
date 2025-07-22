@@ -9,9 +9,15 @@ if (!$id_usuario_logado) {
   exit;
 }
 
+
 // META diária (vinda do painel-controle.php)
-$meia_unidade = $_SESSION['meta_meia_unidade'] ?? 0; // ✅ valor salvo na sessão anteriormente
+$meia_unidade = $_SESSION['meta_meia_unidade'] ?? 0;
 $meta_formatado = number_format($meia_unidade, 2, ',', '.');
+
+$resultado_entrada = $_SESSION['resultado_entrada'] ?? 0;
+$resultado_formatado = number_format($resultado_entrada, 2, ',', '.');
+
+
 
 $sql_mentores = "SELECT id, nome, foto FROM mentores WHERE id_usuario = ?";
 $stmt_mentores = $conexao->prepare($sql_mentores);
@@ -108,22 +114,24 @@ foreach ($lista_mentores as $posicao => $mentor) {
       ";
 }
 
-// Valor total formatado
 $total_geral_formatado = number_format($total_geral_saldo, 2, ',', '.');
 $total_geral_green = array_reduce($lista_mentores, fn($carry, $mentor) => $carry + $mentor['valores']['total_green'], 0);
 $total_geral_red = array_reduce($lista_mentores, fn($carry, $mentor) => $carry + $mentor['valores']['total_red'], 0);
 
 echo "<div id='total-green-dia' data-green='{$total_geral_green}' style='display:none;'></div>";
-
 echo "<div id='total-red-dia' data-red='{$total_geral_red}' style='display:none;'></div>";
-
-// ✅ Linha oculta com saldo total
 echo "<div id='saldo-dia' data-total='R$ {$total_geral_formatado}' style='display:none;'></div>";
-
-// ✅ Nova linha oculta com meta diária ($meia_unidade)
 echo "<div id='meta-meia-unidade' data-meta='R$ {$meta_formatado}' style='display:none;'></div>";
+echo "<div id='resultado-unidade' data-resultado='R$ {$resultado_formatado}' style='display:none;'></div>"; // ✅ Adiciona isso aqui
+if (empty($lista_mentores)) {
+  echo "<div class='mentor-card card-neutro'>Sem mentores cadastrados.</div>";
+}
+
+
+
 
 ?>
+
 
 
 
