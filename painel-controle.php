@@ -257,6 +257,24 @@ mysqli_stmt_fetch($stmt);
 mysqli_stmt_close($stmt);
 $soma_saque = $soma_saque ?: 0;
 
+// Soma valor_green
+    $valor_green = 0;
+    $stmt = mysqli_prepare($conexao, "SELECT SUM(valor_green) FROM valor_mentores WHERE id_usuario = ?");
+    mysqli_stmt_bind_param($stmt, "i", $id_usuario);
+    mysqli_stmt_execute($stmt);
+    mysqli_stmt_bind_result($stmt, $valor_green);
+    mysqli_stmt_fetch($stmt);
+    mysqli_stmt_close($stmt);
+
+    // Soma valor_red
+    $valor_red = 0;
+    $stmt = mysqli_prepare($conexao, "SELECT SUM(valor_red) FROM valor_mentores WHERE id_usuario = ?");
+    mysqli_stmt_bind_param($stmt, "i", $id_usuario);
+    mysqli_stmt_execute($stmt);
+    mysqli_stmt_bind_result($stmt, $valor_red);
+    mysqli_stmt_fetch($stmt);
+    mysqli_stmt_close($stmt);
+
 // 🔎 Consulta última diária (porcentagem)
 $stmt = mysqli_prepare($conexao, "
     SELECT diaria FROM controle
@@ -271,9 +289,10 @@ mysqli_stmt_close($stmt);
 $ultima_diaria = $ultima_diaria ?: 0;
 
 // 🧮 Conversões e cálculos
+$saldo_mentores = $valor_green - $valor_red;
 $depositos_reais = $soma_depositos; 
 $saques_reais = $soma_saque; 
-$saldo_reais = $depositos_reais - $saques_reais;
+$saldo_reais = $depositos_reais - $saques_reais + $saldo_mentores;
 
 $percentualFormatado = (intval($ultima_diaria) == $ultima_diaria)
     ? intval($ultima_diaria) . '%'

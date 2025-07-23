@@ -755,8 +755,24 @@
 }
 
 .mentor-wrapper {
-  margin-top: 25px;
+  margin-top: 20px;
   align-items: center;
+}
+
+.mentor-item {
+  display: flex;
+  align-items: center;
+  margin-bottom: 0px;
+  gap: 0px;
+  margin-left: 0px;
+}
+
+.mentor-card {
+  flex: 1;
+  position: relative;
+  margin-right: 38px;
+  margin-bottom: 10; /* remove espaçamento extra interno */
+  padding-bottom: 10;
 }
 
 /* Estilo para dispositivos com largura até 768px (ex: celulares) */
@@ -967,14 +983,6 @@ input[type="text"] {
   margin-left: 0px;
 }
 
-.mentor-item {
-  display: flex;
-  align-items: center;
-  margin-bottom: 0px;
-  gap: 0px;
-  margin-left: 0px;
-}
-
 .mentor-rank-externo {
   font-size: 15px;
   font-weight: bold;
@@ -1015,12 +1023,6 @@ input[type="text"] {
   align-items: center;
   position: relative;
   margin-bottom: 12px;
-}
-
-.mentor-card {
-  flex: 1;
-  position: relative;
-  margin-right: 38px; /* espaço para o menu externo */
 }
 
 .mentor-menu-externo {

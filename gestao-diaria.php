@@ -303,7 +303,7 @@ if (isset($_SESSION['toast'])) {
     <!-- Aqui o menu será carregado dinamicamente -->
 
     <script>
-      // 📌 Carrega o menu externo (menu.html) dentro do menu-placeholder
+      // 📌 Carrega o menu externo (menu.php) dentro do menu-placeholder
       fetch("menu.php")
         .then((response) => response.text()) // Converte a resposta em texto
         .then((data) => {

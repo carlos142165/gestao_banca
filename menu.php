@@ -1,9 +1,9 @@
-
 <?php
 session_start();
 include_once('config.php');
 
 $saldo_banca = 0;
+$saldo_mentores = 0;
 
 if (isset($_SESSION['usuario_id'])) {
     $id_usuario = $_SESSION['usuario_id'];
@@ -26,10 +26,35 @@ if (isset($_SESSION['usuario_id'])) {
     mysqli_stmt_fetch($stmt);
     mysqli_stmt_close($stmt);
 
-    // Calcula saldo
-    $saldo_banca = $soma_depositos - $soma_saque;
+    // Soma valor_green
+    $valor_green = 0;
+    $stmt = mysqli_prepare($conexao, "SELECT SUM(valor_green) FROM valor_mentores WHERE id_usuario = ?");
+    mysqli_stmt_bind_param($stmt, "i", $id_usuario);
+    mysqli_stmt_execute($stmt);
+    mysqli_stmt_bind_result($stmt, $valor_green);
+    mysqli_stmt_fetch($stmt);
+    mysqli_stmt_close($stmt);
+
+    // Soma valor_red
+    $valor_red = 0;
+    $stmt = mysqli_prepare($conexao, "SELECT SUM(valor_red) FROM valor_mentores WHERE id_usuario = ?");
+    mysqli_stmt_bind_param($stmt, "i", $id_usuario);
+    mysqli_stmt_execute($stmt);
+    mysqli_stmt_bind_result($stmt, $valor_red);
+    mysqli_stmt_fetch($stmt);
+    mysqli_stmt_close($stmt);
+
+
+
+    // Calcula saldo dos mentores
+    $saldo_mentores = $valor_green - $valor_red;
+    $saldo_banca = $soma_depositos - $soma_saque + $saldo_mentores;
+
+
+    
 }
 ?>
+
 
 
 
@@ -321,6 +346,108 @@ if (isset($_SESSION['usuario_id'])) {
 }
 /* aqui finaliza o codigo responsavel pelo saldo da banca e icone */
 
+.valor-item-menu {
+    background-color: #113647;
+    border-radius: 8px;
+    padding: 10px;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.04);
+    font-family: 'Segoe UI', 'Roboto', sans-serif;
+    margin-top: -8px;
+}
+
+.valor-info-wrapper {
+    display: flex;
+    flex-direction: column;
+    gap: 5px;
+}
+
+.valor-label-linha {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    padding: 1px 0;
+    border-bottom: 1px solid #1f4d5f;
+}
+
+.valor-label {
+    font-weight: 500;
+    font-size: 11px;
+    color: #cfd8dc;
+    text-transform: uppercase;
+    letter-spacing: 0.3px;
+}
+
+.valor-bold-menu {
+    font-size: 13px;
+    font-weight: bold;
+    color: #ba9ddbff; /* azul petróleo como sugestão */
+}
+
+
+.valor-valor-saque {
+    font-size: 13px;
+    font-weight: bold;
+    color: #ffb347;
+}
+
+.valor-total-mentores {
+    font-size: 13px;
+    font-weight: bold;
+    color: #80b3ff;
+}
+
+.valor-icone-tema {
+    font-size: 12px;
+    color: #90a4ae;
+    transition: transform 0.3s ease, color 0.3s ease;
+}
+
+.valor-label-linha:hover .valor-icone-tema {
+    transform: scale(1.1);
+    color: #ffffff;
+}
+
+@media (max-width: 480px) {
+  .valor-item-menu {
+    padding: 8px;
+    border-radius: 6px;
+    margin-top: 0px;
+  }
+
+  .valor-label-linha {
+    gap: 4px;
+    padding: 0;
+  }
+
+  .valor-label {
+    font-size: 10px;
+    letter-spacing: 0.2px;
+  }
+
+  .valor-bold-menu,
+  .valor-valor-saque,
+  .valor-total-mentores {
+    font-size: 12px;
+    line-height: 1.1;
+  }
+
+  .valor-icone-tema {
+    font-size: 11px;
+  }
+}
+
+.saldo-positivo {
+    color: #9fe870; /* verde cana */
+}
+
+.saldo-negativo {
+    color: #e57373; /* vermelho suave */
+}
+
+.saldo-neutro {
+    color: #cfd8dc; /* cinza claro */
+}
+
 
 
 
@@ -387,15 +514,46 @@ if (isset($_SESSION['usuario_id'])) {
 
 
 
+
+    
+   <?php
+   $classe_saldo = '';
+
+   if ($saldo_mentores < 0) {
+    $classe_saldo = 'saldo-negativo';
+   } elseif ($saldo_mentores == 0.00) {
+    $classe_saldo = 'saldo-neutro';
+   } else {
+    $classe_saldo = 'saldo-positivo';
+   }
+   ?>
+
    <?php if (isset($_SESSION['usuario_id'])): ?>
-     <div class="valor-item-menu saldo-topo-ajustado">
-         <i class="valor-icone-menu fa fa-piggy-bank"></i>
-         <div>
-         <span class="valor-bold-menu">R$ <?= number_format($saldo_banca, 2, ',', '.') ?></span><br>
-        <span class="valor-desc-menu">Banca</span>
-      </div>
+    <div class="valor-item-menu saldo-topo-ajustado">
+        <div class="valor-info-wrapper">
+            <div class="valor-label-linha">
+                <i class="fa-solid fa-building-columns valor-icone-tema"></i>
+                <span class="valor-label">Banca:</span>
+                <span class="valor-bold-menu">R$ <?= number_format($saldo_banca, 2, ',', '.') ?></span>
+            </div>
+            <div class="valor-label-linha">
+                <i class="fa-solid fa-arrow-up-from-bracket valor-icone-tema"></i>
+                <span class="valor-label">Saque:</span>
+                <span class="valor-valor-saque">R$ <?= number_format($soma_saque, 2, ',', '.') ?></span>
+            </div>
+            <div class="valor-label-linha">
+                <i class="fa-solid fa-chart-line valor-icone-tema"></i>
+                <span class="valor-label">Saldo:</span>
+                <span class="valor-total-mentores <?= $classe_saldo ?>">R$ <?= number_format($saldo_mentores, 2, ',', '.') ?></span>
+
+            </div>
+        </div>
     </div>
 <?php endif; ?>
+
+
+
+
 
 
 
