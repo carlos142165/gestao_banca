@@ -1,0 +1,192 @@
+Array
+(
+    [id_mentor] => 118
+    [opcao] => red
+    [valor] => 10.00
+)
+Array
+(
+    [id_mentor] => 118
+    [opcao] => red
+    [valor] => 90.01
+)
+Array
+(
+    [id_mentor] => 118
+    [opcao] => green
+    [valor] => 95.00
+)
+Array
+(
+    [id_mentor] => 118
+    [opcao] => red
+    [valor] => 185.50
+)
+Array
+(
+    [id_mentor] => 118
+    [opcao] => red
+    [valor] => 185.00
+)
+Array
+(
+    [id_mentor] => 119
+    [opcao] => red
+    [valor] => 101.00
+)
+Array
+(
+    [id_mentor] => 119
+    [opcao] => red
+    [valor] => 100.20
+)
+Array
+(
+    [id_mentor] => 119
+    [opcao] => red
+    [valor] => 101.00
+)
+Array
+(
+    [id_mentor] => 118
+    [opcao] => red
+    [valor] => 101.00
+)
+Array
+(
+    [id_mentor] => 119
+    [opcao] => red
+    [valor] => 101.00
+)
+Array
+(
+    [id_mentor] => 119
+    [opcao] => red
+    [valor] => 101.00
+)
+Array
+(
+    [id_mentor] => 119
+    [opcao] => red
+    [valor] => 101.00
+)
+Array
+(
+    [id_mentor] => 119
+    [opcao] => red
+    [valor] => 101.00
+)
+Array
+(
+    [id_mentor] => 119
+    [opcao] => red
+    [valor] => 101.00
+)
+Array
+(
+    [id_mentor] => 119
+    [opcao] => green
+    [valor] => 10.00
+)
+Array
+(
+    [id_mentor] => 118
+    [opcao] => red
+    [valor] => 101.00
+)
+Array
+(
+    [id_mentor] => 118
+    [opcao] => red
+    [valor] => 10.00
+)
+Array
+(
+    [id_mentor] => 119
+    [opcao] => red
+    [valor] => 101.00
+)
+Array
+(
+    [id_mentor] => 119
+    [opcao] => red
+    [valor] => 101.00
+)
+Array
+(
+    [id_mentor] => 118
+    [opcao] => red
+    [valor] => 25.00
+)
+Array
+(
+    [id_mentor] => 118
+    [opcao] => red
+    [valor] => 30.00
+)
+Array
+(
+    [id_mentor] => 118
+    [opcao] => green
+    [valor] => 65.00
+)
+Array
+(
+    [id_mentor] => 118
+    [opcao] => red
+    [valor] => 10.00
+)
+Array
+(
+    [id_mentor] => 118
+    [opcao] => red
+    [valor] => 10.00
+)
+Array
+(
+    [id_mentor] => 119
+    [opcao] => green
+    [valor] => 10.00
+)
+Array
+(
+    [id_mentor] => 119
+    [opcao] => green
+    [valor] => 10.00
+)
+Array
+(
+    [id_mentor] => 119
+    [opcao] => green
+    [valor] => 10.00
+)
+Array
+(
+    [id_mentor] => 119
+    [opcao] => green
+    [valor] => 10.00
+)
+Array
+(
+    [id_mentor] => 118
+    [opcao] => red
+    [valor] => 10.00
+)
+Array
+(
+    [id_mentor] => 118
+    [opcao] => green
+    [valor] => 15.00
+)
+Array
+(
+    [id_mentor] => 118
+    [opcao] => green
+    [valor] => 10.00
+)
+Array
+(
+    [id_mentor] => 118
+    [opcao] => green
+    [valor] => 25.00
+)

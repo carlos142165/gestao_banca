@@ -185,6 +185,55 @@ function exibirFormularioMentor(card) {
   }, 600);
 }
 
+function atualizarMenu() {
+  fetch("menu.php")
+    .then((response) => response.text())
+    .then((html) => {
+      console.log("📦 HTML do menu.php recebido:", html);
+
+      const menuPlaceholder = document.getElementById("menu-placeholder");
+      if (!menuPlaceholder) {
+        console.warn("⚠️ Elemento #menu-placeholder não encontrado.");
+        return;
+      }
+
+      menuPlaceholder.innerHTML = html;
+
+      const botaoMenu = document.querySelector(".menu-button");
+      const menu = document.getElementById("menu");
+
+      // Remove qualquer listener anterior (se existia)
+      if (botaoMenu) {
+        botaoMenu.onclick = () => {
+          if (menu) {
+            menu.style.display =
+              menu.style.display === "block" ? "none" : "block";
+          }
+        };
+      }
+
+      // Evita adicionar múltiplos listeners ao document
+      document.removeEventListener("click", fecharAoClicarFora); // ← remove anterior
+      document.addEventListener("click", fecharAoClicarFora);
+
+      function fecharAoClicarFora(event) {
+        const btn = document.querySelector(".menu-button");
+        if (
+          menu &&
+          btn &&
+          menu.style.display === "block" &&
+          !menu.contains(event.target) &&
+          !btn.contains(event.target)
+        ) {
+          menu.style.display = "none";
+        }
+      }
+    })
+    .catch((error) => {
+      console.error("❌ Erro ao atualizar o menu:", error);
+    });
+}
+
 // ✅ FORMULÁRIO DE VALOR DO MENTOR
 document.addEventListener("DOMContentLoaded", function () {
   const formulario = document.querySelector(".formulario-mentor");
@@ -196,7 +245,7 @@ document.addEventListener("DOMContentLoaded", function () {
   const campoValor = document.getElementById("valor");
 
   function recarregarMentores() {
-    fetch("carregar-mentores.php")
+    return fetch("carregar-mentores.php")
       .then((res) => res.text())
       .then((html) => {
         const container = document.getElementById("listaMentores");
@@ -339,6 +388,8 @@ document.addEventListener("DOMContentLoaded", function () {
             exibirFormularioMentor(card);
           });
         });
+
+        atualizarMenu(); // Atualiza o topo junto com os mentores
       })
       .catch((error) => {
         console.error("Erro ao recarregar mentores:", error);
@@ -368,7 +419,7 @@ document.addEventListener("DOMContentLoaded", function () {
       "input[name='opcao']:checked"
     );
     if (!opcaoSelecionada) {
-      mostrarToast("⚠️ Por favor, selecione Green ou Red.");
+      mostrarToast("⚠️ Por favor, selecione Green ou Red.", "aviso");
       return;
     }
 
@@ -383,15 +434,18 @@ document.addEventListener("DOMContentLoaded", function () {
       method: "POST",
       body: formData,
     })
-      .then((response) => response.text())
-      .then((mensagem) => {
-        mostrarToast(mensagem, "sucesso");
-        formMentor.reset();
-        formulario.style.display = "none";
-        recarregarMentores();
+      .then((response) => response.json()) // 👈 Agora lê JSON!
+      .then((resposta) => {
+        mostrarToast(resposta.mensagem, resposta.tipo);
+
+        if (resposta.tipo === "sucesso") {
+          formMentor.reset();
+          formulario.style.display = "none";
+          recarregarMentores();
+        }
       })
       .catch((error) => {
-        alert("❌ Erro ao enviar: " + error);
+        mostrarToast("❌ Erro ao enviar.", "erro");
       });
   });
 
@@ -606,7 +660,7 @@ function mostrarResultados(entradas) {
 
 // ✅ Função global para abrir formulário de cadastro
 function recarregarMentores() {
-  fetch("carregar-mentores.php")
+  return fetch("carregar-mentores.php")
     .then((res) => res.text())
     .then((html) => {
       const container = document.getElementById("listaMentores");
@@ -745,6 +799,7 @@ function recarregarMentores() {
           exibirFormularioMentor(card);
         });
       });
+      atualizarMenu();
     })
     .catch((error) => {
       console.error("Erro ao recarregar mentores:", error);
@@ -781,13 +836,23 @@ function excluirEntrada(idEntrada) {
       headers: { "Content-Type": "application/x-www-form-urlencoded" },
       body: `id=${encodeURIComponent(idEntrada)}`,
     })
-      .then((res) => res.text())
+      .then((res) => {
+        if (!res.ok) {
+          throw new Error(`Erro HTTP: ${res.status}`);
+        }
+        return res.text();
+      })
       .then((msg) => {
-        mostrarToast(msg.trim(), msg.includes("sucesso") ? "sucesso" : "aviso");
-        return recarregarMentores();
+        console.log("Resposta do servidor:", msg); // Para depuração
+        const sucesso = msg.toLowerCase().includes("sucesso");
+        mostrarToast(msg.trim(), sucesso ? "sucesso" : "aviso");
+
+        return recarregarMentores(); // Certifique-se de que retorna uma Promise
       })
       .then(() => {
         fecharTelaEdicao();
+        atualizarMenu();
+
         setTimeout(() => {
           if (estaAberta && idMentorBackup) {
             editarAposta(idMentorBackup);
@@ -797,14 +862,15 @@ function excluirEntrada(idEntrada) {
         }, 300);
       })
       .catch((err) => {
-        console.error("Erro:", err);
-        mostrarToast("❌ Falha ao excluir. Verifique o ID ou tente novamente.");
+        console.error("Erro detectado:", err);
+        mostrarToast(`❌ Falha ao excluir. Motivo técnico: ${err.message}`);
       })
       .finally(() => {
         ocultarLoader();
       });
   };
 }
+
 // FIM DO CODIGO RESPONSAVEL PELOS VALOR DE ENTRADA E A AREA DOS 3 PONTINHOS PARA EXCLUIR-->
 
 // TESTE-->

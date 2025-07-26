@@ -165,9 +165,9 @@ if ($mensagem !== "") {
 
 
 <?php
+
 require_once 'config.php';
 mysqli_report(MYSQLI_REPORT_ERROR | MYSQLI_REPORT_STRICT);
- // Certifique-se de iniciar a sessão
 
 // ✅ Função de notificação
 function setToast($mensagem, $tipo = 'info') {
@@ -207,7 +207,7 @@ if (!isset($_SESSION['usuario_id']) || empty($_SESSION['usuario_id'])) {
 
 $id_usuario_logado = $_SESSION['usuario_id'];
 
-// 🔎 Consulta última diária
+// 🔎 Última diária
 $stmt = mysqli_prepare($conexao, "
   SELECT diaria FROM controle
   WHERE id_usuario = ? AND diaria IS NOT NULL AND diaria != 0
@@ -218,13 +218,9 @@ mysqli_stmt_execute($stmt);
 mysqli_stmt_bind_result($stmt, $ultima_diaria);
 mysqli_stmt_fetch($stmt);
 mysqli_stmt_close($stmt);
-
 $ultima_diaria = $ultima_diaria ?? 0;
-$diaria_formatada = (intval($ultima_diaria) == $ultima_diaria)
-  ? intval($ultima_diaria) . '%'
-  : number_format($ultima_diaria, 2, ',', '.') . '%';
 
-// 🔢 Soma depósitos
+// 🔢 Depósitos
 $stmt = mysqli_prepare($conexao, "SELECT SUM(deposito) FROM controle WHERE id_usuario = ?");
 mysqli_stmt_bind_param($stmt, "i", $id_usuario_logado);
 mysqli_stmt_execute($stmt);
@@ -233,7 +229,7 @@ mysqli_stmt_fetch($stmt);
 mysqli_stmt_close($stmt);
 $soma_depositos = $soma_depositos ?? 0;
 
-// 🔢 Soma saques
+// 🔢 Saques
 $stmt = mysqli_prepare($conexao, "SELECT SUM(saque) FROM controle WHERE id_usuario = ?");
 mysqli_stmt_bind_param($stmt, "i", $id_usuario_logado);
 mysqli_stmt_execute($stmt);
@@ -242,7 +238,7 @@ mysqli_stmt_fetch($stmt);
 mysqli_stmt_close($stmt);
 $soma_saque = $soma_saque ?? 0;
 
-// 🔢 Soma green/red
+// 🔢 Green/Red
 $stmt = mysqli_prepare($conexao, "
   SELECT SUM(valor_green), SUM(valor_red)
   FROM valor_mentores WHERE id_usuario = ?
@@ -259,7 +255,6 @@ $valor_red = $valor_red ?? 0;
 $saldo_mentores = $valor_green - $valor_red;
 $saldo_inicial = $soma_depositos - $soma_saque + $saldo_mentores;
 
-// ⚠️ Controle de banca zerada
 if ($saldo_inicial <= 0 && $saldo_mentores < 0) {
   $_SESSION['banca_zerada'] = true;
 } elseif ($saldo_inicial > 0) {
@@ -267,10 +262,13 @@ if ($saldo_inicial <= 0 && $saldo_mentores < 0) {
 }
 
 if (isset($_SESSION['banca_zerada'])) {
-  $saldo_banca = $soma_depositos - $soma_saque; // Ignora saldo dos mentores
+  $saldo_banca = $soma_depositos - $soma_saque;
 } else {
   $saldo_banca = $soma_depositos - $soma_saque + $saldo_mentores;
 }
+
+// ✅ Correção aplicada aqui: salva na sessão!
+$_SESSION['saldo_banca_total'] = $saldo_banca;
 
 $valor_entrada_calculado = $saldo_banca * ($ultima_diaria / 100);
 $valor_entrada_formatado = number_format($valor_entrada_calculado, 2, ',', '.');
@@ -288,6 +286,28 @@ if (isset($_GET['excluir_mentor'])) {
 
 // 📝 Cadastro/Edição de mentor
 if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['acao'])) {
+
+  $valor_digitado = trim($_POST['valor'] ?? '0');
+  $valor_float = is_numeric($valor_digitado) ? floatval($valor_digitado) : null;
+
+  if ($valor_float === null) {
+    setToast('Valor inválido!', 'erro');
+    header('Location: gestao-diaria.php');
+    exit();
+  }
+
+  $valor_sanitizado = filter_var($valor_float, FILTER_SANITIZE_NUMBER_FLOAT, FILTER_FLAG_ALLOW_FRACTION);
+  $valor_numerico = floatval($valor_sanitizado);
+
+  $tipo_operacao = $_POST['opcao'] ?? '';
+  $saldo_banca_verificado = $_SESSION['saldo_banca_total'] ?? 0;
+
+  if ($tipo_operacao === 'red' && $valor_numerico > $saldo_banca_verificado) {
+    setToast('⚠️ Saldo da Banca Insuficiente, Faça um Depósito!', 'erro');
+    header('Location: gestao-diaria.php');
+    exit();
+  }
+
   $usuario_id = $_SESSION['usuario_id'];
   $nome = $_POST['nome'];
   $mentor_id = $_POST['mentor_id'] ?? null;
@@ -323,6 +343,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['acao'])) {
 // 🔎 Meta formatada
 $meta_diaria = $_SESSION['meta_meia_unidade'] ?? 0;
 ?>
+
 
 
 
@@ -708,10 +729,6 @@ if (isset($_SESSION['toast'])) {
     <input type="text" name="valor" id="valor" class="input-valor" placeholder="R$ 0,00" required>
 
 
-
-
-
-
     <button type="submit" class="botao-enviar">Enviar</button>
   </form>
 </div>
@@ -772,9 +789,6 @@ if (isset($_SESSION['toast'])) {
 
 <!-- PUXA O SCRIPT -->
 <script src="script.js"></script>
-
-
-
 
 
 

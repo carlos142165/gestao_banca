@@ -2,16 +2,18 @@
 session_start();
 include_once('config.php');
 
+// Inicialização
 $saldo_banca = 0;
 $saldo_mentores = 0;
 $saques_banca = 0;
 $saques_mentores = 0;
 $saques_reais = 0;
+$classe_saldo = '';
 
 if (isset($_SESSION['usuario_id'])) {
     $id_usuario = $_SESSION['usuario_id'];
 
-    // Soma depósitos
+    // Depósitos
     $stmt = mysqli_prepare($conexao, "SELECT COALESCE(SUM(deposito), 0) FROM controle WHERE id_usuario = ?");
     mysqli_stmt_bind_param($stmt, "i", $id_usuario);
     mysqli_stmt_execute($stmt);
@@ -19,7 +21,7 @@ if (isset($_SESSION['usuario_id'])) {
     mysqli_stmt_fetch($stmt);
     mysqli_stmt_close($stmt);
 
-    // Saques da banca
+    // Saques - banca
     $stmt = mysqli_prepare($conexao, "
         SELECT COALESCE(SUM(saque), 0)
         FROM controle
@@ -31,7 +33,7 @@ if (isset($_SESSION['usuario_id'])) {
     mysqli_stmt_fetch($stmt);
     mysqli_stmt_close($stmt);
 
-    // Saques dos mentores
+    // Saques - mentores
     $stmt = mysqli_prepare($conexao, "
         SELECT COALESCE(SUM(saque), 0)
         FROM controle
@@ -43,10 +45,10 @@ if (isset($_SESSION['usuario_id'])) {
     mysqli_stmt_fetch($stmt);
     mysqli_stmt_close($stmt);
 
-    // Saques totais para exibição combinada
+    // Saques totais
     $saques_reais = $saques_banca + $saques_mentores;
 
-    // valor_green
+    // Green e Red
     $stmt = mysqli_prepare($conexao, "SELECT COALESCE(SUM(valor_green), 0) FROM valor_mentores WHERE id_usuario = ?");
     mysqli_stmt_bind_param($stmt, "i", $id_usuario);
     mysqli_stmt_execute($stmt);
@@ -54,7 +56,6 @@ if (isset($_SESSION['usuario_id'])) {
     mysqli_stmt_fetch($stmt);
     mysqli_stmt_close($stmt);
 
-    // valor_red
     $stmt = mysqli_prepare($conexao, "SELECT COALESCE(SUM(valor_red), 0) FROM valor_mentores WHERE id_usuario = ?");
     mysqli_stmt_bind_param($stmt, "i", $id_usuario);
     mysqli_stmt_execute($stmt);
@@ -62,9 +63,18 @@ if (isset($_SESSION['usuario_id'])) {
     mysqli_stmt_fetch($stmt);
     mysqli_stmt_close($stmt);
 
-    // Cálculos finais
+    // Cálculo final
     $saldo_mentores = $valor_green - $valor_red;
     $saldo_banca = ($soma_depositos - $saques_banca) + $saldo_mentores;
+
+    // Cor da classe do saldo
+    if ($saldo_mentores < 0) {
+        $classe_saldo = 'saldo-negativo';
+    } elseif ($saldo_mentores == 0.00) {
+        $classe_saldo = 'saldo-neutro';
+    } else {
+        $classe_saldo = 'saldo-positivo';
+    }
 }
 ?>
 
@@ -530,36 +540,26 @@ if (isset($_SESSION['usuario_id'])) {
 
 
     
-   <?php
-   $classe_saldo = '';
-if ($saldo_mentores < 0) {
-    $classe_saldo = 'saldo-negativo';
-} elseif ($saldo_mentores == 0.00) {
-    $classe_saldo = 'saldo-neutro';
-} else {
-    $classe_saldo = 'saldo-positivo';
-}
-   ?>
 
-   <?php if (isset($_SESSION['usuario_id'])): ?>
+  <?php if (isset($_SESSION['usuario_id'])): ?>
 <div class="valor-item-menu saldo-topo-ajustado">
-    <div class="valor-info-wrapper">
-        <div class="valor-label-linha">
-            <i class="fa-solid fa-building-columns valor-icone-tema"></i>
-            <span class="valor-label">Banca:</span>
-            <span class="valor-bold-menu">R$ <?= number_format($saldo_banca, 2, ',', '.') ?></span>
-        </div>
-        <div class="valor-label-linha">
-            <i class="fa-solid fa-arrow-up-from-bracket valor-icone-tema"></i>
-            <span class="valor-label">Saque:</span>
-            <span class="valor-valor-saque">R$ <?= number_format($saques_reais, 2, ',', '.') ?></span>
-        </div>
-        <div class="valor-label-linha">
-            <i class="fa-solid fa-chart-line valor-icone-tema"></i>
-            <span class="valor-label">Saldo:</span>
-            <span class="valor-total-mentores <?= $classe_saldo ?>">R$ <?= number_format($saldo_mentores, 2, ',', '.') ?></span>
-        </div>
+  <div class="valor-info-wrapper">
+    <div class="valor-label-linha">
+      <i class="fa-solid fa-building-columns valor-icone-tema"></i>
+      <span class="valor-label">Banca:</span>
+      <span class="valor-bold-menu">R$ <?= number_format($saldo_banca, 2, ',', '.') ?></span>
     </div>
+    <div class="valor-label-linha">
+      <i class="fa-solid fa-arrow-up-from-bracket valor-icone-tema"></i>
+      <span class="valor-label">Saque:</span>
+      <span class="valor-valor-saque">R$ <?= number_format($saques_reais, 2, ',', '.') ?></span>
+    </div>
+    <div class="valor-label-linha">
+      <i class="fa-solid fa-chart-line valor-icone-tema"></i>
+      <span class="valor-label">Saldo:</span>
+      <span class="valor-total-mentores <?= $classe_saldo ?>">R$ <?= number_format($saldo_mentores, 2, ',', '.') ?></span>
+    </div>
+  </div>
 </div>
 <?php endif; ?>
 
@@ -572,11 +572,15 @@ if ($saldo_mentores < 0) {
 
 
     <script>
-      function toggleMenu() {
-        var menu = document.getElementById("menu");
-        menu.style.display = menu.style.display === "block" ? "none" : "block";
-      }
-    </script>
+function toggleMenu() {
+  var menu = document.getElementById("menu");
+  menu.style.display = menu.style.display === "block" ? "none" : "block";
+}
+</script>
+
+
+
+
   </body>
   
 </html>

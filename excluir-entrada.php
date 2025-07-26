@@ -17,7 +17,8 @@ if ($id) {
   $stmt->bind_param("i", $id);
 
   if ($stmt->execute()) {
-    echo "✅ Entrada excluída com sucesso.";
+    echo "sucesso: Entrada excluída com êxito.";
+
   } else {
     echo "❌ Erro ao excluir: " . $stmt->error;
   }
