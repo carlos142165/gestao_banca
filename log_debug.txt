@@ -226,3 +226,51 @@ Array
     [opcao] => green
     [valor] => 5.00
 )
+Array
+(
+    [id_mentor] => 95
+    [opcao] => green
+    [valor] => 10.00
+)
+Array
+(
+    [id_mentor] => 98
+    [opcao] => green
+    [valor] => 10.00
+)
+Array
+(
+    [id_mentor] => 118
+    [opcao] => green
+    [valor] => 100.00
+)
+Array
+(
+    [id_mentor] => 120
+    [opcao] => green
+    [valor] => 10.00
+)
+Array
+(
+    [id_mentor] => 97
+    [opcao] => red
+    [valor] => 500.00
+)
+Array
+(
+    [id_mentor] => 120
+    [opcao] => green
+    [valor] => 50.00
+)
+Array
+(
+    [id_mentor] => 96
+    [opcao] => green
+    [valor] => 221.46
+)
+Array
+(
+    [id_mentor] => 95
+    [opcao] => green
+    [valor] => 221.46
+)

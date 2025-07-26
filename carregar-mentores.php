@@ -28,33 +28,35 @@ $diaria_formatada = (intval($ultima_diaria) == $ultima_diaria)
   : number_format($ultima_diaria, 2, ',', '.') . '%';
 
 // Depósitos e saques
-$stmt = mysqli_prepare($conexao, "SELECT SUM(deposito), SUM(saque) FROM controle WHERE id_usuario = ?");
+$stmt = mysqli_prepare($conexao, "
+  SELECT COALESCE(SUM(deposito), 0), COALESCE(SUM(saque), 0)
+  FROM controle WHERE id_usuario = ?
+");
 mysqli_stmt_bind_param($stmt, "i", $id_usuario);
 mysqli_stmt_execute($stmt);
 mysqli_stmt_bind_result($stmt, $soma_depositos, $soma_saque);
 mysqli_stmt_fetch($stmt);
 mysqli_stmt_close($stmt);
 
-// Valores dos mentores
+// Saldo dos mentores
 $stmt = mysqli_prepare($conexao, "
-  SELECT SUM(valor_green), SUM(valor_red)
+  SELECT COALESCE(SUM(valor_green), 0), COALESCE(SUM(valor_red), 0)
   FROM valor_mentores WHERE id_usuario = ?
 ");
 mysqli_stmt_bind_param($stmt, "i", $id_usuario);
 mysqli_stmt_execute($stmt);
-mysqli_stmt_bind_result($stmt, $valor_green, $valor_red);
+mysqli_stmt_bind_result($stmt, $total_valor_green, $total_valor_red);
 mysqli_stmt_fetch($stmt);
 mysqli_stmt_close($stmt);
 
-$valor_green = $valor_green ?? 0;
-$valor_red = $valor_red ?? 0;
+$saldo_mentores = $total_valor_green - $total_valor_red;
 
-$saldo_mentores = $valor_green - $valor_red;
-$saldo_banca = $soma_depositos - $soma_saque + $saldo_mentores;
+// Cálculo da banca total incluindo mentores
+$saldo_banca_total = ($soma_depositos - $soma_saque) + $saldo_mentores;
 
-// ✅ Cálculo atualizado da entrada e meia unidade direto aqui
-if ($ultima_diaria > 0 && $saldo_banca > 0) {
-  $resultado_entrada = ($ultima_diaria / 100) * $saldo_banca;
+// Cálculo da entrada e meia unidade
+if ($ultima_diaria > 0 && $saldo_banca_total > 0) {
+  $resultado_entrada = ($ultima_diaria / 100) * $saldo_banca_total;
   $meia_unidade = $resultado_entrada * 0.5;
   $_SESSION['resultado_entrada'] = $resultado_entrada;
   $_SESSION['meta_meia_unidade'] = $meia_unidade;
@@ -155,7 +157,7 @@ foreach ($lista_mentores as $posicao => $mentor) {
   ";
 }
 
-// Elementos invisíveis para atualização com JavaScript
+// Elementos invisíveis para JavaScript
 echo "<div id='total-green-dia' data-green='{$total_geral_green}' style='display:none;'></div>";
 echo "<div id='total-red-dia' data-red='{$total_geral_red}' style='display:none;'></div>";
 echo "<div id='saldo-dia' data-total='R$ " . number_format($total_geral_saldo, 2, ',', '.') . "' style='display:none;'></div>";
@@ -167,6 +169,7 @@ if (empty($lista_mentores)) {
   echo "<div class='mentor-card card-neutro'>Sem mentores cadastrados.</div>";
 }
 ?>
+
 
 
 

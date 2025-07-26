@@ -571,16 +571,22 @@ if (isset($_SESSION['toast'])) {
 <!-- BOTÃO ADICIONAR USUARIO -->
  
 <div class="area-central-botao">
-  <span class="valor-porcentagem" id="valor-porcentagem">R$ 0,00</span>
+  <span class="valor-porcentagem" id="valor-porcentagem">
+    R$ <?php echo $meta_formatado ?? '0,00'; ?>
+  </span>
   <span class="rotulo-porcentagem">da Banca Fazer</span>
 
   <span class="rotulo-entrada">Entrada de:</span>
-  <span class="valor-entrada" id="valor-entrada">R$ 0,00</span>
+  <span class="valor-entrada" id="valor-entrada">
+    R$ <?php echo $resultado_formatado ?? '0,00'; ?>
+  </span>
 
   <button class="btn-add-usuario" onclick="prepararFormularioNovoMentor()">
     <i class="fas fa-user-plus"></i>
   </button>
 </div>
+
+
 
 
 
