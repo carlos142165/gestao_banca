@@ -1,298 +1,143 @@
-
 <?php
 session_start();
-require_once 'config.php';
-
-// Verifica se é o primeiro login
-if ($_SESSION['primeiro_login'] ?? true) {
-  $_SESSION['primeiro_login'] = false;
-
-  echo "
-  <!DOCTYPE html>
-  <html lang='pt-br'>
-  <head>
-    <meta charset='UTF-8'>
-    <meta name='viewport' content='width=device-width, initial-scale=1.0'>
-    <title>Boas-Vindas</title>
-    <link rel='stylesheet' href='https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css'>
-    <style>
-      body {
-        margin: 0;
-        padding: 0;
-        font-family: 'Segoe UI', sans-serif;
-        background-color: #f0f2f5;
-      }
-
-      .intro-overlay {
-        position: fixed;
-        top: 0; left: 0;
-        width: 100%; height: 100vh;
-        background: rgba(0,0,0,0.6);
-        display: flex;
-        justify-content: center;
-        align-items: center;
-        z-index: 9999;
-      }
-
-      .intro-box {
-        background: #fff;
-        padding: 40px;
-        border-radius: 16px;
-        box-shadow: 0 0 30px rgba(0,0,0,0.3);
-        width: 90%;
-        max-width: 600px;
-        text-align: center;
-        animation: fadeSlide 0.7s ease-out;
-      }
-
-      .intro-box h1 {
-        font-size: 28px;
-        margin-bottom: 20px;
-        color: #2c3e50;
-      }
-
-      .descricao {
-        font-size: 18px;
-        margin-bottom: 30px;
-        color: #444;
-      }
-
-      .etapas {
-        display: flex;
-        flex-direction: column;
-        gap: 24px;
-        margin-bottom: 20px;
-        text-align: left;
-      }
-
-      .etapa {
-        display: flex;
-        gap: 14px;
-        align-items: flex-start;
-      }
-
-      .etapa i {
-        font-size: 26px;
-        color: #27ae60;
-        margin-top: 4px;
-        min-width: 30px;
-        text-align: center;
-      }
-
-      .etapa div {
-        font-size: 17px;
-        color: #34495e;
-        line-height: 1.6;
-      }
-
-      .final {
-        font-size: 18px;
-        margin-top: 18px;
-        color: #2980b9;
-      }
-
-      .intro-box button {
-        margin-top: 25px;
-        padding: 14px 30px;
-        background: #27ae60;
-        color: white;
-        border: none;
-        border-radius: 8px;
-        font-size: 17px;
-        cursor: pointer;
-        transition: background 0.3s;
-      }
-
-      .intro-box button:hover {
-        background: #219150;
-      }
-
-      @keyframes fadeSlide {
-        from { opacity: 0; transform: translateY(20px); }
-        to { opacity: 1; transform: translateY(0); }
-      }
-
-      @media screen and (max-width: 390px) {
-        .intro-box {
-          padding: 30px 20px;
-        }
-        .intro-box h1 {
-          font-size: 26px;
-        }
-        .descricao {
-          font-size: 19px;
-        }
-        .etapa div {
-          font-size: 18px;
-        }
-        .etapa i {
-          font-size: 30px;
-        }
-        .final {
-          font-size: 18px;
-        }
-        .intro-box button {
-          font-size: 18px;
-          padding: 14px 28px;
-        }
-      }
-    </style>
-  </head>
-  <body>
-    <div class='intro-overlay'>
-      <div class='intro-box'>
-        <h1>🎉 Bem-vindo, novo usuário!</h1>
-        <p class='descricao'>Comece em apenas <strong>2 passos simples</strong>:</p>
-
-        <div class='etapas'>
-          <div class='etapa'>
-            <i class='fas fa-piggy-bank'></i>
-            <div>
-              <strong>1º Passo:</strong> Vá até o <em>Painel de Controle</em> e clique em <strong>Depositar na Banca</strong>. Defina o valor da sua banca.
-            </div>
-          </div>
-          <div class='etapa'>
-            <i class='fas fa-percentage'></i>
-            <div>
-              <strong>2º Passo:</strong> Ainda no Painel, selecione <strong>Defina a Porcentagem</strong> e defina seu percentual favorito.
-            </div>
-          </div>
-        </div>
-
-        <p class='final'>✔️ Pronto! Agora você já pode usar o sistema. Boa sorte!</p>
-
-        <button onclick=\"location.href='painel-controle.php'\">Avançar</button>
-      </div>
-    </div>
-  </body>
-  </html>
-  ";
-  exit;
-}
-?>
-
-
-<?php
-
 include_once('config.php');
 
-// 🔐 Verifica login
 if (!isset($_SESSION['usuario_id'])) {
     echo "<script>alert('ÁREA DE MEMBROS – Faça Já Seu Cadastro Gratuito'); window.location.href = 'home.php';</script>";
     exit();
 }
 
-// 🧠 ID do usuário
 $id_usuario = $_SESSION['usuario_id'];
 
-// 🔁 Processa ações (POST)
 if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['acao'], $_POST['valor'])) {
     $acao = $_POST['acao'];
     $valor = preg_replace('/[^0-9,]/', '', $_POST['valor']);
     $valor = str_replace(',', '.', $valor);
     $valorFloat = is_numeric($valor) ? (float)$valor : 0;
 
-    // 🧹 Limpar banca
     if ($acao === 'limpar') {
         $stmt = mysqli_prepare($conexao, "DELETE FROM controle WHERE id_usuario = ?");
-        mysqli_stmt_bind_param($stmt, "i", $id_usuario);
-        mysqli_stmt_execute($stmt);
-        mysqli_stmt_close($stmt);
-        $_SESSION['mensagem'] = 'Banca Limpa Com Sucesso!';
+        $stmt->bind_param("i", $id_usuario);
+        $stmt->execute();
+        $stmt->close();
+
+        $stmt = mysqli_prepare($conexao, "DELETE FROM valor_mentores WHERE id_usuario = ?");
+        $stmt->bind_param("i", $id_usuario);
+        $stmt->execute();
+        $stmt->close();
+
+        $_SESSION['mensagem'] = 'Banca e históricos dos mentores limpos com sucesso!';
         header('Location: painel-controle.php');
-        exit;
+        exit();
     }
 
-    // 🔒 Bloqueia saque sem saldo
     if ($acao === 'saque') {
         $stmt = mysqli_prepare($conexao, "
-            SELECT COALESCE(SUM(deposito), 0) - COALESCE(SUM(saque), 0)
-            FROM controle WHERE id_usuario = ?");
-        mysqli_stmt_bind_param($stmt, "i", $id_usuario);
-        mysqli_stmt_execute($stmt);
-        mysqli_stmt_bind_result($stmt, $saldo_banca);
-        mysqli_stmt_fetch($stmt);
-        mysqli_stmt_close($stmt);
+            SELECT COALESCE(SUM(valor_green), 0) - COALESCE(SUM(valor_red), 0)
+            FROM valor_mentores WHERE id_usuario = ?");
+        $stmt->bind_param("i", $id_usuario);
+        $stmt->execute();
+        $stmt->bind_result($saldo_mentores);
+        $stmt->fetch();
+        $stmt->close();
 
-        if ($valorFloat > $saldo_banca || $saldo_banca <= 0) {
-            $_SESSION['mensagem'] = 'Saldo Insuficiente. Você Só Pode Sacar Até R$ ' . number_format($saldo_banca, 2, ',', '.');
+        if ($valorFloat > $saldo_mentores || $saldo_mentores <= 0) {
+            $_SESSION['mensagem'] = 'Saldo Insuficiente!';
             header('Location: painel-controle.php');
-            exit;
+            exit();
         }
+
+        $stmt = mysqli_prepare($conexao, "INSERT INTO valor_mentores (id_usuario, valor_red) VALUES (?, ?)");
+        $stmt->bind_param("id", $id_usuario, $valorFloat);
+        $stmt->execute();
+        $stmt->close();
+
+        $stmt = mysqli_prepare($conexao, "INSERT INTO controle (id_usuario, saque, origem) VALUES (?, ?, 'mentor')");
+        $stmt->bind_param("id", $id_usuario, $valorFloat);
+        $stmt->execute();
+        $stmt->close();
+
+        $_SESSION['mensagem'] = 'Saque realizado com sucesso!';
+        header('Location: painel-controle.php');
+        exit();
     }
 
-    // 💾 Insere valor (depósito, saque, diária)
-    if (in_array($acao, ['deposito', 'saque', 'diaria']) && $valorFloat > 0) {
-    $query = "INSERT INTO controle (id_usuario, $acao) VALUES (?, ?)";
-    $stmt = mysqli_prepare($conexao, $query);
-    mysqli_stmt_bind_param($stmt, "id", $id_usuario, $valorFloat);
-    mysqli_stmt_execute($stmt);
-    mysqli_stmt_close($stmt);
+    if (in_array($acao, ['deposito', 'diaria']) && $valorFloat > 0) {
+        $stmt = mysqli_prepare($conexao, "INSERT INTO controle (id_usuario, $acao) VALUES (?, ?)");
+        $stmt->bind_param("id", $id_usuario, $valorFloat);
+        $stmt->execute();
+        $stmt->close();
 
-    // ✅ Mensagem personalizada para "diaria"
-    $_SESSION['mensagem'] = ($acao === 'diaria')
-        ? 'Porcentagem Definida com Sucesso!'
-        : ucfirst($acao) . ' Feito com Sucesso!';
+        $_SESSION['mensagem'] = ($acao === 'diaria')
+            ? 'Porcentagem Definida com Sucesso!'
+            : ucfirst($acao) . ' Feito com Sucesso!';
 
-    header('Location: painel-controle.php');
-    exit;
+        header('Location: painel-controle.php');
+        exit();
     }
 }
 
-// 🔎 Consulta depósitos
-$stmt = mysqli_prepare($conexao, "SELECT SUM(deposito) FROM controle WHERE id_usuario = ?");
-mysqli_stmt_bind_param($stmt, "i", $id_usuario);
-mysqli_stmt_execute($stmt);
-mysqli_stmt_bind_result($stmt, $soma_depositos);
-mysqli_stmt_fetch($stmt);
-mysqli_stmt_close($stmt);
-$soma_depositos = $soma_depositos ?: 0;
+// 🔎 Consultas de valores
+$stmt = mysqli_prepare($conexao, "SELECT COALESCE(SUM(deposito), 0) FROM controle WHERE id_usuario = ?");
+$stmt->bind_param("i", $id_usuario);
+$stmt->execute();
+$stmt->bind_result($soma_depositos);
+$stmt->fetch();
+$stmt->close();
 
-// 🔎 Consulta saques
-$stmt = mysqli_prepare($conexao, "SELECT SUM(saque) FROM controle WHERE id_usuario = ?");
-mysqli_stmt_bind_param($stmt, "i", $id_usuario);
-mysqli_stmt_execute($stmt);
-mysqli_stmt_bind_result($stmt, $soma_saque);
-mysqli_stmt_fetch($stmt);
-mysqli_stmt_close($stmt);
-$soma_saque = $soma_saque ?: 0;
+// ✅ Saques da banca (apenas essa origem será subtraída do saldo)
+$stmt = mysqli_prepare($conexao, "
+    SELECT COALESCE(SUM(saque), 0) 
+    FROM controle 
+    WHERE id_usuario = ? AND (origem IS NULL OR origem = 'banca')
+");
+$stmt->bind_param("i", $id_usuario);
+$stmt->execute();
+$stmt->bind_result($saques_banca);
+$stmt->fetch();
+$stmt->close();
 
-// Soma valor_green
-    $valor_green = 0;
-    $stmt = mysqli_prepare($conexao, "SELECT SUM(valor_green) FROM valor_mentores WHERE id_usuario = ?");
-    mysqli_stmt_bind_param($stmt, "i", $id_usuario);
-    mysqli_stmt_execute($stmt);
-    mysqli_stmt_bind_result($stmt, $valor_green);
-    mysqli_stmt_fetch($stmt);
-    mysqli_stmt_close($stmt);
+// ✅ Saques totais (incluindo mentores — só para exibição, não usado no cálculo da banca)
+$stmt = mysqli_prepare($conexao, "
+    SELECT COALESCE(SUM(saque), 0)
+    FROM controle
+    WHERE id_usuario = ?
+");
+$stmt->bind_param("i", $id_usuario);
+$stmt->execute();
+$stmt->bind_result($saques_reais);
+$stmt->fetch();
+$stmt->close();
 
-    // Soma valor_red
-    $valor_red = 0;
-    $stmt = mysqli_prepare($conexao, "SELECT SUM(valor_red) FROM valor_mentores WHERE id_usuario = ?");
-    mysqli_stmt_bind_param($stmt, "i", $id_usuario);
-    mysqli_stmt_execute($stmt);
-    mysqli_stmt_bind_result($stmt, $valor_red);
-    mysqli_stmt_fetch($stmt);
-    mysqli_stmt_close($stmt);
+$stmt = mysqli_prepare($conexao, "SELECT COALESCE(SUM(valor_green), 0) FROM valor_mentores WHERE id_usuario = ?");
+$stmt->bind_param("i", $id_usuario);
+$stmt->execute();
+$stmt->bind_result($valor_green);
+$stmt->fetch();
+$stmt->close();
 
-// 🔎 Consulta última diária (porcentagem)
+$stmt = mysqli_prepare($conexao, "SELECT COALESCE(SUM(valor_red), 0) FROM valor_mentores WHERE id_usuario = ?");
+$stmt->bind_param("i", $id_usuario);
+$stmt->execute();
+$stmt->bind_result($valor_red);
+$stmt->fetch();
+$stmt->close();
+
 $stmt = mysqli_prepare($conexao, "
     SELECT diaria FROM controle
     WHERE id_usuario = ? AND diaria IS NOT NULL AND diaria != 0
     ORDER BY id DESC LIMIT 1
 ");
-mysqli_stmt_bind_param($stmt, "i", $id_usuario);
-mysqli_stmt_execute($stmt);
-mysqli_stmt_bind_result($stmt, $ultima_diaria);
-mysqli_stmt_fetch($stmt);
-mysqli_stmt_close($stmt);
+$stmt->bind_param("i", $id_usuario);
+$stmt->execute();
+$stmt->bind_result($ultima_diaria);
+$stmt->fetch();
+$stmt->close();
 $ultima_diaria = $ultima_diaria ?: 0;
 
-// 🧮 Conversões e cálculos
+// 🧮 Cálculos finais
 $saldo_mentores = $valor_green - $valor_red;
-$depositos_reais = $soma_depositos; 
-$saques_reais = $soma_saque; 
-$saldo_reais = $depositos_reais - $saques_reais + $saldo_mentores;
+$saldo_reais = ($soma_depositos - $saques_banca) + $saldo_mentores;
 
 $percentualFormatado = (intval($ultima_diaria) == $ultima_diaria)
     ? intval($ultima_diaria) . '%'
@@ -301,15 +146,19 @@ $percentualFormatado = (intval($ultima_diaria) == $ultima_diaria)
 if ($ultima_diaria > 0 && $saldo_reais > 0) {
     $resultado = ($ultima_diaria / 100) * $saldo_reais;
     $meia_unidade = $resultado * 0.5;
-    $meia_unidade_mensal = $meia_unidade * 30;
-    $resultado_anual = $meia_unidade_mensal * 12;
-
-    // ✅ Salvar na sessão
     $_SESSION['meta_meia_unidade'] = $meia_unidade;
-    // ✅ Salvar na sessão
-    $_SESSION['resultado_entrada'] = $resultado; // 👈 NOVO!
+    $_SESSION['resultado_entrada'] = $resultado;
 }
+
 ?>
+
+
+
+
+
+
+
+
 
 
 
@@ -710,9 +559,6 @@ if ($ultima_diaria > 0 && $saldo_reais > 0) {
 
 
  <br>
-
-
-
 
 
 

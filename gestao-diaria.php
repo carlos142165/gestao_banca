@@ -165,85 +165,168 @@ if ($mensagem !== "") {
 
 
 <?php
-
 require_once 'config.php';
 mysqli_report(MYSQLI_REPORT_ERROR | MYSQLI_REPORT_STRICT);
+ // Certifique-se de iniciar a sessão
 
-// 👉 Função para registrar a mensagem toast na sessão
-function setToast($mensagem, $tipo = 'sucesso') {
-    $_SESSION['toast'] = [
-        'mensagem' => $mensagem,
-        'tipo' => $tipo
-    ];
+// ✅ Função de notificação
+function setToast($mensagem, $tipo = 'info') {
+  $cores = [
+    'sucesso' => '#4CAF50',
+    'erro' => '#F44336',
+    'aviso' => '#FFC107',
+    'info' => '#2196F3'
+  ];
+  $cor = $cores[$tipo] ?? '#333';
+
+  echo "<script>
+    document.addEventListener('DOMContentLoaded', function() {
+      const toast = document.createElement('div');
+      toast.textContent = '".addslashes($mensagem)."';
+      toast.style.position = 'fixed';
+      toast.style.bottom = '20px';
+      toast.style.right = '20px';
+      toast.style.padding = '12px 20px';
+      toast.style.backgroundColor = '$cor';
+      toast.style.color = '#fff';
+      toast.style.borderRadius = '5px';
+      toast.style.boxShadow = '0 2px 6px rgba(0,0,0,0.2)';
+      toast.style.zIndex = '1000';
+      document.body.appendChild(toast);
+      setTimeout(() => toast.remove(), 3000);
+    });
+  </script>";
 }
 
-// 🔒 Verificação de sessão
+// 🔐 Verificação de sessão
 if (!isset($_SESSION['usuario_id']) || empty($_SESSION['usuario_id'])) {
-    setToast('Área de membros — faça seu login!', 'aviso');
-    header('Location: home.php');
-    exit();
+  setToast('Área de membros — faça seu login!', 'aviso');
+  header('Location: home.php');
+  exit();
 }
+
+$id_usuario_logado = $_SESSION['usuario_id'];
+
+// 🔎 Consulta última diária
+$stmt = mysqli_prepare($conexao, "
+  SELECT diaria FROM controle
+  WHERE id_usuario = ? AND diaria IS NOT NULL AND diaria != 0
+  ORDER BY id DESC LIMIT 1
+");
+mysqli_stmt_bind_param($stmt, "i", $id_usuario_logado);
+mysqli_stmt_execute($stmt);
+mysqli_stmt_bind_result($stmt, $ultima_diaria);
+mysqli_stmt_fetch($stmt);
+mysqli_stmt_close($stmt);
+
+$ultima_diaria = $ultima_diaria ?? 0;
+$diaria_formatada = (intval($ultima_diaria) == $ultima_diaria)
+  ? intval($ultima_diaria) . '%'
+  : number_format($ultima_diaria, 2, ',', '.') . '%';
+
+// 🔢 Soma depósitos
+$stmt = mysqli_prepare($conexao, "SELECT SUM(deposito) FROM controle WHERE id_usuario = ?");
+mysqli_stmt_bind_param($stmt, "i", $id_usuario_logado);
+mysqli_stmt_execute($stmt);
+mysqli_stmt_bind_result($stmt, $soma_depositos);
+mysqli_stmt_fetch($stmt);
+mysqli_stmt_close($stmt);
+$soma_depositos = $soma_depositos ?? 0;
+
+// 🔢 Soma saques
+$stmt = mysqli_prepare($conexao, "SELECT SUM(saque) FROM controle WHERE id_usuario = ?");
+mysqli_stmt_bind_param($stmt, "i", $id_usuario_logado);
+mysqli_stmt_execute($stmt);
+mysqli_stmt_bind_result($stmt, $soma_saque);
+mysqli_stmt_fetch($stmt);
+mysqli_stmt_close($stmt);
+$soma_saque = $soma_saque ?? 0;
+
+// 🔢 Soma green/red
+$stmt = mysqli_prepare($conexao, "
+  SELECT SUM(valor_green), SUM(valor_red)
+  FROM valor_mentores WHERE id_usuario = ?
+");
+mysqli_stmt_bind_param($stmt, "i", $id_usuario_logado);
+mysqli_stmt_execute($stmt);
+mysqli_stmt_bind_result($stmt, $valor_green, $valor_red);
+mysqli_stmt_fetch($stmt);
+mysqli_stmt_close($stmt);
+$valor_green = $valor_green ?? 0;
+$valor_red = $valor_red ?? 0;
+
+// 💰 Cálculos
+$saldo_mentores = $valor_green - $valor_red;
+$saldo_inicial = $soma_depositos - $soma_saque + $saldo_mentores;
+
+// ⚠️ Controle de banca zerada
+if ($saldo_inicial <= 0 && $saldo_mentores < 0) {
+  $_SESSION['banca_zerada'] = true;
+} elseif ($saldo_inicial > 0) {
+  unset($_SESSION['banca_zerada']);
+}
+
+if (isset($_SESSION['banca_zerada'])) {
+  $saldo_banca = $soma_depositos - $soma_saque; // Ignora saldo dos mentores
+} else {
+  $saldo_banca = $soma_depositos - $soma_saque + $saldo_mentores;
+}
+
+$valor_entrada_calculado = $saldo_banca * ($ultima_diaria / 100);
+$valor_entrada_formatado = number_format($valor_entrada_calculado, 2, ',', '.');
 
 // 🗑️ Exclusão de mentor
 if (isset($_GET['excluir_mentor'])) {
-    $id = intval($_GET['excluir_mentor']);
-    $stmt = $conexao->prepare("DELETE FROM mentores WHERE id = ?");
-    $stmt->bind_param("i", $id);
-    $stmt->execute();
-    setToast('Mentor excluído com sucesso!', 'sucesso');
-    header('Location: gestao-diaria.php');
-    exit();
+  $id = intval($_GET['excluir_mentor']);
+  $stmt = $conexao->prepare("DELETE FROM mentores WHERE id = ?");
+  $stmt->bind_param("i", $id);
+  $stmt->execute();
+  setToast('Mentor excluído com sucesso!', 'sucesso');
+  header('Location: gestao-diaria.php');
+  exit();
 }
 
-// 📝 Cadastro e edição de mentor
+// 📝 Cadastro/Edição de mentor
 if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['acao'])) {
-    $usuario_id = $_SESSION['usuario_id'];
-    $nome = $_POST['nome'];
-    $mentor_id = $_POST['mentor_id'] ?? null;
+  $usuario_id = $_SESSION['usuario_id'];
+  $nome = $_POST['nome'];
+  $mentor_id = $_POST['mentor_id'] ?? null;
 
-    // 🖼️ Processamento da imagem
-    if (isset($_FILES['foto']) && $_FILES['foto']['error'] === UPLOAD_ERR_OK) {
-        $extensao = pathinfo($_FILES['foto']['name'], PATHINFO_EXTENSION);
-        $foto_nome = uniqid() . '.' . $extensao;
-        move_uploaded_file($_FILES['foto']['tmp_name'], "uploads/$foto_nome");
-    } else {
-        $foto_nome = $_POST['foto_atual'] ?? 'avatar-padrao.png';
-    }
+  if (isset($_FILES['foto']) && $_FILES['foto']['error'] === UPLOAD_ERR_OK) {
+    $extensao = pathinfo($_FILES['foto']['name'], PATHINFO_EXTENSION);
+    $foto_nome = uniqid() . '.' . $extensao;
+    move_uploaded_file($_FILES['foto']['tmp_name'], "uploads/$foto_nome");
+  } else {
+    $foto_nome = $_POST['foto_atual'] ?? 'avatar-padrao.png';
+  }
 
-    if ($_POST['acao'] === 'cadastrar_mentor') {
-        $stmt = $conexao->prepare("INSERT INTO mentores (id_usuario, foto, nome, data_criacao) VALUES (?, ?, ?, NOW())");
-        $stmt->bind_param("iss", $usuario_id, $foto_nome, $nome);
-    }
+  if ($_POST['acao'] === 'cadastrar_mentor') {
+    $stmt = $conexao->prepare("INSERT INTO mentores (id_usuario, foto, nome, data_criacao) VALUES (?, ?, ?, NOW())");
+    $stmt->bind_param("iss", $usuario_id, $foto_nome, $nome);
+  }
 
-    if ($_POST['acao'] === 'editar_mentor' && $mentor_id) {
-        $stmt = $conexao->prepare("UPDATE mentores SET nome = ?, foto = ? WHERE id = ?");
-        $stmt->bind_param("ssi", $nome, $foto_nome, $mentor_id);
-    }
+  if ($_POST['acao'] === 'editar_mentor' && $mentor_id) {
+    $stmt = $conexao->prepare("UPDATE mentores SET nome = ?, foto = ? WHERE id = ?");
+    $stmt->bind_param("ssi", $nome, $foto_nome, $mentor_id);
+  }
 
-    if ($stmt->execute()) {
-        setToast('Mentor salvo com sucesso!', 'sucesso');
-    } else {
-        setToast('Erro ao salvar mentor!', 'erro');
-    }
+  if ($stmt->execute()) {
+    setToast('Mentor salvo com sucesso!', 'sucesso');
+  } else {
+    setToast('Erro ao salvar mentor!', 'erro');
+  }
 
-    header('Location: gestao-diaria.php');
-    exit();
+  header('Location: gestao-diaria.php');
+  exit();
 }
 
-
-?>
-<!-- FIM CODIGO RESPONSAVEL PELA EDIÇÃO E EXCLUSÃO DO MENTOR  --> 
-
-
-<!-- FIM CODIGO RESPONSAVEL PUXAR O VALOR DA META DIARIA DO PAINEL DE CONTROLE --> 
-<?php
+// 🔎 Meta formatada
 $meta_diaria = $_SESSION['meta_meia_unidade'] ?? 0;
 ?>
 
-<?php
- $resultado_entrada = $_SESSION['resultado_entrada'] ?? 0;
- $resultado_formatado = number_format($resultado_entrada, 2, ',', '.');
-?>
+
+
+
 
 
 
@@ -268,6 +351,25 @@ body, html {
   padding: 0;
   
 }
+
+.grupo-porcentagem {
+  display: flex;
+  gap: 6px;
+  margin-bottom: 10px;
+  font-family: sans-serif;
+}
+
+.rotulo-porcentagem {
+  font-weight: bold;
+  color: #444;
+}
+
+.valor-porcentagem {
+  color: #007bff;
+  font-size: 1.1em;
+}
+
+
 
 
 </style>
@@ -446,17 +548,24 @@ if (isset($_SESSION['toast'])) {
 
 
 <!-- BOTÃO ADICIONAR USUARIO -->
+ 
 <div class="area-central-botao">
-  <button class="btn-add-usuario" onclick="prepararFormularioNovoMentor()">
-    <i class="fas fa-user-plus"></i>
-  </button>
 
-  <div class="grupo-entrada">
-  <span class="rotulo-entrada">Entrada:</span>
-  <span class="valor-entrada">R$ <?= number_format($resultado_entrada, 2, ',', '.') ?></span>
- </div>
+    <span class="valor-porcentagem"><?= $diaria_formatada ?></span>
+    <span class="rotulo-porcentagem">da Banca Fazer</span>
+
+    <span class="rotulo-entrada">Entrada de:</span>
+    <span class="valor-entrada">R$ <?= $valor_entrada_formatado ?></span>
+
+  
+    <button class="btn-add-usuario" onclick="prepararFormularioNovoMentor()">
+    <i class="fas fa-user-plus"></i>
+    </button>
+  
 
 </div>
+
+
 
 
 
@@ -470,7 +579,8 @@ if (isset($_SESSION['toast'])) {
 
 <!-- AQUI FILTRA OS DADOS DOS MENTORES NO BANCO DE DADOS PRA MOSTRAR NA TELA  -->
 <div class="campo_mentores">
-  <div id="listaMentores" class="mentor-wrapper">
+
+   <div id="listaMentores" class="mentor-wrapper">
     <?php
     $id_usuario_logado = $_SESSION['usuario_id'];
     $sql_mentores = "SELECT id, nome, foto FROM mentores WHERE id_usuario = ?";
@@ -525,55 +635,41 @@ if (isset($_SESSION['toast'])) {
     
 
       echo "
-      <div class='mentor-item'>
-        <div class='mentor-rank-externo'>{$rank}º</div>
+    <div class='mentor-item'>
+      <div class='mentor-rank-externo'>{$rank}º</div>
 
-        <div class='mentor-card {$classe_borda}' 
-             data-nome='{$mentor['nome']}'
-             data-foto='uploads/{$mentor['foto']}'
-             data-id='{$mentor['id']}'>
-          
-          <div class='mentor-header'>
-            <img src='uploads/{$mentor['foto']}' alt='Foto de {$mentor['nome']}' class='mentor-img' />
-            <h3 class='mentor-nome'>{$mentor['nome']}</h3>
-          </div>
-          
-          <div class='mentor-right'>
-            <div class='mentor-values-inline'>
-              <div class='value-box-green green'>
-                <p>Green</p><p>{$valores['total_green']}</p>
-              </div>
-              <div class='value-box-red red'>
-                <p>Red</p><p>{$valores['total_red']}</p>
-              </div>
-              <div class='value-box-saldo saldo'>
-                <p>Saldo</p><p>R$ {$saldo_formatado}</p>
-              </div>
-            </div>
-          </div>
+      <div class='mentor-card {$classe_borda}' 
+           data-nome='{$mentor['nome']}'
+           data-foto='uploads/{$mentor['foto']}'
+           data-id='{$mentor['id']}'>
+        <div class='mentor-header'>
+          <img src='uploads/{$mentor['foto']}' alt='Foto de {$mentor['nome']}' class='mentor-img' />
+          <h3 class='mentor-nome'>{$mentor['nome']}</h3>
         </div>
-
-        <div class='mentor-menu-externo'>
-          <span class='menu-toggle' title='Mais opções'>⋮</span>
-
-          <div class='menu-opcoes'>
-            <button onclick='editarAposta({$mentor["id"]})'>
-             <i class='fas fa-trash'></i> Excluir Entrada
-            </button>
-            
-            <button onclick='editarMentor({$mentor["id"]})'>
-              <i class='fas fa-user-edit'></i> Editar Mentor
-            </button>
+        <div class='mentor-right'>
+          <div class='mentor-values-inline'>
+            <div class='value-box-green green'><p>Green</p><p>{$valores['total_green']}</p></div>
+            <div class='value-box-red red'><p>Red</p><p>{$valores['total_red']}</p></div>
+            <div class='value-box-saldo saldo'><p>Saldo</p><p>R$ {$saldo_formatado}</p></div>
           </div>
         </div>
       </div>
-      ";
+
+      <div class='mentor-menu-externo'>
+        <span class='menu-toggle' title='Mais opções'>⋮</span>
+        <div class='menu-opcoes'>
+          <button onclick='editarAposta({$mentor["id"]})'>
+            <i class='fas fa-trash'></i> Excluir Entrada
+          </button>
+          <button onclick='editarMentor({$mentor["id"]})'>
+            <i class='fas fa-user-edit'></i> Editar Mentor
+          </button>
+        </div>
+      </div>
+    </div>
+  ";
     }
     
-   echo "<div id='entrada-unidade' data-resultado='R$ {$resultado_formatado}' style='display:none;'></div>";
-
-
-
     ?>
     
   </div>
