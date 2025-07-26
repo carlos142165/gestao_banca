@@ -571,19 +571,15 @@ if (isset($_SESSION['toast'])) {
 <!-- BOTÃO ADICIONAR USUARIO -->
  
 <div class="area-central-botao">
+  <span class="valor-porcentagem" id="valor-porcentagem">R$ 0,00</span>
+  <span class="rotulo-porcentagem">da Banca Fazer</span>
 
-    <span class="valor-porcentagem"><?= $diaria_formatada ?></span>
-    <span class="rotulo-porcentagem">da Banca Fazer</span>
+  <span class="rotulo-entrada">Entrada de:</span>
+  <span class="valor-entrada" id="valor-entrada">R$ 0,00</span>
 
-    <span class="rotulo-entrada">Entrada de:</span>
-    <span class="valor-entrada">R$ <?= $valor_entrada_formatado ?></span>
-
-  
-    <button class="btn-add-usuario" onclick="prepararFormularioNovoMentor()">
+  <button class="btn-add-usuario" onclick="prepararFormularioNovoMentor()">
     <i class="fas fa-user-plus"></i>
-    </button>
-  
-
+  </button>
 </div>
 
 
@@ -782,6 +778,17 @@ if (isset($_SESSION['toast'])) {
 
 
 
+
+
+
+
+
+
+
+
+
+
+
 <div id="mensagem-status" class="toast"></div>
 
 <!-- DEIXA TOAST OCULTO -->
@@ -789,13 +796,6 @@ if (isset($_SESSION['toast'])) {
 
 <!-- PUXA O SCRIPT -->
 <script src="script.js"></script>
-
-
-
-
-
-
-
 
 
 

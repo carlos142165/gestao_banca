@@ -190,3 +190,39 @@ Array
     [opcao] => green
     [valor] => 25.00
 )
+Array
+(
+    [id_mentor] => 119
+    [opcao] => green
+    [valor] => 15.00
+)
+Array
+(
+    [id_mentor] => 118
+    [opcao] => green
+    [valor] => 10.00
+)
+Array
+(
+    [id_mentor] => 118
+    [opcao] => green
+    [valor] => 50.00
+)
+Array
+(
+    [id_mentor] => 118
+    [opcao] => green
+    [valor] => 15.00
+)
+Array
+(
+    [id_mentor] => 118
+    [opcao] => green
+    [valor] => 15.00
+)
+Array
+(
+    [id_mentor] => 118
+    [opcao] => green
+    [valor] => 5.00
+)

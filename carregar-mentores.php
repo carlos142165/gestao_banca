@@ -51,13 +51,20 @@ $valor_red = $valor_red ?? 0;
 
 $saldo_mentores = $valor_green - $valor_red;
 $saldo_banca = $soma_depositos - $soma_saque + $saldo_mentores;
-$valor_entrada_calculado = $saldo_banca * ($ultima_diaria / 100);
-$valor_entrada_formatado = number_format($valor_entrada_calculado, 2, ',', '.');
 
-$meia_unidade = $_SESSION['meta_meia_unidade'] ?? 0;
-$meta_formatado = number_format($meia_unidade, 2, ',', '.');
-$resultado_entrada = $_SESSION['resultado_entrada'] ?? 0;
+// ✅ Cálculo atualizado da entrada e meia unidade direto aqui
+if ($ultima_diaria > 0 && $saldo_banca > 0) {
+  $resultado_entrada = ($ultima_diaria / 100) * $saldo_banca;
+  $meia_unidade = $resultado_entrada * 0.5;
+  $_SESSION['resultado_entrada'] = $resultado_entrada;
+  $_SESSION['meta_meia_unidade'] = $meia_unidade;
+} else {
+  $resultado_entrada = $_SESSION['resultado_entrada'] ?? 0;
+  $meia_unidade = $_SESSION['meta_meia_unidade'] ?? 0;
+}
+
 $resultado_formatado = number_format($resultado_entrada, 2, ',', '.');
+$meta_formatado = number_format($meia_unidade, 2, ',', '.');
 
 // Lista de mentores
 $sql_mentores = "SELECT id, nome, foto FROM mentores WHERE id_usuario = ?";
@@ -148,7 +155,7 @@ foreach ($lista_mentores as $posicao => $mentor) {
   ";
 }
 
-// Elementos invisíveis para JavaScript
+// Elementos invisíveis para atualização com JavaScript
 echo "<div id='total-green-dia' data-green='{$total_geral_green}' style='display:none;'></div>";
 echo "<div id='total-red-dia' data-red='{$total_geral_red}' style='display:none;'></div>";
 echo "<div id='saldo-dia' data-total='R$ " . number_format($total_geral_saldo, 2, ',', '.') . "' style='display:none;'></div>";
@@ -160,6 +167,7 @@ if (empty($lista_mentores)) {
   echo "<div class='mentor-card card-neutro'>Sem mentores cadastrados.</div>";
 }
 ?>
+
 
 
 

@@ -251,75 +251,60 @@ document.addEventListener("DOMContentLoaded", function () {
         const container = document.getElementById("listaMentores");
         container.innerHTML = html;
 
-        // 🔄 Atualiza valor da porcentagem da banca
+        const getValorNumerico = (valorBRL) =>
+          parseFloat(
+            valorBRL
+              .replace("R$", "")
+              .replace(/\./g, "")
+              .replace(",", ".")
+              .trim()
+          );
+
+        // 🔄 Atualiza porcentagem da banca
         const porcentagemEl = container.querySelector("#porcentagem-entrada");
         const porcentagemSpan = document.querySelector(".valor-porcentagem");
-
         if (porcentagemEl && porcentagemSpan) {
-          const textoPorcentagem =
-            porcentagemEl.getAttribute("data-porcentagem");
-          porcentagemSpan.textContent = textoPorcentagem;
+          porcentagemSpan.textContent = porcentagemEl.dataset.porcentagem;
         }
 
-        // 🔄 Atualiza valor da Entrada calculada
+        // 🔄 Atualiza entrada
         const entradaEl = container.querySelector("#resultado-unidade");
         const entradaSpan = document.querySelector(".valor-entrada");
-
         if (entradaEl && entradaSpan) {
-          const textoEntrada = entradaEl.getAttribute("data-resultado");
-          entradaSpan.textContent = textoEntrada;
+          entradaSpan.textContent = entradaEl.dataset.resultado;
         }
 
         // ✅ Atualiza saldo geral
         const totalMetaEl = container.querySelector("#saldo-dia");
         const valorSpan = document.querySelector(".valor-saldo");
         const rotuloSpan = document.querySelector(".rotulo-saldo");
-
         if (totalMetaEl && valorSpan && rotuloSpan) {
-          const valorTexto = totalMetaEl.dataset.total
-            .replace("R$", "")
-            .replace(/\./g, "")
-            .replace(",", ".")
-            .trim();
-          const valorNumerico = parseFloat(valorTexto);
+          const valorNumerico = getValorNumerico(totalMetaEl.dataset.total);
           valorSpan.textContent = totalMetaEl.dataset.total;
-
-          let cor;
-          if (valorNumerico > 0) {
-            cor = "#00a651";
-          } else if (valorNumerico < 0) {
-            cor = "#f82008";
-          } else {
-            cor = "#aca7a7";
-          }
-          valorSpan.style.color = cor;
+          valorSpan.style.color =
+            valorNumerico > 0
+              ? "#00a651"
+              : valorNumerico < 0
+              ? "#f82008"
+              : "#aca7a7";
         }
 
-        // ✅ Atualiza meta diária e diferença
+        // ✅ Atualiza meta do dia
         const metaDiv = container.querySelector("#meta-meia-unidade");
         const metaSpan = document.querySelector("#meta-dia");
         const rotuloMetaSpan = document.querySelector(".rotulo-meta");
-
         if (metaDiv && totalMetaEl && metaSpan) {
-          const valorMeta = parseFloat(
-            metaDiv.dataset.meta
-              .replace("R$", "")
-              .replace(/\./g, "")
-              .replace(",", ".")
-          );
-          const valorSaldo = parseFloat(
-            totalMetaEl.dataset.total
-              .replace("R$", "")
-              .replace(/\./g, "")
-              .replace(",", ".")
-          );
-
+          const valorMeta = getValorNumerico(metaDiv.dataset.meta);
+          const valorSaldo = getValorNumerico(totalMetaEl.dataset.total);
           const resultado = valorMeta - valorSaldo;
-          let corResultado;
-          let resultadoFormatado;
+
+          let corResultado = resultado <= 0 ? "#DAA520" : "#00a651";
+          let resultadoFormatado = resultado.toLocaleString("pt-BR", {
+            style: "currency",
+            currency: "BRL",
+          });
 
           if (resultado <= 0) {
-            corResultado = "#DAA520";
             if (resultado < 0) {
               resultadoFormatado = `+ ${Math.abs(resultado).toLocaleString(
                 "pt-BR",
@@ -337,18 +322,9 @@ document.addEventListener("DOMContentLoaded", function () {
               );
               rotuloMetaSpan.innerHTML = `Meta: ${sobraMeta} <span style="font-size: 0.8em;">🏆</span>`;
             } else {
-              resultadoFormatado = `${resultado.toLocaleString("pt-BR", {
-                style: "currency",
-                currency: "BRL",
-              })}`;
               rotuloMetaSpan.innerHTML = `Meta Batida! <span style="font-size: 0.8em;">🏆</span>`;
             }
           } else {
-            corResultado = "#00a651";
-            resultadoFormatado = resultado.toLocaleString("pt-BR", {
-              style: "currency",
-              currency: "BRL",
-            });
             rotuloMetaSpan.textContent =
               valorSaldo === 0 ? "Meta do Dia" : "Restando P/ Meta";
           }
@@ -372,10 +348,9 @@ document.addEventListener("DOMContentLoaded", function () {
           placarRed.textContent = redEl.dataset.red;
         }
 
-        // ✅ Eventos nos cards
-        const mentorCards = container.querySelectorAll(".mentor-card");
-        mentorCards.forEach((card) => {
-          card.addEventListener("click", function (event) {
+        // ✅ Eventos nos cards de mentor
+        container.querySelectorAll(".mentor-card").forEach((card) => {
+          card.addEventListener("click", (event) => {
             const alvo = event.target;
             const clicouEmBotao =
               alvo.closest(".btn-icon") ||
@@ -389,7 +364,7 @@ document.addEventListener("DOMContentLoaded", function () {
           });
         });
 
-        atualizarMenu(); // Atualiza o topo junto com os mentores
+        atualizarMenu(); // Atualiza cabeçalho/topo
       })
       .catch((error) => {
         console.error("Erro ao recarregar mentores:", error);
@@ -666,74 +641,56 @@ function recarregarMentores() {
       const container = document.getElementById("listaMentores");
       container.innerHTML = html;
 
-      // 🔄 Atualiza valor da porcentagem da banca
+      const getValorNumerico = (valorBRL) =>
+        parseFloat(
+          valorBRL.replace("R$", "").replace(/\./g, "").replace(",", ".").trim()
+        );
+
+      // 🔄 Atualiza porcentagem da banca
       const porcentagemEl = container.querySelector("#porcentagem-entrada");
       const porcentagemSpan = document.querySelector(".valor-porcentagem");
-
       if (porcentagemEl && porcentagemSpan) {
-        const textoPorcentagem = porcentagemEl.getAttribute("data-porcentagem");
-        porcentagemSpan.textContent = textoPorcentagem;
+        porcentagemSpan.textContent = porcentagemEl.dataset.porcentagem;
       }
 
-      // 🔄 Atualiza valor da Entrada calculada
+      // 🔄 Atualiza entrada
       const entradaEl = container.querySelector("#resultado-unidade");
       const entradaSpan = document.querySelector(".valor-entrada");
-
       if (entradaEl && entradaSpan) {
-        const textoEntrada = entradaEl.getAttribute("data-resultado");
-        entradaSpan.textContent = textoEntrada;
+        entradaSpan.textContent = entradaEl.dataset.resultado;
       }
 
       // ✅ Atualiza saldo geral
       const totalMetaEl = container.querySelector("#saldo-dia");
       const valorSpan = document.querySelector(".valor-saldo");
       const rotuloSpan = document.querySelector(".rotulo-saldo");
-
       if (totalMetaEl && valorSpan && rotuloSpan) {
-        const valorTexto = totalMetaEl.dataset.total
-          .replace("R$", "")
-          .replace(/\./g, "")
-          .replace(",", ".")
-          .trim();
-        const valorNumerico = parseFloat(valorTexto);
+        const valorNumerico = getValorNumerico(totalMetaEl.dataset.total);
         valorSpan.textContent = totalMetaEl.dataset.total;
-
-        let cor;
-        if (valorNumerico > 0) {
-          cor = "#00a651";
-        } else if (valorNumerico < 0) {
-          cor = "#f82008";
-        } else {
-          cor = "#aca7a7";
-        }
-        valorSpan.style.color = cor;
+        valorSpan.style.color =
+          valorNumerico > 0
+            ? "#00a651"
+            : valorNumerico < 0
+            ? "#f82008"
+            : "#aca7a7";
       }
 
-      // ✅ Atualiza meta diária e diferença
+      // ✅ Atualiza meta do dia
       const metaDiv = container.querySelector("#meta-meia-unidade");
       const metaSpan = document.querySelector("#meta-dia");
       const rotuloMetaSpan = document.querySelector(".rotulo-meta");
-
       if (metaDiv && totalMetaEl && metaSpan) {
-        const valorMeta = parseFloat(
-          metaDiv.dataset.meta
-            .replace("R$", "")
-            .replace(/\./g, "")
-            .replace(",", ".")
-        );
-        const valorSaldo = parseFloat(
-          totalMetaEl.dataset.total
-            .replace("R$", "")
-            .replace(/\./g, "")
-            .replace(",", ".")
-        );
-
+        const valorMeta = getValorNumerico(metaDiv.dataset.meta);
+        const valorSaldo = getValorNumerico(totalMetaEl.dataset.total);
         const resultado = valorMeta - valorSaldo;
-        let corResultado;
-        let resultadoFormatado;
+
+        let corResultado = resultado <= 0 ? "#DAA520" : "#00a651";
+        let resultadoFormatado = resultado.toLocaleString("pt-BR", {
+          style: "currency",
+          currency: "BRL",
+        });
 
         if (resultado <= 0) {
-          corResultado = "#DAA520";
           if (resultado < 0) {
             resultadoFormatado = `+ ${Math.abs(resultado).toLocaleString(
               "pt-BR",
@@ -748,18 +705,9 @@ function recarregarMentores() {
             });
             rotuloMetaSpan.innerHTML = `Meta: ${sobraMeta} <span style="font-size: 0.8em;">🏆</span>`;
           } else {
-            resultadoFormatado = `${resultado.toLocaleString("pt-BR", {
-              style: "currency",
-              currency: "BRL",
-            })}`;
             rotuloMetaSpan.innerHTML = `Meta Batida! <span style="font-size: 0.8em;">🏆</span>`;
           }
         } else {
-          corResultado = "#00a651";
-          resultadoFormatado = resultado.toLocaleString("pt-BR", {
-            style: "currency",
-            currency: "BRL",
-          });
           rotuloMetaSpan.textContent =
             valorSaldo === 0 ? "Meta do Dia" : "Restando P/ Meta";
         }
@@ -783,10 +731,9 @@ function recarregarMentores() {
         placarRed.textContent = redEl.dataset.red;
       }
 
-      // ✅ Eventos nos cards
-      const mentorCards = container.querySelectorAll(".mentor-card");
-      mentorCards.forEach((card) => {
-        card.addEventListener("click", function (event) {
+      // ✅ Eventos nos cards de mentor
+      container.querySelectorAll(".mentor-card").forEach((card) => {
+        card.addEventListener("click", (event) => {
           const alvo = event.target;
           const clicouEmBotao =
             alvo.closest(".btn-icon") ||
@@ -799,7 +746,8 @@ function recarregarMentores() {
           exibirFormularioMentor(card);
         });
       });
-      atualizarMenu();
+
+      atualizarMenu(); // Atualiza cabeçalho/topo
     })
     .catch((error) => {
       console.error("Erro ao recarregar mentores:", error);
