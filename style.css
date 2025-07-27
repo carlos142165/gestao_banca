@@ -756,21 +756,19 @@
 }
 
 .campo_mentores {
-  position: relative; /* Certifique-se de que pode posicionar elementos internos */
-  padding: 0;
-  margin: 0;
+  position: relative;
+  width: 385px;
+  height: 500px; /* Define altura fixa */
+  margin: 10px auto 0;
   background-color: #f7f6f6;
   display: flex;
   flex-direction: column;
   align-items: center;
-  width: 385px;
-  margin: 0 auto;
-  margin-top: 10px;
   border-radius: 12px;
-  padding: 0px;
+  padding: 0;
   box-sizing: border-box;
-  max-height: 570px;
-  overflow-y: auto;
+  overflow-y: auto; /* Permite rolagem vertical */
+  overflow-x: hidden; /* Evita rolagem lateral */
 }
 
 .campo_mentores::-webkit-scrollbar {

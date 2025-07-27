@@ -244,6 +244,40 @@ document.addEventListener("DOMContentLoaded", function () {
   const botaoFechar = document.querySelector(".botao-fechar");
   const campoValor = document.getElementById("valor");
 
+  // AJUSTA A DATA E O HORARIO
+  document.addEventListener("DOMContentLoaded", () => {
+    const form = document.getElementById("form-mentor");
+    if (!form) {
+      console.warn("❌ Formulário #form-mentor não encontrado.");
+      return;
+    }
+
+    const timeZone = Intl.DateTimeFormat().resolvedOptions().timeZone;
+
+    // Cria uma data atual no fuso do navegador e a formata para o padrão brasileiro
+    const now = new Date();
+    const dataLocal = new Intl.DateTimeFormat("pt-BR", {
+      dateStyle: "short",
+      timeStyle: "medium",
+      timeZone,
+      hour12: false,
+    }).format(now);
+
+    // Função para criar um input oculto
+    const criarInput = (name, value) => {
+      if (!form.querySelector(`[name="${name}"]`)) {
+        const input = document.createElement("input");
+        input.type = "hidden";
+        input.name = name;
+        input.value = value;
+        form.appendChild(input);
+      }
+    };
+
+    criarInput("user_time_zone", timeZone);
+    criarInput("data_local", dataLocal);
+  });
+
   function recarregarMentores() {
     return fetch("carregar-mentores.php")
       .then((res) => res.text())

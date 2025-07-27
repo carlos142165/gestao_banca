@@ -1,5 +1,6 @@
 <?php
 session_start();
+
 require_once 'config.php';
 mysqli_report(MYSQLI_REPORT_ERROR | MYSQLI_REPORT_STRICT);
 
@@ -52,7 +53,7 @@ mysqli_stmt_close($stmt);
 $saldo_mentores = $total_valor_green - $total_valor_red;
 
 // Cálculo da banca total incluindo mentores
-$saldo_banca_total = ($soma_depositos - $soma_saque) + $saldo_mentores;
+$saldo_banca_total = ($soma_depositos ) + $saldo_mentores;
 
 // Cálculo da entrada e meia unidade
 if ($ultima_diaria > 0 && $saldo_banca_total > 0) {

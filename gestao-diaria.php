@@ -1,6 +1,8 @@
 
 <?php
 session_start();
+date_default_timezone_set('America/Bahia');
+
 require_once 'config.php';
 
 // Verifica se o usuário está logado
@@ -373,6 +375,12 @@ body, html {
   
 }
 
+.container {
+  display: flex;
+  flex-direction: row; /* horizontal */
+  gap: 20px;            /* espaço horizontal entre os elementos */
+}
+
 .grupo-porcentagem {
   display: flex;
   gap: 6px;
@@ -389,6 +397,218 @@ body, html {
   color: #007bff;
   font-size: 1.1em;
 }
+
+
+/* TESTE   */
+.container-resumos {
+  display: flex;
+  justify-content: center;
+  flex-wrap: wrap; /* permite que os blocos se empilhem se não couberem */
+  gap: 50px;
+  margin-top: 30px;
+}
+
+.resumo-mes::-webkit-scrollbar {
+  display: none; /* Oculta totalmente a barra no Chrome/Safari */
+}
+
+.resumo-mes {
+  width: 400px;
+  height: 735px;
+  overflow-y: auto;
+  background-color: #f7f6f6;
+  border-radius: 12px;
+  padding: 20px;
+  box-shadow: 0 0 12px rgba(0,0,0,0.08);
+  font-family: 'Poppins', sans-serif;
+}
+
+/* Título do mês */
+.resumo-mes h2 {
+  font-size: 20px;
+  color: #333;
+  text-align: center;
+  margin-bottom: 15px;
+}
+
+.rotulo-meta{
+  color: #ecf3e7ff;
+  padding: 4px 8px;
+  font-weight: bold;
+
+}
+
+/* Bloco da meta mensal */
+.meta-mensal-bloco {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  background: #e9f6ff;
+  padding: 10px 15px;
+  border-radius: 8px;
+  margin-bottom: 20px;
+  box-shadow: inset 0 0 6px rgba(0,0,0,0.04);
+}
+
+.meta-mensal-esquerda,
+.meta-mensal-direita {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-size: 14px;
+  font-weight: 500;
+  color: #34da0aff;
+}
+
+.meta-batida {
+  color: #4caf50;
+  background-color: rgba(76, 175, 80, 0.1);
+  padding: 4px 8px;
+  border-radius: 6px;
+  font-weight: bold;
+}
+
+/* Dias do mês */
+.linha-dia {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 8px;
+  background-color: #fff;
+  padding: 6px 10px;
+  border-radius: 8px;
+  box-shadow: 0 0 2px rgba(0,0,0,0.05);
+}
+
+.data {
+  font-size: 12px;
+  color: #333;
+  width: 90px;
+  display: flex;
+  align-items: center;
+  gap: 5px;
+}
+
+.valor {
+  font-size: 12px;
+  color: #444;
+  width: 85px;
+  text-align: right;
+  display: flex;
+  align-items: center;
+  gap: 5px;
+}
+
+.icone {
+  font-size: 14px;
+  color: #4caf50;
+}
+
+/* Gráfico de progresso */
+.barra-progresso {
+  display: flex;
+  width: 85px;
+  height: 4px;
+  border-radius: 10px;
+  overflow: hidden;
+  margin: 0 6px;
+}
+
+.progresso-verde {
+  background-color: #4caf50;
+  width: 40%;
+}
+
+.progresso-vermelho {
+  background-color: #f44336;
+  flex-grow: 1;
+}
+
+
+@media (max-width: 500px) {
+  .resumo-mes {
+    position: static;
+    width: 100%;
+    max-width: 365px;     /* define a largura máxima para telas pequenas */
+    margin: 20px auto;    /* centraliza horizontalmente */
+    transform: none;
+    box-shadow: none;
+    padding: 10px;
+    border-radius: 8px;
+    background: #fefefe;
+  }
+
+   .linha-dia {
+    flex-direction: row;
+    flex-wrap: nowrap;
+    align-items: center;
+    justify-content: space-between;
+    gap: 6px;
+  }
+
+  .data {
+    width: auto;
+    min-width: 70px;
+  }
+
+  .barra-progresso {
+    width: 70px;
+    margin: 0 6px;
+  }
+
+
+  .valor {
+    width: auto;
+    font-size: 12px;
+    text-align: right;
+  }
+
+  .icone {
+    font-size: 14px;
+    margin-left: 6px;
+  }
+}
+
+.resumo-dia{
+  margin-top: -19px;
+ 
+}
+
+  .linha-dia.dia-normal {
+    opacity: 0.4;
+  }
+
+  .linha-dia.dia-hoje {
+    opacity: 1;
+    background-color: #fff;
+  }
+
+  .borda-verde {
+    border-left: 4px solid green;
+  }
+
+  .borda-vermelha {
+    border-left: 4px solid red;
+  }
+
+  .verde-bold {
+    color: green;
+    font-weight: bold;
+  }
+
+  .vermelho-bold {
+    color: red;
+    font-weight: bold;
+  }
+
+
+
+
+
+/* TESTE   */
+
+
+
 
 
 
@@ -467,22 +687,22 @@ if (isset($_SESSION['toast'])) {
 
 <!-- FIM CODIGO RESPONSAVEL PELO  TOPO PUXADO DA PAGINA MENU.PHP -->
 
+<div class="container-resumos">
 
+ <div class="resumo-dia">
 
-
-
-<!-- CODIGO RESPONSAVEL PELO VALOR  PLACAR E META DIARIA E SALDO -->
-<div class="container-valores">
+   <!-- CODIGO RESPONSAVEL PELO VALOR  PLACAR E META DIARIA E SALDO -->
+   <div class="container-valores">
   <div class="pontuacao">
     <span class="placar-green">0</span>
     <span class="separador">x</span>
     <span class="placar-red">0</span>
+   </div>
   </div>
-</div>
 
 
 
-<div class="informacoes-row">
+  <div class="informacoes-row">
 
   <div class="info-item">
   <div class="grupo-valor">
@@ -491,28 +711,28 @@ if (isset($_SESSION['toast'])) {
     </span>
     <span class="rotulo-meta">Meta do Dia</span>
   </div>
-</div>
+ </div>
 
-<div class="info-item">
+ <div class="info-item">
   <div class="grupo-valor">
     <span class="valor-saldo">R$0,00</span>
     <span class="rotulo-saldo">Saldo do Dia</span>
   </div>
-</div>
+ </div>
 
 
 
-</div>
+ </div>
 
-<!-- FIM DO CODIGO RESPONSAVEL PELO VALOR  PLACAR E META DIARIA E SALDO -->
-
-
+ <!-- FIM DO CODIGO RESPONSAVEL PELO VALOR  PLACAR E META DIARIA E SALDO -->
 
 
 
 
-<!-- CODIGO FORMULARIO QUE ADICIONA E EDITA MENTOR -->
-<div id="modal-form" class="modal">
+
+
+ <!-- CODIGO FORMULARIO QUE ADICIONA E EDITA MENTOR -->
+ <div id="modal-form" class="modal">
   <div class="modal-conteudo">
     <span class="fechar" onclick="fecharModal()">&times;</span>
 
@@ -558,19 +778,19 @@ if (isset($_SESSION['toast'])) {
       </div>
     </form>
   </div>
-</div>
+ </div>
 
-<!-- FIM DO CODIGO FORMULARIO QUE ADICIONA E EDITA MENTOR -->
-
-
+ <!-- FIM DO CODIGO FORMULARIO QUE ADICIONA E EDITA MENTOR -->
 
 
 
 
 
-<!-- BOTÃO ADICIONAR USUARIO -->
+
+
+  <!-- BOTÃO ADICIONAR USUARIO -->
  
-<div class="area-central-botao">
+ <div class="area-central-botao">
   <span class="valor-porcentagem" id="valor-porcentagem">
     R$ <?php echo $meta_formatado ?? '0,00'; ?>
   </span>
@@ -584,7 +804,7 @@ if (isset($_SESSION['toast'])) {
   <button class="btn-add-usuario" onclick="prepararFormularioNovoMentor()">
     <i class="fas fa-user-plus"></i>
   </button>
-</div>
+ </div>
 
 
 
@@ -594,14 +814,14 @@ if (isset($_SESSION['toast'])) {
 
 
 
-<!-- FIM CODIGO BOTÃO ADICIONAR USUARIO -->
+ <!-- FIM CODIGO BOTÃO ADICIONAR USUARIO -->
 
 
 
 
 
-<!-- AQUI FILTRA OS DADOS DOS MENTORES NO BANCO DE DADOS PRA MOSTRAR NA TELA  -->
-<div class="campo_mentores">
+ <!-- AQUI FILTRA OS DADOS DOS MENTORES NO BANCO DE DADOS PRA MOSTRAR NA TELA  -->
+ <div class="campo_mentores">
 
    <div id="listaMentores" class="mentor-wrapper">
     <?php
@@ -696,21 +916,21 @@ if (isset($_SESSION['toast'])) {
     ?>
     
   </div>
-</div>
+ </div>
 
-<!-- FIM DO CODIGO QUE FILTRA OS DADOS DOS MENTORES NO BANCO DE DADOS PRA MOSTRAR NA TELA  -->
-
-
+ <!-- FIM DO CODIGO QUE FILTRA OS DADOS DOS MENTORES NO BANCO DE DADOS PRA MOSTRAR NA TELA  -->
 
 
 
 
 
-<!-- FORMULARIO PARA ADICIONAR O VALOR DA ENTRADA DO MENTOR-->
-<div class="formulario-mentor">
+
+
+ <!-- FORMULARIO PARA ADICIONAR O VALOR DA ENTRADA DO MENTOR-->
+ <div class="formulario-mentor">
   <button type="button" class="btn-fechar" onclick="fecharFormulario()">
   <i class="fas fa-times"></i>
-</button>
+ </button>
 
   <img src="" class="mentor-foto-preview" width="100" />
   <h3 class="mentor-nome-preview">Nome do Mentor</h3>
@@ -733,23 +953,26 @@ if (isset($_SESSION['toast'])) {
 
     <button type="submit" class="botao-enviar">Enviar</button>
   </form>
-</div>
-<!-- FIM FORMULARIO PARA ADICIONAR O VALOR DA ENTRADA DO MENTOR-->
+ </div>
+ <!-- FIM FORMULARIO PARA ADICIONAR O VALOR DA ENTRADA DO MENTOR-->
 
 
 
 
 
 
-<!-- FORMULARIO PARA EXCLUIR O MENTOR  -->
+ <!-- FORMULARIO PARA EXCLUIR O MENTOR  -->
   <div id="tela-edicao" class="tela-edicao" style="display:none;">
- 
   <button type="button" class="btn-fechar" onclick="fecharTelaEdicao()">
-  <i class="fas fa-times"></i>
+    <i class="fas fa-times"></i>
   </button>
 
   <img id="fotoMentorEdicao" class="mentor-img-edicao" />
   <h3>Histórico do Mentor - <span id="nomeMentorEdicao"></span></h3>
+
+  <p class="mentor-data-horario">
+    <strong>Horário:</strong> <span id="horarioMentorEdicao">Carregando...</span>
+  </p>
 
   <div id="resultado-filtro"></div>
 </div>
@@ -757,8 +980,9 @@ if (isset($_SESSION['toast'])) {
 
 
 
-<!-- MODAL PARA EXCLUIR A ENTRADA  -->
-<div id="modal-confirmacao" class="modal-confirmacao" style="display:none;">
+
+ <!-- MODAL PARA EXCLUIR A ENTRADA  -->
+ <div id="modal-confirmacao" class="modal-confirmacao" style="display:none;">
   <div class="modal-content">
     <p class="modal-texto">Tem certeza que deseja excluir esta entrada?</p>
     <div class="botoes-modal">
@@ -766,12 +990,12 @@ if (isset($_SESSION['toast'])) {
       <button id="btnCancelar" class="botao-cancelar">Cancelar</button>
     </div>
   </div>
-</div>
+ </div>
 
 
 
-<!-- MODAL PARA EXCLUIR O MENTOR  -->
-<div id="modal-confirmacao-exclusao" style="display:none;">
+ <!-- MODAL PARA EXCLUIR O MENTOR  -->
+ <div id="modal-confirmacao-exclusao" style="display:none;">
   <div class="modal-content">
     <p class="modal-texto">Tem certeza que deseja excluir este mentor?</p>
     <div class="botoes-modal">
@@ -779,6 +1003,149 @@ if (isset($_SESSION['toast'])) {
       <button class="botao-cancelar" onclick="fecharModalExclusao()">Cancelar</button>
     </div>
   </div>
+ </div>
+
+
+ </div>
+
+
+
+
+
+
+<?php
+// 🕒 Configurar timezone corretamente
+$timezone_recebido = $_POST['timezone'] ?? 'America/Bahia';
+date_default_timezone_set($timezone_recebido);
+
+// 🔤 Meses em português
+$meses_portugues = array(
+  "01" => "JANEIRO", "02" => "FEVEREIRO", "03" => "MARÇO",
+  "04" => "ABRIL", "05" => "MAIO", "06" => "JUNHO",
+  "07" => "JULHO", "08" => "AGOSTO", "09" => "SETEMBRO",
+  "10" => "OUTUBRO", "11" => "NOVEMBRO", "12" => "DEZEMBRO"
+);
+
+// 📅 Data atual
+$ano = date('Y');
+$mes = date('m');
+$hoje = date('Y-m-d');
+$diasNoMes = cal_days_in_month(CAL_GREGORIAN, $mes, $ano);
+$nomeMes = $meses_portugues[$mes];
+
+// 💾 Inserir dados no banco
+if ($_SERVER['REQUEST_METHOD'] === 'POST') {
+  $id_mentores = $_POST['id_mentores'];
+  $green = $_POST['green'];
+  $red = $_POST['red'];
+  $valor_green = $_POST['valor_green'];
+  $valor_red = $_POST['valor_red'];
+  $data_criacao = date('Y-m-d H:i:s');
+
+  $stmt = $conexao->prepare("
+    INSERT INTO valor_mentores (
+      id_usuario, id_mentores, green, red, valor_green, valor_red, data_criacao
+    ) VALUES (?, ?, ?, ?, ?, ?, ?)
+  ");
+  $stmt->bind_param("iiiddss", 
+    $id_usuario_logado, $id_mentores, $green, $red, $valor_green, $valor_red, $data_criacao
+  );
+  $stmt->execute();
+  $stmt->close();
+}
+?>
+
+<style>
+  .linha-dia.dia-normal {
+    opacity: 0.4;
+  }
+
+  .linha-dia.dia-hoje {
+    opacity: 1;
+    background-color: #fff;
+  }
+
+  .borda-verde {
+    border-left: 4px solid green;
+  }
+
+  .borda-vermelha {
+    border-left: 4px solid red;
+  }
+
+  .verde-bold {
+    color: green;
+    font-weight: bold;
+  }
+
+  .vermelho-bold {
+    color: red;
+    font-weight: bold;
+  }
+
+  .texto-cinza {
+    color: #777;
+  }
+</style>
+
+<div class="resumo-mes">
+  <h2><?php echo $nomeMes . ' ' . $ano; ?></h2>
+
+  <div class="meta-mensal-bloco">
+    <div class="meta-mensal-esquerda">
+      <span class="rotulo-meta">Meta Mensal</span>
+      <span class="valor-meta">R$ 0,00</span>
+    </div>
+    <div class="meta-mensal-direita">
+      <i class="fas fa-check-circle"></i>
+      <span class="meta-batida">Meta Batida</span>
+    </div>
+  </div>
+
+  <?php
+  for ($dia = 1; $dia <= $diasNoMes; $dia++) {
+    $data_mysql = $ano . '-' . $mes . '-' . str_pad($dia, 2, "0", STR_PAD_LEFT);
+    $data_exibicao = str_pad($dia, 2, "0", STR_PAD_LEFT) . "/" . $mes . "/" . $ano;
+
+    $stmt = $conexao->prepare("
+      SELECT 
+        SUM(COALESCE(valor_green, 0)) AS total_green,
+        SUM(COALESCE(valor_red, 0)) AS total_red
+      FROM valor_mentores
+      WHERE id_usuario = ? AND DATE(data_criacao) = ?
+    ");
+    $stmt->bind_param("is", $id_usuario_logado, $data_mysql);
+    $stmt->execute();
+    $stmt->bind_result($total_green, $total_red);
+    $stmt->fetch();
+    $stmt->close();
+
+    $saldo_dia = ($total_green ?? 0) - ($total_red ?? 0); 
+    $saldo_formatado = number_format($saldo_dia, 2, ',', '.');
+
+    $cor_valor = ($saldo_dia == 0) ? 'texto-cinza' : ($saldo_dia > 0 ? 'verde-bold' : 'vermelho-bold');
+    $classe_texto = ($saldo_dia == 0) ? 'texto-cinza' : '';
+    
+    if ($data_mysql === $hoje) {
+      $cor_borda = $saldo_dia >= 0 ? 'borda-verde' : 'borda-vermelha';
+      $classe_dia = 'dia-hoje ' . $cor_borda;
+    } else {
+      $classe_dia = 'dia-normal';
+    }
+
+    echo '
+      <div class="linha-dia '.$classe_dia.'">
+        <span class="data '.$classe_texto.'"><i class="fas fa-calendar-day"></i> '.$data_exibicao.'</span>
+        <div class="barra-progresso">
+          <div class="progresso-verde" style="width: 50%;"></div>
+          <div class="progresso-vermelho" style="width: 50%;"></div>
+        </div>
+        <span class="valor '.$cor_valor.'"><i class="fas fa-dollar-sign"></i> R$ '.$saldo_formatado.'</span>
+        <span class="icone '.$classe_texto.'"><i class="fas fa-check"></i></span>
+      </div>
+    ';
+  }
+  ?>
 </div>
 
 
@@ -788,10 +1155,16 @@ if (isset($_SESSION['toast'])) {
 
 
 
+<script>
+  document.getElementById('timezone').value =
+    Intl.DateTimeFormat().resolvedOptions().timeZone;
+</script>
 
 
 
-
+  
+ </div>
+</div>
 
 
 
@@ -802,6 +1175,45 @@ if (isset($_SESSION['toast'])) {
 
 <!-- PUXA O SCRIPT -->
 <script src="script.js"></script>
+
+
+
+
+
+
+
+
+
+
+
+<!-- AJUSTA A DATA E O HORARIO -->
+<script>
+document.addEventListener("DOMContentLoaded", function () {
+  const form = document.getElementById("form-mentor");
+
+  if (form) {
+    const timeZone = Intl.DateTimeFormat().resolvedOptions().timeZone;
+    const dataLocal = new Date().toISOString();
+
+    const criarInput = (name, value) => {
+      let existing = form.querySelector(`[name="${name}"]`);
+      if (!existing) {
+        const input = document.createElement("input");
+        input.type = "hidden";
+        input.name = name;
+        input.value = value;
+        form.appendChild(input);
+      }
+    };
+
+    criarInput("user_time_zone", timeZone);
+    criarInput("data_local", dataLocal);
+  } else {
+    console.warn("❌ Formulário #form-mentor não encontrado.");
+  }
+});
+</script>
+<!-- AJUSTA A DATA E O HORARIO -->
 
 
 

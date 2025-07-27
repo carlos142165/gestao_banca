@@ -1,276 +1,70 @@
-Array
-(
-    [id_mentor] => 118
-    [opcao] => red
-    [valor] => 10.00
-)
-Array
-(
-    [id_mentor] => 118
-    [opcao] => red
-    [valor] => 90.01
-)
-Array
-(
-    [id_mentor] => 118
-    [opcao] => green
-    [valor] => 95.00
-)
-Array
-(
-    [id_mentor] => 118
-    [opcao] => red
-    [valor] => 185.50
-)
-Array
-(
-    [id_mentor] => 118
-    [opcao] => red
-    [valor] => 185.00
-)
-Array
-(
-    [id_mentor] => 119
-    [opcao] => red
-    [valor] => 101.00
-)
-Array
-(
-    [id_mentor] => 119
-    [opcao] => red
-    [valor] => 100.20
-)
-Array
-(
-    [id_mentor] => 119
-    [opcao] => red
-    [valor] => 101.00
-)
-Array
-(
-    [id_mentor] => 118
-    [opcao] => red
-    [valor] => 101.00
-)
-Array
-(
-    [id_mentor] => 119
-    [opcao] => red
-    [valor] => 101.00
-)
-Array
-(
-    [id_mentor] => 119
-    [opcao] => red
-    [valor] => 101.00
-)
-Array
-(
-    [id_mentor] => 119
-    [opcao] => red
-    [valor] => 101.00
-)
-Array
-(
-    [id_mentor] => 119
-    [opcao] => red
-    [valor] => 101.00
-)
-Array
-(
-    [id_mentor] => 119
-    [opcao] => red
-    [valor] => 101.00
-)
-Array
-(
-    [id_mentor] => 119
-    [opcao] => green
-    [valor] => 10.00
-)
-Array
-(
-    [id_mentor] => 118
-    [opcao] => red
-    [valor] => 101.00
-)
-Array
-(
-    [id_mentor] => 118
-    [opcao] => red
-    [valor] => 10.00
-)
-Array
-(
-    [id_mentor] => 119
-    [opcao] => red
-    [valor] => 101.00
-)
-Array
-(
-    [id_mentor] => 119
-    [opcao] => red
-    [valor] => 101.00
-)
-Array
-(
-    [id_mentor] => 118
-    [opcao] => red
-    [valor] => 25.00
-)
-Array
-(
-    [id_mentor] => 118
-    [opcao] => red
-    [valor] => 30.00
-)
-Array
-(
-    [id_mentor] => 118
-    [opcao] => green
-    [valor] => 65.00
-)
-Array
-(
-    [id_mentor] => 118
-    [opcao] => red
-    [valor] => 10.00
-)
-Array
-(
-    [id_mentor] => 118
-    [opcao] => red
-    [valor] => 10.00
-)
-Array
-(
-    [id_mentor] => 119
-    [opcao] => green
-    [valor] => 10.00
-)
-Array
-(
-    [id_mentor] => 119
-    [opcao] => green
-    [valor] => 10.00
-)
-Array
-(
-    [id_mentor] => 119
-    [opcao] => green
-    [valor] => 10.00
-)
-Array
-(
-    [id_mentor] => 119
-    [opcao] => green
-    [valor] => 10.00
-)
-Array
-(
-    [id_mentor] => 118
-    [opcao] => red
-    [valor] => 10.00
-)
-Array
-(
-    [id_mentor] => 118
-    [opcao] => green
-    [valor] => 15.00
-)
-Array
-(
-    [id_mentor] => 118
-    [opcao] => green
-    [valor] => 10.00
-)
-Array
-(
-    [id_mentor] => 118
-    [opcao] => green
-    [valor] => 25.00
-)
-Array
-(
-    [id_mentor] => 119
-    [opcao] => green
-    [valor] => 15.00
-)
-Array
-(
-    [id_mentor] => 118
-    [opcao] => green
-    [valor] => 10.00
-)
-Array
-(
-    [id_mentor] => 118
-    [opcao] => green
-    [valor] => 50.00
-)
-Array
-(
-    [id_mentor] => 118
-    [opcao] => green
-    [valor] => 15.00
-)
-Array
-(
-    [id_mentor] => 118
-    [opcao] => green
-    [valor] => 15.00
-)
-Array
-(
-    [id_mentor] => 118
-    [opcao] => green
-    [valor] => 5.00
-)
-Array
-(
-    [id_mentor] => 95
-    [opcao] => green
-    [valor] => 10.00
-)
-Array
-(
-    [id_mentor] => 98
-    [opcao] => green
-    [valor] => 10.00
-)
-Array
-(
-    [id_mentor] => 118
-    [opcao] => green
-    [valor] => 100.00
-)
-Array
-(
-    [id_mentor] => 120
-    [opcao] => green
-    [valor] => 10.00
-)
-Array
-(
-    [id_mentor] => 97
-    [opcao] => red
-    [valor] => 500.00
-)
-Array
-(
-    [id_mentor] => 120
-    [opcao] => green
-    [valor] => 50.00
-)
-Array
-(
-    [id_mentor] => 96
-    [opcao] => green
-    [valor] => 221.46
-)
-Array
-(
-    [id_mentor] => 95
-    [opcao] => green
-    [valor] => 221.46
-)
+
+⚠️ data_local recebido: NULL
+📍 Timezone aplicado: UTC
+⏰ Data final usada: 2025-07-27 13:47:09
+⚠️ data_local recebido: '2025-07-27T13:50:17.641Z'
+📍 Timezone aplicado: America/Bahia
+⏰ Data final usada: 2025-07-27 10:50:17
+⚠️ data_local recebido: '2025-07-27T14:03:21.694Z'
+📍 Timezone aplicado: America/Bahia
+⏰ Data final usada: 2025-07-27 11:03:21
+⚠️ data_local recebido: '2025-07-27T14:21:30.522Z'
+📍 Timezone aplicado: America/Bahia
+⏰ Data final usada: 2025-07-27 11:21:30
+⚠️ data_local recebido: '2025-07-27T14:35:07.494Z'
+📍 Timezone aplicado: America/Bahia
+⏰ Data final usada: 2025-07-27 11:35:07
+⚠️ data_local recebido: '2025-07-27T14:45:41.404Z'
+📍 Timezone aplicado: America/Bahia
+⏰ Data final usada: 2025-07-27 11:45:41
+⚠️ data_local recebido: '2025-07-27T14:52:44.117Z'
+📍 Timezone aplicado: America/Bahia
+⏰ Data final usada: 2025-07-27 11:52:44
+⚠️ data_local recebido: '2025-07-27T14:52:44.117Z'
+📍 Timezone aplicado: America/Bahia
+⏰ Data final usada: 2025-07-27 11:52:44
+⚠️ data_local recebido: '2025-07-27T15:01:12.648Z'
+📍 Timezone aplicado: America/Bahia
+⏰ Data final usada: 2025-07-27 12:01:12
+⚠️ data_local recebido: '2025-07-27T15:07:55.985Z'
+📍 Timezone aplicado: America/Bahia
+⏰ Data final usada: 2025-07-27 12:07:55
+⚠️ data_local recebido: NULL
+📍 Timezone aplicado: UTC
+⏰ Data final usada: 2025-07-27 15:14:18
+⚠️ data_local recebido: '2025-07-27T15:14:56.004Z'
+📍 Timezone aplicado: America/Bahia
+⏰ Data final usada: 2025-07-27 12:14:56
+⚠️ data_local recebido: '2025-07-27T15:20:51.442Z'
+📍 Timezone aplicado: America/Bahia
+⏰ Data final usada: 2025-07-27 12:20:51
+⚠️ data_local recebido: '2025-07-27T15:22:48.573Z'
+📍 Timezone aplicado: America/Bahia
+⏰ Data final usada: 2025-07-27 12:22:48
+⚠️ data_local recebido: '2025-07-27T15:24:42.803Z'
+📍 Timezone aplicado: America/Bahia
+⏰ Data final usada: 2025-07-27 12:24:42
+⚠️ data_local recebido: '2025-07-27T15:25:53.388Z'
+📍 Timezone aplicado: America/Bahia
+⏰ Data final usada: 2025-07-27 12:25:53
+⚠️ data_local recebido: '2025-07-27T15:26:50.382Z'
+📍 Timezone aplicado: America/Bahia
+⏰ Data final usada: 2025-07-27 12:26:50
+⚠️ data_local recebido: '2025-07-27T15:30:51.402Z'
+📍 Timezone aplicado: America/Bahia
+⏰ Data final usada: 2025-07-27 12:30:51
+⚠️ data_local recebido: '2025-07-27T15:35:13.054Z'
+📍 Timezone aplicado: America/Bahia
+⏰ Data final usada: 2025-07-27 12:35:13
+⚠️ data_local recebido: '2025-07-27T15:56:53.526Z'
+📍 Timezone aplicado: America/Bahia
+⏰ Data final usada: 2025-07-27 12:56:53
+⚠️ data_local recebido: '2025-07-27T15:59:35.773Z'
+📍 Timezone aplicado: America/Bahia
+⏰ Data final usada: 2025-07-27 12:59:35
+⚠️ data_local recebido: '2025-07-27T16:05:24.768Z'
+📍 Timezone aplicado: America/Bahia
+⏰ Data final usada: 2025-07-27 13:05:24
+⚠️ data_local recebido: '2025-07-27T16:05:24.768Z'
+📍 Timezone aplicado: America/Bahia
+⏰ Data final usada: 2025-07-27 13:05:24
