@@ -9,6 +9,43 @@ if (!isset($_SESSION['usuario_id'])) {
 
 $id_usuario = $_SESSION['usuario_id'];
 
+// ✅ Busca últimos valores registrados
+$stmt = mysqli_prepare($conexao, "
+    SELECT id, deposito, diaria, unidade FROM controle 
+    WHERE id_usuario = ? 
+    ORDER BY id DESC LIMIT 1
+");
+$stmt->bind_param("i", $id_usuario);
+$stmt->execute();
+$stmt->bind_result($controle_id, $valor_deposito, $valor_diaria, $valor_unidade);
+$stmt->fetch();
+$stmt->close();
+
+// ✅ Trata envio do formulário com edição ou inserção
+// ✅ Trata envio do formulário como sempre um NOVO cadastro
+if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['submitPersonalizado'])) {
+    $deposito = isset($_POST['deposito']) ? preg_replace('/[^0-9,]/', '', $_POST['deposito']) : '';
+    $diaria = isset($_POST['diaria']) ? preg_replace('/[^0-9,]/', '', $_POST['diaria']) : '';
+    $unidade = isset($_POST['unidade']) ? preg_replace('/[^0-9,]/', '', $_POST['unidade']) : '';
+
+    $depositoFloat = str_replace(',', '.', $deposito);
+    $diariaFloat = str_replace(',', '.', $diaria);
+    $unidadeFloat = str_replace(',', '.', $unidade);
+
+    // 🔄 INSERÇÃO SEMPRE — registro novo
+    $stmt = mysqli_prepare($conexao,
+        "INSERT INTO controle (id_usuario, deposito, diaria, unidade) VALUES (?, ?, ?, ?)");
+    $stmt->bind_param("iddd", $id_usuario, $depositoFloat, $diariaFloat, $unidadeFloat);
+    $stmt->execute();
+    $stmt->close();
+
+    $_SESSION['mensagem'] = 'Dados cadastrados com sucesso!';
+    header('Location: painel-controle.php');
+    exit();
+}
+
+
+// 🧩 Continuação do processamento do formulário antigo
 if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['acao'], $_POST['valor'])) {
     $acao = $_POST['acao'];
     $valor = preg_replace('/[^0-9,]/', '', $_POST['valor']);
@@ -123,6 +160,7 @@ $stmt->bind_result($valor_red);
 $stmt->fetch();
 $stmt->close();
 
+// ✅ Última Diaria registrada
 $stmt = mysqli_prepare($conexao, "
     SELECT diaria FROM controle
     WHERE id_usuario = ? AND diaria IS NOT NULL AND diaria != 0
@@ -134,6 +172,21 @@ $stmt->bind_result($ultima_diaria);
 $stmt->fetch();
 $stmt->close();
 $ultima_diaria = $ultima_diaria ?: 0;
+
+// ✅ Última unidade registrada
+$stmt = mysqli_prepare($conexao, "
+    SELECT unidade FROM controle 
+    WHERE id_usuario = ? AND unidade IS NOT NULL 
+    ORDER BY id DESC LIMIT 1
+");
+$stmt->bind_param("i", $id_usuario);
+$stmt->execute();
+$stmt->bind_result($ultima_unidade);
+$stmt->fetch();
+$stmt->close();
+
+// Se quiser usar em algum lugar, pode salvar na sessão:
+$_SESSION['ultima_unidade'] = $ultima_unidade;
 
 // 🧮 Cálculos finais
 $saldo_mentores = $valor_green - $valor_red;
@@ -149,8 +202,8 @@ if ($ultima_diaria > 0 && $saldo_reais > 0) {
     $_SESSION['meta_meia_unidade'] = $meia_unidade;
     $_SESSION['resultado_entrada'] = $resultado;
 }
-
 ?>
+
 
 
 
@@ -408,6 +461,24 @@ if ($ultima_diaria > 0 && $saldo_reais > 0) {
   margin: 0;
 }
 
+#valorBanca {
+  font-size: 18px;
+  padding: 12px;
+  border: 2px solid #3498db;
+  background-color: #eef6fc;
+}
+
+#porcentagem,
+#unidadeMeta {
+  width: 130px;
+  padding: 8px;
+}
+
+#resultadoCalculo,
+#resultadoUnidade {
+  font-size: 14px;
+}
+
 .mensagem-status {
   color:rgb(224, 193, 13);
   padding: 10px 16px;
@@ -433,7 +504,186 @@ if ($ultima_diaria > 0 && $saldo_reais > 0) {
 /* FIM DO CODIGO RESPONSAVEL PELO CALCULO DOS VALORES PARA GESTÃO */
 
 
+/* Teste */
+.custom-inputbox {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  margin-bottom: 16px;
+}
 
+.custom-inputbox label {
+  font-size: 13px;
+  color: #2c3e50;
+  font-weight: 600;
+}
+
+.custom-inputbox input[type="text"] {
+  border-radius: 6px;
+  border: 1px solid #ccc;
+  background-color: #fcfcfc;
+  padding: 6px 8px;
+  font-size: 13px;
+  color: #2c3e50;
+  width: 100%;
+  max-width: 200px;
+}
+
+.custom-button {
+  background-color: #3498db;
+  color: white;
+  font-size: 15px;
+  padding: 12px 24px;
+  border-radius: 10px;
+  border: none;
+  cursor: pointer;
+  width: 100%; /* Agora ocupa toda a largura da área do formulário */
+  display: block;
+  margin-top: 10px;
+  transition: background-color 0.3s ease, transform 0.2s ease;
+}
+
+.custom-button:hover {
+  background-color: #2980b9;
+  transform: scale(1.02);
+}
+
+.custom-inputbox div {
+  display: flex;
+  gap: 4px; /* reduz o espaço entre o input e o resultado */
+  align-items: center;
+}
+
+#resultadoUnidade {
+  margin-left: 0; /* remove qualquer margem que empurre o span */
+  padding-left: 0; /* garante que não haja espaço extra */
+}
+
+.custom-inputbox span {
+  text-align: left;
+}
+
+
+
+#valorBanca {
+  font-size: 14px;
+  padding: 8px 10px;
+  background-color: #eef6fc;
+  border: 2px solid #3498db;
+  max-width: 350px;
+}
+
+/* Campos menores */
+#porcentagem,
+#unidadeMeta {
+max-width: 260px;
+}
+
+  .dropdown-options {
+    display: none;
+  }
+
+  .dropdown-options.show {
+    display: block;
+  }
+
+  .modal-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: rgba(44, 62, 80, 0.8);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 999;
+}
+
+.modal-content {
+  background: #fefefe;
+  padding: 20px;
+  border-radius: 12px;
+  max-width: 380px;
+  width: 100%;
+  box-shadow: 0 6px 16px rgba(0, 0, 0, 0.2);
+  font-family: 'Segoe UI', sans-serif;
+  animation: fadeIn 0.4s ease;
+  position: relative;
+}
+
+/* Botão fechar */
+.btn-fechar {
+  position: absolute;
+  top: 10px;
+  right: 12px;
+  background: none;
+  border: none;
+  font-size: 20px;
+  color: #aaa;
+  cursor: pointer;
+}
+
+.btn-fechar:hover {
+  color: #e74c3c;
+}
+
+.custom-inputbox label {
+  display: block;
+  font-size: 14px;
+  margin-bottom: 6px;
+  font-weight: 600;
+  color: #34495e;
+}
+.custom-inputbox {
+  margin-bottom: 20px;
+}
+
+@keyframes fadeIn {
+  from { opacity: 0; transform: translateY(-10px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+@media screen and (max-width: 300px) {
+  .container-principal, .box, .modal-content {
+    width: 80%;
+    margin: 0 auto;
+    padding: 15px;
+    box-sizing: border-box;
+  }
+
+  .custom-fieldset {
+    padding: 15px;
+  }
+
+  .custom-inputbox input {
+    font-size: 15px;
+  }
+
+  .custom-button {
+    font-size: 15px;
+    padding: 10px 18px;
+  }
+
+  .btn-fechar {
+    top: 8px;
+    right: 10px;
+    width: 28px;
+    height: 28px;
+    font-size: 18px;
+  }
+
+  .dropdown-header, .dropdown-options li {
+    font-size: 14px;
+  }
+
+  legend {
+    font-size: 16px;
+  }
+}
+
+
+/* Teste */
 
 
 
@@ -518,6 +768,7 @@ if ($ultima_diaria > 0 && $saldo_reais > 0) {
 
 
 
+<!-- HTML -->
 <div class="container-principal">
   <div class="box">
     <form action="painel-controle.php" method="POST">
@@ -528,16 +779,13 @@ if ($ultima_diaria > 0 && $saldo_reais > 0) {
             <span class="arrow">&#9662;</span>
           </div>
           <ul class="dropdown-options" id="dropdown-options">
-            <li onclick="selectOption('Depositar na Banca', 'deposito')">
-              <i class="fa-solid fa-money-bill-wave"></i> Depositar na Banca
+            <li onclick="selectOption('Depositar na Banca', 'deposito')" data-text="Depositar na Banca" data-value="deposito">
+              <i class="fa-solid fa-money-bill-wave"></i> Gerenciar Banca
             </li>
-            <li onclick="selectOption('Defina a porcentagem', 'diaria')">
-              <i class="fa-solid fa-chart-line"></i> Defina a porcentagem
+            <li onclick="selectOption('Sacar da Banca', 'saque')" data-text="Sacar da Banca" data-value="saque">
+              <i class="fa-solid fa-arrow-down"></i> Gerenciar Saque 
             </li>
-            <li onclick="selectOption('Sacar da Banca', 'saque')">
-              <i class="fa-solid fa-arrow-down"></i> Sacar da Banca
-            </li>
-            <li onclick="selectOption('Limpar Banca', 'limpar')">
+            <li onclick="selectOption('Limpar Banca', 'limpar')" data-text="Limpar Banca" data-value="limpar">
               <i class="fa-solid fa-trash"></i> Limpar Banca
             </li>
           </ul>
@@ -554,11 +802,53 @@ if ($ultima_diaria > 0 && $saldo_reais > 0) {
       </fieldset>
     </form>
   </div>
- </div>
+</div>
 
 
 
- <br>
+
+<br>
+
+<!-- Formulário de Depósito Personalizado -->
+<!-- Modal de Depósito Personalizado -->
+<div id="modalDeposito" class="modal-overlay" style="display: none;">
+  <div class="modal-content">
+    <form method="POST" action="">
+      <button type="button" class="btn-fechar" onclick="fecharModal()">×</button>
+
+      <div class="custom-inputbox">
+        <label for="valorBanca"><i class="fa-solid fa-coins"></i>  Valor da Banca</label>
+        <input type="text" name="deposito" id="valorBanca" required
+            value="<?= isset($valor_deposito) ? number_format($valor_deposito, 2, ',', '.') : '' ?>">
+      </div>
+
+      <div class="custom-inputbox">
+        <label for="porcentagem"><i class="fa-solid fa-chart-pie"></i> % Unidade de Entrada</label>
+        <div style="display: flex; gap: 10px; align-items: center;">
+          <input type="text" name="diaria" id="porcentagem" required
+              value="<?= isset($valor_diaria) ? number_format($valor_diaria, 2, ',', '.') : '' ?>"
+              style="flex: 1;">
+          <span id="resultadoCalculo" style="font-weight: bold; color: #2c3e50;"></span>
+        </div>
+      </div>
+
+      <div class="custom-inputbox">
+        <label for="unidadeMeta"><i class="fa-solid fa-bullseye"></i> Unidade Para Meta Diária</label>
+        <div style="display: flex; gap: 10px; align-items: center;">
+          <input type="text" name="unidade" id="unidadeMeta" required
+              value="<?= isset($valor_unidade) ? number_format($valor_unidade, 2, ',', '.') : '' ?>"
+              style="flex: 1;">
+          <span id="resultadoUnidade" style="font-weight: bold; color: #2c3e50;"></span>
+        </div>
+      </div>
+
+      <input type="submit" name="submitPersonalizado"
+          value="<?= isset($valor_deposito) ? 'Salvar Edição' : 'Cadastrar Dados' ?>"
+          class="custom-button">
+    </form>
+  </div>
+</div>
+
 
 
 
@@ -577,6 +867,15 @@ if ($ultima_diaria > 0 && $saldo_reais > 0) {
     </div>
   </div>
 
+  <!-- 📤 Total de Saques -->
+  <div class="valor-item">
+    <i class="valor-icone fa fa-hand-holding-usd"></i>
+    <div>
+      <span class="valor-bold">R$ <?= number_format($saques_reais, 2, ',', '.') ?></span><br>
+      <span class="valor-desc">Total de Saques</span>
+    </div>
+  </div>
+
   <!-- 📉 Porcentagem -->
   <div class="valor-item">
     <i class="valor-icone fa fa-chart-line"></i>
@@ -586,14 +885,21 @@ if ($ultima_diaria > 0 && $saldo_reais > 0) {
     </div>
   </div>
 
-  
-
-    <!-- 🎯 Unidade de Entrada -->
+  <!-- 🎯 Unidade de Entrada -->
   <div class="valor-item">
     <i class="valor-icone fa fa-database"></i>
     <div>
       <span class="valor-bold">R$ <?= number_format($resultado ?? 0, 2, ',', '.') ?></span><br>
       <span class="valor-desc">Unidade de Entrada</span>
+    </div>
+  </div>
+
+  <!-- 🎯 Unidade Para Meta -->
+  <div class="valor-item">
+    <i class="valor-icone fa fa-briefcase"></i>
+    <div>
+      <span class="valor-bold">R$ <?= number_format($resultado ?? 0, 2, ',', '.') ?></span><br>
+      <span class="valor-desc">Unidade Para Meta</span>
     </div>
   </div>
 
@@ -624,15 +930,6 @@ if ($ultima_diaria > 0 && $saldo_reais > 0) {
     </div>
   </div>
 
-  <!-- 📤 Total de Saques -->
-  <div class="valor-item">
-    <i class="valor-icone fa fa-hand-holding-usd"></i>
-    <div>
-      <span class="valor-bold">R$ <?= number_format($saques_reais, 2, ',', '.') ?></span><br>
-      <span class="valor-desc">Total de Saques</span>
-    </div>
-  </div>
-
 </div>
 
 
@@ -643,172 +940,224 @@ if ($ultima_diaria > 0 && $saldo_reais > 0) {
 
 
 
-   
-  
-       
 
 
 
 
 
 
+
+
+</body>
+</html>
+
+
+<!-- AQUI CODIGO QUE CUIDA DA OPÇÃO DE GERENCIAR BANCA -->
 <script>
 document.addEventListener("DOMContentLoaded", function () {
-  const acao = document.getElementById("acao");
+  // 🧩 Referências
+  const dropdownOptions = document.querySelectorAll('#dropdown-options li');
+  const dropdownSelected = document.getElementById('dropdown-selected');
+  const dropdownContainer = document.getElementById("dropdown-options");
+  const acaoInput = document.getElementById("acao");
+  const modal = document.getElementById("modalDeposito");
   const valorInputBox = document.getElementById("valorInputBox");
   const valorInput = document.getElementById("valor");
-  const formulario = document.querySelector("form");
-  const dropdownSelected = document.getElementById("dropdown-selected");
-  const dropdownOptions = document.getElementById("dropdown-options");
+  const botaoAcao = document.getElementById("submit");
+  const deposito = document.getElementById("valorBanca");
+  const diaria = document.getElementById("porcentagem");
+  const unidade = document.getElementById("unidadeMeta");
+  const resultadoCalculo = document.getElementById("resultadoCalculo");
+
+  // 🟢 Novo: Span para exibir valor calculado pela unidade
+  const resultadoUnidade = document.createElement("span");
+  resultadoUnidade.id = "resultadoUnidade";
+  resultadoUnidade.style.fontWeight = "bold";
+  resultadoUnidade.style.color = "#2c3e50";
+  unidade.parentNode.appendChild(resultadoUnidade);
+
+  // 🎛️ Dropdown
+  dropdownOptions.forEach(item => {
+    item.addEventListener('click', () => {
+      const texto = item.getAttribute('data-text');
+      const valor = item.getAttribute('data-value');
+      selectOption(texto, valor);
+    });
+  });
+
+  function selectOption(texto, valor) {
+    dropdownSelected.innerHTML = `<i class="fa-solid fa-bars"></i> ${texto}`;
+    acaoInput.value = valor;
+    dropdownContainer.classList.remove("show");
+    atualizarCampoValor();
+    modal.style.display = valor === "deposito" ? "flex" : "none";
+  }
+
+  function toggleDropdown() {
+    dropdownContainer.classList.toggle("show");
+  }
+
+  window.selectOption = selectOption;
+  window.toggleDropdown = toggleDropdown;
+
+  window.addEventListener('click', (e) => {
+    if (!document.querySelector('.dropdown').contains(e.target)) {
+      dropdownContainer.classList.remove("show");
+    }
+    if (e.target === modal) modal.style.display = "none";
+  });
+
+  window.fecharModal = () => modal.style.display = "none";
+
+  acaoInput.addEventListener("change", () => {
+    valorInput.value = "";
+    atualizarCampoValor();
+  });
 
   function atualizarCampoValor() {
-    if (acao.value === "limpar") {
-      valorInputBox.style.display = "none";
+    const valorAcao = acaoInput.value;
+    valorInputBox.style.display = valorAcao === "limpar" ? "none" : "block";
+    if (valorAcao === "limpar") {
       valorInput.removeAttribute("required");
+      botaoAcao.value = "Limpar Banca 💣";
     } else {
-      valorInputBox.style.display = "block";
       valorInput.setAttribute("required", "required");
+      botaoAcao.value = "Enviar";
     }
   }
 
-  acao.addEventListener("change", atualizarCampoValor);
+  // 🎯 Cálculo meta automático
+  function calcularMeta() {
+    const banca = deposito.value.replace(/[^\d]/g, '');
+    const percentual = diaria.value.replace(/[^\d,]/g, '').replace(',', '.');
 
-  window.selectOption = function (texto, valor) {
-    dropdownSelected.innerText = texto;
-    acao.value = valor;
-    dropdownOptions.style.display = "none";
-    atualizarCampoValor();
-  };
+    if (!banca || !percentual) {
+      resultadoCalculo.textContent = '';
+      resultadoUnidade.textContent = '';
+      return;
+    }
 
-  // Envio automático sem confirmação
-  // Mantém compatibilidade para "limpar" direto
-  atualizarCampoValor(); // Executa ao carregar
-});
-</script>
+    const bancaFloat = parseFloat(banca) / 100;
+    const percentFloat = parseFloat(percentual);
 
-<script>
-  function toggleDropdown() {
-    const options = document.getElementById('dropdown-options');
-    options.style.display = options.style.display === 'block' ? 'none' : 'block';
+    if (isNaN(bancaFloat) || isNaN(percentFloat)) {
+      resultadoCalculo.textContent = '';
+      resultadoUnidade.textContent = '';
+      return;
+    }
+
+    const resultado = bancaFloat * (percentFloat / 100);
+    resultadoCalculo.textContent = `= ${resultado.toLocaleString("pt-BR", {
+      style: "currency",
+      currency: "BRL"
+    })}`;
+
+    calcularUnidade(resultado);
   }
 
-  function selectOption(text, value) {
-    document.getElementById('dropdown-selected').innerHTML = text;
-    document.getElementById('acao').value = value;
-    document.getElementById('dropdown-options').style.display = 'none';
+  // 🟢 Novo: Cálculo da meta total multiplicada pela unidade
+  function calcularUnidade(valorMeta) {
+    const unidadeRaw = unidade.value.replace(',', '.');
+    const unidadeFloat = parseFloat(unidadeRaw);
+
+    if (!isNaN(unidadeFloat) && !isNaN(valorMeta)) {
+      const total = unidadeFloat * valorMeta;
+      resultadoUnidade.textContent = `= ${total.toLocaleString("pt-BR", {
+        style: "currency",
+        currency: "BRL"
+      })}`;
+    } else {
+      resultadoUnidade.textContent = '';
+    }
   }
-</script>
 
-
-<div id="meta-meia-unidade" data-meta="R$ <?= number_format($meia_unidade ?? 0, 2, ',', '.') ?>" style="display:none;"></div>
-<div id="resultado-unidade" data-resultado="R$ <?= number_format($resultado ?? 0, 2, ',', '.') ?>" style="display:none;"></div>
-
-
-
-</body>
-
-
-
-
-
-<script>
-document.addEventListener("DOMContentLoaded", function () {
-  const acao = document.getElementById("acao");
-  const valor = document.getElementById("valor");
-
-  function formatarMoeda(valorStr) {
-    const numero = parseFloat(valorStr.replace(/[^\d,.-]/g, "").replace(",", "."));
-    if (isNaN(numero)) return "";
-    return numero.toLocaleString("pt-BR", {
+  // 💰 Formatação de campo da banca
+  deposito.addEventListener("input", () => {
+    let valor = deposito.value.replace(/[^\d]/g, '');
+    if (!valor) return deposito.value = "";
+    deposito.value = (parseFloat(valor) / 100).toLocaleString("pt-BR", {
       style: "currency",
       currency: "BRL"
     });
-  }
-
-  function formatarPorcentagem(valorStr) {
-    let limpo = valorStr.replace(",", ".").replace(/[^\d.]/g, "");
-    if (limpo === "") return "";
-    const numero = parseFloat(limpo);
-    return isNaN(numero) ? "" : numero.toString().replace(".", ",") + "%";
-  }
-
-  // 👇 Sempre que trocar a ação, limpa o campo
-  acao.addEventListener("change", function () {
-    valor.value = "";
+    calcularMeta();
   });
 
-  valor.addEventListener("focus", function () {
-    this.value = ""; // Limpa o campo para nova digitação
+  // 📊 Porcentagem
+  diaria.addEventListener("input", () => {
+    let valor = diaria.value.replace(/[^0-9.,]/g, '');
+    const partes = valor.split(/[.,]/);
+    if (partes.length > 2) valor = partes[0] + ',' + partes[1];
+    diaria.value = valor;
+    calcularMeta();
   });
 
-  valor.addEventListener("blur", function () {
-    const acaoSelecionada = acao.value;
-    const valorAtual = valor.value;
+  diaria.addEventListener("blur", () => {
+    let valor = diaria.value.replace(/%/g, '').replace(",", ".");
+    const numero = parseFloat(valor);
+    if (!isNaN(numero)) {
+      diaria.value = Number.isInteger(numero)
+        ? parseInt(numero) + "%"
+        : numero.toString().replace(".", ",") + "%";
+    } else {
+      diaria.value = "";
+    }
+    calcularMeta();
+  });
 
+  // ✏️ Input de valor com formatações
+  valorInput.addEventListener("focus", () => valorInput.value = "");
+
+  valorInput.addEventListener("blur", () => {
+    const acaoSelecionada = acaoInput.value;
+    const valorAtual = valorInput.value;
     if (!valorAtual) return;
 
-    if (acaoSelecionada === "deposito" || acaoSelecionada === "saque") {
-      this.value = formatarMoeda(valorAtual);
-    } else if (acaoSelecionada === "diaria") {
-      this.value = formatarPorcentagem(valorAtual);
-    }
+    let numero = parseFloat(valorAtual.replace(/[^\d,.-]/g, "").replace(",", "."));
+    if (isNaN(numero)) return;
 
-
+    valorInput.value = acaoSelecionada === "diaria"
+      ? numero.toString().replace(".", ",") + "%"
+      : numero.toLocaleString("pt-BR", { style: "currency", currency: "BRL" });
   });
+
+  valorInput.addEventListener("keypress", (e) => {
+    const char = e.key;
+    const value = valorInput.value;
+    if (!/[0-9.,]/.test(char) || ((char === '.' || char === ',') && (value.includes('.') || value.includes(',')))) {
+      e.preventDefault();
+    }
+  });
+
+  valorInput.addEventListener("input", () => {
+    const value = valorInput.value;
+    const numero = parseFloat(value.replace(',', '.'));
+    if (value === '.' || value === ',' || isNaN(numero)) valorInput.value = '';
+  });
+
+  // 🎯 Unidade meta com cálculo
+  unidade.addEventListener("input", () => {
+    unidade.value = unidade.value.replace(/[^0-9,]/g, '');
+    const resultadoRaw = resultadoCalculo.textContent.replace(/[^\d,]/g, '').replace(',', '.');
+    const metaValue = parseFloat(resultadoRaw);
+    if (!isNaN(metaValue)) calcularUnidade(metaValue);
+  });
+
+  unidade.addEventListener("blur", () => {
+    let valor = unidade.value.replace(",", ".");
+    const numero = parseFloat(valor);
+    unidade.value = !isNaN(numero) ? (Number.isInteger(numero) ? parseInt(numero) : numero) : "";
+    const resultadoRaw = resultadoCalculo.textContent.replace(/[^\d,]/g, '').replace(',', '.');
+    const metaValue = parseFloat(resultadoRaw);
+    if (!isNaN(metaValue)) calcularUnidade(metaValue);
+  });
+
+  // 🚀 Inicialização
+  function formatarValoresIniciais() {
+    [deposito, diaria, unidade].forEach(el => el.dispatchEvent(new Event("blur")));
+    atualizarCampoValor();
+    calcularMeta();
+  }
+
+  formatarValoresIniciais();
 });
 </script>
-
-
-
-
-<script>
-  function toggleDropdown() {
-    const options = document.getElementById('dropdown-options');
-    options.style.display = options.style.display === 'block' ? 'none' : 'block';
-  }
-
-  function selectOption(texto, valor) {
-    document.getElementById('dropdown-selected').innerText = texto;
-    document.getElementById('acao').value = valor;
-    document.getElementById('dropdown-options').style.display = 'none';
-  }
-
-  // Fecha dropdown se clicar fora
-  window.addEventListener('click', function (e) {
-    const dropdown = document.querySelector('.dropdown');
-    if (!dropdown.contains(e.target)) {
-      document.getElementById('dropdown-options').style.display = 'none';
-    }
-  });
-</script>
-
-
-<script>
-  document.addEventListener("DOMContentLoaded", function () {
-    const valor = document.getElementById("valor");
-
-    // Permite número, vírgula e ponto — mas só um separador
-    valor.addEventListener("keypress", function (e) {
-      const char = e.key;
-      const value = valor.value;
-
-      // Permite números e UM separador (vírgula ou ponto)
-      if (!/[0-9.,]/.test(char) || ((char === '.' || char === ',') && (value.includes('.') || value.includes(',')))) {
-        e.preventDefault();
-      }
-    });
-
-    // Valida o valor digitado, convertendo vírgula para ponto
-    valor.addEventListener("input", function () {
-      const value = valor.value;
-      const numero = parseFloat(value.replace(',', '.'));
-
-      if (value === '.' || value === ',' || isNaN(numero)) {
-        valor.value = '';
-      }
-    });
-  });
-</script>
-
-
-

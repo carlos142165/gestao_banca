@@ -57,7 +57,7 @@ $saldo_banca_total = ($soma_depositos ) + $saldo_mentores;
 
 // Cálculo da entrada e meia unidade
 if ($ultima_diaria > 0 && $saldo_banca_total > 0) {
-  $resultado_entrada = ($ultima_diaria / 100) * $saldo_banca_total;
+  $resultado_entrada = ($ultima_diaria / 100) * $soma_depositos;
   $meia_unidade = $resultado_entrada * 0.5;
   $_SESSION['resultado_entrada'] = $resultado_entrada;
   $_SESSION['meta_meia_unidade'] = $meia_unidade;

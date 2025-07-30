@@ -399,220 +399,6 @@ body, html {
 }
 
 
-/* TESTE   */
-.container-resumos {
-  display: flex;
-  justify-content: center;
-  flex-wrap: wrap; /* permite que os blocos se empilhem se não couberem */
-  gap: 50px;
-  margin-top: 30px;
-}
-
-.resumo-mes::-webkit-scrollbar {
-  display: none; /* Oculta totalmente a barra no Chrome/Safari */
-}
-
-.resumo-mes {
-  width: 400px;
-  height: 735px;
-  overflow-y: auto;
-  background-color: #f7f6f6;
-  border-radius: 12px;
-  padding: 20px;
-  box-shadow: 0 0 12px rgba(0,0,0,0.08);
-  font-family: 'Poppins', sans-serif;
-}
-
-/* Título do mês */
-.resumo-mes h2 {
-  font-size: 20px;
-  color: #333;
-  text-align: center;
-  margin-bottom: 15px;
-}
-
-.rotulo-meta{
-  color: #ecf3e7ff;
-  padding: 4px 8px;
-  font-weight: bold;
-
-}
-
-/* Bloco da meta mensal */
-.meta-mensal-bloco {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  background: #e9f6ff;
-  padding: 10px 15px;
-  border-radius: 8px;
-  margin-bottom: 20px;
-  box-shadow: inset 0 0 6px rgba(0,0,0,0.04);
-}
-
-.meta-mensal-esquerda,
-.meta-mensal-direita {
-  display: flex;
-  align-items: center;
-  gap: 8px;
-  font-size: 14px;
-  font-weight: 500;
-  color: #34da0aff;
-}
-
-.meta-batida {
-  color: #4caf50;
-  background-color: rgba(76, 175, 80, 0.1);
-  padding: 4px 8px;
-  border-radius: 6px;
-  font-weight: bold;
-}
-
-/* Dias do mês */
-.linha-dia {
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  margin-bottom: 8px;
-  background-color: #fff;
-  padding: 6px 10px;
-  border-radius: 8px;
-  box-shadow: 0 0 2px rgba(0,0,0,0.05);
-}
-
-.data {
-  font-size: 12px;
-  color: #333;
-  width: 90px;
-  display: flex;
-  align-items: center;
-  gap: 5px;
-}
-
-.valor {
-  font-size: 12px;
-  color: #444;
-  width: 85px;
-  text-align: right;
-  display: flex;
-  align-items: center;
-  gap: 5px;
-}
-
-.icone {
-  font-size: 14px;
-  color: #4caf50;
-}
-
-/* Gráfico de progresso */
-.barra-progresso {
-  display: flex;
-  width: 85px;
-  height: 4px;
-  border-radius: 10px;
-  overflow: hidden;
-  margin: 0 6px;
-}
-
-.progresso-verde {
-  background-color: #4caf50;
-  width: 40%;
-}
-
-.progresso-vermelho {
-  background-color: #f44336;
-  flex-grow: 1;
-}
-
-
-@media (max-width: 500px) {
-  .resumo-mes {
-    position: static;
-    width: 100%;
-    max-width: 365px;     /* define a largura máxima para telas pequenas */
-    margin: 20px auto;    /* centraliza horizontalmente */
-    transform: none;
-    box-shadow: none;
-    padding: 10px;
-    border-radius: 8px;
-    background: #fefefe;
-  }
-
-   .linha-dia {
-    flex-direction: row;
-    flex-wrap: nowrap;
-    align-items: center;
-    justify-content: space-between;
-    gap: 6px;
-  }
-
-  .data {
-    width: auto;
-    min-width: 70px;
-  }
-
-  .barra-progresso {
-    width: 70px;
-    margin: 0 6px;
-  }
-
-
-  .valor {
-    width: auto;
-    font-size: 12px;
-    text-align: right;
-  }
-
-  .icone {
-    font-size: 14px;
-    margin-left: 6px;
-  }
-}
-
-.resumo-dia{
-  margin-top: -19px;
- 
-}
-
-  .linha-dia.dia-normal {
-    opacity: 0.4;
-  }
-
-  .linha-dia.dia-hoje {
-    opacity: 1;
-    background-color: #fff;
-  }
-
-  .borda-verde {
-    border-left: 4px solid green;
-  }
-
-  .borda-vermelha {
-    border-left: 4px solid red;
-  }
-
-  .verde-bold {
-    color: green;
-    font-weight: bold;
-  }
-
-  .vermelho-bold {
-    color: red;
-    font-weight: bold;
-  }
-
-
-
-
-
-/* TESTE   */
-
-
-
-
-
-
-
 </style>
      
      <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
@@ -805,14 +591,6 @@ if (isset($_SESSION['toast'])) {
     <i class="fas fa-user-plus"></i>
   </button>
  </div>
-
-
-
-
-
-
-
-
 
  <!-- FIM CODIGO BOTÃO ADICIONAR USUARIO -->
 
@@ -1014,11 +792,9 @@ if (isset($_SESSION['toast'])) {
 
 
 <?php
-// 🕒 Configurar timezone corretamente
 $timezone_recebido = $_POST['timezone'] ?? 'America/Bahia';
 date_default_timezone_set($timezone_recebido);
 
-// 🔤 Meses em português
 $meses_portugues = array(
   "01" => "JANEIRO", "02" => "FEVEREIRO", "03" => "MARÇO",
   "04" => "ABRIL", "05" => "MAIO", "06" => "JUNHO",
@@ -1026,14 +802,12 @@ $meses_portugues = array(
   "10" => "OUTUBRO", "11" => "NOVEMBRO", "12" => "DEZEMBRO"
 );
 
-// 📅 Data atual
 $ano = date('Y');
 $mes = date('m');
 $hoje = date('Y-m-d');
 $diasNoMes = cal_days_in_month(CAL_GREGORIAN, $mes, $ano);
 $nomeMes = $meses_portugues[$mes];
 
-// 💾 Inserir dados no banco
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
   $id_mentores = $_POST['id_mentores'];
   $green = $_POST['green'];
@@ -1055,98 +829,442 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 }
 ?>
 
-<style>
-  .linha-dia.dia-normal {
-    opacity: 0.4;
-  }
 
-  .linha-dia.dia-hoje {
-    opacity: 1;
-    background-color: #fff;
-  }
 
-  .borda-verde {
-    border-left: 4px solid green;
-  }
 
-  .borda-vermelha {
-    border-left: 4px solid red;
-  }
 
-  .verde-bold {
-    color: green;
-    font-weight: bold;
-  }
+ 
 
-  .vermelho-bold {
-    color: red;
-    font-weight: bold;
-  }
+ <style>
 
-  .texto-cinza {
-    color: #777;
-  }
+/* TESTE   */
+.container-resumos {
+  display: flex;
+  justify-content: center;
+  flex-wrap: wrap;
+  gap: 50px;
+  margin-top: 30px;
+}
+
+.resumo-mes::-webkit-scrollbar {
+  display: none;
+}
+
+.resumo-mes {
+  position: relative;
+  width: 385px;
+  height: 780px;
+  overflow-y: auto;
+  background-color: #f7f6f6;
+  border-radius: 12px;
+  padding-top: 0px; /* espaço suficiente para o bloco fixo */
+  box-shadow: 0 0 12px rgba(0,0,0,0.08);
+  font-family: 'Poppins', sans-serif;
+}
+
+.fixo-topo {
+  position: sticky;  /* Mantém o bloco fixo dentro do scroll */
+  top: 0px;
+  z-index: 10;
+  background-color: #fdfdfd;
+  padding: 14px 18px;
+  border-radius: 12px 12px 0 0;
+  box-shadow: 0 2px 6px rgba(0,0,0,0.04);
+ 
+}
+
+.resumo-mes h2 {
+  font-size: 20px;
+  color: #333;
+  text-align: center;
+  margin-bottom: 15px;
+}
+
+/* RESPONSAVEL PELO CAMPO DAS METAS */
+.bloco-meta-simples {
+  background-color: #f7f6f6;
+  border-radius: 12px;
+  box-shadow: 0 3px 12px rgba(0, 0, 0, 0.06);  
+  display: flex;
+  flex-direction: column;
+  padding-top: 12px;
+  max-width: 360px;
+  font-family: 'Poppins', sans-serif;
+  transition: all 0.3s ease;
+  padding: 16px;
+  gap: 6px; /* Reduzido de 10px */
+ 
+ 
+
+}
+
+.grupo-barra {
+  background: #ffffff;
+  padding: 10px 14px;
+  border-radius: 10px;
+  box-shadow: 0 1px 6px rgba(0, 0, 0, 0.05);
+  display: flex;
+  flex-direction: column;
+  position: relative;
+  transition: transform 0.2s ease-in-out;
+  margin-top: 4px;
+}
+
+.titulo-bloco {
+  font-size: 18px;
+  font-weight: bold;
+  color: #2e7d32;
+  margin: 12px 0;
+  padding: 8px 0;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  border-bottom: 2px solid #c8e6c9;
+  background-color: #f1f8e9;
+  border-radius: 5px;
+  margin: 0 0 15px 0;
+}
+
+.titulo-bloco i {
+  font-size: 20px;
+  color: #43a047;
+}
+
+.grupo-barra:hover {
+  transform: translateY(-1.5px);
+}
+
+.valor-meta {
+  font-size: 14px;
+  font-weight: 600;
+  color: #333;
+  margin-bottom: 2px;
+}
+
+.valor-meta i {
+  color: #d6a10f;
+  margin-right: 6px;
+}
+
+.container-barra-horizontal {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+
+.porcento-barra {
+  font-size: 12px;
+  font-weight: 500;
+  color: #555;
+  min-width: 35px;
+  text-align: right;
+}
+
+.progresso-verde::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  height: 100%;
+  width: var(--largura-barra, 0%);
+  border-radius: 4px;
+  background: linear-gradient(90deg, #4CAF50, #81C784);
+  transition: width 0.4s ease-in-out;
+}
+
+.rotulo-meta-mes.sucesso {
+  background-color: #dff0d8;
+  color: #388e3c;
+  border: 1px solid #81c784;
+  margin-left: 8px;
+  padding: 3px 6px;
+  border-radius: 4px;
+  font-size: 12px;
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+}
+
+
+.rotulo-meta-mes {
+  font-size: 12px;
+  font-weight: 600;
+  color: #28a745;
+  background-color: rgba(40, 167, 69, 0.08);
+  padding: 3px 6px;
+  border-radius: 5px;
+  width: fit-content;
+}
+
+.rotulo-meta-mes i {
+  margin-right: 6px;
+  color: #28a745;
+}
+
+.progresso-dourado,
+.progresso-verde {
+  height: 6px;
+  flex: 1;
+  border-radius: 4px;
+  background-color: #eee;
+  position: relative;
+  overflow: hidden;
+}
+
+.progresso-dourado::before,
+.progresso-verde::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  height: 100%;
+  border-radius: 4px;
+}
+
+.progresso-dourado::before {
+  width: 100%;
+  background: linear-gradient(90deg, #d6a10f, #d6a10f);
+}
+
+.progresso-verde::before {
+  width: 20%;
+  background: linear-gradient(90deg, #4CAF50, #81C784);
+}
+
+
+
+/* FIM RESPONSAVEL PELO CAMPO DAS METAS */
+
+
+
+/* Tabela de dias */
+.linha-dia {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  background-color: #fff;
+  padding: 6px 10px;
+  border-radius: 8px;
+  box-shadow: 0 0 2px rgba(0,0,0,0.05);
+  width: 90%;
+  margin: 8px auto;
+  
+}
+
+.data {
+  font-size: 12px;
+  color: #333;
+  display: flex;
+  align-items: center;
+  gap: 5px;
+}
+
+.placar-dia {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  font-size: 13px;
+}
+
+.placar {
+  font-size: 13px;
+}
+
+.valor {
+  font-size: 12px;
+  color: #444;
+  display: flex;
+  align-items: center;
+  gap: 5px;
+}
+
+.icone {
+  font-size: 14px;
+  color: #4caf50;
+}
+
+.verde-bold {
+  color: #28a745;
+  font-weight: bold;
+}
+
+.vermelho-bold {
+  color: #dc3545;
+  font-weight: bold;
+}
+
+.texto-cinza {
+  color: #777;
+}
+
+.dia-hoje {
+  border-left: 4px solid green;
+  opacity: 1;
+}
+
+.dia-normal {
+  opacity: 0.5;
+}
+
+.borda-verde {
+  border-left: 4px solid green;
+}
+
+.borda-vermelha {
+  border-left: 4px solid red;
+}
+
+.dia-destaque {
+  background-color: #f0fff3;
+  box-shadow: 0 0 8px rgba(40,167,69,0.25);
+}
+
+.lista-dias{
+  margin-top: 18px;
+}
+
+
+
+/* TESTE   */
 </style>
 
-<div class="resumo-mes">
-  <h2><?php echo $nomeMes . ' ' . $ano; ?></h2>
 
-  <div class="meta-mensal-bloco">
-    <div class="meta-mensal-esquerda">
-      <span class="rotulo-meta">Meta Mensal</span>
-      <span class="valor-meta">R$ 0,00</span>
-    </div>
-    <div class="meta-mensal-direita">
-      <i class="fas fa-check-circle"></i>
-      <span class="meta-batida">Meta Batida</span>
+
+
+
+<div class="container-resumos">
+  <div class="resumo-mes">
+    
+    <!-- PEGAR O MES ATUAL E COLOCA NO TITULO -->
+   <div class="bloco-meta-simples fixo-topo">
+
+    
+
+<?php
+  // 🔹 Cálculo da meta mensal
+  $hoje = new DateTime();
+  $dias_mes = cal_days_in_month(CAL_GREGORIAN, (int)$hoje->format('m'), (int)$hoje->format('Y'));
+  $meta_mensal = ($soma_depositos * ($ultima_diaria / 100)) * ($dias_mes / 2);
+
+  // 🔹 Saldo dos mentores
+  $saldo_mentores = $valor_green - $valor_red;
+
+  // 🔹 Cálculo da porcentagem de progresso
+  $porcentagem_meta = $meta_mensal > 0 ? ($saldo_mentores / $meta_mensal) * 100 : 0;
+  $porcentagem_meta_arredondada = round($porcentagem_meta, 1);
+
+  // 🔹 Verificação de meta batida
+  $meta_batida = $saldo_mentores >= $meta_mensal;
+
+  // 🔹 Formatação dos valores
+  $meta_mensal_formatada = 'R$ ' . number_format($meta_mensal, 2, ',', '.');
+  $saldo_mes_formatado = 'R$ ' . number_format($saldo_mentores, 2, ',', '.');
+?>
+
+
+
+
+   <!-- TÍTULO DO MÊS -->
+<h2 class="titulo-bloco">
+  <i class="fas fa-calendar-alt"></i> <span id="tituloMes"></span>
+</h2>
+
+<script>
+  const meses = [
+    "JANEIRO", "FEVEREIRO", "MARÇO", "ABRIL", "MAIO", "JUNHO",
+    "JULHO", "AGOSTO", "SETEMBRO", "OUTUBRO", "NOVEMBRO", "DEZEMBRO"
+  ];
+  const hoje = new Date();
+  const mesAtual = meses[hoje.getMonth()];
+  const anoAtual = hoje.getFullYear();
+  document.getElementById("tituloMes").textContent = `${mesAtual} ${anoAtual}`;
+</script>
+
+<!-- BLOCO FIXO DE METAS -->
+<div class="grupo-barra">
+  <span class="valor-meta"><i class="fas fa-bullseye"></i> <?php echo $meta_mensal_formatada; ?></span>
+  <div class="container-barra-horizontal">
+    <div class="progresso-dourado"></div>
+    <span class="porcento-barra">100%</span>
+  </div>
+  <span class="rotulo-meta-mes"><i class="fas fa-calendar-day"></i> Meta do Mês</span>
+</div>
+
+<div class="grupo-barra">
+  <span class="valor-meta">
+    <i class="fas fa-wallet"></i> <?php echo $saldo_mes_formatado; ?>
+    <?php if ($meta_batida): ?>
+      <span class="rotulo-meta-mes sucesso"><i class="fas fa-trophy"></i> Meta Batida</span>
+    <?php endif; ?>
+  </span>
+  <div class="container-barra-horizontal">
+    <div class="progresso-verde" style="--largura-barra: <?php echo min($porcentagem_meta_arredondada, 100); ?>%;"></div>
+    <span class="porcento-barra"><?php echo $porcentagem_meta_arredondada; ?>%</span>
+  </div>
+  <span class="rotulo-meta-mes"><i class="fas fa-coins"></i> Saldo do Mês</span>
+</div>
+
+
+
+    
+    <!-- CONTEÚDO DINÂMICO DAS LINHAS DIÁRIAS -->
+    <div class="lista-dias">
+      <?php
+      for ($dia = 1; $dia <= $diasNoMes; $dia++) {
+        $data_mysql = $ano . '-' . $mes . '-' . str_pad($dia, 2, "0", STR_PAD_LEFT);
+        $data_exibicao = str_pad($dia, 2, "0", STR_PAD_LEFT) . "/" . $mes . "/" . $ano;
+
+        $stmt = $conexao->prepare("
+          SELECT 
+            SUM(CASE WHEN green = 1 THEN valor_green ELSE 0 END) AS total_valor_green,
+            SUM(CASE WHEN red = 1 THEN valor_red ELSE 0 END) AS total_valor_red,
+            COUNT(CASE WHEN green = 1 THEN 1 END) AS total_green,
+            COUNT(CASE WHEN red = 1 THEN 1 END) AS total_red
+          FROM valor_mentores
+          WHERE id_usuario = ? AND DATE(data_criacao) = ?
+        ");
+        $stmt->bind_param("is", $id_usuario_logado, $data_mysql);
+        $stmt->execute();
+        $stmt->bind_result($total_valor_green, $total_valor_red, $total_green, $total_red);
+        $stmt->fetch();
+        $stmt->close();
+
+        $saldo_dia = ($total_valor_green ?? 0) - ($total_valor_red ?? 0);
+        $saldo_formatado = number_format($saldo_dia, 2, ',', '.');
+
+        $cor_valor = ($saldo_dia == 0) ? 'texto-cinza' : ($saldo_dia > 0 ? 'verde-bold' : 'vermelho-bold');
+        $classe_texto = ($saldo_dia == 0) ? 'texto-cinza' : '';
+        $placar_cinza = ((int)$total_green === 0 && (int)$total_red === 0) ? 'texto-cinza' : '';
+
+        $classe_dia = ($data_mysql === $hoje)
+          ? 'dia-hoje ' . ($saldo_dia >= 0 ? 'borda-verde' : 'borda-vermelha')
+          : 'dia-normal';
+
+        $classe_destaque = ($data_mysql < $hoje && $saldo_dia > 0) ? 'dia-destaque' : '';
+
+        echo '
+          <div class="linha-dia '.$classe_dia.' '.$classe_destaque.'">
+            <span class="data '.$classe_texto.'"><i class="fas fa-calendar-day"></i> '.$data_exibicao.'</span>
+            <div class="placar-dia">
+              <span class="placar verde-bold '.$placar_cinza.'">'.(int)($total_green ?? 0).'</span>
+              <span class="placar separador '.$placar_cinza.'">x</span>
+              <span class="placar vermelho-bold '.$placar_cinza.'">'.(int)($total_red ?? 0).'</span>
+            </div>
+            <span class="valor '.$cor_valor.'"><i class="fas fa-dollar-sign"></i> R$ '.$saldo_formatado.'</span>
+            <span class="icone '.$classe_texto.'"><i class="fas fa-check"></i></span>
+          </div>
+        ';
+      }
+      ?>
     </div>
   </div>
-
-  <?php
-  for ($dia = 1; $dia <= $diasNoMes; $dia++) {
-    $data_mysql = $ano . '-' . $mes . '-' . str_pad($dia, 2, "0", STR_PAD_LEFT);
-    $data_exibicao = str_pad($dia, 2, "0", STR_PAD_LEFT) . "/" . $mes . "/" . $ano;
-
-    $stmt = $conexao->prepare("
-      SELECT 
-        SUM(COALESCE(valor_green, 0)) AS total_green,
-        SUM(COALESCE(valor_red, 0)) AS total_red
-      FROM valor_mentores
-      WHERE id_usuario = ? AND DATE(data_criacao) = ?
-    ");
-    $stmt->bind_param("is", $id_usuario_logado, $data_mysql);
-    $stmt->execute();
-    $stmt->bind_result($total_green, $total_red);
-    $stmt->fetch();
-    $stmt->close();
-
-    $saldo_dia = ($total_green ?? 0) - ($total_red ?? 0); 
-    $saldo_formatado = number_format($saldo_dia, 2, ',', '.');
-
-    $cor_valor = ($saldo_dia == 0) ? 'texto-cinza' : ($saldo_dia > 0 ? 'verde-bold' : 'vermelho-bold');
-    $classe_texto = ($saldo_dia == 0) ? 'texto-cinza' : '';
-    
-    if ($data_mysql === $hoje) {
-      $cor_borda = $saldo_dia >= 0 ? 'borda-verde' : 'borda-vermelha';
-      $classe_dia = 'dia-hoje ' . $cor_borda;
-    } else {
-      $classe_dia = 'dia-normal';
-    }
-
-    echo '
-      <div class="linha-dia '.$classe_dia.'">
-        <span class="data '.$classe_texto.'"><i class="fas fa-calendar-day"></i> '.$data_exibicao.'</span>
-        <div class="barra-progresso">
-          <div class="progresso-verde" style="width: 50%;"></div>
-          <div class="progresso-vermelho" style="width: 50%;"></div>
-        </div>
-        <span class="valor '.$cor_valor.'"><i class="fas fa-dollar-sign"></i> R$ '.$saldo_formatado.'</span>
-        <span class="icone '.$classe_texto.'"><i class="fas fa-check"></i></span>
-      </div>
-    ';
-  }
-  ?>
 </div>
+
+
+
+
+
+
 
 
 
