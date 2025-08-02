@@ -1,174 +1,9 @@
 
-<?php
-session_start();
-date_default_timezone_set('America/Bahia');
-
-require_once 'config.php';
-
-// Verifica se o usuário está logado
-$idUsuario = $_SESSION['usuario_id'] ?? null;
-if (!$idUsuario) {
-  header("Location: login.php");
-  exit;
-}
-
-mysqli_report(MYSQLI_REPORT_ERROR | MYSQLI_REPORT_STRICT);
-
-// Verifica se há registros com depósito e diária
-$sql = "SELECT deposito, diaria FROM controle WHERE id_usuario = ?";
-$stmt = $conexao->prepare($sql);
-$stmt->bind_param("i", $idUsuario);
-$stmt->execute();
-$result = $stmt->get_result();
-
-$temDeposito = false;
-$temDiaria = false;
-
-while ($row = $result->fetch_assoc()) {
-  if (!empty($row['deposito']) && floatval($row['deposito']) > 0) {
-    $temDeposito = true;
-  }
-  if (!empty($row['diaria']) && floatval($row['diaria']) > 0) {
-    $temDiaria = true;
-  }
-}
-$stmt->close();
-
-// Mensagem personalizada
-$mensagem = "";
-if (!$temDeposito && !$temDiaria) {
-  $mensagem = "💰 Você está sem saldo na banca! Deposite para continuar.";
-} elseif (!$temDeposito) {
-  $mensagem = "💼 Você está sem saldo na banca! Deposite para continuar.";
-} elseif (!$temDiaria && $temDeposito) {
-  $mensagem = "🎉 Parabéns! Você definiu sua banca.<br>Agora só falta definir sua porcentagem.";
-}
-
-// Exibe o toast se necessário
-if ($mensagem !== "") {
-  echo "
-  <!DOCTYPE html>
-  <html lang='pt-br'>
-  <head>
-    <meta charset='UTF-8'>
-    <meta name='viewport' content='width=device-width, initial-scale=1.0'>
-    <title>Aviso</title>
-    <link rel='stylesheet' href='https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css'>
-    <style>
-      body {
-        margin: 0;
-        padding: 0;
-        font-family: 'Segoe UI', sans-serif;
-        background-color: #f4f4f4;
-      }
-      .toast-container {
-        position: fixed;
-        top: 0; left: 0;
-        width: 100%; height: 100vh;
-        background: rgba(0, 0, 0, 0.6);
-        display: flex;
-        justify-content: center;
-        align-items: center;
-        z-index: 9999;
-      }
-      .toast {
-        background: white;
-        padding: 32px;
-        border-radius: 14px;
-        box-shadow: 0 0 25px rgba(0, 0, 0, 0.25);
-        width: 92%;
-        max-width: 460px;
-        text-align: center;
-        animation: fadeIn 0.6s ease-out;
-      }
-      .toast-header {
-        font-size: 22px;
-        font-weight: 600;
-        color: #e67e22;
-        display: flex;
-        justify-content: center;
-        align-items: center;
-        gap: 12px;
-        margin-bottom: 20px;
-      }
-      .toast-header i {
-        font-size: 26px;
-      }
-      .toast-body {
-        font-size: 18px;
-        color: #333;
-        line-height: 1.5;
-      }
-      .toast-body button {
-        margin-top: 20px;
-        padding: 12px 26px;
-        background: #3498db;
-        color: white;
-        border: none;
-        border-radius: 8px;
-        font-size: 17px;
-        cursor: pointer;
-        transition: background 0.3s ease;
-      }
-      .toast-body button:hover {
-        background: #2980b9;
-      }
-      @keyframes fadeIn {
-        from { opacity: 0; transform: scale(0.95); }
-        to { opacity: 1; transform: scale(1); }
-      }
-      @media (max-width: 390px) {
-        .toast {
-          padding: 28px 18px;
-        }
-        .toast-header {
-          font-size: 20px;
-        }
-        .toast-header i {
-          font-size: 28px;
-        }
-        .toast-body {
-          font-size: 19px;
-        }
-        .toast-body button {
-          font-size: 18px;
-          padding: 14px 28px;
-        }
-      }
-    </style>
-    <script>
-      setTimeout(() => {
-        location.href = 'painel-controle.php';
-      }, 6000);
-    </script>
-  </head>
-  <body>
-    <div class='toast-container'>
-      <div class='toast'>
-        <div class='toast-header'>
-          <i class='fa fa-exclamation-circle'></i>
-          <strong>Aviso</strong>
-        </div>
-        <div class='toast-body'>
-          $mensagem
-          <br><br>
-          <button onclick=\"location.href='painel-controle.php'\">Ir para o Painel</button>
-        </div>
-      </div>
-    </div>
-  </body>
-  </html>
-  ";
-  exit;
-}
-?>
-
-
-
 
 <?php
-
 require_once 'config.php';
+require_once 'carregar_sessao.php';
+
 mysqli_report(MYSQLI_REPORT_ERROR | MYSQLI_REPORT_STRICT);
 
 // ✅ Função de notificação
@@ -209,71 +44,26 @@ if (!isset($_SESSION['usuario_id']) || empty($_SESSION['usuario_id'])) {
 
 $id_usuario_logado = $_SESSION['usuario_id'];
 
-// 🔎 Última diária
-$stmt = mysqli_prepare($conexao, "
-  SELECT diaria FROM controle
-  WHERE id_usuario = ? AND diaria IS NOT NULL AND diaria != 0
-  ORDER BY id DESC LIMIT 1
-");
-mysqli_stmt_bind_param($stmt, "i", $id_usuario_logado);
-mysqli_stmt_execute($stmt);
-mysqli_stmt_bind_result($stmt, $ultima_diaria);
-mysqli_stmt_fetch($stmt);
-mysqli_stmt_close($stmt);
-$ultima_diaria = $ultima_diaria ?? 0;
+// ✅ Recupera valores de green/red
+$valor_green = $_SESSION['valor_green'] ?? 0;
+$valor_red   = $_SESSION['valor_red'] ?? 0;
 
-// 🔢 Depósitos
-$stmt = mysqli_prepare($conexao, "SELECT SUM(deposito) FROM controle WHERE id_usuario = ?");
-mysqli_stmt_bind_param($stmt, "i", $id_usuario_logado);
-mysqli_stmt_execute($stmt);
-mysqli_stmt_bind_result($stmt, $soma_depositos);
-mysqli_stmt_fetch($stmt);
-mysqli_stmt_close($stmt);
-$soma_depositos = $soma_depositos ?? 0;
+// 🔎 Dados da sessão
+$ultima_diaria         = $_SESSION['porcentagem_entrada'] ?? 0;
+$soma_depositos        = $_SESSION['saldo_mentores'] + $_SESSION['saldo_geral'] - $_SESSION['saques_totais'] ?? 0;
+$soma_saque            = $_SESSION['saques_totais'] ?? 0;
+$saldo_mentores        = $_SESSION['saldo_mentores'] ?? 0;
+$saldo_banca           = $_SESSION['saldo_geral'] ?? 0;
+$valor_entrada_calculado = $_SESSION['resultado_entrada'] ?? 0;
+$valor_entrada_formatado = number_format($valor_entrada_calculado, 2, ',', '.');
 
-// 🔢 Saques
-$stmt = mysqli_prepare($conexao, "SELECT SUM(saque) FROM controle WHERE id_usuario = ?");
-mysqli_stmt_bind_param($stmt, "i", $id_usuario_logado);
-mysqli_stmt_execute($stmt);
-mysqli_stmt_bind_result($stmt, $soma_saque);
-mysqli_stmt_fetch($stmt);
-mysqli_stmt_close($stmt);
-$soma_saque = $soma_saque ?? 0;
-
-// 🔢 Green/Red
-$stmt = mysqli_prepare($conexao, "
-  SELECT SUM(valor_green), SUM(valor_red)
-  FROM valor_mentores WHERE id_usuario = ?
-");
-mysqli_stmt_bind_param($stmt, "i", $id_usuario_logado);
-mysqli_stmt_execute($stmt);
-mysqli_stmt_bind_result($stmt, $valor_green, $valor_red);
-mysqli_stmt_fetch($stmt);
-mysqli_stmt_close($stmt);
-$valor_green = $valor_green ?? 0;
-$valor_red = $valor_red ?? 0;
-
-// 💰 Cálculos
-$saldo_mentores = $valor_green - $valor_red;
+// 🔎 Verificação de banca zerada
 $saldo_inicial = $soma_depositos - $soma_saque + $saldo_mentores;
-
 if ($saldo_inicial <= 0 && $saldo_mentores < 0) {
   $_SESSION['banca_zerada'] = true;
 } elseif ($saldo_inicial > 0) {
   unset($_SESSION['banca_zerada']);
 }
-
-if (isset($_SESSION['banca_zerada'])) {
-  $saldo_banca = $soma_depositos - $soma_saque;
-} else {
-  $saldo_banca = $soma_depositos - $soma_saque + $saldo_mentores;
-}
-
-// ✅ Correção aplicada aqui: salva na sessão!
-$_SESSION['saldo_banca_total'] = $saldo_banca;
-
-$valor_entrada_calculado = $saldo_banca * ($ultima_diaria / 100);
-$valor_entrada_formatado = number_format($valor_entrada_calculado, 2, ',', '.');
 
 // 🗑️ Exclusão de mentor
 if (isset($_GET['excluir_mentor'])) {
@@ -302,7 +92,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['acao'])) {
   $valor_numerico = floatval($valor_sanitizado);
 
   $tipo_operacao = $_POST['opcao'] ?? '';
-  $saldo_banca_verificado = $_SESSION['saldo_banca_total'] ?? 0;
+  $saldo_banca_verificado = $_SESSION['saldo_geral'] ?? 0;
 
   if ($tipo_operacao === 'red' && $valor_numerico > $saldo_banca_verificado) {
     setToast('⚠️ Saldo da Banca Insuficiente, Faça um Depósito!', 'erro');
@@ -345,6 +135,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['acao'])) {
 // 🔎 Meta formatada
 $meta_diaria = $_SESSION['meta_meia_unidade'] ?? 0;
 ?>
+
 
 
 
@@ -467,9 +258,13 @@ if (isset($_SESSION['toast'])) {
         .catch((error) => console.error("Erro ao carregar o menu:", error)); // Exibe erro caso ocorra problema ao carregar
     </script>
 
-    <script src="scripts.js">
-      // Carregando o script de data global
-    </script>
+    
+
+
+
+
+
+
 
 <!-- FIM CODIGO RESPONSAVEL PELO  TOPO PUXADO DA PAGINA MENU.PHP -->
 
@@ -600,39 +395,35 @@ if (isset($_SESSION['toast'])) {
 
  <!-- AQUI FILTRA OS DADOS DOS MENTORES NO BANCO DE DADOS PRA MOSTRAR NA TELA  -->
  <div class="campo_mentores">
-
-   <div id="listaMentores" class="mentor-wrapper">
+  <div id="listaMentores" class="mentor-wrapper">
     <?php
     $id_usuario_logado = $_SESSION['usuario_id'];
-    $sql_mentores = "SELECT id, nome, foto FROM mentores WHERE id_usuario = ?";
-    $stmt_mentores = $conexao->prepare($sql_mentores);
-    $stmt_mentores->bind_param("i", $id_usuario_logado);
-    $stmt_mentores->execute();
-    $result_mentores = $stmt_mentores->get_result();
+
+    // 🔄 Consulta única para mentores + valores
+    $sql = "
+      SELECT m.id, m.nome, m.foto,
+             COALESCE(SUM(v.green), 0) AS total_green,
+             COALESCE(SUM(v.red), 0) AS total_red,
+             COALESCE(SUM(v.valor_green), 0) AS total_valor_green,
+             COALESCE(SUM(v.valor_red), 0) AS total_valor_red
+      FROM mentores m
+      LEFT JOIN valor_mentores v ON m.id = v.id_mentores
+      WHERE m.id_usuario = ?
+      GROUP BY m.id, m.nome, m.foto
+    ";
+
+    $stmt = $conexao->prepare($sql);
+    $stmt->bind_param("i", $id_usuario_logado);
+    $stmt->execute();
+    $result = $stmt->get_result();
 
     $lista_mentores = [];
     $total_geral_saldo = 0;
 
-    while ($mentor = $result_mentores->fetch_assoc()) {
-      $id_mentor = $mentor['id'];
-
-      $sql_valores = "SELECT 
-        COALESCE(SUM(green), 0) AS total_green,
-        COALESCE(SUM(red), 0) AS total_red,
-        COALESCE(SUM(valor_green), 0) AS total_valor_green,
-        COALESCE(SUM(valor_red), 0) AS total_valor_red
-      FROM valor_mentores WHERE id_mentores = ?";
-      $stmt_valores = $conexao->prepare($sql_valores);
-      $stmt_valores->bind_param("i", $id_mentor);
-      $stmt_valores->execute();
-      $valores = $stmt_valores->get_result()->fetch_assoc();
-
-      $total_subtraido = $valores['total_valor_green'] - $valores['total_valor_red'];
-
-      $mentor['valores'] = $valores;
+    while ($mentor = $result->fetch_assoc()) {
+      $total_subtraido = $mentor['total_valor_green'] - $mentor['total_valor_red'];
       $mentor['saldo'] = $total_subtraido;
       $lista_mentores[] = $mentor;
-
       $total_geral_saldo += $total_subtraido;
     }
 
@@ -642,7 +433,6 @@ if (isset($_SESSION['toast'])) {
 
     foreach ($lista_mentores as $posicao => $mentor) {
       $rank = $posicao + 1;
-      $valores = $mentor['valores'];
       $saldo_formatado = number_format($mentor['saldo'], 2, ',', '.');
 
       if ($mentor['saldo'] == 0) {
@@ -653,48 +443,45 @@ if (isset($_SESSION['toast'])) {
         $classe_borda = 'card-negativo';
       }
 
-    
-
       echo "
-    <div class='mentor-item'>
-      <div class='mentor-rank-externo'>{$rank}º</div>
+      <div class='mentor-item'>
+        <div class='mentor-rank-externo'>{$rank}º</div>
 
-      <div class='mentor-card {$classe_borda}' 
-           data-nome='{$mentor['nome']}'
-           data-foto='uploads/{$mentor['foto']}'
-           data-id='{$mentor['id']}'>
-        <div class='mentor-header'>
-          <img src='uploads/{$mentor['foto']}' alt='Foto de {$mentor['nome']}' class='mentor-img' />
-          <h3 class='mentor-nome'>{$mentor['nome']}</h3>
+        <div class='mentor-card {$classe_borda}' 
+             data-nome='{$mentor['nome']}'
+             data-foto='uploads/{$mentor['foto']}'
+             data-id='{$mentor['id']}'>
+          <div class='mentor-header'>
+            <img src='uploads/{$mentor['foto']}' alt='Foto de {$mentor['nome']}' class='mentor-img' />
+            <h3 class='mentor-nome'>{$mentor['nome']}</h3>
+          </div>
+          <div class='mentor-right'>
+            <div class='mentor-values-inline'>
+              <div class='value-box-green green'><p>Green</p><p>{$mentor['total_green']}</p></div>
+              <div class='value-box-red red'><p>Red</p><p>{$mentor['total_red']}</p></div>
+              <div class='value-box-saldo saldo'><p>Saldo</p><p>R$ {$saldo_formatado}</p></div>
+            </div>
+          </div>
         </div>
-        <div class='mentor-right'>
-          <div class='mentor-values-inline'>
-            <div class='value-box-green green'><p>Green</p><p>{$valores['total_green']}</p></div>
-            <div class='value-box-red red'><p>Red</p><p>{$valores['total_red']}</p></div>
-            <div class='value-box-saldo saldo'><p>Saldo</p><p>R$ {$saldo_formatado}</p></div>
+
+        <div class='mentor-menu-externo'>
+          <span class='menu-toggle' title='Mais opções'>⋮</span>
+          <div class='menu-opcoes'>
+            <button onclick='editarAposta({$mentor["id"]})'>
+              <i class='fas fa-trash'></i> Excluir Entrada
+            </button>
+            <button onclick='editarMentor({$mentor["id"]})'>
+              <i class='fas fa-user-edit'></i> Editar Mentor
+            </button>
           </div>
         </div>
       </div>
-
-      <div class='mentor-menu-externo'>
-        <span class='menu-toggle' title='Mais opções'>⋮</span>
-        <div class='menu-opcoes'>
-          <button onclick='editarAposta({$mentor["id"]})'>
-            <i class='fas fa-trash'></i> Excluir Entrada
-          </button>
-          <button onclick='editarMentor({$mentor["id"]})'>
-            <i class='fas fa-user-edit'></i> Editar Mentor
-          </button>
-        </div>
-      </div>
-    </div>
-  ";
+      ";
     }
-    
     ?>
-    
   </div>
- </div>
+</div>
+
 
  <!-- FIM DO CODIGO QUE FILTRA OS DADOS DOS MENTORES NO BANCO DE DADOS PRA MOSTRAR NA TELA  -->
 
@@ -1141,143 +928,162 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     
 
 <?php
-  // 🔹 Cálculo da meta mensal
-  $hoje = new DateTime();
-  $dias_mes = cal_days_in_month(CAL_GREGORIAN, (int)$hoje->format('m'), (int)$hoje->format('Y'));
-  $meta_mensal = ($soma_depositos * ($ultima_diaria / 100)) * ($dias_mes / 2);
 
-  // 🔹 Saldo dos mentores
-  $saldo_mentores = $valor_green - $valor_red;
+require_once 'config.php';
+mysqli_report(MYSQLI_REPORT_ERROR | MYSQLI_REPORT_STRICT);
 
-  // 🔹 Cálculo da porcentagem de progresso
-  $porcentagem_meta = $meta_mensal > 0 ? ($saldo_mentores / $meta_mensal) * 100 : 0;
-  $porcentagem_meta_arredondada = round($porcentagem_meta, 1);
+// 🔐 Verificação de sessão
+if (!isset($_SESSION['usuario_id']) || empty($_SESSION['usuario_id'])) {
+  header('Location: home.php');
+  exit();
+}
 
-  // 🔹 Verificação de meta batida
-  $meta_batida = $saldo_mentores >= $meta_mensal;
+$id_usuario_logado = $_SESSION['usuario_id'];
 
-  // 🔹 Formatação dos valores
-  $meta_mensal_formatada = 'R$ ' . number_format($meta_mensal, 2, ',', '.');
-  $saldo_mes_formatado = 'R$ ' . number_format($saldo_mentores, 2, ',', '.');
+// 🔹 Dados da sessão
+$valor_green = $_SESSION['valor_green'] ?? 0;
+$valor_red   = $_SESSION['valor_red'] ?? 0;
+$soma_depositos = $_SESSION['saldo_mentores'] + $_SESSION['saldo_geral'] - $_SESSION['saques_totais'] ?? 0;
+$ultima_diaria = $_SESSION['porcentagem_entrada'] ?? 0;
+
+// 🔹 Cálculo da meta mensal
+$hoje = new DateTime();
+$ano = (int)$hoje->format('Y');
+$mes = (int)$hoje->format('m');
+$dias_mes = cal_days_in_month(CAL_GREGORIAN, $mes, $ano);
+
+$meta_mensal = ($soma_depositos * ($ultima_diaria / 100)) * ($dias_mes / 2);
+$saldo_mentores = $valor_green - $valor_red;
+
+$porcentagem_meta = $meta_mensal > 0 ? ($saldo_mentores / $meta_mensal) * 100 : 0;
+$porcentagem_meta_arredondada = round($porcentagem_meta, 1);
+$meta_batida = $saldo_mentores >= $meta_mensal;
+
+$meta_mensal_formatada = 'R$ ' . number_format($meta_mensal, 2, ',', '.');
+$saldo_mes_formatado = 'R$ ' . number_format($saldo_mentores, 2, ',', '.');
+
+// 🔹 Consulta única para todos os dias do mês
+$sql = "
+  SELECT 
+    DATE(data_criacao) AS data,
+    SUM(CASE WHEN green = 1 THEN valor_green ELSE 0 END) AS total_valor_green,
+    SUM(CASE WHEN red = 1 THEN valor_red ELSE 0 END) AS total_valor_red,
+    COUNT(CASE WHEN green = 1 THEN 1 END) AS total_green,
+    COUNT(CASE WHEN red = 1 THEN 1 END) AS total_red
+  FROM valor_mentores
+  WHERE id_usuario = ? AND MONTH(data_criacao) = ? AND YEAR(data_criacao) = ?
+  GROUP BY DATE(data_criacao)
+";
+
+$stmt = $conexao->prepare($sql);
+$stmt->bind_param("iii", $id_usuario_logado, $mes, $ano);
+$stmt->execute();
+$result = $stmt->get_result();
+
+$dados_por_dia = [];
+while ($row = $result->fetch_assoc()) {
+  $dados_por_dia[$row['data']] = $row;
+}
 ?>
 
+<div class="container-resumos">
+  <div class="resumo-mes">
+    <div class="bloco-meta-simples fixo-topo">
 
+      <!-- TÍTULO DO MÊS -->
+      <h2 class="titulo-bloco">
+        <i class="fas fa-calendar-alt"></i> <span id="tituloMes"></span>
+      </h2>
 
+      <script>
+        const meses = [
+          "JANEIRO", "FEVEREIRO", "MARÇO", "ABRIL", "MAIO", "JUNHO",
+          "JULHO", "AGOSTO", "SETEMBRO", "OUTUBRO", "NOVEMBRO", "DEZEMBRO"
+        ];
+        const hoje = new Date();
+        const mesAtual = meses[hoje.getMonth()];
+        const anoAtual = hoje.getFullYear();
+        document.getElementById("tituloMes").textContent = `${mesAtual} ${anoAtual}`;
+      </script>
 
-   <!-- TÍTULO DO MÊS -->
-<h2 class="titulo-bloco">
-  <i class="fas fa-calendar-alt"></i> <span id="tituloMes"></span>
-</h2>
+      <!-- BLOCO FIXO DE METAS -->
+      <div class="grupo-barra">
+        <span class="valor-meta"><i class="fas fa-bullseye"></i> <?php echo $meta_mensal_formatada; ?></span>
+        <div class="container-barra-horizontal">
+          <div class="progresso-dourado"></div>
+          <span class="porcento-barra">100%</span>
+        </div>
+        <span class="rotulo-meta-mes"><i class="fas fa-calendar-day"></i> Meta do Mês</span>
+      </div>
 
-<script>
-  const meses = [
-    "JANEIRO", "FEVEREIRO", "MARÇO", "ABRIL", "MAIO", "JUNHO",
-    "JULHO", "AGOSTO", "SETEMBRO", "OUTUBRO", "NOVEMBRO", "DEZEMBRO"
-  ];
-  const hoje = new Date();
-  const mesAtual = meses[hoje.getMonth()];
-  const anoAtual = hoje.getFullYear();
-  document.getElementById("tituloMes").textContent = `${mesAtual} ${anoAtual}`;
-</script>
+      <div class="grupo-barra">
+        <span class="valor-meta">
+          <i class="fas fa-wallet"></i> <?php echo $saldo_mes_formatado; ?>
+          <?php if ($meta_batida): ?>
+            <span class="rotulo-meta-mes sucesso"><i class="fas fa-trophy"></i> Meta Batida</span>
+          <?php endif; ?>
+        </span>
+        <div class="container-barra-horizontal">
+          <div class="progresso-verde" style="--largura-barra: <?php echo min($porcentagem_meta_arredondada, 100); ?>%;"></div>
+          <span class="porcento-barra"><?php echo $porcentagem_meta_arredondada; ?>%</span>
+        </div>
+        <span class="rotulo-meta-mes"><i class="fas fa-coins"></i> Saldo do Mês</span>
+      </div>
 
-<!-- BLOCO FIXO DE METAS -->
-<div class="grupo-barra">
-  <span class="valor-meta"><i class="fas fa-bullseye"></i> <?php echo $meta_mensal_formatada; ?></span>
-  <div class="container-barra-horizontal">
-    <div class="progresso-dourado"></div>
-    <span class="porcento-barra">100%</span>
-  </div>
-  <span class="rotulo-meta-mes"><i class="fas fa-calendar-day"></i> Meta do Mês</span>
-</div>
+      <!-- CONTEÚDO DINÂMICO DAS LINHAS DIÁRIAS -->
+      <div class="lista-dias">
+        <?php
+        for ($dia = 1; $dia <= $dias_mes; $dia++) {
+          $data_mysql = $ano . '-' . str_pad($mes, 2, "0", STR_PAD_LEFT) . '-' . str_pad($dia, 2, "0", STR_PAD_LEFT);
+          $data_exibicao = str_pad($dia, 2, "0", STR_PAD_LEFT) . "/" . str_pad($mes, 2, "0", STR_PAD_LEFT) . "/" . $ano;
 
-<div class="grupo-barra">
-  <span class="valor-meta">
-    <i class="fas fa-wallet"></i> <?php echo $saldo_mes_formatado; ?>
-    <?php if ($meta_batida): ?>
-      <span class="rotulo-meta-mes sucesso"><i class="fas fa-trophy"></i> Meta Batida</span>
-    <?php endif; ?>
-  </span>
-  <div class="container-barra-horizontal">
-    <div class="progresso-verde" style="--largura-barra: <?php echo min($porcentagem_meta_arredondada, 100); ?>%;"></div>
-    <span class="porcento-barra"><?php echo $porcentagem_meta_arredondada; ?>%</span>
-  </div>
-  <span class="rotulo-meta-mes"><i class="fas fa-coins"></i> Saldo do Mês</span>
-</div>
+          $dados = $dados_por_dia[$data_mysql] ?? [
+            'total_valor_green' => 0,
+            'total_valor_red' => 0,
+            'total_green' => 0,
+            'total_red' => 0
+          ];
 
+          $saldo_dia = $dados['total_valor_green'] - $dados['total_valor_red'];
+          $saldo_formatado = number_format($saldo_dia, 2, ',', '.');
 
+          $cor_valor = ($saldo_dia == 0) ? 'texto-cinza' : ($saldo_dia > 0 ? 'verde-bold' : 'vermelho-bold');
+          $classe_texto = ($saldo_dia == 0) ? 'texto-cinza' : '';
+          $placar_cinza = ((int)$dados['total_green'] === 0 && (int)$dados['total_red'] === 0) ? 'texto-cinza' : '';
 
-    
-    <!-- CONTEÚDO DINÂMICO DAS LINHAS DIÁRIAS -->
-    <div class="lista-dias">
-      <?php
-      for ($dia = 1; $dia <= $diasNoMes; $dia++) {
-        $data_mysql = $ano . '-' . $mes . '-' . str_pad($dia, 2, "0", STR_PAD_LEFT);
-        $data_exibicao = str_pad($dia, 2, "0", STR_PAD_LEFT) . "/" . $mes . "/" . $ano;
+          $classe_dia = ($data_mysql === $hoje->format('Y-m-d'))
+            ? 'dia-hoje ' . ($saldo_dia >= 0 ? 'borda-verde' : 'borda-vermelha')
+            : 'dia-normal';
 
-        $stmt = $conexao->prepare("
-          SELECT 
-            SUM(CASE WHEN green = 1 THEN valor_green ELSE 0 END) AS total_valor_green,
-            SUM(CASE WHEN red = 1 THEN valor_red ELSE 0 END) AS total_valor_red,
-            COUNT(CASE WHEN green = 1 THEN 1 END) AS total_green,
-            COUNT(CASE WHEN red = 1 THEN 1 END) AS total_red
-          FROM valor_mentores
-          WHERE id_usuario = ? AND DATE(data_criacao) = ?
-        ");
-        $stmt->bind_param("is", $id_usuario_logado, $data_mysql);
-        $stmt->execute();
-        $stmt->bind_result($total_valor_green, $total_valor_red, $total_green, $total_red);
-        $stmt->fetch();
-        $stmt->close();
+          $classe_destaque = ($data_mysql < $hoje->format('Y-m-d') && $saldo_dia > 0) ? 'dia-destaque' : '';
 
-        $saldo_dia = ($total_valor_green ?? 0) - ($total_valor_red ?? 0);
-        $saldo_formatado = number_format($saldo_dia, 2, ',', '.');
-
-        $cor_valor = ($saldo_dia == 0) ? 'texto-cinza' : ($saldo_dia > 0 ? 'verde-bold' : 'vermelho-bold');
-        $classe_texto = ($saldo_dia == 0) ? 'texto-cinza' : '';
-        $placar_cinza = ((int)$total_green === 0 && (int)$total_red === 0) ? 'texto-cinza' : '';
-
-        $classe_dia = ($data_mysql === $hoje)
-          ? 'dia-hoje ' . ($saldo_dia >= 0 ? 'borda-verde' : 'borda-vermelha')
-          : 'dia-normal';
-
-        $classe_destaque = ($data_mysql < $hoje && $saldo_dia > 0) ? 'dia-destaque' : '';
-
-        echo '
-          <div class="linha-dia '.$classe_dia.' '.$classe_destaque.'">
-            <span class="data '.$classe_texto.'"><i class="fas fa-calendar-day"></i> '.$data_exibicao.'</span>
-            <div class="placar-dia">
-              <span class="placar verde-bold '.$placar_cinza.'">'.(int)($total_green ?? 0).'</span>
-              <span class="placar separador '.$placar_cinza.'">x</span>
-              <span class="placar vermelho-bold '.$placar_cinza.'">'.(int)($total_red ?? 0).'</span>
+          echo '
+            <div class="linha-dia '.$classe_dia.' '.$classe_destaque.'">
+              <span class="data '.$classe_texto.'"><i class="fas fa-calendar-day"></i> '.$data_exibicao.'</span>
+              <div class="placar-dia">
+                <span class="placar verde-bold '.$placar_cinza.'">'.(int)$dados['total_green'].'</span>
+                <span class="placar separador '.$placar_cinza.'">x</span>
+                <span class="placar vermelho-bold '.$placar_cinza.'">'.(int)$dados['total_red'].'</span>
+              </div>
+              <span class="valor '.$cor_valor.'"><i class="fas fa-dollar-sign"></i> R$ '.$saldo_formatado.'</span>
+              <span class="icone '.$classe_texto.'"><i class="fas fa-check"></i></span>
             </div>
-            <span class="valor '.$cor_valor.'"><i class="fas fa-dollar-sign"></i> R$ '.$saldo_formatado.'</span>
-            <span class="icone '.$classe_texto.'"><i class="fas fa-check"></i></span>
-          </div>
-        ';
-      }
-      ?>
+          ';
+        }
+        ?>
+      </div>
     </div>
   </div>
-</div>
+ </div>
 
 
 
 
 
-
-
-
-
-
-
-
-
-
-<script>
+ <script>
   document.getElementById('timezone').value =
     Intl.DateTimeFormat().resolvedOptions().timeZone;
-</script>
-
+ </script>
 
 
   
@@ -1293,13 +1099,6 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 
 <!-- PUXA O SCRIPT -->
 <script src="script.js"></script>
-
-
-
-
-
-
-
 
 
 

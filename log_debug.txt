@@ -1,145 +1,63 @@
-
-⚠️ data_local recebido: NULL
-📍 Timezone aplicado: UTC
-⏰ Data final usada: 2025-07-27 13:47:09
-⚠️ data_local recebido: '2025-07-27T13:50:17.641Z'
+⚠️ data_local recebido: '2025-07-31T10:59:59.707Z'
 📍 Timezone aplicado: America/Bahia
-⏰ Data final usada: 2025-07-27 10:50:17
-⚠️ data_local recebido: '2025-07-27T14:03:21.694Z'
+⏰ Data final usada: 2025-07-31 07:59:59
+⚠️ data_local recebido: '2025-07-31T12:28:43.367Z'
 📍 Timezone aplicado: America/Bahia
-⏰ Data final usada: 2025-07-27 11:03:21
-⚠️ data_local recebido: '2025-07-27T14:21:30.522Z'
+⏰ Data final usada: 2025-07-31 09:28:43
+⚠️ data_local recebido: '2025-07-31T12:36:17.964Z'
 📍 Timezone aplicado: America/Bahia
-⏰ Data final usada: 2025-07-27 11:21:30
-⚠️ data_local recebido: '2025-07-27T14:35:07.494Z'
+⏰ Data final usada: 2025-07-31 09:36:17
+⚠️ data_local recebido: '2025-07-31T12:56:55.671Z'
 📍 Timezone aplicado: America/Bahia
-⏰ Data final usada: 2025-07-27 11:35:07
-⚠️ data_local recebido: '2025-07-27T14:45:41.404Z'
+⏰ Data final usada: 2025-07-31 09:56:55
+⚠️ data_local recebido: '2025-08-01T01:58:25.812Z'
 📍 Timezone aplicado: America/Bahia
-⏰ Data final usada: 2025-07-27 11:45:41
-⚠️ data_local recebido: '2025-07-27T14:52:44.117Z'
+⏰ Data final usada: 2025-07-31 22:58:25
+⚠️ data_local recebido: '2025-08-01T17:24:27.358Z'
 📍 Timezone aplicado: America/Bahia
-⏰ Data final usada: 2025-07-27 11:52:44
-⚠️ data_local recebido: '2025-07-27T14:52:44.117Z'
+⏰ Data final usada: 2025-08-01 14:24:27
+⚠️ data_local recebido: '2025-08-01T17:37:06.880Z'
 📍 Timezone aplicado: America/Bahia
-⏰ Data final usada: 2025-07-27 11:52:44
-⚠️ data_local recebido: '2025-07-27T15:01:12.648Z'
+⏰ Data final usada: 2025-08-01 14:37:06
+⚠️ data_local recebido: '2025-08-01T17:39:26.050Z'
 📍 Timezone aplicado: America/Bahia
-⏰ Data final usada: 2025-07-27 12:01:12
-⚠️ data_local recebido: '2025-07-27T15:07:55.985Z'
+⏰ Data final usada: 2025-08-01 14:39:26
+⚠️ data_local recebido: '2025-08-01T18:58:49.683Z'
 📍 Timezone aplicado: America/Bahia
-⏰ Data final usada: 2025-07-27 12:07:55
-⚠️ data_local recebido: NULL
-📍 Timezone aplicado: UTC
-⏰ Data final usada: 2025-07-27 15:14:18
-⚠️ data_local recebido: '2025-07-27T15:14:56.004Z'
+⏰ Data final usada: 2025-08-01 15:58:49
+⚠️ data_local recebido: '2025-08-01T21:27:35.277Z'
 📍 Timezone aplicado: America/Bahia
-⏰ Data final usada: 2025-07-27 12:14:56
-⚠️ data_local recebido: '2025-07-27T15:20:51.442Z'
+⏰ Data final usada: 2025-08-01 18:27:35
+⚠️ data_local recebido: '2025-08-02T02:50:55.581Z'
 📍 Timezone aplicado: America/Bahia
-⏰ Data final usada: 2025-07-27 12:20:51
-⚠️ data_local recebido: '2025-07-27T15:22:48.573Z'
+⏰ Data final usada: 2025-08-01 23:50:55
+⚠️ data_local recebido: '2025-08-02T11:10:37.209Z'
 📍 Timezone aplicado: America/Bahia
-⏰ Data final usada: 2025-07-27 12:22:48
-⚠️ data_local recebido: '2025-07-27T15:24:42.803Z'
+⏰ Data final usada: 2025-08-02 08:10:37
+⚠️ data_local recebido: '2025-08-02T11:10:37.209Z'
 📍 Timezone aplicado: America/Bahia
-⏰ Data final usada: 2025-07-27 12:24:42
-⚠️ data_local recebido: '2025-07-27T15:25:53.388Z'
+⏰ Data final usada: 2025-08-02 08:10:37
+⚠️ data_local recebido: '2025-08-02T11:10:37.209Z'
 📍 Timezone aplicado: America/Bahia
-⏰ Data final usada: 2025-07-27 12:25:53
-⚠️ data_local recebido: '2025-07-27T15:26:50.382Z'
+⏰ Data final usada: 2025-08-02 08:10:37
+⚠️ data_local recebido: '2025-08-02T12:21:22.662Z'
 📍 Timezone aplicado: America/Bahia
-⏰ Data final usada: 2025-07-27 12:26:50
-⚠️ data_local recebido: '2025-07-27T15:30:51.402Z'
+⏰ Data final usada: 2025-08-02 09:21:22
+⚠️ data_local recebido: '2025-08-02T12:33:46.021Z'
 📍 Timezone aplicado: America/Bahia
-⏰ Data final usada: 2025-07-27 12:30:51
-⚠️ data_local recebido: '2025-07-27T15:35:13.054Z'
+⏰ Data final usada: 2025-08-02 09:33:46
+⚠️ data_local recebido: '2025-08-02T12:54:10.999Z'
 📍 Timezone aplicado: America/Bahia
-⏰ Data final usada: 2025-07-27 12:35:13
-⚠️ data_local recebido: '2025-07-27T15:56:53.526Z'
+⏰ Data final usada: 2025-08-02 09:54:10
+⚠️ data_local recebido: '2025-08-02T14:12:26.728Z'
 📍 Timezone aplicado: America/Bahia
-⏰ Data final usada: 2025-07-27 12:56:53
-⚠️ data_local recebido: '2025-07-27T15:59:35.773Z'
+⏰ Data final usada: 2025-08-02 11:12:26
+⚠️ data_local recebido: '2025-08-02T14:26:08.463Z'
 📍 Timezone aplicado: America/Bahia
-⏰ Data final usada: 2025-07-27 12:59:35
-⚠️ data_local recebido: '2025-07-27T16:05:24.768Z'
+⏰ Data final usada: 2025-08-02 11:26:08
+⚠️ data_local recebido: '2025-08-02T14:32:31.634Z'
 📍 Timezone aplicado: America/Bahia
-⏰ Data final usada: 2025-07-27 13:05:24
-⚠️ data_local recebido: '2025-07-27T16:05:24.768Z'
+⏰ Data final usada: 2025-08-02 11:32:31
+⚠️ data_local recebido: '2025-08-02T14:57:42.844Z'
 📍 Timezone aplicado: America/Bahia
-⏰ Data final usada: 2025-07-27 13:05:24
-⚠️ data_local recebido: '2025-07-28T12:01:24.363Z'
-📍 Timezone aplicado: America/Bahia
-⏰ Data final usada: 2025-07-28 09:01:24
-⚠️ data_local recebido: '2025-07-28T12:39:57.743Z'
-📍 Timezone aplicado: America/Bahia
-⏰ Data final usada: 2025-07-28 09:39:57
-⚠️ data_local recebido: '2025-07-28T12:40:17.537Z'
-📍 Timezone aplicado: America/Bahia
-⏰ Data final usada: 2025-07-28 09:40:17
-⚠️ data_local recebido: '2025-07-28T12:53:33.521Z'
-📍 Timezone aplicado: America/Bahia
-⏰ Data final usada: 2025-07-28 09:53:33
-⚠️ data_local recebido: '2025-07-29T02:13:37.020Z'
-📍 Timezone aplicado: America/Bahia
-⏰ Data final usada: 2025-07-28 23:13:37
-⚠️ data_local recebido: '2025-07-29T02:13:37.020Z'
-📍 Timezone aplicado: America/Bahia
-⏰ Data final usada: 2025-07-28 23:13:37
-⚠️ data_local recebido: '2025-07-29T02:22:40.595Z'
-📍 Timezone aplicado: America/Bahia
-⏰ Data final usada: 2025-07-28 23:22:40
-⚠️ data_local recebido: '2025-07-29T10:50:52.688Z'
-📍 Timezone aplicado: America/Bahia
-⏰ Data final usada: 2025-07-29 07:50:52
-⚠️ data_local recebido: '2025-07-30T01:31:20.409Z'
-📍 Timezone aplicado: America/Bahia
-⏰ Data final usada: 2025-07-29 22:31:20
-⚠️ data_local recebido: '2025-07-30T02:19:56.007Z'
-📍 Timezone aplicado: America/Bahia
-⏰ Data final usada: 2025-07-29 23:19:56
-⚠️ data_local recebido: '2025-07-30T02:20:37.137Z'
-📍 Timezone aplicado: America/Bahia
-⏰ Data final usada: 2025-07-29 23:20:37
-⚠️ data_local recebido: '2025-07-30T02:21:32.745Z'
-📍 Timezone aplicado: America/Bahia
-⏰ Data final usada: 2025-07-29 23:21:32
-⚠️ data_local recebido: '2025-07-30T03:30:13.149Z'
-📍 Timezone aplicado: America/Bahia
-⏰ Data final usada: 2025-07-30 00:30:13
-⚠️ data_local recebido: '2025-07-30T03:39:59.741Z'
-📍 Timezone aplicado: America/Bahia
-⏰ Data final usada: 2025-07-30 00:39:59
-⚠️ data_local recebido: '2025-07-30T10:36:12.474Z'
-📍 Timezone aplicado: America/Bahia
-⏰ Data final usada: 2025-07-30 07:36:12
-⚠️ data_local recebido: '2025-07-30T10:39:40.295Z'
-📍 Timezone aplicado: America/Bahia
-⏰ Data final usada: 2025-07-30 07:39:40
-⚠️ data_local recebido: '2025-07-30T10:41:26.579Z'
-📍 Timezone aplicado: America/Bahia
-⏰ Data final usada: 2025-07-30 07:41:26
-⚠️ data_local recebido: '2025-07-30T10:42:59.796Z'
-📍 Timezone aplicado: America/Bahia
-⏰ Data final usada: 2025-07-30 07:42:59
-⚠️ data_local recebido: '2025-07-30T10:42:59.796Z'
-📍 Timezone aplicado: America/Bahia
-⏰ Data final usada: 2025-07-30 07:42:59
-⚠️ data_local recebido: '2025-07-30T17:56:56.835Z'
-📍 Timezone aplicado: America/Bahia
-⏰ Data final usada: 2025-07-30 14:56:56
-⚠️ data_local recebido: '2025-07-30T19:13:24.101Z'
-📍 Timezone aplicado: America/Bahia
-⏰ Data final usada: 2025-07-30 16:13:24
-⚠️ data_local recebido: '2025-07-30T19:13:24.101Z'
-📍 Timezone aplicado: America/Bahia
-⏰ Data final usada: 2025-07-30 16:13:24
-⚠️ data_local recebido: '2025-07-30T19:13:24.101Z'
-📍 Timezone aplicado: America/Bahia
-⏰ Data final usada: 2025-07-30 16:13:24
-⚠️ data_local recebido: '2025-07-30T19:19:49.115Z'
-📍 Timezone aplicado: America/Bahia
-⏰ Data final usada: 2025-07-30 16:19:49
-⚠️ data_local recebido: '2025-07-30T19:22:51.142Z'
-📍 Timezone aplicado: America/Bahia
-⏰ Data final usada: 2025-07-30 16:22:51
+⏰ Data final usada: 2025-08-02 11:57:42

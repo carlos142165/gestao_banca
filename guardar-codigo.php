@@ -339,3 +339,93 @@ if ($mensagem !== "") {
 ?>
 
 
+
+
+
+<script>
+document.addEventListener("DOMContentLoaded", () => {
+  // Abre/fecha dropdown
+  function toggleDropdown() {
+    document.getElementById("dropdown-options").classList.toggle("show");
+  }
+
+  // Seleciona opção do dropdown e executa ação
+  function selectOption(texto, valor) {
+    console.log("Selecionado:", valor);
+    document.getElementById("dropdown-selected").innerHTML =
+      `<i class="fa-solid fa-bars"></i> ${texto}`;
+    document.getElementById("acao").value = valor;
+    toggleDropdown();
+
+    if (valor === "saque") {
+      carregarSaques();
+    } else {
+      document.getElementById("historico-saques").innerHTML = "";
+    }
+  }
+
+  // Carrega histórico de saques via fetch
+  function carregarSaques() {
+    fetch("listar-saques.php")
+      .then(res => {
+        if (!res.ok) throw new Error("Erro na resposta do servidor");
+        return res.json();
+      })
+      .then(saques => {
+        const container = document.getElementById("historico-saques");
+        container.innerHTML = "";
+
+        if (!Array.isArray(saques) || saques.length === 0) {
+          container.innerHTML = "<p style='color:gray;'>Nenhum saque registrado.</p>";
+          return;
+        }
+
+        saques.forEach(s => {
+          container.innerHTML += `
+            <div class="entrada-card" style="border-left: 6px solid #e74c3c;">
+              <div class="entrada-info">
+                <p><strong>Saque:</strong> R$ ${s.saque}</p>
+                <p class="info-pequena"><strong>Data:</strong> ${s.data}</p>
+              </div>
+              <div class="entrada-acoes">
+                <button onclick="excluirSaque(${s.id})" class="btn-icon btn-lixeira" title="Excluir">
+                  <i class="fas fa-trash"></i>
+                </button>
+              </div>
+            </div>
+          `;
+        });
+      })
+      .catch(err => {
+        console.error("Erro ao carregar saques:", err);
+        document.getElementById("historico-saques").innerHTML =
+          "<p style='color:red;'>Erro ao carregar dados. Tente novamente mais tarde.</p>";
+      });
+  }
+
+  // Exclui um saque e atualiza lista
+  function excluirSaque(idSaque) {
+    if (!confirm("Deseja excluir este saque?")) return;
+
+    fetch("excluir-saque.php", {
+      method: "POST",
+      headers: { "Content-Type": "application/x-www-form-urlencoded" },
+      body: `id=${encodeURIComponent(idSaque)}`
+    })
+      .then(res => res.text())
+      .then(msg => {
+        alert(msg.trim());
+        carregarSaques();
+      })
+      .catch(err => {
+        console.error("Erro ao excluir saque:", err);
+        alert("Falha ao excluir. Tente novamente.");
+      });
+  }
+
+  // Torna as funções globais se necessário
+  window.toggleDropdown = toggleDropdown;
+  window.selectOption = selectOption;
+  window.excluirSaque = excluirSaque;
+});
+</script>

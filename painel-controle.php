@@ -1,7 +1,8 @@
 <?php
-session_start();
-include_once('config.php');
+require_once 'config.php';
+require_once 'carregar_sessao.php';
 
+// Verifica se o usuário está autenticado
 if (!isset($_SESSION['usuario_id'])) {
     echo "<script>alert('ÁREA DE MEMBROS – Faça Já Seu Cadastro Gratuito'); window.location.href = 'home.php';</script>";
     exit();
@@ -9,56 +10,56 @@ if (!isset($_SESSION['usuario_id'])) {
 
 $id_usuario = $_SESSION['usuario_id'];
 
-// ✅ Busca últimos valores registrados
-$stmt = mysqli_prepare($conexao, "
-    SELECT id, deposito, diaria, unidade FROM controle 
-    WHERE id_usuario = ? 
-    ORDER BY id DESC LIMIT 1
-");
-$stmt->bind_param("i", $id_usuario);
-$stmt->execute();
-$stmt->bind_result($controle_id, $valor_deposito, $valor_diaria, $valor_unidade);
-$stmt->fetch();
-$stmt->close();
+// ✅ Recupera variáveis da sessão
+$saldo_reais = $_SESSION['saldo_geral'] ?? 0;
+$saques_reais = $_SESSION['saques_totais'] ?? 0;
+$percentual = $_SESSION['porcentagem_entrada'] ?? 0;
+$percentualFormatado = (intval($percentual) == $percentual)
+    ? intval($percentual) . '%'
+    : number_format($percentual, 2, ',', '.') . '%';
 
-// ✅ Trata envio do formulário com edição ou inserção
-// ✅ Trata envio do formulário como sempre um NOVO cadastro
+// ✅ Processa formulário de edição ou inserção
 if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['submitPersonalizado'])) {
-    $deposito = isset($_POST['deposito']) ? preg_replace('/[^0-9,]/', '', $_POST['deposito']) : '';
-    $diaria = isset($_POST['diaria']) ? preg_replace('/[^0-9,]/', '', $_POST['diaria']) : '';
-    $unidade = isset($_POST['unidade']) ? preg_replace('/[^0-9,]/', '', $_POST['unidade']) : '';
+    $deposito = str_replace(',', '.', preg_replace('/[^0-9,]/', '', $_POST['deposito'] ?? ''));
+    $diaria = str_replace(',', '.', preg_replace('/[^0-9,]/', '', $_POST['diaria'] ?? ''));
+    $unidade = str_replace(',', '.', preg_replace('/[^0-9,]/', '', $_POST['unidade'] ?? ''));
+    $controle_id = intval($_POST['controle_id'] ?? 0);
 
-    $depositoFloat = str_replace(',', '.', $deposito);
-    $diariaFloat = str_replace(',', '.', $diaria);
-    $unidadeFloat = str_replace(',', '.', $unidade);
+    if ($controle_id > 0) {
+        // Atualiza registro existente
+        $stmt = $conexao->prepare("UPDATE controle SET deposito = ?, diaria = ?, unidade = ? WHERE id = ? AND id_usuario = ?");
+        $stmt->bind_param("dddii", $deposito, $diaria, $unidade, $controle_id, $id_usuario);
+        $stmt->execute();
+        $stmt->close();
 
-    // 🔄 INSERÇÃO SEMPRE — registro novo
-    $stmt = mysqli_prepare($conexao,
-        "INSERT INTO controle (id_usuario, deposito, diaria, unidade) VALUES (?, ?, ?, ?)");
-    $stmt->bind_param("iddd", $id_usuario, $depositoFloat, $diariaFloat, $unidadeFloat);
-    $stmt->execute();
-    $stmt->close();
+        $_SESSION['mensagem'] = 'Dados atualizados com sucesso!';
+    } else {
+        // Insere novo registro
+        $stmt = $conexao->prepare("INSERT INTO controle (id_usuario, deposito, diaria, unidade) VALUES (?, ?, ?, ?)");
+        $stmt->bind_param("iddd", $id_usuario, $deposito, $diaria, $unidade);
+        $stmt->execute();
+        $stmt->close();
 
-    $_SESSION['mensagem'] = 'Dados cadastrados com sucesso!';
+        $_SESSION['mensagem'] = 'Dados cadastrados com sucesso!';
+    }
+
     header('Location: painel-controle.php');
     exit();
 }
 
-
-// 🧩 Continuação do processamento do formulário antigo
+// ✅ Processa ações como saque ou limpar
 if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['acao'], $_POST['valor'])) {
     $acao = $_POST['acao'];
-    $valor = preg_replace('/[^0-9,]/', '', $_POST['valor']);
-    $valor = str_replace(',', '.', $valor);
+    $valor = str_replace(',', '.', preg_replace('/[^0-9,]/', '', $_POST['valor']));
     $valorFloat = is_numeric($valor) ? (float)$valor : 0;
 
     if ($acao === 'limpar') {
-        $stmt = mysqli_prepare($conexao, "DELETE FROM controle WHERE id_usuario = ?");
+        $stmt = $conexao->prepare("DELETE FROM controle WHERE id_usuario = ?");
         $stmt->bind_param("i", $id_usuario);
         $stmt->execute();
         $stmt->close();
 
-        $stmt = mysqli_prepare($conexao, "DELETE FROM valor_mentores WHERE id_usuario = ?");
+        $stmt = $conexao->prepare("DELETE FROM valor_mentores WHERE id_usuario = ?");
         $stmt->bind_param("i", $id_usuario);
         $stmt->execute();
         $stmt->close();
@@ -69,27 +70,18 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['acao'], $_POST['valor
     }
 
     if ($acao === 'saque') {
-        $stmt = mysqli_prepare($conexao, "
-            SELECT COALESCE(SUM(valor_green), 0) - COALESCE(SUM(valor_red), 0)
-            FROM valor_mentores WHERE id_usuario = ?");
-        $stmt->bind_param("i", $id_usuario);
-        $stmt->execute();
-        $stmt->bind_result($saldo_mentores);
-        $stmt->fetch();
-        $stmt->close();
-
-        if ($valorFloat > $saldo_mentores || $saldo_mentores <= 0) {
+        if ($valorFloat > $saldo_reais || $saldo_reais <= 0) {
             $_SESSION['mensagem'] = 'Saldo Insuficiente!';
             header('Location: painel-controle.php');
             exit();
         }
 
-        $stmt = mysqli_prepare($conexao, "INSERT INTO valor_mentores (id_usuario, valor_red) VALUES (?, ?)");
+        $stmt = $conexao->prepare("INSERT INTO valor_mentores (id_usuario, valor_red) VALUES (?, ?)");
         $stmt->bind_param("id", $id_usuario, $valorFloat);
         $stmt->execute();
         $stmt->close();
 
-        $stmt = mysqli_prepare($conexao, "INSERT INTO controle (id_usuario, saque, origem) VALUES (?, ?, 'mentor')");
+        $stmt = $conexao->prepare("INSERT INTO controle (id_usuario, saque, origem) VALUES (?, ?, 'mentor')");
         $stmt->bind_param("id", $id_usuario, $valorFloat);
         $stmt->execute();
         $stmt->close();
@@ -100,7 +92,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['acao'], $_POST['valor
     }
 
     if (in_array($acao, ['deposito', 'diaria']) && $valorFloat > 0) {
-        $stmt = mysqli_prepare($conexao, "INSERT INTO controle (id_usuario, $acao) VALUES (?, ?)");
+        $stmt = $conexao->prepare("INSERT INTO controle (id_usuario, $acao) VALUES (?, ?)");
         $stmt->bind_param("id", $id_usuario, $valorFloat);
         $stmt->execute();
         $stmt->close();
@@ -113,96 +105,9 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['acao'], $_POST['valor
         exit();
     }
 }
-
-// 🔎 Consultas de valores
-$stmt = mysqli_prepare($conexao, "SELECT COALESCE(SUM(deposito), 0) FROM controle WHERE id_usuario = ?");
-$stmt->bind_param("i", $id_usuario);
-$stmt->execute();
-$stmt->bind_result($soma_depositos);
-$stmt->fetch();
-$stmt->close();
-
-// ✅ Saques da banca (apenas essa origem será subtraída do saldo)
-$stmt = mysqli_prepare($conexao, "
-    SELECT COALESCE(SUM(saque), 0) 
-    FROM controle 
-    WHERE id_usuario = ? AND (origem IS NULL OR origem = 'banca')
-");
-$stmt->bind_param("i", $id_usuario);
-$stmt->execute();
-$stmt->bind_result($saques_banca);
-$stmt->fetch();
-$stmt->close();
-
-// ✅ Saques totais (incluindo mentores — só para exibição, não usado no cálculo da banca)
-$stmt = mysqli_prepare($conexao, "
-    SELECT COALESCE(SUM(saque), 0)
-    FROM controle
-    WHERE id_usuario = ?
-");
-$stmt->bind_param("i", $id_usuario);
-$stmt->execute();
-$stmt->bind_result($saques_reais);
-$stmt->fetch();
-$stmt->close();
-
-$stmt = mysqli_prepare($conexao, "SELECT COALESCE(SUM(valor_green), 0) FROM valor_mentores WHERE id_usuario = ?");
-$stmt->bind_param("i", $id_usuario);
-$stmt->execute();
-$stmt->bind_result($valor_green);
-$stmt->fetch();
-$stmt->close();
-
-$stmt = mysqli_prepare($conexao, "SELECT COALESCE(SUM(valor_red), 0) FROM valor_mentores WHERE id_usuario = ?");
-$stmt->bind_param("i", $id_usuario);
-$stmt->execute();
-$stmt->bind_result($valor_red);
-$stmt->fetch();
-$stmt->close();
-
-// ✅ Última Diaria registrada
-$stmt = mysqli_prepare($conexao, "
-    SELECT diaria FROM controle
-    WHERE id_usuario = ? AND diaria IS NOT NULL AND diaria != 0
-    ORDER BY id DESC LIMIT 1
-");
-$stmt->bind_param("i", $id_usuario);
-$stmt->execute();
-$stmt->bind_result($ultima_diaria);
-$stmt->fetch();
-$stmt->close();
-$ultima_diaria = $ultima_diaria ?: 0;
-
-// ✅ Última unidade registrada
-$stmt = mysqli_prepare($conexao, "
-    SELECT unidade FROM controle 
-    WHERE id_usuario = ? AND unidade IS NOT NULL 
-    ORDER BY id DESC LIMIT 1
-");
-$stmt->bind_param("i", $id_usuario);
-$stmt->execute();
-$stmt->bind_result($ultima_unidade);
-$stmt->fetch();
-$stmt->close();
-
-// Se quiser usar em algum lugar, pode salvar na sessão:
-$_SESSION['ultima_unidade'] = $ultima_unidade;
-
-// 🧮 Cálculos finais
-$saldo_mentores = $valor_green - $valor_red;
-$saldo_reais = ($soma_depositos - $saques_banca) + $saldo_mentores;
-
-$percentualFormatado = (intval($ultima_diaria) == $ultima_diaria)
-    ? intval($ultima_diaria) . '%'
-    : number_format($ultima_diaria, 2, ',', '.') . '%';
-
-if ($ultima_diaria > 0 && $saldo_reais > 0) {
-    $resultado = ($ultima_diaria / 100) * $saldo_reais;
-    $meia_unidade = $resultado * 0.5;
-    $_SESSION['meta_meia_unidade'] = $meia_unidade;
-    $_SESSION['resultado_entrada'] = $resultado;
-}
 ?>
+
+
 
 
 
@@ -576,7 +481,7 @@ if ($ultima_diaria > 0 && $saldo_reais > 0) {
 /* Campos menores */
 #porcentagem,
 #unidadeMeta {
-max-width: 260px;
+max-width: 110px;
 }
 
   .dropdown-options {
@@ -682,10 +587,299 @@ max-width: 260px;
   }
 }
 
+#historico-saques {
+  display: block !important;
+}
+
 
 /* Teste */
 
+.painel-saques .container-principal {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  padding: 40px 15px;
+}
 
+.painel-saques .box {
+  background: #ffffff;
+  border-radius: 16px;
+  padding: 25px 30px;
+  box-shadow: 0 20px 40px rgba(0, 0, 0, 0.15);
+  font-family: "Segoe UI", sans-serif;
+  width: 320px;
+  color: #333;
+}
+
+.painel-saques .dropdown {
+  position: relative;
+}
+
+.painel-saques .dropdown-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  background: #f2f2f2;
+  border-radius: 8px;
+  padding: 10px 15px;
+  cursor: pointer;
+  font-weight: 600;
+  color: #2c3e50;
+}
+
+.painel-saques .dropdown-options {
+  display: none;
+  list-style: none;
+  margin-top: 5px;
+  background: #fff;
+  border-radius: 8px;
+  box-shadow: 0 8px 20px rgba(0, 0, 0, 0.08);
+  padding: 8px 0;
+  position: absolute;
+  width: 100%;
+  z-index: 1000;
+}
+
+.painel-saques .dropdown-options.show {
+  display: block;
+}
+
+.painel-saques .dropdown-options li {
+  padding: 10px 15px;
+  cursor: pointer;
+  font-size: 14px;
+  transition: background 0.2s ease;
+  color: #34495e;
+}
+
+.painel-saques .dropdown-options li:hover {
+  background-color: #ecf0f1;
+}
+
+.painel-saques .inputbox {
+  position: relative;
+  margin-top: 20px;
+}
+
+.painel-saques .inputUser {
+  width: 100%;
+  padding: 10px;
+  border: none;
+  border-radius: 8px;
+  outline: none;
+  background: #f2f2f2;
+  font-size: 14px;
+  color: #2c3e50;
+}
+
+.painel-saques .labelinput {
+  position: absolute;
+  top: -18px;
+  left: 10px;
+  font-size: 14px;
+  font-weight: 600;
+  color: #34495e;
+}
+
+.painel-saques #submit {
+  margin-top: 20px;
+  width: 100%;
+  padding: 10px 0;
+  background-color: #3498db;
+  color: #fff;
+  border: none;
+  border-radius: 8px;
+  font-weight: 600;
+  font-size: 14px;
+  cursor: pointer;
+  transition: background 0.3s ease;
+}
+
+.painel-saques #submit:hover {
+  background-color: #2980b9;
+}
+
+.painel-saques .lista-saques {
+  margin: 40px auto;
+  max-width: 320px;
+  font-family: "Segoe UI", sans-serif;
+}
+
+.painel-saques .entrada-card {
+  background: #f8f8f8;
+  border-left: 6px solid #14aa46ff;
+  border-radius: 10px;
+  padding: 12px 16px;
+  margin-bottom: 12px;
+  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.06);
+  display: flex;
+  justify-content: space-between;
+}
+
+.painel-saques .entrada-info p {
+  margin: 3px 0;
+  font-size: 14px;
+  color: #2c3e50;
+}
+
+.painel-saques .entrada-acoes {
+  display: flex;
+  align-items: center;
+}
+
+.painel-saques .btn-lixeira {
+  background: none;
+  border: none;
+  color: #b4b4b4;
+  font-size: 16px;
+  cursor: pointer;
+  transition: transform 0.2s ease;
+}
+
+.painel-saques .btn-lixeira:hover {
+  transform: scale(1.2);
+}
+
+/* Modal de exclusão escopado */
+
+.oculta {
+  display: none;
+}
+
+/* Modal full overlay */
+/* Container do modal */
+.modal-confirmacao {
+  position: fixed;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  width: 320px;
+  background-color: #ffffff;
+  border-radius: 12px;
+  box-shadow: 0 8px 20px rgba(0, 0, 0, 0.2);
+  padding: 15px 10px;
+  z-index: 1000;
+  font-family: 'Segoe UI', sans-serif;
+  animation: fadeIn 0.3s ease-in-out;
+}
+
+/* Texto do modal */
+.modal-texto {
+  font-size: 16px;
+  color: #333;
+  margin-bottom: 20px;
+  text-align: center;
+  line-height: 1.4;
+}
+
+/* Botões */
+.botoes-modal {
+  display: flex;
+  justify-content: space-between;
+  gap: 10px;
+}
+
+.botao-confirmar,
+.botao-cancelar {
+  flex: 1;
+  padding: 10px 0;
+  border: none;
+  border-radius: 8px;
+  font-weight: bold;
+  cursor: pointer;
+  transition: background-color 0.2s ease;
+}
+
+.botao-confirmar {
+  background-color: #e53935;
+  color: #fff;
+}
+
+.botao-confirmar:hover {
+  background-color: #d32f2f;
+}
+
+.botao-cancelar {
+  background-color: #eeeeee;
+  color: #333;
+}
+
+.botao-cancelar:hover {
+  background-color: #e0e0e0;
+}
+
+/* Ocultar por padrão */
+.oculta {
+  display: none;
+}
+
+/* Animação de entrada */
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+    transform: translate(-50%, -55%);
+  }
+  to {
+    opacity: 1;
+    transform: translate(-50%, -50%);
+  }
+}
+
+.toast {
+  position: fixed;
+  top: 20px;
+  left: 50%;
+  transform: translateX(-50%);
+  background-color: #319e49ff;
+  color: #fff;
+  padding: 8px 16px;
+  border-radius: 4px;
+  font-size: 0.85rem; /* Tamanho menor */
+  font-weight: 500;    /* Peso mais leve */
+  box-shadow: 0 3px 8px rgba(0, 0, 0, 0.25);
+  opacity: 0;
+  z-index: 9999;
+  transition: opacity 0.4s ease;
+}
+.toast.show {
+  opacity: 1;
+}
+.toast.hidden {
+  display: none;
+}
+
+body.ocultar-scroll {
+  overflow: hidden;
+}
+
+
+  .input-destaque {
+  transform: scaleX(1.3);
+  transform-origin: left;
+}
+
+
+  #inputAcao {
+  max-width: 500px;
+  padding: 10px;
+  font-size: 12px;
+  box-sizing: border-box;
+  border: 2px solid #138d13ff;
+  box-shadow: 0 0 8px rgba(52, 152, 219, 0.3);
+  transition: all 0.3s ease;
+}
+
+
+  #inputAcao {
+    width: 288px;
+    height: 35px;
+    padding: 8px;
+    box-sizing: border-box;
+  }
+
+#inputAcaoContainer {
+  display: none;
+}
 
 
 
@@ -706,51 +900,82 @@ max-width: 260px;
 
 
 
-    <div id="data-container"></div>
-    <!-- A data será carregada aqui -->
+   
 
-    <div id="menu-placeholder"></div>
-    <!-- Aqui o menu será carregado dinamicamente -->
+  <div id="menu-placeholder"></div>
 
-    <script>
-      // 📌 Carrega o menu externo (menu.html) dentro do menu-placeholder
-      fetch("menu.php")
-        .then((response) => response.text()) // Converte a resposta em texto
-        .then((data) => {
-          document.getElementById("menu-placeholder").innerHTML = data; // Insere o menu na página
+ <script>
+  // 📌 Carrega o menu externo (menu.php) dentro do menu-placeholder
+  fetch("menu.php")
+    .then((response) => response.text())
+    .then((data) => {
+      document.getElementById("menu-placeholder").innerHTML = data;
 
-          document
-            .querySelector(".menu-button")
-            .addEventListener("click", function () {
-              // Adiciona um evento ao botão do menu
-              var menu = document.getElementById("menu"); // Obtém o elemento do menu suspenso
-              menu.style.display =
-                menu.style.display === "block" ? "none" : "block"; // Alterna entre mostrar e esconder o menu
-            });
-
-          // 🛠️ Fecha o menu ao clicar fora dele
-          document.addEventListener("click", function (event) {
-            var menu = document.getElementById("menu");
-            var menuButton = document.querySelector(".menu-button");
-
-            if (menu && menuButton) {
-              // Verifica se os elementos existem
-              if (
-                menu.style.display === "block" &&
-                !menu.contains(event.target) &&
-                !menuButton.contains(event.target)
-              ) {
-                menu.style.display = "none"; // Fecha o menu se o clique for fora
-              }
+      // ✅ Aguarda o DOM do menu ser inserido antes de atualizar os valores
+      function atualizarTopoValores() {
+        fetch("api/atualizar_topo.php?t=" + new Date().getTime())
+          .then((response) => response.json())
+          .then((data) => {
+            if (data.error) {
+              console.warn("Erro da API:", data.error);
+              return;
             }
-          });
-        })
-        .catch((error) => console.error("Erro ao carregar o menu:", error)); // Exibe erro caso ocorra problema ao carregar
-    </script>
 
-    <script src="scripts.js">
-      // Carregando o script de data global
-    </script>
+            const bancaEl = document.querySelector(".valor-bold-menu");
+            const saqueEl = document.querySelector(".valor-valor-saque");
+            const lucroEl = document.querySelector(".valor-total-mentores");
+
+            if (bancaEl) bancaEl.textContent = "R$ " + data.saldo_banca;
+            if (saqueEl) saqueEl.textContent = "R$ " + data.saques_reais;
+            if (lucroEl) {
+              lucroEl.textContent = "R$ " + data.saldo_mentores;
+              lucroEl.className = "valor-total-mentores " + data.classe_saldo;
+            }
+          })
+          .catch((error) => console.error("Erro ao atualizar topo:", error));
+      }
+
+      // ⏱️ Aguarda o DOM do menu ser renderizado antes de atualizar
+      const intervalo = setInterval(() => {
+        const bancaEl = document.querySelector(".valor-bold-menu");
+        const saqueEl = document.querySelector(".valor-valor-saque");
+        const lucroEl = document.querySelector(".valor-total-mentores");
+
+        if (bancaEl && saqueEl && lucroEl) {
+          clearInterval(intervalo); // Para o intervalo quando os elementos forem encontrados
+          atualizarTopoValores(); // Atualiza ao carregar
+          setInterval(atualizarTopoValores, 10000); // Atualiza a cada 10s
+        }
+      }, 100);
+
+      // 🎯 Eventos do menu suspenso
+      document.addEventListener("click", function (event) {
+        const menu = document.getElementById("menu");
+        const menuButton = document.querySelector(".menu-button");
+
+        if (menu && menuButton) {
+          if (
+            menu.style.display === "block" &&
+            !menu.contains(event.target) &&
+            !menuButton.contains(event.target)
+          ) {
+            menu.style.display = "none";
+          }
+        }
+      });
+
+      const menuButton = document.querySelector(".menu-button");
+      if (menuButton) {
+        menuButton.addEventListener("click", function () {
+          const menu = document.getElementById("menu");
+          if (menu) {
+            menu.style.display = menu.style.display === "block" ? "none" : "block";
+          }
+        });
+      }
+    })
+    .catch((error) => console.error("Erro ao carregar o menu:", error));
+</script>
 
 
 
@@ -766,88 +991,213 @@ max-width: 260px;
 
 
 
-
-
-<!-- HTML -->
 <div class="container-principal">
-  <div class="box">
-    <form action="painel-controle.php" method="POST">
-      <fieldset>
-        <div class="dropdown">
-          <div class="dropdown-header" onclick="toggleDropdown()">
-            <span id="dropdown-selected"><i class="fa-solid fa-bars"></i> Selecione</span>
-            <span class="arrow">&#9662;</span>
+    <div class="box">
+      <form action="painel-controle.php" method="POST">
+        <fieldset>
+          <div class="dropdown">
+            <div class="dropdown-header" onclick="toggleDropdown()">
+              <span id="dropdown-selected"><i class="fa-solid fa-bars"></i> Selecione</span>
+              <span class="arrow">&#9662;</span>
+            </div>
+            <ul class="dropdown-options" id="dropdown-options">
+              <li onclick="selectOption('Depositar na Banca', 'deposito')" data-text="Depositar na Banca" data-value="deposito">
+                <i class="fa-solid fa-money-bill-wave"></i> Gerenciar Banca
+              </li>
+              <li onclick="selectOption('Sacar Valor do Saldo', 'saque')" data-text="Sacar Valor do Saldo" data-value="saque">
+                <i class="fa-solid fa-arrow-down"></i> Sacar Saldo 
+              </li>
+              <li onclick="selectOption('Limpar Banca', 'limpar')" data-text="Limpar Banca" data-value="limpar">
+                <i class="fa-solid fa-trash"></i> Limpar Banca
+              </li>
+            </ul>
+            <input type="hidden" name="acao" id="acao">
           </div>
-          <ul class="dropdown-options" id="dropdown-options">
-            <li onclick="selectOption('Depositar na Banca', 'deposito')" data-text="Depositar na Banca" data-value="deposito">
-              <i class="fa-solid fa-money-bill-wave"></i> Gerenciar Banca
-            </li>
-            <li onclick="selectOption('Sacar da Banca', 'saque')" data-text="Sacar da Banca" data-value="saque">
-              <i class="fa-solid fa-arrow-down"></i> Gerenciar Saque 
-            </li>
-            <li onclick="selectOption('Limpar Banca', 'limpar')" data-text="Limpar Banca" data-value="limpar">
-              <i class="fa-solid fa-trash"></i> Limpar Banca
-            </li>
-          </ul>
-          <input type="hidden" name="acao" id="acao">
-        </div>
 
-        <div class="inputbox" id="valorInputBox">
-          <input type="text" name="valor" id="valor" class="inputUser" required>
-          <label for="valor" class="labelinput"><i class="fa-solid fa-coins"></i> Valor</label>
-        </div>
+          <div class="inputbox" id="valorInputBox">
+            <input type="text" name="valor" id="valor" class="inputUser" required>
+            <label for="valor" class="labelinput"><i class="fa-solid fa-coins"></i> Valor</label>
+          </div>
 
-        <br>
-        <input type="submit" name="submit" id="submit" value="Enviar">
-      </fieldset>
-    </form>
+          <br>
+          <input type="submit" name="submit" id="submit" value="Enviar">
+        </fieldset>
+      </form>
+    </div>
+  </div>
+
+<!-- ENCAPSULOU COM : <div class="painel-saques"> PARA NÃO DA CONFLITO COM O CSS DO FORMULARIO -->
+<div class="painel-saques">
+  
+  <!-- Histórico de saques aparece abaixo -->
+  <div id="historico-saques" class="lista-saques"></div>
+
+  <!-- Modal de exclusão -->
+  <div id="modal-confirmacao" class="modal-confirmacao oculta">
+  <p class="modal-texto">Tem certeza que deseja excluir Este Saque?</p>
+  <div class="botoes-modal">
+    <button id="btnConfirmarBanca" class="botao-confirmar">Sim, excluir</button>
+    <button id="btnCancelarBanca" class="botao-cancelar">Cancelar</button>
   </div>
 </div>
+
+
+</div>
+
+
+<div id="toast-msg" class="toast hidden">Saque excluído com sucesso!</div>
+<div id="toast-msg" class="toast hidden">Mensagem</div>
+
 
 
 
 
 <br>
 
-<!-- Formulário de Depósito Personalizado -->
-<!-- Modal de Depósito Personalizado -->
+
 <div id="modalDeposito" class="modal-overlay" style="display: none;">
   <div class="modal-content">
     <form method="POST" action="">
+      <input type="hidden" name="controle_id" value="<?= isset($controle_id) ? $controle_id : '' ?>">
+
       <button type="button" class="btn-fechar" onclick="fecharModal()">×</button>
 
       <div class="custom-inputbox">
-        <label for="valorBanca"><i class="fa-solid fa-coins"></i>  Valor da Banca</label>
+        <div style="display: flex; justify-content: space-between; align-items: center;">
+          <label for="valorBanca">
+            <i class="fa-solid fa-coins"></i> Banca
+          </label>
+
+          <div id="radioWrapper" style="display: none; gap: 10px;">
+            <label style="display: flex; align-items: center; gap: 5px;">
+              <input type="radio" name="acaoBanca" value="add" class="radio-banca"> ADD
+            </label>
+            <label style="display: flex; align-items: center; gap: 5px;">
+              <input type="radio" name="acaoBanca" value="sacar" class="radio-banca"> Sacar Deposito
+            </label>
+          </div>
+        </div>
+
         <input type="text" name="deposito" id="valorBanca" required
-            value="<?= isset($valor_deposito) ? number_format($valor_deposito, 2, ',', '.') : '' ?>">
+          value="<?= isset($valor_deposito) ? number_format($valor_deposito, 2, ',', '.') : '' ?>">
+
+        <div id="inputAcaoContainer" style="margin-top: 10px;">
+          <input type="text" id="inputAcao" name="valorAcao" placeholder="quanto quer adicionar">
+        </div>
       </div>
 
       <div class="custom-inputbox">
-        <label for="porcentagem"><i class="fa-solid fa-chart-pie"></i> % Unidade de Entrada</label>
+        <label for="porcentagem"><i class="fa-solid fa-chart-pie"></i> Porcentagem</label>
         <div style="display: flex; gap: 10px; align-items: center;">
           <input type="text" name="diaria" id="porcentagem" required
-              value="<?= isset($valor_diaria) ? number_format($valor_diaria, 2, ',', '.') : '' ?>"
-              style="flex: 1;">
+            value="<?= isset($valor_diaria) ? number_format($valor_diaria, 2, ',', '.') : '' ?>"
+            style="flex: 1;">
           <span id="resultadoCalculo" style="font-weight: bold; color: #2c3e50;"></span>
         </div>
       </div>
 
       <div class="custom-inputbox">
-        <label for="unidadeMeta"><i class="fa-solid fa-bullseye"></i> Unidade Para Meta Diária</label>
+        <label for="unidadeMeta"><i class="fa-solid fa-bullseye"></i> Qtd de Unidade </label>
         <div style="display: flex; gap: 10px; align-items: center;">
           <input type="text" name="unidade" id="unidadeMeta" required
-              value="<?= isset($valor_unidade) ? number_format($valor_unidade, 2, ',', '.') : '' ?>"
-              style="flex: 1;">
+            value="<?= isset($valor_unidade) ? number_format($valor_unidade, 2, ',', '.') : '' ?>"
+            style="flex: 1;">
           <span id="resultadoUnidade" style="font-weight: bold; color: #2c3e50;"></span>
         </div>
       </div>
 
       <input type="submit" name="submitPersonalizado"
-          value="<?= isset($valor_deposito) ? 'Salvar Edição' : 'Cadastrar Dados' ?>"
-          class="custom-button">
+        value="<?= isset($valor_deposito) ? 'Salvar Edição' : 'Cadastrar Dados' ?>"
+        class="custom-button">
     </form>
   </div>
 </div>
+
+
+
+
+
+
+<script>
+  const valorBanca = document.getElementById('valorBanca');
+  const radioWrapper = document.getElementById('radioWrapper');
+  const inputAcaoContainer = document.getElementById('inputAcaoContainer');
+  const inputAcao = document.getElementById('inputAcao');
+  const radioInputs = document.querySelectorAll('input[name="acaoBanca"]');
+
+  // Oculta o campo ao carregar
+  inputAcaoContainer.style.display = 'none';
+
+  function verificarValorBanca() {
+    const valorLimpo = valorBanca.value.replace(/\./g, '').replace(',', '.');
+    const valor = parseFloat(valorLimpo);
+
+    if (!isNaN(valor) && valor > 0) {
+      radioWrapper.style.display = 'flex';
+    } else {
+      radioWrapper.style.display = 'none';
+      radioInputs.forEach(radio => {
+        radio.checked = false;
+        radio.dataset.checked = "false";
+      });
+      inputAcaoContainer.style.display = 'none';
+      valorBanca.readOnly = false;
+      valorBanca.style.backgroundColor = '';
+      inputAcao.classList.remove('input-destaque');
+    }
+  }
+
+  verificarValorBanca();
+  valorBanca.addEventListener('input', verificarValorBanca);
+
+  radioInputs.forEach(radio => {
+    radio.addEventListener('click', () => {
+      if (radio.checked) {
+        if (radio.dataset.checked === "true") {
+          radio.checked = false;
+          radio.dataset.checked = "false";
+
+          valorBanca.readOnly = false;
+          valorBanca.style.backgroundColor = '';
+          inputAcaoContainer.style.display = 'none';
+          inputAcao.classList.remove('input-destaque');
+        } else {
+          radioInputs.forEach(r => r.dataset.checked = "false");
+          radio.dataset.checked = "true";
+
+          valorBanca.readOnly = true;
+          valorBanca.style.backgroundColor = '#eee';
+          inputAcaoContainer.style.display = 'block';
+          inputAcao.classList.add('input-destaque');
+
+          inputAcao.value = ''; // limpa o campo
+
+          if (radio.value === 'add') {
+            inputAcao.placeholder = 'R$ 0,00  Adicionar Valor na Banca';
+          } else if (radio.value === 'sacar') {
+            inputAcao.placeholder = 'R$ 0,00 Sacar Vlaor Depositado';
+          }
+        }
+      }
+    });
+  });
+</script>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 
 
@@ -941,15 +1291,6 @@ max-width: 260px;
 
 
 
-
-
-
-
-
-
-
-</body>
-</html>
 
 
 <!-- AQUI CODIGO QUE CUIDA DA OPÇÃO DE GERENCIAR BANCA -->
@@ -1047,10 +1388,11 @@ document.addEventListener("DOMContentLoaded", function () {
     }
 
     const resultado = bancaFloat * (percentFloat / 100);
-    resultadoCalculo.textContent = `= ${resultado.toLocaleString("pt-BR", {
-      style: "currency",
-      currency: "BRL"
+    resultadoCalculo.textContent = `Sua Unidade de Entrada nas Apostas é de: ${resultado.toLocaleString("pt-BR", {
+    style: "currency",
+    currency: "BRL"
     })}`;
+
 
     calcularUnidade(resultado);
   }
@@ -1062,9 +1404,9 @@ document.addEventListener("DOMContentLoaded", function () {
 
     if (!isNaN(unidadeFloat) && !isNaN(valorMeta)) {
       const total = unidadeFloat * valorMeta;
-      resultadoUnidade.textContent = `= ${total.toLocaleString("pt-BR", {
-        style: "currency",
-        currency: "BRL"
+      resultadoUnidade.textContent = `O Valor da Sua Meta Diária é de: ${total.toLocaleString("pt-BR", {
+      style: "currency",
+       currency: "BRL"
       })}`;
     } else {
       resultadoUnidade.textContent = '';
@@ -1161,3 +1503,154 @@ document.addEventListener("DOMContentLoaded", function () {
   formatarValoresIniciais();
 });
 </script>
+
+
+
+
+
+
+
+
+
+
+
+
+<script>
+document.addEventListener("DOMContentLoaded", () => {
+  let idSaqueSelecionado = null;
+
+  // Alterna o dropdown
+  function toggleDropdown() {
+    document.getElementById("dropdown-options").classList.toggle("show");
+  }
+
+  // Seleciona uma opção do dropdown
+  function selectOption(texto, valor) {
+    document.getElementById("dropdown-selected").innerHTML =
+      `<i class="fa-solid fa-bars"></i> ${texto}`;
+    document.getElementById("acao").value = valor;
+    toggleDropdown();
+
+    const blocoUnidade = document.querySelector(".bloco-unidade");
+
+    if (valor === "saque") {
+      blocoUnidade.style.display = "none"; // Oculta container
+      document.body.classList.add("ocultar-scroll"); // Remove scroll lateral
+      carregarSaques();
+    } else {
+      blocoUnidade.style.display = ""; // Exibe novamente
+      document.body.classList.remove("ocultar-scroll"); // Restaura scroll
+      document.getElementById("historico-saques").innerHTML = "";
+    }
+  }
+
+  // Carrega lista de saques
+  function carregarSaques() {
+    fetch("listar-saques.php")
+      .then(res => res.json())
+      .then(saques => {
+        const container = document.getElementById("historico-saques");
+        const blocoUnidade = document.querySelector(".bloco-unidade");
+        container.innerHTML = "";
+
+        if (!Array.isArray(saques) || saques.length === 0) {
+          blocoUnidade.style.display = ""; // Garante que o container volte
+          container.innerHTML = ""; // Não exibe mensagem
+          return;
+        }
+
+        saques.forEach(s => {
+          container.innerHTML += `
+            <div class="entrada-card" style="border-left: 6px solid #16b445;">
+              <div class="entrada-info">
+                <p><strong>Saque:</strong> R$ ${s.saque}</p>
+                <p class="info-pequena"><strong>Data:</strong> ${s.data}</p>
+              </div>
+              <div class="entrada-acoes">
+                <button class="btn-icon btn-lixeira" title="Excluir" data-id="${s.id}">
+                  <i class="fas fa-trash"></i>
+                </button>
+              </div>
+            </div>
+          `;
+        });
+      })
+      .catch(err => {
+        console.error("Erro ao carregar saques:", err);
+        document.getElementById("historico-saques").innerHTML =
+          "<p style='color:red;'>Erro ao carregar dados.</p>";
+      });
+  }
+
+  // Toast visual
+  function mostrarToast(mensagem) {
+    const toast = document.getElementById("toast-msg");
+    toast.textContent = mensagem;
+    toast.classList.remove("hidden");
+    toast.classList.add("show");
+
+    setTimeout(() => {
+      toast.classList.remove("show");
+      setTimeout(() => toast.classList.add("hidden"), 500);
+    }, 3000);
+  }
+
+  // Clique na lixeira
+  document.getElementById("historico-saques").addEventListener("click", (e) => {
+    const botao = e.target.closest(".btn-lixeira");
+    if (botao && botao.dataset.id) {
+      idSaqueSelecionado = botao.dataset.id;
+      document.getElementById("modal-confirmacao").classList.remove("oculta");
+    }
+  });
+
+  // Cancelar exclusão
+  document.getElementById("btnCancelarBanca").addEventListener("click", () => {
+    document.getElementById("modal-confirmacao").classList.add("oculta");
+    idSaqueSelecionado = null;
+  });
+
+  // Confirmar exclusão
+  document.getElementById("btnConfirmarBanca").addEventListener("click", () => {
+    if (!idSaqueSelecionado) return;
+
+    fetch("excluir-saque.php", {
+      method: "POST",
+      headers: { "Content-Type": "application/x-www-form-urlencoded" },
+      body: `id=${encodeURIComponent(idSaqueSelecionado)}`
+    })
+      .then(res => res.text())
+      .then(msg => {
+        mostrarToast("✅ " + msg.trim());
+        document.getElementById("modal-confirmacao").classList.add("oculta");
+        idSaqueSelecionado = null;
+        carregarSaques();
+      })
+      .catch(err => {
+        console.error("Erro ao excluir saque:", err);
+        mostrarToast("❌ Falha ao excluir.");
+      });
+  });
+
+  // Expondo funções globais
+  window.toggleDropdown = toggleDropdown;
+  window.selectOption = selectOption;
+});
+</script>
+
+
+
+
+
+
+
+
+
+
+
+
+
+</body>
+</html>
+
+

@@ -556,7 +556,7 @@ if (isset($_SESSION['usuario_id'])) {
     </div>
     <div class="valor-label-linha">
       <i class="fa-solid fa-chart-line valor-icone-tema"></i>
-      <span class="valor-label">Saldo:</span>
+      <span class="valor-label">Lucro:</span>
       <span class="valor-total-mentores <?= $classe_saldo ?>">R$ <?= number_format($saldo_mentores, 2, ',', '.') ?></span>
     </div>
   </div>
@@ -566,21 +566,16 @@ if (isset($_SESSION['usuario_id'])) {
 
 
 
-
-
-
-
-
-    <script>
-function toggleMenu() {
+<script>
+ function toggleMenu() {
   var menu = document.getElementById("menu");
   menu.style.display = menu.style.display === "block" ? "none" : "block";
-}
+ }
 </script>
 
 
 
 
-  </body>
+</body>
   
 </html>
