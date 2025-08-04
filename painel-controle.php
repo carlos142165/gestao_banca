@@ -882,6 +882,383 @@ body.ocultar-scroll {
 }
 
 
+/*TESTE*/
+#menu-placeholder {
+        background-color: #113647;
+        color: #eff1f1;
+        padding: 15px 20px;
+        font-family: Arial, sans-serif;
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+        font-size: 14px;
+        height: 60px;
+        
+        
+        
+      }
+
+      .menu-button {
+        background: none;
+        color: #eff1f1;
+        border: none;
+        font-size: 25px;
+        cursor: pointer;
+        padding: 5px;
+        line-height: 1;
+        
+      }
+
+      #menu {
+        display: none;
+        position: absolute;
+        top: 60px;
+        left: 20px;
+        background-color: #eff1f1;
+        box-shadow: 0 8px 16px rgba(0, 0, 0, 0.2);
+        z-index: 1000;
+        padding-left: -3px;
+        width: 180px;
+      }
+
+
+
+  .menu-content {
+    text-align: left;
+  }
+
+  .menu-content a {
+    display: flex;
+    align-items: center;
+    padding: 10px 15px;
+    text-decoration: none;
+    color: #333;
+  }
+
+  .menu-icon {
+    margin-right: 7px;
+    flex-shrink: 0;
+    min-width: 20px;
+    text-align: center; /* garante que fiquem colados na esquerda */
+  }
+
+  
+
+
+
+
+      #menu a {
+        color: #004080;
+        padding: 12px 0px 12px 10px; /* Reduzi o padding esquerdo */
+        display: flex;
+        align-items: center;
+        text-decoration: none;
+      }
+
+      #menu a:hover {
+        background-color: #daf3f5;
+      }
+      /*  AQUI ESTAO OS CODIGOS DOS MENU */
+
+      /*  AQUI ESTAO OS CODIGOS DOS BOTOES REGISTRE-SE E ENTRAR*/
+      #top-bar {
+        display: flex;
+        justify-content: flex-start;
+        align-items: center;
+        background-color: #113647;
+        padding: 15px 5px;
+        color: white;
+        font-family: Arial, sans-serif;
+        height: 60px;
+      }
+
+      .app-title {
+        font-size: 20px;
+        font-weight: bold;
+      }
+
+      .top-buttons {
+        display: flex;
+        gap: 15px;
+        margin-right: auto;
+        font-size: 18px;
+      }
+
+      .top-link {
+        color:rgb(233, 198, 45);
+        text-decoration: none;
+        font-weight: 500;
+        border: 1px solid white;
+        padding: 6px 12px;
+        border-radius: 4px;
+        transition: background 0.3s;
+      }
+
+      .top-link-entrar {
+        color:rgb(235, 235, 235);
+        text-decoration: none;
+        font-weight: 500;
+        border: 1px solid white;
+        padding: 6px 12px;
+        border-radius: 4px;
+        transition: background 0.3s;
+      }
+
+      .top-link:hover {
+        background-color: white;
+        color: #113647;
+      }
+
+      .top-link-entrar:hover {
+        background-color: white;
+        color: #113647;
+      }
+
+      @media (max-width: 600px) {
+        .top-link {
+          font-size: 14px;
+          padding: 5px 8px;
+        }
+
+        .top-link-entrar {
+          font-size: 14px;
+          padding: 5px 8px;
+        }
+
+        .top-buttons {
+          gap: 10px;
+        }
+
+        .app-title {
+          font-size: 16px;
+        }
+      }
+
+      .logo-img {
+      width: 30vw;
+      max-width: 100px;
+      min-width: 80px;
+      height: auto;
+      object-fit: contain;
+      transition: width 0.3s ease;
+      margin-left: -20px;
+      }
+
+      /* Ajuste especial para telas menores que 600px */
+      @media (max-width: 600px) {
+     .logo-img {
+      width: 50vw;
+      max-width: 70px;
+      min-width: 70px;
+      flex-direction: row;
+      margin-left: -20px;
+      
+      
+     }
+
+     .top-buttons {
+     flex-direction: row;
+     align-items: center;
+     gap: 8px;
+     }
+    }
+
+     .usuario-saldo {
+      margin-left: 15px;
+      font-weight: bold;
+      display: flex;
+      align-items: center;
+      color: white; /* ou a cor que combine com seu topo */
+      font-family: Arial, sans-serif;
+     }
+
+     .usuario-saldo img {
+     width: 20px;
+     height: 20px;
+     margin-right: 6px;
+     }
+
+
+
+
+
+/* codigo responsavel pelo saldo da banca e icone */
+.valor-item-menu {
+  display: flex;
+  align-items: center; /* Centraliza verticalmente */
+  justify-content: flex-start;
+  padding: 6px 8px;
+  gap: 5px;
+  border-radius: 8px;
+  transition: transform 0.2s ease, box-shadow 0.2s ease;
+  
+  
+}
+
+.valor-item-menu:hover {
+  transform: translateY(-2px);
+  
+}
+
+.valor-icone-menu {
+  font-size: 18px;
+  color: rgb(184, 153, 238);
+  min-width: 22px;
+  display: flex;
+  align-items: center; /* Garante centralização do ícone dentro do espaço */
+  justify-content: center;
+  max-width: 100%;
+  white-space: nowrap;
+  
+}
+
+.valor-texto {
+  display: flex;
+  flex-direction: column;
+}
+
+.valor-bold-menu {
+  font-weight: bold;
+  font-size: 13px; /* Tamanho menor */
+  color: rgb(235, 235, 235);
+  margin-bottom: 1px;
+}
+
+.valor-desc-menu {
+  font-size: 11px; /* Tamanho menor */
+  color: rgb(219, 218, 218);
+  margin: 0;
+}
+
+
+.saldo-topo-ajustado {
+  position: absolute;
+  z-index: 1001;
+}
+
+/* Para telas grandes (computadores) */
+@media (min-width: 768px) {
+  .saldo-topo-ajustado {
+    top: 5px;
+    right: 15px;
+  }
+}
+
+/* Para telas pequenas (celulares) */
+@media (max-width: 767px) {
+  .saldo-topo-ajustado {
+    top: 5px;
+    right: 5px;
+    left: auto; /* remove o posicionamento fixo que pode causar problemas */
+  }
+}
+/* aqui finaliza o codigo responsavel pelo saldo da banca e icone */
+
+.valor-item-menu {
+    background-color: #113647;
+    border-radius: 8px;
+    padding: 10px;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.04);
+    font-family: 'Segoe UI', 'Roboto', sans-serif;
+    margin-top: -8px;
+}
+
+.valor-info-wrapper {
+    display: flex;
+    flex-direction: column;
+    gap: 5px;
+}
+
+.valor-label-linha {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    padding: 1px 0;
+    border-bottom: 1px solid #1f4d5f;
+}
+
+.valor-label {
+    font-weight: 500;
+    font-size: 11px;
+    color: #cfd8dc;
+    text-transform: uppercase;
+    letter-spacing: 0.3px;
+}
+
+.valor-bold-menu {
+    font-size: 13px;
+    font-weight: bold;
+    color: #a9b5bbff; /* azul petróleo como sugestão */
+}
+
+
+.valor-valor-saque {
+    font-size: 13px;
+    font-weight: bold;
+    color: #90a4ae;
+}
+
+.valor-total-mentores {
+    font-size: 13px;
+    font-weight: bold;
+    color: #80b3ff;
+}
+
+.valor-icone-tema {
+    font-size: 12px;
+    color: #90a4ae;
+    transition: transform 0.3s ease, color 0.3s ease;
+}
+
+.valor-label-linha:hover .valor-icone-tema {
+    transform: scale(1.1);
+    color: #ffffff;
+}
+
+@media (max-width: 480px) {
+  .valor-item-menu {
+    padding: 8px;
+    border-radius: 6px;
+    margin-top: 0px;
+  }
+
+  .valor-label-linha {
+    gap: 4px;
+    padding: 0;
+  }
+
+  .valor-label {
+    font-size: 10px;
+    letter-spacing: 0.2px;
+  }
+
+  .valor-bold-menu,
+  .valor-valor-saque,
+  .valor-total-mentores {
+    font-size: 12px;
+    line-height: 1.1;
+  }
+
+  .valor-icone-tema {
+    font-size: 11px;
+  }
+}
+
+.saldo-positivo {
+    color: #9fe870; /* verde cana */
+}
+
+.saldo-negativo {
+    color: #e57373; /* vermelho suave */
+}
+
+.saldo-neutro {
+    color: #cfd8dc; /* cinza claro */
+}
+/*TESTE*/
+
+
 
 </style>
 
@@ -900,86 +1277,6 @@ body.ocultar-scroll {
 
 
 
-   
-
-  <div id="menu-placeholder"></div>
-
- <script>
-  // 📌 Carrega o menu externo (menu.php) dentro do menu-placeholder
-  fetch("menu.php")
-    .then((response) => response.text())
-    .then((data) => {
-      document.getElementById("menu-placeholder").innerHTML = data;
-
-      // ✅ Aguarda o DOM do menu ser inserido antes de atualizar os valores
-      function atualizarTopoValores() {
-        fetch("api/atualizar_topo.php?t=" + new Date().getTime())
-          .then((response) => response.json())
-          .then((data) => {
-            if (data.error) {
-              console.warn("Erro da API:", data.error);
-              return;
-            }
-
-            const bancaEl = document.querySelector(".valor-bold-menu");
-            const saqueEl = document.querySelector(".valor-valor-saque");
-            const lucroEl = document.querySelector(".valor-total-mentores");
-
-            if (bancaEl) bancaEl.textContent = "R$ " + data.saldo_banca;
-            if (saqueEl) saqueEl.textContent = "R$ " + data.saques_reais;
-            if (lucroEl) {
-              lucroEl.textContent = "R$ " + data.saldo_mentores;
-              lucroEl.className = "valor-total-mentores " + data.classe_saldo;
-            }
-          })
-          .catch((error) => console.error("Erro ao atualizar topo:", error));
-      }
-
-      // ⏱️ Aguarda o DOM do menu ser renderizado antes de atualizar
-      const intervalo = setInterval(() => {
-        const bancaEl = document.querySelector(".valor-bold-menu");
-        const saqueEl = document.querySelector(".valor-valor-saque");
-        const lucroEl = document.querySelector(".valor-total-mentores");
-
-        if (bancaEl && saqueEl && lucroEl) {
-          clearInterval(intervalo); // Para o intervalo quando os elementos forem encontrados
-          atualizarTopoValores(); // Atualiza ao carregar
-          setInterval(atualizarTopoValores, 10000); // Atualiza a cada 10s
-        }
-      }, 100);
-
-      // 🎯 Eventos do menu suspenso
-      document.addEventListener("click", function (event) {
-        const menu = document.getElementById("menu");
-        const menuButton = document.querySelector(".menu-button");
-
-        if (menu && menuButton) {
-          if (
-            menu.style.display === "block" &&
-            !menu.contains(event.target) &&
-            !menuButton.contains(event.target)
-          ) {
-            menu.style.display = "none";
-          }
-        }
-      });
-
-      const menuButton = document.querySelector(".menu-button");
-      if (menuButton) {
-        menuButton.addEventListener("click", function () {
-          const menu = document.getElementById("menu");
-          if (menu) {
-            menu.style.display = menu.style.display === "block" ? "none" : "block";
-          }
-        });
-      }
-    })
-    .catch((error) => console.error("Erro ao carregar o menu:", error));
-</script>
-
-
-
-
 <?php if (isset($_SESSION['mensagem'])): ?>
   <div class="mensagem-status" id="mensagemStatus">
     <i class="fa-solid fa-triangle-exclamation"></i>
@@ -988,6 +1285,86 @@ body.ocultar-scroll {
   </div>
   <?php unset($_SESSION['mensagem']); ?>
 <?php endif; ?>
+
+
+
+
+
+<div id="top-bar"> 
+  <div class="menu-container">
+    <button class="menu-button" onclick="toggleMenu()">☰</button>
+
+    <div id="menu" class="menu-content">
+      <a href="home.php">
+        <i class="fas fa-home menu-icon"></i><span>Home</span>
+      </a>
+      <a href="gestao-diaria.php">
+        <i class="fas fa-university menu-icon"></i><span>Gestão de Banca</span>
+      </a>
+      <a href="gestao-mensal.php">
+        <i class="fas fa-calendar-alt menu-icon"></i><span>Gestão Mensal</span>
+      </a>
+      <a href="gestao-anual.php">
+        <i class="fas fa-calendar menu-icon"></i><span>Gestão Anual</span>
+      </a>
+      <a href="estatisticas.php">
+        <i class="fas fa-chart-bar menu-icon"></i><span>Estatísticas</span>
+      </a>
+      <a href="painel-controle.php">
+        <i class="fas fa-cogs menu-icon"></i><span>Painel de Controle</span>
+      </a>
+
+      <?php if (isset($_SESSION['usuario_id'])): ?>
+        <a href="logout.php">
+          <i class="fas fa-sign-out-alt menu-icon"></i><span>Sair</span>
+        </a>
+      <?php endif; ?>
+    </div>
+
+
+
+    
+<div id="lista-mentores">
+  <div class="valor-item-menu saldo-topo-ajustado">
+    <div class="valor-info-wrapper">
+      
+      <!-- Banca -->
+      <div class="valor-label-linha">
+        <i class="fa-solid fa-building-columns valor-icone-tema"></i>
+        <span class="valor-label">Banca:</span>
+        <span class="valor-bold-menu">R$ <?php echo number_format(calcularSaldoBanca(), 2, ',', '.'); ?></span>
+
+      </div>
+
+      <!-- Saque -->
+      <div class="valor-label-linha">
+        <i class="fa-solid fa-arrow-up-from-bracket valor-icone-tema"></i>
+        <span class="valor-label">Saque:</span>
+        <span class="valor-valor-saque">R$ <?php echo number_format($_SESSION['saques_totais'] ?? 0, 2, ',', '.'); ?></span>
+      </div>
+
+      <!-- Saldo Mentores -->
+      <div class="valor-label-linha">
+        <i class="fa-solid fa-chart-line valor-icone-tema"></i>
+        <span class="valor-label">Saldo:</span>
+        <span class="valor-total-mentores saldo-neutro">R$ <?php echo number_format($_SESSION['saldo_mentores'] ?? 0, 2, ',', '.'); ?></span>
+      </div>
+
+    </div>
+  </div>
+</div>
+
+
+
+  </div>
+</div>
+
+
+
+
+
+
+
 
 
 
@@ -1641,7 +2018,12 @@ document.addEventListener("DOMContentLoaded", () => {
 
 
 
-
+<script>
+ function toggleMenu() {
+  var menu = document.getElementById("menu");
+  menu.style.display = menu.style.display === "block" ? "none" : "block";
+ }
+</script>
 
 
 

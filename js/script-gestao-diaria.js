@@ -185,55 +185,6 @@ function exibirFormularioMentor(card) {
   }, 600);
 }
 
-function atualizarMenu() {
-  fetch("menu.php")
-    .then((response) => response.text())
-    .then((html) => {
-      console.log("📦 HTML do menu.php recebido:", html);
-
-      const menuPlaceholder = document.getElementById("menu-placeholder");
-      if (!menuPlaceholder) {
-        console.warn("⚠️ Elemento #menu-placeholder não encontrado.");
-        return;
-      }
-
-      menuPlaceholder.innerHTML = html;
-
-      const botaoMenu = document.querySelector(".menu-button");
-      const menu = document.getElementById("menu");
-
-      // Remove qualquer listener anterior (se existia)
-      if (botaoMenu) {
-        botaoMenu.onclick = () => {
-          if (menu) {
-            menu.style.display =
-              menu.style.display === "block" ? "none" : "block";
-          }
-        };
-      }
-
-      // Evita adicionar múltiplos listeners ao document
-      document.removeEventListener("click", fecharAoClicarFora); // ← remove anterior
-      document.addEventListener("click", fecharAoClicarFora);
-
-      function fecharAoClicarFora(event) {
-        const btn = document.querySelector(".menu-button");
-        if (
-          menu &&
-          btn &&
-          menu.style.display === "block" &&
-          !menu.contains(event.target) &&
-          !btn.contains(event.target)
-        ) {
-          menu.style.display = "none";
-        }
-      }
-    })
-    .catch((error) => {
-      console.error("❌ Erro ao atualizar o menu:", error);
-    });
-}
-
 // ✅ FORMULÁRIO DE VALOR DO MENTOR
 document.addEventListener("DOMContentLoaded", function () {
   const formulario = document.querySelector(".formulario-mentor");
@@ -243,40 +194,6 @@ document.addEventListener("DOMContentLoaded", function () {
   const formMentor = document.getElementById("form-mentor");
   const botaoFechar = document.querySelector(".botao-fechar");
   const campoValor = document.getElementById("valor");
-
-  // AJUSTA A DATA E O HORARIO
-  document.addEventListener("DOMContentLoaded", () => {
-    const form = document.getElementById("form-mentor");
-    if (!form) {
-      console.warn("❌ Formulário #form-mentor não encontrado.");
-      return;
-    }
-
-    const timeZone = Intl.DateTimeFormat().resolvedOptions().timeZone;
-
-    // Cria uma data atual no fuso do navegador e a formata para o padrão brasileiro
-    const now = new Date();
-    const dataLocal = new Intl.DateTimeFormat("pt-BR", {
-      dateStyle: "short",
-      timeStyle: "medium",
-      timeZone,
-      hour12: false,
-    }).format(now);
-
-    // Função para criar um input oculto
-    const criarInput = (name, value) => {
-      if (!form.querySelector(`[name="${name}"]`)) {
-        const input = document.createElement("input");
-        input.type = "hidden";
-        input.name = name;
-        input.value = value;
-        form.appendChild(input);
-      }
-    };
-
-    criarInput("user_time_zone", timeZone);
-    criarInput("data_local", dataLocal);
-  });
 
   function recarregarMentores() {
     return fetch("carregar-mentores.php")
@@ -382,6 +299,24 @@ document.addEventListener("DOMContentLoaded", function () {
           placarRed.textContent = redEl.dataset.red;
         }
 
+        // ✅ Atualiza valores do topo do menu
+        const bancaEl = document.querySelector(".valor-bold-menu");
+        const saqueEl = document.querySelector(".valor-valor-saque");
+        const saldoEl = document.querySelector(".valor-total-mentores");
+
+        const bancaData = container.querySelector("#menu-saldo-banca");
+        const saqueData = container.querySelector("#menu-saques");
+        const saldoData = container.querySelector("#menu-saldo-mentores");
+
+        if (bancaEl && bancaData) bancaEl.textContent = bancaData.dataset.banca;
+        if (saqueEl && saqueData)
+          saqueEl.textContent = saqueData.dataset.saques;
+        if (saldoEl && saldoData) {
+          saldoEl.textContent = saldoData.dataset.saldo;
+          saldoEl.className =
+            "valor-total-mentores " + saldoData.dataset.classe;
+        }
+
         // ✅ Eventos nos cards de mentor
         container.querySelectorAll(".mentor-card").forEach((card) => {
           card.addEventListener("click", (event) => {
@@ -397,8 +332,6 @@ document.addEventListener("DOMContentLoaded", function () {
             exibirFormularioMentor(card);
           });
         });
-
-        atualizarMenu(); // Atualiza cabeçalho/topo
       })
       .catch((error) => {
         console.error("Erro ao recarregar mentores:", error);
@@ -406,6 +339,14 @@ document.addEventListener("DOMContentLoaded", function () {
   }
 
   recarregarMentores();
+  setInterval(() => {
+    const formularioVisivel =
+      document.querySelector(".formulario-mentor")?.style.display === "block";
+
+    if (document.visibilityState === "visible" && !formularioVisivel) {
+      recarregarMentores();
+    }
+  }, 30000);
 
   campoValor.addEventListener("input", function () {
     let valor = this.value.replace(/\D/g, "");
@@ -668,8 +609,14 @@ function mostrarResultados(entradas) {
 }
 
 // ✅ Função global para abrir formulário de cadastro
+function atualizarSessaoERecarregar() {
+  return fetch("carregar-sessao.php?atualizar=1").then(() =>
+    recarregarMentores()
+  );
+}
+
 function recarregarMentores() {
-  return fetch("carregar-mentores.php")
+  return fetch("carregar-mentores.php?_=" + Date.now())
     .then((res) => res.text())
     .then((html) => {
       const container = document.getElementById("listaMentores");
@@ -680,21 +627,19 @@ function recarregarMentores() {
           valorBRL.replace("R$", "").replace(/\./g, "").replace(",", ".").trim()
         );
 
-      // 🔄 Atualiza porcentagem da banca
+      // Atualizações visuais
       const porcentagemEl = container.querySelector("#porcentagem-entrada");
       const porcentagemSpan = document.querySelector(".valor-porcentagem");
       if (porcentagemEl && porcentagemSpan) {
         porcentagemSpan.textContent = porcentagemEl.dataset.porcentagem;
       }
 
-      // 🔄 Atualiza entrada
       const entradaEl = container.querySelector("#resultado-unidade");
       const entradaSpan = document.querySelector(".valor-entrada");
       if (entradaEl && entradaSpan) {
         entradaSpan.textContent = entradaEl.dataset.resultado;
       }
 
-      // ✅ Atualiza saldo geral
       const totalMetaEl = container.querySelector("#saldo-dia");
       const valorSpan = document.querySelector(".valor-saldo");
       const rotuloSpan = document.querySelector(".rotulo-saldo");
@@ -709,7 +654,6 @@ function recarregarMentores() {
             : "#aca7a7";
       }
 
-      // ✅ Atualiza meta do dia
       const metaDiv = container.querySelector("#meta-meia-unidade");
       const metaSpan = document.querySelector("#meta-dia");
       const rotuloMetaSpan = document.querySelector(".rotulo-meta");
@@ -751,21 +695,33 @@ function recarregarMentores() {
         metaSpan.style.color = corResultado;
       }
 
-      // ✅ Placar Green
       const greenEl = container.querySelector("#total-green-dia");
       const placarGreen = document.querySelector(".placar-green");
       if (greenEl && placarGreen) {
         placarGreen.textContent = greenEl.dataset.green;
       }
 
-      // ✅ Placar Red
       const redEl = container.querySelector("#total-red-dia");
       const placarRed = document.querySelector(".placar-red");
       if (redEl && placarRed) {
         placarRed.textContent = redEl.dataset.red;
       }
 
-      // ✅ Eventos nos cards de mentor
+      const bancaEl = document.querySelector(".valor-bold-menu");
+      const saqueEl = document.querySelector(".valor-valor-saque");
+      const saldoEl = document.querySelector(".valor-total-mentores");
+
+      const bancaData = container.querySelector("#menu-saldo-banca");
+      const saqueData = container.querySelector("#menu-saques");
+      const saldoData = container.querySelector("#menu-saldo-mentores");
+
+      if (bancaEl && bancaData) bancaEl.textContent = bancaData.dataset.banca;
+      if (saqueEl && saqueData) saqueEl.textContent = saqueData.dataset.saques;
+      if (saldoEl && saldoData) {
+        saldoEl.textContent = saldoData.dataset.saldo;
+        saldoEl.className = "valor-total-mentores " + saldoData.dataset.classe;
+      }
+
       container.querySelectorAll(".mentor-card").forEach((card) => {
         card.addEventListener("click", (event) => {
           const alvo = event.target;
@@ -780,24 +736,18 @@ function recarregarMentores() {
           exibirFormularioMentor(card);
         });
       });
-
-      atualizarMenu(); // Atualiza cabeçalho/topo
     })
     .catch((error) => {
       console.error("Erro ao recarregar mentores:", error);
     });
 }
 
-// ✅ Exclusão com controle pós-ação
 function excluirEntrada(idEntrada) {
   const modal = document.getElementById("modal-confirmacao");
   const btnConfirmar = document.getElementById("btnConfirmar");
   const btnCancelar = document.getElementById("btnCancelar");
 
-  // Exibe o modal de confirmação
   modal.style.display = "flex";
-
-  // Remove event listeners anteriores para evitar duplicações
   btnConfirmar.onclick = null;
   btnCancelar.onclick = null;
 
@@ -819,22 +769,17 @@ function excluirEntrada(idEntrada) {
       body: `id=${encodeURIComponent(idEntrada)}`,
     })
       .then((res) => {
-        if (!res.ok) {
-          throw new Error(`Erro HTTP: ${res.status}`);
-        }
+        if (!res.ok) throw new Error(`Erro HTTP: ${res.status}`);
         return res.text();
       })
       .then((msg) => {
-        console.log("Resposta do servidor:", msg); // Para depuração
         const sucesso = msg.toLowerCase().includes("sucesso");
         mostrarToast(msg.trim(), sucesso ? "sucesso" : "aviso");
 
-        return recarregarMentores(); // Certifique-se de que retorna uma Promise
+        return atualizarSessaoERecarregar();
       })
       .then(() => {
         fecharTelaEdicao();
-        atualizarMenu();
-
         setTimeout(() => {
           if (estaAberta && idMentorBackup) {
             editarAposta(idMentorBackup);
@@ -852,9 +797,3 @@ function excluirEntrada(idEntrada) {
       });
   };
 }
-
-// FIM DO CODIGO RESPONSAVEL PELOS VALOR DE ENTRADA E A AREA DOS 3 PONTINHOS PARA EXCLUIR-->
-
-// TESTE-->
-
-// TESTE-->

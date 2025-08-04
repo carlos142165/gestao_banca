@@ -3,6 +3,9 @@
 <?php
 require_once 'config.php';
 require_once 'carregar_sessao.php';
+require_once 'funcoes.php'; // ✅ Inclui a função de cálculo
+
+
 
 mysqli_report(MYSQLI_REPORT_ERROR | MYSQLI_REPORT_STRICT);
 
@@ -53,15 +56,14 @@ $ultima_diaria         = $_SESSION['porcentagem_entrada'] ?? 0;
 $soma_depositos        = $_SESSION['saldo_mentores'] + $_SESSION['saldo_geral'] - $_SESSION['saques_totais'] ?? 0;
 $soma_saque            = $_SESSION['saques_totais'] ?? 0;
 $saldo_mentores        = $_SESSION['saldo_mentores'] ?? 0;
-$saldo_banca           = $_SESSION['saldo_geral'] ?? 0;
+$saldo_banca           = calcularSaldoBanca(); // ✅ usa função do funcoes.php
 $valor_entrada_calculado = $_SESSION['resultado_entrada'] ?? 0;
 $valor_entrada_formatado = number_format($valor_entrada_calculado, 2, ',', '.');
 
 // 🔎 Verificação de banca zerada
-$saldo_inicial = $soma_depositos - $soma_saque + $saldo_mentores;
-if ($saldo_inicial <= 0 && $saldo_mentores < 0) {
+if ($saldo_banca <= 0 && $saldo_mentores < 0) {
   $_SESSION['banca_zerada'] = true;
-} elseif ($saldo_inicial > 0) {
+} elseif ($saldo_banca > 0) {
   unset($_SESSION['banca_zerada']);
 }
 
@@ -134,11 +136,13 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['acao'])) {
 
 // 🔎 Meta formatada
 $meta_diaria = $_SESSION['meta_meia_unidade'] ?? 0;
+
+if (!isset($_SESSION['saldo_banca'])) {
+    header('Location: carregar-sessao.php?atualizar=1');
+    exit();
+}
+
 ?>
-
-
-
-
 
 
 
@@ -155,48 +159,19 @@ $meta_diaria = $_SESSION['meta_meia_unidade'] ?? 0;
 <meta name="viewport" content="width=device-width, initial-scale=1.0" />
 <title>Gestão do Dia</title>
 
-
-<style>
-body, html {
-  height: 100%;
-  font-family: 'Poppins', sans-serif;
-  background-color:rgb(235, 235, 235);
-  margin: 0;
-  padding: 0;
-  
-}
-
-.container {
-  display: flex;
-  flex-direction: row; /* horizontal */
-  gap: 20px;            /* espaço horizontal entre os elementos */
-}
-
-.grupo-porcentagem {
-  display: flex;
-  gap: 6px;
-  margin-bottom: 10px;
-  font-family: sans-serif;
-}
-
-.rotulo-porcentagem {
-  font-weight: bold;
-  color: #444;
-}
-
-.valor-porcentagem {
-  color: #007bff;
-  font-size: 1.1em;
-}
-
-
-</style>
      
      <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
-     <link rel="stylesheet" href="style.css?v=2">
 
+     <link rel="stylesheet" href="css/estilo-gestao-diaria.css">
+     <link rel="stylesheet" href="css/estilo-campo-mes.css">
 
+     <script src="js/script-gestao-diaria.js" defer></script>
+     <script src="js/script-mes.js" defer></script>
 </head>
+
+
+
+
 <body>
 
 <!-- CODIGO RESPONSAVEL PELA MENSAGEM TOAST -->  
@@ -213,61 +188,78 @@ if (isset($_SESSION['toast'])) {
 
 
 
-
-    <!-- CODIGO RESPONSAVEL PELO  TOPO PUXADO DA PAGINA MENU.PHP -->
-
-    <div id="data-container"></div>
-    <!-- A data será carregada aqui -->
-
-    <div id="menu-placeholder"></div>
-    <!-- Aqui o menu será carregado dinamicamente -->
-
-    <script>
-      // 📌 Carrega o menu externo (menu.php) dentro do menu-placeholder
-      fetch("menu.php")
-        .then((response) => response.text()) // Converte a resposta em texto
-        .then((data) => {
-          document.getElementById("menu-placeholder").innerHTML = data; // Insere o menu na página
-
-          document
-            .querySelector(".menu-button")
-            .addEventListener("click", function () {
-              // Adiciona um evento ao botão do menu
-              var menu = document.getElementById("menu"); // Obtém o elemento do menu suspenso
-              menu.style.display =
-                menu.style.display === "block" ? "none" : "block"; // Alterna entre mostrar e esconder o menu
-            });
-
-          // 🛠️ Fecha o menu ao clicar fora dele
-          document.addEventListener("click", function (event) {
-            var menu = document.getElementById("menu");
-            var menuButton = document.querySelector(".menu-button");
-
-            if (menu && menuButton) {
-              // Verifica se os elementos existem
-              if (
-                menu.style.display === "block" &&
-                !menu.contains(event.target) &&
-                !menuButton.contains(event.target)
-              ) {
-                menu.style.display = "none"; // Fecha o menu se o clique for fora
-              }
-            }
-          });
-        })
-        .catch((error) => console.error("Erro ao carregar o menu:", error)); // Exibe erro caso ocorra problema ao carregar
-    </script>
-
     
 
 
+<!--  CODIGO RESPONSAVEL PELO MENU TOPO -->
+<div id="top-bar"> 
+  <div class="menu-container">
+    <button class="menu-button" onclick="toggleMenu()">☰</button>
 
+    <div id="menu" class="menu-content">
+      <a href="home.php">
+        <i class="fas fa-home menu-icon"></i><span>Home</span>
+      </a>
+      <a href="gestao-diaria.php">
+        <i class="fas fa-university menu-icon"></i><span>Gestão de Banca</span>
+      </a>  
+      <a href="estatisticas.php">
+        <i class="fas fa-chart-bar menu-icon"></i><span>Estatísticas</span>
+      </a>
+      <a href="painel-controle.php">
+        <i class="fas fa-cogs menu-icon"></i><span>Painel de Controle</span>
+      </a>
+
+      <?php if (isset($_SESSION['usuario_id'])): ?>
+        <a href="logout.php">
+          <i class="fas fa-sign-out-alt menu-icon"></i><span>Sair</span>
+        </a>
+      <?php endif; ?>
+    </div>
+
+
+
+    
+<div id="lista-mentores">
+  <div class="valor-item-menu saldo-topo-ajustado">
+    <div class="valor-info-wrapper">
+      
+      <!-- Banca -->
+      <div class="valor-label-linha">
+        <i class="fa-solid fa-building-columns valor-icone-tema"></i>
+        <span class="valor-label">Banca:</span>
+        <span class="valor-bold-menu">R$ <?php echo number_format(calcularSaldoBanca(), 2, ',', '.'); ?></span>
+
+      </div>
+
+      <!-- Saque -->
+      <div class="valor-label-linha">
+        <i class="fa-solid fa-arrow-up-from-bracket valor-icone-tema"></i>
+        <span class="valor-label">Saque:</span>
+        <span class="valor-valor-saque">R$ <?php echo number_format($_SESSION['saques_totais'] ?? 0, 2, ',', '.'); ?></span>
+      </div>
+
+      <!-- Saldo Mentores -->
+      <div class="valor-label-linha">
+        <i class="fa-solid fa-chart-line valor-icone-tema"></i>
+        <span class="valor-label">Saldo:</span>
+        <span class="valor-total-mentores saldo-neutro">R$ <?php echo number_format($_SESSION['saldo_mentores'] ?? 0, 2, ',', '.'); ?></span>
+      </div>
+
+    </div>
+  </div>
+</div>
+
+
+
+  </div>
+</div>
+<!--  FIM CODIGO RESPONSAVEL PELO MENU TOPO -->
 
 
 
 
 <!-- FIM CODIGO RESPONSAVEL PELO  TOPO PUXADO DA PAGINA MENU.PHP -->
-
 <div class="container-resumos">
 
  <div class="resumo-dia">
@@ -301,18 +293,15 @@ if (isset($_SESSION['toast'])) {
   </div>
  </div>
 
-
-
- </div>
-
- <!-- FIM DO CODIGO RESPONSAVEL PELO VALOR  PLACAR E META DIARIA E SALDO -->
+</div>
+<!-- FIM DO CODIGO RESPONSAVEL PELO VALOR  PLACAR E META DIARIA E SALDO -->
 
 
 
 
 
 
- <!-- CODIGO FORMULARIO QUE ADICIONA E EDITA MENTOR -->
+<!-- CODIGO FORMULARIO QUE ADICIONA E EDITA MENTOR -->
  <div id="modal-form" class="modal">
   <div class="modal-conteudo">
     <span class="fechar" onclick="fecharModal()">&times;</span>
@@ -361,7 +350,7 @@ if (isset($_SESSION['toast'])) {
   </div>
  </div>
 
- <!-- FIM DO CODIGO FORMULARIO QUE ADICIONA E EDITA MENTOR -->
+<!-- FIM DO CODIGO FORMULARIO QUE ADICIONA E EDITA MENTOR -->
 
 
 
@@ -369,9 +358,8 @@ if (isset($_SESSION['toast'])) {
 
 
 
-  <!-- BOTÃO ADICIONAR USUARIO -->
- 
- <div class="area-central-botao">
+<!-- BOTÃO ADICIONAR USUARIO -->
+  <div class="area-central-botao">
   <span class="valor-porcentagem" id="valor-porcentagem">
     R$ <?php echo $meta_formatado ?? '0,00'; ?>
   </span>
@@ -387,13 +375,13 @@ if (isset($_SESSION['toast'])) {
   </button>
  </div>
 
- <!-- FIM CODIGO BOTÃO ADICIONAR USUARIO -->
+<!-- FIM CODIGO BOTÃO ADICIONAR USUARIO -->
 
 
 
 
 
- <!-- AQUI FILTRA OS DADOS DOS MENTORES NO BANCO DE DADOS PRA MOSTRAR NA TELA  -->
+<!-- AQUI FILTRA OS DADOS DOS MENTORES NO BANCO DE DADOS PRA MOSTRAR NA TELA  -->
  <div class="campo_mentores">
   <div id="listaMentores" class="mentor-wrapper">
     <?php
@@ -481,9 +469,7 @@ if (isset($_SESSION['toast'])) {
     ?>
   </div>
 </div>
-
-
- <!-- FIM DO CODIGO QUE FILTRA OS DADOS DOS MENTORES NO BANCO DE DADOS PRA MOSTRAR NA TELA  -->
+<!-- FIM DO CODIGO QUE FILTRA OS DADOS DOS MENTORES NO BANCO DE DADOS PRA MOSTRAR NA TELA  -->
 
 
 
@@ -491,14 +477,15 @@ if (isset($_SESSION['toast'])) {
 
 
 
- <!-- FORMULARIO PARA ADICIONAR O VALOR DA ENTRADA DO MENTOR-->
- <div class="formulario-mentor">
-  <button type="button" class="btn-fechar" onclick="fecharFormulario()">
-  <i class="fas fa-times"></i>
- </button>
+<!-- FORMULARIO PARA ADICIONAR O VALOR DA ENTRADA DO MENTOR-->
+ <div class="formulario-mentor" id="formulario-mentor">
+  <button type="button" class="btn-fechar" id="botao-fechar">
+    <i class="fas fa-times"></i>
+  </button>
 
   <img src="" class="mentor-foto-preview" width="100" />
   <h3 class="mentor-nome-preview">Nome do Mentor</h3>
+
   <form id="form-mentor" method="POST">
     <input type="hidden" name="id_mentor" class="mentor-id-hidden">
 
@@ -515,18 +502,17 @@ if (isset($_SESSION['toast'])) {
 
     <input type="text" name="valor" id="valor" class="input-valor" placeholder="R$ 0,00" required>
 
-
     <button type="submit" class="botao-enviar">Enviar</button>
   </form>
  </div>
- <!-- FIM FORMULARIO PARA ADICIONAR O VALOR DA ENTRADA DO MENTOR-->
+<!-- FIM FORMULARIO PARA ADICIONAR O VALOR DA ENTRADA DO MENTOR-->
 
 
 
 
 
 
- <!-- FORMULARIO PARA EXCLUIR O MENTOR  -->
+<!-- FORMULARIO PARA EXCLUIR O MENTOR  -->
   <div id="tela-edicao" class="tela-edicao" style="display:none;">
   <button type="button" class="btn-fechar" onclick="fecharTelaEdicao()">
     <i class="fas fa-times"></i>
@@ -546,7 +532,7 @@ if (isset($_SESSION['toast'])) {
 
 
 
- <!-- MODAL PARA EXCLUIR A ENTRADA  -->
+<!-- MODAL PARA EXCLUIR A ENTRADA  -->
  <div id="modal-confirmacao" class="modal-confirmacao" style="display:none;">
   <div class="modal-content">
     <p class="modal-texto">Tem certeza que deseja excluir esta entrada?</p>
@@ -559,7 +545,7 @@ if (isset($_SESSION['toast'])) {
 
 
 
- <!-- MODAL PARA EXCLUIR O MENTOR  -->
+<!-- MODAL PARA EXCLUIR O MENTOR  -->
  <div id="modal-confirmacao-exclusao" style="display:none;">
   <div class="modal-content">
     <p class="modal-texto">Tem certeza que deseja excluir este mentor?</p>
@@ -571,13 +557,13 @@ if (isset($_SESSION['toast'])) {
  </div>
 
 
- </div>
+</div>
 
 
 
 
 
-
+<!-- RESPONSAVEL PELO CAMPO DO MÊS -->
 <?php
 $timezone_recebido = $_POST['timezone'] ?? 'America/Bahia';
 date_default_timezone_set($timezone_recebido);
@@ -615,306 +601,6 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
   $stmt->close();
 }
 ?>
-
-
-
-
-
- 
-
- <style>
-
-/* TESTE   */
-.container-resumos {
-  display: flex;
-  justify-content: center;
-  flex-wrap: wrap;
-  gap: 50px;
-  margin-top: 30px;
-}
-
-.resumo-mes::-webkit-scrollbar {
-  display: none;
-}
-
-.resumo-mes {
-  position: relative;
-  width: 385px;
-  height: 780px;
-  overflow-y: auto;
-  background-color: #f7f6f6;
-  border-radius: 12px;
-  padding-top: 0px; /* espaço suficiente para o bloco fixo */
-  box-shadow: 0 0 12px rgba(0,0,0,0.08);
-  font-family: 'Poppins', sans-serif;
-}
-
-.fixo-topo {
-  position: sticky;  /* Mantém o bloco fixo dentro do scroll */
-  top: 0px;
-  z-index: 10;
-  background-color: #fdfdfd;
-  padding: 14px 18px;
-  border-radius: 12px 12px 0 0;
-  box-shadow: 0 2px 6px rgba(0,0,0,0.04);
- 
-}
-
-.resumo-mes h2 {
-  font-size: 20px;
-  color: #333;
-  text-align: center;
-  margin-bottom: 15px;
-}
-
-/* RESPONSAVEL PELO CAMPO DAS METAS */
-.bloco-meta-simples {
-  background-color: #f7f6f6;
-  border-radius: 12px;
-  box-shadow: 0 3px 12px rgba(0, 0, 0, 0.06);  
-  display: flex;
-  flex-direction: column;
-  padding-top: 12px;
-  max-width: 360px;
-  font-family: 'Poppins', sans-serif;
-  transition: all 0.3s ease;
-  padding: 16px;
-  gap: 6px; /* Reduzido de 10px */
- 
- 
-
-}
-
-.grupo-barra {
-  background: #ffffff;
-  padding: 10px 14px;
-  border-radius: 10px;
-  box-shadow: 0 1px 6px rgba(0, 0, 0, 0.05);
-  display: flex;
-  flex-direction: column;
-  position: relative;
-  transition: transform 0.2s ease-in-out;
-  margin-top: 4px;
-}
-
-.titulo-bloco {
-  font-size: 18px;
-  font-weight: bold;
-  color: #2e7d32;
-  margin: 12px 0;
-  padding: 8px 0;
-  display: flex;
-  align-items: center;
-  gap: 10px;
-  border-bottom: 2px solid #c8e6c9;
-  background-color: #f1f8e9;
-  border-radius: 5px;
-  margin: 0 0 15px 0;
-}
-
-.titulo-bloco i {
-  font-size: 20px;
-  color: #43a047;
-}
-
-.grupo-barra:hover {
-  transform: translateY(-1.5px);
-}
-
-.valor-meta {
-  font-size: 14px;
-  font-weight: 600;
-  color: #333;
-  margin-bottom: 2px;
-}
-
-.valor-meta i {
-  color: #d6a10f;
-  margin-right: 6px;
-}
-
-.container-barra-horizontal {
-  display: flex;
-  align-items: center;
-  gap: 6px;
-}
-
-.porcento-barra {
-  font-size: 12px;
-  font-weight: 500;
-  color: #555;
-  min-width: 35px;
-  text-align: right;
-}
-
-.progresso-verde::before {
-  content: '';
-  position: absolute;
-  top: 0;
-  left: 0;
-  height: 100%;
-  width: var(--largura-barra, 0%);
-  border-radius: 4px;
-  background: linear-gradient(90deg, #4CAF50, #81C784);
-  transition: width 0.4s ease-in-out;
-}
-
-.rotulo-meta-mes.sucesso {
-  background-color: #dff0d8;
-  color: #388e3c;
-  border: 1px solid #81c784;
-  margin-left: 8px;
-  padding: 3px 6px;
-  border-radius: 4px;
-  font-size: 12px;
-  display: inline-flex;
-  align-items: center;
-  gap: 4px;
-}
-
-
-.rotulo-meta-mes {
-  font-size: 12px;
-  font-weight: 600;
-  color: #28a745;
-  background-color: rgba(40, 167, 69, 0.08);
-  padding: 3px 6px;
-  border-radius: 5px;
-  width: fit-content;
-}
-
-.rotulo-meta-mes i {
-  margin-right: 6px;
-  color: #28a745;
-}
-
-.progresso-dourado,
-.progresso-verde {
-  height: 6px;
-  flex: 1;
-  border-radius: 4px;
-  background-color: #eee;
-  position: relative;
-  overflow: hidden;
-}
-
-.progresso-dourado::before,
-.progresso-verde::before {
-  content: '';
-  position: absolute;
-  top: 0;
-  left: 0;
-  height: 100%;
-  border-radius: 4px;
-}
-
-.progresso-dourado::before {
-  width: 100%;
-  background: linear-gradient(90deg, #d6a10f, #d6a10f);
-}
-
-.progresso-verde::before {
-  width: 20%;
-  background: linear-gradient(90deg, #4CAF50, #81C784);
-}
-
-
-
-/* FIM RESPONSAVEL PELO CAMPO DAS METAS */
-
-
-
-/* Tabela de dias */
-.linha-dia {
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  background-color: #fff;
-  padding: 6px 10px;
-  border-radius: 8px;
-  box-shadow: 0 0 2px rgba(0,0,0,0.05);
-  width: 90%;
-  margin: 8px auto;
-  
-}
-
-.data {
-  font-size: 12px;
-  color: #333;
-  display: flex;
-  align-items: center;
-  gap: 5px;
-}
-
-.placar-dia {
-  display: flex;
-  align-items: center;
-  gap: 6px;
-  font-size: 13px;
-}
-
-.placar {
-  font-size: 13px;
-}
-
-.valor {
-  font-size: 12px;
-  color: #444;
-  display: flex;
-  align-items: center;
-  gap: 5px;
-}
-
-.icone {
-  font-size: 14px;
-  color: #4caf50;
-}
-
-.verde-bold {
-  color: #28a745;
-  font-weight: bold;
-}
-
-.vermelho-bold {
-  color: #dc3545;
-  font-weight: bold;
-}
-
-.texto-cinza {
-  color: #777;
-}
-
-.dia-hoje {
-  border-left: 4px solid green;
-  opacity: 1;
-}
-
-.dia-normal {
-  opacity: 0.5;
-}
-
-.borda-verde {
-  border-left: 4px solid green;
-}
-
-.borda-vermelha {
-  border-left: 4px solid red;
-}
-
-.dia-destaque {
-  background-color: #f0fff3;
-  box-shadow: 0 0 8px rgba(40,167,69,0.25);
-}
-
-.lista-dias{
-  margin-top: 18px;
-}
-
-
-
-/* TESTE   */
-</style>
-
 
 
 
@@ -1076,64 +762,42 @@ while ($row = $result->fetch_assoc()) {
   </div>
  </div>
 
-
-
-
-
  <script>
   document.getElementById('timezone').value =
     Intl.DateTimeFormat().resolvedOptions().timeZone;
  </script>
 
-
-  
- </div>
+  </div>
 </div>
+<!-- FIM RESPONSAVEL PELO CAMPO DO MÊS -->
 
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<script>
+ function toggleMenu() {
+  var menu = document.getElementById("menu");
+  menu.style.display = menu.style.display === "block" ? "none" : "block";
+ }
+</script>
 
 
 <div id="mensagem-status" class="toast"></div>
-
 <!-- DEIXA TOAST OCULTO -->
 <div id="toast" class="toast hidden"></div>
-
-<!-- PUXA O SCRIPT -->
-<script src="script.js"></script>
-
-
-
-
-<!-- AJUSTA A DATA E O HORARIO -->
-<script>
-document.addEventListener("DOMContentLoaded", function () {
-  const form = document.getElementById("form-mentor");
-
-  if (form) {
-    const timeZone = Intl.DateTimeFormat().resolvedOptions().timeZone;
-    const dataLocal = new Date().toISOString();
-
-    const criarInput = (name, value) => {
-      let existing = form.querySelector(`[name="${name}"]`);
-      if (!existing) {
-        const input = document.createElement("input");
-        input.type = "hidden";
-        input.name = name;
-        input.value = value;
-        form.appendChild(input);
-      }
-    };
-
-    criarInput("user_time_zone", timeZone);
-    criarInput("data_local", dataLocal);
-  } else {
-    console.warn("❌ Formulário #form-mentor não encontrado.");
-  }
-});
-</script>
-<!-- AJUSTA A DATA E O HORARIO -->
-
-
-
 
 </body>
 </html>

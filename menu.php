@@ -1,89 +1,3 @@
-<?php
-session_start();
-include_once('config.php');
-
-// Inicialização
-$saldo_banca = 0;
-$saldo_mentores = 0;
-$saques_banca = 0;
-$saques_mentores = 0;
-$saques_reais = 0;
-$classe_saldo = '';
-
-if (isset($_SESSION['usuario_id'])) {
-    $id_usuario = $_SESSION['usuario_id'];
-
-    // Depósitos
-    $stmt = mysqli_prepare($conexao, "SELECT COALESCE(SUM(deposito), 0) FROM controle WHERE id_usuario = ?");
-    mysqli_stmt_bind_param($stmt, "i", $id_usuario);
-    mysqli_stmt_execute($stmt);
-    mysqli_stmt_bind_result($stmt, $soma_depositos);
-    mysqli_stmt_fetch($stmt);
-    mysqli_stmt_close($stmt);
-
-    // Saques - banca
-    $stmt = mysqli_prepare($conexao, "
-        SELECT COALESCE(SUM(saque), 0)
-        FROM controle
-        WHERE id_usuario = ? AND (origem IS NULL OR origem = 'banca')
-    ");
-    mysqli_stmt_bind_param($stmt, "i", $id_usuario);
-    mysqli_stmt_execute($stmt);
-    mysqli_stmt_bind_result($stmt, $saques_banca);
-    mysqli_stmt_fetch($stmt);
-    mysqli_stmt_close($stmt);
-
-    // Saques - mentores
-    $stmt = mysqli_prepare($conexao, "
-        SELECT COALESCE(SUM(saque), 0)
-        FROM controle
-        WHERE id_usuario = ? AND origem = 'mentor'
-    ");
-    mysqli_stmt_bind_param($stmt, "i", $id_usuario);
-    mysqli_stmt_execute($stmt);
-    mysqli_stmt_bind_result($stmt, $saques_mentores);
-    mysqli_stmt_fetch($stmt);
-    mysqli_stmt_close($stmt);
-
-    // Saques totais
-    $saques_reais = $saques_banca + $saques_mentores;
-
-    // Green e Red
-    $stmt = mysqli_prepare($conexao, "SELECT COALESCE(SUM(valor_green), 0) FROM valor_mentores WHERE id_usuario = ?");
-    mysqli_stmt_bind_param($stmt, "i", $id_usuario);
-    mysqli_stmt_execute($stmt);
-    mysqli_stmt_bind_result($stmt, $valor_green);
-    mysqli_stmt_fetch($stmt);
-    mysqli_stmt_close($stmt);
-
-    $stmt = mysqli_prepare($conexao, "SELECT COALESCE(SUM(valor_red), 0) FROM valor_mentores WHERE id_usuario = ?");
-    mysqli_stmt_bind_param($stmt, "i", $id_usuario);
-    mysqli_stmt_execute($stmt);
-    mysqli_stmt_bind_result($stmt, $valor_red);
-    mysqli_stmt_fetch($stmt);
-    mysqli_stmt_close($stmt);
-
-    // Cálculo final
-    $saldo_mentores = $valor_green - $valor_red;
-    $saldo_banca = ($soma_depositos - $saques_banca) + $saldo_mentores;
-
-    // Cor da classe do saldo
-    if ($saldo_mentores < 0) {
-        $classe_saldo = 'saldo-negativo';
-    } elseif ($saldo_mentores == 0.00) {
-        $classe_saldo = 'saldo-neutro';
-    } else {
-        $classe_saldo = 'saldo-positivo';
-    }
-}
-?>
-
-
-
-
-
-
-
 
 
 
@@ -488,9 +402,7 @@ if (isset($_SESSION['usuario_id'])) {
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>Gestão</title>
-    <style>
-      /* ... (seus estilos permanecem os mesmos) ... */
-    </style>
+   
   </head>
 
 
@@ -512,7 +424,7 @@ if (isset($_SESSION['usuario_id'])) {
       <a href="logout.php"><i class="fas fa-sign-out-alt menu-icon"></i><span>Sair</span></a>
     <?php endif; ?>
   </div>
-</div>
+ </div>
 
 
 
@@ -539,29 +451,7 @@ if (isset($_SESSION['usuario_id'])) {
 
 
 
-    
-
-  <?php if (isset($_SESSION['usuario_id'])): ?>
-<div class="valor-item-menu saldo-topo-ajustado">
-  <div class="valor-info-wrapper">
-    <div class="valor-label-linha">
-      <i class="fa-solid fa-building-columns valor-icone-tema"></i>
-      <span class="valor-label">Banca:</span>
-      <span class="valor-bold-menu">R$ <?= number_format($saldo_banca, 2, ',', '.') ?></span>
-    </div>
-    <div class="valor-label-linha">
-      <i class="fa-solid fa-arrow-up-from-bracket valor-icone-tema"></i>
-      <span class="valor-label">Saque:</span>
-      <span class="valor-valor-saque">R$ <?= number_format($saques_reais, 2, ',', '.') ?></span>
-    </div>
-    <div class="valor-label-linha">
-      <i class="fa-solid fa-chart-line valor-icone-tema"></i>
-      <span class="valor-label">Lucro:</span>
-      <span class="valor-total-mentores <?= $classe_saldo ?>">R$ <?= number_format($saldo_mentores, 2, ',', '.') ?></span>
-    </div>
-  </div>
-</div>
-<?php endif; ?>
+  
 
 
 

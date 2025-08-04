@@ -2,6 +2,7 @@
 
 require_once 'config.php';
 require_once 'carregar_sessao.php';
+require_once 'funcoes.php'; // ✅ NOVO
 
 // Verifica login
 $id_usuario = $_SESSION['usuario_id'] ?? null;
@@ -13,10 +14,14 @@ if (!$id_usuario) {
 // Dados da sessão
 $ultima_diaria       = $_SESSION['porcentagem_entrada'] ?? 0;
 $saldo_mentores      = $_SESSION['saldo_mentores'] ?? 0;
-$saldo_banca_total   = $_SESSION['saldo_geral'] ?? 0;
+$depositos           = $_SESSION['depositos'] ?? 0; // ✅ NOVO: usamos depósitos reais
 $saques_totais       = $_SESSION['saques_totais'] ?? 0;
 $resultado_entrada   = $_SESSION['resultado_entrada'] ?? 0;
 $meia_unidade        = $_SESSION['meta_meia_unidade'] ?? 0;
+
+// ✅ Cálculo corrigido da banca
+$saldo_banca = calcularSaldoBanca(); // ✅ esta no arquivo funcoes.php
+
 
 $diaria_formatada    = (intval($ultima_diaria) == $ultima_diaria)
   ? intval($ultima_diaria) . '%'
@@ -122,11 +127,19 @@ echo "<div id='saldo-dia' data-total='R$ " . number_format($total_geral_saldo, 2
 echo "<div id='meta-meia-unidade' data-meta='R$ {$meta_formatado}' style='display:none;'></div>";
 echo "<div id='resultado-unidade' data-resultado='R$ {$resultado_formatado}' style='display:none;'></div>";
 echo "<div id='porcentagem-entrada' data-porcentagem='{$diaria_formatada}' style='display:none;'></div>";
+echo "<div id='menu-saldo-banca' data-banca='R$ " . number_format($saldo_banca, 2, ',', '.') . "' style='display:none;'></div>";
+echo "<div id='menu-saques' data-saques='R$ " . number_format($saques_totais, 2, ',', '.') . "' style='display:none;'></div>";
+
+$classe_saldo = $total_geral_saldo > 0 ? 'saldo-positivo' : ($total_geral_saldo < 0 ? 'saldo-negativo' : 'saldo-neutro');
+echo "<div id='menu-saldo-mentores' data-saldo='R$ " . number_format($total_geral_saldo, 2, ',', '.') . "' data-classe='{$classe_saldo}' style='display:none;'></div>";
 
 if (empty($lista_mentores)) {
   echo "<div class='mentor-card card-neutro'>Sem mentores cadastrados.</div>";
 }
+
 ?>
+
+
 
 
 

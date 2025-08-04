@@ -1,17 +1,20 @@
 <?php
 session_start();
 require_once 'config.php';
+require_once 'funcoes.php'; // ✅ Inclui função de cálculo
 mysqli_report(MYSQLI_REPORT_ERROR | MYSQLI_REPORT_STRICT);
 
-// A sessão já deve estar iniciada no arquivo principal
+// Verifica se o usuário está autenticado
 $id_usuario = $_SESSION['usuario_id'] ?? null;
 if (!$id_usuario) {
   echo "<div class='mentor-card card-neutro'>Usuário não autenticado.</div>";
   exit;
 }
 
-// Verifica se os dados já estão na sessão
-if (!isset($_SESSION['saldo_geral'])) {
+// Permite forçar atualização com ?atualizar=1
+$forcar_atualizacao = isset($_GET['atualizar']) && $_GET['atualizar'] == 1;
+
+if (!isset($_SESSION['saldo_banca']) || $forcar_atualizacao) {
   // Última diária
   $stmt = $conexao->prepare("
     SELECT diaria FROM controle
@@ -37,7 +40,7 @@ if (!isset($_SESSION['saldo_geral'])) {
   $stmt->fetch();
   $stmt->close();
 
-  // Green e Red geral
+  // Green e Red geral dos mentores
   $stmt = $conexao->prepare("
     SELECT COALESCE(SUM(valor_green), 0), COALESCE(SUM(valor_red), 0)
     FROM valor_mentores WHERE id_usuario = ?
@@ -60,30 +63,37 @@ if (!isset($_SESSION['saldo_geral'])) {
   $stmt->fetch();
   $stmt->close();
 
-  // Armazena os valores na sessão
-  $_SESSION['valor_green']        = $total_valor_green;
-  $_SESSION['valor_red']          = $total_valor_red;
-  $_SESSION['ultima_unidade']     = $ultima_unidade ?? 0;
+  // Cálculos
+  $saldo_mentores = $total_valor_green - $total_valor_red;
 
-  $saldo_mentores     = $total_valor_green - $total_valor_red;
-  $saldo_banca_total  = $soma_depositos + $saldo_mentores;
-  $saques_totais      = $soma_saque;
+  // ✅ Armazena os valores na sessão
+  $_SESSION['depositos']           = $soma_depositos;
+  $_SESSION['saques_totais']       = $soma_saque;
+  $_SESSION['saldo_mentores']      = $saldo_mentores;
+  $_SESSION['valor_green']         = $total_valor_green;
+  $_SESSION['valor_red']           = $total_valor_red;
+  $_SESSION['ultima_unidade']      = $ultima_unidade ?? 0;
 
-  $_SESSION['saldo_mentores']     = $saldo_mentores;
-  $_SESSION['saldo_geral']        = $saldo_banca_total;
-  $_SESSION['saques_totais']      = $saques_totais;
+  // ✅ Cálculo centralizado da banca
+  $_SESSION['saldo_banca'] = calcularSaldoBanca();
 
-  if ($ultima_diaria > 0 && $saldo_banca_total > 0) {
+  // Meta e resultado da entrada
+  if ($ultima_diaria > 0 && $soma_depositos > 0) {
     $resultado_entrada = ($ultima_diaria / 100) * $soma_depositos;
     $meia_unidade = $resultado_entrada * 0.5;
-    $_SESSION['resultado_entrada'] = $resultado_entrada;
-    $_SESSION['meta_meia_unidade'] = $meia_unidade;
   } else {
-    $_SESSION['resultado_entrada'] = 0;
-    $_SESSION['meta_meia_unidade'] = 0;
+    $resultado_entrada = 0;
+    $meia_unidade = 0;
   }
 
+  $_SESSION['resultado_entrada']   = $resultado_entrada;
+  $_SESSION['meta_meia_unidade']   = $meia_unidade;
   $_SESSION['porcentagem_entrada'] = $ultima_diaria;
 }
 ?>
+
+
+
+
+
 
