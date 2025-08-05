@@ -1,0 +1,134 @@
+.modal-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: rgba(0, 0, 0, 0.6);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  z-index: 999;
+}
+
+.modal-content {
+  background: #fff;
+  padding: 30px;
+  border-radius: 12px;
+  width: 100%;
+  max-width: 500px;
+  box-shadow: 0 10px 25px rgba(0, 0, 0, 0.2);
+  animation: fadeIn 0.3s ease-in-out;
+}
+
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+    transform: scale(0.95);
+  }
+  to {
+    opacity: 1;
+    transform: scale(1);
+  }
+}
+
+.btn-fechar {
+  background: none;
+  border: none;
+  font-size: 24px;
+  color: #e74c3c;
+  float: right;
+  cursor: pointer;
+  transition: color 0.3s;
+}
+
+.btn-fechar:hover {
+  color: #c0392b;
+}
+
+.custom-inputbox {
+  margin-bottom: 20px;
+}
+
+.custom-inputbox label {
+  display: block;
+  font-weight: 600;
+  margin-bottom: 8px;
+  color: #34495e;
+  font-size: 15px;
+}
+
+.custom-inputbox i {
+  margin-right: 6px;
+  color: #3498db;
+}
+
+.custom-inputbox input[type="text"],
+.custom-inputbox input[type="number"] {
+  width: 100%;
+  padding: 12px 15px;
+  border: 1px solid #dcdde1;
+  border-radius: 8px;
+  font-size: 15px;
+  transition: border-color 0.3s;
+  background-color: #fdfdfd;
+}
+
+.custom-inputbox input:focus {
+  border-color: #3498db;
+  outline: none;
+  background-color: #fff;
+}
+
+#radioWrapper label {
+  background: #ecf0f1;
+  padding: 8px 12px;
+  border-radius: 6px;
+  cursor: pointer;
+  transition: background 0.3s;
+}
+
+#radioWrapper input[type="radio"] {
+  accent-color: #3498db;
+}
+
+#radioWrapper label:hover {
+  background: #dfe6e9;
+}
+
+.custom-button {
+  width: 100%;
+  padding: 14px;
+  background: #2ecc71;
+  color: white;
+  font-weight: bold;
+  border: none;
+  border-radius: 8px;
+  font-size: 16px;
+  cursor: pointer;
+  transition: background 0.3s;
+}
+
+.custom-button:hover {
+  background: #27ae60;
+}
+
+#resultadoCalculo,
+#resultadoUnidade,
+#resultadoOdds {
+  display: block;
+  margin-top: 6px;
+  font-size: 14px;
+  color: #2c3e50;
+}
+
+@media (max-width: 600px) {
+  .modal-content {
+    padding: 20px;
+    width: 90%;
+  }
+
+  .custom-button {
+    font-size: 15px;
+  }
+}
