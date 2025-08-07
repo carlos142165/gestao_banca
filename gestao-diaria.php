@@ -278,6 +278,8 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['acao'], $_POST['valor
      <link rel="stylesheet" href="css/estilo-gestao-diaria.css">
      <link rel="stylesheet" href="css/estilo-campo-mes.css">
      <link rel="stylesheet" href="css/estilo-painel-controle.css">
+    
+
 
      <script src="js/script-gestao-diaria.js" defer></script>
      <script src="js/script-mes.js" defer></script>
@@ -910,85 +912,129 @@ while ($row = $result->fetch_assoc()) {
 
 
 <!-- MODAL DE DEPÓSITO -->
-<div id="modalDeposito" class="modal-overlay" style="display: none;">
-  <div class="modal-content">
-    <form method="POST" action="">
-      <input type="hidden" name="controle_id" value="<?= isset($controle_id) ? $controle_id : '' ?>">
 
-      <button type="button" class="btn-fechar">×</button>
+<div class="modal-gerencia-banca">
+  <div id="modalDeposito" class="modal-overlay">
+    <div class="modal-content">
+      <form method="POST" action="">
+        <input type="hidden" name="controle_id" value="<?= isset($controle_id) ? $controle_id : '' ?>">
 
-      <!-- Banca -->
-      <div class="custom-inputbox">
-        <div style="display: flex; justify-content: space-between; align-items: center;">
-          <label><i class="fa-solid fa-coins"></i> Banca</label>
-          <span id="valorBancaLabel" style="font-weight: bold; color: #2c3e50;">R$ 0,00</span>
-        </div>
-      </div>
+        <button type="button" class="btn-fechar" id="fecharModal">×</button>
 
-      <!-- Lucro Total -->
-      <div class="custom-inputbox" id="lucroLabelWrapper">
-        <div style="display: flex; justify-content: space-between; align-items: center;">
-          <label id="lucroLabel"><i class="fa-solid fa-money-bill-trend-up"></i> Lucro</label>
-          <span id="valorLucroLabel" style="font-weight: bold; color: #2c3e50;">R$ 0,00</span>
-        </div>
-      </div>
-
-      <!-- Botões de ação -->
-      <div id="radioWrapper" style="display: flex; gap: 10px;">
-        <label style="display: flex; align-items: center; gap: 5px;">
-          <input type="radio" name="acaoBanca" value="add" class="radio-banca"> Depositar
-        </label>
-        <label style="display: flex; align-items: center; gap: 5px;">
-          <input type="radio" name="acaoBanca" value="sacar" class="radio-banca"> Sacar
-        </label>
-        <label style="display: flex; align-items: center; gap: 5px;">
-          <input type="radio" name="acaoBanca" value="resetar" class="radio-banca"> Resetar Banca
-        </label>
-      </div>
-
-      <!-- Campo de valor -->
-      <input type="text" id="valorBanca" name="valorBanca" placeholder="R$ 0,00" style="margin-top: 10px;">
-
-      <!-- Porcentagem -->
-      <div class="custom-inputbox">
-        <label for="porcentagem"><i class="fa-solid fa-chart-pie"></i> Porcentagem</label>
-        <div style="display: flex; gap: 10px; align-items: center;">
-          <input type="text" name="diaria" id="porcentagem" required
-            value="<?= isset($valor_diaria) ? number_format($valor_diaria, 2, ',', '.') : '2,00' ?>"
-            style="flex: 1;">
-          <span id="resultadoCalculo" style="font-weight: bold; color: #2c3e50;"></span>
-        </div>
-      </div>
-
-      <!-- Unidade -->
-      <div class="custom-inputbox">
-        <label for="unidadeMeta"><i class="fa-solid fa-bullseye"></i> Qtd de Unidade </label>
-        <div style="display: flex; gap: 10px; align-items: center;">
-          <input type="text" name="unidade" id="unidadeMeta" required
-            value="<?= isset($valor_unidade) ? intval($valor_unidade) : '2' ?>"
-            style="flex: 1;">
-          <span id="resultadoUnidade" style="font-weight: bold; color: #2c3e50;"></span>
-        </div>
-      </div>
-
-      <!-- Odds -->
-      <div class="custom-inputbox">
-        <label for="oddsMeta"><i class="fa-solid fa-percent"></i> Odds</label>
-        <div style="display: flex; gap: 10px; align-items: center;">
-          <input type="text" name="odds" id="oddsMeta" required
-            value="<?= isset($valor_odds) ? number_format(floatval($valor_odds), 2, ',', '') : '1,50' ?>"
-            style="flex: 1;">
-          <span id="resultadoOdds" style="font-weight: bold; color: #2c3e50;"></span>
-        </div>
-      </div>
-
-      <!-- Botão -->
-      <input type="submit" id="botaoAcao" name="submitPersonalizado" value="Cadastrar Dados" class="custom-button">
-    </form>
+        <!-- Banca e Lucro lado a lado -->
+        <div class="linha-banca-lucro">
+  <div class="campo-banca">
+    <div class="conteudo">
+      <label>
+        <i class="fa-solid fa-coins"></i> Banca
+      </label>
+      <span id="valorBancaLabel">R$ 0,00</span>
+    </div>
+  </div>
+  
+  <div class="campo-lucro">
+    <div class="conteudo">
+      <label id="lucroLabel">
+        <i class="fa-solid fa-money-bill-trend-up"></i> Lucro
+      </label>
+      <span id="valorLucroLabel">R$ 0,00</span>
+    </div>
   </div>
 </div>
 
 
+        <!-- Ação da banca -->
+  <div class="custom-inputbox">
+  <div class="select-wrapper">
+    <select name="acaoBanca" id="acaoBanca">
+      <option value="">Selecione uma ação</option>
+      <option value="add">Depositar</option>
+      <option value="sacar">Sacar</option>
+      <option value="alterar">Alterar Dados</option>
+      <option value="resetar">Resetar Banca</option>
+    </select>
+  </div>
+</div>
+
+
+
+        <!-- Valor da banca -->
+        <div class="custom-inputbox">
+  <label for="valorBanca">
+    <i class="fa-solid fa-wallet"></i> Valor da Banca
+  </label>
+  <div class="input-wrapper banca-wrapper">
+    <input
+      type="text"
+      id="valorBanca"
+      name="valorBanca"
+      placeholder="R$ 0,00"
+      required
+    >
+  </div>
+</div>
+
+
+        <!-- Porcentagem -->
+       <!-- Porcentagem -->
+<div class="custom-inputbox">
+  <label for="porcentagem">
+    <i class="fa-solid fa-chart-pie"></i> Porcentagem
+  </label>
+  <div class="input-wrapper porc-wrapper">
+    <input
+      type="text"
+      name="diaria"
+      id="porcentagem"
+      required
+      value="<?= isset($valor_diaria) ? number_format($valor_diaria, 2, ',', '.') : '2,00' ?>"
+    >
+    <span id="resultadoCalculo"></span>
+  </div>
+</div>
+
+<!-- Unidade -->
+<div class="custom-inputbox">
+  <label for="unidadeMeta">
+    <i class="fa-solid fa-bullseye"></i> Qtd de Unidade
+  </label>
+  <div class="input-wrapper unidade-wrapper">
+    <input
+      type="text"
+      name="unidade"
+      id="unidadeMeta"
+      required
+      value="<?= isset($valor_unidade) ? intval($valor_unidade) : '2' ?>"
+    >
+    <span id="resultadoUnidade"></span>
+  </div>
+</div>
+
+
+        <!-- Odds -->
+        <div class="custom-inputbox">
+  <label for="oddsMeta">
+    <i class="fa-solid fa-percent"></i> Odds
+  </label>
+  <div class="input-wrapper odds-wrapper">
+    <input
+      type="text"
+      name="odds"
+      id="oddsMeta"
+      required
+      value="<?= isset($valor_odds) ? number_format(floatval($valor_odds), 2, ',', '') : '1,50' ?>"
+    >
+    <span id="resultadoOdds"></span>
+  </div>
+</div>
+
+
+        <!-- Botão de ação -->
+        <input type="submit" id="botaoAcao" name="submitPersonalizado" value="Cadastrar Dados" class="custom-button">
+      </form>
+    </div>
+  </div>
+</div>
 
 <!-- FIM  CODIGO RESPONSALVEL PELO PAINEL-CONTROLE -->
 
