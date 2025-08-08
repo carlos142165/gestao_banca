@@ -1,50 +1,49 @@
 document.addEventListener("DOMContentLoaded", () => {
-  // 🔹 Elementos principais do DOM
   const botaoGerencia = document.getElementById("abrirGerenciaBanca");
   const modal = document.getElementById("modalDeposito");
   const botaoFechar = modal.querySelector(".btn-fechar");
 
   let modalInicializado = false;
   let valorOriginalBanca = 0;
-  // 🔹 Abrir modal de gerenciamento da banca
+
+  // Variáveis globais necessárias em outras funções
+  let diaria, unidade, oddsMeta;
+  let resultadoCalculo, resultadoUnidade, resultadoOdds;
+
   botaoGerencia.addEventListener("click", (e) => {
     e.preventDefault();
-    if (!document.body.contains(modal)) {
-      document.body.appendChild(modal);
-    }
     modal.style.display = "flex";
     inicializarModalDeposito();
   });
-  // 🔹 Fechar modal
+
   botaoFechar.addEventListener("click", () => {
     modal.style.display = "none";
   });
-  // 🔹 Selecionar conteúdo ao focar nos inputs
+
   function selecionarAoClicar(input) {
     input.addEventListener("focus", () => input.select());
     input.addEventListener("mouseup", (e) => e.preventDefault());
   }
-  // 🔹 Inicialização do modal de depósito
+
   function inicializarModalDeposito() {
     if (modalInicializado) return;
     modalInicializado = true;
-    // 🔸 Elementos do modal
+
     const valorBancaInput = modal.querySelector("#valorBanca");
     const valorBancaLabel = modal.querySelector("#valorBancaLabel");
-    const diaria = modal.querySelector("#porcentagem");
-    const unidade = modal.querySelector("#unidadeMeta");
-    const resultadoCalculo = modal.querySelector("#resultadoCalculo");
-    const resultadoUnidade = modal.querySelector("#resultadoUnidade");
-    const resultadoOdds = modal.querySelector("#resultadoOdds");
-    const oddsMeta = modal.querySelector("#oddsMeta");
+    diaria = modal.querySelector("#porcentagem");
+    unidade = modal.querySelector("#unidadeMeta");
+    resultadoCalculo = modal.querySelector("#resultadoCalculo");
+    resultadoUnidade = modal.querySelector("#resultadoUnidade");
+    resultadoOdds = modal.querySelector("#resultadoOdds");
+    oddsMeta = modal.querySelector("#oddsMeta");
     const acaoSelect = modal.querySelector("#acaoBanca");
-
     const botaoAcao = modal.querySelector("#botaoAcao");
-    // 🔸 Aplicar seleção automática nos inputs
+
     selecionarAoClicar(diaria);
     selecionarAoClicar(unidade);
     selecionarAoClicar(oddsMeta);
-    // 🔸 Criar elementos auxiliares (legenda e mensagem de erro)
+
     const legendaBanca = document.createElement("div");
     legendaBanca.id = "legendaBanca";
     legendaBanca.style = "margin-top: 5px; font-size: 0.9em; color: #7f8c8d;";
@@ -54,82 +53,91 @@ document.addEventListener("DOMContentLoaded", () => {
     mensagemErro.id = "mensagemErro";
     mensagemErro.style = "color: red; margin-top: 10px; font-weight: bold;";
     botaoAcao.parentNode.insertBefore(mensagemErro, botaoAcao.nextSibling);
-    // 🔸 Elementos de exibição de lucro
+
     const lucroTotalLabel = modal.querySelector("#valorLucroLabel");
     const lucroLabelTexto = modal.querySelector("#lucroLabel");
-    // 🔸 Buscar dados iniciais via AJAX
+
     fetch("ajax_deposito.php")
       .then((response) => response.json())
       .then((data) => {
         if (!data.success) return;
 
-        // Lucro
         const lucro = parseFloat(data.lucro);
-        const lucroFormatado = lucro.toLocaleString("pt-BR", {
+        lucroTotalLabel.textContent = lucro.toLocaleString("pt-BR", {
           style: "currency",
           currency: "BRL",
         });
 
-        lucroTotalLabel.textContent = lucroFormatado;
+        lucroTotalLabel.style.color =
+          lucro > 0 ? "#009e42ff" : lucro < 0 ? "#e92a15ff" : "#7f8c8d";
+        lucroLabelTexto.innerHTML =
+          lucro > 0
+            ? `<i class="fa-solid fa-money-bill-trend-up"></i> Lucro`
+            : lucro < 0
+            ? `<i class="fa-solid fa-money-bill-trend-up"></i> Negativo`
+            : `<i class="fa-solid fa-money-bill-trend-up"></i> Neutro`;
 
-        if (lucro > 0) {
-          lucroTotalLabel.style.color = "#0bbb54ff"; // verde
-          lucroLabelTexto.innerHTML = `<i class="fa-solid fa-money-bill-trend-up"></i> Lucro`;
-        } else if (lucro < 0) {
-          lucroTotalLabel.style.color = "#e92a15ff"; // vermelho
-          lucroLabelTexto.innerHTML = `<i class="fa-solid fa-money-bill-trend-down"></i> Perdendo`;
-        } else {
-          lucroTotalLabel.style.color = "#7f8c8d"; // cinza
-          lucroLabelTexto.innerHTML = `<i class="fa-solid fa-money-bill-trend-up"></i> Neutro`;
-        }
-
-        // 🔸 Exibir banca atual e configurar inputs
         valorOriginalBanca = parseFloat(data.banca);
-        const valorFormatado = valorOriginalBanca.toLocaleString("pt-BR", {
-          style: "currency",
-          currency: "BRL",
-        });
+        valorBancaLabel.textContent = valorOriginalBanca.toLocaleString(
+          "pt-BR",
+          {
+            style: "currency",
+            currency: "BRL",
+          }
+        );
 
-        valorBancaInput.value = "";
-        valorBancaLabel.textContent = valorFormatado;
-        const diariaValor = Math.max(parseFloat(data.diaria || "2.00"), 1);
-        diaria.value = `${diariaValor.toFixed(0)}%`;
-
+        diaria.value = `${Math.max(
+          parseFloat(data.diaria || "2.00"),
+          1
+        ).toFixed(0)}%`;
         unidade.value = parseInt(data.unidade || "2");
 
         calcularMeta(valorOriginalBanca);
-
-        //radioWrapper.style.display = "flex";
       });
-    // 🔸 Configurar comportamento dos botões de ação (radio buttons)
-    // 🔸 Configurar comportamento da seleção via dropdown
-    acaoSelect.value = ""; // limpa seleção inicial
-    acaoSelect.addEventListener("change", () => {
-      valorBancaInput.value = "";
-      mensagemErro.textContent = "";
 
-      const tipo = acaoSelect.value;
+    const dropdownItems = modal.querySelectorAll(".dropdown-menu li");
 
-      if (tipo === "add") {
-        valorBancaInput.placeholder = "Quanto quer Depositar na Banca R$ 0,00";
-        valorBancaInput.disabled = false;
-        botaoAcao.value = "Depositar na Banca";
-      } else if (tipo === "sacar") {
-        valorBancaInput.placeholder = "Quanto Quer Sacar da Banca R$ 0,00";
-        valorBancaInput.disabled = false;
-        botaoAcao.value = "Sacar da Banca";
-      } else if (tipo === "resetar") {
-        valorBancaInput.placeholder = "Essa ação irá zerar sua banca";
-        valorBancaInput.disabled = true;
-        botaoAcao.value = "Resetar Banca";
-      } else {
-        valorBancaInput.placeholder = "R$ 0,00";
-        valorBancaInput.disabled = false;
-        botaoAcao.value = "Cadastrar Dados";
-      }
+    dropdownItems.forEach((item) => {
+      item.addEventListener("click", () => {
+        const tipo = item.getAttribute("data-value");
+        acaoSelect.value = tipo;
+
+        valorBancaInput.value = "";
+        mensagemErro.textContent = "";
+
+        // Sempre exibe o input, mas controla se está ativo ou não
+        valorBancaInput.style.display = "block";
+
+        if (tipo === "add") {
+          valorBancaInput.placeholder =
+            "Quanto quer Depositar na Banca R$ 0,00";
+          valorBancaInput.disabled = false;
+          valorBancaInput.classList.remove("desativado");
+          botaoAcao.value = "Depositar na Banca";
+        } else if (tipo === "sacar") {
+          valorBancaInput.placeholder = "Quanto Quer Sacar da Banca R$ 0,00";
+          valorBancaInput.disabled = false;
+          valorBancaInput.classList.remove("desativado");
+          botaoAcao.value = "Sacar da Banca";
+        } else if (tipo === "resetar") {
+          valorBancaInput.placeholder = "Essa ação irá zerar sua banca";
+          valorBancaInput.disabled = true;
+          valorBancaInput.classList.add("desativado");
+          botaoAcao.value = "Resetar Banca";
+        } else if (tipo === "alterar") {
+          valorBancaInput.placeholder = "Essa ação não requer valor";
+          valorBancaInput.disabled = true;
+          valorBancaInput.classList.add("desativado");
+          botaoAcao.value = "Alterar Dados";
+        } else {
+          valorBancaInput.placeholder = "R$ 0,00";
+          valorBancaInput.disabled = false;
+          valorBancaInput.classList.remove("desativado");
+          botaoAcao.value = "Cadastrar Dados";
+        }
+      });
     });
 
-    // 🔸 Formatar e validar valor digitado
     valorBancaInput.addEventListener("input", () => {
       let valor = valorBancaInput.value.replace(/[^\d]/g, "");
       if (!valor) {
@@ -140,11 +148,10 @@ document.addEventListener("DOMContentLoaded", () => {
       }
 
       const valorDigitado = parseFloat(valor) / 100;
-      const formatado = valorDigitado.toLocaleString("pt-BR", {
+      valorBancaInput.value = valorDigitado.toLocaleString("pt-BR", {
         style: "currency",
         currency: "BRL",
       });
-      valorBancaInput.value = formatado;
 
       const tipo = acaoSelect.value;
       let valorAtualizado = valorOriginalBanca;
@@ -170,7 +177,6 @@ document.addEventListener("DOMContentLoaded", () => {
       calcularMeta(valorAtualizado);
     });
 
-    // 🔸 Executar ação ao clicar no botão
     botaoAcao.addEventListener("click", (e) => {
       e.preventDefault();
       mensagemErro.textContent = "";
@@ -182,9 +188,11 @@ document.addEventListener("DOMContentLoaded", () => {
           "Selecione uma opção: Depositar, Sacar ou Resetar.";
         return;
       }
-      // 🔹 Validação de campos obrigatórios
+
       const camposObrigatorios = [
-        { campo: valorBancaInput, nome: "Valor da Banca" },
+        ...(tipoSelecionado !== "alterar"
+          ? [{ campo: valorBancaInput, nome: "Valor da Banca" }]
+          : []),
         { campo: diaria, nome: "Porcentagem Diária" },
         { campo: unidade, nome: "Quantidade de Unidade" },
         { campo: oddsMeta, nome: "Odds" },
@@ -207,7 +215,7 @@ document.addEventListener("DOMContentLoaded", () => {
           "Preencha os seguintes campos: " + camposVazios.join(", ");
         return;
       }
-      // 🔹 Ação de resetar banca
+
       if (tipoSelecionado === "resetar") {
         if (
           !confirm(
@@ -232,7 +240,7 @@ document.addEventListener("DOMContentLoaded", () => {
           });
         return;
       }
-      // 🔹 Preparar dados para depósito ou saque
+
       const valorRaw = valorBancaInput.value.replace(/[^\d]/g, "");
       const valorNumerico = parseFloat(valorRaw) / 100;
 
@@ -242,7 +250,10 @@ document.addEventListener("DOMContentLoaded", () => {
       const diariaFloat = parseFloat(diariaRaw);
       const unidadeInt = parseInt(unidadeRaw);
 
-      if (isNaN(valorNumerico) || valorNumerico <= 0) {
+      if (
+        tipoSelecionado !== "alterar" &&
+        (isNaN(valorNumerico) || valorNumerico <= 0)
+      ) {
         mensagemErro.textContent = "Digite um valor válido.";
         return;
       }
@@ -252,10 +263,15 @@ document.addEventListener("DOMContentLoaded", () => {
         return;
       }
 
-      let acaoFinal = tipoSelecionado === "sacar" ? "saque" : "deposito";
+      let acaoFinal =
+        tipoSelecionado === "sacar"
+          ? "saque"
+          : tipoSelecionado === "alterar"
+          ? "alterar"
+          : "deposito";
 
       const oddsValor = parseFloat(oddsMeta.value.replace(",", "."));
-      // 🔹 Enviar dados via AJAX
+
       fetch("ajax_deposito.php", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
@@ -277,7 +293,10 @@ document.addEventListener("DOMContentLoaded", () => {
           }
         });
     });
-    // 🔹 Eventos de input e blur para campos de meta
+    configurarEventosDeMeta();
+  }
+
+  function configurarEventosDeMeta() {
     diaria.addEventListener("input", () => {
       diaria.value = diaria.value.replace(/[^0-9]/g, "");
       calcularMeta(valorOriginalBanca);
@@ -305,90 +324,71 @@ document.addEventListener("DOMContentLoaded", () => {
     oddsMeta.addEventListener("blur", () => {
       calcularOdds(unidadeCalculada);
     });
-    // 🔹 Função para formatar porcentagem
-    function formatarPorcentagem(valor) {
-      const num = parseFloat(valor);
-      return !isNaN(num) ? `${num}%` : "";
+  }
+
+  function formatarPorcentagem(valor) {
+    const num = parseFloat(valor);
+    return !isNaN(num) ? `${num}%` : "";
+  }
+
+  let unidadeCalculada = 0;
+
+  function calcularMeta(bancaFloat) {
+    const percentualRaw = diaria.value.replace("%", "").replace(",", ".");
+    const percentFloat = parseFloat(percentualRaw);
+
+    if (isNaN(percentFloat)) {
+      resultadoCalculo.textContent = "";
+      return;
     }
 
-    let unidadeCalculada = 0;
-    // 🔹 Cálculo da meta com base na banca e porcentagem
-    function calcularMeta(bancaFloat) {
-      const percentualRaw = diaria.value.replace("%", "").replace(",", ".");
-      const percentFloat = parseFloat(percentualRaw);
+    const baseCalculo = bancaFloat || 0;
+    const unidadeEntrada = baseCalculo * (percentFloat / 100);
 
-      if (isNaN(percentFloat)) {
-        resultadoCalculo.textContent = "";
-        resultadoUnidade.textContent = "";
-        resultadoOdds.textContent = "";
-        unidadeCalculada = 0;
-        return;
+    resultadoCalculo.textContent = `Unidade de Entrada: ${unidadeEntrada.toLocaleString(
+      "pt-BR",
+      {
+        style: "currency",
+        currency: "BRL",
       }
+    )}`;
+    unidadeCalculada = baseCalculo * (percentFloat / 100);
+    calcularUnidade(unidadeCalculada);
+    calcularOdds(unidadeCalculada);
+  }
 
-      let baseCalculo =
-        bancaFloat > 0
-          ? bancaFloat
-          : parseFloat(
-              valorBancaLabel.textContent
-                .replace("R$", "")
-                .replace(".", "")
-                .replace(",", ".")
-                .trim()
-            );
-
-      if (isNaN(baseCalculo)) {
-        resultadoCalculo.textContent = "";
-        resultadoUnidade.textContent = "";
-        resultadoOdds.textContent = "";
-        unidadeCalculada = 0;
-        return;
-      }
-
-      const resultado = baseCalculo * (percentFloat / 100);
-      unidadeCalculada = resultado;
-
-      resultadoCalculo.textContent = `Sua Unidade de Entrada nas Apostas é de: ${resultado.toLocaleString(
+  function calcularUnidade(valorMeta) {
+    const unidadeFloat = parseInt(unidade.value);
+    if (!isNaN(unidadeFloat) && !isNaN(valorMeta)) {
+      const total = unidadeFloat * valorMeta;
+      resultadoUnidade.textContent = `Meta Diária: ${total.toLocaleString(
         "pt-BR",
-        { style: "currency", currency: "BRL" }
+        {
+          style: "currency",
+          currency: "BRL",
+        }
       )}`;
-
-      calcularUnidade(resultado);
-      calcularOdds(resultado);
-      calcularOddsIdeal();
+    } else {
+      resultadoUnidade.textContent = "";
     }
-    // 🔹 Cálculo da meta diária com base na unidade
-    function calcularUnidade(valorMeta) {
-      const unidadeFloat = parseInt(unidade.value);
-      if (!isNaN(unidadeFloat) && !isNaN(valorMeta)) {
-        const total = unidadeFloat * valorMeta;
-        resultadoUnidade.textContent = `O Valor da Sua Meta Diária é de: ${total.toLocaleString(
-          "pt-BR",
-          { style: "currency", currency: "BRL" }
-        )}`;
-      } else {
-        resultadoUnidade.textContent = "";
-      }
-    }
-    // 🔹 Cálculo de odds necessárias para atingir a meta
-    function calcularOdds(valorUnidade) {
-      const oddsRaw = oddsMeta.value.replace(",", ".");
-      const oddsFloat = parseFloat(oddsRaw);
+  }
 
-      if (!isNaN(oddsFloat) && !isNaN(valorUnidade)) {
-        const bruto = valorUnidade * oddsFloat;
-        const lucro = bruto - valorUnidade;
+  function calcularOdds(valorUnidade) {
+    const oddsRaw = oddsMeta.value.replace(",", ".");
+    const oddsFloat = parseFloat(oddsRaw);
 
-        const unidadeFloat = parseInt(unidade.value);
-        const metaTotal = unidadeFloat * valorUnidade;
+    const unidadeFloat = parseInt(unidade.value) || 0;
+    const valorUnidadeSeguro = !isNaN(valorUnidade) ? valorUnidade : 0;
+    const oddsSeguro = !isNaN(oddsFloat) ? oddsFloat : 0;
 
-        const divisao = lucro > 0 ? metaTotal / lucro : 0;
+    const bruto = valorUnidadeSeguro * oddsSeguro;
+    const lucro = bruto - valorUnidadeSeguro;
+    const metaTotal = unidadeFloat * valorUnidadeSeguro;
 
-        resultadoOdds.textContent = `${Math.round(
-          divisao
-        )}  Greens Para Meta Diária`;
-      } else {
-        resultadoOdds.textContent = "";
-      }
-    }
+    const divisao = lucro > 0 ? metaTotal / lucro : 0;
+
+    resultadoOdds.textContent = `${Math.round(
+      divisao
+    )} Entradas Para Meta Diária`;
   }
 });

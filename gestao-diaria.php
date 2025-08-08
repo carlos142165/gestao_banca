@@ -1,6 +1,7 @@
 
 
 <?php
+ob_start();
 require_once 'config.php';
 require_once 'carregar_sessao.php';
 require_once 'funcoes.php'; // ✅ Inclui a função de cálculo
@@ -10,24 +11,18 @@ require_once 'funcoes.php'; // ✅ Inclui a função de cálculo
 mysqli_report(MYSQLI_REPORT_ERROR | MYSQLI_REPORT_STRICT);
 
 // ✅ Função de notificação
-function setToast($mensagem, $tipo = 'info') {
-  $cores = [
-    'sucesso' => '#4CAF50',
-    'erro' => '#F44336',
-    'aviso' => '#FFC107',
-    'info' => '#2196F3'
-  ];
-  $cor = $cores[$tipo] ?? '#333';
-
+if (isset($_SESSION['toast'])) {
+  $msg = addslashes($_SESSION['toast']['mensagem']);
+  $tipo = $_SESSION['toast']['tipo'];
   echo "<script>
     document.addEventListener('DOMContentLoaded', function() {
       const toast = document.createElement('div');
-      toast.textContent = '".addslashes($mensagem)."';
+      toast.textContent = '$msg';
       toast.style.position = 'fixed';
       toast.style.bottom = '20px';
       toast.style.right = '20px';
       toast.style.padding = '12px 20px';
-      toast.style.backgroundColor = '$cor';
+      toast.style.backgroundColor = '" . ($tipo === 'sucesso' ? '#4CAF50' : '#F44336') . "';
       toast.style.color = '#fff';
       toast.style.borderRadius = '5px';
       toast.style.boxShadow = '0 2px 6px rgba(0,0,0,0.2)';
@@ -36,7 +31,9 @@ function setToast($mensagem, $tipo = 'info') {
       setTimeout(() => toast.remove(), 3000);
     });
   </script>";
+  unset($_SESSION['toast']);
 }
+
 
 // 🔐 Verificação de sessão
 if (!isset($_SESSION['usuario_id']) || empty($_SESSION['usuario_id'])) {
@@ -52,13 +49,18 @@ $valor_green = $_SESSION['valor_green'] ?? 0;
 $valor_red   = $_SESSION['valor_red'] ?? 0;
 
 // 🔎 Dados da sessão
+// 🔎 Dados da sessão
 $ultima_diaria         = $_SESSION['porcentagem_entrada'] ?? 0;
-$soma_depositos        = $_SESSION['saldo_mentores'] + $_SESSION['saldo_geral'] - $_SESSION['saques_totais'] ?? 0;
+$soma_depositos        = 
+    ($_SESSION['saldo_mentores'] ?? 0) + 
+    ($_SESSION['saldo_geral'] ?? 0) - 
+    ($_SESSION['saques_totais'] ?? 0);
 $soma_saque            = $_SESSION['saques_totais'] ?? 0;
 $saldo_mentores        = $_SESSION['saldo_mentores'] ?? 0;
 $saldo_banca           = calcularSaldoBanca(); // ✅ usa função do funcoes.php
 $valor_entrada_calculado = $_SESSION['resultado_entrada'] ?? 0;
 $valor_entrada_formatado = number_format($valor_entrada_calculado, 2, ',', '.');
+
 
 // 🔎 Verificação de banca zerada
 if ($saldo_banca <= 0 && $saldo_mentores < 0) {
@@ -150,116 +152,7 @@ if (!isset($_SESSION['saldo_banca'])) {
 
 
 
-<!-- CODIGO RESPONSAVEL PELO PAINEL-CONTROLE -->  
-<?php
-require_once 'config.php';
-require_once 'carregar_sessao.php';
 
-// Verifica se o usuário está autenticado
-if (!isset($_SESSION['usuario_id'])) {
-    echo "<script>alert('ÁREA DE MEMBROS – Faça Já Seu Cadastro Gratuito'); window.location.href = 'home.php';</script>";
-    exit();
-}
-
-$id_usuario = $_SESSION['usuario_id'];
-
-// ✅ Recupera variáveis da sessão
-$saldo_reais = $_SESSION['saldo_geral'] ?? 0;
-$saques_reais = $_SESSION['saques_totais'] ?? 0;
-$percentual = $_SESSION['porcentagem_entrada'] ?? 0;
-$percentualFormatado = (intval($percentual) == $percentual)
-    ? intval($percentual) . '%'
-    : number_format($percentual, 2, ',', '.') . '%';
-
-// ✅ Processa formulário de edição ou inserção
-if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['submitPersonalizado'])) {
-    $deposito = str_replace(',', '.', preg_replace('/[^0-9,]/', '', $_POST['deposito'] ?? ''));
-    $diaria = str_replace(',', '.', preg_replace('/[^0-9,]/', '', $_POST['diaria'] ?? ''));
-    $unidade = str_replace(',', '.', preg_replace('/[^0-9,]/', '', $_POST['unidade'] ?? ''));
-    $controle_id = intval($_POST['controle_id'] ?? 0);
-
-    if ($controle_id > 0) {
-        // Atualiza registro existente
-        $stmt = $conexao->prepare("UPDATE controle SET deposito = ?, diaria = ?, unidade = ? WHERE id = ? AND id_usuario = ?");
-        $stmt->bind_param("dddii", $deposito, $diaria, $unidade, $controle_id, $id_usuario);
-        $stmt->execute();
-        $stmt->close();
-
-        $_SESSION['mensagem'] = 'Dados atualizados com sucesso!';
-    } else {
-        // Insere novo registro
-        $stmt = $conexao->prepare("INSERT INTO controle (id_usuario, deposito, diaria, unidade) VALUES (?, ?, ?, ?)");
-        $stmt->bind_param("iddd", $id_usuario, $deposito, $diaria, $unidade);
-        $stmt->execute();
-        $stmt->close();
-
-        $_SESSION['mensagem'] = 'Dados cadastrados com sucesso!';
-    }
-
-    header('Location: painel-controle.php');
-    exit();
-}
-
-// ✅ Processa ações como saque ou limpar
-if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['acao'], $_POST['valor'])) {
-    $acao = $_POST['acao'];
-    $valor = str_replace(',', '.', preg_replace('/[^0-9,]/', '', $_POST['valor']));
-    $valorFloat = is_numeric($valor) ? (float)$valor : 0;
-
-    if ($acao === 'limpar') {
-        $stmt = $conexao->prepare("DELETE FROM controle WHERE id_usuario = ?");
-        $stmt->bind_param("i", $id_usuario);
-        $stmt->execute();
-        $stmt->close();
-
-        $stmt = $conexao->prepare("DELETE FROM valor_mentores WHERE id_usuario = ?");
-        $stmt->bind_param("i", $id_usuario);
-        $stmt->execute();
-        $stmt->close();
-
-        $_SESSION['mensagem'] = 'Banca e históricos dos mentores limpos com sucesso!';
-        header('Location: painel-controle.php');
-        exit();
-    }
-
-    if ($acao === 'saque') {
-        if ($valorFloat > $saldo_reais || $saldo_reais <= 0) {
-            $_SESSION['mensagem'] = 'Saldo Insuficiente!';
-            header('Location: painel-controle.php');
-            exit();
-        }
-
-        $stmt = $conexao->prepare("INSERT INTO valor_mentores (id_usuario, valor_red) VALUES (?, ?)");
-        $stmt->bind_param("id", $id_usuario, $valorFloat);
-        $stmt->execute();
-        $stmt->close();
-
-        $stmt = $conexao->prepare("INSERT INTO controle (id_usuario, saque, origem) VALUES (?, ?, 'mentor')");
-        $stmt->bind_param("id", $id_usuario, $valorFloat);
-        $stmt->execute();
-        $stmt->close();
-
-        $_SESSION['mensagem'] = 'Saque realizado com sucesso!';
-        header('Location: painel-controle.php');
-        exit();
-    }
-
-    if (in_array($acao, ['deposito', 'diaria']) && $valorFloat > 0) {
-        $stmt = $conexao->prepare("INSERT INTO controle (id_usuario, $acao) VALUES (?, ?)");
-        $stmt->bind_param("id", $id_usuario, $valorFloat);
-        $stmt->execute();
-        $stmt->close();
-
-        $_SESSION['mensagem'] = ($acao === 'diaria')
-            ? 'Porcentagem Definida com Sucesso!'
-            : ucfirst($acao) . ' Feito com Sucesso!';
-
-        header('Location: painel-controle.php');
-        exit();
-    }
-}
-?>
-<!-- FIM CODIGO RESPONSAVEL PELO PAINEL-CONTROLE -->  
 
 
 
@@ -274,6 +167,9 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['acao'], $_POST['valor
 
      
      <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+     <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+     
 
      <link rel="stylesheet" href="css/estilo-gestao-diaria.css">
      <link rel="stylesheet" href="css/estilo-campo-mes.css">
@@ -692,12 +588,12 @@ if (isset($_SESSION['toast'])) {
 $timezone_recebido = $_POST['timezone'] ?? 'America/Bahia';
 date_default_timezone_set($timezone_recebido);
 
-$meses_portugues = array(
+$meses_portugues = [
   "01" => "JANEIRO", "02" => "FEVEREIRO", "03" => "MARÇO",
   "04" => "ABRIL", "05" => "MAIO", "06" => "JUNHO",
   "07" => "JULHO", "08" => "AGOSTO", "09" => "SETEMBRO",
   "10" => "OUTUBRO", "11" => "NOVEMBRO", "12" => "DEZEMBRO"
-);
+];
 
 $ano = date('Y');
 $mes = date('m');
@@ -706,11 +602,20 @@ $diasNoMes = cal_days_in_month(CAL_GREGORIAN, $mes, $ano);
 $nomeMes = $meses_portugues[$mes];
 
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
-  $id_mentores = $_POST['id_mentores'];
-  $green = $_POST['green'];
-  $red = $_POST['red'];
-  $valor_green = $_POST['valor_green'];
-  $valor_red = $_POST['valor_red'];
+  $campos = ['id_mentores', 'green', 'red', 'valor_green', 'valor_red'];
+  foreach ($campos as $campo) {
+    if (!isset($_POST[$campo])) {
+      $_SESSION['toast'] = ['mensagem' => "Erro: campo '$campo' não enviado.", 'tipo' => 'erro'];
+      header('Location: gestao-diaria.php');
+      exit();
+    }
+  }
+
+  $id_mentores = intval($_POST['id_mentores']);
+  $green = trim($_POST['green']);
+  $red = trim($_POST['red']);
+  $valor_green = floatval($_POST['valor_green']);
+  $valor_red = floatval($_POST['valor_red']);
   $data_criacao = date('Y-m-d H:i:s');
 
   $stmt = $conexao->prepare("
@@ -721,10 +626,21 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
   $stmt->bind_param("iiiddss", 
     $id_usuario_logado, $id_mentores, $green, $red, $valor_green, $valor_red, $data_criacao
   );
-  $stmt->execute();
+
+  if ($stmt->execute()) {
+    $_SESSION['toast'] = ['mensagem' => 'Dados salvos com sucesso!', 'tipo' => 'sucesso'];
+  } else {
+    $_SESSION['toast'] = ['mensagem' => 'Erro ao salvar os dados!', 'tipo' => 'erro'];
+  }
+
   $stmt->close();
+  header('Location: gestao-diaria.php');
+  exit();
 }
+
+ob_end_flush();
 ?>
+
 
 
 
@@ -751,10 +667,14 @@ if (!isset($_SESSION['usuario_id']) || empty($_SESSION['usuario_id'])) {
 $id_usuario_logado = $_SESSION['usuario_id'];
 
 // 🔹 Dados da sessão
-$valor_green = $_SESSION['valor_green'] ?? 0;
-$valor_red   = $_SESSION['valor_red'] ?? 0;
-$soma_depositos = $_SESSION['saldo_mentores'] + $_SESSION['saldo_geral'] - $_SESSION['saques_totais'] ?? 0;
-$ultima_diaria = $_SESSION['porcentagem_entrada'] ?? 0;
+$valor_green     = $_SESSION['valor_green'] ?? 0;
+$valor_red       = $_SESSION['valor_red'] ?? 0;
+$saldo_mentores  = $_SESSION['saldo_mentores'] ?? 0;
+$saldo_geral     = $_SESSION['saldo_geral'] ?? 0;
+$saques_totais   = $_SESSION['saques_totais'] ?? 0;
+$soma_depositos  = $saldo_mentores + $saldo_geral - $saques_totais;
+$ultima_diaria   = $_SESSION['porcentagem_entrada'] ?? 0;
+
 
 // 🔹 Cálculo da meta mensal
 $hoje = new DateTime();
@@ -917,124 +837,100 @@ while ($row = $result->fetch_assoc()) {
   <div id="modalDeposito" class="modal-overlay">
     <div class="modal-content">
       <form method="POST" action="">
+        <!-- ID de controle -->
         <input type="hidden" name="controle_id" value="<?= isset($controle_id) ? $controle_id : '' ?>">
 
+        <!-- Botão de fechar -->
         <button type="button" class="btn-fechar" id="fecharModal">×</button>
 
-        <!-- Banca e Lucro lado a lado -->
+        <!-- Banca e Lucro -->
         <div class="linha-banca-lucro">
-  <div class="campo-banca">
-    <div class="conteudo">
-      <label>
-        <i class="fa-solid fa-coins"></i> Banca
-      </label>
-      <span id="valorBancaLabel">R$ 0,00</span>
-    </div>
-  </div>
-  
-  <div class="campo-lucro">
-    <div class="conteudo">
-      <label id="lucroLabel">
-        <i class="fa-solid fa-money-bill-trend-up"></i> Lucro
-      </label>
-      <span id="valorLucroLabel">R$ 0,00</span>
-    </div>
-  </div>
-</div>
-
+          <div class="campo-banca">
+            <div class="conteudo">
+              <label><i class="fa-solid fa-coins"></i> Banca</label>
+              <span id="valorBancaLabel">R$ 0,00</span>
+            </div>
+          </div>
+          <div class="campo-lucro">
+            <div class="conteudo">
+              <label id="lucroLabel"><i class="fa-solid fa-money-bill-trend-up"></i> Lucro</label>
+              <span id="valorLucroLabel">R$ 0,00</span>
+            </div>
+          </div>
+        </div>
 
         <!-- Ação da banca -->
-  <div class="custom-inputbox">
-  <div class="select-wrapper">
-    <select name="acaoBanca" id="acaoBanca">
-      <option value="">Selecione uma ação</option>
-      <option value="add">Depositar</option>
-      <option value="sacar">Sacar</option>
-      <option value="alterar">Alterar Dados</option>
-      <option value="resetar">Resetar Banca</option>
-    </select>
-  </div>
-</div>
-
-
+        <div class="custom-dropdown">
+          <button class="dropdown-toggle" type="button">
+            <i class="fa-solid fa-hand-pointer"></i> Selecione uma ação
+            <i class="fa-solid fa-chevron-down"></i>
+          </button>
+          <ul class="dropdown-menu">
+            <li data-value="add"><i class="fa-solid fa-money-bill-wave"></i> Depositar</li>
+            <li data-value="sacar"><i class="fa-solid fa-money-bill-transfer"></i> Sacar</li>
+            <li data-value="alterar"><i class="fa-solid fa-pen-to-square"></i> Alterar Dados</li>
+            <li data-value="resetar"><i class="fa-solid fa-trash-can"></i> Resetar Banca</li>
+          </ul>
+          <input type="hidden" name="acaoBanca" id="acaoBanca">
+        </div>
 
         <!-- Valor da banca -->
         <div class="custom-inputbox">
-  <label for="valorBanca">
-    <i class="fa-solid fa-wallet"></i> Valor da Banca
-  </label>
-  <div class="input-wrapper banca-wrapper">
-    <input
-      type="text"
-      id="valorBanca"
-      name="valorBanca"
-      placeholder="R$ 0,00"
-      required
-    >
-  </div>
-</div>
-
+          <label for="valorBanca"><i class="fa-solid fa-wallet"></i> Adicionar Valor</label>
+          <div class="input-wrapper banca-wrapper">
+            <input type="text" id="valorBanca" name="valorBanca" placeholder="R$ 0,00">
+          </div>
+        </div>
 
         <!-- Porcentagem -->
-       <!-- Porcentagem -->
-<div class="custom-inputbox">
-  <label for="porcentagem">
-    <i class="fa-solid fa-chart-pie"></i> Porcentagem
-  </label>
-  <div class="input-wrapper porc-wrapper">
-    <input
-      type="text"
-      name="diaria"
-      id="porcentagem"
-      required
-      value="<?= isset($valor_diaria) ? number_format($valor_diaria, 2, ',', '.') : '2,00' ?>"
-    >
-    <span id="resultadoCalculo"></span>
-  </div>
-</div>
+        <div class="custom-inputbox">
+          <label for="porcentagem"><i class="fa-solid fa-chart-pie"></i> Porcentagem</label>
+          <div class="input-wrapper porc-wrapper">
+            <input
+              type="text"
+              name="diaria"
+              id="porcentagem"
+              value="<?= isset($valor_diaria) ? number_format($valor_diaria, 2, ',', '.') : '2,00' ?>"
+            >
+            <span id="resultadoCalculo"></span>
+          </div>
+        </div>
 
-<!-- Unidade -->
-<div class="custom-inputbox">
-  <label for="unidadeMeta">
-    <i class="fa-solid fa-bullseye"></i> Qtd de Unidade
-  </label>
-  <div class="input-wrapper unidade-wrapper">
-    <input
-      type="text"
-      name="unidade"
-      id="unidadeMeta"
-      required
-      value="<?= isset($valor_unidade) ? intval($valor_unidade) : '2' ?>"
-    >
-    <span id="resultadoUnidade"></span>
-  </div>
-</div>
-
+        <!-- Unidade -->
+        <div class="custom-inputbox">
+          <label for="unidadeMeta"><i class="fa-solid fa-bullseye"></i> Qtd de Unidade</label>
+          <div class="input-wrapper unidade-wrapper">
+            <input
+              type="text"
+              name="unidade"
+              id="unidadeMeta"
+              value="<?= isset($valor_unidade) ? intval($valor_unidade) : '2' ?>"
+            >
+            <span id="resultadoUnidade"></span>
+          </div>
+        </div>
 
         <!-- Odds -->
         <div class="custom-inputbox">
-  <label for="oddsMeta">
-    <i class="fa-solid fa-percent"></i> Odds
-  </label>
-  <div class="input-wrapper odds-wrapper">
-    <input
-      type="text"
-      name="odds"
-      id="oddsMeta"
-      required
-      value="<?= isset($valor_odds) ? number_format(floatval($valor_odds), 2, ',', '') : '1,50' ?>"
-    >
-    <span id="resultadoOdds"></span>
-  </div>
-</div>
-
+          <label for="oddsMeta"><i class="fa-solid fa-percent"></i> Odds</label>
+          <div class="input-wrapper odds-wrapper">
+            <input
+              type="text"
+              name="odds"
+              id="oddsMeta"
+              value="<?= isset($valor_odds) ? number_format(floatval($valor_odds), 2, ',', '') : '1,50' ?>"
+            >
+            <span id="resultadoOdds"></span>
+          </div>
+        </div>
 
         <!-- Botão de ação -->
-        <input type="submit" id="botaoAcao" name="submitPersonalizado" value="Cadastrar Dados" class="custom-button">
+        <input type="button" id="botaoAcao" value="Cadastrar Dados" class="custom-button">
       </form>
     </div>
   </div>
 </div>
+
 
 <!-- FIM  CODIGO RESPONSALVEL PELO PAINEL-CONTROLE -->
 
@@ -1052,6 +948,31 @@ while ($row = $result->fetch_assoc()) {
   menu.style.display = menu.style.display === "block" ? "none" : "block";
  }
 </script>
+
+<script>
+  const toggle = document.querySelector('.dropdown-toggle');
+  const menu = document.querySelector('.dropdown-menu');
+  const hiddenInput = document.getElementById('acaoBanca');
+
+  toggle.addEventListener('click', () => {
+    menu.style.display = menu.style.display === 'block' ? 'none' : 'block';
+  });
+
+  menu.querySelectorAll('li').forEach(item => {
+    item.addEventListener('click', () => {
+      toggle.innerHTML = item.innerHTML + '<i class="fa-solid fa-chevron-down"></i>';
+      hiddenInput.value = item.dataset.value;
+      menu.style.display = 'none';
+    });
+  });
+
+  document.addEventListener('click', (e) => {
+    if (!e.target.closest('.custom-dropdown')) {
+      menu.style.display = 'none';
+    }
+  });
+</script>
+
 
 
 <div id="mensagem-status" class="toast"></div>
