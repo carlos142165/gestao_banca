@@ -37,26 +37,25 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     }
 
     if ($acao === 'alterar') {
-    $stmt = $conexao->prepare("
-        UPDATE controle SET diaria = ?, unidade = ?, odds = ?
-        WHERE id_usuario = ? ORDER BY id DESC LIMIT 1
-    ");
-    $stmt->bind_param("didi", $diaria, $unidade, $odds, $id_usuario);
+        $stmt = $conexao->prepare("
+            UPDATE controle SET diaria = ?, unidade = ?, odds = ?
+            WHERE id_usuario = ? ORDER BY id DESC LIMIT 1
+        ");
+        $stmt->bind_param("didi", $diaria, $unidade, $odds, $id_usuario);
 
-    if ($stmt->execute()) {
-        echo json_encode(['success' => true, 'message' => 'Dados alterados com sucesso']);
-    } else {
-        echo json_encode(['success' => false, 'message' => 'Erro ao alterar dados']);
+        if ($stmt->execute()) {
+            echo json_encode(['success' => true, 'message' => 'Dados alterados com sucesso']);
+        } else {
+            echo json_encode(['success' => false, 'message' => 'Erro ao alterar dados']);
+        }
+        $stmt->close();
+        exit();
     }
-    $stmt->close();
-    exit();
-}
 
-if ($valor <= 0 || !in_array($acao, ['deposito', 'saque', 'cadastrar'])) {
-    echo json_encode(['success' => false, 'message' => 'Dados inválidos']);
-    exit();
-}
-
+    if ($valor <= 0 || !in_array($acao, ['deposito', 'saque', 'cadastrar'])) {
+        echo json_encode(['success' => false, 'message' => 'Dados inválidos']);
+        exit();
+    }
 
     $query = "";
     if ($acao === 'deposito' || $acao === 'cadastrar') {
@@ -125,6 +124,7 @@ function getUltimoCampo($conexao, $campo, $id_usuario) {
 
 $ultima_diaria = getUltimoCampo($conexao, 'diaria', $id_usuario);
 $ultima_unidade = getUltimoCampo($conexao, 'unidade', $id_usuario);
+$ultima_odds = getUltimoCampo($conexao, 'odds', $id_usuario); // ✅ odds incluída
 
 echo json_encode([
     'success' => true,
@@ -134,7 +134,9 @@ echo json_encode([
     'lucro' => number_format($lucro, 2, '.', ''),
     'mostrar_radios' => $mostrar_radios,
     'diaria' => number_format($ultima_diaria ?? 0, 2, '.', ''),
-    'unidade' => intval($ultima_unidade ?? 0)
+    'unidade' => intval($ultima_unidade ?? 0),
+    'odds' => number_format($ultima_odds ?? 0, 2, '.', '') // ✅ odds retornada
 ]);
+
 
 

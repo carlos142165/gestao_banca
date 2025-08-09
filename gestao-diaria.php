@@ -252,13 +252,6 @@ if (isset($_SESSION['toast'])) {
 
       </div>
 
-      <!-- Saque -->
-      <div class="valor-label-linha">
-        <i class="fa-solid fa-arrow-up-from-bracket valor-icone-tema"></i>
-        <span class="valor-label">Saque:</span>
-        <span class="valor-valor-saque">R$ <?php echo number_format($_SESSION['saques_totais'] ?? 0, 2, ',', '.'); ?></span>
-      </div>
-
       <!-- Saldo Mentores -->
       <div class="valor-label-linha">
         <i class="fa-solid fa-chart-line valor-icone-tema"></i>
@@ -862,7 +855,7 @@ while ($row = $result->fetch_assoc()) {
         <!-- Ação da banca -->
         <div class="custom-dropdown">
           <button class="dropdown-toggle" type="button">
-            <i class="fa-solid fa-hand-pointer"></i> Selecione uma ação
+            <i class="fa-solid fa-hand-pointer"></i> Selecione Uma Opção
             <i class="fa-solid fa-chevron-down"></i>
           </button>
           <ul class="dropdown-menu">
@@ -912,7 +905,7 @@ while ($row = $result->fetch_assoc()) {
 
         <!-- Odds -->
         <div class="custom-inputbox">
-          <label for="oddsMeta"><i class="fa-solid fa-percent"></i> Odds</label>
+          <label for="oddsMeta"><i class="fa-solid fa-percent"></i> Odds Min..</label>
           <div class="input-wrapper odds-wrapper">
             <input
               type="text"
@@ -924,12 +917,16 @@ while ($row = $result->fetch_assoc()) {
           </div>
         </div>
 
+        <!-- ✅ Toast discreto dentro do modal -->
+        <div id="toastModal" style="margin-top: 10px;"></div>
+
         <!-- Botão de ação -->
         <input type="button" id="botaoAcao" value="Cadastrar Dados" class="custom-button">
       </form>
     </div>
   </div>
 </div>
+
 
 
 <!-- FIM  CODIGO RESPONSALVEL PELO PAINEL-CONTROLE -->

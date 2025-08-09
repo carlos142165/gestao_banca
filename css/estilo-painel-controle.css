@@ -456,9 +456,9 @@ input.desativado {
   opacity: 0.6;
 }
 
-@media (max-width: 500px) {
+@media (max-width: 600px) {
   .modal-gerencia-banca #valorBanca {
-    width: 330px;
+    width: 350px;
     max-width: 100%;
     min-width: unset;
     margin-left: 0; /* alinha à esquerda */

@@ -91,6 +91,13 @@ document.addEventListener("DOMContentLoaded", () => {
           1
         ).toFixed(0)}%`;
         unidade.value = parseInt(data.unidade || "2");
+        oddsMeta.value = parseFloat(data.odds || "1.50").toLocaleString(
+          "pt-BR",
+          {
+            minimumFractionDigits: 2,
+            maximumFractionDigits: 2,
+          }
+        );
 
         calcularMeta(valorOriginalBanca);
       });
@@ -128,7 +135,7 @@ document.addEventListener("DOMContentLoaded", () => {
           valorBancaInput.placeholder = "Essa ação não requer valor";
           valorBancaInput.disabled = true;
           valorBancaInput.classList.add("desativado");
-          botaoAcao.value = "Alterar Dados";
+          botaoAcao.value = "Salvar Alteração";
         } else {
           valorBancaInput.placeholder = "R$ 0,00";
           valorBancaInput.disabled = false;
@@ -158,11 +165,17 @@ document.addEventListener("DOMContentLoaded", () => {
 
       if (tipo === "add") {
         valorAtualizado += valorDigitado;
+        mensagemErro.textContent = ""; // limpa qualquer erro anterior
+        legendaBanca.style.display = "block";
       } else if (tipo === "sacar") {
         valorAtualizado -= valorDigitado;
+
         if (valorDigitado > valorOriginalBanca) {
           mensagemErro.textContent = "Saldo Insuficiente.";
           legendaBanca.style.display = "none";
+        } else {
+          mensagemErro.textContent = ""; // remove a mensagem se o valor for válido
+          legendaBanca.style.display = "block";
         }
       } else if (!tipo && valorOriginalBanca === 0) {
         valorAtualizado = valorDigitado;
@@ -184,8 +197,10 @@ document.addEventListener("DOMContentLoaded", () => {
       const tipoSelecionado = acaoSelect.value;
 
       if (!tipoSelecionado) {
-        mensagemErro.textContent =
-          "Selecione uma opção: Depositar, Sacar ou Resetar.";
+        exibirToast(
+          "Selecione uma opção: Depositar, Sacar, Alterar ou Resetar.",
+          "erro"
+        );
         return;
       }
 
@@ -211,8 +226,10 @@ document.addEventListener("DOMContentLoaded", () => {
       });
 
       if (camposVazios.length > 0) {
-        mensagemErro.textContent =
-          "Preencha os seguintes campos: " + camposVazios.join(", ");
+        exibirToast(
+          "Preencha os seguintes campos: " + camposVazios.join(", "),
+          "erro"
+        );
         return;
       }
 
@@ -232,10 +249,11 @@ document.addEventListener("DOMContentLoaded", () => {
           .then((res) => res.json())
           .then((resposta) => {
             if (resposta.success) {
-              alert("Banca resetada com sucesso!");
+              exibirToast("Banca resetada com sucesso!", "sucesso");
+              atualizarDadosModal();
               modal.style.display = "none";
             } else {
-              alert("Erro ao resetar banca.");
+              exibirToast("Erro ao resetar banca.", "erro");
             }
           });
         return;
@@ -254,12 +272,12 @@ document.addEventListener("DOMContentLoaded", () => {
         tipoSelecionado !== "alterar" &&
         (isNaN(valorNumerico) || valorNumerico <= 0)
       ) {
-        mensagemErro.textContent = "Digite um valor válido.";
+        exibirToast("Digite um valor válido.", "erro");
         return;
       }
 
       if (tipoSelecionado === "sacar" && valorNumerico > valorOriginalBanca) {
-        mensagemErro.textContent = "Saldo Insuficiente.";
+        exibirToast("Saldo Insuficiente.", "erro");
         return;
       }
 
@@ -286,44 +304,59 @@ document.addEventListener("DOMContentLoaded", () => {
         .then((res) => res.json())
         .then((resposta) => {
           if (resposta.success) {
-            alert("Operação realizada com sucesso!");
-            modal.style.display = "none";
+            exibirToast("Operação realizada com sucesso!", "sucesso");
+            atualizarDadosModal();
+
+            const selectAcao = document.getElementById("selectAcao");
+            const inputValor = document.getElementById("inputValor");
+
+            if (selectAcao) selectAcao.value = "";
+            if (inputValor) inputValor.value = "0,00";
+
+            //modal.style.display = "none";
           } else {
-            mensagemErro.textContent = "Erro ao salvar no banco.";
+            exibirToast("Erro ao realizar operação.", "erro");
           }
         });
     });
+
     configurarEventosDeMeta();
   }
 
   function configurarEventosDeMeta() {
-    diaria.addEventListener("input", () => {
-      diaria.value = diaria.value.replace(/[^0-9]/g, "");
-      calcularMeta(valorOriginalBanca);
-    });
+    if (diaria) {
+      diaria.addEventListener("input", () => {
+        diaria.value = diaria.value.replace(/[^0-9]/g, "");
+        calcularMeta(valorOriginalBanca);
+      });
 
-    diaria.addEventListener("blur", () => {
-      diaria.value = formatarPorcentagem(diaria.value);
-      calcularMeta(valorOriginalBanca);
-    });
+      diaria.addEventListener("blur", () => {
+        diaria.value = formatarPorcentagem(diaria.value);
+        calcularMeta(valorOriginalBanca);
+      });
+    }
 
-    unidade.addEventListener("input", () => {
-      unidade.value = unidade.value.replace(/\D/g, "");
-      calcularMeta(valorOriginalBanca);
-    });
+    if (unidade) {
+      unidade.addEventListener("input", () => {
+        unidade.value = unidade.value.replace(/\D/g, "");
+        calcularMeta(valorOriginalBanca);
+      });
 
-    unidade.addEventListener("blur", () => {
-      unidade.value = parseInt(unidade.value) || "";
-      calcularMeta(valorOriginalBanca);
-    });
+      unidade.addEventListener("blur", () => {
+        unidade.value = parseInt(unidade.value) || "";
+        calcularMeta(valorOriginalBanca);
+      });
+    }
 
-    oddsMeta.addEventListener("input", () => {
-      calcularOdds(unidadeCalculada);
-    });
+    if (oddsMeta) {
+      oddsMeta.addEventListener("input", () => {
+        calcularOdds(unidadeCalculada);
+      });
 
-    oddsMeta.addEventListener("blur", () => {
-      calcularOdds(unidadeCalculada);
-    });
+      oddsMeta.addEventListener("blur", () => {
+        calcularOdds(unidadeCalculada);
+      });
+    }
   }
 
   function formatarPorcentagem(valor) {
@@ -345,7 +378,7 @@ document.addEventListener("DOMContentLoaded", () => {
     const baseCalculo = bancaFloat || 0;
     const unidadeEntrada = baseCalculo * (percentFloat / 100);
 
-    resultadoCalculo.textContent = `Unidade de Entrada: ${unidadeEntrada.toLocaleString(
+    resultadoCalculo.textContent = `Unidade: ${unidadeEntrada.toLocaleString(
       "pt-BR",
       {
         style: "currency",
@@ -390,5 +423,124 @@ document.addEventListener("DOMContentLoaded", () => {
     resultadoOdds.textContent = `${Math.round(
       divisao
     )} Entradas Para Meta Diária`;
+  }
+  function atualizarDadosModal() {
+    fetch("dados_banca.php")
+      .then((res) => res.json())
+      .then((data) => {
+        if (!data.success) return;
+
+        valorOriginalBanca = parseFloat(data.banca);
+
+        // Atualiza o rótulo da banca
+        document.getElementById("valorBancaLabel").textContent =
+          valorOriginalBanca.toLocaleString("pt-BR", {
+            style: "currency",
+            currency: "BRL",
+          });
+
+        // Atualiza o lucro
+        const lucroTotalLabel = document.getElementById("valorLucroLabel");
+        const lucroLabelTexto = document.getElementById("lucroLabel");
+
+        lucroTotalLabel.textContent = parseFloat(data.lucro).toLocaleString(
+          "pt-BR",
+          {
+            style: "currency",
+            currency: "BRL",
+          }
+        );
+
+        lucroTotalLabel.style.color =
+          data.lucro > 0
+            ? "#009e42ff"
+            : data.lucro < 0
+            ? "#e92a15ff"
+            : "#7f8c8d";
+
+        lucroLabelTexto.innerHTML =
+          data.lucro > 0
+            ? `<i class="fa-solid fa-money-bill-trend-up"></i> Lucro`
+            : data.lucro < 0
+            ? `<i class="fa-solid fa-money-bill-trend-up"></i> Negativo`
+            : `<i class="fa-solid fa-money-bill-trend-up"></i> Neutro`;
+
+        // Atualiza os campos do formulário
+        diaria.value = `${Math.max(
+          parseFloat(data.diaria || "2.00"),
+          1
+        ).toFixed(0)}%`;
+        unidade.value = parseInt(data.unidade || "2");
+        oddsMeta.value = parseFloat(data.odds || "1.50").toLocaleString(
+          "pt-BR",
+          {
+            minimumFractionDigits: 2,
+            maximumFractionDigits: 2,
+          }
+        );
+
+        // ✅ Resetar campos de operação
+        document.getElementById("selectAcao").value = "deposito"; // ou o valor padrão desejado
+        document.getElementById("inputValor").value = ""; // limpa o campo de valor
+
+        calcularMeta(valorOriginalBanca);
+      });
+  }
+  function exibirToast(mensagem, tipo = "info") {
+    const toastContainer = document.getElementById("toastModal");
+    if (!toastContainer) return;
+
+    const toast = document.createElement("div");
+    toast.textContent = mensagem;
+
+    Object.assign(toast.style, {
+      backgroundColor:
+        tipo === "sucesso"
+          ? "#d4edda"
+          : tipo === "erro"
+          ? "#f8d7da"
+          : "#e2e3e5",
+      color:
+        tipo === "sucesso"
+          ? "#155724"
+          : tipo === "erro"
+          ? "#721c24"
+          : "#383d41",
+      padding: "6px 12px",
+      borderRadius: "4px",
+      fontSize: "0.85em",
+      marginBottom: "5px",
+      border: "1px solid transparent",
+      borderColor:
+        tipo === "sucesso"
+          ? "#c3e6cb"
+          : tipo === "erro"
+          ? "#f5c6cb"
+          : "#d6d8db",
+      transition: "opacity 0.3s ease-in-out",
+      opacity: "1",
+    });
+
+    toastContainer.appendChild(toast);
+
+    setTimeout(() => {
+      toast.style.opacity = "0";
+      setTimeout(() => {
+        toast.remove();
+      }, 300);
+    }, 3000);
+
+    // 🔄 Resetar campo de valor da banca
+    const campoValor = document.getElementById("valorBanca");
+    if (campoValor) campoValor.value = "R$ 0,00";
+
+    // 🔄 Resetar dropdown de ação
+    const dropdownToggle = document.querySelector(".dropdown-toggle");
+    if (dropdownToggle) {
+      dropdownToggle.innerHTML = `<i class="fa-solid fa-hand-pointer"></i> Selecione Uma Opção <i class="fa-solid fa-chevron-down"></i>`;
+    }
+
+    const campoAcao = document.getElementById("acaoBanca");
+    if (campoAcao) campoAcao.value = "";
   }
 });
