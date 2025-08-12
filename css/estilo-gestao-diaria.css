@@ -854,6 +854,7 @@ html {
   font-family: "Poppins", sans-serif;
   z-index: 1000;
   align-items: center;
+  display: none;
 }
 
 .botao-fechar {
@@ -1732,4 +1733,73 @@ input[type="text"] {
 .saldo-neutro {
   color: #cfd8dc; /* cinza claro */
 }
+
+.lucro-entradas-linha {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  padding: 1px 0;
+  border-bottom: 1px solid #1f4d5f;
+}
+
+.lucro-label {
+  font-weight: 500;
+  font-size: 11px;
+  color: #cfd8dc;
+  text-transform: uppercase;
+  letter-spacing: 0.3px;
+}
+
+.lucro-valor {
+  font-size: 13px;
+  font-weight: bold;
+  color: #a9b5bbff; /* azul petróleo */
+}
+
+.lucro-icone {
+  font-size: 12px;
+  color: #90a4ae;
+  transition: transform 0.3s ease, color 0.3s ease;
+}
+
+.lucro-entradas-linha:hover .lucro-icone {
+  transform: scale(1.1);
+  color: #ffffff;
+}
+
+/* Responsivo para telas pequenas */
+@media (max-width: 480px) {
+  .lucro-entradas-linha {
+    gap: 4px;
+    padding: 0;
+  }
+
+  .lucro-label {
+    font-size: 10px;
+    letter-spacing: 0.2px;
+  }
+
+  .lucro-valor {
+    font-size: 12px;
+    line-height: 1.1;
+  }
+
+  .lucro-icone {
+    font-size: 11px;
+  }
+}
+
+/* Cores dinâmicas */
+.saldo-positivo {
+  color: #9fe870;
+}
+
+.saldo-negativo {
+  color: #e57373;
+}
+
+.saldo-neutro {
+  color: #cfd8dc;
+}
+
 /*TESTE*/

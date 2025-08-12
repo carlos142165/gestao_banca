@@ -59,8 +59,12 @@ $ultima_odds = getUltimoCampo($conexao, 'odds', $id_usuario);
 echo json_encode([
   'success' => true,
   'banca' => $saldo_banca,
+  'banca_formatada' => 'R$ ' . number_format($saldo_banca, 2, ',', '.'),
+  'saques_formatado' => 'R$ ' . number_format($total_saque, 2, ',', '.'),
   'lucro' => $lucro,
+  'lucro_formatado' => 'R$ ' . number_format($lucro, 2, ',', '.'),
   'diaria' => $ultima_diaria,
   'unidade' => $ultima_unidade,
   'odds' => $ultima_odds
 ]);
+

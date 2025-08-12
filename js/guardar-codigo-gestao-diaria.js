@@ -76,46 +76,47 @@ function confirmarExclusaoMentor() {
 }
 
 // ✅ TOAST + FORMATADOR DE NOMES COM ESPAÇO PRESERVADO
+document.addEventListener("DOMContentLoaded", function () {
+  const toast = document.getElementById("toast");
+  if (toast && toast.classList.contains("ativo")) {
+    setTimeout(() => {
+      toast.classList.remove("ativo");
+    }, 3000);
+  }
 
-const toast = document.getElementById("toast");
-if (toast && toast.classList.contains("ativo")) {
-  setTimeout(() => {
-    toast.classList.remove("ativo");
-  }, 3000);
-}
+  const campoNome = document.getElementById("nome");
+  const nomePreview = document.querySelector(".mentor-nome-preview");
 
-const campoNome = document.getElementById("nome");
-const nomePreview = document.querySelector(".mentor-nome-preview");
+  const limiteCaracteres = 17; // 🧢 Limite máximo incluindo espaços
 
-const limiteCaracteres = 17; // 🧢 Limite máximo incluindo espaços
+  if (campoNome && nomePreview) {
+    // Atualiza preview ao digitar e aplica limite
+    campoNome.addEventListener("input", function () {
+      if (this.value.length > limiteCaracteres) {
+        this.value = this.value.slice(0, limiteCaracteres); // corta o excedente
+      }
 
-if (campoNome && nomePreview) {
-  // Atualiza preview ao digitar e aplica limite
-  campoNome.addEventListener("input", function () {
-    if (this.value.length > limiteCaracteres) {
-      this.value = this.value.slice(0, limiteCaracteres); // corta o excedente
-    }
+      nomePreview.textContent = this.value; // mostra texto atual
+    });
 
-    nomePreview.textContent = this.value; // mostra texto atual
-  });
+    // Aplica capitalização ao sair do campo
+    campoNome.addEventListener("blur", function () {
+      const nomeFormatado = this.value
+        .replace(/\s+/g, " ")
+        .trim()
+        .split(" ")
+        .map((palavra) =>
+          palavra
+            ? palavra.charAt(0).toUpperCase() + palavra.slice(1).toLowerCase()
+            : ""
+        )
+        .join(" ");
 
-  // Aplica capitalização ao sair do campo
-  campoNome.addEventListener("blur", function () {
-    const nomeFormatado = this.value
-      .replace(/\s+/g, " ")
-      .trim()
-      .split(" ")
-      .map((palavra) =>
-        palavra
-          ? palavra.charAt(0).toUpperCase() + palavra.slice(1).toLowerCase()
-          : ""
-      )
-      .join(" ");
-
-    this.value = nomeFormatado;
-    nomePreview.textContent = nomeFormatado;
-  });
-}
+      this.value = nomeFormatado;
+      nomePreview.textContent = nomeFormatado;
+    });
+  }
+});
 
 function aplicarMascaraValor(input) {
   let bloqueioInicial = true;
@@ -186,7 +187,6 @@ function exibirFormularioMentor(card) {
 
 // ✅ FORMULÁRIO DE VALOR DO MENTOR
 document.addEventListener("DOMContentLoaded", function () {
-  atualizarLucroEBancaViaAjax();
   const formulario = document.querySelector(".formulario-mentor");
   const nomePreview = formulario.querySelector(".mentor-nome-preview");
   const fotoPreview = formulario.querySelector(".mentor-foto-preview");
@@ -299,6 +299,36 @@ document.addEventListener("DOMContentLoaded", function () {
           placarRed.textContent = redEl.dataset.red;
         }
 
+        // ✅ Atualiza valores do topo do menu
+        const bancaEl = document.querySelector(".valor-bold-menu");
+        const saqueEl = document.querySelector(".valor-valor-saque");
+        const saldoEl = document.querySelector(".valor-total-mentores");
+
+        const bancaData = container.querySelector("#menu-saldo-banca");
+        const saqueData = container.querySelector("#menu-saques");
+        const saldoData = container.querySelector("#menu-saldo-mentores");
+
+        if (bancaEl && bancaData) bancaEl.textContent = bancaData.dataset.banca;
+        if (saqueEl && saqueData)
+          saqueEl.textContent = saqueData.dataset.saques;
+        if (saldoEl && saldoData) {
+          saldoEl.textContent = saldoData.dataset.saldo;
+          saldoEl.className =
+            "valor-total-mentores " + saldoData.dataset.classe;
+        }
+
+        // ✅ Atualiza valor da banca dentro do modal
+        const valorBancaModal = document.querySelector("#valorBancaLabel");
+        if (valorBancaModal && bancaData) {
+          valorBancaModal.textContent = bancaData.dataset.banca;
+        }
+
+        // ✅ Atualiza valor de lucro dentro do modal
+        const valorLucroModal = document.querySelector("#valorLucroLabel");
+        if (valorLucroModal && saldoData) {
+          valorLucroModal.textContent = saldoData.dataset.saldo;
+        }
+
         // ✅ Eventos nos cards de mentor
         container.querySelectorAll(".mentor-card").forEach((card) => {
           card.addEventListener("click", (event) => {
@@ -312,7 +342,6 @@ document.addEventListener("DOMContentLoaded", function () {
             ultimoCardClicado = card;
             mentorAtualId = null;
             exibirFormularioMentor(card);
-            atualizarLucroEBancaViaAjax();
           });
         });
       })
@@ -375,7 +404,6 @@ document.addEventListener("DOMContentLoaded", function () {
           formMentor.reset();
           formulario.style.display = "none";
           recarregarMentores();
-          atualizarLucroEBancaViaAjax();
 
           // 🔄 Atualiza os dados da banca e lucro
           if (typeof atualizarDadosModal === "function") {
@@ -395,79 +423,7 @@ document.addEventListener("DOMContentLoaded", function () {
 
   botaoFechar.addEventListener("click", fecharFormulario);
 });
-//
-//
-// RESPONSAVEL NO VALOR DA BANCA + LUCRO DO FORMULARIO MODAL DA GUIA GERENCIAR BANCA E DO TOPO DA PAGINA
-function atualizarLucroEBancaViaAjax() {
-  fetch("dados_banca.php")
-    .then((response) => response.json())
-    .then((data) => {
-      if (!data.success) return;
 
-      const lucro = parseFloat(data.lucro);
-
-      // Elementos principais
-      const lucroTotalLabel = document.getElementById("valorLucroLabel");
-      const lucroLabelTextoSpan = document.querySelector(".lucro-label-texto");
-
-      // Elementos adicionais (lucro entradas)
-      const lucroEntradasRotulo = document.getElementById(
-        "lucro_entradas_rotulo"
-      );
-      const lucroValorEntrada = document.getElementById("lucro_valor_entrada");
-
-      // Formatação de valor
-      const lucroFormatado = lucro.toLocaleString("pt-BR", {
-        style: "currency",
-        currency: "BRL",
-      });
-
-      // Cor baseada no valor
-      const corLucro =
-        lucro > 0 ? "#009e42ff" : lucro < 0 ? "#e92a15ff" : "#7f8c8d";
-
-      // Rótulo baseado no valor
-      const rotuloLucro =
-        lucro > 0 ? "Lucro" : lucro < 0 ? "Negativo" : "Neutro";
-
-      // Atualiza campo principal
-      lucroTotalLabel.textContent = lucroFormatado;
-      lucroTotalLabel.style.color = corLucro;
-      if (lucroLabelTextoSpan) lucroLabelTextoSpan.textContent = rotuloLucro;
-
-      // Atualiza campo adicional
-      lucroValorEntrada.classList.remove(
-        "saldo-positivo",
-        "saldo-negativo",
-        "saldo-neutro"
-      );
-
-      if (lucro > 0) {
-        lucroValorEntrada.classList.add("saldo-positivo");
-      } else if (lucro < 0) {
-        lucroValorEntrada.classList.add("saldo-negativo");
-      } else {
-        lucroValorEntrada.classList.add("saldo-neutro");
-      }
-
-      lucroValorEntrada.textContent = lucroFormatado;
-      lucroEntradasRotulo.textContent = rotuloLucro;
-
-      // Atualiza banca
-      const valorBancaLabel = document.getElementById("valorBancaLabel");
-      if (valorBancaLabel) valorBancaLabel.textContent = data.banca_formatada;
-
-      const valorTotalBancaLabel = document.getElementById(
-        "valorTotalBancaLabel"
-      );
-      if (valorTotalBancaLabel)
-        valorTotalBancaLabel.textContent = data.banca_formatada;
-    });
-}
-
-// FIM RESPONSAVEL NO VALOR DA BANCA + LUCRO DO FORMULARIO MODAL DA GUIA GERENCIAR BANCA E DO TOPO DA PAGINA
-//
-//
 // ✅ TOAST DE ALERTA
 function mostrarToast(mensagem, tipo = "aviso") {
   const toast = document.getElementById("mensagem-status");
@@ -773,6 +729,34 @@ function recarregarMentores() {
         placarRed.textContent = redEl.dataset.red;
       }
 
+      // ✅ Atualiza valores da banca tanto no topo como do modal painel
+      const bancaEl = document.querySelector(".valor-bold-menu");
+      const saqueEl = document.querySelector(".valor-valor-saque");
+      const saldoEl = document.querySelector(".valor-total-mentores");
+
+      const bancaData = container.querySelector("#menu-saldo-banca");
+      const saqueData = container.querySelector("#menu-saques");
+      const saldoData = container.querySelector("#menu-saldo-mentores");
+
+      if (bancaEl && bancaData) bancaEl.textContent = bancaData.dataset.banca;
+      if (saqueEl && saqueData) saqueEl.textContent = saqueData.dataset.saques;
+      if (saldoEl && saldoData) {
+        saldoEl.textContent = saldoData.dataset.saldo;
+        saldoEl.className = "valor-total-mentores " + saldoData.dataset.classe;
+      }
+
+      // ✅ Atualiza valor da banca dentro do modal
+      const valorBancaModal = document.querySelector("#valorBancaLabel");
+      if (valorBancaModal && bancaData) {
+        valorBancaModal.textContent = bancaData.dataset.banca;
+      }
+
+      // ✅ Atualiza valor de lucro dentro do modal
+      const valorLucroModal = document.querySelector("#valorLucroLabel");
+      if (valorLucroModal && saldoData) {
+        valorLucroModal.textContent = saldoData.dataset.saldo;
+      }
+
       // ✅ Eventos nos cards de mentor
       container.querySelectorAll(".mentor-card").forEach((card) => {
         card.addEventListener("click", (event) => {
@@ -786,7 +770,6 @@ function recarregarMentores() {
           ultimoCardClicado = card;
           mentorAtualId = null;
           exibirFormularioMentor(card);
-          atualizarLucroEBancaViaAjax();
         });
       });
     })
@@ -832,7 +815,6 @@ function excluirEntrada(idEntrada) {
         return atualizarSessaoERecarregar();
       })
       .then(() => {
-        atualizarLucroEBancaViaAjax();
         fecharTelaEdicao();
         setTimeout(() => {
           if (estaAberta && idMentorBackup) {

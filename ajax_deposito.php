@@ -124,7 +124,10 @@ function getUltimoCampo($conexao, $campo, $id_usuario) {
 
 $ultima_diaria = getUltimoCampo($conexao, 'diaria', $id_usuario);
 $ultima_unidade = getUltimoCampo($conexao, 'unidade', $id_usuario);
-$ultima_odds = getUltimoCampo($conexao, 'odds', $id_usuario); // ✅ odds incluída
+$ultima_odds = getUltimoCampo($conexao, 'odds', $id_usuario);
+
+// ✅ odds padrão se for 0 ou nula
+$odds_final = ($ultima_odds && floatval($ultima_odds) > 0) ? $ultima_odds : 1.5;
 
 echo json_encode([
     'success' => true,
@@ -135,8 +138,9 @@ echo json_encode([
     'mostrar_radios' => $mostrar_radios,
     'diaria' => number_format($ultima_diaria ?? 0, 2, '.', ''),
     'unidade' => intval($ultima_unidade ?? 0),
-    'odds' => number_format($ultima_odds ?? 0, 2, '.', '') // ✅ odds retornada
+    'odds' => number_format($odds_final, 2, '.', '') // ✅ odds ajustada
 ]);
+
 
 
 

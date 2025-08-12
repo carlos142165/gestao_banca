@@ -1,16 +1,20 @@
-
-
 <?php
 ob_start();
 require_once 'config.php';
 require_once 'carregar_sessao.php';
 require_once 'funcoes.php'; // ✅ Inclui a função de cálculo
 
-
-
 mysqli_report(MYSQLI_REPORT_ERROR | MYSQLI_REPORT_STRICT);
 
-// ✅ Função de notificação
+// ✅ Função auxiliar para notificação via sessão
+function setToast($mensagem, $tipo = 'aviso') { // ✅ Função adicionada
+  $_SESSION['toast'] = [
+    'mensagem' => $mensagem,
+    'tipo' => $tipo
+  ];
+}
+
+// ✅ Exibe toast se existir na sessão
 if (isset($_SESSION['toast'])) {
   $msg = addslashes($_SESSION['toast']['mensagem']);
   $tipo = $_SESSION['toast']['tipo'];
@@ -34,7 +38,6 @@ if (isset($_SESSION['toast'])) {
   unset($_SESSION['toast']);
 }
 
-
 // 🔐 Verificação de sessão
 if (!isset($_SESSION['usuario_id']) || empty($_SESSION['usuario_id'])) {
   setToast('Área de membros — faça seu login!', 'aviso');
@@ -49,7 +52,6 @@ $valor_green = $_SESSION['valor_green'] ?? 0;
 $valor_red   = $_SESSION['valor_red'] ?? 0;
 
 // 🔎 Dados da sessão
-// 🔎 Dados da sessão
 $ultima_diaria         = $_SESSION['porcentagem_entrada'] ?? 0;
 $soma_depositos        = 
     ($_SESSION['saldo_mentores'] ?? 0) + 
@@ -60,7 +62,6 @@ $saldo_mentores        = $_SESSION['saldo_mentores'] ?? 0;
 $saldo_banca           = calcularSaldoBanca(); // ✅ usa função do funcoes.php
 $valor_entrada_calculado = $_SESSION['resultado_entrada'] ?? 0;
 $valor_entrada_formatado = number_format($valor_entrada_calculado, 2, ',', '.');
-
 
 // 🔎 Verificação de banca zerada
 if ($saldo_banca <= 0 && $saldo_mentores < 0) {
@@ -75,14 +76,13 @@ if (isset($_GET['excluir_mentor'])) {
   $stmt = $conexao->prepare("DELETE FROM mentores WHERE id = ?");
   $stmt->bind_param("i", $id);
   $stmt->execute();
-  setToast('Mentor excluído com sucesso!', 'sucesso');
+  setToast('Mentor excluído com sucesso!', 'sucesso'); // ✅ Agora definida corretamente
   header('Location: gestao-diaria.php');
   exit();
 }
 
 // 📝 Cadastro/Edição de mentor
 if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['acao'])) {
-
   $valor_digitado = trim($_POST['valor'] ?? '0');
   $valor_float = is_numeric($valor_digitado) ? floatval($valor_digitado) : null;
 
@@ -140,11 +140,12 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['acao'])) {
 $meta_diaria = $_SESSION['meta_meia_unidade'] ?? 0;
 
 if (!isset($_SESSION['saldo_banca'])) {
-    header('Location: carregar-sessao.php?atualizar=1');
-    exit();
+  header('Location: carregar-sessao.php?atualizar=1');
+  exit();
 }
 
 ?>
+
 <!-- FIM CODIGO RESPONSAVEL PELO GESTAO-DIARIA -->  
 
 
@@ -178,8 +179,8 @@ if (!isset($_SESSION['saldo_banca'])) {
 
 
      <script src="js/script-gestao-diaria.js" defer></script>
-     <script src="js/script-mes.js" defer></script>
      <script src="js/script-painel-controle.js" defer></script>
+     <script src="js/script-mes.js" defer></script>
 
 
 </head>
@@ -243,25 +244,33 @@ if (isset($_SESSION['toast'])) {
 <div id="lista-mentores">
   <div class="valor-item-menu saldo-topo-ajustado">
     <div class="valor-info-wrapper">
-      
+
       <!-- Banca -->
       <div class="valor-label-linha">
         <i class="fa-solid fa-building-columns valor-icone-tema"></i>
         <span class="valor-label">Banca:</span>
-        <span class="valor-bold-menu">R$ <?php echo number_format(calcularSaldoBanca(), 2, ',', '.'); ?></span>
-
+        <span class="valor-bold-menu" id="valorTotalBancaLabel">R$ 0,00</span>
       </div>
 
-      <!-- Saldo Mentores -->
-      <div class="valor-label-linha">
-        <i class="fa-solid fa-chart-line valor-icone-tema"></i>
-        <span class="valor-label">Saldo:</span>
-        <span class="valor-total-mentores saldo-neutro">R$ <?php echo number_format($_SESSION['saldo_mentores'] ?? 0, 2, ',', '.'); ?></span>
-      </div>
+      <!-- Lucro Mentores -->
+ <div class="valor-label-linha">
+  <i class="fa-solid fa-money-bill-trend-up valor-icone-tema"></i>
+  <span class="valor-label" id="lucro_entradas_rotulo">Lucro:</span>
+  <span class="valor-bold-menu" id="lucro_valor_entrada">R$ 0,00</span>
+</div>
+
+
+
+</div>
+
+
+
+
 
     </div>
   </div>
 </div>
+
 
 
 
@@ -830,29 +839,32 @@ while ($row = $result->fetch_assoc()) {
   <div id="modalDeposito" class="modal-overlay">
     <div class="modal-content">
       <form method="POST" action="">
-        <!-- ID de controle -->
         <input type="hidden" name="controle_id" value="<?= isset($controle_id) ? $controle_id : '' ?>">
 
-        <!-- Botão de fechar -->
         <button type="button" class="btn-fechar" id="fecharModal">×</button>
 
-        <!-- Banca e Lucro -->
         <div class="linha-banca-lucro">
+
           <div class="campo-banca">
             <div class="conteudo">
               <label><i class="fa-solid fa-coins"></i> Banca</label>
               <span id="valorBancaLabel">R$ 0,00</span>
             </div>
           </div>
+
           <div class="campo-lucro">
-            <div class="conteudo">
-              <label id="lucroLabel"><i class="fa-solid fa-money-bill-trend-up"></i> Lucro</label>
-              <span id="valorLucroLabel">R$ 0,00</span>
-            </div>
-          </div>
+  <div class="conteudo">
+    <label id="lucroLabel">
+      <i class="fa-solid fa-money-bill-trend-up"></i>
+      <span class="lucro-label-texto" id="lucroLabelTexto">Lucro</span>
+
+    </label>
+    <span id="valorLucroLabel">R$ 0,00</span>
+  </div>
+</div>
+
         </div>
 
-        <!-- Ação da banca -->
         <div class="custom-dropdown">
           <button class="dropdown-toggle" type="button">
             <i class="fa-solid fa-hand-pointer"></i> Selecione Uma Opção
@@ -867,7 +879,6 @@ while ($row = $result->fetch_assoc()) {
           <input type="hidden" name="acaoBanca" id="acaoBanca">
         </div>
 
-        <!-- Valor da banca -->
         <div class="custom-inputbox">
           <label for="valorBanca"><i class="fa-solid fa-wallet"></i> Adicionar Valor</label>
           <div class="input-wrapper banca-wrapper">
@@ -875,57 +886,51 @@ while ($row = $result->fetch_assoc()) {
           </div>
         </div>
 
-        <!-- Porcentagem -->
         <div class="custom-inputbox">
           <label for="porcentagem"><i class="fa-solid fa-chart-pie"></i> Porcentagem</label>
           <div class="input-wrapper porc-wrapper">
-            <input
-              type="text"
-              name="diaria"
-              id="porcentagem"
-              value="<?= isset($valor_diaria) ? number_format($valor_diaria, 2, ',', '.') : '2,00' ?>"
-            >
+            <input type="text" name="diaria" id="porcentagem" value="<?= isset($valor_diaria) ? number_format($valor_diaria, 2, ',', '.') : '2,00' ?>">
             <span id="resultadoCalculo"></span>
           </div>
         </div>
 
-        <!-- Unidade -->
         <div class="custom-inputbox">
           <label for="unidadeMeta"><i class="fa-solid fa-bullseye"></i> Qtd de Unidade</label>
           <div class="input-wrapper unidade-wrapper">
-            <input
-              type="text"
-              name="unidade"
-              id="unidadeMeta"
-              value="<?= isset($valor_unidade) ? intval($valor_unidade) : '2' ?>"
-            >
+            <input type="text" name="unidade" id="unidadeMeta" value="<?= isset($valor_unidade) ? intval($valor_unidade) : '2' ?>">
             <span id="resultadoUnidade"></span>
           </div>
         </div>
 
-        <!-- Odds -->
         <div class="custom-inputbox">
           <label for="oddsMeta"><i class="fa-solid fa-percent"></i> Odds Min..</label>
           <div class="input-wrapper odds-wrapper">
-            <input
-              type="text"
-              name="odds"
-              id="oddsMeta"
-              value="<?= isset($valor_odds) ? number_format(floatval($valor_odds), 2, ',', '') : '1,50' ?>"
-            >
+            <input type="text" name="odds" id="oddsMeta" value="<?= isset($valor_odds) ? number_format(floatval($valor_odds), 2, ',', '') : '1,50' ?>">
             <span id="resultadoOdds"></span>
           </div>
         </div>
 
-        <!-- ✅ Toast discreto dentro do modal -->
+        <!-- 🔔 Confirmação interna para resetar banca -->
+        <!-- 🔔 Confirmação interna para resetar banca -->
+ <div id="confirmarReset" style="display: none; margin-top: 10px;">
+  <div class="mensagem-reset">
+    Tem certeza que deseja <strong>resetar sua banca</strong>? Essa ação é irreversível.
+    <div class="botoes-reset">
+      <button type="button" id="btnConfirmarReset" class="btn-reset-confirmar">Sim, Resetar</button>
+      <button type="button" id="btnCancelarReset" class="btn-reset-cancelar">Cancelar</button>
+    </div>
+  </div>
+ </div>
+
+
         <div id="toastModal" style="margin-top: 10px;"></div>
 
-        <!-- Botão de ação -->
         <input type="button" id="botaoAcao" value="Cadastrar Dados" class="custom-button">
       </form>
     </div>
   </div>
 </div>
+
 
 
 
@@ -975,6 +980,9 @@ while ($row = $result->fetch_assoc()) {
 <div id="mensagem-status" class="toast"></div>
 <!-- DEIXA TOAST OCULTO -->
 <div id="toast" class="toast hidden"></div>
+
+
+
 
 </body>
 </html>
