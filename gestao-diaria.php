@@ -854,14 +854,18 @@ while ($row = $result->fetch_assoc()) {
 
           <div class="campo-lucro">
   <div class="conteudo">
-    <label id="lucroLabel">
-      <i class="fa-solid fa-money-bill-trend-up"></i>
-      <span class="lucro-label-texto" id="lucroLabelTexto">Lucro</span>
+<label>
+  <i class="fa-solid fa-money-bill-trend-up" id="iconeLucro"></i>
+  <span id="lucroLabel" class="lucro-label-texto">Lucro</span>
+</label>
 
-    </label>
+
     <span id="valorLucroLabel">R$ 0,00</span>
   </div>
 </div>
+
+
+
 
         </div>
 

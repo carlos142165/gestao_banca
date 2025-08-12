@@ -1,4 +1,5 @@
 document.addEventListener("DOMContentLoaded", () => {
+  atualizarLucroEBancaViaAjax();
   const botaoGerencia = document.getElementById("abrirGerenciaBanca");
   const modal = document.getElementById("modalDeposito");
   const botaoFechar = modal.querySelector(".btn-fechar");
@@ -74,7 +75,6 @@ document.addEventListener("DOMContentLoaded", () => {
     botaoAcao.parentNode.insertBefore(mensagemErro, botaoAcao.nextSibling);
 
     const lucroTotalLabel = modal.querySelector("#valorLucroLabel");
-    const lucroLabelTexto = modal.querySelector("#lucroLabel");
 
     fetch("ajax_deposito.php")
       .then((response) => response.json())
@@ -86,15 +86,6 @@ document.addEventListener("DOMContentLoaded", () => {
           style: "currency",
           currency: "BRL",
         });
-
-        lucroTotalLabel.style.color =
-          lucro > 0 ? "#009e42ff" : lucro < 0 ? "#e92a15ff" : "#7f8c8d";
-        lucroLabelTexto.innerHTML =
-          lucro > 0
-            ? `<i class="fa-solid fa-money-bill-trend-up"></i> Lucro`
-            : lucro < 0
-            ? `<i class="fa-solid fa-money-bill-trend-up"></i> Negativo`
-            : `<i class="fa-solid fa-money-bill-trend-up"></i> Neutro`;
 
         valorOriginalBanca = parseFloat(data.banca);
         valorBancaLabel.textContent = valorOriginalBanca.toLocaleString(
@@ -301,6 +292,7 @@ document.addEventListener("DOMContentLoaded", () => {
           if (resposta.success) {
             exibirToast("Operação realizada com sucesso!", "sucesso");
             atualizarDadosModal();
+            atualizarLucroEBancaViaAjax();
 
             const selectAcao = document.getElementById("selectAcao");
             const inputValor = document.getElementById("inputValor");
@@ -327,6 +319,7 @@ document.addEventListener("DOMContentLoaded", () => {
             if (resposta.success) {
               exibirToast("Banca resetada com sucesso!", "sucesso");
               atualizarDadosModal();
+              atualizarLucroEBancaViaAjax();
               document.getElementById("confirmarReset").style.display = "none";
             } else {
               exibirToast("Erro ao resetar banca.", "erro");
@@ -492,7 +485,6 @@ document.addEventListener("DOMContentLoaded", () => {
 
         // Atualiza o lucro
         const lucroTotalLabel = document.getElementById("valorLucroLabel");
-        const lucroLabelTexto = document.getElementById("lucroLabel");
 
         const lucro = parseFloat(data.lucro);
         const lucroFormatado = lucro.toLocaleString("pt-BR", {
@@ -501,18 +493,6 @@ document.addEventListener("DOMContentLoaded", () => {
         });
 
         lucroTotalLabel.textContent = lucroFormatado;
-
-        // Define cor e rótulo com ícone
-        if (lucro > 0) {
-          lucroTotalLabel.style.color = "#009e42ff"; // verde
-          lucroLabelTexto.innerHTML = `<i class="fa-solid fa-money-bill-trend-up"></i> Lucro`;
-        } else if (lucro < 0) {
-          lucroTotalLabel.style.color = "#e92a15ff"; // vermelho
-          lucroLabelTexto.innerHTML = `<i class="fa-solid fa-money-bill-trend-down"></i> Negativo`;
-        } else {
-          lucroTotalLabel.style.color = "#7f8c8d"; // cinza
-          lucroLabelTexto.innerHTML = `<i class="fa-solid fa-money-bill"></i> Neutro`;
-        }
 
         // Atualiza os campos do formulário
         diaria.value = `${Math.max(
@@ -534,6 +514,7 @@ document.addEventListener("DOMContentLoaded", () => {
 
         calcularMeta(valorOriginalBanca);
       });
+    atualizarLucroEBancaViaAjax();
   }
 
   function exibirToast(mensagem, tipo = "info") {

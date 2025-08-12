@@ -405,55 +405,72 @@ function atualizarLucroEBancaViaAjax() {
       if (!data.success) return;
 
       const lucro = parseFloat(data.lucro);
-
-      // Elementos principais
-      const lucroTotalLabel = document.getElementById("valorLucroLabel");
-      const lucroLabelTextoSpan = document.querySelector(".lucro-label-texto");
-
-      // Elementos adicionais (lucro entradas)
-      const lucroEntradasRotulo = document.getElementById(
-        "lucro_entradas_rotulo"
-      );
-      const lucroValorEntrada = document.getElementById("lucro_valor_entrada");
-
-      // Formatação de valor
       const lucroFormatado = lucro.toLocaleString("pt-BR", {
         style: "currency",
         currency: "BRL",
       });
 
-      // Cor baseada no valor
       const corLucro =
         lucro > 0 ? "#009e42ff" : lucro < 0 ? "#e92a15ff" : "#7f8c8d";
-
-      // Rótulo baseado no valor
       const rotuloLucro =
         lucro > 0 ? "Lucro" : lucro < 0 ? "Negativo" : "Neutro";
 
-      // Atualiza campo principal
-      lucroTotalLabel.textContent = lucroFormatado;
-      lucroTotalLabel.style.color = corLucro;
-      if (lucroLabelTextoSpan) lucroLabelTextoSpan.textContent = rotuloLucro;
-
-      // Atualiza campo adicional
-      lucroValorEntrada.classList.remove(
-        "saldo-positivo",
-        "saldo-negativo",
-        "saldo-neutro"
-      );
-
-      if (lucro > 0) {
-        lucroValorEntrada.classList.add("saldo-positivo");
-      } else if (lucro < 0) {
-        lucroValorEntrada.classList.add("saldo-negativo");
-      } else {
-        lucroValorEntrada.classList.add("saldo-neutro");
+      const lucroTotalLabel = document.getElementById("valorLucroLabel");
+      if (lucroTotalLabel) {
+        lucroTotalLabel.textContent = lucroFormatado;
+        lucroTotalLabel.style.color = corLucro;
       }
 
-      lucroValorEntrada.textContent = lucroFormatado;
-      lucroEntradasRotulo.textContent = rotuloLucro;
+      const atualizarRotulo = () => {
+        const rotulos = document.querySelectorAll(".lucro-label-texto");
+        if (rotulos.length > 0) {
+          rotulos.forEach((el) => {
+            el.textContent = rotuloLucro;
+            el.style.color = corLucro;
+          });
+          return true;
+        }
+        return false;
+      };
 
-      // Atualiza banca
+      if (!atualizarRotulo()) {
+        const observer = new MutationObserver((mutations, obs) => {
+          if (atualizarRotulo()) obs.disconnect();
+        });
+
+        observer.observe(document.body, {
+          childList: true,
+          subtree: true,
+        });
+      }
+
+      const lucroEntradasRotulo = document.getElementById(
+        "lucro_entradas_rotulo"
+      );
+      const lucroValorEntrada = document.getElementById("lucro_valor_entrada");
+
+      if (lucroValorEntrada) {
+        lucroValorEntrada.classList.remove(
+          "saldo-positivo",
+          "saldo-negativo",
+          "saldo-neutro"
+        );
+
+        if (lucro > 0) {
+          lucroValorEntrada.classList.add("saldo-positivo");
+        } else if (lucro < 0) {
+          lucroValorEntrada.classList.add("saldo-negativo");
+        } else {
+          lucroValorEntrada.classList.add("saldo-neutro");
+        }
+
+        lucroValorEntrada.textContent = lucroFormatado;
+      }
+
+      if (lucroEntradasRotulo) {
+        lucroEntradasRotulo.textContent = rotuloLucro;
+      }
+
       const valorBancaLabel = document.getElementById("valorBancaLabel");
       if (valorBancaLabel) valorBancaLabel.textContent = data.banca_formatada;
 
