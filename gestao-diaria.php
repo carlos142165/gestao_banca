@@ -388,7 +388,7 @@ ob_end_flush();
                  HEADER COM DATA INTEGRADA NO TOPO
                  ======================================== -->
             <div class="data-header-integrada" id="data-header">
-                <i class="fas fa-calendar-day"></i>
+                <i class="fa-solid fa-calendar-days"></i>
                 
                 <div class="data-texto-compacto">
                     <span class="data-prefixo">Hoje:</span>
@@ -408,7 +408,7 @@ ob_end_flush();
                  ======================================== -->
             <div class="widget-conteudo-principal">
                 <div class="widget-meta-valor" id="meta-valor">
-                    <i class="fas fa-coins"></i>
+                    <i class="fa-solid fa-coins"></i>
                     <span class="valor-texto">
                         <span class="loading-text">Calculando...</span>
                     </span>
@@ -416,7 +416,7 @@ ob_end_flush();
                 
                 <!-- Exibição do valor que ultrapassou a meta -->
                 <div class="valor-ultrapassou" id="valor-ultrapassou" style="display: none;">
-                    <i class="fas fa-trophy"></i>
+                    <i class="fa-solid fa-trophy"></i>
                     <span class="texto-ultrapassou">Lucro Extra: <span id="valor-extra">R$ 0,00</span></span>
                 </div>
                 
@@ -428,11 +428,11 @@ ob_end_flush();
                 
                 <div class="widget-info-progresso">
                     <span id="saldo-info">
-                        <i class="fas fa-wallet"></i>
+                        <i class="fa-solid fa-wallet"></i>
                         Saldo: R$ 0,00
                     </span>
                     <span id="percentual-info">
-                        <i class="fas fa-percentage"></i>
+                        <i class="fa-solid fa-percent"></i>
                         0%
                     </span>
                 </div>

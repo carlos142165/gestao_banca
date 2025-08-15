@@ -583,6 +583,14 @@
    ANIMAÇÕES E ESTADOS BASE
    ======================================== */
 
+/* ========================================
+   ANIMAÇÕES E ESTADOS BASE
+   ======================================== */
+
+/* ========================================
+   ANIMAÇÕES E ESTADOS BASE
+   ======================================== */
+
 .valor-meta.atualizado {
   animation: pulse-update 2s cubic-bezier(0.4, 0, 0.6, 1);
 }
@@ -676,7 +684,7 @@
     inset 0 1px 0 rgba(255, 255, 255, 0.3) !important;
 }
 
-.data-header-integrada .fas.fa-calendar-day {
+.data-header-integrada .fa-solid.fa-calendar-days {
   font-size: 14px !important;
   color: #3498db !important;
   margin-right: 5px !important;
@@ -857,7 +865,7 @@
 }
 
 /* Ícone da moeda principal */
-.widget-meta-valor .fas.fa-coins {
+.widget-meta-valor .fa-solid.fa-coins {
   font-size: 26px !important;
   color: #f39c12 !important;
   filter: drop-shadow(0 2px 4px rgba(243, 156, 18, 0.3));
@@ -915,7 +923,7 @@
   }
 }
 
-.valor-ultrapassou .fas.fa-trophy {
+.valor-ultrapassou .fa-solid.fa-trophy {
   font-size: 16px !important;
   color: #f39c12 !important;
   filter: drop-shadow(0 2px 4px rgba(243, 156, 18, 0.3));
@@ -935,7 +943,7 @@
    ======================================== */
 
 .widget-meta-rotulo {
-  font-size: 12px !important;
+  font-size: 14px !important; /* ✅ AUMENTADO DE 12px PARA 14px */
   color: #576574 !important;
   margin-bottom: 15px !important;
   text-transform: uppercase !important;
@@ -946,12 +954,12 @@
 }
 
 /* ========================================
-   BARRA DE PROGRESSO
+   BARRA DE PROGRESSO - MAIS LARGA
    ======================================== */
 
 .widget-barra-container {
   width: 100% !important;
-  height: 12px !important;
+  height: 16px !important; /* ✅ AUMENTADO DE 12px PARA 16px */
   background: rgba(0, 0, 0, 0.1) !important;
   border-radius: 20px !important;
   margin-bottom: 12px !important;
@@ -988,11 +996,11 @@
 }
 
 /* ========================================
-   INFO DE PROGRESSO COM ÍCONES
+   INFO DE PROGRESSO COM ÍCONES - PORCENTAGEM MAIOR
    ======================================== */
 
 .widget-info-progresso {
-  font-size: 11px !important;
+  font-size: 13px !important; /* ✅ AUMENTADO DE 11px PARA 13px */
   color: #576574 !important;
   display: flex !important;
   justify-content: space-between !important;
@@ -1013,9 +1021,9 @@
   transform: translateY(-1px) !important;
 }
 
-/* Ícones das informações */
-.widget-info-progresso .fas {
-  font-size: 10px !important;
+/* Ícones das informações - MAIORES */
+.widget-info-progresso .fa-solid {
+  font-size: 12px !important; /* ✅ AUMENTADO DE 10px PARA 12px */
   opacity: 0.8 !important;
   transition: all 0.3s ease !important;
 }
@@ -1026,7 +1034,7 @@
 }
 
 /* Ícone da porcentagem */
-.widget-info-progresso .fa-percentage {
+.widget-info-progresso .fa-percent {
   color: #3498db !important;
 }
 
@@ -1082,7 +1090,25 @@
   filter: drop-shadow(0 2px 4px rgba(33, 150, 243, 0.3));
 }
 
-/* Cores dinâmicas com gradientes para barras */
+.valor-meta.neutro {
+  background: linear-gradient(135deg, #95a5a6, #bdc3c7);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+  font-weight: 600;
+  filter: drop-shadow(0 2px 4px rgba(149, 165, 166, 0.3));
+}
+
+.valor-meta.lucro {
+  background: linear-gradient(135deg, #00a651, #4caf50);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+  font-weight: 800;
+  filter: drop-shadow(0 2px 4px rgba(0, 166, 81, 0.3));
+}
+
+/* Cores dinâmicas com gradientes para barras - ADICIONADAS NOVAS CORES */
 .cor-2196F3 {
   background: linear-gradient(135deg, #2196f3, #64b5f6) !important;
   color: #2196f3 !important;
@@ -1106,6 +1132,11 @@
 .cor-e67e22 {
   background: linear-gradient(135deg, #e67e22, #f39c12) !important;
   color: #e67e22 !important;
+}
+
+.cor-95a5a6 {
+  background: linear-gradient(135deg, #95a5a6, #bdc3c7) !important;
+  color: #95a5a6 !important;
 }
 
 /* Estados para saldo negativo */
