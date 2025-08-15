@@ -370,13 +370,16 @@ ob_end_flush();
 <div class="informacoes-row">
 
 
+
 <!-- ========================================
-     INDICADOR DE DATA ELEGANTE
-     Adicione este HTML ANTES do seu widget meta existente
+     WIDGET META COM DATA INTEGRADA
+     ======================================== -->
+
+<!-- ========================================
+     WIDGET META COM DATA INTEGRADA
      ======================================== -->
 
 <!-- Container da Data Elegante -->
-<!-- Widget Meta com Data Integrada no Topo -->
 <div class="widget-meta-container">
     <div class="widget-meta-row">
         <div class="widget-meta-item" id="widget-meta">
@@ -401,7 +404,7 @@ ob_end_flush();
             </div>
 
             <!-- ========================================
-                 CONTEÚDO PRINCIPAL DO WIDGET (SEU CÓDIGO EXISTENTE)
+                 CONTEÚDO PRINCIPAL DO WIDGET
                  ======================================== -->
             <div class="widget-conteudo-principal">
                 <div class="widget-meta-valor" id="meta-valor">
@@ -409,6 +412,12 @@ ob_end_flush();
                     <span class="valor-texto">
                         <span class="loading-text">Calculando...</span>
                     </span>
+                </div>
+                
+                <!-- Exibição do valor que ultrapassou a meta -->
+                <div class="valor-ultrapassou" id="valor-ultrapassou" style="display: none;">
+                    <i class="fas fa-trophy"></i>
+                    <span class="texto-ultrapassou">Lucro Extra: <span id="valor-extra">R$ 0,00</span></span>
                 </div>
                 
                 <div class="widget-meta-rotulo" id="rotulo-meta">Meta do Dia</div>

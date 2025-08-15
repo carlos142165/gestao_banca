@@ -1611,6 +1611,10 @@ window.addEventListener("beforeunload", () => {
 
 // ✅ JAVASCRIPT ATUALIZADO - META COM SUBTRAÇÃO DO SALDO DO DIA
 
+// ========================================
+// SISTEMA DE META DIÁRIA ATUALIZADO
+// ========================================
+
 const MetaDiariaManager = {
   // Calcula e atualiza a meta diária
   async atualizarMetaDiaria() {
@@ -1648,7 +1652,7 @@ const MetaDiariaManager = {
     }
   },
 
-  // ✅ FUNÇÃO ATUALIZADA: Calcula meta final subtraindo saldo do dia
+  // ✅ FUNÇÃO ATUALIZADA: Calcula meta final com todas as regras de negócio
   atualizarElementoMeta(data) {
     const metaElement = document.getElementById("meta-diaria-ajax");
     const rotuloElement = document.querySelector(".rotulo-meta");
@@ -1660,18 +1664,48 @@ const MetaDiariaManager = {
         loadingText.remove();
       }
 
-      // ✅ OBTER SALDO DO DIA ATUAL
+      // ✅ OBTER VALORES NECESSÁRIOS
       const saldoDiaElement = document.querySelector(".valor-saldo");
       let saldoDia = 0;
 
       if (saldoDiaElement && saldoDiaElement.textContent) {
-        // Extrai valor numérico do saldo do dia
         saldoDia = this.extrairValorNumerico(saldoDiaElement.textContent);
       }
 
-      // ✅ CALCULAR META FINAL: Meta Calculada - Saldo do Dia
       const metaCalculada = parseFloat(data.meta_diaria) || 0;
-      const metaFinal = metaCalculada - saldoDia;
+      const bancaTotal = parseFloat(data.banca) || 0;
+
+      // ✅ APLICAR REGRAS DE NEGÓCIO
+      let metaFinal, rotulo, corClasse;
+
+      // REGRA 1: Banca <= 0 - Mostrar "DEPOSITE P/ COMEÇAR"
+      if (bancaTotal <= 0) {
+        metaFinal = bancaTotal;
+        rotulo = "DEPOSITE P/ COMEÇAR";
+        corClasse = "sem-banca";
+      }
+      // REGRA 2: Banca > 0 e Meta foi batida (saldo >= meta)
+      else if (saldoDia >= metaCalculada) {
+        metaFinal = 0; // Sempre mostra 0,00
+        rotulo = "META BATIDA! 🏆";
+        corClasse = "meta-batida";
+
+        // Calcular e mostrar valor extra
+        const valorExtra = saldoDia - metaCalculada;
+        this.mostrarValorExtra(valorExtra);
+      }
+      // REGRA 3: Saldo negativo - Mostrar progresso negativo
+      else if (saldoDia < 0) {
+        metaFinal = metaCalculada - saldoDia; // Meta + valor negativo
+        rotulo = "Meta do Dia 📉";
+        corClasse = "negativo";
+      }
+      // REGRA 4: Progresso normal (saldo positivo mas não bateu meta)
+      else {
+        metaFinal = metaCalculada - saldoDia;
+        rotulo = "Restando P/ Meta 📈";
+        corClasse = "positivo";
+      }
 
       // ✅ FORMATAR COMO MOEDA BRASILEIRA
       const metaFinalFormatada = metaFinal.toLocaleString("pt-BR", {
@@ -1682,32 +1716,24 @@ const MetaDiariaManager = {
       // Atualiza o valor com formato BRL
       metaElement.textContent = metaFinalFormatada;
 
-      // ✅ COR BASEADA NO VALOR FINAL - USANDO CLASSES
+      // ✅ APLICAR CLASSE DE COR
       metaElement.className = "valor-meta"; // Reset das classes
-      if (metaFinal > 0) {
-        metaElement.classList.add("positivo"); // Verde se positivo
-      } else if (metaFinal < 0) {
-        metaElement.classList.add("negativo"); // Vermelho se negativo
-      } else {
-        metaElement.classList.add("zero"); // Cinza se zero
-      }
+      metaElement.classList.add(corClasse);
 
-      // ✅ ATUALIZAR RÓTULO BASEADO NO RESULTADO
+      // ✅ ATUALIZAR RÓTULO
       if (rotuloElement) {
-        if (metaFinal <= 0) {
-          rotuloElement.innerHTML =
-            'Meta Batida! <span style="font-size: 0.8em;">🏆</span>';
-        } else {
-          rotuloElement.textContent = "Restando P/ Meta";
-        }
+        rotuloElement.innerHTML = rotulo;
       }
 
       // Log para debug
       console.log("🎯 Meta Debug:", {
+        bancaTotal: bancaTotal,
         metaCalculada: metaCalculada,
         saldoDia: saldoDia,
         metaFinal: metaFinal,
         metaFinalFormatada: metaFinalFormatada,
+        rotulo: rotulo,
+        corClasse: corClasse,
       });
     }
 
@@ -1720,7 +1746,32 @@ const MetaDiariaManager = {
     }
   },
 
-  // ✅ NOVA FUNÇÃO: Extrai valor numérico de string BRL
+  // ✅ FUNÇÃO CORRIGIDA: Mostra valor que ultrapassou a meta com reset adequado
+  mostrarValorExtra(valorExtra) {
+    const valorUltrapassouElement =
+      document.getElementById("valor-ultrapassou");
+    const valorExtraElement = document.getElementById("valor-extra");
+
+    if (valorUltrapassouElement && valorExtraElement) {
+      if (valorExtra > 0) {
+        const valorExtraFormatado = valorExtra.toLocaleString("pt-BR", {
+          style: "currency",
+          currency: "BRL",
+        });
+
+        valorExtraElement.textContent = valorExtraFormatado;
+        valorUltrapassouElement.style.display = "flex";
+        valorUltrapassouElement.classList.add("mostrar");
+      } else {
+        // ✅ FORÇA OCULTAÇÃO COMPLETA
+        valorExtraElement.textContent = "R$ 0,00";
+        valorUltrapassouElement.style.display = "none";
+        valorUltrapassouElement.classList.remove("mostrar");
+      }
+    }
+  },
+
+  // ✅ FUNÇÃO: Extrai valor numérico de string BRL
   extrairValorNumerico(valorBRL) {
     if (!valorBRL || typeof valorBRL !== "string") return 0;
 
@@ -1791,7 +1842,440 @@ const MetaDiariaManager = {
   },
 };
 
-// ✅ ATUALIZAÇÃO DOS OUTROS MANAGERS (mantém as funcionalidades existentes)
+// ========================================
+// WIDGET META PROGRESSO - VERSÃO COMPLETA
+// ========================================
+
+const MetaProgressoWidget = {
+  metaCalculada: 0,
+  saldoDia: 0,
+  metaFinal: 0,
+  bancaTotal: 0,
+
+  // Integra com MetaDiariaManager
+  integrarComMetaDiariaManager() {
+    if (typeof MetaDiariaManager !== "undefined") {
+      const originalFunc = MetaDiariaManager.atualizarElementoMeta;
+
+      MetaDiariaManager.atualizarElementoMeta = (data) => {
+        // Executa função original
+        if (originalFunc) {
+          originalFunc.call(MetaDiariaManager, data);
+        }
+
+        // Atualiza widget após pequeno delay
+        setTimeout(() => {
+          this.atualizarWidget(data);
+        }, 100);
+      };
+
+      console.log("🔗 Widget integrado com todas as regras");
+    }
+  },
+
+  // Atualização do widget com todas as regras de negócio
+  atualizarWidget(data) {
+    try {
+      // Calcula valores
+      this.metaCalculada = parseFloat(data.meta_diaria) || 0;
+      this.saldoDia = this.obterSaldoDia(data);
+      this.bancaTotal = parseFloat(data.banca) || 0;
+
+      // Aplica regras de negócio
+      this.aplicarRegrasNegocio();
+
+      // Atualiza interface
+      this.atualizarInterface();
+
+      // Atualiza data
+      this.atualizarData();
+    } catch (error) {
+      console.error("❌ Erro no widget:", error);
+    }
+  },
+
+  // ✅ NOVA FUNÇÃO: Aplica todas as regras de negócio
+  aplicarRegrasNegocio() {
+    // REGRA 1: Banca <= 0 - Mostrar "DEPOSITE P/ COMEÇAR"
+    if (this.bancaTotal <= 0) {
+      this.metaFinal = this.bancaTotal;
+      this.statusMeta = "sem-banca";
+      this.rotulo = "DEPOSITE P/ COMEÇAR";
+      this.valorExtra = 0; // ✅ RESET OBRIGATÓRIO
+    }
+    // REGRA 2: Banca > 0 e Meta foi batida (saldo >= meta)
+    else if (this.saldoDia >= this.metaCalculada) {
+      this.metaFinal = 0; // Sempre mostra 0,00
+      this.statusMeta = "meta-batida";
+      this.rotulo = "META BATIDA! 🏆";
+      this.valorExtra = this.saldoDia - this.metaCalculada;
+    }
+    // REGRA 3: Saldo negativo - Mostrar progresso negativo
+    else if (this.saldoDia < 0) {
+      this.metaFinal = this.metaCalculada - this.saldoDia;
+      this.statusMeta = "negativo";
+      this.rotulo = "Meta do Dia 📉";
+      this.valorExtra = 0; // ✅ RESET OBRIGATÓRIO
+    }
+    // REGRA 4: Progresso normal (saldo positivo mas não bateu meta)
+    else {
+      this.metaFinal = this.metaCalculada - this.saldoDia;
+      this.statusMeta = "positivo";
+      this.rotulo = "Restando P/ Meta 📈";
+      this.valorExtra = 0; // ✅ RESET OBRIGATÓRIO
+    }
+
+    // ✅ LOG PARA DEBUG
+    console.log("🎯 Regras aplicadas:", {
+      banca: this.bancaTotal,
+      saldo: this.saldoDia,
+      meta: this.metaCalculada,
+      status: this.statusMeta,
+      valorExtra: this.valorExtra,
+      deveMostrarExtra: this.valorExtra > 0,
+    });
+  },
+
+  // Obtém saldo de forma robusta
+  obterSaldoDia(data = null) {
+    if (data && data.lucro !== undefined) {
+      return parseFloat(data.lucro) || 0;
+    }
+
+    if (
+      data &&
+      data.green_total !== undefined &&
+      data.red_total !== undefined
+    ) {
+      return (
+        (parseFloat(data.green_total) || 0) - (parseFloat(data.red_total) || 0)
+      );
+    }
+
+    return 0;
+  },
+
+  // Formata moeda
+  formatarMoeda(valor) {
+    return valor.toLocaleString("pt-BR", {
+      style: "currency",
+      currency: "BRL",
+    });
+  },
+
+  // ✅ NOVA FUNÇÃO: Calcula progresso com regras especiais
+  calcularProgresso() {
+    // Se não tem banca, progresso é 0
+    if (this.bancaTotal <= 0) {
+      return 0;
+    }
+
+    // Se meta foi batida, progresso é 100%
+    if (this.statusMeta === "meta-batida") {
+      return 100;
+    }
+
+    // Se saldo é negativo, calcula progresso negativo
+    if (this.saldoDia < 0) {
+      // Progresso negativo baseado no valor absoluto do saldo
+      const progressoNegativo =
+        Math.abs(this.saldoDia / this.metaCalculada) * 100;
+      return -Math.min(progressoNegativo, 100); // Negativo, limitado a -100%
+    }
+
+    // Progresso normal
+    if (this.metaCalculada === 0) return 0;
+    return Math.max(
+      0,
+      Math.min(100, (this.saldoDia / this.metaCalculada) * 100)
+    );
+  },
+
+  // ✅ FUNÇÃO CORRIGIDA: Atualiza interface com reset completo do lucro extra
+  atualizarInterface() {
+    const metaValor = document.getElementById("meta-valor");
+    const rotuloMeta = document.getElementById("rotulo-meta");
+    const saldoInfo = document.getElementById("saldo-info");
+    const percentualInfo = document.getElementById("percentual-info");
+    const barraProgresso = document.getElementById("barra-progresso");
+    const valorUltrapassou = document.getElementById("valor-ultrapassou");
+    const valorExtra = document.getElementById("valor-extra");
+
+    if (!metaValor || !barraProgresso) {
+      console.log("⚠️ Elementos não encontrados");
+      return;
+    }
+
+    // ✅ ATUALIZA VALOR MANTENDO ÍCONE
+    const valorTexto = metaValor.querySelector(".valor-texto");
+    const loadingText = metaValor.querySelector(".loading-text");
+
+    if (loadingText) {
+      loadingText.remove();
+    }
+
+    // Se existe o span do valor, atualiza apenas ele
+    if (valorTexto) {
+      valorTexto.textContent = this.formatarMoeda(this.metaFinal);
+    } else {
+      // Se não existe, cria mantendo o ícone
+      const icone = metaValor.querySelector(".fas.fa-coins");
+      if (icone) {
+        // Limpa conteúdo mas mantém ícone
+        metaValor.innerHTML = "";
+        metaValor.appendChild(icone);
+
+        // Adiciona o texto
+        const novoSpan = document.createElement("span");
+        novoSpan.className = "valor-texto";
+        novoSpan.textContent = this.formatarMoeda(this.metaFinal);
+        metaValor.appendChild(novoSpan);
+      } else {
+        // Se não tem ícone, adiciona tudo
+        metaValor.innerHTML = `
+          <i class="fas fa-coins"></i>
+          <span class="valor-texto">${this.formatarMoeda(this.metaFinal)}</span>
+        `;
+      }
+    }
+
+    const progresso = this.calcularProgresso();
+
+    // ✅ ATUALIZA SALDO MANTENDO ÍCONE
+    if (saldoInfo) {
+      saldoInfo.innerHTML = `
+        <i class="fas fa-wallet"></i>
+        Saldo: ${this.formatarMoeda(this.saldoDia)}
+      `;
+    }
+
+    // ✅ ATUALIZA PERCENTUAL COM LÓGICA ESPECIAL
+    if (percentualInfo) {
+      let percentualTexto;
+
+      if (this.bancaTotal <= 0) {
+        percentualTexto = "0%";
+      } else if (this.statusMeta === "meta-batida") {
+        percentualTexto = "100%";
+      } else if (progresso < 0) {
+        percentualTexto = `${Math.round(progresso)}%`; // Já é negativo
+      } else {
+        percentualTexto = `${Math.round(progresso)}%`;
+      }
+
+      percentualInfo.innerHTML = `
+        <i class="fas fa-percentage"></i>
+        ${percentualTexto}
+      `;
+    }
+
+    // ✅ ATUALIZA RÓTULO
+    if (rotuloMeta) {
+      rotuloMeta.innerHTML = this.rotulo;
+    }
+
+    // ✅ CONTROLE RIGOROSO DO LUCRO EXTRA
+    if (valorUltrapassou && valorExtra) {
+      if (this.valorExtra > 0 && this.statusMeta === "meta-batida") {
+        // MOSTRA o lucro extra
+        valorExtra.textContent = this.formatarMoeda(this.valorExtra);
+        valorUltrapassou.style.display = "flex";
+        valorUltrapassou.classList.add("mostrar");
+
+        console.log(
+          "✅ Mostrando lucro extra:",
+          this.formatarMoeda(this.valorExtra)
+        );
+      } else {
+        // ESCONDE o lucro extra SEMPRE que não for meta batida com valor extra
+        valorExtra.textContent = "R$ 0,00";
+        valorUltrapassou.style.display = "none";
+        valorUltrapassou.classList.remove("mostrar");
+
+        console.log(
+          "🚫 Ocultando lucro extra - Status:",
+          this.statusMeta,
+          "Valor Extra:",
+          this.valorExtra
+        );
+      }
+    }
+
+    // ✅ ATUALIZA BARRA COM LÓGICA ESPECIAL
+    this.atualizarBarra(barraProgresso, progresso);
+
+    // Aplica cores baseadas no estado
+    this.aplicarCores(metaValor, rotuloMeta, barraProgresso, progresso);
+
+    console.log("✅ Widget atualizado - Lucro Extra:", {
+      banca: this.bancaTotal,
+      meta: this.metaCalculada,
+      saldo: this.saldoDia,
+      final: this.metaFinal,
+      progresso: progresso,
+      status: this.statusMeta,
+      valorExtra: this.valorExtra,
+      deveMostrarLucroExtra:
+        this.valorExtra > 0 && this.statusMeta === "meta-batida",
+    });
+  },
+
+  // ✅ NOVA FUNÇÃO: Atualiza barra com lógica especial
+  atualizarBarra(barraProgresso, progresso) {
+    let larguraBarra;
+
+    if (this.bancaTotal <= 0) {
+      larguraBarra = 0;
+    } else if (this.statusMeta === "meta-batida") {
+      larguraBarra = 100;
+    } else if (progresso < 0) {
+      // Para progresso negativo, mostra barra crescendo da direita para esquerda
+      larguraBarra = Math.min(Math.abs(progresso), 100);
+    } else {
+      larguraBarra = progresso;
+    }
+
+    // Aplica largura
+    barraProgresso.style.width = `${larguraBarra}%`;
+
+    // Para saldos negativos, adiciona classe especial
+    if (progresso < 0) {
+      barraProgresso.classList.add("barra-negativa");
+    } else {
+      barraProgresso.classList.remove("barra-negativa");
+    }
+  },
+
+  // ✅ FUNÇÃO DE CORES MELHORADA COM TODAS AS REGRAS
+  aplicarCores(metaValor, rotuloMeta, barraProgresso, progresso) {
+    // Remove todas as classes e estilos anteriores da barra
+    barraProgresso.className = "widget-barra-progresso barra-progresso";
+    barraProgresso.removeAttribute("style");
+
+    // Força largura primeiro
+    const larguraBarra =
+      this.bancaTotal <= 0
+        ? 0
+        : this.statusMeta === "meta-batida"
+        ? 100
+        : progresso < 0
+        ? Math.min(Math.abs(progresso), 100)
+        : progresso;
+
+    barraProgresso.style.width = `${larguraBarra}%`;
+
+    // Determina cor baseada no status
+    let corBarra = "#9E9E9E"; // Padrão cinza
+    let corTexto = "#7f8c8d";
+
+    const valorTexto = metaValor.querySelector(".valor-texto");
+
+    switch (this.statusMeta) {
+      case "sem-banca":
+        corBarra = "#e67e22";
+        corTexto = "#e67e22";
+        break;
+      case "meta-batida":
+        corBarra = "#2196F3";
+        corTexto = "#2196F3";
+        break;
+      case "negativo":
+        corBarra = "#f44336";
+        corTexto = "#e74c3c";
+        barraProgresso.classList.add("barra-negativa");
+        break;
+      case "positivo":
+        corBarra = "#4CAF50";
+        corTexto = "#00a651";
+        break;
+      default:
+        corBarra = "#9E9E9E";
+        corTexto = "#7f8c8d";
+    }
+
+    // Aplica cor no texto
+    if (valorTexto) {
+      valorTexto.style.color = corTexto;
+    }
+
+    // MÚLTIPLAS TENTATIVAS DE APLICAR COR NA BARRA:
+
+    // 1. Aplica estilos inline diretamente com cssText
+    barraProgresso.style.cssText = `
+      width: ${larguraBarra}% !important;
+      height: 100% !important;
+      background-color: ${corBarra} !important;
+      background: ${corBarra} !important;
+      border-radius: 20px !important;
+    `;
+
+    // 2. Força via setProperty com important
+    barraProgresso.style.setProperty("background-color", corBarra, "important");
+    barraProgresso.style.setProperty("background", corBarra, "important");
+    barraProgresso.style.setProperty("width", `${larguraBarra}%`, "important");
+
+    // 3. Adiciona classe CSS dinâmica específica para a cor
+    const classCor = `cor-${corBarra.replace("#", "")}`;
+    barraProgresso.classList.add(classCor);
+
+    // 4. Força via setAttribute como último recurso
+    setTimeout(() => {
+      barraProgresso.setAttribute(
+        "style",
+        `width: ${larguraBarra}% !important; background-color: ${corBarra} !important; background: ${corBarra} !important; height: 100% !important; border-radius: 20px !important;`
+      );
+
+      console.log("🎨 Cor aplicada - Estado final:", {
+        status: this.statusMeta,
+        corBarra,
+        larguraBarra: larguraBarra + "%",
+        progresso: progresso + "%",
+        estiloCSS: barraProgresso.style.cssText,
+        backgroundColor:
+          window.getComputedStyle(barraProgresso).backgroundColor,
+        classes: barraProgresso.className,
+      });
+    }, 50);
+  },
+
+  // ✅ NOVA FUNÇÃO: Atualiza data no header
+  atualizarData() {
+    const dataAtualElement = document.getElementById("data-atual");
+    if (dataAtualElement) {
+      const agora = new Date();
+      const opcoes = {
+        weekday: "short",
+        day: "2-digit",
+        month: "2-digit",
+        year: "numeric",
+      };
+
+      const dataFormatada = agora.toLocaleDateString("pt-BR", opcoes);
+      dataAtualElement.textContent = dataFormatada;
+    }
+  },
+
+  // Inicialização completa
+  inicializar() {
+    console.log("🚀 Inicializando Widget Completo...");
+
+    this.integrarComMetaDiariaManager();
+    this.atualizarData();
+
+    // Primeira atualização
+    setTimeout(() => {
+      if (MetaDiariaManager && MetaDiariaManager.atualizarMetaDiaria) {
+        MetaDiariaManager.atualizarMetaDiaria();
+      }
+    }, 1500);
+
+    console.log("✅ Widget completo inicializado");
+  },
+};
+
+// ========================================
+// ATUALIZAÇÃO DOS OUTROS MANAGERS
+// ========================================
 
 const DadosManagerAtualizado = {
   ...DadosManager,
@@ -1817,7 +2301,7 @@ const DadosManagerAtualizado = {
         this.atualizarElementosLucro(data);
         this.atualizarElementosBanca(data);
 
-        // ✅ ATUALIZA meta diária (agora com subtração)
+        // ✅ ATUALIZA meta diária (agora com todas as regras)
         MetaDiariaManager.atualizarElementoMeta(data);
 
         // Calcula meta com dados atualizados
@@ -1992,267 +2476,7 @@ window.atualizarLucroEBancaViaAjax = async () => {
   }
 };
 
-console.log("✅ Sistema de Meta Diária com subtração carregado!");
-
-// ✅ ========================================
-// ✅ WIDGET META PROGRESSO - VERSÃO COM ÍCONES
-// ✅ ========================================
-
-const MetaProgressoWidget = {
-  metaCalculada: 0,
-  saldoDia: 0,
-  metaFinal: 0,
-
-  // Integra com MetaDiariaManager de forma simples
-  integrarComMetaDiariaManager() {
-    if (typeof MetaDiariaManager !== "undefined") {
-      const originalFunc = MetaDiariaManager.atualizarElementoMeta;
-
-      MetaDiariaManager.atualizarElementoMeta = (data) => {
-        // Executa função original
-        if (originalFunc) {
-          originalFunc.call(MetaDiariaManager, data);
-        }
-
-        // Atualiza widget após pequeno delay
-        setTimeout(() => {
-          this.atualizarWidget(data);
-        }, 100);
-      };
-
-      console.log("🔗 Widget integrado com ícones");
-    }
-  },
-
-  // Atualização do widget com suporte a ícones
-  atualizarWidget(data) {
-    try {
-      // Calcula valores
-      this.metaCalculada = parseFloat(data.meta_diaria) || 0;
-      this.saldoDia = this.obterSaldoDia(data);
-      this.metaFinal = this.metaCalculada - this.saldoDia;
-
-      // Atualiza interface
-      this.atualizarInterface();
-    } catch (error) {
-      console.error("❌ Erro no widget:", error);
-    }
-  },
-
-  // Obtém saldo de forma simples
-  obterSaldoDia(data = null) {
-    if (data && data.lucro !== undefined) {
-      return parseFloat(data.lucro) || 0;
-    }
-
-    if (
-      data &&
-      data.green_total !== undefined &&
-      data.red_total !== undefined
-    ) {
-      return (
-        (parseFloat(data.green_total) || 0) - (parseFloat(data.red_total) || 0)
-      );
-    }
-
-    return 0;
-  },
-
-  // Formata moeda
-  formatarMoeda(valor) {
-    return valor.toLocaleString("pt-BR", {
-      style: "currency",
-      currency: "BRL",
-    });
-  },
-
-  // Calcula progresso
-  calcularProgresso() {
-    if (this.metaCalculada === 0) return 0;
-    return Math.max(
-      0,
-      Math.min(100, (this.saldoDia / this.metaCalculada) * 100)
-    );
-  },
-
-  // ✅ FUNÇÃO ADAPTADA PARA TRABALHAR COM ÍCONES
-  atualizarInterface() {
-    const metaValor = document.getElementById("meta-valor");
-    const rotuloMeta = document.getElementById("rotulo-meta");
-    const saldoInfo = document.getElementById("saldo-info");
-    const percentualInfo = document.getElementById("percentual-info");
-    const barraProgresso = document.getElementById("barra-progresso");
-
-    if (!metaValor || !barraProgresso) {
-      console.log("⚠️ Elementos não encontrados");
-      return;
-    }
-
-    // ✅ ATUALIZA VALOR MANTENDO ÍCONE
-    const valorTexto = metaValor.querySelector(".valor-texto");
-    const loadingText = metaValor.querySelector(".loading-text");
-
-    if (loadingText) {
-      loadingText.remove();
-    }
-
-    // Se existe o span do valor, atualiza apenas ele
-    if (valorTexto) {
-      valorTexto.textContent = this.formatarMoeda(this.metaFinal);
-    } else {
-      // Se não existe, cria mantendo o ícone
-      const icone = metaValor.querySelector(".fas.fa-coins");
-      if (icone) {
-        // Limpa conteúdo mas mantém ícone
-        metaValor.innerHTML = "";
-        metaValor.appendChild(icone);
-
-        // Adiciona o texto
-        const novoSpan = document.createElement("span");
-        novoSpan.className = "valor-texto";
-        novoSpan.textContent = this.formatarMoeda(this.metaFinal);
-        metaValor.appendChild(novoSpan);
-      } else {
-        // Se não tem ícone, adiciona tudo
-        metaValor.innerHTML = `
-          <i class="fas fa-coins"></i>
-          <span class="valor-texto">${this.formatarMoeda(this.metaFinal)}</span>
-        `;
-      }
-    }
-
-    const progresso = this.calcularProgresso();
-
-    // ✅ ATUALIZA SALDO MANTENDO ÍCONE
-    if (saldoInfo) {
-      saldoInfo.innerHTML = `
-        <i class="fas fa-wallet"></i>
-        Saldo: ${this.formatarMoeda(this.saldoDia)}
-      `;
-    }
-
-    // ✅ ATUALIZA PERCENTUAL MANTENDO ÍCONE
-    if (percentualInfo) {
-      percentualInfo.innerHTML = `
-        <i class="fas fa-percentage"></i>
-        ${Math.round(progresso)}%
-      `;
-    }
-
-    // Atualiza barra IMEDIATAMENTE sem animação
-    barraProgresso.style.width = `${progresso}%`;
-
-    // Aplica cores baseadas no estado
-    this.aplicarCores(metaValor, rotuloMeta, barraProgresso);
-
-    console.log("✅ Widget atualizado com ícones:", {
-      meta: this.metaCalculada,
-      saldo: this.saldoDia,
-      final: this.metaFinal,
-      progresso: progresso,
-    });
-  },
-
-  // ✅ FUNÇÃO DE CORES MELHORADA
-  aplicarCores(metaValor, rotuloMeta, barraProgresso) {
-    // Remove todas as classes e estilos anteriores da barra
-    barraProgresso.className = "widget-barra-progresso barra-progresso";
-    barraProgresso.removeAttribute("style");
-
-    // Força largura primeiro
-    const progresso = this.calcularProgresso();
-    barraProgresso.style.width = `${progresso}%`;
-
-    // Aplica cor com múltiplas tentativas para garantir que funcione
-    let corBarra = "#9E9E9E"; // Padrão cinza
-
-    // ✅ ATUALIZA COR DO VALOR (MANTENDO ÍCONES)
-    const valorTexto = metaValor.querySelector(".valor-texto");
-
-    if (this.metaFinal <= 0) {
-      // Meta batida - azul
-      corBarra = "#2196F3";
-      if (valorTexto) valorTexto.style.color = "#2196F3";
-      if (rotuloMeta) rotuloMeta.innerHTML = "Meta Batida! 🏆";
-    } else if (this.saldoDia > 0) {
-      // Progresso positivo - verde
-      corBarra = "#4CAF50";
-      if (valorTexto) valorTexto.style.color = "#00a651";
-      if (rotuloMeta) rotuloMeta.innerHTML = "Restando P/ Meta 📈";
-    } else if (this.saldoDia < 0) {
-      // Saldo negativo - vermelho
-      corBarra = "#f44336";
-      if (valorTexto) valorTexto.style.color = "#e74c3c";
-      if (rotuloMeta) rotuloMeta.innerHTML = "Meta do Dia 📉";
-    } else {
-      // Zero - cinza
-      corBarra = "#9E9E9E";
-      if (valorTexto) valorTexto.style.color = "#7f8c8d";
-      if (rotuloMeta) rotuloMeta.textContent = "Meta do Dia";
-    }
-
-    // MÚLTIPLAS TENTATIVAS DE APLICAR COR:
-
-    // 1. Aplica estilos inline diretamente com cssText
-    barraProgresso.style.cssText = `
-      width: ${progresso}% !important;
-      height: 100% !important;
-      background-color: ${corBarra} !important;
-      background: ${corBarra} !important;
-      border-radius: 20px !important;
-    `;
-
-    // 2. Força via setProperty com important
-    barraProgresso.style.setProperty("background-color", corBarra, "important");
-    barraProgresso.style.setProperty("background", corBarra, "important");
-    barraProgresso.style.setProperty("width", `${progresso}%`, "important");
-
-    // 3. Adiciona classe CSS dinâmica específica para a cor
-    const classCor = `cor-${corBarra.replace("#", "")}`;
-    barraProgresso.classList.add(classCor);
-
-    // 4. Força via setAttribute como último recurso
-    setTimeout(() => {
-      barraProgresso.setAttribute(
-        "style",
-        `width: ${progresso}% !important; background-color: ${corBarra} !important; background: ${corBarra} !important; height: 100% !important; border-radius: 20px !important;`
-      );
-
-      console.log("🎨 Cor aplicada - Estado final:", {
-        corBarra,
-        progresso: progresso + "%",
-        estiloCSS: barraProgresso.style.cssText,
-        backgroundColor:
-          window.getComputedStyle(barraProgresso).backgroundColor,
-        classes: barraProgresso.className,
-      });
-    }, 50);
-
-    console.log("🎨 Aplicando cor na barra:", {
-      corBarra,
-      progresso: progresso + "%",
-      elemento: barraProgresso,
-    });
-  },
-
-  // Inicialização simples
-  inicializar() {
-    console.log("🚀 Inicializando Widget com Ícones...");
-
-    this.integrarComMetaDiariaManager();
-
-    // Primeira atualização
-    setTimeout(() => {
-      if (MetaDiariaManager && MetaDiariaManager.atualizarMetaDiaria) {
-        MetaDiariaManager.atualizarMetaDiaria();
-      }
-    }, 1500);
-
-    console.log("✅ Widget com ícones inicializado");
-  },
-};
-
-// Inicialização automática
+// ✅ INICIALIZAÇÃO AUTOMÁTICA
 if (document.readyState === "loading") {
   document.addEventListener("DOMContentLoaded", () => {
     MetaProgressoWidget.inicializar();
@@ -2261,13 +2485,12 @@ if (document.readyState === "loading") {
   MetaProgressoWidget.inicializar();
 }
 
-// Função global para debug
-window.debugWidgetSimples = () => {
-  console.log("Debug Widget:", MetaProgressoWidget);
+// ✅ FUNÇÕES DE DEBUG
+window.debugWidgetCompleto = () => {
+  console.log("Debug Widget Completo:", MetaProgressoWidget);
   return MetaProgressoWidget;
 };
 
-// Função de debug melhorada da barra
 window.debugBarra = () => {
   const barra = document.getElementById("barra-progresso");
   if (barra) {
@@ -2294,7 +2517,32 @@ window.debugBarra = () => {
   return barra;
 };
 
-console.log("✅ JavaScript adaptado com ícones carregado!");
+window.testarRegrasNegocio = (banca, meta, saldo) => {
+  console.log("🧪 Testando regras de negócio:");
+  console.log(`Banca: R$ ${banca}, Meta: R$ ${meta}, Saldo: R$ ${saldo}`);
+
+  let resultado;
+
+  if (banca <= 0) {
+    resultado = "DEPOSITE P/ COMEÇAR";
+  } else if (saldo >= meta) {
+    resultado = `META BATIDA! Lucro extra: R$ ${(saldo - meta).toFixed(2)}`;
+  } else if (saldo < 0) {
+    resultado = `Saldo negativo. Progresso: ${((saldo / meta) * 100).toFixed(
+      1
+    )}%`;
+  } else {
+    resultado = `Restante: R$ ${(meta - saldo).toFixed(2)} (${(
+      (saldo / meta) *
+      100
+    ).toFixed(1)}%)`;
+  }
+
+  console.log("Resultado:", resultado);
+  return resultado;
+};
+
+console.log("✅ Sistema completo com todas as regras de negócio carregado!");
 
 //
 //
