@@ -1,275 +1,415 @@
-/* RESPONSAVEL PELO CAMPO DAS METAS */
-
-.container-resumos {
-  display: flex;
-  justify-content: center;
-  flex-wrap: wrap;
-  gap: 50px;
-  margin-top: 30px;
-}
-
-.resumo-mes::-webkit-scrollbar {
-  display: none;
-}
+/* ===== CSS ENCAPSULADO PARA O BLOCO .resumo-mes ===== */
 
 .resumo-mes {
-  position: relative;
-  width: 385px;
-  height: 780px;
-  overflow-y: auto;
-  background-color: #f7f6f6;
-  border-radius: 12px;
-  padding-top: 0px; /* espaço suficiente para o bloco fixo */
-  box-shadow: 0 0 12px rgba(0, 0, 0, 0.08);
+  flex: 1;
+  min-width: 360px;
+  width: 390px;
+  max-width: 390px;
+  overflow: hidden;
   font-family: "Poppins", sans-serif;
 }
 
-.fixo-topo {
-  position: sticky; /* Mantém o bloco fixo dentro do scroll */
-  top: 0px;
-  z-index: 10;
-  background-color: #fdfdfd;
-  padding: 14px 18px;
-  border-radius: 12px 12px 0 0;
-  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.04);
-}
-
-.resumo-mes h2 {
-  font-size: 20px;
-  color: #333;
-  text-align: center;
+/* ===== BLOCO META SIMPLES ===== */
+.resumo-mes .bloco-meta-simples {
+  width: 100%;
+  max-width: 100%;
+  box-sizing: border-box;
+  background-color: #f7f6f6;
+  border-radius: 12px;
+  padding: 20px;
   margin-bottom: 15px;
 }
 
-/* RESPONSAVEL PELO CAMPO DAS METAS */
-.bloco-meta-simples {
-  background-color: #f7f6f6;
-  border-radius: 12px;
-  box-shadow: 0 3px 12px rgba(0, 0, 0, 0.06);
-  display: flex;
-  flex-direction: column;
-  padding-top: 12px;
-  max-width: 360px;
-  font-family: "Poppins", sans-serif;
-  transition: all 0.3s ease;
-  padding: 16px;
-  gap: 6px; /* Reduzido de 10px */
+.resumo-mes .bloco-meta-simples.fixo-topo {
+  position: sticky;
+  top: 0;
+  z-index: 100;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
 }
 
-.grupo-barra {
-  background: #ffffff;
-  padding: 10px 14px;
-  border-radius: 10px;
-  box-shadow: 0 1px 6px rgba(0, 0, 0, 0.05);
-  display: flex;
-  flex-direction: column;
-  position: relative;
-  transition: transform 0.2s ease-in-out;
-  margin-top: 4px;
-}
-
-.titulo-bloco {
-  font-size: 18px;
+/* ===== TÍTULO DO MÊS ===== */
+.resumo-mes .titulo-bloco {
+  font-size: 22px;
   font-weight: bold;
-  color: #2e7d32;
-  margin: 12px 0;
-  padding: 8px 0;
+  color: #2c3e50;
+  margin-bottom: 20px;
+  text-align: center;
   display: flex;
   align-items: center;
+  justify-content: center;
   gap: 10px;
-  border-bottom: 2px solid #c8e6c9;
-  background-color: #f1f8e9;
-  border-radius: 5px;
-  margin: 0 0 15px 0;
 }
 
-.titulo-bloco i {
+.resumo-mes .titulo-bloco i {
+  color: #3498db;
   font-size: 20px;
-  color: #43a047;
 }
 
-.grupo-barra:hover {
-  transform: translateY(-1.5px);
+/* ===== GRUPO BARRA ===== */
+.resumo-mes .grupo-barra {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  margin-bottom: 20px;
+  background: #ffffff;
+  padding: 15px;
+  border-radius: 10px;
+  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.08);
 }
 
-.valor-meta {
+.resumo-mes .valor-meta {
+  font-size: 16px;
+  font-weight: bold;
+  color: #2c3e50;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.resumo-mes .valor-meta i {
+  color: #e67e22;
   font-size: 14px;
-  font-weight: 600;
-  color: #333;
-  margin-bottom: 2px;
 }
 
-.valor-meta i {
-  color: #d6a10f;
-  margin-right: 6px;
+.resumo-mes .container-barra-horizontal {
+  position: relative;
+  width: 100%;
+  height: 24px;
+  background-color: #ecf0f1;
+  border-radius: 12px;
+  overflow: hidden;
+  border: 1px solid #bdc3c7;
 }
 
-.container-barra-horizontal {
+.resumo-mes .progresso-dourado {
+  height: 100%;
+  width: 100%;
+  background: linear-gradient(90deg, #f39c12, #e67e22);
+  border-radius: 12px;
+  transition: width 0.3s ease;
+}
+
+.resumo-mes .progresso-verde {
+  height: 100%;
+  width: var(--largura-barra, 0%);
+  background: linear-gradient(90deg, #27ae60, #2ecc71);
+  border-radius: 12px;
+  transition: width 0.3s ease;
+}
+
+.resumo-mes .porcento-barra {
+  position: absolute;
+  top: 50%;
+  right: 8px;
+  transform: translateY(-50%);
+  font-size: 12px;
+  font-weight: bold;
+  color: #ffffff;
+  text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.5);
+}
+
+.resumo-mes .rotulo-meta-mes {
+  font-size: 13px;
+  color: #7f8c8d;
   display: flex;
   align-items: center;
   gap: 6px;
-}
-
-.porcento-barra {
-  font-size: 12px;
   font-weight: 500;
-  color: #555;
-  min-width: 35px;
-  text-align: right;
 }
 
-.progresso-verde::before {
-  content: "";
-  position: absolute;
-  top: 0;
-  left: 0;
-  height: 100%;
-  width: var(--largura-barra, 0%);
-  border-radius: 4px;
-  background: linear-gradient(90deg, #4caf50, #81c784);
-  transition: width 0.4s ease-in-out;
-}
-
-.rotulo-meta-mes.sucesso {
-  background-color: #dff0d8;
-  color: #388e3c;
-  border: 1px solid #81c784;
-  margin-left: 8px;
-  padding: 3px 6px;
-  border-radius: 4px;
+.resumo-mes .rotulo-meta-mes i {
+  color: #95a5a6;
   font-size: 12px;
-  display: inline-flex;
+}
+
+.resumo-mes .rotulo-meta-mes.sucesso {
+  color: #27ae60;
+  font-weight: bold;
+}
+
+.resumo-mes .rotulo-meta-mes.sucesso i {
+  color: #f1c40f;
+}
+
+/* ===== LISTA DIAS ===== */
+.resumo-mes .lista-dias {
+  width: 100%;
+  max-width: 100%;
+  box-sizing: border-box;
+  overflow-x: hidden;
+  overflow-y: auto;
+  max-height: 400px;
+  background-color: #ffffff;
+  border-radius: 10px;
+  padding: 10px;
+  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.08);
+}
+
+.resumo-mes .lista-dias::-webkit-scrollbar {
+  width: 6px;
+}
+
+.resumo-mes .lista-dias::-webkit-scrollbar-track {
+  background: #f1f1f1;
+  border-radius: 3px;
+}
+
+.resumo-mes .lista-dias::-webkit-scrollbar-thumb {
+  background: #bdc3c7;
+  border-radius: 3px;
+}
+
+.resumo-mes .lista-dias::-webkit-scrollbar-thumb:hover {
+  background: #95a5a6;
+}
+
+/* ===== LINHA DIA ===== */
+.resumo-mes .linha-dia {
+  width: 100%;
+  max-width: 100%;
+  box-sizing: border-box;
+  overflow: hidden;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 12px 15px;
+  margin-bottom: 8px;
+  border-radius: 8px;
+  background-color: #f8f9fa;
+  border: 2px solid transparent;
+  transition: all 0.3s ease;
+  font-size: 14px;
+}
+
+.resumo-mes .linha-dia:hover {
+  background-color: #e9ecef;
+  transform: translateX(3px);
+}
+
+.resumo-mes .linha-dia.dia-normal {
+  border-color: #dee2e6;
+}
+
+.resumo-mes .linha-dia.dia-hoje {
+  background-color: #fff3cd;
+  font-weight: bold;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+}
+
+.resumo-mes .linha-dia.dia-hoje.borda-verde {
+  border-color: #28a745;
+  border-left: 6px solid #28a745;
+}
+
+.resumo-mes .linha-dia.dia-hoje.borda-vermelha {
+  border-color: #dc3545;
+  border-left: 6px solid #dc3545;
+}
+
+.resumo-mes .linha-dia.dia-destaque {
+  background-color: #d4edda;
+  border-left: 4px solid #28a745;
+}
+
+/* ===== ELEMENTOS DA LINHA ===== */
+.resumo-mes .linha-dia .data,
+.resumo-mes .linha-dia .placar-dia,
+.resumo-mes .linha-dia .valor,
+.resumo-mes .linha-dia .icone {
+  flex-shrink: 1;
+  min-width: 0;
+  display: flex;
   align-items: center;
   gap: 4px;
 }
 
-.rotulo-meta-mes {
-  font-size: 12px;
-  font-weight: 600;
-  color: #28a745;
-  background-color: rgba(40, 167, 69, 0.08);
-  padding: 3px 6px;
-  border-radius: 5px;
-  width: fit-content;
-}
-
-.rotulo-meta-mes i {
-  margin-right: 6px;
-  color: #28a745;
-}
-
-.progresso-dourado,
-.progresso-verde {
-  height: 6px;
+.resumo-mes .linha-dia .data {
   flex: 1;
-  border-radius: 4px;
-  background-color: #eee;
-  position: relative;
-  overflow: hidden;
+  font-weight: 500;
+  color: #495057;
 }
 
-.progresso-dourado::before,
-.progresso-verde::before {
-  content: "";
-  position: absolute;
-  top: 0;
-  left: 0;
-  height: 100%;
-  border-radius: 4px;
-}
-
-.progresso-dourado::before {
-  width: 100%;
-  background: linear-gradient(90deg, #d6a10f, #d6a10f);
-}
-
-.progresso-verde::before {
-  width: 20%;
-  background: linear-gradient(90deg, #4caf50, #81c784);
-}
-
-.linha-dia {
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  background-color: #fff;
-  padding: 6px 10px;
-  border-radius: 8px;
-  box-shadow: 0 0 2px rgba(0, 0, 0, 0.05);
-  width: 90%;
-  margin: 8px auto;
-}
-
-.data {
+.resumo-mes .linha-dia .data i {
+  color: #6c757d;
   font-size: 12px;
-  color: #333;
+}
+
+.resumo-mes .linha-dia .placar-dia {
+  flex: 0 0 auto;
   display: flex;
   align-items: center;
-  gap: 5px;
+  gap: 8px;
+  font-weight: bold;
 }
 
-.placar-dia {
-  display: flex;
-  align-items: center;
-  gap: 6px;
-  font-size: 13px;
-}
-
-.placar {
-  font-size: 13px;
-}
-
-.valor {
-  font-size: 12px;
-  color: #444;
-  display: flex;
-  align-items: center;
-  gap: 5px;
-}
-
-.icone {
+.resumo-mes .linha-dia .placar-dia .placar {
   font-size: 14px;
-  color: #4caf50;
+  min-width: 20px;
+  text-align: center;
 }
 
-.verde-bold {
+.resumo-mes .linha-dia .placar-dia .separador {
+  color: #6c757d;
+  font-weight: normal;
+}
+
+.resumo-mes .linha-dia .valor {
+  flex: 1;
+  text-align: right;
+  font-weight: bold;
+  font-size: 14px;
+}
+
+.resumo-mes .linha-dia .valor i {
+  font-size: 12px;
+  margin-right: 2px;
+}
+
+.resumo-mes .linha-dia .icone {
+  flex: 0 0 auto;
+  width: 20px;
+  text-align: center;
+}
+
+.resumo-mes .linha-dia .icone i {
   color: #28a745;
+  font-size: 12px;
+}
+
+/* ===== CLASSES DE COR ===== */
+.resumo-mes .verde-bold {
+  color: #28a745 !important;
   font-weight: bold;
 }
 
-.vermelho-bold {
-  color: #dc3545;
+.resumo-mes .vermelho-bold {
+  color: #dc3545 !important;
   font-weight: bold;
 }
 
-.texto-cinza {
-  color: #777;
+.resumo-mes .texto-cinza {
+  color: #6c757d !important;
 }
 
-.dia-hoje {
-  border-left: 4px solid green;
-  opacity: 1;
+/* ===== RESPONSIVIDADE ===== */
+
+/* Tablets pequenos */
+@media (max-width: 768px) and (min-width: 481px) {
+  .resumo-mes .bloco-meta-simples {
+    padding: 15px;
+  }
+
+  .resumo-mes .titulo-bloco {
+    font-size: 20px;
+  }
+
+  .resumo-mes .linha-dia {
+    padding: 10px 12px;
+    font-size: 13px;
+  }
 }
 
-.dia-normal {
-  opacity: 0.5;
+/* Celulares */
+@media (max-width: 480px) {
+  .resumo-mes {
+    min-width: 100%;
+    width: 100%;
+    max-width: 100%;
+  }
+
+  .resumo-mes .bloco-meta-simples {
+    padding: 12px;
+    margin-bottom: 10px;
+  }
+
+  .resumo-mes .titulo-bloco {
+    font-size: 18px;
+    margin-bottom: 15px;
+  }
+
+  .resumo-mes .grupo-barra {
+    padding: 12px;
+    margin-bottom: 15px;
+  }
+
+  .resumo-mes .valor-meta {
+    font-size: 14px;
+  }
+
+  .resumo-mes .container-barra-horizontal {
+    height: 20px;
+  }
+
+  .resumo-mes .porcento-barra {
+    font-size: 11px;
+    right: 6px;
+  }
+
+  .resumo-mes .rotulo-meta-mes {
+    font-size: 12px;
+  }
+
+  .resumo-mes .lista-dias {
+    padding: 8px;
+    max-height: 350px;
+  }
+
+  .resumo-mes .linha-dia {
+    padding: 8px 10px;
+    font-size: 12px;
+    flex-wrap: wrap;
+    gap: 5px;
+  }
+
+  .resumo-mes .linha-dia .data {
+    flex: 1 1 50%;
+    min-width: 120px;
+  }
+
+  .resumo-mes .linha-dia .placar-dia {
+    flex: 0 0 auto;
+    order: 3;
+  }
+
+  .resumo-mes .linha-dia .valor {
+    flex: 1 1 40%;
+    text-align: right;
+    order: 2;
+  }
+
+  .resumo-mes .linha-dia .icone {
+    flex: 0 0 auto;
+    order: 4;
+  }
 }
 
-.borda-verde {
-  border-left: 4px solid green;
-}
+/* Telas muito pequenas */
+@media (max-width: 360px) {
+  .resumo-mes .titulo-bloco {
+    font-size: 16px;
+    flex-direction: column;
+    gap: 5px;
+  }
 
-.borda-vermelha {
-  border-left: 4px solid red;
-}
+  .resumo-mes .grupo-barra {
+    padding: 10px;
+  }
 
-.dia-destaque {
-  background-color: #f0fff3;
-  box-shadow: 0 0 8px rgba(40, 167, 69, 0.25);
-}
+  .resumo-mes .valor-meta {
+    font-size: 13px;
+    flex-wrap: wrap;
+  }
 
-.lista-dias {
-  margin-top: 18px;
-}
+  .resumo-mes .lista-dias {
+    max-height: 300px;
+  }
 
-/* FIM RESPONSAVEL PELO CAMPO DAS METAS */
+  .resumo-mes .linha-dia {
+    padding: 6px 8px;
+    font-size: 11px;
+  }
+
+  .resumo-mes .linha-dia .data {
+    min-width: 100px;
+  }
+}

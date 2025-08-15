@@ -40,7 +40,7 @@ html {
   box-sizing: border-box;
   max-width: 400px;
   margin: 0 auto;
-  margin-top: 18px;
+  margin-top: 0px;
   width: 390px;
 }
 
@@ -1456,10 +1456,11 @@ input[type="text"] {
   justify-content: flex-start;
   align-items: center;
   background-color: #113647;
-  padding: 15px 5px;
+  padding: 15px 3px;
   color: white;
   font-family: Arial, sans-serif;
   height: 60px;
+  width: 100%;
 }
 
 .app-title {
@@ -1803,3 +1804,151 @@ input[type="text"] {
 }
 
 /*TESTE*/
+/* CSS adicional para layout lado a lado */
+/* ===== SUBSTITUA O CSS ANTERIOR POR ESTE ===== */
+
+/* Container principal que coloca os blocos lado a lado */
+.container-resumos {
+  display: flex;
+  gap: 30px;
+  max-width: 1400px;
+  margin: 0 auto;
+  padding: 20px;
+  box-sizing: border-box;
+}
+
+/* Bloco da direita (resumo-mes) */
+.resumo-mes {
+  flex: 1;
+  min-width: 0; /* Permite que o flex funcione corretamente */
+  max-width: 50%; /* Garante que não ultrapasse 50% */
+  overflow: hidden; /* Evita vazamento */
+}
+
+/* Ajustes específicos para o conteúdo do mês */
+.bloco-meta-simples {
+  width: 100%;
+  max-width: 100%;
+  box-sizing: border-box;
+}
+
+.lista-dias {
+  width: 100%;
+  max-width: 100%;
+  box-sizing: border-box;
+  overflow-x: hidden; /* Evita scroll horizontal */
+  overflow-y: auto; /* Mantém scroll vertical se necessário */
+}
+
+.linha-dia {
+  width: 100%;
+  max-width: 100%;
+  box-sizing: border-box;
+  overflow: hidden; /* Evita que o conteúdo vaze */
+}
+
+/* Ajuste para os elementos internos das linhas */
+.linha-dia .data,
+.linha-dia .placar-dia,
+.linha-dia .valor,
+.linha-dia .icone {
+  flex-shrink: 1; /* Permite que os elementos encolham se necessário */
+  min-width: 0; /* Permite quebra de texto se necessário */
+}
+
+/* Responsividade - Em telas menores, coloca um bloco abaixo do outro */
+@media (max-width: 1024px) {
+  .container-resumos {
+    flex-direction: column;
+    gap: 15px;
+  }
+
+  .resumo-dia,
+  .resumo-mes {
+    flex: none;
+    max-width: 100%; /* Remove limitação em telas pequenas */
+  }
+}
+
+/* Ajuste para dispositivos muito pequenos */
+@media (max-width: 768px) {
+  .container-resumos {
+    padding: 10px;
+    gap: 10px;
+  }
+
+  .resumo-dia,
+  .resumo-mes {
+    max-width: 100%;
+  }
+}
+
+/* ===== ADICIONE ESTE CSS AO FINAL DO SEU ARQUIVO OU SUBSTITUA AS REGRAS EXISTENTES ===== */
+
+/* Força os elementos do informacoes-row ficarem lado a lado em todas as telas */
+.informacoes-row {
+  display: flex !important;
+  justify-content: center !important;
+  align-items: center !important;
+  text-align: left;
+  flex-wrap: nowrap !important; /* Impede quebra de linha */
+  gap: 10px;
+  margin-top: -5px;
+}
+
+.info-item {
+  display: flex !important;
+  flex-direction: column;
+  align-items: center !important;
+  justify-content: center !important;
+  background-color: #f7f6f6;
+  padding: 15px;
+  border-radius: 10px;
+  text-align: center !important; /* Centraliza o texto */
+  width: 140px !important; /* Largura fixa menor para caber em telas pequenas */
+  min-width: 120px !important; /* Largura mínima */
+  max-width: 160px !important; /* Largura máxima */
+  height: 48px;
+  margin-top: 18px;
+  flex-shrink: 1; /* Permite encolher se necessário */
+}
+
+/* Responsividade específica para telas muito pequenas */
+@media (max-width: 480px) {
+  .informacoes-row {
+    gap: 5px !important; /* Reduz espaço entre elementos */
+    padding: 0 5px; /* Adiciona padding lateral */
+  }
+
+  .info-item {
+    width: 120px !important; /* Largura ainda menor para celulares */
+    min-width: 100px !important;
+    padding: 10px 8px !important; /* Padding menor */
+    font-size: 14px; /* Fonte menor se necessário */
+  }
+
+  .valor-meta,
+  .valor-saldo {
+    font-size: 16px !important; /* Ajusta tamanho da fonte */
+  }
+
+  .rotulo-meta,
+  .rotulo-saldo {
+    font-size: 11px !important; /* Fonte menor para os rótulos */
+  }
+}
+
+/* Para telas entre 481px e 768px (tablets pequenos) */
+@media (max-width: 768px) and (min-width: 481px) {
+  .info-item {
+    width: 130px !important;
+    padding: 12px !important;
+  }
+}
+
+/* Para telas maiores mantém o comportamento atual */
+@media (min-width: 769px) {
+  .info-item {
+    width: 160px !important;
+  }
+}

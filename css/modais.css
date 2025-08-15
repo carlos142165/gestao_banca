@@ -1,0 +1,687 @@
+/* ===== CSS ENCAPSULADO PARA MODAIS E FORMULÁRIOS ===== */
+
+/* Container principal para encapsular todos os modais */
+.modais-container {
+  font-family: "Poppins", sans-serif;
+}
+
+/* ===== TELA DE EDIÇÃO (HISTÓRICO DO MENTOR) ===== */
+.modais-container .tela-edicao {
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  max-height: 85vh;
+  overflow-y: auto;
+  background: #ffffff;
+  border-radius: 16px;
+  padding: 20px 25px;
+  box-shadow: 0 20px 40px rgba(0, 0, 0, 0.2);
+  z-index: 9999;
+  font-family: "Segoe UI", sans-serif;
+  color: #333;
+  width: 300px;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  position: fixed;
+  opacity: 1;
+  transition: opacity 0.3s ease;
+}
+
+.modais-container .tela-edicao.oculta {
+  opacity: 0;
+  pointer-events: none;
+}
+
+.modais-container .btn-fechar {
+  position: absolute;
+  top: 10px;
+  right: 10px;
+  background: transparent;
+  border: none;
+  font-size: 18px;
+  cursor: pointer;
+  z-index: 1000;
+  font-weight: bold;
+  color: #6d6d6dff;
+}
+
+.modais-container .mentor-img-edicao {
+  display: block;
+  margin: 15px auto 5px;
+  width: 80px;
+  height: 80px;
+  border-radius: 50%;
+  object-fit: cover;
+  box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+}
+
+.modais-container .tela-edicao h3 {
+  text-align: center;
+  margin-bottom: 20px;
+  font-size: 15px;
+  color: #2c3e50;
+  font-weight: 600;
+}
+
+.modais-container .mentor-data-horario {
+  text-align: center;
+  margin-bottom: 15px;
+  font-size: 14px;
+  color: #555;
+}
+
+.modais-container .entrada-card {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  background: #f8f8f8ff;
+  border-left: 6px solid #4caf50;
+  border-radius: 10px;
+  padding: 12px 16px;
+  margin-bottom: 12px;
+  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.06);
+  height: 50px;
+}
+
+.modais-container .entrada-info p {
+  margin: 4px 0;
+  font-size: 14px;
+  color: #34495e;
+  margin-top: -4px;
+}
+
+.modais-container .entrada-acoes {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.modais-container .btn-icon {
+  background: none;
+  border: none;
+  font-size: 1.2rem;
+  cursor: pointer;
+  transition: transform 0.2s ease;
+}
+
+.modais-container .btn-icon i {
+  pointer-events: none;
+}
+
+.modais-container .btn-lixeira {
+  color: #b4b4b4ff;
+  font-size: 15px;
+  margin-top: 15px;
+}
+
+.modais-container .btn-icon:hover {
+  transform: scale(1.2);
+}
+
+.modais-container .data-hora-edicao {
+  margin-top: 8px;
+  font-size: 16px;
+  color: #555;
+}
+
+/* ===== MODAL CONFIRMAÇÃO EXCLUSÃO ENTRADA ===== */
+.modais-container .modal-confirmacao {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: rgba(0, 0, 0, 0.5);
+  z-index: 9999;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.modais-container .modal-content {
+  background: #fff;
+  padding: 25px;
+  border-radius: 10px;
+  text-align: center;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
+  font-family: "Segoe UI", sans-serif;
+}
+
+.modais-container .modal-texto {
+  color: #2c3e50;
+  font-size: 16px;
+  font-weight: 500;
+  margin-bottom: 20px;
+}
+
+.modais-container .botoes-modal {
+  margin-top: 15px;
+  display: flex;
+  justify-content: center;
+  gap: 10px;
+}
+
+.modais-container .botao-confirmar {
+  background: #e74c3c;
+  color: white;
+  border: none;
+  padding: 8px 16px;
+  border-radius: 6px;
+  cursor: pointer;
+  font-weight: bold;
+  transition: background-color 0.3s ease;
+}
+
+.modais-container .botao-confirmar:hover {
+  background: #c0392b;
+}
+
+.modais-container .botao-cancelar {
+  background: #ccc;
+  color: black;
+  border: none;
+  padding: 8px 16px;
+  border-radius: 6px;
+  cursor: pointer;
+  font-weight: bold;
+  transition: background-color 0.3s ease;
+}
+
+.modais-container .botao-cancelar:hover {
+  background: #bbb;
+}
+
+/* ===== MODAL CONFIRMAÇÃO EXCLUSÃO MENTOR ===== */
+.modais-container #modal-confirmacao-exclusao {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: rgba(0, 0, 0, 0.5);
+  z-index: 9999;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.modais-container #modal-confirmacao-exclusao .modal-content {
+  background: #fff;
+  padding: 25px;
+  width: 350px;
+  border-radius: 10px;
+  text-align: center;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
+  font-family: "Segoe UI", sans-serif;
+  margin: 0 auto;
+  margin-top: 35%;
+}
+
+/* ===== MODAL FORMULÁRIO PRINCIPAL ===== */
+.modais-container .modal {
+  display: none;
+  position: fixed;
+  z-index: 1000;
+  left: 0;
+  top: 0;
+  width: 100%;
+  height: 100%;
+  background-color: rgba(0, 0, 0, 0.6);
+  justify-content: center;
+  align-items: center;
+  font-family: "Segoe UI", sans-serif;
+}
+
+.modais-container .modal-conteudo {
+  position: relative;
+  background-color: #fff;
+  margin: 5% auto;
+  padding: 20px 25px;
+  border-radius: 15px;
+  max-width: 450px;
+  width: 70%;
+  box-shadow: 0 0 20px rgba(0, 0, 0, 0.3);
+  animation: fadeIn 0.3s ease-in-out;
+  top: 80px;
+  text-align: center;
+}
+
+.modais-container .fechar {
+  position: absolute;
+  top: 2px;
+  right: 10px;
+  font-size: 26px;
+  cursor: pointer;
+  color: #888;
+  background: none;
+  border: none;
+  transition: color 0.3s ease;
+}
+
+.modais-container .fechar:hover {
+  color: #f44336;
+}
+
+/* ===== FORMULÁRIO MENTOR COMPLETO ===== */
+.modais-container .formulario-mentor-completo {
+  display: flex;
+  flex-direction: column;
+  gap: 15px;
+}
+
+.modais-container .input-group {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.modais-container .label-arquivo {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  font-weight: bold;
+  font-size: 15px;
+  color: #fff;
+  background-color: #4a90e2;
+  border-radius: 8px;
+  padding: 10px 16px;
+  cursor: pointer;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+  transition: background-color 0.3s ease, transform 0.2s ease;
+  margin-top: 8px;
+  text-align: center;
+  justify-content: center;
+}
+
+.modais-container .label-arquivo:hover {
+  background-color: #357abd;
+  transform: scale(1.03);
+}
+
+.modais-container .label-arquivo i {
+  font-size: 18px;
+}
+
+.modais-container .input-file {
+  display: none;
+}
+
+.modais-container .nome-arquivo {
+  display: block;
+  margin-bottom: 8px;
+  font-style: italic;
+  font-size: 13px;
+  color: #666;
+  text-align: center;
+}
+
+.modais-container .preview-foto-wrapper {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 10px;
+  margin: 15px 0;
+}
+
+.modais-container .preview-img {
+  display: block;
+  width: 120px;
+  max-width: 100%;
+  height: 120px;
+  aspect-ratio: 1 / 1;
+  border-radius: 50%;
+  object-fit: cover;
+  object-position: center;
+  border: 3px solid #4caf50;
+  box-shadow: 0 0 8px rgba(0, 0, 0, 0.2);
+  margin: 0 auto;
+}
+
+.modais-container .btn-remover-foto {
+  background-color: #f44336;
+  color: white;
+  border: none;
+  padding: 8px 12px;
+  border-radius: 8px;
+  cursor: pointer;
+  font-size: 14px;
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  transition: background-color 0.3s ease;
+}
+
+.modais-container .btn-remover-foto:hover {
+  background-color: #d32f2f;
+}
+
+.modais-container .mentor-nome-preview {
+  font-size: 18px;
+  font-weight: bold;
+  color: #333;
+  margin: 10px 0;
+}
+
+.modais-container .input-text {
+  width: 100%;
+  padding: 10px 14px;
+  border: 1px solid #ccc;
+  border-radius: 8px;
+  font-size: 15px;
+  box-sizing: border-box;
+  transition: border 0.3s ease;
+}
+
+.modais-container .input-text:focus {
+  border-color: #2196f3;
+  outline: none;
+}
+
+.modais-container .botoes-formulario {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 10px;
+  width: 100%;
+  margin-top: 10px;
+  text-align: center;
+}
+
+.modais-container .btn-enviar {
+  background-color: #2196f3;
+  color: white;
+  border: none;
+  padding: 12px 0;
+  border-radius: 8px;
+  font-size: 16px;
+  font-weight: bold;
+  transition: background-color 0.3s ease;
+  display: inline-flex;
+  justify-content: center;
+  align-items: center;
+  gap: 8px;
+  cursor: pointer;
+  width: 100%;
+}
+
+.modais-container .btn-enviar:hover {
+  background-color: #1976d2;
+}
+
+.modais-container .btn-excluir {
+  width: 100%;
+  font-size: 16px;
+  font-weight: bold;
+  box-sizing: border-box;
+  background-color: #e64135ff;
+  border-radius: 8px;
+  padding: 12px 0;
+  border: none;
+  color: white;
+  cursor: pointer;
+  display: inline-flex;
+  justify-content: center;
+  align-items: center;
+  gap: 8px;
+  transition: background-color 0.3s ease;
+}
+
+.modais-container .btn-excluir:hover {
+  background-color: #c62828;
+}
+
+/* ===== FORMULÁRIO MENTOR (ADICIONAR VALORES) ===== */
+.modais-container .formulario-mentor {
+  position: fixed;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  background-color: #ffffff;
+  padding: 30px 25px;
+  border-radius: 16px;
+  box-shadow: 0 10px 25px rgba(0, 0, 0, 0.2);
+  width: 270px;
+  height: 320px;
+  text-align: center;
+  font-family: "Poppins", sans-serif;
+  z-index: 1000;
+  align-items: center;
+  display: none;
+}
+
+.modais-container .formulario-mentor .btn-fechar {
+  position: absolute;
+  top: 12px;
+  right: 15px;
+  background: none;
+  border: none;
+  font-size: 15px;
+  cursor: pointer;
+  color: #999;
+  transition: color 0.3s ease;
+}
+
+.modais-container .formulario-mentor .btn-fechar:hover {
+  color: #333;
+}
+
+.modais-container .mentor-foto-preview {
+  width: 80px;
+  height: 80px;
+  border-radius: 50%;
+  object-fit: cover;
+  border: 3px solid #00a651;
+  margin-bottom: 12px;
+}
+
+.modais-container .formulario-mentor .mentor-nome-preview {
+  font-size: 18px;
+  font-weight: bold;
+  color: #333;
+  margin-bottom: 25px;
+  margin-top: -2px;
+}
+
+.modais-container .formulario-mentor form {
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+}
+
+.modais-container .checkbox-container {
+  display: flex;
+  justify-content: center;
+  gap: 30px;
+}
+
+.modais-container .checkbox-wrapper {
+  display: flex;
+  align-items: center;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.modais-container .formulario-mentor input[type="radio"] {
+  appearance: none;
+  width: 24px;
+  height: 24px;
+  border: 2px solid #ccc;
+  border-radius: 6px;
+  transition: background-color 0.3s;
+  cursor: pointer;
+}
+
+.modais-container .formulario-mentor #green:checked {
+  background-color: #00a651;
+  border-color: #00a651;
+}
+
+.modais-container .formulario-mentor #red:checked {
+  background-color: #f44336;
+  border-color: #f44336;
+}
+
+.modais-container .checkbox-label {
+  font-weight: bold;
+  font-size: 16px;
+  color: #555;
+  transition: color 0.3s;
+}
+
+.modais-container #green:checked + .green-label {
+  color: #00a651;
+}
+
+.modais-container #red:checked + .red-label {
+  color: #f44336;
+}
+
+.modais-container .input-valor {
+  padding: 14px 18px;
+  border: 1px solid #ccc;
+  border-radius: 8px;
+  font-size: 16px;
+  outline: none;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.05);
+  transition: border-color 0.3s ease;
+  text-align: center;
+}
+
+.modais-container .input-valor:focus {
+  border-color: #4caf50;
+}
+
+.modais-container .botao-enviar {
+  background: linear-gradient(to right, #00a651, #3ac77b);
+  border: none;
+  color: white;
+  font-weight: bold;
+  font-size: 16px;
+  padding: 12px;
+  border-radius: 10px;
+  cursor: pointer;
+  transition: transform 0.2s ease, background 0.3s ease;
+}
+
+.modais-container .botao-enviar:hover {
+  transform: scale(1.04);
+  background: linear-gradient(to right, #3ac77b, #00a651);
+}
+
+/* ===== LOADER ===== */
+.modais-container #loader {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: rgba(255, 255, 255, 0.7);
+  z-index: 9999;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.modais-container #loader::after {
+  content: "";
+  width: 50px;
+  height: 50px;
+  border: 6px solid #3498db;
+  border-top-color: transparent;
+  border-radius: 50%;
+  animation: girar 1s linear infinite;
+}
+
+/* ===== ANIMAÇÕES ===== */
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+    transform: translateY(-20px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@keyframes girar {
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+/* ===== RESPONSIVIDADE ===== */
+
+/* Tablets */
+@media (max-width: 768px) {
+  .modais-container .modal-conteudo {
+    width: 85%;
+    max-width: 400px;
+    padding: 18px 20px;
+  }
+
+  .modais-container .formulario-mentor {
+    width: 250px;
+    height: 300px;
+    padding: 25px 20px;
+  }
+
+  .modais-container .tela-edicao {
+    width: 280px;
+    max-height: 80vh;
+  }
+}
+
+/* Celulares */
+@media (max-width: 480px) {
+  .modais-container #modal-confirmacao-exclusao .modal-content {
+    width: 85%;
+    padding: 18px;
+    font-size: 14px;
+  }
+
+  .modais-container #modal-confirmacao-exclusao .botao-confirmar,
+  .modais-container #modal-confirmacao-exclusao .botao-cancelar {
+    font-size: 13px;
+    padding: 6px 12px;
+  }
+
+  .modais-container .modal-conteudo {
+    width: 90%;
+    margin: 10% auto;
+    top: 40px;
+    padding: 15px;
+  }
+
+  .modais-container .formulario-mentor {
+    width: 90%;
+    max-width: 280px;
+    height: auto;
+    min-height: 300px;
+    padding: 20px 15px;
+  }
+
+  .modais-container .tela-edicao {
+    width: 90%;
+    max-width: 300px;
+    max-height: 75vh;
+    padding: 15px 20px;
+  }
+
+  .modais-container .preview-img {
+    width: 100px;
+    height: 100px;
+  }
+
+  .modais-container .mentor-foto-preview {
+    width: 70px;
+    height: 70px;
+  }
+
+  .modais-container .checkbox-container {
+    gap: 20px;
+  }
+}
+/* ===== CSS PARA MENSAGENS TOAST ===== */

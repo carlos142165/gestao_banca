@@ -1,5 +1,6 @@
 document.addEventListener("DOMContentLoaded", () => {
   atualizarLucroEBancaViaAjax();
+
   const botaoGerencia = document.getElementById("abrirGerenciaBanca");
   const modal = document.getElementById("modalDeposito");
   const botaoFechar = modal.querySelector(".btn-fechar");
@@ -10,12 +11,80 @@ document.addEventListener("DOMContentLoaded", () => {
   // Variáveis globais necessárias em outras funções
   let diaria, unidade, oddsMeta;
   let resultadoCalculo, resultadoUnidade, resultadoOdds;
+  let valorBancaInput, mensagemErro;
 
+  // ✅ FUNÇÃO PARA ATUALIZAR A META DIÁRIA
+  function atualizarMetaDiaria(metaFormatada) {
+    const metaElement = document.getElementById("meta-dia");
+    if (metaElement && metaFormatada) {
+      // Adicionar animação
+      metaElement.classList.add("updating");
+
+      // Atualizar o valor
+      setTimeout(() => {
+        metaElement.textContent = metaFormatada;
+      }, 100);
+
+      // Remover animação
+      setTimeout(() => {
+        metaElement.classList.remove("updating");
+      }, 600);
+
+      console.log("✅ Meta diária atualizada para:", metaFormatada);
+    }
+  }
+
+  // ✅ FUNÇÃO PARA ATUALIZAR UNIDADE DE ENTRADA NO FORMULÁRIO
+  function atualizarUnidadeEntradaFormulario(unidadeFormatada) {
+    if (unidadeFormatada) {
+      setTimeout(() => {
+        const campoValor = document.getElementById("valor");
+        if (campoValor) {
+          // Atualiza placeholder
+          campoValor.placeholder = unidadeFormatada;
+
+          // Se o campo está vazio, preenche com a unidade
+          if (!campoValor.value || campoValor.value === "R$ 0,00") {
+            campoValor.value = unidadeFormatada;
+          }
+        }
+
+        // Atualiza elemento oculto para JavaScript
+        const unidadeElement = document.getElementById("unidade-entrada");
+        if (unidadeElement) {
+          unidadeElement.textContent = unidadeFormatada;
+          unidadeElement.setAttribute(
+            "data-unidade",
+            unidadeFormatada.replace("R$ ", "")
+          );
+        }
+
+        console.log("✅ Unidade de entrada atualizada para:", unidadeFormatada);
+      }, 100);
+    }
+  }
+
+  // ✅ MODIFICAÇÃO: Recarrega e abre automaticamente após reload
   botaoGerencia.addEventListener("click", (e) => {
     e.preventDefault();
-    modal.style.display = "flex";
-    inicializarModalDeposito();
+
+    // Salva no sessionStorage que deve abrir o modal após reload
+    sessionStorage.setItem("abrirModalGerencia", "true");
+
+    // Recarrega a página
+    location.reload();
   });
+
+  // ✅ MODIFICAÇÃO: Verifica se deve abrir o modal automaticamente após reload
+  if (sessionStorage.getItem("abrirModalGerencia") === "true") {
+    sessionStorage.removeItem("abrirModalGerencia");
+
+    // Aguarda um pouco para garantir que a página carregou completamente
+    setTimeout(() => {
+      modal.style.display = "flex";
+      inicializarModalDeposito();
+    }, 100);
+  }
 
   botaoFechar.addEventListener("click", () => {
     modal.style.display = "none";
@@ -26,11 +95,112 @@ document.addEventListener("DOMContentLoaded", () => {
     input.addEventListener("mouseup", (e) => e.preventDefault());
   }
 
+  // ✅ FUNÇÃO PARA MARCAR CAMPOS OBRIGATÓRIOS
+  function marcarCamposObrigatorios(campos) {
+    campos.forEach((campo) => {
+      if (campo && campo.style) {
+        campo.style.border = "2px solid red";
+        campo.style.boxShadow = "0 0 5px rgba(255, 0, 0, 0.3)";
+      }
+    });
+  }
+
+  // ✅ FUNÇÃO PARA LIMPAR MARCAÇÃO DE CAMPOS
+  function limparMarcacaoCampos(campos) {
+    campos.forEach((campo) => {
+      if (campo && campo.style) {
+        campo.style.border = "";
+        campo.style.boxShadow = "";
+      }
+    });
+  }
+
+  // ✅ FUNÇÃO PARA GERAR MENSAGEM ESPECÍFICA POR OPERAÇÃO
+  function gerarMensagemOperacao(tipoOperacao, valor = null) {
+    const valorFormatado = valor
+      ? valor.toLocaleString("pt-BR", {
+          style: "currency",
+          currency: "BRL",
+        })
+      : "";
+
+    switch (tipoOperacao) {
+      case "deposito":
+      case "add":
+        return `💰 Depósito de ${valorFormatado} realizado com sucesso!`;
+
+      case "saque":
+      case "sacar":
+        return `💸 Saque de ${valorFormatado} realizado com sucesso!`;
+
+      case "alterar":
+        return `⚙️ Configurações alteradas com sucesso!`;
+
+      case "resetar":
+        return `🔄 Banca resetada com sucesso!`;
+
+      default:
+        return `✅ Operação realizada com sucesso!`;
+    }
+  }
+
+  // ✅ FUNÇÃO EXIBIR TOAST CORRIGIDA
+  function exibirToast(mensagem, tipo = "info") {
+    const toastContainer = document.getElementById("toastModal");
+    if (!toastContainer) return;
+
+    // ✅ Usa o próprio elemento com as classes CSS
+    toastContainer.textContent = mensagem;
+    toastContainer.className = `show ${tipo}`;
+
+    // Remove após 3 segundos
+    setTimeout(() => {
+      toastContainer.className = "hide";
+      toastContainer.textContent = "";
+    }, 3000);
+
+    // 🔄 Resetar campos APENAS se for sucesso
+    if (tipo === "sucesso") {
+      const campoValor = document.getElementById("valorBanca");
+      if (campoValor) campoValor.value = "";
+
+      // 🔄 Resetar dropdown de ação
+      const dropdownToggle = document.querySelector(".dropdown-toggle");
+      if (dropdownToggle) {
+        dropdownToggle.innerHTML = `<i class="fa-solid fa-hand-pointer"></i> Selecione Uma Opção <i class="fa-solid fa-chevron-down"></i>`;
+      }
+
+      const campoAcao = document.getElementById("acaoBanca");
+      if (campoAcao) campoAcao.value = "";
+    }
+  }
+
+  // ✅ FUNÇÃO PARA ADICIONAR EVENTOS DE LIMPEZA DOS CAMPOS
+  function adicionarEventosLimpezaCampos() {
+    const campos = [valorBancaInput, diaria, unidade, oddsMeta];
+
+    campos.forEach((campo) => {
+      if (campo) {
+        campo.addEventListener("focus", () => {
+          // Remove marcação vermelha quando campo recebe foco
+          campo.style.border = "";
+          campo.style.boxShadow = "";
+        });
+
+        campo.addEventListener("input", () => {
+          // Remove marcação vermelha quando usuário começa a digitar
+          campo.style.border = "";
+          campo.style.boxShadow = "";
+        });
+      }
+    });
+  }
+
   function inicializarModalDeposito() {
     if (modalInicializado) return;
     modalInicializado = true;
 
-    const valorBancaInput = modal.querySelector("#valorBanca");
+    valorBancaInput = modal.querySelector("#valorBanca");
     const valorBancaLabel = modal.querySelector("#valorBancaLabel");
     diaria = modal.querySelector("#porcentagem");
     unidade = modal.querySelector("#unidadeMeta");
@@ -38,6 +208,7 @@ document.addEventListener("DOMContentLoaded", () => {
     resultadoUnidade = modal.querySelector("#resultadoUnidade");
     resultadoOdds = modal.querySelector("#resultadoOdds");
     oddsMeta = modal.querySelector("#oddsMeta");
+
     // Permite vírgula ou ponto ao digitar no campo odds
     oddsMeta.addEventListener("input", () => {
       oddsMeta.value = oddsMeta.value.replace(/[^0-9.,]/g, "");
@@ -69,13 +240,14 @@ document.addEventListener("DOMContentLoaded", () => {
     legendaBanca.style = "margin-top: 5px; font-size: 0.9em; color: #7f8c8d;";
     valorBancaInput.parentNode.appendChild(legendaBanca);
 
-    const mensagemErro = document.createElement("div");
+    mensagemErro = document.createElement("div");
     mensagemErro.id = "mensagemErro";
     mensagemErro.style = "color: red; margin-top: 10px; font-weight: bold;";
     botaoAcao.parentNode.insertBefore(mensagemErro, botaoAcao.nextSibling);
 
     const lucroTotalLabel = modal.querySelector("#valorLucroLabel");
 
+    // ✅ CARREGAMENTO INICIAL COM META DIÁRIA
     fetch("ajax_deposito.php")
       .then((response) => response.json())
       .then((data) => {
@@ -106,7 +278,20 @@ document.addEventListener("DOMContentLoaded", () => {
           ? "1.50"
           : oddsFormatada.toFixed(2);
 
+        // ✅ ATUALIZAR META DIÁRIA INICIAL
+        if (data.meta_diaria_formatada) {
+          atualizarMetaDiaria(data.meta_diaria_formatada);
+        }
+
+        // ✅ ATUALIZAR UNIDADE DE ENTRADA INICIAL
+        if (data.unidade_entrada_formatada) {
+          atualizarUnidadeEntradaFormulario(data.unidade_entrada_formatada);
+        }
+
         calcularMeta(valorOriginalBanca);
+      })
+      .catch((error) => {
+        console.error("Erro ao carregar dados iniciais:", error);
       });
 
     const dropdownItems = modal.querySelectorAll(".dropdown-menu li");
@@ -197,16 +382,19 @@ document.addEventListener("DOMContentLoaded", () => {
       calcularMeta(valorAtualizado);
     });
 
+    // ✅ EVENTO DO BOTÃO PRINCIPAL MODIFICADO PARA ATUALIZAR META
     botaoAcao.addEventListener("click", (e) => {
       e.preventDefault();
+
+      // Limpa mensagens de erro anteriores
       mensagemErro.textContent = "";
 
       const tipoSelecionado = acaoSelect.value;
 
       if (!tipoSelecionado) {
         exibirToast(
-          "Selecione uma opção: Depositar, Sacar, Alterar ou Resetar.",
-          "erro"
+          "⚠️ Selecione uma opção: Depositar, Sacar, Alterar ou Resetar.",
+          "aviso"
         );
         return;
       }
@@ -221,21 +409,28 @@ document.addEventListener("DOMContentLoaded", () => {
       ];
 
       let camposVazios = [];
+      let camposComErro = [];
 
+      // ✅ Primeiro limpa todas as marcações
+      const todosCampos = camposObrigatorios.map((item) => item.campo);
+      limparMarcacaoCampos(todosCampos);
+
+      // ✅ Verifica campos vazios e marca em vermelho
       camposObrigatorios.forEach(({ campo, nome }) => {
         const isDisabled = campo.disabled;
         if (!campo.value.trim() && !isDisabled) {
           camposVazios.push(nome);
-          campo.style.border = "2px solid red";
-        } else {
-          campo.style.border = "";
+          camposComErro.push(campo);
         }
       });
 
       if (camposVazios.length > 0) {
+        // ✅ Marca os campos com erro
+        marcarCamposObrigatorios(camposComErro);
+
         exibirToast(
-          "Preencha os seguintes campos: " + camposVazios.join(", "),
-          "erro"
+          `📝 Preencha os seguintes campos: ${camposVazios.join(", ")}`,
+          "aviso"
         );
         return;
       }
@@ -258,12 +453,16 @@ document.addEventListener("DOMContentLoaded", () => {
         tipoSelecionado !== "alterar" &&
         (isNaN(valorNumerico) || valorNumerico <= 0)
       ) {
-        exibirToast("Digite um valor válido.", "erro");
+        // ✅ Marca o campo de valor
+        marcarCamposObrigatorios([valorBancaInput]);
+        exibirToast("💲 Digite um valor válido.", "erro");
         return;
       }
 
       if (tipoSelecionado === "sacar" && valorNumerico > valorOriginalBanca) {
-        exibirToast("Saldo Insuficiente.", "erro");
+        // ✅ Marca o campo de valor
+        marcarCamposObrigatorios([valorBancaInput]);
+        exibirToast("🚫 Saldo Insuficiente para saque.", "erro");
         return;
       }
 
@@ -290,9 +489,26 @@ document.addEventListener("DOMContentLoaded", () => {
         .then((res) => res.json())
         .then((resposta) => {
           if (resposta.success) {
-            exibirToast("Operação realizada com sucesso!", "sucesso");
+            // ✅ Mensagem específica por tipo de operação
+            const mensagem = gerarMensagemOperacao(
+              tipoSelecionado,
+              valorNumerico
+            );
+            exibirToast(mensagem, "sucesso");
+
+            // ✅ ATUALIZAR META DIÁRIA SE RETORNADA
+            if (resposta.meta_diaria_formatada) {
+              atualizarMetaDiaria(resposta.meta_diaria_formatada);
+            }
+
+            // ✅ ATUALIZAR UNIDADE DE ENTRADA SE RETORNADA
+            if (resposta.unidade_entrada_formatada) {
+              atualizarUnidadeEntradaFormulario(
+                resposta.unidade_entrada_formatada
+              );
+            }
+
             atualizarDadosModal();
-            atualizarLucroEBancaViaAjax();
 
             const selectAcao = document.getElementById("selectAcao");
             const inputValor = document.getElementById("inputValor");
@@ -300,12 +516,24 @@ document.addEventListener("DOMContentLoaded", () => {
             if (selectAcao) selectAcao.value = "";
             if (inputValor) inputValor.value = "0,00";
           } else {
-            exibirToast("Erro ao realizar operação.", "erro");
+            exibirToast(
+              `❌ Erro ao realizar ${tipoSelecionado}: ${
+                resposta.message || "Tente novamente."
+              }`,
+              "erro"
+            );
           }
+        })
+        .catch((error) => {
+          console.error("Erro na requisição:", error);
+          exibirToast(
+            "🔌 Erro de conexão. Verifique sua internet e tente novamente.",
+            "erro"
+          );
         });
     });
 
-    // ✅ Eventos de confirmação de reset
+    // ✅ EVENTOS DE CONFIRMAÇÃO DE RESET MODIFICADOS PARA ATUALIZAR META
     document
       .getElementById("btnConfirmarReset")
       .addEventListener("click", () => {
@@ -317,13 +545,38 @@ document.addEventListener("DOMContentLoaded", () => {
           .then((res) => res.json())
           .then((resposta) => {
             if (resposta.success) {
-              exibirToast("Banca resetada com sucesso!", "sucesso");
+              exibirToast(
+                "🔄 Banca resetada com sucesso! Todos os dados foram zerados.",
+                "sucesso"
+              );
+
+              // ✅ ATUALIZAR META APÓS RESET
+              if (resposta.meta_diaria_formatada) {
+                atualizarMetaDiaria(resposta.meta_diaria_formatada);
+              } else {
+                // Se não retornar meta, zera
+                atualizarMetaDiaria("0,00");
+              }
+
+              // ✅ ATUALIZAR UNIDADE DE ENTRADA APÓS RESET
+              if (resposta.unidade_entrada_formatada) {
+                atualizarUnidadeEntradaFormulario(
+                  resposta.unidade_entrada_formatada
+                );
+              } else {
+                // Se não retornar unidade, zera
+                atualizarUnidadeEntradaFormulario("R$ 0,00");
+              }
+
               atualizarDadosModal();
-              atualizarLucroEBancaViaAjax();
               document.getElementById("confirmarReset").style.display = "none";
             } else {
-              exibirToast("Erro ao resetar banca.", "erro");
+              exibirToast("❌ Erro ao resetar banca. Tente novamente.", "erro");
             }
+          })
+          .catch((error) => {
+            console.error("Erro ao resetar:", error);
+            exibirToast("🔌 Erro de conexão ao resetar banca.", "erro");
           });
       });
 
@@ -334,6 +587,9 @@ document.addEventListener("DOMContentLoaded", () => {
       });
 
     configurarEventosDeMeta();
+
+    // ✅ ADICIONA EVENTOS DE LIMPEZA DOS CAMPOS
+    adicionarEventosLimpezaCampos();
   }
 
   function configurarEventosDeMeta() {
@@ -468,6 +724,7 @@ document.addEventListener("DOMContentLoaded", () => {
     resultadoOdds.textContent = `${entradas} Entradas Para Meta Diária`;
   }
 
+  // ✅ FUNÇÃO atualizarDadosModal MODIFICADA PARA INCLUIR META
   function atualizarDadosModal() {
     fetch("dados_banca.php")
       .then((res) => res.json())
@@ -494,6 +751,16 @@ document.addEventListener("DOMContentLoaded", () => {
 
         lucroTotalLabel.textContent = lucroFormatado;
 
+        // ✅ ATUALIZAR META DIÁRIA SE RETORNADA
+        if (data.meta_diaria_formatada) {
+          atualizarMetaDiaria(data.meta_diaria_formatada);
+        }
+
+        // ✅ ATUALIZAR UNIDADE DE ENTRADA SE RETORNADA
+        if (data.unidade_entrada_formatada) {
+          atualizarUnidadeEntradaFormulario(data.unidade_entrada_formatada);
+        }
+
         // Atualiza os campos do formulário
         diaria.value = `${Math.max(
           parseFloat(data.diaria || "2.00"),
@@ -509,69 +776,17 @@ document.addEventListener("DOMContentLoaded", () => {
         );
 
         // Resetar campos de operação
-        document.getElementById("selectAcao").value = "deposito";
-        document.getElementById("inputValor").value = "";
+        const selectAcao = document.getElementById("selectAcao");
+        const inputValor = document.getElementById("inputValor");
+
+        if (selectAcao) selectAcao.value = "";
+        if (inputValor) inputValor.value = "";
 
         calcularMeta(valorOriginalBanca);
+      })
+      .catch((error) => {
+        console.error("Erro ao atualizar dados:", error);
       });
     atualizarLucroEBancaViaAjax();
-  }
-
-  function exibirToast(mensagem, tipo = "info") {
-    const toastContainer = document.getElementById("toastModal");
-    if (!toastContainer) return;
-
-    const toast = document.createElement("div");
-    toast.textContent = mensagem;
-
-    Object.assign(toast.style, {
-      backgroundColor:
-        tipo === "sucesso"
-          ? "#d4edda"
-          : tipo === "erro"
-          ? "#f8d7da"
-          : "#e2e3e5",
-      color:
-        tipo === "sucesso"
-          ? "#155724"
-          : tipo === "erro"
-          ? "#721c24"
-          : "#383d41",
-      padding: "6px 12px",
-      borderRadius: "4px",
-      fontSize: "0.85em",
-      marginBottom: "5px",
-      border: "1px solid transparent",
-      borderColor:
-        tipo === "sucesso"
-          ? "#c3e6cb"
-          : tipo === "erro"
-          ? "#f5c6cb"
-          : "#d6d8db",
-      transition: "opacity 0.3s ease-in-out",
-      opacity: "1",
-    });
-
-    toastContainer.appendChild(toast);
-
-    setTimeout(() => {
-      toast.style.opacity = "0";
-      setTimeout(() => {
-        toast.remove();
-      }, 300);
-    }, 3000);
-
-    // 🔄 Resetar campo de valor da banca
-    const campoValor = document.getElementById("valorBanca");
-    if (campoValor) campoValor.value = "R$ 0,00";
-
-    // 🔄 Resetar dropdown de ação
-    const dropdownToggle = document.querySelector(".dropdown-toggle");
-    if (dropdownToggle) {
-      dropdownToggle.innerHTML = `<i class="fa-solid fa-hand-pointer"></i> Selecione Uma Opção <i class="fa-solid fa-chevron-down"></i>`;
-    }
-
-    const campoAcao = document.getElementById("acaoBanca");
-    if (campoAcao) campoAcao.value = "";
   }
 });

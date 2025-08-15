@@ -44,8 +44,8 @@
 /* Botão de fechar */
 .modal-gerencia-banca .btn-fechar {
   position: absolute;
-  top: 0;
-  right: 0;
+  top: 0px; /* ✅ Mude de 0 para 15px */
+  right: 0px; /* ✅ Mude de 0 para 15px */
   padding: 8px 12px;
   font-size: 29px;
   color: #6e7985;
@@ -54,13 +54,18 @@
   cursor: pointer;
   transition: color 0.3s ease;
 }
+
 .modal-gerencia-banca .btn-fechar:hover {
   color: #ff6b6b;
 }
-
 /* Inputbox */
 .modal-gerencia-banca .custom-inputbox {
   margin-bottom: 18px;
+  margin-top: -7px;
+}
+.modal-gerencia-banca .custom-campo {
+  margin-bottom: 18px;
+  margin-top: 40px;
 }
 .modal-gerencia-banca .custom-inputbox label {
   font-weight: 600;
@@ -217,6 +222,7 @@
   justify-content: center;
 }
 
+/* Estilo base já existente — mantido */
 .campo-banca,
 .campo-lucro {
   flex: 1;
@@ -225,21 +231,19 @@
   border-radius: 12px;
   box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
   display: flex;
-  justify-content: center; /* centraliza o conteúdo verticalmente */
-  align-items: center; /* centraliza o conteúdo horizontalmente */
+  justify-content: center;
+  align-items: center;
   text-align: left;
   border: 1px solid #bec7bd;
 }
 
-/* Container interno para rótulo + valor */
 .campo-banca .conteudo,
 .campo-lucro .conteudo {
   display: flex;
   flex-direction: column;
-  align-items: flex-start; /* alinha texto à esquerda */
+  align-items: flex-start;
 }
 
-/* Rótulo com ícone */
 .campo-banca label,
 .campo-lucro label {
   display: flex;
@@ -250,12 +254,12 @@
   margin-bottom: 4px;
   font-size: 14px;
 }
+
 .campo-banca label i,
 .campo-lucro label i {
-  margin-right: 8px; /* aumenta o espaço entre o ícone e o texto */
+  margin-right: 8px;
 }
 
-/* Valor */
 .campo-banca span,
 .campo-lucro span {
   font-size: 18px;
@@ -263,7 +267,17 @@
   color: #30ca0a;
 }
 
-/* Tamanho fixo para inputs */
+/* 🔒 Proteção para o rótulo #lucroLabel */
+#lucroLabel {
+  color: #2f4236 !important;
+  font-weight: 600 !important;
+  font-size: 14px !important;
+  margin-top: 3px;
+  pointer-events: none;
+  user-select: none;
+}
+
+/* Reforço de especificidade se houver classe adicional */
 
 /* Wrapper personalizado para odds */
 .modal-gerencia-banca .odds-wrapper {
@@ -388,6 +402,7 @@ select option:hover {
   font-family: "Poppins", sans-serif;
   margin-bottom: 18px;
   height: 42px;
+  margin-top: 40px;
 }
 
 .dropdown-toggle {
@@ -410,7 +425,9 @@ select option:hover {
   border-color: #27ae60;
   border-radius: 12px;
 }
-
+.dropdown.custom-campo-opcos {
+  margin-bottom: 0px;
+}
 .dropdown-menu {
   position: absolute;
   top: 100%;
