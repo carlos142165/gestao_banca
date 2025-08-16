@@ -1,209 +1,564 @@
-/* ===== CSS ENCAPSULADO PARA O BLOCO .container-resumos ===== */
+/* ===== CSS LAYOUT COMPLETO COM FLEXIBILIDADE TOTAL ===== */
 
-.container-resumos {
+body {
+  background: linear-gradient(135deg, #e1e1e4 0%, #b5ccc9 100%);
+  margin: 0;
+  padding: 20px;
+  font-family: "Poppins", sans-serif;
+}
+
+.container {
   display: flex;
   gap: 30px;
-  max-width: 1400px;
+  max-width: 1200px;
   margin: 0 auto;
+}
+
+.bloco {
+  flex: 1;
+  background-color: #ffffff;
+  padding: 30px;
+  border-radius: 8px;
+  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+  min-height: 400px;
+}
+
+/* ===== BLOCO 1 - TOTALMENTE FLEXÍVEL ===== */
+.bloco-1 {
+  background-color: #e3f2fd;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 20px;
   padding: 20px;
+  width: 390px;
+  flex: 0 0 400px;
+}
+
+/* ===== BLOCO 2 - TOTALMENTE FLEXÍVEL ===== */
+.bloco-2 {
+  background-color: #f3e5f5;
+  display: flex;
+  flex-direction: column;
+  padding: clamp(15px, 3vw, 30px);
+  /* O bloco 2 se ajusta automaticamente ao espaço restante */
+}
+
+/* ===== CONTAINER RESUMOS - AGORA 100% FLEXÍVEL ===== */
+.container-resumos {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 20px;
+  width: 100%; /* Sempre 100% da largura do bloco pai */
+  margin: 0;
+  padding: 0;
   box-sizing: border-box;
   font-family: "Poppins", sans-serif;
 }
 
-/* ===== VALORES E PLACAR ===== */
-.container-resumos .container-valores {
-  background-color: #f7f6f6;
-  padding: 20px;
-  border-radius: 12px;
-  box-sizing: border-box;
-  max-width: 400px;
-  margin: 0 auto;
-  margin-top: 0px;
-  width: 390px;
-}
-
-.container-resumos .pontuacao {
+/* ===== WIDGET META - TOTALMENTE RESPONSIVO ===== */
+.widget-meta-container {
   display: flex;
   justify-content: center;
   align-items: center;
-  font-size: 2.8em;
-  margin-bottom: 20px;
-  margin-top: 1px;
+  width: 100%;
 }
 
-.container-resumos .placar-green {
-  color: #00a651;
-  font-size: 1.2em;
-  gap: 30px;
-  margin-right: 60px;
-  font-weight: bold;
-}
-
-.container-resumos .placar-red {
-  color: #f82008;
-  font-size: 1.2em;
-  margin-left: 60px;
-  font-weight: bold;
-}
-
-.container-resumos .separador {
-  font-size: 45px;
-  margin: 0 8px;
-  color: rgb(105, 104, 104);
-  font-weight: bold;
-  margin-top: -8px;
-}
-
-.container-resumos .rotulo-meta {
-  display: block;
-  font-size: 12px;
-  color: rgb(172, 167, 167);
-  margin-bottom: 6px;
-  margin-left: 0px;
-  margin: 0;
-  margin-left: 0;
-  font-weight: bold;
-  margin-top: 3px;
-}
-
-.container-resumos .rotulo-saldo {
-  display: block;
-  font-size: 12px;
-  color: #aca7a7;
-  margin-bottom: 6px;
-  margin-left: -3px;
-  margin: 0;
-  margin-left: 0px;
-  font-weight: bold;
-  margin-top: 3px;
-}
-
-.container-resumos .valor-meta,
-.container-resumos .valor-saldo {
-  font-size: 18px;
-  font-weight: bold;
-  color: #aca7a7;
-  margin-bottom: 0px;
-  margin-left: 0px;
-}
-
-/* ===== ÁREA CENTRAL BOTÃO ===== */
-.container-resumos .area-central-botao {
-  position: relative;
-  background-color: #f7f6f6;
-  border-radius: 10px;
-  width: 355px;
-  height: 40px;
-  margin: 20px auto 0;
-  z-index: 15;
-  padding: 0 16px;
-  margin-top: 10px;
-}
-
-.container-resumos .btn-add-usuario {
-  position: absolute;
-  background-color: #00a651;
-  color: white;
-  font-size: 1em;
-  border: none;
-  border-radius: 50%;
-  width: 30px;
-  height: 30px;
-  cursor: pointer;
-  transition: background 0.3s ease;
+.widget-meta-row {
   display: flex;
+  justify-content: center;
   align-items: center;
-  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.15);
+  width: 100%;
 }
 
-.container-resumos .btn-add-usuario:hover {
-  background-color: #009043;
-}
-
-.container-resumos .grupo-entrada {
-  display: flex;
-  flex-direction: row;
-  align-items: center;
-  justify-content: flex-end;
-  gap: 6px;
-  position: absolute;
-  right: 20px;
-  top: 50%;
-  transform: translateY(-50%);
-  font-size: 14px;
-  background: #ffffff;
-  padding: 4px 10px;
-  border-radius: 8px;
-  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.08);
-}
-
-.container-resumos .rotulo-entrada {
-  font-weight: 500;
-  color: #666;
-  text-transform: uppercase;
-  font-size: 12px;
-  letter-spacing: 0.4px;
-}
-
-.container-resumos .valor-entrada {
-  font-weight: bold;
-  color: #00a651;
-  font-size: 14px;
-}
-
-.container-resumos .grupo-porcentagem {
-  display: flex;
-  align-items: center;
-  gap: 4px;
-  background: #ffffff;
-  padding: 4px 10px;
-  border-radius: 8px;
-  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.08);
-  font-size: 14px;
-  max-height: 40px;
-}
-
-.container-resumos .valor-porcentagem {
-  font-weight: bold;
-  color: #00a651;
-  font-size: 14px;
-}
-
-.container-resumos .rotulo-porcentagem {
-  font-weight: 500;
-  color: #666;
-  text-transform: uppercase;
-  font-size: 12px;
-  letter-spacing: 0.4px;
-}
-
-/* ===== CAMPO MENTORES ===== */
-.container-resumos .campo_mentores {
-  position: relative;
-  width: 385px;
-  height: 500px;
-  margin: 10px auto 0;
-  background-color: #f7f6f6;
+.widget-meta-item {
   display: flex;
   flex-direction: column;
   align-items: center;
-  border-radius: 12px;
+  background: rgba(247, 246, 246, 0.95);
+  backdrop-filter: blur(5px);
+  border: 2px solid #9e9e9e;
+  padding: 0;
+  border-radius: 20px;
+  width: 100%; /* Sempre 100% da largura disponível */
+  min-height: 180px;
+  box-sizing: border-box;
+  box-shadow: 0 8px 20px rgba(0, 0, 0, 0.1);
+  position: relative;
+  overflow: hidden;
+}
+
+/* ===== TOPO FIXO COM DATA E PLACAR - RESPONSIVO ===== */
+.data-header-integrada {
+  width: 100%;
+  height: 60px;
+  background: linear-gradient(135deg, #9e9e9e 0%, #b8c9b8 50%, #a8a8a8 100%);
+  border-radius: 18px 18px 0 0;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 0 5%; /* Padding proporcional */
+  box-sizing: border-box;
+  position: relative;
+  border-bottom: 2px solid rgba(255, 255, 255, 0.2);
+}
+
+/* Data no canto esquerdo */
+.data-texto-compacto {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  flex: 0 0 auto;
+}
+
+.data-header-integrada .fa-solid.fa-calendar-days {
+  font-size: clamp(12px, 2.5vw, 16px); /* Fonte responsiva */
+  color: white;
+  margin-right: 5px;
+  filter: drop-shadow(0 2px 4px rgba(0, 0, 0, 0.3));
+}
+
+.data-principal-integrada {
+  font-size: clamp(10px, 2.2vw, 14px); /* Fonte responsiva */
+  font-weight: 700;
+  color: white;
+  text-shadow: 0 2px 4px rgba(0, 0, 0, 0.3);
+  letter-spacing: 0.5px;
+  white-space: nowrap;
+}
+
+/* Placar centralizado */
+.pontuacao {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: clamp(8px, 2vw, 15px); /* Gap responsivo */
+  color: white;
+  font-size: clamp(16px, 4vw, 24px); /* Fonte responsiva */
+  font-weight: 700;
+
+  position: absolute;
+  left: 50%;
+  transform: translateX(-50%);
+}
+
+.placar-green {
+  color: #03a158;
+
+  font-weight: bold;
+}
+
+.placar-red {
+  color: #e93a3a;
+
+  font-weight: bold;
+}
+
+.separador {
+  color: rgba(219, 219, 219, 0.9);
+  font-size: clamp(14px, 3vw, 20px); /* Fonte responsiva */
+  font-weight: 300;
+  margin: 0 clamp(4px, 1vw, 8px); /* Margin responsiva */
+}
+
+/* AREA DIREITA TOPO FIXO */
+
+/* Container principal da área direita */
+.barra-superior .area-direita {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start; /* ✅ MUDANÇA: flex-start para alinhar à esquerda */
+  justify-content: center;
+  gap: clamp(4px, 1vw, 6px);
+  justify-self: end;
+  flex-shrink: 0;
+  padding: clamp(4px, 1vw, 8px);
+  margin-left: 240px;
+}
+
+/* Elementos de valor dinâmico APENAS dentro da .area-direita */
+.barra-superior .area-direita .valor-dinamico {
+  display: flex;
+  align-items: center;
+  justify-content: flex-start; /* ✅ MUDANÇA: flex-start para alinhar à esquerda */
+  gap: clamp(3px, 0.8vw, 5px);
+  font-size: clamp(10px, 2vw, 12px);
+  font-weight: 600;
+  color: #576574;
+  background: transparent;
+  border: none;
+  padding: 0;
+  border-radius: 0;
+  transition: all 0.3s ease;
+  width: 100%; /* ✅ ADICIONADO: largura total para alinhamento */
+}
+
+.barra-superior .area-direita .valor-dinamico:hover {
+  transform: scale(1.05);
+}
+
+/* ===== ÍCONE DO BANCO (DIÁRIA) - APENAS na .area-direita ===== */
+.barra-superior .area-direita .valor-diaria {
+  order: 1; /* Fica em cima */
+}
+
+.barra-superior .area-direita .valor-diaria .fas.fa-university {
+  color: #3498db;
+  font-size: clamp(10px, 2vw, 12px);
+}
+
+.barra-superior .area-direita #porcentagem-diaria {
+  color: #3498db;
+  font-weight: 700;
+  text-shadow: 0 1px 2px rgba(52, 152, 219, 0.3);
+}
+
+/* ===== RÓTULO E VALOR DA UNIDADE - APENAS na .area-direita ===== */
+.barra-superior .area-direita .valor-unidade {
+  order: 2; /* Fica embaixo */
+}
+
+.barra-superior .area-direita .rotulo-und {
+  color: #8e44ad;
+  font-weight: 700;
+  font-size: clamp(9px, 1.8vw, 10px);
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+}
+
+.barra-superior .area-direita #valor-unidade {
+  color: #28a745;
+  font-weight: 700;
+  text-shadow: 0 1px 2px rgba(39, 174, 96, 0.3);
+}
+
+/* ===== ANIMAÇÕES DE ATUALIZAÇÃO - APENAS na .area-direita ===== */
+.barra-superior .area-direita .valor-dinamico.atualizado {
+  transform: scale(1.1);
+}
+
+.barra-superior .area-direita .valor-dinamico.atualizado #porcentagem-diaria {
+  text-shadow: 0 0 8px rgba(52, 152, 219, 0.6);
+}
+
+.barra-superior .area-direita .valor-dinamico.atualizado #valor-unidade {
+  text-shadow: 0 0 8px rgba(39, 174, 96, 0.6);
+}
+
+/* ===== RESPONSIVIDADE - APENAS para .area-direita ===== */
+@media (max-width: 768px) {
+  .barra-superior .area-direita {
+    gap: clamp(2px, 0.5vw, 4px);
+    padding: clamp(2px, 0.5vw, 4px);
+  }
+
+  .barra-superior .area-direita .valor-dinamico {
+    font-size: clamp(8px, 1.8vw, 10px);
+    gap: clamp(2px, 0.5vw, 3px);
+  }
+
+  .barra-superior .area-direita .valor-diaria .fas.fa-university {
+    font-size: clamp(8px, 1.5vw, 10px);
+  }
+
+  .barra-superior .area-direita .rotulo-und {
+    font-size: clamp(7px, 1.5vw, 8px);
+  }
+}
+
+@media (max-width: 480px) {
+  .barra-superior .area-direita {
+    gap: 1px;
+    padding: 2px;
+  }
+
+  .barra-superior .area-direita .valor-dinamico {
+    font-size: clamp(7px, 1.5vw, 8px);
+    gap: 1px;
+  }
+
+  .barra-superior .area-direita .valor-diaria .fas.fa-university {
+    font-size: clamp(6px, 1.2vw, 8px);
+  }
+
+  .barra-superior .area-direita .rotulo-und {
+    font-size: clamp(6px, 1.2vw, 7px);
+  }
+}
+
+/* ===== CLASSES UTILITÁRIAS - APENAS para elementos na .area-direita ===== */
+.barra-superior .area-direita .valor-positivo {
+  color: #27ae60 !important;
+  text-shadow: 0 1px 2px rgba(39, 174, 96, 0.4) !important;
+}
+
+.barra-superior .area-direita .valor-negativo {
+  color: #e74c3c !important;
+  text-shadow: 0 1px 2px rgba(231, 76, 60, 0.4) !important;
+}
+
+.barra-superior .area-direita .valor-neutro {
+  color: #7f8c8d !important;
+  text-shadow: 0 1px 2px rgba(127, 140, 141, 0.4) !important;
+}
+
+/* FIM AREA DIREITA TOPO FIXO */
+
+/* Espaço reservado à direita para equilíbrio */
+.espaco-equilibrio {
+  flex: 0 0 auto;
+  width: clamp(40px, 8vw, 80px); /* Largura responsiva */
+}
+
+/* ===== CONTEÚDO PRINCIPAL DO WIDGET - RESPONSIVO ===== */
+.widget-conteudo-principal {
+  padding: clamp(15px, 4vw, 25px); /* Padding responsivo */
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  width: 100%;
+  box-sizing: border-box;
+  background: rgba(247, 246, 246, 0.95);
+}
+
+.widget-meta-valor {
+  font-size: clamp(18px, 5vw, 28px); /* Fonte responsiva */
+  font-weight: 800;
+  margin-bottom: 8px;
+  text-align: center;
+  color: #2c3e50;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: clamp(6px, 2vw, 12px); /* Gap responsivo */
+  letter-spacing: -0.5px;
+}
+
+.widget-meta-valor .fa-solid.fa-coins {
+  font-size: clamp(16px, 4vw, 26px); /* Fonte responsiva */
+  color: #f39c12;
+}
+
+.widget-meta-rotulo {
+  font-size: clamp(10px, 2.2vw, 14px); /* Fonte responsiva */
+  color: #576574;
+  margin-bottom: 15px;
+  text-transform: uppercase;
+  text-align: center;
+  letter-spacing: 1px;
+  font-weight: 600;
+}
+
+.widget-barra-container {
+  width: 100%;
+  height: clamp(16px, 3vw, 20px); /* Altura responsiva */
+  background: rgba(0, 0, 0, 0.1);
+  border-radius: 20px;
+  margin-bottom: 12px;
+  overflow: hidden;
+  box-shadow: inset 0 2px 4px rgba(0, 0, 0, 0.1);
+  border: 1px solid rgba(255, 255, 255, 0.2);
+  position: relative;
+}
+
+.widget-barra-progresso {
+  height: 100%;
+  border-radius: 20px;
+  width: 65%;
+  background: linear-gradient(
+    90deg,
+    #4caf50 0%,
+    rgba(255, 255, 255, 0.2) 50%,
+    #4caf50 100%
+  );
+  box-shadow: 0 0 8px rgba(255, 255, 255, 0.2);
+  transition: width 0.8s cubic-bezier(0.4, 0, 0.2, 1);
+  position: relative;
+}
+
+.porcentagem-barra {
+  position: absolute;
+  top: 50%;
+  left: 60%;
+  transform: translateY(-50%);
+  font-size: clamp(8px, 1.8vw, 11px); /* Fonte responsiva */
+  font-weight: 700;
+  color: #fff;
+  text-shadow: 0 1px 2px rgba(0, 0, 0, 0.5);
+  z-index: 10;
+}
+
+.widget-info-progresso {
+  font-size: clamp(10px, 2vw, 13px); /* Fonte responsiva */
+  color: #576574;
+  display: flex;
+  justify-content: center;
+  width: 100%;
+  font-weight: 600;
+}
+
+.widget-info-progresso span {
+  display: flex;
+  align-items: center;
+  gap: 5px;
+}
+
+.widget-info-progresso .fa-wallet {
+  color: #95a5a6;
+  font-size: clamp(10px, 2vw, 13px); /* Fonte responsiva */
+}
+
+/* ===== CAMPO MENTORES - TOTALMENTE RESPONSIVO ===== */
+.campo_mentores {
+  position: relative;
+  width: 100%; /* Sempre 100% da largura do bloco pai */
+  height: 510px;
+  background: rgba(247, 246, 246, 0.95);
+  backdrop-filter: blur(5px);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  border-radius: 20px;
+  border: 2px solid #9e9e9e;
   padding: 0;
   box-sizing: border-box;
+  overflow: hidden;
+  box-shadow: 0 8px 20px rgba(0, 0, 0, 0.1);
+  margin-top: -15px;
+}
+
+/* ===== BARRA SUPERIOR RESPONSIVA ===== */
+.barra-superior {
+  position: sticky;
+  top: 0;
+  left: 0;
+  right: 0;
+  width: 100%;
+  height: 60px;
+  background: rgba(247, 246, 246, 0.95);
+  display: flex;
+  align-items: center;
+  justify-content: flex-start; /* Alinha conteúdo à esquerda */
+  padding: 0 5%; /* Padding proporcional */
+  z-index: 100;
+  border-bottom: 1px solid rgba(206, 205, 205, 0.3);
+  border-radius: 18px 18px 0 0;
+  position: relative;
+}
+
+/* ===== BOTÃO ADD RESPONSIVO ===== */
+.btn-add-usuario {
+  background: rgba(255, 255, 255, 0.15);
+  backdrop-filter: blur(8px);
+  color: #27ae60;
+  font-size: clamp(12px, 2.5vw, 16px); /* Fonte responsiva */
+  border: 2px solid #27ae60;
+  border-radius: 50%;
+  width: clamp(32px, 6vw, 33px); /* Largura responsiva */
+  height: clamp(32px, 6vw, 33px); /* Altura responsiva */
+  cursor: pointer;
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  position: relative;
+  overflow: hidden;
+  box-shadow: 0 2px 6px rgba(39, 174, 96, 0.2);
+  flex-shrink: 0; /* Impede que o botão diminua */
+  margin-left: 10px;
+}
+
+.btn-add-usuario:hover {
+  transform: scale(1.1);
+  background: rgba(39, 174, 96, 0.15);
+  border-color: #2ecc71;
+  color: #2ecc71;
+  box-shadow: 0 4px 15px rgba(39, 174, 96, 0.3);
+}
+
+.btn-add-usuario:active {
+  transform: scale(0.95);
+}
+
+.area-central {
+  position: absolute;
+  left: 50%;
+  top: 50%;
+  transform: translate(-50%, -50%);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: clamp(12px, 2.5vw, 16px);
+  font-weight: 600;
+  color: #576574;
+  text-transform: uppercase;
+  letter-spacing: 1px;
+  /* Adicione estilos específicos para seus elementos centrais aqui */
+}
+
+/* ===== ESTILOS PARA ELEMENTOS DENTRO DA ÁREA CENTRAL ===== */
+.area-central span {
+  display: flex;
+  align-items: center;
+  gap: clamp(4px, 1vw, 8px);
+}
+
+.area-central i {
+  font-size: clamp(10px, 2vw, 14px);
+  color: #8e44ad;
+}
+/* ===== RESPONSIVE ADJUSTMENTS ===== */
+@media (max-width: 768px) {
+  .barra-superior {
+    height: 50px;
+    padding: 0 3%;
+  }
+
+  .area-central {
+    font-size: clamp(10px, 2vw, 14px);
+  }
+}
+
+@media (max-width: 480px) {
+  .barra-superior {
+    height: 45px;
+    padding: 0 2%;
+  }
+
+  .area-central {
+    font-size: clamp(9px, 1.8vw, 12px);
+  }
+}
+
+/* ===== ÁREA DOS MENTORES RESPONSIVA ===== */
+.mentor-wrapper {
+  padding: clamp(10px, 3vw, 30px); /* Padding responsivo */
+  width: 100%;
+  height: calc(100% - 60px);
   overflow-y: auto;
   overflow-x: hidden;
-}
-
-.container-resumos .campo_mentores::-webkit-scrollbar {
-  display: none;
-}
-
-.container-resumos .mentor-wrapper {
-  margin-top: 20px;
+  margin-top: 0;
   align-items: center;
+  margin-left: 10px;
 }
 
-.container-resumos .mentor-item {
+.mentor-wrapper::-webkit-scrollbar {
+  width: 0px;
+}
+
+.mentor-wrapper::-webkit-scrollbar-track {
+  background: rgba(0, 0, 0, 0.1);
+  border-radius: 10px;
+}
+
+.mentor-wrapper::-webkit-scrollbar-thumb {
+  background: linear-gradient(135deg, #9e9e9e, #a8a8a8);
+  border-radius: 10px;
+}
+
+/* ===== ESTILOS DOS MENTORES RESPONSIVOS ===== */
+.mentor-item {
   display: flex;
   align-items: center;
   position: relative;
@@ -212,23 +567,16 @@
   margin-left: 0px;
 }
 
-.container-resumos .mentor-card {
+.mentor-card {
   display: flex;
   align-items: center;
   border: 1px solid #dcdcdc;
-  border-radius: 8px;
-  padding: 6px 15px;
-  background-color: #fff;
-  width: 300px;
-  height: 67px;
-  font-family: Arial, sans-serif;
-  margin-top: 0px;
-  box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
-  gap: 0px;
-  background-color: #f7f6f6;
   border-radius: 10px;
-  padding: 8px;
-  margin: 10px auto;
+  padding: clamp(4px, 1.5vw, 8px); /* Padding responsivo */
+  background-color: #f7f6f6;
+  width: calc(100% - 50px); /* Largura sempre proporcional ao container */
+  height: clamp(55px, 10vw, 80px); /* Altura responsiva */
+  font-family: Arial, sans-serif;
   box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
   cursor: pointer;
   transition: transform 0.3s ease, box-shadow 0.3s ease;
@@ -236,56 +584,55 @@
   flex: 1;
   position: relative;
   margin-right: 38px;
-  margin-bottom: 10;
-  padding-bottom: 10;
+  margin-bottom: 10px;
+  box-sizing: border-box;
 }
 
-.container-resumos .card-neutro {
+.card-neutro {
   border-color: #999;
 }
 
-.container-resumos .card-positivo {
+.card-positivo {
   border-color: #2ecc71;
 }
 
-.container-resumos .card-negativo {
+.card-negativo {
   border-color: #e74c3c;
 }
 
-.container-resumos .mentor-card:hover {
+.mentor-card:hover {
   transform: scale(1.03);
   box-shadow: 0 8px 12px rgba(0, 0, 0, 0.15);
 }
 
-.container-resumos .mentor-header {
+.mentor-header {
   display: flex;
   flex-direction: column;
   align-items: center;
   justify-content: center;
-  width: 100px;
+  width: clamp(60px, 15vw, 100px); /* Largura responsiva */
   flex-shrink: 0;
 }
 
-.container-resumos .mentor-img {
-  border-radius: 50%;
-  object-fit: cover;
-  margin-top: 15px;
-  width: 50px;
-  height: 50px;
+.mentor-img {
+  width: clamp(35px, 8vw, 50px); /* Largura responsiva */
+  height: clamp(35px, 8vw, 50px); /* Altura responsiva */
   border-radius: 50%;
   object-fit: cover;
   border: 2px solid #00a651;
+  margin-top: 15px;
+  margin-left: 0px;
 }
 
-.container-resumos .mentor-nome {
-  font-size: 12px;
+.mentor-nome {
+  font-size: clamp(9px, 1.8vw, 12px); /* Fonte responsiva */
   margin-top: 1px;
   color: #333;
   text-align: center;
   font-weight: normal;
 }
 
-.container-resumos .mentor-right {
+.mentor-right {
   display: flex;
   justify-content: flex-end;
   flex: 1;
@@ -293,21 +640,22 @@
   align-items: center;
 }
 
-.container-resumos .mentor-values-inline {
+.mentor-values-inline {
   display: flex;
   justify-content: flex-end;
   align-items: center;
   height: 100%;
   gap: 2px;
   flex-wrap: nowrap;
+  width: 100%;
 }
 
-.container-resumos .value-box-green,
-.container-resumos .value-box-red,
-.container-resumos .value-box-saldo {
-  width: 60px;
-  min-width: 60px;
-  height: 60px;
+.value-box-green,
+.value-box-red,
+.value-box-saldo {
+  width: clamp(40px, 8vw, 60px); /* Largura responsiva */
+  min-width: clamp(40px, 8vw, 60px);
+  height: clamp(45px, 9vw, 60px); /* Altura responsiva */
   display: flex;
   flex-direction: column;
   justify-content: center;
@@ -316,73 +664,57 @@
   text-align: center;
 }
 
-.container-resumos .value-box-saldo {
+.value-box-saldo {
   flex-grow: 1;
-  min-width: 80px;
+  min-width: clamp(60px, 12vw, 80px); /* Largura mínima responsiva */
 }
 
-.container-resumos .value-box-green p,
-.container-resumos .value-box-red p,
-.container-resumos .value-box-saldo p {
+.value-box-green p,
+.value-box-red p,
+.value-box-saldo p {
   margin: 2px 1;
   line-height: 0.2;
 }
 
-.container-resumos .value-box-green p:nth-child(2),
-.container-resumos .value-box-red p:nth-child(2),
-.container-resumos .value-box-saldo p:nth-child(2) {
-  font-size: 13px;
+.value-box-green p:nth-child(2),
+.value-box-red p:nth-child(2),
+.value-box-saldo p:nth-child(2) {
+  font-size: clamp(9px, 2vw, 13px); /* Fonte responsiva */
   color: #333;
 }
 
-.container-resumos .value-box-green p:first-child,
-.container-resumos .value-box-red p:first-child,
-.container-resumos .value-box-saldo p:first-child {
+.value-box-green p:first-child,
+.value-box-red p:first-child,
+.value-box-saldo p:first-child {
   font-weight: bold;
-  font-size: 13px;
+  font-size: clamp(9px, 2vw, 13px); /* Fonte responsiva */
 }
 
-.container-resumos .value-box-green.green p:first-child {
+.value-box-green.green p:first-child {
   color: #00a651;
 }
 
-.container-resumos .value-box-green.red p:first-child,
-.container-resumos .value-box-red.red p:first-child {
+.value-box-green.red p:first-child,
+.value-box-red.red p:first-child {
   color: #ff4d4d;
 }
 
-.container-resumos .value-box-green.saldo p:first-child,
-.container-resumos .value-box-red.saldo p:first-child,
-.container-resumos .value-box-saldo.saldo p:first-child {
+.value-box-green.saldo p:first-child,
+.value-box-red.saldo p:first-child,
+.value-box-saldo.saldo p:first-child {
   color: rgb(95, 93, 93);
 }
 
-.container-resumos .value-box-green.saldo p:last-child,
-.container-resumos .value-box-red.saldo p:last-child,
-.container-resumos .value-box-saldo.saldo p:last-child {
-  white-space: nowrap;
-  text-overflow: ellipsis;
-  display: inline-block;
-}
-
-.container-resumos .value-box-green.saldo,
-.container-resumos .value-box-red.saldo,
-.container-resumos .value-box-saldo.saldo {
-  flex-grow: 1;
-}
-
-/* ===== RANKING ===== */
-.container-resumos .mentor-rank-externo {
-  font-size: 15px;
+.mentor-rank-externo {
+  font-size: clamp(11px, 2.2vw, 15px); /* Fonte responsiva */
   font-weight: bold;
   color: rgb(90, 90, 90);
-  width: 50px;
+  width: clamp(30px, 6vw, 50px); /* Largura responsiva */
   text-align: right;
   margin-left: -12px;
 }
 
-/* ===== MENU DOS TRÊS PONTOS ===== */
-.container-resumos .mentor-menu-externo {
+.mentor-menu-externo {
   position: absolute;
   right: 23px;
   top: 50%;
@@ -390,25 +722,23 @@
   z-index: 10;
 }
 
-.container-resumos .menu-toggle {
-  font-family: "Font Awesome 6 Free";
-  font-weight: 900;
+.menu-toggle {
   color: #8f8e8eff;
   background-color: transparent;
   border: none;
   cursor: pointer;
   padding: 5px 10px;
   transition: color 0.3s ease;
-  font-size: 22px;
+  font-size: clamp(16px, 3vw, 22px); /* Fonte responsiva */
   user-select: none;
   padding: 0px;
 }
 
-.container-resumos .menu-toggle:hover {
+.menu-toggle:hover {
   color: #4caf50;
 }
 
-.container-resumos .menu-opcoes {
+.menu-opcoes {
   display: none;
   position: absolute;
   top: 28px;
@@ -421,1247 +751,409 @@
   padding: 6px;
 }
 
-.container-resumos .menu-opcoes button {
+.menu-opcoes button {
   display: block;
   width: 100%;
   background: none;
   border: none;
   text-align: left;
-  font-size: 14px;
+  font-size: clamp(10px, 2vw, 14px); /* Fonte responsiva */
   padding: 6px 10px;
   cursor: pointer;
 }
 
-.container-resumos .menu-opcoes button:hover {
+.menu-opcoes button:hover {
   background-color: #f0f0f0;
 }
 
-/* ===== RESPONSIVIDADE ===== */
-
-/* Telas muito pequenas (celulares) */
-@media (max-width: 480px) {
-  .container-resumos .informacoes-row {
-    gap: 5px !important;
-    padding: 0 5px;
-  }
-
-  .container-resumos .info-item {
-    width: 120px !important;
-    min-width: 100px !important;
-    padding: 10px 8px !important;
-    font-size: 14px;
-  }
-
-  .container-resumos .valor-meta,
-  .container-resumos .valor-saldo {
-    font-size: 16px !important;
-  }
-
-  .container-resumos .rotulo-meta,
-  .container-resumos .rotulo-saldo {
-    font-size: 11px !important;
-  }
-
-  .container-resumos .campo_mentores {
-    height: 500px;
-    width: 385px;
-  }
+/* ===== BLOCO 2 - RESUMO DO MÊS RESPONSIVO ===== */
+.resumo-mes {
+  width: 100%;
+  height: 100%;
+  display: flex;
+  flex-direction: column;
+  box-sizing: border-box;
 }
 
-/* Tablets pequenos */
-@media (max-width: 768px) and (min-width: 481px) {
-  .container-resumos .info-item {
-    width: 130px !important;
-    padding: 12px !important;
-  }
+.bloco-meta-simples {
+  background: rgba(255, 255, 255, 0.95);
+  border-radius: 15px;
+  padding: clamp(15px, 4vw, 25px);
+  margin-bottom: clamp(15px, 3vw, 20px);
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+  border: 2px solid #e0e0e0;
 }
 
-/* Telas menores - layout em coluna */
+.fixo-topo {
+  position: sticky;
+  top: 0;
+  z-index: 10;
+  background: rgba(255, 255, 255, 0.98);
+  backdrop-filter: blur(10px);
+}
+
+.titulo-bloco {
+  font-size: clamp(16px, 4vw, 22px);
+  font-weight: 700;
+  color: #2c3e50;
+  margin: 0 0 clamp(15px, 3vw, 20px) 0;
+  text-align: center;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: clamp(8px, 2vw, 12px);
+}
+
+.titulo-bloco i {
+  color: #8e44ad;
+  font-size: clamp(14px, 3.5vw, 20px);
+}
+
+.grupo-barra {
+  margin-bottom: clamp(15px, 3vw, 20px);
+  display: flex;
+  flex-direction: column;
+  gap: clamp(6px, 1.5vw, 10px);
+}
+
+.valor-meta {
+  font-size: clamp(14px, 3vw, 18px);
+  font-weight: 700;
+  color: #2c3e50;
+  display: flex;
+  align-items: center;
+  gap: clamp(6px, 1.5vw, 10px);
+  justify-content: center;
+}
+
+.valor-meta i {
+  color: #f39c12;
+  font-size: clamp(12px, 2.5vw, 16px);
+}
+
+.container-barra-horizontal {
+  width: 100%;
+  height: clamp(20px, 4vw, 28px);
+  background: rgba(0, 0, 0, 0.1);
+  border-radius: 15px;
+  position: relative;
+  overflow: hidden;
+  box-shadow: inset 0 2px 4px rgba(0, 0, 0, 0.1);
+}
+
+.progresso-dourado {
+  height: 100%;
+  width: 100%;
+  background: linear-gradient(90deg, #f39c12 0%, #f1c40f 50%, #f39c12 100%);
+  border-radius: 15px;
+  box-shadow: 0 0 10px rgba(243, 156, 18, 0.4);
+}
+
+.progresso-verde {
+  height: 100%;
+  width: var(--largura-barra, 0%);
+  background: linear-gradient(90deg, #27ae60 0%, #2ecc71 50%, #27ae60 100%);
+  border-radius: 15px;
+  box-shadow: 0 0 10px rgba(39, 174, 96, 0.4);
+  transition: width 0.8s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.porcento-barra {
+  position: absolute;
+  top: 50%;
+  right: clamp(8px, 2vw, 15px);
+  transform: translateY(-50%);
+  font-size: clamp(10px, 2vw, 14px);
+  font-weight: 700;
+  color: #fff;
+  text-shadow: 0 1px 2px rgba(0, 0, 0, 0.5);
+}
+
+.rotulo-meta-mes {
+  font-size: clamp(10px, 2vw, 13px);
+  color: #7f8c8d;
+  text-transform: uppercase;
+  letter-spacing: 1px;
+  font-weight: 600;
+  text-align: center;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: clamp(4px, 1vw, 8px);
+}
+
+.rotulo-meta-mes i {
+  font-size: clamp(8px, 1.5vw, 12px);
+}
+
+.rotulo-meta-mes.sucesso {
+  color: #27ae60;
+  font-weight: 700;
+}
+
+.rotulo-meta-mes.sucesso i {
+  color: #f39c12;
+}
+
+/* ===== LISTA DE DIAS RESPONSIVA ===== */
+.lista-dias {
+  flex: 1;
+  overflow-y: auto;
+  padding: clamp(5px, 1vw, 10px);
+  display: flex;
+  flex-direction: column;
+  gap: clamp(6px, 1.5vw, 10px);
+}
+
+.lista-dias::-webkit-scrollbar {
+  width: 6px;
+}
+
+.lista-dias::-webkit-scrollbar-track {
+  background: rgba(0, 0, 0, 0.1);
+  border-radius: 10px;
+}
+
+.lista-dias::-webkit-scrollbar-thumb {
+  background: linear-gradient(135deg, #bdc3c7, #95a5a6);
+  border-radius: 10px;
+}
+
+.linha-dia {
+  display: grid;
+  grid-template-columns: 1fr auto 1fr auto;
+  align-items: center;
+  gap: clamp(8px, 2vw, 15px);
+  padding: clamp(8px, 2vw, 12px);
+  background: rgba(255, 255, 255, 0.9);
+  border-radius: 10px;
+  border: 2px solid transparent;
+  transition: all 0.3s ease;
+  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.05);
+}
+
+.linha-dia:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+}
+
+.dia-normal {
+  border-color: #e0e0e0;
+}
+
+.dia-hoje {
+  box-shadow: 0 4px 15px rgba(0, 0, 0, 0.15);
+  transform: scale(1.02);
+}
+
+.dia-hoje.borda-verde {
+  border-color: #27ae60;
+  background: rgba(39, 174, 96, 0.05);
+}
+
+.dia-hoje.borda-vermelha {
+  border-color: #e74c3c;
+  background: rgba(231, 76, 60, 0.05);
+}
+
+.dia-destaque {
+  background: rgba(39, 174, 96, 0.08);
+  border-color: #27ae60;
+}
+
+.data {
+  font-size: clamp(10px, 2vw, 13px);
+  font-weight: 600;
+  color: #2c3e50;
+  display: flex;
+  align-items: center;
+  gap: clamp(4px, 1vw, 6px);
+}
+
+.data i {
+  color: #8e44ad;
+  font-size: clamp(8px, 1.5vw, 11px);
+}
+
+.placar-dia {
+  display: flex;
+  align-items: center;
+  gap: clamp(4px, 1vw, 8px);
+  justify-content: center;
+}
+
+.placar {
+  font-size: clamp(10px, 2vw, 14px);
+  font-weight: 700;
+}
+
+.verde-bold {
+  color: #27ae60;
+}
+
+.vermelho-bold {
+  color: #e74c3c;
+}
+
+.separador {
+  color: #7f8c8d;
+  font-weight: 400;
+}
+
+.valor {
+  font-size: clamp(10px, 2vw, 13px);
+  font-weight: 700;
+  text-align: right;
+  display: flex;
+  align-items: center;
+  justify-content: flex-end;
+  gap: clamp(4px, 1vw, 6px);
+}
+
+.valor i {
+  font-size: clamp(8px, 1.5vw, 11px);
+}
+
+.icone {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: clamp(10px, 2vw, 14px);
+  color: #27ae60;
+}
+
+.texto-cinza {
+  color: #bdc3c7 !important;
+}
+
+/* ===== RESPONSIVIDADE ADICIONAL ===== */
 @media (max-width: 1024px) {
-  .container-resumos {
+  .container {
     flex-direction: column;
     gap: 15px;
   }
 
-  .container-resumos .resumo-dia,
-  .container-resumos .resumo-mes {
-    flex: none;
-    max-width: 100%;
+  .bloco-1 {
+    flex: 1; /* Volta a ser proporcional em telas menores */
+  }
+
+  .linha-dia {
+    grid-template-columns: 1fr auto 1fr;
+    gap: clamp(6px, 1.5vw, 10px);
+  }
+
+  .icone {
+    display: none; /* Oculta ícone em telas menores */
   }
 }
 
-/* Dispositivos muito pequenos */
 @media (max-width: 768px) {
-  .container-resumos {
+  .container {
     padding: 10px;
     gap: 10px;
   }
 
-  .container-resumos .resumo-dia,
-  .container-resumos .resumo-mes {
-    max-width: 100%;
+  .bloco-1,
+  .bloco-2 {
+    padding: 15px;
+  }
+
+  .data-header-integrada {
+    height: 50px;
+  }
+
+  .barra-superior {
+    height: 50px;
+  }
+
+  .linha-dia {
+    grid-template-columns: 1fr auto;
+    gap: clamp(6px, 1.5vw, 10px);
+  }
+
+  .placar-dia {
+    grid-column: span 2;
+    justify-self: center;
   }
 }
 
-/* Telas maiores */
-@media (min-width: 769px) {
-  .container-resumos .info-item {
-    width: 160px !important;
+@media (max-width: 480px) {
+  .bloco-1,
+  .bloco-2 {
+    padding: 10px;
+  }
+
+  .data-header-integrada {
+    height: 45px;
+  }
+
+  .barra-superior {
+    height: 45px;
+  }
+
+  .linha-dia {
+    grid-template-columns: 1fr;
+    text-align: center;
+    gap: clamp(4px, 1vw, 8px);
+  }
+
+  .data,
+  .valor {
+    justify-content: center;
   }
 }
 
-/* ===== ELEMENTOS AUXILIARES (HIDDEN) ===== */
-.container-resumos #total-green-dia,
-.container-resumos #total-red-dia,
-.container-resumos #saldo-dia {
+/* ===== ESTILOS AUXILIARES ===== */
+.valor-ultrapassou {
   display: none;
-}
-
-.container-resumos .erro-mentores {
-  color: #e74c3c;
-  text-align: center;
-  padding: 20px;
-  font-weight: bold;
-}
-
-/* TESTE */
-
-.valor-meta.atualizado {
-  animation: pulse-green 1.5s ease-in-out;
-}
-
-@keyframes pulse-green {
-  0% {
-    transform: scale(1);
-    color: inherit;
-  }
-  50% {
-    transform: scale(1.05);
-    color: #00a651;
-    text-shadow: 0 0 8px rgba(0, 166, 81, 0.3);
-  }
-  100% {
-    transform: scale(1);
-    color: #00a651;
-  }
-}
-
-.info-item .valor-meta {
-  transition: all 0.3s ease;
-}
-/*  */
-/*  */
-/*  */
-/*  */
-/*  */
-/*  */
-/*  */
-/*  */
-/*  */
-/*  */
-/*  */
-/*  */
-/*  */
-/*  */
-/* ================================================================================
-   CSS PARA META DIÁRIA CAMPO VALOR + BARRA DE PROGRESSO
-   ================================================================================ */
-
-/* ========================================
-   ANIMAÇÕES E ESTADOS BASE
-   ======================================== */
-
-/* ========================================
-   ANIMAÇÕES E ESTADOS BASE
-   ======================================== */
-
-/* ========================================
-   ANIMAÇÕES E ESTADOS BASE
-   ======================================== */
-
-/* ========================================
-   ANIMAÇÕES E ESTADOS BASE
-   ======================================== */
-
-/* ========================================
-   ANIMAÇÕES E ESTADOS BASE
-   ======================================== */
-
-/* ========================================
-   ANIMAÇÕES E ESTADOS BASE
-   ======================================== */
-
-.valor-meta.atualizado {
-  animation: pulse-update 2s cubic-bezier(0.4, 0, 0.6, 1);
-}
-
-@keyframes pulse-update {
-  0% {
-    transform: scale(1) rotateZ(0deg);
-    filter: brightness(1);
-  }
-  50% {
-    transform: scale(1.08) rotateZ(1deg);
-    filter: brightness(1.2);
-    text-shadow: 0 0 20px rgba(0, 166, 81, 0.6);
-  }
-  100% {
-    transform: scale(1) rotateZ(0deg);
-    filter: brightness(1);
-  }
+  color: #27ae60;
+  font-size: clamp(10px, 2vw, 14px);
+  margin-top: 10px;
+  font-weight: 600;
 }
 
 .loading-text {
-  font-style: italic;
-  opacity: 0.7;
-  color: #666 !important;
-  background: linear-gradient(45deg, #666, #999, #666);
-  background-size: 200% 200%;
-  -webkit-background-clip: text;
-  -webkit-text-fill-color: transparent;
-  background-clip: text;
-  animation: loading-shimmer 1.5s ease-in-out infinite;
-  position: relative;
-  overflow: hidden;
+  color: #576574;
 }
 
-@keyframes loading-shimmer {
-  0%,
-  100% {
-    background-position: 0% 50%;
-    opacity: 0.7;
-  }
-  50% {
-    background-position: 100% 50%;
-    opacity: 1;
-  }
+h2 {
+  color: #333;
+  margin-bottom: 15px;
 }
 
-.loading-text::after {
-  content: "●●●";
-  position: absolute;
-  right: -25px;
-  top: 0;
-  animation: loading-dots 1.5s infinite;
-  color: #f39c12;
-  -webkit-text-fill-color: #f39c12;
+p {
+  color: #666;
+  line-height: 1.6;
 }
 
-@keyframes loading-dots {
-  0%,
-  20% {
-    opacity: 0;
-    transform: scale(0.8);
-  }
-  40% {
-    opacity: 1;
-    transform: scale(1.1);
-  }
-  60%,
-  100% {
-    opacity: 0;
-    transform: scale(0.8);
-  }
-}
-
-/* ========================================
-   DATA HEADER INTEGRADA
-   ======================================== */
-
-.data-header-integrada {
-  display: flex !important;
-  align-items: center !important;
-  justify-content: center !important;
-  gap: 12px !important;
-  margin-bottom: 20px !important;
-  padding: 12px 18px !important;
-
-  background: rgba(52, 152, 219, 0.1) !important;
-  border: 1px solid rgba(52, 152, 219, 0.2) !important;
-  border-radius: 25px !important;
-
-  box-shadow: 0 4px 15px rgba(52, 152, 219, 0.1),
-    inset 0 1px 0 rgba(255, 255, 255, 0.3) !important;
-}
-
-.data-header-integrada .fa-solid.fa-calendar-days {
-  font-size: 14px !important;
-  color: #3498db !important;
-  margin-right: 5px !important;
-}
-
-.data-texto-compacto {
-  display: flex !important;
-  align-items: center !important;
-  gap: 6px !important;
-}
-
-.data-prefixo {
-  font-size: 11px !important;
-  color: #7f8c8d !important;
-  font-weight: 600 !important;
-  text-transform: uppercase !important;
-  letter-spacing: 0.5px !important;
-}
-
-.data-principal-integrada {
-  font-size: 13px !important;
-  font-weight: 700 !important;
-  color: #2c3e50 !important;
-  letter-spacing: -0.3px !important;
-}
-
-.data-separador-mini {
-  width: 2px !important;
-  height: 20px !important;
-  background: linear-gradient(
-    180deg,
-    transparent,
-    #bdc3c7,
-    transparent
-  ) !important;
-  border-radius: 1px !important;
-}
-
-.status-periodo-mini {
-  display: flex !important;
-  align-items: center !important;
-  gap: 6px !important;
-}
-
-.status-periodo-icone {
-  width: 8px !important;
-  height: 8px !important;
-  background: #27ae60 !important;
-  border-radius: 50% !important;
-  box-shadow: 0 0 8px rgba(39, 174, 96, 0.4) !important;
-  animation: pulse-status 2s infinite !important;
-}
-
-@keyframes pulse-status {
-  0%,
-  100% {
-    opacity: 1;
-    transform: scale(1);
-  }
-  50% {
-    opacity: 0.7;
-    transform: scale(1.2);
-  }
-}
-
-.status-periodo-texto {
-  font-size: 10px !important;
-  font-weight: 700 !important;
-  color: #27ae60 !important;
-  text-transform: uppercase !important;
-  letter-spacing: 0.8px !important;
-}
-
-/* ========================================
-   WIDGET META MODERNO - GLASSMORPHISM
-   ======================================== */
-
-.widget-meta-container {
-  display: flex !important;
-  justify-content: center !important;
-  align-items: center !important;
-  width: 100% !important;
-  margin: 20px 0 !important;
-  perspective: 1000px;
-}
-
-.widget-meta-row {
-  display: flex !important;
-  justify-content: center !important;
-  align-items: center !important;
-  gap: 15px !important;
-}
-
-.widget-meta-item {
-  display: flex !important;
-  flex-direction: column !important;
-  align-items: center !important;
-
-  /* Glassmorphism Effect */
-  background: rgba(255, 255, 255, 0.25) !important;
-  backdrop-filter: blur(10px) !important;
-  -webkit-backdrop-filter: blur(10px) !important;
-  border: 1px solid rgba(255, 255, 255, 0.3) !important;
-
-  padding: 25px !important;
-  border-radius: 20px !important;
-  width: 390px !important;
-  max-width: 390px !important;
-  min-width: 390px !important;
-  min-height: 120px !important;
-  margin: 10px !important;
-  box-sizing: border-box !important;
-
-  /* Sombras modernas */
-  box-shadow: 0 8px 32px rgba(0, 0, 0, 0.1), 0 4px 16px rgba(0, 0, 0, 0.05),
-    inset 0 1px 0 rgba(255, 255, 255, 0.3) !important;
-
-  /* Animações */
-  transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1) !important;
-  transform: translateY(0) rotateX(0deg) !important;
-  position: relative !important;
-  overflow: hidden !important;
-}
-
-/* Efeito hover no widget */
-.widget-meta-item:hover {
-  transform: translateY(-5px) rotateX(5deg) !important;
-  box-shadow: 0 15px 40px rgba(0, 0, 0, 0.15), 0 8px 25px rgba(0, 0, 0, 0.1),
-    inset 0 1px 0 rgba(255, 255, 255, 0.4) !important;
-  background: rgba(255, 255, 255, 0.35) !important;
-}
-
-/* Gradiente de fundo estático */
-.widget-meta-item::before {
-  content: "";
-  position: absolute;
-  top: -50%;
-  left: -50%;
-  width: 200%;
-  height: 200%;
-  background: linear-gradient(
-    45deg,
-    transparent,
-    rgba(0, 166, 81, 0.03),
-    transparent,
-    rgba(52, 152, 219, 0.03),
-    transparent
-  );
-  z-index: -1;
-}
-
-/* ========================================
-   VALOR META COM ÍCONES - ESTRUTURA PRINCIPAL
-   ======================================== */
-
-.widget-conteudo-principal {
-  width: 100%;
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-}
-
-.widget-meta-valor {
-  font-size: 28px !important;
-  font-weight: 800 !important;
-  margin-bottom: 8px !important;
-  text-align: center !important;
-  color: #2c3e50 !important;
-
-  display: flex !important;
-  align-items: center !important;
-  justify-content: center !important;
-  gap: 12px !important;
-
-  text-shadow: 0 2px 10px rgba(0, 0, 0, 0.1) !important;
-  letter-spacing: -0.5px !important;
-  transition: all 0.3s ease !important;
-}
-
-/* Ícone da moeda principal */
-.widget-meta-valor .fa-solid.fa-coins {
-  font-size: 26px !important;
-  color: #f39c12 !important;
-  filter: drop-shadow(0 2px 4px rgba(243, 156, 18, 0.3));
-  margin-right: 5px !important;
-}
-
-/* Texto do valor */
-.widget-meta-valor .valor-texto {
-  font-size: 28px !important;
-  font-weight: 800 !important;
-  color: inherit !important;
-}
-
-/* ========================================
-   VALOR QUE ULTRAPASSOU A META
-   ======================================== */
-
-.valor-ultrapassou {
-  display: none !important; /* Oculto por padrão */
-  align-items: center !important;
-  justify-content: center !important;
-  gap: 8px !important;
-  margin-bottom: 10px !important;
-  padding: 8px 15px !important;
-
-  background: linear-gradient(
-    135deg,
-    rgba(52, 152, 219, 0.1),
-    rgba(46, 204, 113, 0.1)
-  ) !important;
-  border: 1px solid rgba(52, 152, 219, 0.2) !important;
-  border-radius: 15px !important;
-
-  font-size: 14px !important;
-  font-weight: 600 !important;
-  color: #2980b9 !important;
-
-  box-shadow: 0 2px 8px rgba(52, 152, 219, 0.1) !important;
-  animation: fade-in 0.5s ease !important;
-}
-
-/* Quando deve aparecer */
-.valor-ultrapassou.mostrar {
-  display: flex !important;
-}
-
-@keyframes fade-in {
-  from {
-    opacity: 0;
-    transform: translateY(-10px);
-  }
-  to {
-    opacity: 1;
-    transform: translateY(0);
-  }
-}
-
-.valor-ultrapassou .fa-solid.fa-trophy {
-  font-size: 16px !important;
-  color: #f39c12 !important;
-  filter: drop-shadow(0 2px 4px rgba(243, 156, 18, 0.3));
-}
-
-.texto-ultrapassou {
-  font-weight: 600 !important;
-}
-
-#valor-extra {
-  font-weight: 800 !important;
-  color: #27ae60 !important;
-}
-
-/* ========================================
-   RÓTULOS E TEXTOS
-   ======================================== */
-
-.widget-meta-rotulo {
-  font-size: 14px !important; /* ✅ AUMENTADO DE 12px PARA 14px */
-  color: #576574 !important;
-  margin-bottom: 15px !important;
-  text-transform: uppercase !important;
-  text-align: center !important;
-  letter-spacing: 1px !important;
-  font-weight: 600 !important;
-  text-shadow: 0 0 10px rgba(87, 101, 116, 0.3) !important;
-}
-
-/* ========================================
-   BARRA DE PROGRESSO - MAIS LARGA
-   ======================================== */
-
-.widget-barra-container {
-  width: 100% !important;
-  height: 16px !important; /* ✅ AUMENTADO DE 12px PARA 16px */
-  background: rgba(0, 0, 0, 0.1) !important;
-  border-radius: 20px !important;
-  margin-bottom: 12px !important;
-  overflow: hidden !important;
-  box-shadow: inset 0 2px 4px rgba(0, 0, 0, 0.1) !important;
-  border: 1px solid rgba(255, 255, 255, 0.2) !important;
-}
-
-/* Barra de progresso moderna */
-.barra-progresso,
-.widget-barra-progresso {
-  height: 100% !important;
-  border-radius: 20px !important;
-  width: 0% !important;
-
-  /* Gradiente estático */
-  background: linear-gradient(
-    90deg,
-    currentColor 0%,
-    rgba(255, 255, 255, 0.2) 50%,
-    currentColor 100%
-  ) !important;
-
-  /* Sombra suave */
-  box-shadow: 0 0 8px rgba(255, 255, 255, 0.2),
-    inset 0 1px 0 rgba(255, 255, 255, 0.3) !important;
-
-  /* Transição suave */
-  transition: width 0.8s cubic-bezier(0.4, 0, 0.2, 1) !important;
-}
-
-#barra-progresso {
-  background-color: inherit !important;
-}
-
-/* ========================================
-   INFO DE PROGRESSO COM ÍCONES - PORCENTAGEM MAIOR
-   ======================================== */
-
-.widget-info-progresso {
-  font-size: 13px !important; /* ✅ AUMENTADO DE 11px PARA 13px */
-  color: #576574 !important;
-  display: flex !important;
-  justify-content: space-between !important;
-  width: 100% !important;
-  font-weight: 600 !important;
-  text-shadow: 0 1px 2px rgba(0, 0, 0, 0.1) !important;
-}
-
-.widget-info-progresso span {
-  transition: all 0.3s ease !important;
-  display: flex !important;
-  align-items: center !important;
-  gap: 5px !important;
-}
-
-.widget-info-progresso span:hover {
-  color: #2c3e50 !important;
-  transform: translateY(-1px) !important;
-}
-
-/* Ícones das informações - MAIORES */
-.widget-info-progresso .fa-solid {
-  font-size: 12px !important; /* ✅ AUMENTADO DE 10px PARA 12px */
-  opacity: 0.8 !important;
-  transition: all 0.3s ease !important;
-}
-
-/* Ícone da carteira */
-.widget-info-progresso .fa-wallet {
-  color: #27ae60 !important;
-}
-
-/* Ícone da porcentagem */
-.widget-info-progresso .fa-percent {
-  color: #3498db !important;
-}
-
-/* ========================================
-   ESTADOS DE COR DINÂMICOS
-   ======================================== */
-
-/* Estados da meta com gradientes */
-.valor-meta.positivo {
-  background: linear-gradient(135deg, #00a651, #4caf50);
-  -webkit-background-clip: text;
-  -webkit-text-fill-color: transparent;
-  background-clip: text;
-  font-weight: 800;
-  filter: drop-shadow(0 2px 4px rgba(0, 166, 81, 0.3));
-}
-
-.valor-meta.negativo {
-  background: linear-gradient(135deg, #e74c3c, #ff6b6b);
-  -webkit-background-clip: text;
-  -webkit-text-fill-color: transparent;
-  background-clip: text;
-  font-weight: 800;
-  filter: drop-shadow(0 2px 4px rgba(231, 76, 60, 0.3));
-}
-
-.valor-meta.zero {
-  background: linear-gradient(135deg, #7f8c8d, #95a5a6);
-  -webkit-background-clip: text;
-  -webkit-text-fill-color: transparent;
-  background-clip: text;
+.erro-mentores {
+  color: #e74c3c;
+  text-align: center;
+  padding: 20px;
   font-weight: 600;
-  font-style: italic;
-  opacity: 0.8;
 }
 
-/* Estados específicos para situações especiais */
-.valor-meta.sem-banca {
-  background: linear-gradient(135deg, #e67e22, #f39c12);
-  -webkit-background-clip: text;
-  -webkit-text-fill-color: transparent;
-  background-clip: text;
-  font-weight: 800;
-  filter: drop-shadow(0 2px 4px rgba(230, 126, 34, 0.3));
+/* ===== CONTROLE DE LARGURA DOS BLOCOS ===== */
+/* 
+INSTRUÇÕES PARA AJUSTAR A LARGURA:
+
+Para controlar a largura do bloco 1, modifique a propriedade flex na classe .bloco-1:
+
+OPÇÕES DISPONÍVEIS:
+- flex: 0 0 300px;  → Largura fixa de 300px
+- flex: 0 0 400px;  → Largura fixa de 400px (atual)
+- flex: 0 0 500px;  → Largura fixa de 500px
+- flex: 0 0 600px;  → Largura fixa de 600px
+- flex: 1;          → Largura proporcional (divide espaço igualmente com bloco-2)
+- flex: 0.5;        → Metade da largura proporcional
+- flex: 2;          → Duas vezes maior que bloco-2
+
+O BLOCO 2 SE AJUSTA AUTOMATICAMENTE AO ESPAÇO RESTANTE!
+
+Exemplo de uso:
+.bloco-1 {
+  flex: 0 0 350px; // Mude este valor para ajustar a largura
 }
 
-.valor-meta.meta-batida {
-  background: linear-gradient(135deg, #2196f3, #64b5f6);
-  -webkit-background-clip: text;
-  -webkit-text-fill-color: transparent;
-  background-clip: text;
-  font-weight: 800;
-  filter: drop-shadow(0 2px 4px rgba(33, 150, 243, 0.3));
-}
-
-.valor-meta.neutro {
-  background: linear-gradient(135deg, #95a5a6, #bdc3c7);
-  -webkit-background-clip: text;
-  -webkit-text-fill-color: transparent;
-  background-clip: text;
-  font-weight: 600;
-  filter: drop-shadow(0 2px 4px rgba(149, 165, 166, 0.3));
-}
-
-.valor-meta.lucro {
-  background: linear-gradient(135deg, #00a651, #4caf50);
-  -webkit-background-clip: text;
-  -webkit-text-fill-color: transparent;
-  background-clip: text;
-  font-weight: 800;
-  filter: drop-shadow(0 2px 4px rgba(0, 166, 81, 0.3));
-}
-
-/* Cores dinâmicas com gradientes para barras - ADICIONADAS NOVAS CORES */
-.cor-2196F3 {
-  background: linear-gradient(135deg, #2196f3, #64b5f6) !important;
-  color: #2196f3 !important;
-}
-
-.cor-4CAF50 {
-  background: linear-gradient(135deg, #4caf50, #81c784) !important;
-  color: #4caf50 !important;
-}
-
-.cor-f44336 {
-  background: linear-gradient(135deg, #f44336, #ef5350) !important;
-  color: #f44336 !important;
-}
-
-.cor-9E9E9E {
-  background: linear-gradient(135deg, #9e9e9e, #bdbdbd) !important;
-  color: #9e9e9e !important;
-}
-
-.cor-e67e22 {
-  background: linear-gradient(135deg, #e67e22, #f39c12) !important;
-  color: #e67e22 !important;
-}
-
-.cor-95a5a6 {
-  background: linear-gradient(135deg, #95a5a6, #bdc3c7) !important;
-  color: #95a5a6 !important;
-}
-
-/* Estados para saldo negativo */
-.saldo-negativo {
-  color: #e74c3c !important;
-}
-
-.barra-negativa {
-  background: linear-gradient(135deg, #e74c3c, #c0392b) !important;
-}
-
-/* ========================================
-   RESPONSIVIDADE MELHORADA
-   ======================================== */
-
-@media (min-width: 769px) {
-  .widget-meta-item {
-    width: 390px !important;
-    max-width: 390px !important;
-    min-width: 390px !important;
-    margin: 15px auto !important;
-  }
-}
-
-@media (max-width: 768px) {
-  .widget-meta-item {
-    width: 85% !important;
-    max-width: 380px !important;
-    min-width: 320px !important;
-    margin: 15px auto !important;
-    padding: 20px !important;
-  }
-
-  .widget-meta-valor {
-    font-size: 24px !important;
-  }
-
-  .widget-meta-valor .fas.fa-coins {
-    font-size: 22px !important;
-  }
-
-  .widget-meta-valor .valor-texto {
-    font-size: 24px !important;
-  }
-
-  .widget-info-progresso .fas {
-    font-size: 9px !important;
-  }
-
-  .data-header-integrada {
-    padding: 10px 15px !important;
-    gap: 10px !important;
-  }
-
-  .data-prefixo {
-    font-size: 10px !important;
-  }
-
-  .data-principal-integrada {
-    font-size: 12px !important;
-  }
-
-  .lucro-extra-inline {
-    font-size: 10px !important;
-    padding: 2px 6px !important;
-    margin-left: 6px !important;
-  }
-
-  #valor-extra-inline {
-    font-size: 10px !important;
-  }
-}
-
-@media (max-width: 480px) {
-  .widget-meta-item {
-    width: 95% !important;
-    min-width: 280px !important;
-    padding: 18px !important;
-    margin: 12px auto !important;
-  }
-
-  .widget-meta-valor {
-    font-size: 22px !important;
-    gap: 10px !important;
-  }
-
-  .widget-meta-valor .fas.fa-coins {
-    font-size: 20px !important;
-  }
-
-  .widget-meta-valor .valor-texto {
-    font-size: 22px !important;
-  }
-
-  .widget-meta-rotulo {
-    font-size: 10px !important;
-    margin-bottom: 12px !important;
-  }
-
-  .widget-barra-container {
-    height: 10px !important;
-  }
-
-  .widget-info-progresso {
-    font-size: 10px !important;
-  }
-
-  .widget-info-progresso .fas {
-    font-size: 8px !important;
-  }
-
-  .widget-info-progresso span {
-    gap: 4px !important;
-  }
-
-  .data-header-integrada {
-    padding: 8px 12px !important;
-    gap: 8px !important;
-    margin-bottom: 15px !important;
-  }
-
-  .lucro-extra-inline {
-    font-size: 9px !important;
-    padding: 2px 5px !important;
-    margin-left: 4px !important;
-    flex-direction: column !important;
-    text-align: center !important;
-  }
-
-  #valor-extra-inline {
-    font-size: 9px !important;
-  }
-}
-
-.widget-meta-item:focus-within {
-  outline: 2px solid rgba(52, 152, 219, 0.5);
-  outline-offset: 4px;
-}
-/* ================================================================================
-   FIM CSS PARA META DIÁRIA CAMPO VALOR + BARRA DE PROGRESSO
-   ================================================================================ */
-
-/*  */
-/*  */
-/*  */
-/*  */
-/*  */
-/*  */
-/*  */
-/*  */
-/*  */
-/*  */
-/*  */
-/*  */
-/*  */
-/*  */
-
-/* ================================================================================
-   CSS PARA DATA DO DIA 
-   ================================================================================ */
-
-.widget-meta-item {
-  padding: 0 !important;
-  min-height: 160px !important;
-}
-
-.data-header-integrada {
-  width: 100% !important;
-  background: rgba(0, 0, 0, 0.05) !important;
-  backdrop-filter: blur(5px) !important;
-  border-bottom: 1px solid rgba(255, 255, 255, 0.1) !important;
-  border-radius: 20px 20px 0 0 !important;
-  padding: 8px 15px !important;
-
-  display: flex !important;
-  align-items: center !important;
-  justify-content: center !important;
-  gap: 8px !important;
-
-  position: relative !important;
-  overflow: hidden !important;
-  box-sizing: border-box !important;
-}
-
-/* Efeito sutil de gradiente */
-.data-header-integrada::before {
-  content: "";
-  position: absolute;
-  top: 0;
-  left: -100%;
-  width: 100%;
-  height: 100%;
-  background: linear-gradient(
-    90deg,
-    transparent,
-    rgba(255, 255, 255, 0.1),
-    transparent
-  );
-  animation: data-shine 3s ease-in-out infinite;
-}
-
-@keyframes data-shine {
-  0% {
-    left: -100%;
-  }
-  100% {
-    left: 100%;
-  }
-}
-
-/* Ícone do calendário */
-.data-header-integrada .fas.fa-calendar-day {
-  font-size: 14px !important;
-  color: #2c3e50 !important;
-  filter: drop-shadow(0 1px 2px rgba(0, 0, 0, 0.1));
-  animation: calendar-pulse 4s ease-in-out infinite;
-}
-
-@keyframes calendar-pulse {
-  0%,
-  100% {
-    transform: scale(1);
-    opacity: 0.8;
-  }
-  50% {
-    transform: scale(1.05);
-    opacity: 1;
-  }
-}
-
-/* Container do texto da data */
-.data-texto-compacto {
-  display: flex !important;
-  align-items: center !important;
-  gap: 5px !important;
-}
-
-/* Texto "Hoje:" */
-.data-prefixo {
-  font-size: 11px !important;
-  color: #576574 !important;
-  font-weight: 600 !important;
-  text-transform: uppercase !important;
-  letter-spacing: 0.5px !important;
-  opacity: 0.8 !important;
-}
-
-/* Data principal */
-.data-principal-integrada {
-  font-size: 13px !important;
-  color: #2c3e50 !important;
-  font-weight: 700 !important;
-  letter-spacing: 0.3px !important;
-  text-shadow: 0 1px 2px rgba(0, 0, 0, 0.1) !important;
-  transition: all 0.3s ease !important;
-}
-
-/* Separador fino */
-.data-separador-mini {
-  width: 1px !important;
-  height: 18px !important;
-  background: linear-gradient(
-    to bottom,
-    transparent,
-    rgba(44, 62, 80, 0.3),
-    transparent
-  ) !important;
-  margin: 0 3px !important;
-}
-
-/* Status período compacto */
-.status-periodo-mini {
-  display: flex !important;
-  align-items: center !important;
-  gap: 4px !important;
-}
-
-.status-periodo-icone {
-  width: 6px !important;
-  height: 6px !important;
-  border-radius: 50% !important;
-  background: #4caf50 !important;
-  box-shadow: 0 0 6px rgba(76, 175, 80, 0.5) !important;
-  animation: status-mini-pulse 2s ease-in-out infinite;
-  transition: all 0.3s ease !important;
-}
-
-@keyframes status-mini-pulse {
-  0%,
-  100% {
-    box-shadow: 0 0 6px rgba(76, 175, 80, 0.5);
-    transform: scale(1);
-  }
-  50% {
-    box-shadow: 0 0 10px rgba(76, 175, 80, 0.7);
-    transform: scale(1.2);
-  }
-}
-
-.status-periodo-texto {
-  font-size: 9px !important;
-  color: #576574 !important;
-  font-weight: 600 !important;
-  text-transform: uppercase !important;
-  letter-spacing: 0.3px !important;
-  opacity: 0.7 !important;
-}
-
-/* ========================================
-   CONTEÚDO PRINCIPAL DO WIDGET
-   ======================================== */
-
-.widget-conteudo-principal {
-  padding: 20px 25px 25px 25px !important;
-  display: flex !important;
-  flex-direction: column !important;
-  align-items: center !important;
-  width: 100% !important;
-  box-sizing: border-box !important;
-}
-
-/* ========================================
-   ESTADOS DE CORES PARA DIFERENTES PERÍODOS
-   ======================================== */
-
-/* Madrugada (0h-6h) */
-.periodo-madrugada .status-periodo-icone {
-  background: #9c27b0 !important;
-  box-shadow: 0 0 6px rgba(156, 39, 176, 0.5) !important;
-}
-
-/* Manhã (6h-12h) */
-.periodo-manha .status-periodo-icone {
-  background: #ff9800 !important;
-  box-shadow: 0 0 6px rgba(255, 152, 0, 0.5) !important;
-}
-
-/* Tarde (12h-18h) */
-.periodo-tarde .status-periodo-icone {
-  background: #4caf50 !important;
-  box-shadow: 0 0 6px rgba(76, 175, 80, 0.5) !important;
-}
-
-/* Noite (18h-24h) */
-.periodo-noite .status-periodo-icone {
-  background: #2196f3 !important;
-  box-shadow: 0 0 6px rgba(33, 150, 243, 0.5) !important;
-}
-
-/* ========================================
-   ESTADOS ESPECIAIS - FIM DE SEMANA E FERIADOS
-   ======================================== */
-
-/* Fim de semana */
-.data-header-integrada.weekend {
-  background: rgba(255, 193, 7, 0.1) !important;
-  border-bottom: 1px solid rgba(255, 193, 7, 0.2) !important;
-}
-
-.data-header-integrada.weekend .data-principal-integrada {
-  color: #f57c00 !important;
-  font-weight: 800 !important;
-  text-shadow: 0 1px 3px rgba(245, 124, 0, 0.3) !important;
-}
-
-.data-header-integrada.weekend .fas.fa-calendar-day {
-  color: #f57c00 !important;
-}
-
-/* Feriados */
-.data-header-integrada.feriado {
-  background: rgba(233, 30, 99, 0.1) !important;
-  border-bottom: 1px solid rgba(233, 30, 99, 0.2) !important;
-}
-
-.data-header-integrada.feriado .data-principal-integrada {
-  color: #e91e63 !important;
-  font-weight: 800 !important;
-  text-shadow: 0 1px 3px rgba(233, 30, 99, 0.3) !important;
-}
-
-.data-header-integrada.feriado .fas.fa-calendar-day {
-  color: #e91e63 !important;
-}
-
-.data-header-integrada.feriado::after {
-  content: "🎉";
-  font-size: 12px;
-  margin-left: 5px;
-  animation: celebrar 2s ease-in-out infinite;
-}
-
-@keyframes celebrar {
-  0%,
-  100% {
-    transform: rotate(0deg) scale(1);
-  }
-  25% {
-    transform: rotate(-5deg) scale(1.05);
-  }
-  75% {
-    transform: rotate(5deg) scale(1.05);
-  }
-}
-
-/* ========================================
-   EFEITOS DE ATUALIZAÇÃO
-   ======================================== */
-
-/* Efeito de mudança de dia */
-.data-principal-integrada.atualizando {
-  animation: data-update-integrada 0.6s ease-in-out;
-}
-
-@keyframes data-update-integrada {
-  0% {
-    transform: scale(1);
-    filter: brightness(1);
-  }
-  50% {
-    transform: scale(1.1);
-    filter: brightness(1.3);
-    color: #4caf50 !important;
-    text-shadow: 0 0 10px rgba(76, 175, 80, 0.6) !important;
-  }
-  100% {
-    transform: scale(1);
-    filter: brightness(1);
-  }
-}
-
-/* ========================================
-   RESPONSIVIDADE PARA DATA INTEGRADA
-   ======================================== */
-
-@media (min-width: 769px) {
-  .data-header-integrada {
-    padding: 8px 15px !important;
-    gap: 8px !important;
-  }
-
-  .data-header-integrada .fas.fa-calendar-day {
-    font-size: 14px !important;
-  }
-
-  .data-prefixo {
-    font-size: 11px !important;
-  }
-
-  .data-principal-integrada {
-    font-size: 13px !important;
-  }
-
-  .status-periodo-texto {
-    font-size: 9px !important;
-  }
-}
-
-@media (max-width: 768px) {
-  .data-header-integrada {
-    padding: 6px 12px !important;
-    gap: 6px !important;
-  }
-
-  .data-header-integrada .fas.fa-calendar-day {
-    font-size: 12px !important;
-  }
-
-  .data-prefixo {
-    font-size: 10px !important;
-  }
-
-  .data-principal-integrada {
-    font-size: 12px !important;
-  }
-
-  .status-periodo-texto {
-    font-size: 8px !important;
-  }
-
-  .widget-conteudo-principal {
-    padding: 15px 20px 20px 20px !important;
-  }
-}
-
-@media (max-width: 480px) {
-  .data-header-integrada {
-    padding: 5px 10px !important;
-    gap: 5px !important;
-  }
-
-  .data-header-integrada .fas.fa-calendar-day {
-    font-size: 11px !important;
-  }
-
-  .data-prefixo {
-    font-size: 9px !important;
-  }
-
-  .data-principal-integrada {
-    font-size: 11px !important;
-  }
-
-  /* Oculta elementos em telas muito pequenas */
-  .data-separador-mini {
-    display: none !important;
-  }
-
-  .status-periodo-mini {
-    display: none !important;
-  }
-
-  .widget-conteudo-principal {
-    padding: 12px 15px 18px 15px !important;
-  }
-}
-
-/* ========================================
-   AJUSTES FINAIS PARA INTEGRAÇÃO
-   ======================================== */
-
-/* Ajuste para o efeito hover do widget não afetar o header */
-.widget-meta-item:hover .data-header-integrada {
-  transform: none !important;
-}
-/* ================================================================================
-   FIM CSS PARA DATA DO DIA 
-   ================================================================================ */
+TODOS OS ELEMENTOS INTERNOS DE AMBOS OS BLOCOS SE AJUSTARÃO AUTOMATICAMENTE!
+*/

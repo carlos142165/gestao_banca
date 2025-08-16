@@ -16,7 +16,7 @@
   border-radius: 16px;
   padding: 20px 25px;
   box-shadow: 0 20px 40px rgba(0, 0, 0, 0.2);
-  z-index: 9999;
+  z-index: 9998;
   font-family: "Segoe UI", sans-serif;
   color: #333;
   width: 300px;
@@ -133,8 +133,8 @@
   left: 0;
   width: 100%;
   height: 100%;
-  background: rgba(0, 0, 0, 0.5);
-  z-index: 9999;
+  background: rgba(0, 0, 0, 0.7);
+  z-index: 9999999;
   display: flex;
   justify-content: center;
   align-items: center;
@@ -147,6 +147,8 @@
   text-align: center;
   box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
   font-family: "Segoe UI", sans-serif;
+  z-index: 100000;
+  position: relative;
 }
 
 .modais-container .modal-texto {
@@ -446,7 +448,7 @@
   height: 320px;
   text-align: center;
   font-family: "Poppins", sans-serif;
-  z-index: 1000;
+  z-index: 9997;
   align-items: center;
   display: none;
 }
@@ -684,4 +686,5 @@
     gap: 20px;
   }
 }
+
 /* ===== CSS PARA MENSAGENS TOAST ===== */

@@ -1530,7 +1530,41 @@ const App = {
 
     // Submete formulário
     const formData = new FormData(form);
-    await FormularioValorManager.processarSubmissao(formData);
+
+    try {
+      const response = await fetch("cadastrar-valor.php", {
+        method: "POST",
+        body: formData,
+      });
+
+      if (!response.ok) throw new Error(`HTTP ${response.status}`);
+
+      const resposta = await response.json();
+
+      ToastManager.mostrar(resposta.mensagem, resposta.tipo);
+
+      if (resposta.tipo === "sucesso") {
+        FormularioValorManager.resetarFormulario();
+
+        // ✅ ATUALIZAÇÃO SUPER RÁPIDA DA ÁREA DIREITA
+        setTimeout(async () => {
+          if (typeof atualizarAreaDireita === "function") {
+            atualizarAreaDireita();
+          }
+
+          // Recarrega outros dados
+          await MentorManager.recarregarMentores();
+          await DadosManager.atualizarLucroEBancaViaAjax();
+
+          if (typeof atualizarDadosModal === "function") {
+            atualizarDadosModal();
+          }
+        }, 50); // ✅ Apenas 50ms
+      }
+    } catch (error) {
+      console.error("Erro ao enviar formulário:", error);
+      ToastManager.mostrar("❌ Erro ao enviar dados", "erro");
+    }
   },
 
   // Configura evento de mudança de visibilidade
@@ -1612,13 +1646,15 @@ window.addEventListener("beforeunload", () => {
 // ✅ JAVASCRIPT ATUALIZADO - META COM SUBTRAÇÃO DO SALDO DO DIA
 
 // ========================================
-// SISTEMA DE META DIÁRIA ATUALIZADO
+// META DIÁRIA MANAGER - VERSÃO COMPLETA CORRIGIDA
 // ========================================
 
 const MetaDiariaManager = {
   // Calcula e atualiza a meta diária
   async atualizarMetaDiaria() {
     try {
+      console.log("🔄 Iniciando atualização da meta diária...");
+
       const response = await fetch("dados_banca.php", {
         method: "GET",
         headers: {
@@ -1632,6 +1668,7 @@ const MetaDiariaManager = {
       }
 
       const data = await response.json();
+      console.log("📊 Dados recebidos do PHP:", data);
 
       if (!data.success) {
         throw new Error(data.message || "Erro na resposta do servidor");
@@ -1640,11 +1677,16 @@ const MetaDiariaManager = {
       // Atualiza o elemento da meta na tela
       this.atualizarElementoMeta(data);
 
-      console.log("✅ Meta diária atualizada:", data.meta_diaria_formatada);
+      console.log(
+        "✅ Meta diária atualizada:",
+        data.meta_diaria_brl || data.meta_diaria_formatada
+      );
       return data;
     } catch (error) {
       console.error("❌ Erro ao atualizar meta diária:", error);
-      ToastManager.mostrar("❌ Erro ao calcular meta diária", "erro");
+      if (typeof ToastManager !== "undefined") {
+        ToastManager.mostrar("❌ Erro ao calcular meta diária", "erro");
+      }
 
       // Em caso de erro, mostra valor padrão
       this.mostrarErroMeta();
@@ -1652,112 +1694,190 @@ const MetaDiariaManager = {
     }
   },
 
-  // ✅ FUNÇÃO ATUALIZADA: Calcula meta final com todas as regras de negócio
+  // ✅ FUNÇÃO ATUALIZADA: Integra com os dados do seu PHP
   atualizarElementoMeta(data) {
-    const metaElement = document.getElementById("meta-diaria-ajax");
-    const rotuloElement = document.querySelector(".rotulo-meta");
+    console.log("🎯 Atualizando elemento meta com dados:", data);
 
-    if (metaElement && data.meta_diaria_formatada) {
-      // Remove texto de loading se existir
-      const loadingText = metaElement.querySelector(".loading-text");
-      if (loadingText) {
-        loadingText.remove();
-      }
+    // ✅ BUSCAR ELEMENTO COM MÚLTIPLAS ESTRATÉGIAS
+    const possiveisElementos = [
+      document.getElementById("meta-diaria-ajax"),
+      document.getElementById("meta-valor"),
+      document.querySelector(".meta-valor"),
+      document.querySelector(".valor-meta"),
+      document.querySelector("[data-meta]"),
+    ];
 
-      // ✅ OBTER VALORES NECESSÁRIOS
-      const saldoDiaElement = document.querySelector(".valor-saldo");
-      let saldoDia = 0;
+    const metaElement = possiveisElementos.find((el) => el !== null);
+    const rotuloElement =
+      document.querySelector(".rotulo-meta") ||
+      document.getElementById("rotulo-meta");
 
-      if (saldoDiaElement && saldoDiaElement.textContent) {
-        saldoDia = this.extrairValorNumerico(saldoDiaElement.textContent);
-      }
-
-      const metaCalculada = parseFloat(data.meta_diaria) || 0;
-      const bancaTotal = parseFloat(data.banca) || 0;
-
-      // ✅ APLICAR REGRAS DE NEGÓCIO CORRETAS
-      let metaFinal, rotulo;
-
-      // REGRA 1: Banca <= 0 - Mostrar valor da banca
-      if (bancaTotal <= 0) {
-        metaFinal = bancaTotal;
-        rotulo = "DEPOSITE P/ COMEÇAR";
-      }
-      // REGRA 2: Meta foi batida (saldo >= meta)
-      else if (saldoDia >= metaCalculada) {
-        metaFinal = 0;
-        rotulo = "META BATIDA! <i class='fa-solid fa-trophy'></i>";
-
-        // Calcular e mostrar valor extra
-        const valorExtra = saldoDia - metaCalculada;
-        this.mostrarValorExtra(valorExtra);
-      }
-      // REGRA 3: Saldo negativo
-      else if (saldoDia < 0) {
-        metaFinal = metaCalculada - saldoDia;
-        rotulo = "RESTANDO P/ META";
-      }
-      // REGRA 4: Saldo zero
-      else if (saldoDia === 0) {
-        metaFinal = metaCalculada;
-        rotulo = "META DO DIA";
-      }
-      // REGRA 5: Saldo positivo mas não bateu meta
-      else {
-        metaFinal = metaCalculada - saldoDia;
-        rotulo = "RESTANDO P/ META";
-      }
-
-      // ✅ FORMATAR COMO MOEDA BRASILEIRA
-      const metaFinalFormatada = metaFinal.toLocaleString("pt-BR", {
-        style: "currency",
-        currency: "BRL",
-      });
-
-      // Atualiza o elemento com valor formatado
-      metaElement.textContent = metaFinalFormatada;
-
-      // ✅ APLICAR CLASSE DE COR baseada no status
-      metaElement.className = "valor-meta"; // Reset das classes
-
-      if (bancaTotal <= 0) {
-        metaElement.classList.add("sem-banca");
-      } else if (saldoDia >= metaCalculada) {
-        metaElement.classList.add("meta-batida");
-      } else if (saldoDia < 0) {
-        metaElement.classList.add("negativo");
-      } else if (saldoDia === 0) {
-        metaElement.classList.add("neutro");
-      } else {
-        metaElement.classList.add("lucro");
-      }
-
-      // ✅ ATUALIZAR RÓTULO INFERIOR
-      if (rotuloElement) {
-        rotuloElement.innerHTML = rotulo;
-      }
-
-      // Log para debug
-      console.log("🎯 Meta Debug Correto:", {
-        bancaTotal: bancaTotal,
-        metaCalculada: metaCalculada,
-        saldoDia: saldoDia,
-        metaFinal: metaFinal,
-        metaFinalFormatada: metaFinalFormatada,
-        rotuloInferior: rotulo,
-      });
+    if (!metaElement) {
+      console.warn("⚠️ Elemento da meta não encontrado!");
+      console.log(
+        "Tentou buscar:",
+        possiveisElementos.map(
+          (el, i) => `${i}: ${el ? "ENCONTRADO" : "NÃO ENCONTRADO"}`
+        )
+      );
+      return;
     }
 
-    // Adiciona animação de atualização
-    if (metaElement) {
-      metaElement.classList.add("atualizado");
-      setTimeout(() => {
-        metaElement.classList.remove("atualizado");
-      }, 1500);
+    console.log("✅ Elemento da meta encontrado:", metaElement);
+
+    // ✅ VERIFICAR SE TEM DADOS NECESSÁRIOS
+    if (
+      !data.meta_diaria_brl &&
+      !data.meta_diaria_formatada &&
+      !data.meta_diaria
+    ) {
+      console.warn("⚠️ Dados da meta não encontrados no retorno do PHP");
+      return;
     }
+
+    // Remove texto de loading se existir
+    const loadingText = metaElement.querySelector(".loading-text");
+    if (loadingText) {
+      loadingText.remove();
+    }
+
+    // ✅ USAR DADOS DO SEU PHP
+    const saldoDia = parseFloat(data.lucro) || 0; // Lucro do dia
+    const metaCalculada = parseFloat(data.meta_diaria) || 0; // Meta calculada
+    const bancaTotal = parseFloat(data.banca) || 0; // Banca total
+
+    console.log("📊 Valores extraídos:", {
+      saldoDia,
+      metaCalculada,
+      bancaTotal,
+    });
+
+    // ✅ APLICAR SUAS REGRAS DE NEGÓCIO
+    let metaFinal, rotulo, statusClass;
+
+    // REGRA 1: Banca total <= 0 - Precisa depositar
+    if (bancaTotal <= 0) {
+      metaFinal = bancaTotal;
+      rotulo = "DEPOSITE P/ COMEÇAR";
+      statusClass = "sem-banca";
+    }
+    // REGRA 2: Meta foi batida (lucro >= meta)
+    else if (saldoDia >= metaCalculada) {
+      metaFinal = 0;
+      rotulo = "META BATIDA! <i class='fa-solid fa-trophy'></i>";
+      statusClass = "meta-batida";
+
+      // Mostrar valor extra
+      const valorExtra = saldoDia - metaCalculada;
+      this.mostrarValorExtra(valorExtra);
+    }
+    // REGRA 3: Lucro negativo
+    else if (saldoDia < 0) {
+      metaFinal = metaCalculada - saldoDia; // Meta + prejuízo
+      rotulo = "RESTANDO P/ META";
+      statusClass = "negativo";
+    }
+    // REGRA 4: Lucro zero
+    else if (saldoDia === 0) {
+      metaFinal = metaCalculada;
+      rotulo = "META DO DIA";
+      statusClass = "neutro";
+    }
+    // REGRA 5: Lucro positivo mas não bateu meta
+    else {
+      metaFinal = metaCalculada - saldoDia;
+      rotulo = "RESTANDO P/ META";
+      statusClass = "lucro";
+    }
+
+    // Formatar valor final
+    const metaFinalFormatada = metaFinal.toLocaleString("pt-BR", {
+      style: "currency",
+      currency: "BRL",
+    });
+
+    console.log("💰 Meta final calculada:", {
+      metaFinal,
+      metaFinalFormatada,
+      rotulo,
+      statusClass,
+    });
+
+    // ✅ ATUALIZAR ELEMENTO PRINCIPAL COM MÚLTIPLAS ESTRATÉGIAS
+    this.atualizarElementoComEstrategias(
+      metaElement,
+      metaFinalFormatada,
+      statusClass
+    );
+
+    // Atualizar rótulo
+    if (rotuloElement) {
+      rotuloElement.innerHTML = rotulo;
+      console.log("✅ Rótulo atualizado:", rotulo);
+    }
+
+    // ✅ APLICAR ANIMAÇÃO
+    this.aplicarAnimacao(metaElement);
+
+    // ✅ LOG COM DADOS DO SEU PHP
+    console.log("🎯 Meta calculada com seus dados:", {
+      bancaTotal: bancaTotal,
+      metaCalculada: metaCalculada,
+      lucroDia: saldoDia,
+      metaFinal: metaFinal,
+      metaFormatada: metaFinalFormatada,
+      rotulo: rotulo,
+      statusClass: statusClass,
+      calculoDetalhado: data.calculo_detalhado,
+    });
   },
 
-  // ✅ FUNÇÃO CORRIGIDA: Mostra valor que ultrapassou a meta com reset adequado
+  // ✅ FUNÇÃO PARA ATUALIZAR ELEMENTO COM MÚLTIPLAS ESTRATÉGIAS
+  atualizarElementoComEstrategias(elemento, valor, statusClass) {
+    // Estratégia 1: Tentar encontrar .valor-texto
+    let valorTexto = elemento.querySelector(".valor-texto");
+
+    if (valorTexto) {
+      console.log("✅ Estratégia 1: Atualizando .valor-texto");
+      valorTexto.textContent = valor;
+    } else {
+      // Estratégia 2: Verificar se tem ícone e criar estrutura
+      const icone = elemento.querySelector("i.fa-solid, .fa-coins");
+
+      if (icone) {
+        console.log("✅ Estratégia 2: Criando estrutura com ícone");
+        elemento.innerHTML = "";
+        elemento.appendChild(icone);
+
+        const span = document.createElement("span");
+        span.className = "valor-texto";
+        span.textContent = valor;
+        elemento.appendChild(span);
+      } else {
+        // Estratégia 3: Atualizar textContent diretamente
+        console.log("✅ Estratégia 3: Atualizando textContent");
+        elemento.textContent = valor;
+      }
+    }
+
+    // ✅ APLICAR CLASSES CSS baseadas no status
+    elemento.className = "valor-meta " + statusClass;
+
+    console.log("✅ Elemento atualizado:", {
+      conteudo: elemento.innerHTML || elemento.textContent,
+      classes: elemento.className,
+    });
+  },
+
+  // ✅ APLICAR ANIMAÇÃO
+  aplicarAnimacao(elemento) {
+    elemento.classList.add("atualizado");
+    setTimeout(() => {
+      elemento.classList.remove("atualizado");
+    }, 1500);
+  },
+
+  // Mostra valor extra quando meta é batida
   mostrarValorExtra(valorExtra) {
     const valorUltrapassouElement =
       document.getElementById("valor-ultrapassou");
@@ -1773,8 +1893,8 @@ const MetaDiariaManager = {
         valorExtraElement.textContent = valorExtraFormatado;
         valorUltrapassouElement.style.display = "flex";
         valorUltrapassouElement.classList.add("mostrar");
+        console.log("✅ Valor extra mostrado:", valorExtraFormatado);
       } else {
-        // ✅ FORÇA OCULTAÇÃO COMPLETA
         valorExtraElement.textContent = "R$ 0,00";
         valorUltrapassouElement.style.display = "none";
         valorUltrapassouElement.classList.remove("mostrar");
@@ -1782,58 +1902,71 @@ const MetaDiariaManager = {
     }
   },
 
-  // ✅ FUNÇÃO: Extrai valor numérico de string BRL
+  // Extrai valor numérico de string BRL
   extrairValorNumerico(valorBRL) {
     if (!valorBRL || typeof valorBRL !== "string") return 0;
 
-    // Remove R$, espaços e converte para número
     return (
       parseFloat(
         valorBRL
-          .replace(/[^\d,.-]/g, "") // Remove tudo exceto números, vírgula, ponto e hífen
-          .replace(/\./g, "") // Remove pontos (separadores de milhares)
-          .replace(",", ".") // Substitui vírgula por ponto (decimal)
+          .replace(/[^\d,.-]/g, "")
+          .replace(/\./g, "")
+          .replace(",", ".")
       ) || 0
     );
   },
 
-  // ✅ FUNÇÃO ATUALIZADA: Mostra erro com formato BRL
+  // Mostra erro
   mostrarErroMeta() {
-    const metaElement = document.getElementById("meta-diaria-ajax");
+    const possiveisElementos = [
+      document.getElementById("meta-diaria-ajax"),
+      document.getElementById("meta-valor"),
+      document.querySelector(".valor-meta"),
+    ];
+
+    const metaElement = possiveisElementos.find((el) => el !== null);
+
     if (metaElement) {
       metaElement.innerHTML = '<span style="color: #e74c3c;">R$ 0,00</span>';
+      console.log("❌ Erro mostrado na meta");
     }
   },
 
-  // ✅ FUNÇÃO DE INICIALIZAÇÃO
+  // ✅ INICIALIZAÇÃO MELHORADA
   async inicializar() {
-    const metaElement = document.getElementById("meta-diaria-ajax");
-    if (metaElement) {
-      // Mostra loading inicial
-      metaElement.innerHTML = '<span class="loading-text">Calculando...</span>';
+    console.log("🚀 Inicializando MetaDiariaManager...");
 
-      // Aguarda um pouco para garantir que a página carregou
-      setTimeout(() => {
-        this.atualizarMetaDiaria();
-      }, 500);
-    }
+    // Mostrar loading em todos os elementos possíveis
+    const possiveisElementos = [
+      document.getElementById("meta-diaria-ajax"),
+      document.getElementById("meta-valor"),
+      document.querySelector(".meta-valor"),
+      document.querySelector(".valor-meta"),
+    ];
+
+    possiveisElementos.forEach((el) => {
+      if (el) {
+        el.innerHTML = '<span class="loading-text">Calculando...</span>';
+      }
+    });
+
+    setTimeout(() => {
+      this.atualizarMetaDiaria();
+    }, 500);
   },
 
-  // ✅ NOVA FUNÇÃO: Força atualização quando saldo do dia muda
+  // Observer para mudanças no saldo
   atualizarQuandoSaldoMudar() {
-    // Observa mudanças no elemento do saldo do dia
     const saldoDiaElement = document.querySelector(".valor-saldo");
 
     if (saldoDiaElement) {
-      // Cria observer para detectar mudanças no texto
       const observer = new MutationObserver((mutations) => {
         mutations.forEach((mutation) => {
           if (
             mutation.type === "childList" ||
             mutation.type === "characterData"
           ) {
-            console.log("🔄 Saldo do dia alterado, recalculando meta...");
-            // Aguarda um pouco e recalcula
+            console.log("🔄 Saldo alterado, recalculando meta...");
             setTimeout(() => {
               this.atualizarMetaDiaria();
             }, 300);
@@ -1841,20 +1974,19 @@ const MetaDiariaManager = {
         });
       });
 
-      // Configura o observer
       observer.observe(saldoDiaElement, {
         childList: true,
         subtree: true,
         characterData: true,
       });
 
-      console.log("👀 Observer configurado para saldo do dia");
+      console.log("👀 Observer configurado para saldo");
     }
   },
 };
 
 // ========================================
-// WIDGET META PROGRESSO - VERSÃO COMPLETA
+// WIDGET ATUALIZADO PARA SEUS DADOS
 // ========================================
 
 const MetaProgressoWidget = {
@@ -1862,122 +1994,104 @@ const MetaProgressoWidget = {
   saldoDia: 0,
   metaFinal: 0,
   bancaTotal: 0,
+  saldoBaseMeta: 0,
 
-  // Integra com MetaDiariaManager
+  // ✅ INTEGRA COM SEU MetaDiariaManager
   integrarComMetaDiariaManager() {
     if (typeof MetaDiariaManager !== "undefined") {
       const originalFunc = MetaDiariaManager.atualizarElementoMeta;
 
       MetaDiariaManager.atualizarElementoMeta = (data) => {
-        // Executa função original
         if (originalFunc) {
           originalFunc.call(MetaDiariaManager, data);
         }
 
-        // Atualiza widget após pequeno delay
         setTimeout(() => {
           this.atualizarWidget(data);
         }, 100);
       };
 
-      console.log("🔗 Widget integrado com todas as regras");
+      console.log("🔗 Widget integrado com seus dados PHP");
     }
   },
 
-  // Atualização do widget com todas as regras de negócio
+  // ✅ ATUALIZA WIDGET COM DADOS DO SEU PHP
   atualizarWidget(data) {
     try {
-      // Calcula valores
-      this.metaCalculada = parseFloat(data.meta_diaria) || 0;
-      this.saldoDia = this.obterSaldoDia(data);
-      this.bancaTotal = parseFloat(data.banca) || 0;
+      console.log("🔄 Atualizando widget com dados:", data);
 
-      // Aplica regras de negócio
+      // ✅ USAR SEUS DADOS ESPECÍFICOS
+      this.metaCalculada = parseFloat(data.meta_diaria) || 0;
+      this.saldoDia = parseFloat(data.lucro) || 0; // Lucro do dia
+      this.bancaTotal = parseFloat(data.banca) || 0; // Banca total
+      this.saldoBaseMeta = parseFloat(data.saldo_base_meta) || 0; // Base para meta
+
+      // Aplicar regras de negócio
       this.aplicarRegrasNegocio();
 
-      // Atualiza interface
+      // Atualizar interface
       this.atualizarInterface();
 
-      // Atualiza data
+      // Atualizar data
       this.atualizarData();
+
+      console.log("✅ Widget atualizado com sucesso");
+
+      // ✅ LOG DOS SEUS DADOS
+      console.log("📊 Dados recebidos do PHP no Widget:", {
+        metaDiaria: this.metaCalculada,
+        lucro: this.saldoDia,
+        bancaTotal: this.bancaTotal,
+        saldoBaseMeta: this.saldoBaseMeta,
+        calculoDetalhado: data.calculo_detalhado,
+      });
     } catch (error) {
       console.error("❌ Erro no widget:", error);
     }
   },
 
-  // ✅ NOVA FUNÇÃO: Aplica todas as regras de negócio COM RÓTULOS CORRETOS
+  // Aplica regras usando seus dados
   aplicarRegrasNegocio() {
-    // REGRA 1: Banca <= 0 - Mostrar "DEPOSITE P/ COMEÇAR"
+    // REGRA 1: Banca total <= 0
     if (this.bancaTotal <= 0) {
       this.metaFinal = this.bancaTotal;
       this.statusMeta = "sem-banca";
       this.rotulo = "DEPOSITE P/ COMEÇAR";
-      this.textoSaldo = "Saldo"; // ✅ TEXTO PADRÃO
+      this.textoSaldo = "Saldo";
       this.valorExtra = 0;
     }
-    // REGRA 2: Banca > 0 e Meta foi batida (saldo >= meta)
+    // REGRA 2: Meta batida (lucro >= meta)
     else if (this.saldoDia >= this.metaCalculada) {
       this.metaFinal = 0;
       this.statusMeta = "meta-batida";
-      this.rotulo = "META BATIDA! <i class='fa-solid fa-trophy'></i>"; // ✅ ÍCONE MODERNO
-      this.textoSaldo = "Lucro"; // ✅ SUBSTITUI "Saldo"
+      this.rotulo = "META BATIDA! <i class='fa-solid fa-trophy'></i>";
+      this.textoSaldo = "Lucro";
       this.valorExtra = this.saldoDia - this.metaCalculada;
     }
-    // REGRA 3: Saldo negativo - Mostrar "NEGATIVO" no lugar de "Saldo"
+    // REGRA 3: Lucro negativo
     else if (this.saldoDia < 0) {
       this.metaFinal = this.metaCalculada - this.saldoDia;
       this.statusMeta = "negativo";
-      this.rotulo = "RESTANDO P/ META"; // ✅ RÓTULO INFERIOR
-      this.textoSaldo = "Negativo"; // ✅ SUBSTITUI "Saldo"
+      this.rotulo = "RESTANDO P/ META";
+      this.textoSaldo = "Negativo";
       this.valorExtra = 0;
     }
-    // REGRA 4: Saldo zero - Mostrar "NEUTRO" no lugar de "Saldo"
+    // REGRA 4: Lucro zero
     else if (this.saldoDia === 0) {
       this.metaFinal = this.metaCalculada;
       this.statusMeta = "neutro";
-      this.rotulo = "META DO DIA"; // ✅ RÓTULO INICIAL
-      this.textoSaldo = "Neutro"; // ✅ SUBSTITUI "Saldo"
+      this.rotulo = "META DO DIA";
+      this.textoSaldo = "Neutro";
       this.valorExtra = 0;
     }
-    // REGRA 5: Saldo positivo mas não bateu meta - Mostrar "LUCRO" no lugar de "Saldo"
+    // REGRA 5: Lucro positivo mas meta não batida
     else {
       this.metaFinal = this.metaCalculada - this.saldoDia;
       this.statusMeta = "lucro";
-      this.rotulo = "RESTANDO P/ META"; // ✅ RÓTULO INFERIOR
-      this.textoSaldo = "Lucro"; // ✅ SUBSTITUI "Saldo"
+      this.rotulo = "RESTANDO P/ META";
+      this.textoSaldo = "Lucro";
       this.valorExtra = 0;
     }
-
-    // ✅ LOG PARA DEBUG
-    console.log("🎯 Regras aplicadas:", {
-      banca: this.bancaTotal,
-      saldo: this.saldoDia,
-      meta: this.metaCalculada,
-      status: this.statusMeta,
-      rotulo: this.rotulo,
-      textoSaldo: this.textoSaldo,
-      valorExtra: this.valorExtra,
-      deveMostrarExtra: this.valorExtra > 0,
-    });
-  },
-
-  // Obtém saldo de forma robusta
-  obterSaldoDia(data = null) {
-    if (data && data.lucro !== undefined) {
-      return parseFloat(data.lucro) || 0;
-    }
-
-    if (
-      data &&
-      data.green_total !== undefined &&
-      data.red_total !== undefined
-    ) {
-      return (
-        (parseFloat(data.green_total) || 0) - (parseFloat(data.red_total) || 0)
-      );
-    }
-
-    return 0;
   },
 
   // Formata moeda
@@ -1988,27 +2102,22 @@ const MetaProgressoWidget = {
     });
   },
 
-  // ✅ NOVA FUNÇÃO: Calcula progresso com regras especiais
+  // Calcula progresso
   calcularProgresso() {
-    // Se não tem banca, progresso é 0
     if (this.bancaTotal <= 0) {
       return 0;
     }
 
-    // Se meta foi batida, progresso é 100%
     if (this.statusMeta === "meta-batida") {
       return 100;
     }
 
-    // Se saldo é negativo, calcula progresso negativo
     if (this.saldoDia < 0) {
-      // Progresso negativo baseado no valor absoluto do saldo
       const progressoNegativo =
         Math.abs(this.saldoDia / this.metaCalculada) * 100;
-      return -Math.min(progressoNegativo, 100); // Negativo, limitado a -100%
+      return -Math.min(progressoNegativo, 100);
     }
 
-    // Progresso normal
     if (this.metaCalculada === 0) return 0;
     return Math.max(
       0,
@@ -2016,189 +2125,146 @@ const MetaProgressoWidget = {
     );
   },
 
-  // ✅ FUNÇÃO CORRIGIDA: Atualiza interface com textos nos locais corretos
+  // Atualiza interface completa
   atualizarInterface() {
     const metaValor = document.getElementById("meta-valor");
     const rotuloMeta = document.getElementById("rotulo-meta");
     const saldoInfo = document.getElementById("saldo-info");
-    const percentualInfo = document.getElementById("percentual-info");
     const barraProgresso = document.getElementById("barra-progresso");
     const valorUltrapassou = document.getElementById("valor-ultrapassou");
     const valorExtra = document.getElementById("valor-extra");
 
-    if (!metaValor || !barraProgresso) {
-      console.log("⚠️ Elementos não encontrados");
+    if (!metaValor && !barraProgresso) {
+      console.log("⚠️ Elementos do widget não encontrados");
       return;
     }
 
-    // ✅ ATUALIZA VALOR PRINCIPAL (sempre moeda formatada)
-    const valorTextoElement = metaValor.querySelector(".valor-texto");
-    const loadingText = metaValor.querySelector(".loading-text");
+    // ✅ ATUALIZAR VALOR PRINCIPAL DO WIDGET
+    if (metaValor) {
+      const valorTextoElement = metaValor.querySelector(".valor-texto");
+      const loadingText = metaValor.querySelector(".loading-text");
 
-    if (loadingText) {
-      loadingText.remove();
-    }
+      if (loadingText) {
+        loadingText.remove();
+      }
 
-    // O valor principal sempre mostra valor em moeda
-    const valorParaMostrar = this.formatarMoeda(this.metaFinal);
+      const valorParaMostrar = this.formatarMoeda(this.metaFinal);
 
-    // Se existe o span do valor, atualiza apenas ele
-    if (valorTextoElement) {
-      valorTextoElement.textContent = valorParaMostrar;
-    } else {
-      // Se não existe, cria mantendo o ícone
-      const icone = metaValor.querySelector(".fa-solid.fa-coins");
-      if (icone) {
-        // Limpa conteúdo mas mantém ícone
-        metaValor.innerHTML = "";
-        metaValor.appendChild(icone);
-
-        // Adiciona o texto
-        const novoSpan = document.createElement("span");
-        novoSpan.className = "valor-texto";
-        novoSpan.textContent = valorParaMostrar;
-        metaValor.appendChild(novoSpan);
+      if (valorTextoElement) {
+        valorTextoElement.textContent = valorParaMostrar;
       } else {
-        // Se não tem ícone, adiciona tudo
-        metaValor.innerHTML = `
-          <i class="fa-solid fa-coins"></i>
-          <span class="valor-texto">${valorParaMostrar}</span>
-        `;
+        const icone = metaValor.querySelector(".fa-solid.fa-coins");
+        if (icone) {
+          metaValor.innerHTML = "";
+          metaValor.appendChild(icone);
+          const novoSpan = document.createElement("span");
+          novoSpan.className = "valor-texto";
+          novoSpan.textContent = valorParaMostrar;
+          metaValor.appendChild(novoSpan);
+        } else {
+          metaValor.innerHTML = `
+            <i class="fa-solid fa-coins"></i>
+            <span class="valor-texto">${valorParaMostrar}</span>
+          `;
+        }
       }
     }
 
     const progresso = this.calcularProgresso();
 
-    // ✅ ATUALIZA SALDO COM TEXTO DINÂMICO (Negativo/Neutro/Lucro)
+    // ✅ ATUALIZAR SALDO COM CORES CONDICIONAIS
     if (saldoInfo) {
+      let classCor = "saldo-zero";
+      if (this.saldoDia > 0) {
+        classCor = "saldo-positivo";
+      } else if (this.saldoDia < 0) {
+        classCor = "saldo-negativo";
+      }
+
+      saldoInfo.className = classCor;
       saldoInfo.innerHTML = `
         <i class="fa-solid fa-wallet"></i>
         ${this.textoSaldo}: ${this.formatarMoeda(this.saldoDia)}
       `;
     }
 
-    // ✅ ATUALIZA PERCENTUAL SEM DUPLICAR %
-    if (percentualInfo) {
-      let percentualTexto;
-
-      if (this.bancaTotal <= 0) {
-        percentualTexto = "0%";
-      } else if (this.statusMeta === "meta-batida") {
-        percentualTexto = "100%";
-      } else if (progresso < 0) {
-        percentualTexto = `${Math.round(progresso)}%`; // Já é negativo, já tem %
-      } else {
-        percentualTexto = `${Math.round(progresso)}%`; // Já tem %
-      }
-
-      percentualInfo.innerHTML = `
-        <i class="fa-solid fa-percent"></i>
-        ${percentualTexto}
-      `;
-    }
-
-    // ✅ ATUALIZA RÓTULO INFERIOR
+    // Atualizar rótulo
     if (rotuloMeta) {
       rotuloMeta.innerHTML = this.rotulo;
     }
 
-    // ✅ CONTROLE RIGOROSO DO LUCRO EXTRA
+    // Controlar lucro extra
     if (valorUltrapassou && valorExtra) {
       if (this.valorExtra > 0 && this.statusMeta === "meta-batida") {
-        // MOSTRA o lucro extra
         valorExtra.textContent = this.formatarMoeda(this.valorExtra);
         valorUltrapassou.style.display = "flex";
         valorUltrapassou.classList.add("mostrar");
-
-        console.log(
-          "✅ Mostrando lucro extra:",
-          this.formatarMoeda(this.valorExtra)
-        );
       } else {
-        // ESCONDE o lucro extra SEMPRE que não for meta batida com valor extra
         valorExtra.textContent = "R$ 0,00";
         valorUltrapassou.style.display = "none";
         valorUltrapassou.classList.remove("mostrar");
-
-        console.log(
-          "🚫 Ocultando lucro extra - Status:",
-          this.statusMeta,
-          "Valor Extra:",
-          this.valorExtra
-        );
       }
     }
 
-    // ✅ ATUALIZA BARRA COM LÓGICA ESPECIAL
-    this.atualizarBarra(barraProgresso, progresso);
-
-    // Aplica cores baseadas no estado
-    this.aplicarCores(metaValor, rotuloMeta, barraProgresso, progresso);
-
-    console.log("✅ Widget atualizado - Textos corretos:", {
-      banca: this.bancaTotal,
-      meta: this.metaCalculada,
-      saldo: this.saldoDia,
-      status: this.statusMeta,
-      valorPrincipal: valorParaMostrar,
-      textoSaldo: this.textoSaldo,
-      rotuloInferior: this.rotulo,
-      progresso: progresso,
-      valorExtra: this.valorExtra,
-      deveMostrarLucroExtra:
-        this.valorExtra > 0 && this.statusMeta === "meta-batida",
-    });
+    // ✅ ATUALIZAR BARRA COM PORCENTAGEM NA PONTA
+    if (barraProgresso) {
+      this.atualizarBarra(barraProgresso, progresso);
+      this.aplicarCores(metaValor, rotuloMeta, barraProgresso, progresso);
+    }
   },
 
-  // ✅ NOVA FUNÇÃO: Atualiza barra com lógica especial
+  // ✅ ATUALIZA BARRA COM PORCENTAGEM NA PONTA
   atualizarBarra(barraProgresso, progresso) {
-    let larguraBarra;
+    const porcentagemTexto = document.getElementById("porcentagem-barra");
 
-    if (this.bancaTotal <= 0) {
-      larguraBarra = 0;
-    } else if (this.statusMeta === "meta-batida") {
-      larguraBarra = 100;
-    } else if (progresso < 0) {
-      // Para progresso negativo, mostra barra crescendo da direita para esquerda
-      larguraBarra = Math.min(Math.abs(progresso), 100);
-    } else {
-      larguraBarra = progresso;
-    }
+    let larguraBarra = Math.abs(progresso);
+    if (this.bancaTotal <= 0) larguraBarra = 0;
+    if (this.statusMeta === "meta-batida") larguraBarra = 100;
 
-    // Aplica largura
     barraProgresso.style.width = `${larguraBarra}%`;
 
-    // Para saldos negativos, adiciona classe especial
     if (progresso < 0) {
       barraProgresso.classList.add("barra-negativa");
     } else {
       barraProgresso.classList.remove("barra-negativa");
     }
+
+    // ✅ PORCENTAGEM NA PONTA DA BARRA
+    if (porcentagemTexto) {
+      porcentagemTexto.textContent = Math.round(progresso) + "%";
+
+      if (larguraBarra <= 0) {
+        porcentagemTexto.style.display = "none";
+      } else if (larguraBarra < 15) {
+        porcentagemTexto.style.display = "block";
+        porcentagemTexto.style.left = `${larguraBarra + 3}%`;
+        porcentagemTexto.style.color = this.obterCorBarra(progresso);
+      } else {
+        porcentagemTexto.style.display = "block";
+        porcentagemTexto.style.left = `${larguraBarra - 10}%`;
+        porcentagemTexto.style.color = "#fff";
+      }
+    }
   },
 
-  // ✅ FUNÇÃO DE CORES MELHORADA COM NOVOS STATUS
-  aplicarCores(metaValor, rotuloMeta, barraProgresso, progresso) {
-    // Remove todas as classes e estilos anteriores da barra
-    barraProgresso.className = "widget-barra-progresso barra-progresso";
-    barraProgresso.removeAttribute("style");
+  // Obtém cor da barra
+  obterCorBarra(progresso) {
+    if (progresso < 0) return "#e74c3c";
+    if (this.statusMeta === "meta-batida") return "#2196f3";
+    return "#4caf50";
+  },
 
-    // Força largura primeiro
+  // Aplica cores
+  aplicarCores(metaValor, rotuloMeta, barraProgresso, progresso) {
     const larguraBarra =
       this.bancaTotal <= 0
         ? 0
         : this.statusMeta === "meta-batida"
         ? 100
-        : progresso < 0
-        ? Math.min(Math.abs(progresso), 100)
-        : progresso;
+        : Math.abs(progresso);
 
-    barraProgresso.style.width = `${larguraBarra}%`;
-
-    // Determina cor baseada no status ATUALIZADO
-    let corBarra = "#9E9E9E"; // Padrão cinza
+    let corBarra = "#9E9E9E";
     let corTexto = "#7f8c8d";
-
-    const valorTexto = metaValor.querySelector(".valor-texto");
 
     switch (this.statusMeta) {
       case "sem-banca":
@@ -2212,29 +2278,24 @@ const MetaProgressoWidget = {
       case "negativo":
         corBarra = "#f44336";
         corTexto = "#e74c3c";
-        barraProgresso.classList.add("barra-negativa");
         break;
-      case "neutro": // ✅ NOVO STATUS
+      case "neutro":
         corBarra = "#95a5a6";
         corTexto = "#7f8c8d";
         break;
-      case "lucro": // ✅ NOVO STATUS
+      case "lucro":
         corBarra = "#4CAF50";
         corTexto = "#00a651";
         break;
-      default:
-        corBarra = "#9E9E9E";
-        corTexto = "#7f8c8d";
     }
 
-    // Aplica cor no texto
-    if (valorTexto) {
-      valorTexto.style.color = corTexto;
+    if (metaValor) {
+      const valorTexto = metaValor.querySelector(".valor-texto");
+      if (valorTexto) {
+        valorTexto.style.color = corTexto;
+      }
     }
 
-    // MÚLTIPLAS TENTATIVAS DE APLICAR COR NA BARRA:
-
-    // 1. Aplica estilos inline diretamente com cssText
     barraProgresso.style.cssText = `
       width: ${larguraBarra}% !important;
       height: 100% !important;
@@ -2242,37 +2303,9 @@ const MetaProgressoWidget = {
       background: ${corBarra} !important;
       border-radius: 20px !important;
     `;
-
-    // 2. Força via setProperty com important
-    barraProgresso.style.setProperty("background-color", corBarra, "important");
-    barraProgresso.style.setProperty("background", corBarra, "important");
-    barraProgresso.style.setProperty("width", `${larguraBarra}%`, "important");
-
-    // 3. Adiciona classe CSS dinâmica específica para a cor
-    const classCor = `cor-${corBarra.replace("#", "")}`;
-    barraProgresso.classList.add(classCor);
-
-    // 4. Força via setAttribute como último recurso
-    setTimeout(() => {
-      barraProgresso.setAttribute(
-        "style",
-        `width: ${larguraBarra}% !important; background-color: ${corBarra} !important; background: ${corBarra} !important; height: 100% !important; border-radius: 20px !important;`
-      );
-
-      console.log("🎨 Cor aplicada - Estado final:", {
-        status: this.statusMeta,
-        corBarra,
-        larguraBarra: larguraBarra + "%",
-        progresso: progresso + "%",
-        estiloCSS: barraProgresso.style.cssText,
-        backgroundColor:
-          window.getComputedStyle(barraProgresso).backgroundColor,
-        classes: barraProgresso.className,
-      });
-    }, 50);
   },
 
-  // ✅ NOVA FUNÇÃO: Atualiza data no header
+  // Atualiza data
   atualizarData() {
     const dataAtualElement = document.getElementById("data-atual");
     if (dataAtualElement) {
@@ -2289,31 +2322,29 @@ const MetaProgressoWidget = {
     }
   },
 
-  // Inicialização completa
+  // ✅ INICIALIZAÇÃO
   inicializar() {
-    console.log("🚀 Inicializando Widget Completo...");
+    console.log("🚀 Inicializando Widget com dados PHP...");
 
     this.integrarComMetaDiariaManager();
     this.atualizarData();
 
-    // Primeira atualização
     setTimeout(() => {
-      if (MetaDiariaManager && MetaDiariaManager.atualizarMetaDiaria) {
+      if (typeof MetaDiariaManager !== "undefined") {
         MetaDiariaManager.atualizarMetaDiaria();
       }
     }, 1500);
 
-    console.log("✅ Widget completo inicializado");
+    console.log("✅ Widget integrado com dados_banca.php");
   },
 };
 
 // ========================================
-// ATUALIZAÇÃO DOS OUTROS MANAGERS
+// MANAGER ATUALIZADO PARA SEUS DADOS
 // ========================================
 
 const DadosManagerAtualizado = {
-  ...DadosManager,
-
+  // Função para atualizar dados usando seu PHP
   atualizarLucroEBancaViaAjax() {
     return fetch("dados_banca.php", {
       method: "GET",
@@ -2331,195 +2362,319 @@ const DadosManagerAtualizado = {
           throw new Error(data.message || "Resposta inválida do servidor");
         }
 
-        // Atualiza elementos existentes
-        this.atualizarElementosLucro(data);
-        this.atualizarElementosBanca(data);
+        console.log("📊 Dados recebidos do PHP:", data);
 
-        // ✅ ATUALIZA meta diária (agora com todas as regras)
+        // Atualizar elementos se existirem
+        if (typeof this.atualizarElementosLucro === "function") {
+          this.atualizarElementosLucro(data);
+        }
+        if (typeof this.atualizarElementosBanca === "function") {
+          this.atualizarElementosBanca(data);
+        }
+
+        // Atualizar meta diária
         MetaDiariaManager.atualizarElementoMeta(data);
-
-        // Calcula meta com dados atualizados
-        const bancaFloat = Utils.getValorNumerico(data.banca_formatada);
-        this.calcularMeta(bancaFloat);
 
         return data;
       })
       .catch((error) => {
         console.error("Erro ao atualizar dados da banca:", error);
-        ToastManager.mostrar("❌ Erro ao atualizar dados financeiros", "erro");
+        if (typeof ToastManager !== "undefined") {
+          ToastManager.mostrar(
+            "❌ Erro ao atualizar dados financeiros",
+            "erro"
+          );
+        }
         throw error;
       });
   },
 };
 
-const FormularioValorManagerAtualizado = {
-  ...FormularioValorManager,
+// ========================================
+// FUNÇÕES GLOBAIS
+// ========================================
 
-  async processarSubmissao(formData) {
-    try {
-      LoaderManager.mostrar();
-
-      const response = await fetch("cadastrar-valor.php", {
-        method: "POST",
-        body: formData,
-      });
-
-      if (!response.ok) throw new Error(`HTTP ${response.status}`);
-
-      const resposta = await response.json();
-
-      ToastManager.mostrar(resposta.mensagem, resposta.tipo);
-
-      if (resposta.tipo === "sucesso") {
-        this.resetarFormulario();
-
-        // Atualiza todos os dados incluindo meta diária
-        await Promise.all([
-          MentorManager.recarregarMentores(),
-          DadosManagerAtualizado.atualizarLucroEBancaViaAjax(),
-          // ✅ Aguarda um pouco para o saldo do dia ser atualizado
-          new Promise((resolve) => setTimeout(resolve, 300)),
-        ]);
-
-        // ✅ Força recálculo da meta após saldo ser atualizado
-        setTimeout(() => {
-          MetaDiariaManager.atualizarMetaDiaria();
-        }, 500);
-
-        if (typeof atualizarDadosModal === "function") {
-          atualizarDadosModal();
-        }
-      }
-    } catch (error) {
-      console.error("Erro ao enviar formulário:", error);
-      ToastManager.mostrar("❌ Erro ao enviar dados", "erro");
-    } finally {
-      LoaderManager.ocultar();
-    }
-  },
+window.atualizarMetaDiaria = () => {
+  console.log("🔄 Função global: atualizarMetaDiaria chamada");
+  return MetaDiariaManager.atualizarMetaDiaria();
 };
-
-const MentorManagerAtualizado = {
-  ...MentorManager,
-
-  async recarregarMentores() {
-    try {
-      const response = await fetch("carregar-mentores.php", {
-        method: "GET",
-        headers: {
-          "Cache-Control": "no-cache",
-          "X-Requested-With": "XMLHttpRequest",
-        },
-      });
-
-      if (!response.ok) {
-        throw new Error(`HTTP ${response.status}: ${response.statusText}`);
-      }
-
-      const html = await response.text();
-      const container = document.getElementById("listaMentores");
-
-      if (!container) {
-        throw new Error("Container de mentores não encontrado");
-      }
-
-      const formularioAberto =
-        document.querySelector(".formulario-mentor")?.style.display === "block";
-      const telaEdicaoAberta =
-        document.getElementById("tela-edicao")?.style.display === "block";
-
-      container.innerHTML = html;
-
-      this.aplicarEstilosCorretos();
-      this.atualizarDashboard(container);
-      this.adicionarEventosMentores(container);
-
-      // ✅ Aguarda um pouco para elementos serem processados
-      setTimeout(() => {
-        MetaDiariaManager.atualizarMetaDiaria();
-      }, 300);
-
-      if (formularioAberto && !telaEdicaoAberta) {
-        const formulario = document.querySelector(".formulario-mentor");
-        if (formulario) {
-          formulario.style.display = "block";
-        }
-      }
-
-      console.log("✅ Mentores recarregados com sucesso");
-    } catch (error) {
-      console.error("Erro ao recarregar mentores:", error);
-      ToastManager.mostrar(
-        "❌ Erro ao carregar mentores: " + error.message,
-        "erro"
-      );
-    }
-  },
-};
-
-const AppAtualizado = {
-  ...App,
-
-  async inicializarComponentes() {
-    try {
-      // Inicializa meta diária primeiro
-      await MetaDiariaManager.inicializar();
-
-      // Inicializa dados da banca
-      await DadosManagerAtualizado.atualizarLucroEBancaViaAjax();
-
-      // Carrega mentores
-      await MentorManagerAtualizado.recarregarMentores();
-
-      // ✅ CONFIGURA OBSERVER PARA SALDO DO DIA
-      setTimeout(() => {
-        MetaDiariaManager.atualizarQuandoSaldoMudar();
-      }, 1000);
-
-      MascaraManager.configurarCampoNome();
-      ModalManager.inicializarEventosGlobais();
-      MenuManager.inicializar();
-
-      console.log("✅ Componentes inicializados com meta diária e observer");
-    } catch (error) {
-      console.error("❌ Erro na inicialização dos componentes:", error);
-      throw error;
-    }
-  },
-};
-
-// ✅ SUBSTITUI OS MANAGERS GLOBAIS
-Object.assign(DadosManager, DadosManagerAtualizado);
-Object.assign(FormularioValorManager, FormularioValorManagerAtualizado);
-Object.assign(MentorManager, MentorManagerAtualizado);
-Object.assign(App, AppAtualizado);
-
-// ✅ FUNÇÕES GLOBAIS ATUALIZADAS
-window.atualizarMetaDiaria = () => MetaDiariaManager.atualizarMetaDiaria();
 
 window.atualizarLucroEBancaViaAjax = async () => {
   try {
     await DadosManagerAtualizado.atualizarLucroEBancaViaAjax();
-    // Aguarda um pouco para saldo ser atualizado
     setTimeout(() => {
       MetaDiariaManager.atualizarMetaDiaria();
     }, 300);
-    console.log("✅ Dados da banca e meta diária atualizados");
+    console.log("✅ Dados atualizados com dados_banca.php");
   } catch (error) {
     console.error("❌ Erro ao atualizar dados:", error);
   }
 };
 
-// ✅ INICIALIZAÇÃO AUTOMÁTICA
+// ✅ FUNÇÃO PARA FORÇAR ATUALIZAÇÃO COMPLETA
+window.forcarAtualizacaoMeta = async () => {
+  console.log("🔄 Forçando atualização completa da meta...");
+  try {
+    const data = await MetaDiariaManager.atualizarMetaDiaria();
+    if (data && typeof MetaProgressoWidget !== "undefined") {
+      MetaProgressoWidget.atualizarWidget(data);
+    }
+    console.log("✅ Atualização forçada concluída");
+    return data;
+  } catch (error) {
+    console.error("❌ Erro na atualização forçada:", error);
+    return null;
+  }
+};
+
+// ========================================
+// FUNÇÕES DE TESTE E DEBUG
+// ========================================
+
+// ✅ FUNÇÃO DE DEBUG COMPLETA
+window.debugMeta = () => {
+  console.log("🔍 DEBUG META - Verificando elementos...");
+
+  const elementos = [
+    "meta-diaria-ajax",
+    "meta-valor",
+    "barra-progresso",
+    "rotulo-meta",
+    "saldo-info",
+    "valor-ultrapassou",
+    "valor-extra",
+    "data-atual",
+  ];
+
+  elementos.forEach((id) => {
+    const el = document.getElementById(id);
+    console.log(`${id}:`, el ? "✅ ENCONTRADO" : "❌ NÃO ENCONTRADO", el);
+  });
+
+  // Buscar por classes
+  const classes = [
+    ".valor-meta",
+    ".meta-valor",
+    ".rotulo-meta",
+    ".valor-texto",
+    ".loading-text",
+  ];
+
+  classes.forEach((cls) => {
+    const el = document.querySelector(cls);
+    console.log(`${cls}:`, el ? "✅ ENCONTRADO" : "❌ NÃO ENCONTRADO", el);
+  });
+
+  return {
+    MetaDiariaManager,
+    MetaProgressoWidget,
+  };
+};
+
+// ✅ FUNÇÃO PARA TESTAR SISTEMA COMPLETO
+window.testarMeta = async () => {
+  console.log("🧪 Testando sistema de meta completo...");
+
+  try {
+    // 1. Buscar dados do servidor
+    console.log("1️⃣ Buscando dados do servidor...");
+    const response = await fetch("dados_banca.php");
+    const data = await response.json();
+
+    console.log("📊 Dados do servidor:", data);
+
+    // 2. Verificar se dados são válidos
+    console.log("2️⃣ Verificando dados...");
+    if (!data.success) {
+      throw new Error("Dados inválidos: " + data.message);
+    }
+
+    // 3. Testar atualização do elemento principal
+    console.log("3️⃣ Testando atualização do elemento principal...");
+    MetaDiariaManager.atualizarElementoMeta(data);
+
+    // 4. Testar widget se existir
+    console.log("4️⃣ Testando widget...");
+    if (typeof MetaProgressoWidget !== "undefined") {
+      MetaProgressoWidget.atualizarWidget(data);
+    }
+
+    // 5. Verificar se elementos foram atualizados
+    console.log("5️⃣ Verificando se elementos foram atualizados...");
+    const elementos = [
+      { id: "meta-diaria-ajax", nome: "Meta Ajax" },
+      { id: "meta-valor", nome: "Meta Valor" },
+      { classe: ".valor-meta", nome: "Valor Meta (classe)" },
+    ];
+
+    elementos.forEach((item) => {
+      const el = item.id
+        ? document.getElementById(item.id)
+        : document.querySelector(item.classe);
+      if (el) {
+        console.log(`✅ ${item.nome}:`, el.textContent || el.innerHTML);
+      } else {
+        console.log(`❌ ${item.nome}: não encontrado`);
+      }
+    });
+
+    console.log("✅ Teste concluído com sucesso");
+    return data;
+  } catch (error) {
+    console.error("❌ Erro no teste:", error);
+    return null;
+  }
+};
+
+// ✅ FUNÇÃO PARA SIMULAR DADOS DE TESTE
+window.simularDados = (banca = 1000, meta = 20, lucro = 0) => {
+  console.log("🧪 Simulando dados para teste...");
+
+  const dadosSimulados = {
+    success: true,
+    banca: banca,
+    meta_diaria: meta,
+    lucro: lucro,
+    meta_diaria_formatada: `R$ ${meta.toFixed(2).replace(".", ",")}`,
+    meta_diaria_brl: `R$ ${meta.toFixed(2).replace(".", ",")}`,
+    banca_formatada: `R$ ${banca.toFixed(2).replace(".", ",")}`,
+    lucro_formatado: `R$ ${lucro.toFixed(2).replace(".", ",")}`,
+    calculo_detalhado: {
+      saldo_banca_total: banca,
+      depositos: banca,
+      saques: 0,
+      lucro: lucro,
+    },
+  };
+
+  console.log("📊 Dados simulados:", dadosSimulados);
+
+  // Aplicar dados simulados
+  MetaDiariaManager.atualizarElementoMeta(dadosSimulados);
+
+  if (typeof MetaProgressoWidget !== "undefined") {
+    MetaProgressoWidget.atualizarWidget(dadosSimulados);
+  }
+
+  return dadosSimulados;
+};
+
+// ========================================
+// INICIALIZAÇÃO AUTOMÁTICA
+// ========================================
+
 if (document.readyState === "loading") {
   document.addEventListener("DOMContentLoaded", () => {
+    console.log("📄 DOM carregado, inicializando sistemas...");
+    MetaDiariaManager.inicializar();
     MetaProgressoWidget.inicializar();
+
+    // Configurar observer para mudanças no saldo
+    MetaDiariaManager.atualizarQuandoSaldoMudar();
   });
 } else {
+  console.log("📄 DOM já carregado, inicializando sistemas...");
+  MetaDiariaManager.inicializar();
   MetaProgressoWidget.inicializar();
+
+  // Configurar observer para mudanças no saldo
+  MetaDiariaManager.atualizarQuandoSaldoMudar();
 }
 
-// ✅ FUNÇÕES DE DEBUG
+// ========================================
+// EXEMPLO DE COMO ENVIAR DADOS PARA SEU PHP
+// ========================================
+
+// Função para enviar depósito
+window.enviarDeposito = async (valor, diaria = 2, unidade = 2, odds = 1.5) => {
+  try {
+    console.log("💰 Enviando depósito:", { valor, diaria, unidade, odds });
+
+    const response = await fetch("dados_banca.php", {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify({
+        acao: "deposito",
+        valor: valor,
+        diaria: diaria,
+        unidade: unidade,
+        odds: odds,
+      }),
+    });
+
+    const data = await response.json();
+
+    if (data.success) {
+      console.log("✅ Depósito realizado:", data);
+      setTimeout(() => {
+        MetaDiariaManager.atualizarMetaDiaria();
+      }, 300);
+    } else {
+      console.error("❌ Erro no depósito:", data.message);
+    }
+
+    return data;
+  } catch (error) {
+    console.error("❌ Erro ao enviar depósito:", error);
+    throw error;
+  }
+};
+
+// Função para enviar saque
+window.enviarSaque = async (valor, diaria = 2, unidade = 2, odds = 1.5) => {
+  try {
+    console.log("💸 Enviando saque:", { valor, diaria, unidade, odds });
+
+    const response = await fetch("dados_banca.php", {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify({
+        acao: "saque",
+        valor: valor,
+        diaria: diaria,
+        unidade: unidade,
+        odds: odds,
+      }),
+    });
+
+    const data = await response.json();
+
+    if (data.success) {
+      console.log("✅ Saque realizado:", data);
+      setTimeout(() => {
+        MetaDiariaManager.atualizarMetaDiaria();
+      }, 300);
+    } else {
+      console.error("❌ Erro no saque:", data.message);
+    }
+
+    return data;
+  } catch (error) {
+    console.error("❌ Erro ao enviar saque:", error);
+    throw error;
+  }
+};
+
+console.log("✅ Sistema integrado com seu dados_banca.php!");
+
+// ========================================
+// SUBSTITUIR MANAGERS EXISTENTES (se necessário)
+// ========================================
+
+// Se você já tem DadosManager no seu sistema, substitui pelas funções atualizadas
+if (typeof DadosManager !== "undefined") {
+  Object.assign(DadosManager, DadosManagerAtualizado);
+  console.log("🔄 DadosManager existente atualizado");
+}
+
+// ========================================
+// FUNÇÕES DE DEBUG E TESTE ORIGINAIS
+// ========================================
+
 window.debugWidgetCompleto = () => {
   console.log("Debug Widget Completo:", MetaProgressoWidget);
   return MetaProgressoWidget;
@@ -2536,17 +2691,7 @@ window.debugBarra = () => {
       computedBackgroundColor: computedStyle.backgroundColor,
       computedBackground: computedStyle.background,
       computedWidth: computedStyle.width,
-      hasStyle: barra.hasAttribute("style"),
-      styleAttribute: barra.getAttribute("style"),
     });
-
-    // Testa aplicação de cor manualmente
-    console.log("🧪 Teste manual de cor:");
-    barra.style.backgroundColor = "#FF0000";
-    console.log(
-      "Cor vermelha aplicada:",
-      window.getComputedStyle(barra).backgroundColor
-    );
   }
   return barra;
 };
@@ -2579,13 +2724,44 @@ window.testarRegrasNegocio = (banca, meta, saldo) => {
     textoSaldo = `Lucro: R$ ${saldo.toFixed(2)}`;
   }
 
-  console.log("Valor Principal (grande com moeda):", valorPrincipal);
-  console.log("Rótulo Inferior (abaixo do valor):", rotuloInferior);
-  console.log("Texto do Saldo (no lugar de 'Saldo'):", textoSaldo);
+  console.log("Valor Principal:", valorPrincipal);
+  console.log("Rótulo Inferior:", rotuloInferior);
+  console.log("Texto do Saldo:", textoSaldo);
   return { valorPrincipal, rotuloInferior, textoSaldo };
 };
 
-console.log("✅ Sistema completo com textos dinâmicos no saldo carregado!");
+// ========================================
+// ATALHOS PARA DESENVOLVIMENTO
+// ========================================
+
+// Atalhos globais para facilitar desenvolvimento
+window.$ = {
+  debug: () => debugMeta(),
+  test: () => testarMeta(),
+  force: () => forcarAtualizacaoMeta(),
+  simulate: (banca, meta, lucro) => simularDados(banca, meta, lucro),
+};
+
+// ========================================
+// LOGS FINAIS
+// ========================================
+
+console.log("✅ Sistema de Meta Diária - TOTALMENTE CARREGADO!");
+console.log("🔧 Funções disponíveis:");
+console.log("  - atualizarMetaDiaria()");
+console.log("  - forcarAtualizacaoMeta()");
+console.log("  - debugMeta()");
+console.log("  - testarMeta()");
+console.log("  - simularDados(banca, meta, lucro)");
+console.log("  - enviarDeposito(valor)");
+console.log("  - enviarSaque(valor)");
+console.log("  - testarRegrasNegocio(banca, meta, saldo)");
+console.log("🎯 Atalhos rápidos:");
+console.log("  - $.debug() - Debug completo");
+console.log("  - $.test() - Testar sistema");
+console.log("  - $.force() - Forçar atualização");
+console.log("  - $.simulate(1000, 20, 5) - Simular dados");
+console.log("📱 Execute $.debug() para começar!");
 
 //
 //

@@ -1,5 +1,5 @@
 <?php
-// ✅ ARQUIVO DADOS_BANCA.PHP - CÁLCULO META CORRIGIDO
+// ✅ ARQUIVO DADOS_BANCA.PHP - COMPLETO COM META INCLUINDO LUCRO
 
 require_once 'config.php';
 require_once 'carregar_sessao.php';
@@ -35,11 +35,33 @@ function getUltimoCampo($conexao, $campo, $id_usuario) {
     return $valor;
 }
 
-// ✅ FUNÇÃO PARA CALCULAR META DIÁRIA - CORRIGIDA
-function calcularMetaDiaria($conexao, $id_usuario, $total_deposito, $total_saque) {
+// ✅ FUNÇÃO PARA CALCULAR LUCRO
+function calcularLucro($conexao, $id_usuario) {
+    $stmt = $conexao->prepare("
+        SELECT 
+            COALESCE(SUM(valor_green), 0),
+            COALESCE(SUM(valor_red), 0)
+        FROM valor_mentores
+        WHERE id_usuario = ?
+    ");
+    $stmt->bind_param("i", $id_usuario);
+    $stmt->execute();
+    $stmt->bind_result($total_green, $total_red);
+    $stmt->fetch();
+    $stmt->close();
+    
+    return [
+        'green' => $total_green,
+        'red' => $total_red,
+        'lucro' => $total_green - $total_red
+    ];
+}
+
+// ✅ FUNÇÃO PARA CALCULAR META DIÁRIA - CORRIGIDA COM LUCRO
+function calcularMetaDiaria($conexao, $id_usuario, $total_deposito, $total_saque, $lucro) {
     try {
-        // ✅ CORREÇÃO: Meta baseada apenas na banca (sem lucro)
-        $saldo_banca_para_meta = $total_deposito - $total_saque;
+        // ✅ CORREÇÃO: Meta baseada na banca TOTAL (depósito - saque + lucro)
+        $saldo_banca_para_meta = $total_deposito - $total_saque + $lucro;
         
         // Buscar os últimos valores de diária e unidade
         $stmt = $conexao->prepare("
@@ -59,7 +81,7 @@ function calcularMetaDiaria($conexao, $id_usuario, $total_deposito, $total_saque
         if ($diaria === null) $diaria = 2.00;
         if ($unidade === null) $unidade = 2;
         
-        // ✅ CÁLCULO CORRETO: (deposito - saque) * (diaria/100) * unidade
+        // ✅ CÁLCULO CORRETO: (deposito - saque + lucro) * (diaria/100) * unidade
         $porcentagem_decimal = $diaria / 100;
         $meta_diaria = $saldo_banca_para_meta * $porcentagem_decimal * $unidade;
         
@@ -77,6 +99,37 @@ function calcularMetaDiaria($conexao, $id_usuario, $total_deposito, $total_saque
             'diaria_usada' => 2,
             'unidade_usada' => 2,
             'saldo_banca_meta' => 0
+        ];
+    }
+}
+
+// ✅ NOVA FUNÇÃO PARA CALCULAR DADOS DA ÁREA DIREITA - COM SALDO TOTAL
+function calcularAreaDireita($conexao, $id_usuario, $saldo_banca_total) {
+    try {
+        // Buscar última diária cadastrada
+        $ultima_diaria = getUltimoCampo($conexao, 'diaria', $id_usuario);
+        $diaria = $ultima_diaria ?? 2.00;
+        
+        // ✅ USAR SALDO TOTAL DA BANCA (com lucro) para calcular UND
+        // Calcular unidade de entrada: saldo_total * (diária / 100)
+        $unidade_entrada = $saldo_banca_total * ($diaria / 100);
+        
+        return [
+            'diaria_porcentagem' => $diaria,
+            'saldo_banca_total' => $saldo_banca_total,
+            'unidade_entrada' => $unidade_entrada,
+            'diaria_formatada' => number_format($diaria, 0) . '%',
+            'unidade_entrada_formatada' => 'R$ ' . number_format($unidade_entrada, 2, ',', '.')
+        ];
+        
+    } catch (Exception $e) {
+        error_log("Erro ao calcular área direita: " . $e->getMessage());
+        return [
+            'diaria_porcentagem' => 2,
+            'saldo_banca_total' => 0,
+            'unidade_entrada' => 0,
+            'diaria_formatada' => '2%',
+            'unidade_entrada_formatada' => 'R$ 0,00'
         ];
     }
 }
@@ -137,24 +190,18 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         $total_deposito = getSoma($conexao, 'deposito', $id_usuario);
         $total_saque = getSoma($conexao, 'saque', $id_usuario);
         
-        $stmt = $conexao->prepare("
-            SELECT 
-                COALESCE(SUM(valor_green), 0),
-                COALESCE(SUM(valor_red), 0)
-            FROM valor_mentores
-            WHERE id_usuario = ?
-        ");
-        $stmt->bind_param("i", $id_usuario);
-        $stmt->execute();
-        $stmt->bind_result($total_green, $total_red);
-        $stmt->fetch();
-        $stmt->close();
+        // ✅ CALCULAR LUCRO
+        $dados_lucro = calcularLucro($conexao, $id_usuario);
+        $lucro = $dados_lucro['lucro'];
         
-        $lucro = $total_green - $total_red;
+        // ✅ SALDO TOTAL DA BANCA (DEPÓSITO - SAQUE + LUCRO)
         $saldo_banca_total = $total_deposito - $total_saque + $lucro;
         
-        // ✅ CALCULAR META BASEADA APENAS EM (DEPÓSITO - SAQUE)
-        $meta_resultado = calcularMetaDiaria($conexao, $id_usuario, $total_deposito, $total_saque);
+        // ✅ CALCULAR META BASEADA EM (DEPÓSITO - SAQUE + LUCRO) - CORRIGIDO!
+        $meta_resultado = calcularMetaDiaria($conexao, $id_usuario, $total_deposito, $total_saque, $lucro);
+        
+        // ✅ CALCULAR DADOS PARA ÁREA DIREITA COM SALDO TOTAL
+        $area_direita = calcularAreaDireita($conexao, $id_usuario, $saldo_banca_total);
         
         echo json_encode([
             'success' => true, 
@@ -164,10 +211,18 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             'lucro' => $lucro,
             'lucro_formatado' => 'R$ ' . number_format($lucro, 2, ',', '.'),
             'meta_diaria' => $meta_resultado['meta_diaria'],
-            'meta_diaria_formatada' => number_format($meta_resultado['meta_diaria'], 2, ',', '.'),
+            'meta_diaria_formatada' => 'R$ ' . number_format($meta_resultado['meta_diaria'], 2, ',', '.'),
+            'meta_diaria_brl' => 'R$ ' . number_format($meta_resultado['meta_diaria'], 2, ',', '.'),
             'diaria_atual' => $meta_resultado['diaria_usada'],
             'unidade_atual' => $meta_resultado['unidade_usada'],
-            'saldo_base_meta' => $meta_resultado['saldo_banca_meta']
+            'saldo_base_meta' => $meta_resultado['saldo_banca_meta'],
+            
+            // ✅ DADOS PARA ÁREA DIREITA COM SALDO TOTAL
+            'diaria_formatada' => $area_direita['diaria_formatada'],
+            'unidade_entrada_formatada' => $area_direita['unidade_entrada_formatada'],
+            'diaria_raw' => $area_direita['diaria_porcentagem'],
+            'saldo_banca_total' => $area_direita['saldo_banca_total'],
+            'unidade_entrada_raw' => $area_direita['unidade_entrada']
         ]);
         
     } catch (Exception $e) {
@@ -176,26 +231,18 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     exit;
 }
 
-// ✅ PROCESSAR REQUISIÇÕES GET (CONSULTAS) - CORRIGIDO
+// ✅ PROCESSAR REQUISIÇÕES GET (CONSULTAS) - CORRIGIDO COM LUCRO NA META
 try {
     $total_deposito = getSoma($conexao, 'deposito', $id_usuario);
     $total_saque = getSoma($conexao, 'saque', $id_usuario);
     
-    // Buscar valores de green e red
-    $stmt = $conexao->prepare("
-        SELECT 
-            COALESCE(SUM(valor_green), 0),
-            COALESCE(SUM(valor_red), 0)
-        FROM valor_mentores
-        WHERE id_usuario = ?
-    ");
-    $stmt->bind_param("i", $id_usuario);
-    $stmt->execute();
-    $stmt->bind_result($total_green, $total_red);
-    $stmt->fetch();
-    $stmt->close();
+    // ✅ CALCULAR LUCRO
+    $dados_lucro = calcularLucro($conexao, $id_usuario);
+    $total_green = $dados_lucro['green'];
+    $total_red = $dados_lucro['red'];
+    $lucro = $dados_lucro['lucro'];
     
-    $lucro = $total_green - $total_red;
+    // ✅ SALDO TOTAL DA BANCA (DEPÓSITO - SAQUE + LUCRO)
     $saldo_banca_total = $total_deposito - $total_saque + $lucro;
     
     // Buscar últimos valores de configuração
@@ -203,8 +250,11 @@ try {
     $ultima_unidade = getUltimoCampo($conexao, 'unidade', $id_usuario);
     $ultima_odds = getUltimoCampo($conexao, 'odds', $id_usuario);
     
-    // ✅ CALCULAR META BASEADA APENAS EM (DEPÓSITO - SAQUE)
-    $meta_resultado = calcularMetaDiaria($conexao, $id_usuario, $total_deposito, $total_saque);
+    // ✅ CALCULAR META BASEADA EM (DEPÓSITO - SAQUE + LUCRO) - CORRIGIDO!
+    $meta_resultado = calcularMetaDiaria($conexao, $id_usuario, $total_deposito, $total_saque, $lucro);
+    
+    // ✅ CALCULAR DADOS PARA ÁREA DIREITA COM SALDO TOTAL
+    $area_direita = calcularAreaDireita($conexao, $id_usuario, $saldo_banca_total);
     
     // ✅ RESPOSTA COMPLETA COM META CORRIGIDA
     echo json_encode([
@@ -227,15 +277,22 @@ try {
         'unidade' => $ultima_unidade ?? 2,
         'odds' => $ultima_odds ?? 1.5,
         
-        // ✅ META DIÁRIA BASEADA EM (DEPÓSITO - SAQUE)
+        // ✅ META DIÁRIA BASEADA EM (DEPÓSITO - SAQUE + LUCRO)
         'meta_diaria' => $meta_resultado['meta_diaria'],
-        'meta_diaria_formatada' => number_format($meta_resultado['meta_diaria'], 2, ',', '.'),
+        'meta_diaria_formatada' => 'R$ ' . number_format($meta_resultado['meta_diaria'], 2, ',', '.'),
         'meta_diaria_brl' => 'R$ ' . number_format($meta_resultado['meta_diaria'], 2, ',', '.'),
         'diaria_usada' => $meta_resultado['diaria_usada'],
         'unidade_usada' => $meta_resultado['unidade_usada'],
         'saldo_base_meta' => $meta_resultado['saldo_banca_meta'],
         
-        // ✅ INFORMAÇÕES DETALHADAS PARA DEBUG
+        // ✅ DADOS ESPECÍFICOS PARA ÁREA DIREITA COM SALDO TOTAL
+        'diaria_formatada' => $area_direita['diaria_formatada'],
+        'unidade_entrada_formatada' => $area_direita['unidade_entrada_formatada'],
+        'diaria_raw' => $area_direita['diaria_porcentagem'],
+        'saldo_banca_total' => $area_direita['saldo_banca_total'],
+        'unidade_entrada_raw' => $area_direita['unidade_entrada'],
+        
+        // ✅ INFORMAÇÕES DETALHADAS PARA DEBUG COM LUCRO
         'calculo_detalhado' => [
             'saldo_banca_total' => $saldo_banca_total,
             'saldo_base_meta' => $meta_resultado['saldo_banca_meta'],
@@ -244,7 +301,18 @@ try {
             'lucro' => $lucro,
             'diaria_percentual' => $meta_resultado['diaria_usada'],
             'unidade_multiplicador' => $meta_resultado['unidade_usada'],
-            'formula' => "Base: R$ " . number_format($total_deposito, 2, ',', '.') . " - R$ " . number_format($total_saque, 2, ',', '.') . " = R$ " . number_format($meta_resultado['saldo_banca_meta'], 2, ',', '.') . " × {$meta_resultado['diaria_usada']}% × {$meta_resultado['unidade_usada']} = R$ " . number_format($meta_resultado['meta_diaria'], 2, ',', '.')
+            'formula_meta' => "Base: (R$ " . number_format($total_deposito, 2, ',', '.') . " - R$ " . number_format($total_saque, 2, ',', '.') . " + R$ " . number_format($lucro, 2, ',', '.') . ") = R$ " . number_format($meta_resultado['saldo_banca_meta'], 2, ',', '.') . " × {$meta_resultado['diaria_usada']}% × {$meta_resultado['unidade_usada']} = R$ " . number_format($meta_resultado['meta_diaria'], 2, ',', '.')
+        ],
+        
+        // ✅ DADOS ESPECÍFICOS ÁREA DIREITA PARA DEBUG COM SALDO TOTAL
+        'area_direita_debug' => [
+            'formula_unidade' => "Saldo Total: R$ " . number_format($saldo_banca_total, 2, ',', '.') . " × {$area_direita['diaria_porcentagem']}% = {$area_direita['unidade_entrada_formatada']}",
+            'saldo_banca_total' => $saldo_banca_total,
+            'depositos' => $total_deposito,
+            'saques' => $total_saque,
+            'lucro' => $lucro,
+            'diaria_aplicada' => $area_direita['diaria_porcentagem'],
+            'resultado_unidade' => $area_direita['unidade_entrada']
         ]
     ]);
     
@@ -254,7 +322,10 @@ try {
         'success' => false, 
         'message' => 'Erro interno do servidor: ' . $e->getMessage(),
         'meta_diaria' => 0,
-        'meta_diaria_formatada' => '0,00'
+        'meta_diaria_formatada' => 'R$ 0,00',
+        'meta_diaria_brl' => 'R$ 0,00',
+        'diaria_formatada' => '2%',
+        'unidade_entrada_formatada' => 'R$ 0,00'
     ]);
 }
 ?>
