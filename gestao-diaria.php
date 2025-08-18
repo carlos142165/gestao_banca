@@ -512,310 +512,331 @@ ob_end_flush();
 
 
 <div class="container">
-    <!-- BLOCO 1 -->
-    <div class="bloco bloco-1">
-        <div class="container-resumos">
-            <!-- Widget Meta com seu código PHP integrado -->
-            <div class="widget-meta-container">
-                <div class="widget-meta-row">
-                    <div class="widget-meta-item" id="widget-meta">
-                        
-                        <!-- Header com data e placar integrados -->
-                        <div class="data-header-integrada" id="data-header">
-                            <!-- Data no canto esquerdo -->
-                            <div class="data-texto-compacto">
-                                <i class="fa-solid fa-calendar-days"></i>
-                                <span class="data-principal-integrada" id="data-atual">Carregando...</span>
-                            </div>
-                            
-                            <!-- Placar foi movido para a barra dos mentores -->
+    
+  <!-- BLOCO 1 -->
+  <div class="bloco bloco-1">
+    <div class="container-resumos">
+        <!-- Widget Meta com seu código PHP integrado -->
+        <div class="widget-meta-container">
+            <div class="widget-meta-row">
+                <div class="widget-meta-item" id="widget-meta">
+                    
+                    <!-- Header com data e placar integrados -->
+                  <div class="data-header-integrada" id="data-header">
+                     <div class="data-texto-compacto">
+                     <i class="fa-solid fa-calendar-days"></i>
+                     <span class="data-principal-integrada" id="data-atual"></span>
 
-                            
-                            <!-- Espaço para equilíbrio -->
-                            <div class="espaco-equilibrio"></div>
-                            
-                            <div class="data-separador-mini"></div>
-                            
-                            <div class="status-periodo-mini" id="status-periodo">
-                                <!-- Status período será preenchido via JS -->
+                   <!-- Badge do período será adicionado aqui automaticamente -->
+    
+                  </div>
+                        
+                        <!-- Caixas de seleção de período -->
+                        <div class="periodo-selecao-container">
+                            <div class="periodo-opcao">
+                                <label class="periodo-label">
+                                    <input type="radio" name="periodo" value="dia" class="periodo-radio" checked>
+                                    <span class="periodo-texto">DIA</span>
+                                </label>
+                            </div>
+                            <div class="periodo-opcao">
+                                <label class="periodo-label">
+                                    <input type="radio" name="periodo" value="mes" class="periodo-radio">
+                                    <span class="periodo-texto">MÊS</span>
+                                </label>
+                            </div>
+                            <div class="periodo-opcao">
+                                <label class="periodo-label">
+                                    <input type="radio" name="periodo" value="ano" class="periodo-radio">
+                                    <span class="periodo-texto">ANO</span>
+                                </label>
                             </div>
                         </div>
+                        
+                        <!-- Espaço para equilíbrio -->
+                        <div class="espaco-equilibrio"></div>
+                        
+                        <div class="data-separador-mini"></div>
+                        
+                        <div class="status-periodo-mini" id="status-periodo">
+                            <!-- Status período será preenchido via JS -->
+                        </div>
+                    </div>
 
-                        <!-- Conteúdo principal do widget -->
-                        <div class="widget-conteudo-principal">
-                            <div class="widget-meta-valor" id="meta-valor">
-                                <i class="fa-solid fa-coins"></i>
-                                <span class="valor-texto" id="valor-texto-meta">
-                                    <span class="loading-text">Calculando...</span>
-                                </span>
-                            </div>
-                            
-                            <!-- Exibição do valor que ultrapassou a meta -->
-                            <div class="valor-ultrapassou" id="valor-ultrapassou" style="display: none;">
-                                <i class="fa-solid fa-trophy"></i>
-                                <span class="texto-ultrapassou">Lucro Extra: <span id="valor-extra">R$ 0,00</span></span>
-                            </div>
-                            
-                            <div class="widget-meta-rotulo" id="rotulo-meta">Meta do Dia</div>
-                            
-                            <!-- Barra de progresso com porcentagem dentro -->
-                            <div class="widget-barra-container">
-                                <div class="widget-barra-progresso" id="barra-progresso"></div>
-                                <div class="porcentagem-barra" id="porcentagem-barra">0%</div>
-                            </div>
-                            
-                            <!-- Info de progresso apenas com saldo -->
-                            <div class="widget-info-progresso">
-                                <span id="saldo-info">
-                                    <i class="fa-solid fa-wallet"></i>
-                                    Saldo: R$ 0,00
-                                </span>
-                            </div>
+                    <!-- Conteúdo principal do widget -->
+                    <div class="widget-conteudo-principal">
+                        <div class="widget-meta-valor" id="meta-valor">
+                            <i class="fa-solid fa-coins"></i>
+                            <span class="valor-texto" id="valor-texto-meta">
+                                <span class="loading-text">Calculando...</span>
+                            </span>
+                        </div>
+                        
+                        <!-- Exibição do valor que ultrapassou a meta -->
+                        <div class="valor-ultrapassou" id="valor-ultrapassou" style="display: none;">
+                            <i class="fa-solid fa-trophy"></i>
+                            <span class="texto-ultrapassou">Lucro Extra: <span id="valor-extra">R$ 0,00</span></span>
+                        </div>
+                        
+                        <div class="widget-meta-rotulo" id="rotulo-meta">Meta do Dia</div>
+                        
+                        <!-- Barra de progresso com porcentagem dentro -->
+                        <div class="widget-barra-container">
+                            <div class="widget-barra-progresso" id="barra-progresso"></div>
+                            <div class="porcentagem-barra" id="porcentagem-barra">0%</div>
+                        </div>
+                        
+                        <!-- Info de progresso apenas com saldo -->
+                        <div class="widget-info-progresso">
+                            <span id="saldo-info">
+                                <i class="fa-solid fa-wallet"></i>
+                                Saldo: R$ 0,00
+                            </span>
                         </div>
                     </div>
                 </div>
             </div>
-
-            <!-- Campo Mentores com seu código PHP integrado -->
-            <div class="campo_mentores">
-                <!-- Barra superior com botão à esquerda e placar centralizado -->
-<div class="barra-superior">
-    <button class="btn-add-usuario" onclick="prepararFormularioNovoMentor()">
-        <i class="fas fa-user-plus"></i>
-    </button>
-    
-    <div class="area-central">
-        <div class="pontuacao" id="pontuacao">
-            <span class="placar-green">0</span>
-            <span class="separador">×</span>
-            <span class="placar-red">0</span>
         </div>
     </div>
 
-    <!-- ✅ NOVA ÁREA DIREITA -->
-    <div class="area-direita">
-        <div class="valor-dinamico valor-diaria">
-            <i class="fas fa-university"></i>
-            <span id="porcentagem-diaria">Carregando...</span>
+    <!-- Campo Mentores com seu código PHP integrado -->
+    <div class="campo_mentores">
+        <!-- Barra superior com botão à esquerda e placar centralizado -->
+        <div class="barra-superior">
+            <button class="btn-add-usuario" onclick="prepararFormularioNovoMentor()">
+                <i class="fas fa-user-plus"></i>
+            </button>
+            
+            <div class="area-central">
+                <div class="pontuacao" id="pontuacao">
+                    <span class="placar-green">0</span>
+                    <span class="separador">×</span>
+                    <span class="placar-red">0</span>
+                </div>
+            </div>
+
+            <!-- ✅ NOVA ÁREA DIREITA -->
+            <div class="area-direita">
+                <div class="valor-dinamico valor-diaria">
+                    <i class="fas fa-university"></i>
+                    <span id="porcentagem-diaria">Carregando...</span>
+                </div>
+                <div class="valor-dinamico valor-unidade">
+                    <span class="rotulo-und">UND:</span>
+                    <span id="valor-unidade">Carregando...</span>
+                </div>
+            </div>
         </div>
-        <div class="valor-dinamico valor-unidade">
-            <span class="rotulo-und">UND:</span>
-            <span id="valor-unidade">Carregando...</span>
+
+        <!-- Área dos mentores - SEU CÓDIGO PHP ORIGINAL -->
+        <div id="listaMentores" class="mentor-wrapper">
+            <?php
+            try {
+              // Consulta para buscar mentores e seus valores
+              $sql = "
+                SELECT m.id, m.nome, m.foto,
+                       COALESCE(SUM(v.green), 0) AS total_green,
+                       COALESCE(SUM(v.red), 0) AS total_red,
+                       COALESCE(SUM(v.valor_green), 0) AS total_valor_green,
+                       COALESCE(SUM(v.valor_red), 0) AS total_valor_red
+                FROM mentores m
+                LEFT JOIN valor_mentores v ON m.id = v.id_mentores
+                WHERE m.id_usuario = ?
+                GROUP BY m.id, m.nome, m.foto
+                ORDER BY (COALESCE(SUM(v.valor_green), 0) - COALESCE(SUM(v.valor_red), 0)) DESC
+              ";
+
+              $stmt = $conexao->prepare($sql);
+              $stmt->bind_param("i", $id_usuario_logado);
+              $stmt->execute();
+              $result = $stmt->get_result();
+
+              $lista_mentores = [];
+              $total_geral_saldo = 0;
+
+              while ($mentor = $result->fetch_assoc()) {
+                $total_subtraido = floatval($mentor['total_valor_green']) - floatval($mentor['total_valor_red']);
+                $mentor['saldo'] = $total_subtraido;
+                $lista_mentores[] = $mentor;
+                $total_geral_saldo += $total_subtraido;
+              }
+
+              foreach ($lista_mentores as $posicao => $mentor) {
+                $rank = $posicao + 1;
+                $saldo_formatado = number_format($mentor['saldo'], 2, ',', '.');
+                $nome_seguro = htmlspecialchars($mentor['nome']);
+                
+                // Verificação da foto do mentor
+                $foto_original = $mentor['foto'];
+                if (empty($foto_original) || $foto_original === 'avatar-padrao.png') {
+                  $foto_path = 'https://cdn-icons-png.flaticon.com/512/847/847969.png';
+                } else {
+                  $foto_path = 'uploads/' . htmlspecialchars($foto_original);
+                  if (!file_exists($foto_path)) {
+                    $foto_path = 'https://cdn-icons-png.flaticon.com/512/847/847969.png';
+                  }
+                }
+
+                // Determina a cor da borda baseada no saldo
+                if ($mentor['saldo'] == 0) {
+                  $classe_borda = 'card-neutro';
+                } elseif ($mentor['saldo'] > 0) {
+                  $classe_borda = 'card-positivo';
+                } else {
+                  $classe_borda = 'card-negativo';
+                }
+
+                echo "
+                <div class='mentor-item'>
+                  <div class='mentor-rank-externo'>{$rank}º</div>
+
+                  <div class='mentor-card {$classe_borda}' 
+                       data-nome='{$nome_seguro}'
+                       data-foto='{$foto_path}'
+                       data-id='{$mentor['id']}'>
+                    <div class='mentor-header'>
+                      <img src='{$foto_path}' alt='Foto de {$nome_seguro}' class='mentor-img' 
+                           onerror=\"this.src='https://cdn-icons-png.flaticon.com/512/847/847969.png'\" />
+                      <h3 class='mentor-nome'>{$nome_seguro}</h3>
+                    </div>
+                    <div class='mentor-right'>
+                      <div class='mentor-values-inline'>
+                        <div class='value-box-green green'>
+                          <p>Green</p>
+                          <p>{$mentor['total_green']}</p>
+                        </div>
+                        <div class='value-box-red red'>
+                          <p>Red</p>
+                          <p>{$mentor['total_red']}</p>
+                        </div>
+                        <div class='value-box-saldo saldo'>
+                          <p>Saldo</p>
+                          <p>R$ {$saldo_formatado}</p>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+
+                  <div class='mentor-menu-externo'>
+                    <span class='menu-toggle' title='Mais opções'>⋮</span>
+                    <div class='menu-opcoes'>
+                      <button onclick='editarAposta({$mentor["id"]})'>
+                        <i class='fas fa-trash'></i> Excluir Entrada
+                      </button>
+                      <button onclick='editarMentor({$mentor["id"]})'>
+                        <i class='fas fa-user-edit'></i> Editar Mentor
+                      </button>
+                    </div>
+                  </div>
+                </div>
+                ";
+              }
+
+              // Elementos auxiliares para cálculos JavaScript
+              echo "
+              <div id='total-green-dia' data-green='" . array_sum(array_column($lista_mentores, 'total_green')) . "' style='display:none;'></div>
+              <div id='total-red-dia' data-red='" . array_sum(array_column($lista_mentores, 'total_red')) . "' style='display:none;'></div>
+              <div id='saldo-dia' data-total='" . number_format($total_geral_saldo, 2, ',', '.') . "' style='display:none;'></div>
+              ";
+              
+            } catch (Exception $e) {
+              echo "<div class='erro-mentores'>Erro ao carregar mentores!</div>";
+              error_log("Erro ao carregar mentores: " . $e->getMessage());
+            }
+            ?>
         </div>
     </div>
 </div>
 
-                <!-- Área dos mentores - SEU CÓDIGO PHP ORIGINAL -->
-                <div id="listaMentores" class="mentor-wrapper">
-                    <?php
-                    try {
-                      // Consulta para buscar mentores e seus valores
-                      $sql = "
-                        SELECT m.id, m.nome, m.foto,
-                               COALESCE(SUM(v.green), 0) AS total_green,
-                               COALESCE(SUM(v.red), 0) AS total_red,
-                               COALESCE(SUM(v.valor_green), 0) AS total_valor_green,
-                               COALESCE(SUM(v.valor_red), 0) AS total_valor_red
-                        FROM mentores m
-                        LEFT JOIN valor_mentores v ON m.id = v.id_mentores
-                        WHERE m.id_usuario = ?
-                        GROUP BY m.id, m.nome, m.foto
-                        ORDER BY (COALESCE(SUM(v.valor_green), 0) - COALESCE(SUM(v.valor_red), 0)) DESC
-                      ";
+<!-- BLOCO 2 -->
+<div class="bloco bloco-2">
+    <div class="resumo-mes">
+        <!-- Cabeçalho fixo com metas mensais -->
+        <div class="bloco-meta-simples fixo-topo">
 
-                      $stmt = $conexao->prepare($sql);
-                      $stmt->bind_param("i", $id_usuario_logado);
-                      $stmt->execute();
-                      $result = $stmt->get_result();
+          <!-- Título do mês atual -->
+          <h2 class="titulo-bloco">
+            <i class="fas fa-calendar-alt"></i> <span id="tituloMes"></span>
+          </h2>
 
-                      $lista_mentores = [];
-                      $total_geral_saldo = 0;
+          <script>
+            const meses = [
+              "JANEIRO", "FEVEREIRO", "MARÇO", "ABRIL", "MAIO", "JUNHO",
+              "JULHO", "AGOSTO", "SETEMBRO", "OUTUBRO", "NOVEMBRO", "DEZEMBRO"
+            ];
+            const hoje = new Date();
+            const mesAtual = meses[hoje.getMonth()];
+            const anoAtual = hoje.getFullYear();
+            document.getElementById("tituloMes").textContent = `${mesAtual} ${anoAtual}`;
+          </script>
 
-                      while ($mentor = $result->fetch_assoc()) {
-                        $total_subtraido = floatval($mentor['total_valor_green']) - floatval($mentor['total_valor_red']);
-                        $mentor['saldo'] = $total_subtraido;
-                        $lista_mentores[] = $mentor;
-                        $total_geral_saldo += $total_subtraido;
-                      }
-
-                      foreach ($lista_mentores as $posicao => $mentor) {
-                        $rank = $posicao + 1;
-                        $saldo_formatado = number_format($mentor['saldo'], 2, ',', '.');
-                        $nome_seguro = htmlspecialchars($mentor['nome']);
-                        
-                        // Verificação da foto do mentor
-                        $foto_original = $mentor['foto'];
-                        if (empty($foto_original) || $foto_original === 'avatar-padrao.png') {
-                          $foto_path = 'https://cdn-icons-png.flaticon.com/512/847/847969.png';
-                        } else {
-                          $foto_path = 'uploads/' . htmlspecialchars($foto_original);
-                          if (!file_exists($foto_path)) {
-                            $foto_path = 'https://cdn-icons-png.flaticon.com/512/847/847969.png';
-                          }
-                        }
-
-                        // Determina a cor da borda baseada no saldo
-                        if ($mentor['saldo'] == 0) {
-                          $classe_borda = 'card-neutro';
-                        } elseif ($mentor['saldo'] > 0) {
-                          $classe_borda = 'card-positivo';
-                        } else {
-                          $classe_borda = 'card-negativo';
-                        }
-
-                        echo "
-                        <div class='mentor-item'>
-                          <div class='mentor-rank-externo'>{$rank}º</div>
-
-                          <div class='mentor-card {$classe_borda}' 
-                               data-nome='{$nome_seguro}'
-                               data-foto='{$foto_path}'
-                               data-id='{$mentor['id']}'>
-                            <div class='mentor-header'>
-                              <img src='{$foto_path}' alt='Foto de {$nome_seguro}' class='mentor-img' 
-                                   onerror=\"this.src='https://cdn-icons-png.flaticon.com/512/847/847969.png'\" />
-                              <h3 class='mentor-nome'>{$nome_seguro}</h3>
-                            </div>
-                            <div class='mentor-right'>
-                              <div class='mentor-values-inline'>
-                                <div class='value-box-green green'>
-                                  <p>Green</p>
-                                  <p>{$mentor['total_green']}</p>
-                                </div>
-                                <div class='value-box-red red'>
-                                  <p>Red</p>
-                                  <p>{$mentor['total_red']}</p>
-                                </div>
-                                <div class='value-box-saldo saldo'>
-                                  <p>Saldo</p>
-                                  <p>R$ {$saldo_formatado}</p>
-                                </div>
-                              </div>
-                            </div>
-                          </div>
-
-                          <div class='mentor-menu-externo'>
-                            <span class='menu-toggle' title='Mais opções'>⋮</span>
-                            <div class='menu-opcoes'>
-                              <button onclick='editarAposta({$mentor["id"]})'>
-                                <i class='fas fa-trash'></i> Excluir Entrada
-                              </button>
-                              <button onclick='editarMentor({$mentor["id"]})'>
-                                <i class='fas fa-user-edit'></i> Editar Mentor
-                              </button>
-                            </div>
-                          </div>
-                        </div>
-                        ";
-                      }
-
-                      // Elementos auxiliares para cálculos JavaScript
-                      echo "
-                      <div id='total-green-dia' data-green='" . array_sum(array_column($lista_mentores, 'total_green')) . "' style='display:none;'></div>
-                      <div id='total-red-dia' data-red='" . array_sum(array_column($lista_mentores, 'total_red')) . "' style='display:none;'></div>
-                      <div id='saldo-dia' data-total='" . number_format($total_geral_saldo, 2, ',', '.') . "' style='display:none;'></div>
-                      ";
-                      
-                    } catch (Exception $e) {
-                      echo "<div class='erro-mentores'>Erro ao carregar mentores!</div>";
-                      error_log("Erro ao carregar mentores: " . $e->getMessage());
-                    }
-                    ?>
-                </div>
+          <!-- Meta mensal (100%) -->
+          <div class="grupo-barra">
+            <span class="valor-meta"><i class="fas fa-bullseye"></i> <?php echo $meta_mensal_formatada; ?></span>
+            <div class="container-barra-horizontal">
+              <div class="progresso-dourado"></div>
+              <span class="porcento-barra">100%</span>
             </div>
+            <span class="rotulo-meta-mes"><i class="fas fa-calendar-day"></i> Meta do Mês</span>
+          </div>
+
+          <!-- Progresso atual da meta -->
+          <div class="grupo-barra">
+            <span class="valor-meta">
+              <i class="fas fa-wallet"></i> <?php echo $saldo_mes_formatado; ?>
+              <?php if ($meta_batida): ?>
+                <span class="rotulo-meta-mes sucesso"><i class="fas fa-trophy"></i> Meta Batida</span>
+              <?php endif; ?>
+            </span>
+            <div class="container-barra-horizontal">
+              <div class="progresso-verde" style="--largura-barra: <?php echo min($porcentagem_meta_arredondada, 100); ?>%;"></div>
+              <span class="porcento-barra"><?php echo $porcentagem_meta_arredondada; ?>%</span>
+            </div>
+            <span class="rotulo-meta-mes"><i class="fas fa-coins"></i> Saldo do Mês</span>
+          </div>
         </div>
-    </div>
 
-    <!-- BLOCO 2 -->
-    <div class="bloco bloco-2">
-        <div class="resumo-mes">
-            <!-- Cabeçalho fixo com metas mensais -->
-            <div class="bloco-meta-simples fixo-topo">
+        <!-- Lista de dias do mês com resultados -->
+        <div class="lista-dias">
+          <?php
+          for ($dia = 1; $dia <= $diasNoMes; $dia++) {
+            $data_mysql = $ano . '-' . str_pad($mes, 2, "0", STR_PAD_LEFT) . '-' . str_pad($dia, 2, "0", STR_PAD_LEFT);
+            $data_exibicao = str_pad($dia, 2, "0", STR_PAD_LEFT) . "/" . str_pad($mes, 2, "0", STR_PAD_LEFT) . "/" . $ano;
 
-              <!-- Título do mês atual -->
-              <h2 class="titulo-bloco">
-                <i class="fas fa-calendar-alt"></i> <span id="tituloMes"></span>
-              </h2>
+            $dados = $dados_por_dia[$data_mysql] ?? [
+              'total_valor_green' => 0,
+              'total_valor_red' => 0,
+              'total_green' => 0,
+              'total_red' => 0
+            ];
 
-              <script>
-                const meses = [
-                  "JANEIRO", "FEVEREIRO", "MARÇO", "ABRIL", "MAIO", "JUNHO",
-                  "JULHO", "AGOSTO", "SETEMBRO", "OUTUBRO", "NOVEMBRO", "DEZEMBRO"
-                ];
-                const hoje = new Date();
-                const mesAtual = meses[hoje.getMonth()];
-                const anoAtual = hoje.getFullYear();
-                document.getElementById("tituloMes").textContent = `${mesAtual} ${anoAtual}`;
-              </script>
+            $saldo_dia = floatval($dados['total_valor_green']) - floatval($dados['total_valor_red']);
+            $saldo_formatado = number_format($saldo_dia, 2, ',', '.');
 
-              <!-- Meta mensal (100%) -->
-              <div class="grupo-barra">
-                <span class="valor-meta"><i class="fas fa-bullseye"></i> <?php echo $meta_mensal_formatada; ?></span>
-                <div class="container-barra-horizontal">
-                  <div class="progresso-dourado"></div>
-                  <span class="porcento-barra">100%</span>
+            $cor_valor = ($saldo_dia == 0) ? 'texto-cinza' : ($saldo_dia > 0 ? 'verde-bold' : 'vermelho-bold');
+            $classe_texto = ($saldo_dia == 0) ? 'texto-cinza' : '';
+            $placar_cinza = ((int)$dados['total_green'] === 0 && (int)$dados['total_red'] === 0) ? 'texto-cinza' : '';
+
+            $classe_dia = ($data_mysql === $hoje)
+              ? 'dia-hoje ' . ($saldo_dia >= 0 ? 'borda-verde' : 'borda-vermelha')
+              : 'dia-normal';
+
+            $classe_destaque = ($data_mysql < $hoje && $saldo_dia > 0) ? 'dia-destaque' : '';
+
+            echo '
+              <div class="linha-dia '.$classe_dia.' '.$classe_destaque.'">
+                <span class="data '.$classe_texto.'"><i class="fas fa-calendar-day"></i> '.$data_exibicao.'</span>
+                <div class="placar-dia">
+                  <span class="placar verde-bold '.$placar_cinza.'">'.(int)$dados['total_green'].'</span>
+                  <span class="placar separador '.$placar_cinza.'">x</span>
+                  <span class="placar vermelho-bold '.$placar_cinza.'">'.(int)$dados['total_red'].'</span>
                 </div>
-                <span class="rotulo-meta-mes"><i class="fas fa-calendar-day"></i> Meta do Mês</span>
+                <span class="valor '.$cor_valor.'"><i class="fas fa-dollar-sign"></i> R$ '.$saldo_formatado.'</span>
+                <span class="icone '.$classe_texto.'"><i class="fas fa-check"></i></span>
               </div>
-
-              <!-- Progresso atual da meta -->
-              <div class="grupo-barra">
-                <span class="valor-meta">
-                  <i class="fas fa-wallet"></i> <?php echo $saldo_mes_formatado; ?>
-                  <?php if ($meta_batida): ?>
-                    <span class="rotulo-meta-mes sucesso"><i class="fas fa-trophy"></i> Meta Batida</span>
-                  <?php endif; ?>
-                </span>
-                <div class="container-barra-horizontal">
-                  <div class="progresso-verde" style="--largura-barra: <?php echo min($porcentagem_meta_arredondada, 100); ?>%;"></div>
-                  <span class="porcento-barra"><?php echo $porcentagem_meta_arredondada; ?>%</span>
-                </div>
-                <span class="rotulo-meta-mes"><i class="fas fa-coins"></i> Saldo do Mês</span>
-              </div>
-            </div>
-
-            <!-- Lista de dias do mês com resultados -->
-            <div class="lista-dias">
-              <?php
-              for ($dia = 1; $dia <= $diasNoMes; $dia++) {
-                $data_mysql = $ano . '-' . str_pad($mes, 2, "0", STR_PAD_LEFT) . '-' . str_pad($dia, 2, "0", STR_PAD_LEFT);
-                $data_exibicao = str_pad($dia, 2, "0", STR_PAD_LEFT) . "/" . str_pad($mes, 2, "0", STR_PAD_LEFT) . "/" . $ano;
-
-                $dados = $dados_por_dia[$data_mysql] ?? [
-                  'total_valor_green' => 0,
-                  'total_valor_red' => 0,
-                  'total_green' => 0,
-                  'total_red' => 0
-                ];
-
-                $saldo_dia = floatval($dados['total_valor_green']) - floatval($dados['total_valor_red']);
-                $saldo_formatado = number_format($saldo_dia, 2, ',', '.');
-
-                $cor_valor = ($saldo_dia == 0) ? 'texto-cinza' : ($saldo_dia > 0 ? 'verde-bold' : 'vermelho-bold');
-                $classe_texto = ($saldo_dia == 0) ? 'texto-cinza' : '';
-                $placar_cinza = ((int)$dados['total_green'] === 0 && (int)$dados['total_red'] === 0) ? 'texto-cinza' : '';
-
-                $classe_dia = ($data_mysql === $hoje)
-                  ? 'dia-hoje ' . ($saldo_dia >= 0 ? 'borda-verde' : 'borda-vermelha')
-                  : 'dia-normal';
-
-                $classe_destaque = ($data_mysql < $hoje && $saldo_dia > 0) ? 'dia-destaque' : '';
-
-                echo '
-                  <div class="linha-dia '.$classe_dia.' '.$classe_destaque.'">
-                    <span class="data '.$classe_texto.'"><i class="fas fa-calendar-day"></i> '.$data_exibicao.'</span>
-                    <div class="placar-dia">
-                      <span class="placar verde-bold '.$placar_cinza.'">'.(int)$dados['total_green'].'</span>
-                      <span class="placar separador '.$placar_cinza.'">x</span>
-                      <span class="placar vermelho-bold '.$placar_cinza.'">'.(int)$dados['total_red'].'</span>
-                    </div>
-                    <span class="valor '.$cor_valor.'"><i class="fas fa-dollar-sign"></i> R$ '.$saldo_formatado.'</span>
-                    <span class="icone '.$classe_texto.'"><i class="fas fa-check"></i></span>
-                  </div>
-                ';
-              }
-              ?>
-            </div>
+            ';
+          }
+          ?>
         </div>
     </div>
 </div>

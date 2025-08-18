@@ -23,6 +23,17 @@ document.addEventListener("DOMContentLoaded", () => {
 
   // ✅ FUNÇÃO PRINCIPAL PARA ATUALIZAR ÁREA DIREITA EM TEMPO REAL
   function atualizarAreaDireita(dadosResposta = null) {
+    // ✅ VERIFICAR SE MODAL ESTÁ ABERTO ANTES DE QUALQUER COISA
+    const modalAberto = document.getElementById("modalDeposito");
+    if (
+      modalAberto &&
+      (modalAberto.style.display === "flex" ||
+        modalAberto.style.display === "block")
+    ) {
+      console.log("⏸️ Modal aberto - pausando atualização da área direita");
+      return Promise.resolve();
+    }
+
     console.log("🔄 Iniciando atualização da área direita...");
 
     // ✅ Se temos dados da resposta de uma operação, usa eles diretamente
@@ -31,9 +42,16 @@ document.addEventListener("DOMContentLoaded", () => {
       return Promise.resolve();
     }
 
-    // ✅ Busca dados atualizados do servidor com timeout otimizado
+    // ✅ INCLUIR PERÍODO ATUAL NA REQUISIÇÃO
+    const formData = new FormData();
+    if (typeof SistemaFiltroPeriodo !== "undefined") {
+      formData.append("periodo", SistemaFiltroPeriodo.periodoAtual);
+    }
+
+    // ✅ Busca dados atualizados do servidor com período
     return fetch("dados_banca.php", {
-      method: "GET",
+      method: "POST", // MUDANÇA: de GET para POST
+      body: formData, // ADIÇÃO: inclui o período
       headers: {
         "Cache-Control": "no-cache",
         "X-Requested-With": "XMLHttpRequest",
@@ -936,44 +954,98 @@ document.addEventListener("DOMContentLoaded", () => {
     });
 
     // ✅ EVENTO INPUT DO VALOR BANCA
+    // ✅ EVENTO INPUT DO VALOR BANCA - VERSÃO CORRIGIDA SEM ERROS
     if (valorBancaInput) {
-      valorBancaInput.addEventListener("input", () => {
-        let valor = valorBancaInput.value.replace(/[^\d]/g, "");
-        if (!valor) {
-          valorBancaInput.value = "";
+      // ✅ CONFIGURAR MÁSCARA DE DINHEIRO
+      valorBancaInput.addEventListener("input", function () {
+        console.log("💰 Input detectado no campo valor banca");
+
+        let valor = this.value.replace(/[^\d]/g, "");
+
+        // ✅ BUSCAR ELEMENTOS DINAMICAMENTE PARA EVITAR ERRO
+        const mensagemErro = document.getElementById("mensagemErro");
+        const legendaBanca = document.getElementById("legendaBanca");
+        const valorBancaLabel = document.getElementById("valorBancaLabel");
+        const acaoSelect = document.getElementById("acaoBanca");
+
+        // Se campo vazio, limpar tudo
+        if (!valor || valor === "0") {
+          this.value = "";
           if (mensagemErro) mensagemErro.textContent = "";
-          if (legendaBanca) legendaBanca.style.display = "block";
+          if (legendaBanca) legendaBanca.style.display = "none";
+
+          // Restaurar valor original na label
+          if (valorBancaLabel) {
+            valorBancaLabel.textContent = valorOriginalBanca.toLocaleString(
+              "pt-BR",
+              {
+                style: "currency",
+                currency: "BRL",
+              }
+            );
+          }
           return;
         }
 
+        // ✅ FORMATAR VALOR DIGITADO
         const valorDigitado = parseFloat(valor) / 100;
-        valorBancaInput.value = valorDigitado.toLocaleString("pt-BR", {
+        this.value = valorDigitado.toLocaleString("pt-BR", {
           style: "currency",
           currency: "BRL",
         });
 
+        // ✅ OBTER TIPO DE AÇÃO SELECIONADA
         const tipo = acaoSelect ? acaoSelect.value : "";
+
+        console.log(
+          `📊 Tipo de ação: ${tipo}, Valor digitado: ${valorDigitado}`
+        );
+
         let valorAtualizado = valorOriginalBanca;
+        let temErro = false;
 
-        if (tipo === "add") {
-          valorAtualizado += valorDigitado;
-          if (mensagemErro) mensagemErro.textContent = "";
-          if (legendaBanca) legendaBanca.style.display = "block";
-        } else if (tipo === "sacar") {
-          valorAtualizado -= valorDigitado;
-
-          if (valorDigitado > valorOriginalBanca) {
-            if (mensagemErro) mensagemErro.textContent = "Saldo Insuficiente.";
-            if (legendaBanca) legendaBanca.style.display = "none";
-          } else {
+        // ✅ CALCULAR BASEADO NO TIPO DE AÇÃO
+        switch (tipo) {
+          case "add":
+            valorAtualizado = valorOriginalBanca + valorDigitado;
             if (mensagemErro) mensagemErro.textContent = "";
-            if (legendaBanca) legendaBanca.style.display = "block";
-          }
-        } else if (!tipo && valorOriginalBanca === 0) {
-          valorAtualizado = valorDigitado;
+            break;
+
+          case "sacar":
+            valorAtualizado = valorOriginalBanca - valorDigitado;
+
+            // ✅ VERIFICAR SALDO INSUFICIENTE
+            if (valorDigitado > valorOriginalBanca) {
+              if (mensagemErro)
+                mensagemErro.textContent = "Saldo Insuficiente.";
+              temErro = true;
+            } else {
+              if (mensagemErro) mensagemErro.textContent = "";
+            }
+            break;
+
+          case "alterar":
+            // Na alteração, não muda o valor da banca
+            valorAtualizado = valorOriginalBanca;
+            break;
+
+          case "resetar":
+            // No reset, não muda o valor da banca
+            valorAtualizado = valorOriginalBanca;
+            break;
+
+          default:
+            // Se não tem tipo selecionado e banca é 0, é cadastro inicial
+            if (valorOriginalBanca === 0) {
+              valorAtualizado = valorDigitado;
+            }
+            break;
         }
 
+        // ✅ GARANTIR QUE VALOR NÃO SEJA NEGATIVO
         valorAtualizado = Math.max(0, valorAtualizado);
+
+        // ✅ ATUALIZAR LABEL DO VALOR DA BANCA
         if (valorBancaLabel) {
           valorBancaLabel.textContent = valorAtualizado.toLocaleString(
             "pt-BR",
@@ -982,10 +1054,161 @@ document.addEventListener("DOMContentLoaded", () => {
               currency: "BRL",
             }
           );
+
+          console.log(`💰 Banca atualizada para: ${valorAtualizado}`);
         }
 
-        calcularMeta(valorAtualizado);
+        // ✅ MOSTRAR/OCULTAR LEGENDA BASEADO NO ERRO
+        if (legendaBanca) {
+          legendaBanca.style.display = temErro ? "none" : "block";
+        }
+
+        // ✅ RECALCULAR META COM VALOR ATUALIZADO
+        if (typeof calcularMeta === "function") {
+          calcularMeta(valorAtualizado);
+        }
       });
+
+      // ✅ EVENTO FOCUS PARA SELECIONAR TUDO
+      valorBancaInput.addEventListener("focus", function () {
+        this.select();
+      });
+
+      // ✅ EVENTO BLUR PARA VALIDAÇÃO FINAL
+      valorBancaInput.addEventListener("blur", function () {
+        if (!this.value || this.value === "R$ 0,00") {
+          this.value = "";
+        }
+      });
+
+      console.log("✅ Eventos do campo valor banca configurados");
+    }
+
+    // ✅ FUNÇÃO CALCULAR META TAMBÉM PRECISA SER CORRIGIDA
+    function calcularMeta(bancaFloat) {
+      console.log(`🎯 Calculando meta para banca: ${bancaFloat}`);
+
+      // ✅ BUSCAR ELEMENTOS DINAMICAMENTE
+      const diaria = document.getElementById("porcentagem");
+      const resultadoCalculo = document.getElementById("resultadoCalculo");
+
+      const percentualRaw = diaria
+        ? diaria.value.replace("%", "").replace(",", ".")
+        : "2";
+      const percentFloat = parseFloat(percentualRaw);
+
+      if (isNaN(percentFloat) || percentFloat <= 0) {
+        if (resultadoCalculo) resultadoCalculo.textContent = "";
+        console.warn("⚠️ Percentual inválido");
+        return;
+      }
+
+      // ✅ USAR A BANCA PASSADA COMO PARÂMETRO
+      const baseCalculo = bancaFloat || 0;
+      const unidadeEntrada = baseCalculo * (percentFloat / 100);
+
+      // ✅ ATUALIZAR RESULTADO DA UNIDADE
+      if (resultadoCalculo) {
+        resultadoCalculo.textContent = `Unidade: ${unidadeEntrada.toLocaleString(
+          "pt-BR",
+          {
+            style: "currency",
+            currency: "BRL",
+          }
+        )}`;
+      }
+
+      // ✅ CALCULAR OUTRAS METAS SE AS FUNÇÕES EXISTIREM
+      if (typeof calcularUnidade === "function") {
+        calcularUnidade(unidadeEntrada);
+      }
+      if (typeof calcularOdds === "function") {
+        calcularOdds(unidadeEntrada);
+      }
+
+      console.log(`✅ Meta calculada - Unidade: ${unidadeEntrada}`);
+    }
+
+    // ✅ EVENTOS DE DROPDOWN CORRIGIDOS (SE NECESSÁRIO)
+    if (typeof modal !== "undefined" && modal) {
+      const dropdownItems = modal.querySelectorAll(".dropdown-menu li");
+      const dropdownToggle = modal.querySelector(".dropdown-toggle");
+
+      dropdownItems.forEach((item) => {
+        item.addEventListener("click", function () {
+          const tipo = this.getAttribute("data-value");
+          const texto = this.innerHTML;
+
+          console.log(`🎯 Selecionado: ${tipo}`);
+
+          // ✅ ATUALIZAR DROPDOWN
+          if (dropdownToggle) {
+            dropdownToggle.innerHTML =
+              texto + ' <i class="fa-solid fa-chevron-down"></i>';
+          }
+
+          // ✅ ATUALIZAR CAMPO HIDDEN
+          const acaoSelect = document.getElementById("acaoBanca");
+          if (acaoSelect) acaoSelect.value = tipo;
+
+          // ✅ CONFIGURAR CAMPO BASEADO NO TIPO
+          const valorBancaInput = document.getElementById("valorBanca");
+          const botaoAcao = document.getElementById("botaoAcao");
+          const mensagemErro = document.getElementById("mensagemErro");
+
+          if (valorBancaInput && botaoAcao) {
+            // Limpar valor e erro
+            valorBancaInput.value = "";
+            if (mensagemErro) mensagemErro.textContent = "";
+
+            switch (tipo) {
+              case "add":
+                valorBancaInput.placeholder =
+                  "Quanto quer Depositar na Banca R$ 0,00";
+                valorBancaInput.disabled = false;
+                valorBancaInput.classList.remove("desativado");
+                botaoAcao.value = "Depositar na Banca";
+                break;
+
+              case "sacar":
+                valorBancaInput.placeholder =
+                  "Quanto Quer Sacar da Banca R$ 0,00";
+                valorBancaInput.disabled = false;
+                valorBancaInput.classList.remove("desativado");
+                botaoAcao.value = "Sacar da Banca";
+                break;
+
+              case "alterar":
+                valorBancaInput.placeholder = "Essa ação não requer valor";
+                valorBancaInput.disabled = true;
+                valorBancaInput.classList.add("desativado");
+                botaoAcao.value = "Salvar Alteração";
+                break;
+
+              case "resetar":
+                valorBancaInput.placeholder = "Essa ação irá zerar sua banca";
+                valorBancaInput.disabled = true;
+                valorBancaInput.classList.add("desativado");
+                botaoAcao.value = "Resetar Banca";
+                break;
+
+              default:
+                valorBancaInput.placeholder = "R$ 0,00";
+                valorBancaInput.disabled = false;
+                valorBancaInput.classList.remove("desativado");
+                botaoAcao.value = "Cadastrar Dados";
+                break;
+            }
+
+            // ✅ FOCAR NO CAMPO SE HABILITADO
+            if (!valorBancaInput.disabled) {
+              setTimeout(() => valorBancaInput.focus(), 100);
+            }
+          }
+        });
+      });
+
+      console.log("✅ Eventos do dropdown configurados");
     }
 
     // ✅ EVENTO BOTÃO AÇÃO MODIFICADO PARA ATUALIZAR ÁREA DIREITA
@@ -1433,8 +1656,14 @@ document.addEventListener("DOMContentLoaded", () => {
 
   // ✅ ATUALIZAÇÃO AUTOMÁTICA MAIS FREQUENTE PARA UND
   setInterval(() => {
-    atualizarAreaDireita();
-  }, 5000); // ✅ Reduzido de 8 para 5 segundos
+    // ✅ SÓ ATUALIZA SE NÃO HOUVER FILTRO ATIVO
+    if (
+      typeof SistemaFiltroPeriodo === "undefined" ||
+      SistemaFiltroPeriodo.periodoAtual === "dia"
+    ) {
+      atualizarAreaDireita();
+    }
+  }, 5000);
 
   // ✅ ESCUTAR EVENTOS CUSTOMIZADOS PARA ATUALIZAÇÃO IMEDIATA
   document.addEventListener("mentorCadastrado", (event) => {
