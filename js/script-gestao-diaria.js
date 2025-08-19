@@ -1714,15 +1714,15 @@ const MetaDiariaManager = {
     switch (periodo) {
       case "mes":
         metaFinal = parseFloat(data.meta_mensal) || 0;
-        rotuloFinal = "META DO MÊS";
+        rotuloFinal = "Meta do Mês"; // ✅ Mudado de "META DO MÊS"
         break;
       case "ano":
         metaFinal = parseFloat(data.meta_anual) || 0;
-        rotuloFinal = "META DO ANO";
+        rotuloFinal = "Meta do Ano"; // ✅ Mudado de "META DO ANO"
         break;
       default:
         metaFinal = parseFloat(data.meta_diaria) || 0;
-        rotuloFinal = "META DO DIA";
+        rotuloFinal = "Meta do Dia"; // ✅ Mudado de "META DO DIA"
         break;
     }
 
@@ -1829,18 +1829,18 @@ const MetaDiariaManager = {
     // ✅ REGRA 1: Banca total <= 0 - Precisa depositar
     if (bancaTotal <= 0) {
       metaFinal = bancaTotal;
-      rotulo = "DEPOSITE P/ COMEÇAR";
+      rotulo = "Deposite p/ Começar"; // ✅ Mudado de "DEPOSITE P/ COMEÇAR"
       statusClass = "sem-banca";
-      valorExtra = 0; // ✅ SEM lucro extra
+      valorExtra = 0;
     }
     // ✅ REGRA 2: Meta foi batida E tem lucro extra (lucro > meta)
     else if (saldoDia > 0 && metaCalculada > 0 && saldoDia >= metaCalculada) {
       metaFinal = 0;
       rotulo = `${
-        data.rotulo_periodo || "META"
-      } BATIDA! <i class='fa-solid fa-trophy'></i>`;
+        data.rotulo_periodo || "Meta" // ✅ Mudado de "META"
+      } Batida! <i class='fa-solid fa-trophy'></i>`; // ✅ Mudado de "BATIDA!"
       statusClass = "meta-batida";
-      valorExtra = saldoDia - metaCalculada; // ✅ CALCULAR lucro extra real
+      valorExtra = saldoDia - metaCalculada;
 
       // ✅ VERIFICAÇÃO: Se não há lucro extra real, não mostrar
       if (valorExtra <= 0) {
@@ -1849,24 +1849,24 @@ const MetaDiariaManager = {
     }
     // ✅ REGRA 3: Lucro negativo
     else if (saldoDia < 0) {
-      metaFinal = metaCalculada - saldoDia; // Meta + prejuízo para recuperar
-      rotulo = `RESTANDO P/ ${data.rotulo_periodo || "META"}`;
+      metaFinal = metaCalculada - saldoDia;
+      rotulo = `Restando p/ ${data.rotulo_periodo || "Meta"}`; // ✅ Mudado de "RESTANDO P/"
       statusClass = "negativo";
-      valorExtra = 0; // ✅ SEM lucro extra
+      valorExtra = 0;
     }
     // ✅ REGRA 4: Lucro zero
     else if (saldoDia === 0) {
       metaFinal = metaCalculada;
-      rotulo = data.rotulo_periodo || "META DO DIA";
+      rotulo = data.rotulo_periodo || "Meta do Dia"; // ✅ Mudado de "META DO DIA"
       statusClass = "neutro";
-      valorExtra = 0; // ✅ SEM lucro extra
+      valorExtra = 0;
     }
     // ✅ REGRA 5: Lucro positivo mas não bateu meta (saldo < meta)
     else {
       metaFinal = metaCalculada - saldoDia;
-      rotulo = `RESTANDO P/ ${data.rotulo_periodo || "META"}`;
+      rotulo = `Restando p/ ${data.rotulo_periodo || "Meta"}`; // ✅ Mudado de "RESTANDO P/"
       statusClass = "lucro";
-      valorExtra = 0; // ✅ SEM lucro extra - meta não foi batida
+      valorExtra = 0;
     }
 
     return {
@@ -1930,6 +1930,7 @@ const MetaDiariaManager = {
   atualizarValorExtra(valorExtra) {
     const valorUltrapassouElement =
       document.getElementById("valor-ultrapassou");
+    const valorExtraElement = document.getElementById("valor-extra");
 
     if (valorUltrapassouElement) {
       // ✅ VERIFICAÇÃO RIGOROSA: Só mostrar se realmente há lucro extra
@@ -1939,30 +1940,26 @@ const MetaDiariaManager = {
           currency: "BRL",
         });
 
-        // ✅ ESTRUTURA HTML LIMPA - SEM CSS INLINE
-        valorUltrapassouElement.innerHTML = `
-        <div class="valor-ultrapassou-container">
-          <i class="fa-solid fa-trophy valor-ultrapassou-icone"></i>
-          <span class="valor-ultrapassou-texto">Lucro Extra:</span>
-          <span class="valor-ultrapassou-valor">${valorFormatado}</span>
-        </div>
-      `;
+        // Atualizar o valor no span existente
+        if (valorExtraElement) {
+          valorExtraElement.textContent = valorFormatado;
+        }
 
-        valorUltrapassouElement.classList.remove("oculta");
+        // Mostrar o elemento
+        valorUltrapassouElement.style.display = "flex";
         valorUltrapassouElement.classList.add("mostrar");
 
-        // ✅ ADICIONAR CLASSE AO BODY PARA EFEITO DE OPACIDADE
+        // ✅ ADICIONAR CLASSE AO BODY PARA EFEITO
         document.body.classList.add("tem-lucro-extra");
       } else {
-        // ✅ OCULTAR USANDO CLASSES CSS
+        // ✅ OCULTAR O ELEMENTO
+        valorUltrapassouElement.style.display = "none";
         valorUltrapassouElement.classList.remove("mostrar");
-        valorUltrapassouElement.classList.add("oculta");
 
         // ✅ REMOVER CLASSE DO BODY
         document.body.classList.remove("tem-lucro-extra");
 
-        // ✅ LIMPAR CONTEÚDO
-        const valorExtraElement = document.getElementById("valor-extra");
+        // ✅ LIMPAR VALOR
         if (valorExtraElement) {
           valorExtraElement.textContent = "R$ 0,00";
         }
@@ -1971,6 +1968,7 @@ const MetaDiariaManager = {
   },
 
   // ✅ ATUALIZAR BARRA PROGRESSO - MODIFICADA
+  // ✅ ATUALIZAR BARRA PROGRESSO - VERSÃO CORRIGIDA
   atualizarBarraProgresso(resultado, data) {
     const barraProgresso = document.getElementById("barra-progresso");
     const saldoInfo = document.getElementById("saldo-info");
@@ -2001,12 +1999,18 @@ const MetaDiariaManager = {
 
     // ✅ SISTEMA DE CORES USANDO APENAS CLASSES CSS
     let temLucroExtra = false;
+    let classeCor = ""; // Para armazenar a classe de cor atual
 
-    // ✅ REMOVER TODAS AS CLASSES DE COR ANTERIORES
+    // ✅ REMOVER TODAS AS CLASSES DE COR ANTERIORES MAS MANTER widget-barra-progresso
     barraProgresso.className = barraProgresso.className.replace(
       /\bbarra-\w+/g,
       ""
     );
+
+    // ✅ IMPORTANTE: Garantir que a classe base permaneça
+    if (!barraProgresso.classList.contains("widget-barra-progresso")) {
+      barraProgresso.classList.add("widget-barra-progresso");
+    }
 
     // ✅ VERIFICAR SE REALMENTE TEM LUCRO EXTRA
     if (
@@ -2015,10 +2019,12 @@ const MetaDiariaManager = {
       saldoDia > metaCalculada
     ) {
       temLucroExtra = true;
-      barraProgresso.classList.add("barra-lucro-extra"); // Dourado
+      classeCor = "barra-lucro-extra"; // Dourado
+      barraProgresso.classList.add(classeCor);
     } else {
       // Aplicar classe baseada no status
-      barraProgresso.classList.add(`barra-${resultado.statusClass}`);
+      classeCor = `barra-${resultado.statusClass}`;
+      barraProgresso.classList.add(classeCor);
     }
 
     // ✅ ATUALIZAR APENAS A LARGURA VIA JAVASCRIPT - COR VIA CSS
@@ -2027,47 +2033,63 @@ const MetaDiariaManager = {
     barraProgresso.style.backgroundColor = "";
     barraProgresso.style.background = "";
 
-    // ✅ PORCENTAGEM FIXA NO FINAL DA BARRA
+    // ✅ PORCENTAGEM COM FUNDO COLORIDO - ALTURA TOTAL
     if (porcentagemBarra) {
       const porcentagemTexto = Math.round(progresso) + "%";
-      porcentagemBarra.textContent = porcentagemTexto;
+
+      // ✅ CRIAR ESTRUTURA COM FUNDO QUE OCUPA ALTURA TOTAL
+      porcentagemBarra.innerHTML = `
+      <span class="porcentagem-fundo ${classeCor}">${porcentagemTexto}</span>
+    `;
+
+      // Adicionar classe especial para valores pequenos
+      if (larguraBarra <= 10) {
+        porcentagemBarra.classList.add("pequeno");
+      } else {
+        porcentagemBarra.classList.remove("pequeno");
+      }
 
       if (larguraBarra <= 0) {
         porcentagemBarra.classList.add("oculta");
       } else {
         porcentagemBarra.classList.remove("oculta");
-        // ✅ NÃO ALTERAR POSIÇÃO - FICA FIXA NO CSS (right: 10px)
-        // Removida a linha: porcentagemBarra.style.left = `${larguraBarra}%`;
       }
     }
 
-    // ✅ SALDO INFO SIMPLIFICADO - SEM "LUCRO EXTRA"
+    // ✅ SALDO INFO COM ÍCONE DINÂMICO
+    // ✅ PARTE DO SALDO NA FUNÇÃO atualizarBarraProgresso
+    // Substitua apenas esta parte na sua função:
+
+    // ✅ SALDO INFO COM ESTRUTURA CORRETA PARA CORES SEPARADAS
     if (saldoInfo) {
       const saldoFormatado = saldoDia.toLocaleString("pt-BR", {
         style: "currency",
         currency: "BRL",
       });
 
-      // ✅ SIMPLIFICADO - APENAS LUCRO, NEGATIVO OU SALDO
+      // ✅ DEFINIR TEXTO E ÍCONE BASEADO NO STATUS
       let textoSaldo = "Saldo";
+      let iconeClass = "fa-solid fa-wallet"; // Ícone padrão
 
       if (saldoDia > 0) {
         textoSaldo = "Lucro";
+        iconeClass = "fa-solid fa-chart-line"; // Ícone de lucro
       } else if (saldoDia < 0) {
         textoSaldo = "Negativo";
+        iconeClass = "fa-solid fa-arrow-trend-down"; // Ícone de negativo
       } else {
         textoSaldo = "Saldo";
+        iconeClass = "fa-solid fa-wallet"; // Ícone de saldo neutro
       }
 
-      // ✅ ESTRUTURA HTML LIMPA - SEM CSS INLINE
+      // ✅ ESTRUTURA HTML COM SPANS SEPARADOS PARA RÓTULO E VALOR
       saldoInfo.innerHTML = `
-        <div class="saldo-info-container">
-          <span class="saldo-info-rotulo">${textoSaldo}:</span>
-          <span class="saldo-info-valor">${saldoFormatado}</span>
-        </div>
-      `;
+    <i class="${iconeClass}"></i>
+    <span class="saldo-info-rotulo">${textoSaldo}:</span>
+    <span class="saldo-info-valor">${saldoFormatado}</span>
+  `;
 
-      // ✅ APLICAR CLASSES CSS BASEADAS NO STATUS (SEM "saldo-extra")
+      // ✅ APLICAR CLASSES CSS BASEADAS NO STATUS
       saldoInfo.className =
         saldoDia > 0
           ? "saldo-positivo"

@@ -2306,3 +2306,585 @@ console.log("  $.test() - Teste de períodos");
 console.log("  $.info() - Ver status");
 console.log("  $.testExtra() - Testar lucro extra");
 
+css:
+
+/* ========================================
+   1. BARRA DE PROGRESSO + PORCENTAGEM
+   ======================================== */
+
+/* Porcentagem fixa no canto direito - APENAS NÚMERO */
+.porcentagem-barra {
+  position: absolute;
+  top: 50%;
+  left: 94%;
+  transform: translate(-50%, -50%);
+  font-size: clamp(8px, 1.8vw, 13px);
+  font-weight: 700;
+  color: #fff;
+  text-shadow: 0 0 4px rgba(0, 0, 0, 0.6), 0 1px 2px rgba(0, 0, 0, 0.1);
+  z-index: 10;
+  border-radius: 50%;
+  padding: 4px 8px;
+  white-space: nowrap;
+}
+/* Campo da Porcentagem */
+.widget-barra-container {
+  position: relative;
+  width: 300px;
+  height: 26px;
+  background-color: #f3f5f4;
+  border-radius: 12px;
+  overflow: hidden;
+  border: 1px solid #bdc3c7; /* Borda externa de 1px */
+  box-shadow: inset 0 0 6px 2px rgba(189, 195, 199, 0.4); /* Sombra interna suave */
+}
+
+/* COR DENTRO BARRA PROGRESSO */
+#barra-progresso {
+  transition: all 0.1s ease;
+  border-radius: 18px;
+  height: 17px; /* Mais grossa */
+  display: flex;
+  align-items: center; /* Alinha verticalmente */
+  justify-content: center; /* Opcional: alinha horizontalmente */
+  margin-top: 4.4px;
+}
+
+/* Barra dourada - lucro extra com gradiente premium */
+.barra-lucro-extra,
+#barra-progresso.barra-lucro-extra {
+  background: linear-gradient(
+    90deg,
+    #f39821 0%,
+    #f8911b 25%,
+    #f8911b 50%,
+    #f8911b 75%,
+    #f39821 100%
+  ) !important;
+  background-size: 200% 100%;
+  animation: goldWave 2s linear infinite;
+}
+/* Barra laranja - sem banca */
+/* Sem banca - cinza */
+/* Sem banca - cinza */
+/* Sem banca - cinza */
+.barra-sem-banca,
+#barra-progresso.barra-sem-banca {
+  background: linear-gradient(
+    90deg,
+    #95a5a6 0%,
+    #8e9e9f 50%,
+    #7f8c8d 100%
+  ) !important;
+}
+
+/* Meta batida - azul */
+.barra-meta-batida,
+#barra-progresso.barra-meta-batida {
+  background: linear-gradient(
+    90deg,
+    #2196f3 0%,
+    #3793e0 50%,
+    #1976d2 100%
+  ) !important;
+}
+
+/* Negativo - vermelho */
+.barra-negativo,
+#barra-progresso.barra-negativo {
+  background: linear-gradient(
+    90deg,
+    #f44336 0%,
+    #e53935 50%,
+    #d32f2f 100%
+  ) !important;
+}
+
+/* Neutro - cinza */
+.barra-neutro,
+#barra-progresso.barra-neutro {
+  background: linear-gradient(
+    90deg,
+    #95a5a6 0%,
+    #8e9e9f 50%,
+    #7f8c8d 100%
+  ) !important;
+}
+
+/* Lucro - verde */
+.barra-lucro,
+#barra-progresso.barra-lucro {
+  background: linear-gradient(
+    90deg,
+    #4caf50 0%,
+    #43a047 50%,
+    #388e3c 100%
+  ) !important;
+}
+
+/* ========================================
+   1. FIM BARRA DE PROGRESSO + PORCENTAGEM
+   ======================================== */
+/* */
+/* */
+/* */
+/* */
+/* */
+/* */
+/* */
+/* */
+/* */
+/* */
+/* */
+/* */
+/* */
+/* */
+/* */
+/* ========================================
+   3. STATUS META BATIDA
+   ======================================== */
+.widget-meta-rotulo {
+  font-size: clamp(10px, 2.2vw, 14px); /* Fonte responsiva */
+  color: #807f7f;
+  margin-bottom: 15px;
+  text-align: center;
+  letter-spacing: 1px;
+  font-weight: 600;
+}
+/* ========================================
+   3. FIM STATUS META BATIDA
+   ======================================== */
+/* */
+/* */
+/* */
+/* */
+/* */
+/* */
+/* */
+/* */
+/* */
+/* */
+/* */
+/* */
+/* */
+/* */
+/* */
+/* ========================================
+   3. VALOR DA META 
+   ======================================== */
+
+/* Container principal do valor da meta - MAIOR */
+@import url("https://fonts.googleapis.com/css2?family=Rajdhani:wght@600&display=swap");
+
+.widget-meta-valor,
+#meta-valor {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 25px;
+  font-weight: 900;
+  font-family: "Rajdhani", sans-serif; /* Fonte estilizada para números */
+  transition: all 0.3s ease;
+}
+
+.widget-meta-valor {
+  font-size: clamp(18px, 5vw, 28px); /* Fonte responsiva */
+  font-weight: 800;
+  margin-bottom: 8px;
+  text-align: center;
+  color: #2c3e50;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: clamp(6px, 2vw, 12px); /* Gap responsivo */
+  letter-spacing: -0.5px;
+}
+
+.widget-meta-valor .fa-solid.fa-coins {
+  font-size: clamp(16px, 4vw, 26px); /* Fonte responsiva */
+  color: #f39c12;
+}
+
+/* Ícone de moedas ao lado do valor */
+.widget-meta-valor .fa-coins,
+#meta-valor .fa-coins {
+  margin-right: 0px;
+  font-size: 28px;
+  color: #f3b200; /* Dourado mais vibrante */
+}
+
+/* Texto do valor da meta */
+.valor-texto {
+  font-weight: 900;
+  font-size: 24px;
+  letter-spacing: -0.5px;
+}
+
+/* Laranja para sem banca */
+.valor-meta.sem-banca .valor-texto {
+  color: #e67e22;
+}
+
+/* Azul para meta batida */
+.valor-meta.meta-batida .valor-texto {
+  color: #2196f3;
+}
+
+/* Vermelho para negativo */
+.valor-meta.negativo .valor-texto {
+  color: #f53520;
+}
+
+/* Cinza para neutro */
+.valor-meta.neutro .valor-texto {
+  color: #7f8c8d;
+}
+
+/* Verde para lucro */
+.valor-meta.lucro .valor-texto {
+  color: #00a651;
+}
+
+/* Estado visível do valor extra */
+.valor-ultrapassou {
+  display: none;
+  margin-top: -9px;
+  margin-bottom: 10px;
+  position: relative;
+  z-index: 30;
+}
+
+/* Estado visível do valor extra */
+.valor-ultrapassou.mostrar {
+  display: flex !important;
+  justify-content: center; /* Centraliza com a barra menor */
+  animation: pulseGold 2s infinite;
+}
+
+/* Container com gradiente premium melhorado */
+
+/* Efeito de brilho no fundo */
+
+/* Ícone da taça dourada */
+.valor-ultrapassou-icone {
+  color: #f78f08;
+  font-size: 24px;
+  margin-right: 12px;
+
+  animation: bounce 1.5s ease-in-out infinite;
+}
+
+/* Texto "Lucro Extra:" */
+.valor-ultrapassou-texto {
+  color: #0073df;
+  font-weight: bold;
+  font-size: 16px;
+  margin-right: 8px;
+}
+
+/* Valor em dourado com sombra */
+.valor-ultrapassou-valor {
+  color: #f78f08;
+  font-weight: 900;
+  font-size: 20px;
+}
+/* ========================================
+   3. FIM VALOR DA META 
+   ======================================== */
+/* */
+/* */
+/* */
+/* */
+/* */
+/* */
+/* */
+/* */
+/* */
+/* */
+/* */
+/* */
+/* */
+/* */
+/* */
+
+/* ========================================
+   8. SALDO + ROTULO
+   ======================================== */
+
+/* Container do saldo - centralizado com a barra menor */
+#saldo-info {
+  margin-top: 5px;
+  margin-left: -170px;
+}
+
+.saldo-info-container {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+/* Rótulo do saldo */
+.saldo-info-rotulo {
+  font-weight: bold;
+  margin-right: 1px;
+  font-size: 13px;
+}
+
+/* Valor do saldo */
+.saldo-info-valor {
+  font-weight: bold;
+  font-size: 13px;
+}
+#saldo-info i {
+  margin-right: 0px;
+  font-size: 1em;
+}
+
+.saldo-info-container {
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+}
+
+.saldo-positivo i {
+  color: #4caf50;
+}
+
+.saldo-negativo i {
+  color: #f44336;
+}
+
+.saldo-zero i {
+  color: #95a5a6;
+}
+
+/* Verde para lucro positivo */
+
+.saldo-positivo .saldo-info-valor {
+  color: #00a651;
+}
+
+/* Vermelho para negativo */
+
+.saldo-negativo .saldo-info-valor {
+  color: #f44336;
+}
+/* */
+/* */
+/* ROTULO SALDO */
+.saldo-zero .saldo-info-valor {
+  color: #666;
+}
+
+/* Verde para lucro positivo */
+.saldo-positivo .saldo-info-rotulo {
+  color: #5d6360;
+}
+
+/* Vermelho para negativo */
+.saldo-negativo .saldo-info-rotulo {
+  color: #5d6360;
+}
+
+/* Cinza para neutro */
+.saldo-zero .saldo-info-rotulo {
+  color: #5d6360;
+}
+
+/* ========================================
+   9. ANIMAÇÕES
+   ======================================== */
+
+/* Animação de onda dourada */
+@keyframes goldWave {
+  0% {
+    background-position: 0% 50%;
+  }
+  100% {
+    background-position: 200% 50%;
+  }
+}
+
+/* Animação de brilho para o container */
+@keyframes shimmer {
+  0% {
+    background-position: 0% 50%;
+  }
+  50% {
+    background-position: 100% 50%;
+  }
+  100% {
+    background-position: 0% 50%;
+  }
+}
+
+/* Animação de shine */
+@keyframes shine {
+  0% {
+    transform: translateX(-100%) translateY(-100%) rotate(45deg);
+  }
+  100% {
+    transform: translateX(100%) translateY(100%) rotate(45deg);
+  }
+}
+
+/* Animação de bounce para o ícone */
+@keyframes bounce {
+  0%,
+  100% {
+    transform: translateY(0);
+  }
+  50% {
+    transform: translateY(-5px);
+  }
+}
+
+/* Animação de pulse dourado */
+@keyframes pulseGold {
+  0% {
+    transform: scale(1);
+  }
+  50% {
+    transform: scale(1.02);
+  }
+  100% {
+    transform: scale(1);
+  }
+}
+
+/* Animação de atualização */
+@keyframes pulse-update {
+  0% {
+    transform: scale(1);
+  }
+  50% {
+    transform: scale(1.05);
+  }
+  100% {
+    transform: scale(1);
+  }
+}
+
+/* Classe para animação de atualização */
+.atualizado {
+  animation: pulse-update 1.5s ease-in-out;
+}
+
+/* ========================================
+   10. MODAL - CORES DO LUCRO
+   ======================================== */
+
+.modal-lucro-positivo {
+  color: #4caf50 !important;
+}
+
+.modal-lucro-negativo {
+  color: #f44336 !important;
+}
+
+.modal-lucro-neutro {
+  color: #666 !important;
+}
+
+/* ========================================
+   11. RESPONSIVIDADE - MOBILE
+   ======================================== */
+
+@media (max-width: 768px) {
+  /* Barra ajustada para mobile */
+  .barra-container {
+    width: 90%; /* Um pouco maior em mobile */
+    height: 24px; /* Um pouco menor em mobile */
+    border-radius: 12px;
+  }
+
+  #barra-progresso,
+  .widget-barra-progresso {
+    border-radius: 12px;
+  }
+
+  /* Porcentagem ajustada para mobile */
+  .porcentagem-barra {
+    font-size: 12px;
+    right: 8px;
+    font-weight: 800;
+  }
+
+  /* Valor da meta menor em mobile */
+  .widget-meta-valor,
+  #meta-valor {
+    font-size: 20px;
+  }
+
+  .valor-texto {
+    font-size: 20px;
+  }
+
+  .widget-meta-valor .fa-coins,
+  #meta-valor .fa-coins {
+    font-size: 18px;
+  }
+
+  /* Container do valor extra em mobile */
+  .valor-ultrapassou-container {
+    padding: 8px 12px;
+  }
+
+  .valor-ultrapassou-icone {
+    font-size: 20px;
+    margin-right: 8px;
+  }
+
+  .valor-ultrapassou-texto {
+    font-size: 14px;
+  }
+
+  .valor-ultrapassou-valor {
+    font-size: 16px;
+  }
+
+  .saldo-info-valor {
+    font-size: 12px;
+  }
+}
+
+/* ========================================
+   12. ESTADOS DE LOADING
+   ======================================== */
+
+.loading-text {
+  color: #999;
+  font-style: italic;
+}
+
+/* ========================================
+   13. CLASSES UTILITÁRIAS
+   ======================================== */
+
+.text-center {
+  text-align: center;
+}
+
+.flex-center {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.flex-start {
+  display: flex;
+  align-items: center;
+  justify-content: flex-start;
+}
+
+.font-bold {
+  font-weight: bold;
+}
+
+.margin-top-small {
+  margin-top: 8px;
+}
+
+.margin-top-medium {
+  margin-top: 10px;
+}

@@ -1,3 +1,6 @@
+    <!-- ==================================================================================================================================== --> 
+<!--                                                 💼   PHP DE CALCULOS                    
+ ====================================================================================================================================== -->
 <?php
 ob_start();
 require_once 'config.php';
@@ -408,7 +411,9 @@ function setToast($mensagem, $tipo = 'info') {
 
 ob_end_flush();
 ?>
-
+    <!-- ==================================================================================================================================== --> 
+<!--                                                 💼  FIM PHP DE CALCULOS                    
+ ====================================================================================================================================== -->
 
 
 
@@ -424,11 +429,35 @@ ob_end_flush();
 <meta charset="UTF-8" />
 <meta name="viewport" content="width=device-width, initial-scale=1.0" />
 <title>Gestão do Dia</title>
-
+<!-- -->
+<!-- -->
+<!-- -->
+<!-- -->
+<!-- -->
+<!-- -->
+<!-- -->
+<!-- -->
+<!-- -->
+<!-- -->
+    <!-- ==================================================================================================================================== --> 
+<!--                                                 💼  LINK DOS ICONES                    
+ ====================================================================================================================================== -->
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
 
-<!-- CSS ORGANIZADOS POR FUNCIONALIDADE -->
+<!-- -->
+<!-- -->
+<!-- -->
+<!-- -->
+<!-- -->
+<!-- -->
+<!-- -->
+<!-- -->
+<!-- -->
+<!-- -->
+    <!-- ==================================================================================================================================== --> 
+<!--                                                 💼  LINK DOS CSS                    
+ ====================================================================================================================================== -->
 <link rel="stylesheet" href="css/menu-topo.css">
 <link rel="stylesheet" href="css/modais.css">
 <link rel="stylesheet" href="css/estilo-gestao-diaria-novo.css">
@@ -436,21 +465,40 @@ ob_end_flush();
 <link rel="stylesheet" href="css/estilo-painel-controle.css">
 <link rel="stylesheet" href="css/toast.css">
 <link rel="stylesheet" href="css/toast-modal-gerencia.css">
+<!-- -->
+<!-- -->
+<!-- -->
+<!-- -->
+<!-- -->
+<!-- -->
+<!-- -->
+<!-- -->
+<!-- -->
+<!-- -->
 
-<!-- SCRIPTS ORGANIZADOS POR FUNCIONALIDADE -->
+    <!-- ==================================================================================================================================== --> 
+<!--                                                 💼  LINK DOS SCRIPTS                    
+ ====================================================================================================================================== -->
 <script src="js/script-gestao-diaria.js" defer></script>
 <script src="js/script-painel-controle.js" defer></script>
 <script src="js/script-mes.js" defer></script>
+<!-- -->
+<!-- -->
+<!-- -->
+<!-- -->
+<!-- -->
+<!-- -->
+<!-- -->
+<!-- -->
+<!-- -->
+<!-- -->
 </head>
-
 <body>
 
 
-
-<!-- ============================================================================= -->
-<!-- 🔝 SEÇÃO: MENU SUPERIOR DE NAVEGAÇÃO                                         -->
-<!-- Função: Navegação principal da aplicação + Saldo da banca                   -->
-<!-- ============================================================================= -->
+    <!-- ==================================================================================================================================== --> 
+<!--                                      💼    TOPO MENU SELEÇÃO + BANCA E SALDO                    
+ ====================================================================================================================================== -->
 <div class="menu-topo-container">
   <div id="top-bar"> 
     <div class="menu-container">
@@ -505,12 +553,22 @@ ob_end_flush();
   </div>
 </div>
 
-<!-- ============================================================================= -->
-<!-- 📋 SEÇÃO: CONTAINER PRINCIPAL DE RESUMOS                                     -->
-<!-- Função: Área principal com dados do dia e do mês                            -->
-<!-- ============================================================================= -->
-
-
+    <!-- ==================================================================================================================================== --> 
+<!--                                      💼   FIM TOPO MENU SELEÇÃO + BANCA E SALDO                    
+ ====================================================================================================================================== -->
+<!-- -->
+<!-- -->
+<!-- -->
+<!-- -->
+<!-- -->
+<!-- -->
+<!-- -->
+<!-- -->
+<!-- -->
+<!-- -->
+    <!-- ==================================================================================================================================== --> 
+<!--                                      💼   FILTRO DIA - MES - ANO BLOCO CAMPO VALOR META E SALDO                      
+ ====================================================================================================================================== -->
 <div class="container">
     
   <!-- BLOCO 1 -->
@@ -563,42 +621,65 @@ ob_end_flush();
                         </div>
                     </div>
 
-                    <!-- Conteúdo principal do widget -->
-                    <div class="widget-conteudo-principal">
-                        <div class="widget-meta-valor" id="meta-valor">
-                            <i class="fa-solid fa-coins"></i>
-                            <span class="valor-texto" id="valor-texto-meta">
-                                <span class="loading-text">Calculando...</span>
-                            </span>
-                        </div>
-                        
-                        <!-- Exibição do valor que ultrapassou a meta -->
-                        <div class="valor-ultrapassou" id="valor-ultrapassou" style="display: none;">
-                            <i class="fa-solid fa-trophy"></i>
-                            <span class="texto-ultrapassou">Lucro Extra: <span id="valor-extra">R$ 0,00</span></span>
-                        </div>
-                        
-                        <div class="widget-meta-rotulo" id="rotulo-meta">Meta do Dia</div>
-                        
-                        <!-- Barra de progresso com porcentagem dentro -->
-                        <div class="widget-barra-container">
-                            <div class="widget-barra-progresso" id="barra-progresso"></div>
-                            <div class="porcentagem-barra" id="porcentagem-barra">0%</div>
-                        </div>
-                        
-                        <!-- Info de progresso apenas com saldo -->
-                        <div class="widget-info-progresso">
-                            <span id="saldo-info">
-                                <i class="fa-solid fa-wallet"></i>
-                                Saldo: R$ 0,00
-                            </span>
-                        </div>
+<!-- Conteúdo principal do widget -->
+<div class="widget-conteudo-principal">
+  <div class="conteudo-left">
+     <!-- Container da Barra de Progresso -->
+     <!-- Valor da Meta -->
+     <div class="widget-meta-valor" id="meta-valor">
+        <i class="fa-solid fa-coins"></i>
+        <span class="valor-texto" id="valor-texto-meta">
+            <span class="loading-text">Calculando...</span>
+        </span>
+      </div>
+    
+     <!-- Exibição do valor que ultrapassou a meta -->
+     <div class="valor-ultrapassou" id="valor-ultrapassou" style="display: none;">
+        <i class="fa-solid fa-trophy"></i>
+        <span class="texto-ultrapassou">Lucro Extra: <span id="valor-extra">R$ 0,00</span></span>
+     </div>
+    
+     <!-- RÓTULO QUE ESTAVA FALTANDO -->
+     <div class="widget-meta-rotulo" id="rotulo-meta">Meta do Dia</div>
+    
+     <!-- Container da Barra de Progresso -->
+     <div class="widget-barra-container">
+        <div class="widget-barra-progresso" id="barra-progresso"></div>
+        <div class="porcentagem-barra" id="porcentagem-barra">0%</div>
+     </div>
+    
+     <!-- Info de progresso com saldo -->
+      <div class="widget-info-progresso">
+      <span id="saldo-info" class="saldo-positivo">
+     <i class="fa-solid fa-chart-line"></i>
+     <span class="saldo-info-rotulo">Lucro:</span>
+     <span class="saldo-info-valor">R$ 75,00</span>
+     </span>
+    </div>
+    </div>
+    
+
                     </div>
                 </div>
             </div>
         </div>
     </div>
-
+    <!-- ==================================================================================================================================== --> 
+<!--                                      💼  FIM FILTRO DIA - MES - ANO BLOCO CAMPO VALOR META E SALDO                      
+ ====================================================================================================================================== -->
+<!-- -->
+<!-- -->
+<!-- -->
+<!-- -->
+<!-- -->
+<!-- -->
+<!-- -->
+<!-- -->
+<!-- -->
+<!-- -->
+<!-- ==================================================================================================================================== --> 
+<!--                                                  💼  FILTRO BLOCO CAMPO MENTORES                        
+ ====================================================================================================================================== -->
     <!-- Campo Mentores com seu código PHP integrado -->
     <div class="campo_mentores">
         <!-- Barra superior com botão à esquerda e placar centralizado -->
@@ -747,7 +828,22 @@ ob_end_flush();
         </div>
     </div>
 </div>
-
+<!-- ==================================================================================================================================== --> 
+<!--                                                  💼  FIM FILTRO BLOCO CAMPO MENTORES                        
+ ====================================================================================================================================== -->
+<!-- -->
+<!-- -->
+<!-- -->
+<!-- -->
+<!-- -->
+<!-- -->
+<!-- -->
+<!-- -->
+<!-- -->
+<!-- -->
+<!-- ==================================================================================================================================== --> 
+<!--                                                  💼  FILTRO BLOCO MÊS                          
+ ====================================================================================================================================== -->
 <!-- BLOCO 2 -->
 <div class="bloco bloco-2">
     <div class="resumo-mes">
@@ -789,7 +885,7 @@ ob_end_flush();
               <?php endif; ?>
             </span>
             <div class="container-barra-horizontal">
-              <div class="progresso-verde" style="--largura-barra: <?php echo min($porcentagem_meta_arredondada, 100); ?>%;"></div>
+              
               <span class="porcento-barra"><?php echo $porcentagem_meta_arredondada; ?>%</span>
             </div>
             <span class="rotulo-meta-mes"><i class="fas fa-coins"></i> Saldo do Mês</span>
@@ -840,15 +936,22 @@ ob_end_flush();
         </div>
     </div>
 </div>
-
-
-
-
-
-
-
-
-
+<!-- ==================================================================================================================================== --> 
+<!--                                                  💼  FIM DO FILTRO BLOCO MÊS                          
+ ====================================================================================================================================== -->
+<!-- -->
+<!-- -->
+<!-- -->
+<!-- -->
+<!-- -->
+<!-- -->
+<!-- -->
+<!-- -->
+<!-- -->
+<!-- -->
+<!-- ==================================================================================================================================== --> 
+<!--                                  💼  FORMULARIO DE CADASTRO DO MENTOR + MODAL EXCLUSÃO DO MENTOR                           
+ ====================================================================================================================================== -->
 <div class="modais-container">
 
   <div id="modal-form" class="modal">
@@ -910,11 +1013,22 @@ ob_end_flush();
   </div>
 
 </div>
-
-  <!-- ============================================================================= -->
-  <!-- 💰 SUB-SEÇÃO: FORMULÁRIO DE VALORES (GREEN/RED)                              -->
-  <!-- Função: Adicionar entrada de green ou red para um mentor específico         -->
-  <!-- ============================================================================= -->
+<!-- ==================================================================================================================================== --> 
+<!--                                  💼  FIM FORMULARIO DE CADASTRO DO MENTOR + MODAL EXCLUSÃO DO MENTOR                           
+ ====================================================================================================================================== -->
+<!-- -->
+<!-- -->
+<!-- -->
+<!-- -->
+<!-- -->
+<!-- -->
+<!-- -->
+<!-- -->
+<!-- -->
+<!-- -->
+<!-- ==================================================================================================================================== --> 
+<!--                                  💼  FORMULARIO DE CADASTRO DE ENTRADA + MODAL EXCLUSÃO DE ENTRADA                              
+ ====================================================================================================================================== -->
 <!-- Container que encapsula todos os modais -->
 <div class="modais-container">
 
@@ -979,45 +1093,32 @@ ob_end_flush();
     </form>
   </div>
 
-</div>
-
-  <!-- ============================================================================= -->
-  <!-- 📋 SUB-SEÇÃO: TELA DE HISTÓRICO DO MENTOR                                    -->
-  <!-- Função: Exibir histórico de entradas e permitir exclusões                   -->
-  <!-- ============================================================================= -->
+ </div>
 
 
 
-
-
-  <!-- ============================================================================= -->
-  <!-- ❓ SUB-SEÇÃO: MODAL DE CONFIRMAÇÃO - EXCLUSÃO DE MENTOR                      -->
-  <!-- Função: Confirmar exclusão completa de um mentor                            -->
-  <!-- ============================================================================= -->
-  <div id="modal-confirmacao-exclusao" style="display:none;">
-    <div class="modal-content">
-      <p class="modal-texto">Tem certeza que deseja excluir este mentor?</p>
-      <div class="botoes-modal">
-        <button class="botao-confirmar" onclick="confirmarExclusaoMentor()">Sim, excluir</button>
-        <button class="botao-cancelar" onclick="fecharModalExclusao()">Cancelar</button>
-      </div>
-    </div>
-  </div>
-
-  <!-- ============================================================================= -->
-  <!-- 🍞 SUB-SEÇÃO: MENSAGENS TOAST                                                -->
-  <!-- Função: Mensagens temporárias de feedback                                   -->
-  <!-- ============================================================================= -->
   <div id="mensagem-status" class="toast"></div>
   <div id="toast" class="toast hidden"></div>
 
 </div>
-<!-- FIM MODAIS CONTAINER -->
+<!-- ==================================================================================================================================== --> 
+<!--                                  💼  FIM FORMULARIO DE CADASTRO DE ENTRADA + MODAL EXCLUSÃO DE ENTRADA                              
+ ====================================================================================================================================== -->
+<!-- -->
+<!-- -->
+<!-- -->
+<!-- -->
+<!-- -->
+<!-- -->
+<!-- -->
+<!-- -->
+<!-- -->
+<!-- -->
+<!-- ==================================================================================================================================== --> 
+<!--                                           💼  FORMULARIO GERENCIAMENTO DE BANCA  PAINEL CONTROLE                               
+ ====================================================================================================================================== -->
 
-<!-- ============================================================================= -->
-<!-- 💼 SEÇÃO: MODAL DE GERENCIAMENTO DE BANCA                                     -->
-<!-- Função: Painel para gerenciar valores da banca (depósitos, saques, etc.)    -->
-<!-- ============================================================================= -->
+
 <div class="modal-gerencia-banca">
   <div id="modalDeposito" class="modal-overlay">
 
@@ -1117,16 +1218,36 @@ ob_end_flush();
     </div>
   </div>
 </div>
-
+<!-- ==================================================================================================================================== --> 
+<!--                                         💼  FIM FORMULARIO GERENCIAMENTO DE BANCA  PAINEL CONTROLE                               
+ ====================================================================================================================================== -->
+<!-- -->
+<!-- -->
+<!-- -->
+<!-- -->
+<!-- -->
+<!-- -->
+<!-- -->
+<!-- -->
+<!-- -->
+<!-- -->
 <!-- Toast geral da página -->
 <div id="toast-msg" class="toast hidden">Mensagem</div>
+<!-- -->
+<!-- -->
+<!-- -->
+<!-- -->
+<!-- -->
+<!-- -->
+<!-- -->
+<!-- -->
+<!-- -->
+<!-- -->
+<!-- -->
+<!-- ==================================================================================================================================== --> 
+<!--                                         💼  ATUALIZA A ZONA DE DATA E HORARIO                              
+ ====================================================================================================================================== -->
 
-<!-- ============================================================================= -->
-<!-- 🔧 SEÇÃO: SCRIPTS JAVASCRIPT                                                  -->
-<!-- Função: Funcionalidades interativas da página                               -->
-<!-- ============================================================================= -->
-
-<!-- Script para timezone -->
 <script>
 // Definir timezone se o elemento existir
 const timezoneInput = document.getElementById('timezone');
@@ -1134,8 +1255,23 @@ if (timezoneInput) {
   timezoneInput.value = Intl.DateTimeFormat().resolvedOptions().timeZone;
 }
 </script>
-
-<!-- Script do menu de navegação -->
+<!-- ==================================================================================================================================== --> 
+<!--                                         💼  FIM ATUALIZA A ZONA DE DATA E HORARIO                              
+ ====================================================================================================================================== -->
+<!-- -->
+<!-- -->
+<!-- -->
+<!-- -->
+<!-- -->
+<!-- -->
+<!-- -->
+<!-- -->
+<!-- -->
+<!-- -->
+<!-- -->
+<!-- ==================================================================================================================================== --> 
+<!--                                         💼  FECHA O MEU AO CLICAR FORA                             
+ ====================================================================================================================================== -->
 <script>
 function toggleMenu() {
   var menu = document.getElementById("menu");
@@ -1154,8 +1290,23 @@ document.addEventListener('click', function(event) {
   }
 });
 </script>
-
-<!-- Script do dropdown de gerenciamento -->
+<!-- ==================================================================================================================================== --> 
+<!--                                         💼  FIM FECHA O MEU AO CLICAR FORA                            
+ ====================================================================================================================================== -->
+<!-- -->
+<!-- -->
+<!-- -->
+<!-- -->
+<!-- -->
+<!-- -->
+<!-- -->
+<!-- -->
+<!-- -->
+<!-- -->
+<!-- -->
+<!-- ==================================================================================================================================== --> 
+<!--                                         💼  VERIFICAR O QUE É                           
+ ====================================================================================================================================== -->
 <script>
 const toggle = document.querySelector('.dropdown-toggle');
 const menu = document.querySelector('.dropdown-menu');
@@ -1182,6 +1333,19 @@ if (toggle && menu && hiddenInput) {
   });
 }
 </script>
-
+<!-- ==================================================================================================================================== --> 
+<!--                                         💼  FIM VERIFICAR O QUE É                           
+ ====================================================================================================================================== -->
+ <!-- -->
+<!-- -->
+<!-- -->
+<!-- -->
+<!-- -->
+<!-- -->
+<!-- -->
+<!-- -->
+<!-- -->
+<!-- -->
+<!-- -->
 </body>
 </html>

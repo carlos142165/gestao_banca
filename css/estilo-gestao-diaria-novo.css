@@ -313,28 +313,15 @@ body {
 
 /* ===== CONTEÚDO PRINCIPAL DO WIDGET - RESPONSIVO ===== */
 .widget-conteudo-principal {
-  padding: clamp(15px, 4vw, 25px); /* Padding responsivo */
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  width: 100%;
-  box-sizing: border-box;
-  background: rgba(247, 246, 246, 0.95);
-}
-
-.widget-barra-progresso {
-  height: 100%;
-  border-radius: 20px;
-  width: 65%;
-  background: linear-gradient(
-    90deg,
-    #4caf50 0%,
-    rgba(255, 255, 255, 0.2) 50%,
-    #4caf50 100%
-  );
-  box-shadow: 0 0 8px rgba(255, 255, 255, 0.2);
-  transition: width 0.8s cubic-bezier(0.4, 0, 0.2, 1);
-  position: relative;
+  background: #f8f9fa !important;
+  border-radius: 12px !important;
+  padding: 20px !important;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05) !important;
+  display: flex !important;
+  flex-direction: column !important;
+  align-items: flex-start !important; /* ✅ MUDADO: de center para flex-start */
+  width: 100% !important;
+  box-sizing: border-box !important;
 }
 
 .widget-info-progresso {
@@ -1177,116 +1164,6 @@ p {
    ======================================== */
 
 /* Porcentagem fixa no canto direito - APENAS NÚMERO */
-.porcentagem-barra {
-  position: absolute;
-  top: 50%;
-  left: 95%;
-  transform: translate(-50%, -50%);
-  font-size: clamp(8px, 1.8vw, 13px);
-  font-weight: 700;
-  color: #fff;
-  text-shadow: 0 0 4px rgba(0, 0, 0, 0.6), 0 1px 2px rgba(0, 0, 0, 0.9);
-  z-index: 10;
-  border-radius: 50%;
-  padding: 4px 8px;
-  white-space: nowrap;
-}
-/* Campo da Porcentagem */
-.widget-barra-container {
-  width: 100%;
-  height: clamp(16px, 3vw, 4px); /* Altura responsiva */
-  background-color: #d1cfcf;
-  border-radius: 13px;
-  margin-bottom: 12px;
-  overflow: hidden;
-  border: 4px solid rgba(231, 215, 215, 0.2);
-  position: relative;
-}
-
-/* COR BARRA PROGRESSO */
-#barra-progresso {
-  transition: all 0.1s ease;
-  border-radius: 18px;
-  height: 15px; /* Mais grossa */
-  display: flex;
-  align-items: center; /* Alinha verticalmente */
-  justify-content: center; /* Opcional: alinha horizontalmente */
-  margin-top: 0px;
-}
-
-/* Barra dourada - lucro extra com gradiente premium */
-.barra-lucro-extra,
-#barra-progresso.barra-lucro-extra {
-  background: linear-gradient(
-    90deg,
-    #f39821 0%,
-    #f8911b 25%,
-    #f8911b 50%,
-    #f8911b 75%,
-    #f39821 100%
-  ) !important;
-  background-size: 200% 100%;
-  animation: goldWave 2s linear infinite;
-  box-shadow: 0 2px 15px rgba(255, 215, 0, 0.6),
-    inset 0 1px 2px rgba(255, 255, 255, 0.5);
-}
-/* Barra laranja - sem banca */
-/* Sem banca - cinza */
-/* Sem banca - cinza */
-/* Sem banca - cinza */
-.barra-sem-banca,
-#barra-progresso.barra-sem-banca {
-  background: linear-gradient(
-    90deg,
-    #95a5a6 0%,
-    #8e9e9f 50%,
-    #7f8c8d 100%
-  ) !important;
-}
-
-/* Meta batida - azul */
-.barra-meta-batida,
-#barra-progresso.barra-meta-batida {
-  background: linear-gradient(
-    90deg,
-    #2196f3 0%,
-    #3793e0 50%,
-    #1976d2 100%
-  ) !important;
-}
-
-/* Negativo - vermelho */
-.barra-negativo,
-#barra-progresso.barra-negativo {
-  background: linear-gradient(
-    90deg,
-    #f44336 0%,
-    #e53935 50%,
-    #d32f2f 100%
-  ) !important;
-}
-
-/* Neutro - cinza */
-.barra-neutro,
-#barra-progresso.barra-neutro {
-  background: linear-gradient(
-    90deg,
-    #95a5a6 0%,
-    #8e9e9f 50%,
-    #7f8c8d 100%
-  ) !important;
-}
-
-/* Lucro - verde */
-.barra-lucro,
-#barra-progresso.barra-lucro {
-  background: linear-gradient(
-    90deg,
-    #4caf50 0%,
-    #43a047 50%,
-    #388e3c 100%
-  ) !important;
-}
 
 /* ========================================
    1. FIM BARRA DE PROGRESSO + PORCENTAGEM
@@ -1309,14 +1186,7 @@ p {
 /* ========================================
    3. STATUS META BATIDA
    ======================================== */
-.widget-meta-rotulo {
-  font-size: clamp(10px, 2.2vw, 14px); /* Fonte responsiva */
-  color: #807f7f;
-  margin-bottom: 15px;
-  text-align: center;
-  letter-spacing: 1px;
-  font-weight: 600;
-}
+
 /* ========================================
    3. FIM STATUS META BATIDA
    ======================================== */
@@ -1344,26 +1214,17 @@ p {
 
 .widget-meta-valor,
 #meta-valor {
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  font-size: 25px;
-  font-weight: 900;
-  font-family: "Rajdhani", sans-serif; /* Fonte estilizada para números */
-  transition: all 0.3s ease;
-}
+  display: flex !important;
 
-.widget-meta-valor {
-  font-size: clamp(18px, 5vw, 28px); /* Fonte responsiva */
-  font-weight: 800;
-  margin-bottom: 8px;
-  text-align: center;
-  color: #2c3e50;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  gap: clamp(6px, 2vw, 12px); /* Gap responsivo */
-  letter-spacing: -0.5px;
+  justify-content: flex-start !important; /* ✅ MUDADO: de center para flex-start */
+  font-size: 18px !important;
+
+  font-family: "Rajdhani", sans-serif !important;
+  transition: all 0.3s ease !important;
+  margin-bottom: 8px !important;
+  margin-left: 0px !important; /* ✅ Garantir que fique colado à esquerda */
+  padding-left: 0 !important; /* ✅ Sem padding à esquerda */
+  width: auto !important; /* ✅ Largura automática */
 }
 
 .widget-meta-valor .fa-solid.fa-coins {
@@ -1374,16 +1235,16 @@ p {
 /* Ícone de moedas ao lado do valor */
 .widget-meta-valor .fa-coins,
 #meta-valor .fa-coins {
-  margin-right: 0px;
-  font-size: 28px;
-  color: #f3b200; /* Dourado mais vibrante */
-  text-shadow: 1px 1px 2px #b8860b, 0 0 5px #ffecb3, 0 0 10px #ffecb3;
+  margin-right: 0px !important; /* Pequeno espaço entre ícone e valor */
+  font-size: 20px !important;
+  color: #f3b200 !important;
+  margin-left: 0px;
 }
 
 /* Texto do valor da meta */
 .valor-texto {
-  font-weight: 900;
-  font-size: 24px;
+  font-weight: 700;
+  font-size: 19px;
   letter-spacing: -0.5px;
 }
 
@@ -1415,17 +1276,18 @@ p {
 /* Estado visível do valor extra */
 .valor-ultrapassou {
   display: none;
-  margin-top: -9px;
-  margin-bottom: 10px;
-  position: relative;
-  z-index: 30;
+  margin-top: -9px !important;
+  margin-bottom: 10px !important;
+  margin-left: 0 !important; /* ✅ Alinhado à esquerda */
+  position: relative !important;
+  z-index: 30 !important;
 }
 
-/* Estado visível do valor extra */
 .valor-ultrapassou.mostrar {
   display: flex !important;
-  justify-content: center; /* Centraliza com a barra menor */
-  animation: pulseGold 2s infinite;
+  justify-content: flex-start !important; /* ✅ MUDADO: de center para flex-start */
+  align-items: center !important;
+  animation: pulseGold 2s infinite !important;
 }
 
 /* Container com gradiente premium melhorado */
@@ -1480,9 +1342,7 @@ p {
 
 /* Container do saldo - centralizado com a barra menor */
 #saldo-info {
-  display: flex;
-  justify-content: center;
-  margin-top: 0px;
+  margin-top: 10px !important;
 }
 
 .saldo-info-container {
@@ -1494,15 +1354,36 @@ p {
 /* Rótulo do saldo */
 .saldo-info-rotulo {
   font-weight: bold;
-  margin-right: 8px;
-  font-size: 12px;
-  text-transform: uppercase;
+  margin-right: 1px;
+  font-size: 13px;
 }
 
 /* Valor do saldo */
 .saldo-info-valor {
   font-weight: bold;
-  font-size: 15px;
+  font-size: 13px;
+}
+#saldo-info i {
+  margin-right: 0px;
+  font-size: 1em;
+}
+
+.saldo-info-container {
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+}
+
+.saldo-positivo i {
+  color: #4caf50;
+}
+
+.saldo-negativo i {
+  color: #f44336;
+}
+
+.saldo-zero i {
+  color: #95a5a6;
 }
 
 /* Verde para lucro positivo */
@@ -1541,76 +1422,6 @@ p {
 /* ========================================
    9. ANIMAÇÕES
    ======================================== */
-
-/* Animação de onda dourada */
-@keyframes goldWave {
-  0% {
-    background-position: 0% 50%;
-  }
-  100% {
-    background-position: 200% 50%;
-  }
-}
-
-/* Animação de brilho para o container */
-@keyframes shimmer {
-  0% {
-    background-position: 0% 50%;
-  }
-  50% {
-    background-position: 100% 50%;
-  }
-  100% {
-    background-position: 0% 50%;
-  }
-}
-
-/* Animação de shine */
-@keyframes shine {
-  0% {
-    transform: translateX(-100%) translateY(-100%) rotate(45deg);
-  }
-  100% {
-    transform: translateX(100%) translateY(100%) rotate(45deg);
-  }
-}
-
-/* Animação de bounce para o ícone */
-@keyframes bounce {
-  0%,
-  100% {
-    transform: translateY(0);
-  }
-  50% {
-    transform: translateY(-5px);
-  }
-}
-
-/* Animação de pulse dourado */
-@keyframes pulseGold {
-  0% {
-    transform: scale(1);
-  }
-  50% {
-    transform: scale(1.02);
-  }
-  100% {
-    transform: scale(1);
-  }
-}
-
-/* Animação de atualização */
-@keyframes pulse-update {
-  0% {
-    transform: scale(1);
-  }
-  50% {
-    transform: scale(1.05);
-  }
-  100% {
-    transform: scale(1);
-  }
-}
 
 /* Classe para animação de atualização */
 .atualizado {
@@ -1734,4 +1545,413 @@ p {
 
 .margin-top-medium {
   margin-top: 10px;
+}
+
+/* ========================================
+   13. TESTE
+   ======================================== */
+
+/* ========================================
+   ADICIONAR ESTES ESTILOS PARA A BARRA
+   ======================================== */
+
+/* Container da barra - SOBRESCREVER o estilo antigo */
+.widget-barra-container {
+  background: #ecf0f1 !important;
+  border-radius: 20px !important;
+  height: 22px !important;
+  position: relative !important;
+  overflow: hidden !important;
+  box-shadow: inset 0 2px 4px rgba(0, 0, 0, 0.1) !important;
+  margin-top: -10px !important;
+  width: 85% !important; /* ✅ Ocupa toda largura disponível */
+}
+
+/* Barra de progresso - CORRIGIDA */
+.widget-barra-progresso {
+  height: 100% !important;
+  border-radius: 25px !important;
+  transition: all 0.5s cubic-bezier(0.4, 0, 0.2, 1) !important;
+  position: relative !important;
+  display: flex !important;
+  align-items: center !important;
+  /* REMOVER width: 65% que estava no CSS antigo */
+  background: none !important; /* Limpar background antigo */
+  box-shadow: none !important; /* Limpar shadow antigo */
+  margin-top: 0px;
+}
+
+/* ========================================
+   CORES DAS BARRAS - IMPORTANTES
+   ======================================== */
+
+.widget-barra-progresso.barra-lucro {
+  background: linear-gradient(90deg, #4caf50, #66bb6a) !important;
+}
+
+.widget-barra-progresso.barra-meta-batida {
+  background: linear-gradient(90deg, #2196f3, #42a5f5) !important;
+}
+
+.widget-barra-progresso.barra-lucro-extra {
+  background: linear-gradient(90deg, #ffd700, #ffa500) !important;
+  animation: shimmer 2s linear infinite !important;
+}
+
+.widget-barra-progresso.barra-negativo {
+  background: linear-gradient(90deg, #f44336, #ef5350) !important;
+}
+
+.widget-barra-progresso.barra-neutro {
+  background: linear-gradient(90deg, #95a5a6, #b4bcc2) !important;
+}
+
+.widget-barra-progresso.barra-sem-banca {
+  background: linear-gradient(90deg, #e67e22, #f39c12) !important;
+}
+
+/* Animação shimmer */
+@keyframes shimmer {
+  0% {
+    background-position: -200% 50%;
+  }
+  100% {
+    background-position: 200% 50%;
+  }
+}
+
+/* ========================================
+   PORCENTAGEM - POSICIONAMENTO CORRETO
+   ======================================== */
+
+.porcentagem-barra {
+  position: absolute !important;
+  right: 0 !important;
+  top: 0 !important;
+  height: 100% !important;
+  z-index: 10 !important;
+  display: flex !important;
+  align-items: center !important;
+  overflow: hidden !important;
+  /* Remover estilos conflitantes */
+  font-size: inherit !important;
+  font-weight: inherit !important;
+}
+
+/* ========================================
+   PORCENTAGEM COM LARGURA REDUZIDA
+   ======================================== */
+
+/* ========================================
+   PORCENTAGEM - BORDA ESQUERDA SEMPRE RETA
+   ======================================== */
+
+.porcentagem-fundo {
+  display: flex !important;
+  align-items: center !important;
+  justify-content: center !important;
+  padding: 0 10px !important;
+  height: 100% !important;
+  font-size: 12px !important;
+  font-weight: 700 !important;
+  color: white !important;
+  text-shadow: 0 1px 3px rgba(0, 0, 0, 0.3) !important;
+  transition: all 0.3s ease !important;
+  min-width: 40px !important;
+  position: relative !important;
+  /* ✅ CRÍTICO: Forçar borda esquerda RETA e direita arredondada */
+  border-radius: 0 25px 25px 0 !important;
+  border-top-left-radius: 0 !important;
+  border-bottom-left-radius: 0 !important;
+  border-top-right-radius: 25px !important;
+  border-bottom-right-radius: 25px !important;
+  border-left: 2px solid rgba(255, 255, 255, 0.3) !important;
+}
+
+/* ✅ OVERRIDE PARA CLASSE PEQUENO - NÃO MUDAR BORDAS */
+.porcentagem-barra.pequeno .porcentagem-fundo {
+  /* FORÇAR borda esquerda reta mesmo em valores pequenos */
+  border-radius: 0 25px 25px 0 !important;
+  border-top-left-radius: 0 !important;
+  border-bottom-left-radius: 0 !important;
+  border-top-right-radius: 25px !important;
+  border-bottom-right-radius: 25px !important;
+  min-width: 45px !important;
+  padding: 0 8px !important;
+}
+
+/* ========================================
+   FORÇAR EM TODAS AS CORES - BORDA ESQUERDA RETA
+   ======================================== */
+
+/* Verde - Lucro */
+.porcentagem-fundo.barra-lucro {
+  background: rgba(76, 175, 80, 0.9) !important;
+  backdrop-filter: blur(5px) !important;
+  /* Forçar bordas */
+  border-top-left-radius: 0 !important;
+  border-bottom-left-radius: 0 !important;
+  border-top-right-radius: 25px !important;
+  border-bottom-right-radius: 25px !important;
+}
+
+/* Azul - Meta Batida */
+.porcentagem-fundo.barra-meta-batida {
+  background: rgba(33, 150, 243, 0.9) !important;
+  backdrop-filter: blur(5px) !important;
+  /* Forçar bordas */
+  border-top-left-radius: 0 !important;
+  border-bottom-left-radius: 0 !important;
+  border-top-right-radius: 25px !important;
+  border-bottom-right-radius: 25px !important;
+}
+
+/* Dourado - Lucro Extra */
+.porcentagem-fundo.barra-lucro-extra {
+  background: linear-gradient(
+    135deg,
+    rgba(255, 215, 0, 0.95),
+    rgba(255, 165, 0, 0.95)
+  ) !important;
+  backdrop-filter: blur(5px) !important;
+  animation: pulseGold 2s ease-in-out infinite !important;
+  /* Forçar bordas */
+  border-top-left-radius: 0 !important;
+  border-bottom-left-radius: 0 !important;
+  border-top-right-radius: 25px !important;
+  border-bottom-right-radius: 25px !important;
+}
+
+/* Vermelho - Negativo */
+.porcentagem-fundo.barra-negativo {
+  background: rgba(244, 67, 54, 0.9) !important;
+  backdrop-filter: blur(5px) !important;
+  /* Forçar bordas */
+  border-top-left-radius: 0 !important;
+  border-bottom-left-radius: 0 !important;
+  border-top-right-radius: 25px !important;
+  border-bottom-right-radius: 25px !important;
+}
+
+/* Cinza - Neutro */
+.porcentagem-fundo.barra-neutro {
+  background: rgba(149, 165, 166, 0.9) !important;
+  backdrop-filter: blur(5px) !important;
+  /* Forçar bordas */
+  border-top-left-radius: 0 !important;
+  border-bottom-left-radius: 0 !important;
+  border-top-right-radius: 25px !important;
+  border-bottom-right-radius: 25px !important;
+}
+
+/* Laranja - Sem Banca */
+.porcentagem-fundo.barra-sem-banca {
+  background: rgba(230, 126, 34, 0.9) !important;
+  backdrop-filter: blur(5px) !important;
+  /* Forçar bordas */
+  border-top-left-radius: 0 !important;
+  border-bottom-left-radius: 0 !important;
+  border-top-right-radius: 25px !important;
+  border-bottom-right-radius: 25px !important;
+}
+
+/* ========================================
+   HOVER - MANTER BORDAS
+   ======================================== */
+
+.porcentagem-fundo:hover {
+  padding: 0 12px !important;
+  font-size: 13px !important;
+  filter: brightness(1.1) !important;
+  cursor: default !important;
+  /* Forçar bordas no hover também */
+  border-top-left-radius: 0 !important;
+  border-bottom-left-radius: 0 !important;
+  border-top-right-radius: 25px !important;
+  border-bottom-right-radius: 25px !important;
+}
+
+/* ========================================
+   REGRA GLOBAL - MÁXIMA PRIORIDADE
+   ======================================== */
+
+/* Aplicar a TODOS os elementos com porcentagem-fundo, independente do estado */
+[class*="porcentagem-fundo"] {
+  border-top-left-radius: 0 !important;
+  border-bottom-left-radius: 0 !important;
+  border-top-right-radius: 25px !important;
+  border-bottom-right-radius: 25px !important;
+}
+
+/* Para garantir em valores muito pequenos */
+.widget-barra-progresso[style*="width: 0"]
+  ~ .porcentagem-barra
+  .porcentagem-fundo,
+.widget-barra-progresso[style*="width: 1"]
+  ~ .porcentagem-barra
+  .porcentagem-fundo,
+.widget-barra-progresso[style*="width: 2"]
+  ~ .porcentagem-barra
+  .porcentagem-fundo,
+.widget-barra-progresso[style*="width: 3"]
+  ~ .porcentagem-barra
+  .porcentagem-fundo,
+.widget-barra-progresso[style*="width: 4"]
+  ~ .porcentagem-barra
+  .porcentagem-fundo,
+.widget-barra-progresso[style*="width: 5"]
+  ~ .porcentagem-barra
+  .porcentagem-fundo {
+  border-top-left-radius: 0 !important;
+  border-bottom-left-radius: 0 !important;
+}
+
+/* ========================================
+   WIDGET META ROTULO - GARANTIR VISIBILIDADE
+   ======================================== */
+
+.widget-meta-rotulo {
+  font-size: 14px !important;
+  color: #7f8c8d !important;
+  margin-bottom: 15px !important;
+  margin-left: 0px !important; /* ✅ Alinhado à esquerda */
+  padding-left: 0 !important; /* ✅ Sem padding */
+  font-weight: 500 !important;
+  text-transform: none !important;
+  letter-spacing: 0.5px !important;
+  text-align: left !important; /* ✅ MUDADO: de center para left */
+  display: block !important;
+  width: auto !important; /* ✅ Largura automática */
+}
+/* Garantir que o texto não seja forçado para maiúsculas em nenhum lugar */
+#rotulo-meta {
+  text-transform: none !important;
+  margin-left: 0px;
+}
+
+/* ========================================
+   WIDGET INFO PROGRESSO - AJUSTE
+   ======================================== */
+
+.widget-info-progresso {
+  margin-top: 0px !important;
+  display: flex !important;
+  justify-content: flex-start !important; /* ✅ Também alinhado à esquerda */
+  width: 100% !important;
+  margin-left: 0px;
+}
+
+/* ========================================
+   CONTAINER PRINCIPAL - FUNDO CINZA CLARO
+   ======================================== */
+
+.widget-conteudo-principal {
+  /* Fundo cinza claro como na demonstração */
+  background: #f8f9fa !important;
+
+  /* Bordas arredondadas */
+  border-radius: 12px !important;
+
+  /* Padding interno */
+  padding: 10px !important;
+
+  /* Sombra suave opcional */
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05) !important;
+
+  /* Outros estilos */
+  display: flex !important;
+  flex-direction: column !important;
+
+  width: 95% !important;
+  box-sizing: border-box !important;
+
+  /* Margem opcional se quiser espaçamento */
+  margin: 20px 0 !important;
+  align-items: center !important;
+}
+.widget-conteudo-principal > div {
+  text-align: center;
+  width: 100%;
+}
+.conteudo-left {
+  margin-left: 15%;
+}
+
+/* Alternativa se quiser um card mais definido */
+.widget-conteudo-principal.card-style {
+  background: white !important;
+  border: 1px solid #e0e0e0 !important;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08) !important;
+}
+
+/* Se quiser o mesmo efeito em outros containers */
+.widget-meta-item .widget-conteudo-principal {
+  background: #f8f9fa !important;
+}
+
+/* ========================================
+   OPÇÕES DE CORES DE FUNDO
+   ======================================== */
+
+/* Opção 1: Cinza muito claro (recomendado) */
+.fundo-cinza-claro {
+  background: #f8f9fa !important;
+}
+
+/* Opção 2: Cinza mais claro ainda */
+.fundo-cinza-super-claro {
+  background: #fafbfc !important;
+}
+
+/* Opção 3: Cinza com tom levemente azulado */
+.fundo-cinza-azulado {
+  background: #f0f4f8 !important;
+}
+
+/* Opção 4: Branco com transparência */
+.fundo-branco-transparente {
+  background: rgba(255, 255, 255, 0.9) !important;
+  backdrop-filter: blur(10px) !important;
+}
+
+/* ========================================
+   AJUSTES PARA ELEMENTOS INTERNOS
+   ======================================== */
+
+/* Barra de progresso com destaque */
+.widget-conteudo-principal .widget-barra-container {
+  /* Já tem seu próprio fundo #ecf0f1 */
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.08) !important;
+}
+
+@media (max-width: 768px) {
+  .widget-meta-valor,
+  #meta-valor {
+    font-size: 20px !important;
+  }
+
+  .widget-meta-valor .fa-coins,
+  #meta-valor .fa-coins {
+    font-size: 22px !important;
+  }
+
+  .widget-meta-rotulo {
+    font-size: 12px !important;
+  }
+}
+
+@media (max-width: 480px) {
+  .widget-conteudo-principal {
+    padding: 15px !important;
+  }
+
+  .widget-meta-valor,
+  #meta-valor {
+    font-size: 18px !important;
+  }
+
+  .widget-meta-valor .fa-coins,
+  #meta-valor .fa-coins {
+    font-size: 20px !important;
+  }
 }
