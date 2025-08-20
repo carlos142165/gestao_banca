@@ -1684,38 +1684,22 @@ window.addEventListener("beforeunload", () => {
 // // ✅  ATUALIZADO - META DO DIA COM SUBTRAÇÃO DO SALDO DO DIA
 // ========================================================================================================================
 
-// ✅ SISTEMA INTEGRADO - META DIÁRIA COM FILTRO DE LUCRO POR PERÍODO
-
-// ✅ SISTEMA INTEGRADO - META DIÁRIA COM FILTRO DE LUCRO POR PERÍODO
-
-// ✅ SISTEMA INTEGRADO - META DIÁRIA COM FILTRO DE LUCRO POR PERÍODO
-
-// ✅ SISTEMA INTEGRADO - META DIÁRIA COM FILTRO DE LUCRO POR PERÍODO
-
 const MetaDiariaManager = {
   // ✅ CONTROLE SIMPLES
   atualizandoAtualmente: false,
-  periodoAtual: "dia", // ✅ RASTREAR PERÍODO ATUAL
 
-  // ✅ ATUALIZAR META DIÁRIA - VERSÃO COM FILTRO DE PERÍODO E CONTROLE DE TIMING
-  async atualizarMetaDiaria(aguardarDados = false) {
+  // ✅ ATUALIZAR META DIÁRIA - VERSÃO ESTÁVEL
+  async atualizarMetaDiaria() {
     if (this.atualizandoAtualmente) return null;
 
     this.atualizandoAtualmente = true;
 
     try {
-      // ✅ SE AGUARDAR DADOS, DAR UM PEQUENO DELAY PARA SINCRONIZAÇÃO
-      if (aguardarDados) {
-        await new Promise((resolve) => setTimeout(resolve, 150));
-      }
-
-      // ✅ INCLUIR PERÍODO ATUAL NA REQUISIÇÃO
       const response = await fetch("dados_banca.php", {
         method: "GET",
         headers: {
           "Cache-Control": "no-cache",
           "X-Requested-With": "XMLHttpRequest",
-          "X-Periodo-Filtro": this.periodoAtual, // ✅ ENVIAR PERÍODO ATIVO
         },
       });
 
@@ -1723,20 +1707,6 @@ const MetaDiariaManager = {
 
       const data = await response.json();
       if (!data.success) throw new Error(data.message);
-
-      // ✅ ARMAZENAR PERÍODO RETORNADO
-      if (data.periodo_ativo) {
-        this.periodoAtual = data.periodo_ativo;
-      }
-
-      // ✅ VERIFICAR SE OS DADOS CORRESPONDEM AO PERÍODO ATUAL
-      const dadosValidos = this.verificarConsistenciaDados(data);
-      if (!dadosValidos) {
-        console.warn("⚠️ Dados inconsistentes, tentando novamente...");
-        // Tentar novamente após pequeno delay
-        setTimeout(() => this.atualizarMetaDiaria(false), 100);
-        return null;
-      }
 
       // Aplicar período e atualizar
       const dadosComPeriodo = this.aplicarAjustePeriodo(data);
@@ -1752,53 +1722,27 @@ const MetaDiariaManager = {
     }
   },
 
-  // ✅ NOVA FUNÇÃO: VERIFICAR CONSISTÊNCIA DOS DADOS
-  verificarConsistenciaDados(data) {
-    // Verificar se o período retornado corresponde ao atual
-    const periodoRetornado = data.periodo_ativo || "dia";
-    if (periodoRetornado !== this.periodoAtual) {
-      console.warn(
-        `⚠️ Período inconsistente: esperado ${this.periodoAtual}, recebido ${periodoRetornado}`
-      );
-      return false;
-    }
-
-    // Verificar se há dados básicos
-    if (
-      typeof data.lucro === "undefined" ||
-      typeof data.meta_diaria === "undefined"
-    ) {
-      console.warn("⚠️ Dados básicos faltando");
-      return false;
-    }
-
-    return true;
-  },
-
   // ✅ APLICAR AJUSTE DE PERÍODO - VERSÃO ESTÁVEL
   aplicarAjustePeriodo(data) {
     const radioSelecionado = document.querySelector(
       'input[name="periodo"]:checked'
     );
-    const periodo = radioSelecionado?.value || this.periodoAtual || "dia";
-
-    // ✅ SINCRONIZAR PERÍODO ATUAL
-    this.periodoAtual = periodo;
+    const periodo = radioSelecionado?.value || "dia";
 
     let metaFinal, rotuloFinal;
 
     switch (periodo) {
       case "mes":
         metaFinal = parseFloat(data.meta_mensal) || 0;
-        rotuloFinal = "Meta do Mês";
+        rotuloFinal = "Meta do Mês"; // ✅ Mudado de "META DO MÊS"
         break;
       case "ano":
         metaFinal = parseFloat(data.meta_anual) || 0;
-        rotuloFinal = "Meta do Ano";
+        rotuloFinal = "Meta do Ano"; // ✅ Mudado de "META DO ANO"
         break;
       default:
         metaFinal = parseFloat(data.meta_diaria) || 0;
-        rotuloFinal = "Meta do Dia";
+        rotuloFinal = "Meta do Dia"; // ✅ Mudado de "META DO DIA"
         break;
     }
 
@@ -1816,10 +1760,10 @@ const MetaDiariaManager = {
     };
   },
 
-  // ✅ ATUALIZAR TODOS OS ELEMENTOS - SEPARANDO LUCRO TOTAL DO FILTRADO
+  // ✅ ATUALIZAR TODOS OS ELEMENTOS - VERSÃO ESTÁVEL
   atualizarTodosElementos(data) {
-    // ✅ USAR LUCRO FILTRADO PARA CÁLCULOS DA META E BARRA
-    const saldoDia = parseFloat(data.lucro) || 0; // ✅ Lucro filtrado para cálculos
+    // Calcular valores uma vez
+    const saldoDia = parseFloat(data.lucro) || 0;
     const metaCalculada = parseFloat(data.meta_display) || 0;
     const bancaTotal = parseFloat(data.banca) || 0;
     const resultado = this.calcularMetaFinal(
@@ -1831,25 +1775,11 @@ const MetaDiariaManager = {
 
     // Atualizar em sequência
     this.atualizarAreaDireita(data);
-    this.atualizarModal(data); // ✅ Usa lucro total para o campo do topo
+    this.atualizarModal(data);
     this.atualizarMetaElemento(resultado);
     this.atualizarRotulo(resultado.rotulo);
     this.atualizarValorExtra(resultado.valorExtra);
-    this.atualizarBarraProgresso(resultado, data); // ✅ Usa lucro filtrado
-
-    // ✅ LOG PARA DEBUG - MOSTRANDO OS DOIS TIPOS DE LUCRO
-    console.log(
-      `🎯 Meta atualizada para período: ${
-        data.periodo_ativo || this.periodoAtual
-      }`
-    );
-    console.log(`💰 Lucro FILTRADO (para cálculos): R$ ${saldoDia.toFixed(2)}`);
-    console.log(
-      `💰 Lucro TOTAL (para topo): R$ ${(
-        parseFloat(data.lucro_total_display) || 0
-      ).toFixed(2)}`
-    );
-    console.log(`🎯 Meta: R$ ${metaCalculada.toFixed(2)}`);
+    this.atualizarBarraProgresso(resultado, data);
   },
 
   // ✅ ATUALIZAR ÁREA DIREITA - ESTÁVEL
@@ -1865,44 +1795,23 @@ const MetaDiariaManager = {
     }
   },
 
-  // ✅ ATUALIZAR MODAL - COM LUCRO TOTAL + CAMPO ESPECÍFICO
+  // ✅ ATUALIZAR MODAL - ESTÁVEL
   atualizarModal(data) {
     const valorBancaLabel = document.getElementById("valorBancaLabel");
     if (valorBancaLabel && data.banca_formatada) {
       valorBancaLabel.textContent = data.banca_formatada;
     }
 
-    // ✅ USAR LUCRO TOTAL PARA O CAMPO DO TOPO (SEM FILTRO)
     const valorLucroLabel = document.getElementById("valorLucroLabel");
-    if (valorLucroLabel && data.lucro_total_formatado) {
-      valorLucroLabel.textContent = data.lucro_total_formatado;
+    if (valorLucroLabel && data.lucro_formatado) {
+      valorLucroLabel.textContent = data.lucro_formatado;
     }
 
-    // ✅ CORREÇÃO: USAR LUCRO TOTAL PARA O CAMPO lucro_valor_entrada (SOMA COMPLETA SEM FILTRO)
-    const lucroValorEntrada = document.getElementById("lucro_valor_entrada");
-    if (lucroValorEntrada) {
-      // Usar lucro total formatado ou calcular se não disponível
-      const lucroTotalFormatado =
-        data.lucro_total_formatado ||
-        data.lucro_total_historico?.toLocaleString("pt-BR", {
-          style: "currency",
-          currency: "BRL",
-        }) ||
-        "R$ 0,00";
-
-      lucroValorEntrada.textContent = lucroTotalFormatado; // ✅ SEMPRE SOMA TOTAL
-    }
-
-    // ✅ APLICAR CORES BASEADAS NO LUCRO TOTAL (NÃO FILTRADO)
-    const lucroValorTotal =
-      parseFloat(data.lucro_total_historico) ||
-      parseFloat(data.lucro_total_display) ||
-      parseFloat(data.lucro_total) ||
-      0; // ✅ Lucro total para cores
-
-    // ✅ APLICAR CORES NO MODAL BASEADAS NO LUCRO TOTAL
+    // ✅ APLICAR CORES DO LUCRO - USANDO CLASSES CSS
+    const lucroValor = parseFloat(data.lucro) || 0;
     const iconeLucro = document.getElementById("iconeLucro");
     const lucroLabel = document.getElementById("lucroLabel");
+
     if (iconeLucro && lucroLabel && valorLucroLabel) {
       // Remover classes anteriores
       lucroLabel.className = lucroLabel.className.replace(
@@ -1914,11 +1823,11 @@ const MetaDiariaManager = {
         ""
       );
 
-      if (lucroValorTotal > 0) {
+      if (lucroValor > 0) {
         iconeLucro.className = "fa-solid fa-money-bill-trend-up";
         lucroLabel.classList.add("modal-lucro-positivo");
         valorLucroLabel.classList.add("modal-lucro-positivo");
-      } else if (lucroValorTotal < 0) {
+      } else if (lucroValor < 0) {
         iconeLucro.className = "fa-solid fa-money-bill-trend-down";
         lucroLabel.classList.add("modal-lucro-negativo");
         valorLucroLabel.classList.add("modal-lucro-negativo");
@@ -1928,42 +1837,9 @@ const MetaDiariaManager = {
         valorLucroLabel.classList.add("modal-lucro-neutro");
       }
     }
-
-    // ✅ APLICAR CORES NO CAMPO lucro_valor_entrada BASEADO NO LUCRO TOTAL
-    if (lucroValorEntrada) {
-      // Remover classes anteriores
-      lucroValorEntrada.classList.remove(
-        "saldo-positivo",
-        "saldo-negativo",
-        "saldo-neutro"
-      );
-
-      // Adicionar classe baseada no valor TOTAL (sem filtro)
-      if (lucroValorTotal > 0) {
-        lucroValorEntrada.classList.add("saldo-positivo");
-      } else if (lucroValorTotal < 0) {
-        lucroValorEntrada.classList.add("saldo-negativo");
-      } else {
-        lucroValorEntrada.classList.add("saldo-neutro");
-      }
-    }
-
-    // ✅ ATUALIZAR RÓTULO DO LUCRO BASEADO NO VALOR TOTAL
-    const lucroEntradasRotulo = document.getElementById(
-      "lucro_entradas_rotulo"
-    );
-    if (lucroEntradasRotulo) {
-      if (lucroValorTotal > 0) {
-        lucroEntradasRotulo.textContent = "Lucro:";
-      } else if (lucroValorTotal < 0) {
-        lucroEntradasRotulo.textContent = "Negativo:";
-      } else {
-        lucroEntradasRotulo.textContent = "Neutro:";
-      }
-    }
   },
 
-  // ✅ CALCULAR META FINAL - USANDO LUCRO FILTRADO
+  // ✅ CALCULAR META FINAL - LÓGICA CORRIGIDA PARA LUCRO EXTRA
   calcularMetaFinal(saldoDia, metaCalculada, bancaTotal, data) {
     let metaFinal,
       rotulo,
@@ -1973,7 +1849,7 @@ const MetaDiariaManager = {
     // ✅ REGRA 1: Banca total <= 0 - Precisa depositar
     if (bancaTotal <= 0) {
       metaFinal = bancaTotal;
-      rotulo = "Deposite p/ Começar";
+      rotulo = "Deposite p/ Começar"; // ✅ Mudado de "DEPOSITE P/ COMEÇAR"
       statusClass = "sem-banca";
       valorExtra = 0;
     }
@@ -1981,8 +1857,8 @@ const MetaDiariaManager = {
     else if (saldoDia > 0 && metaCalculada > 0 && saldoDia >= metaCalculada) {
       metaFinal = 0;
       rotulo = `${
-        data.rotulo_periodo || "Meta"
-      } Batida! <i class='fa-solid fa-trophy'></i>`;
+        data.rotulo_periodo || "Meta" // ✅ Mudado de "META"
+      } Batida! <i class='fa-solid fa-trophy'></i>`; // ✅ Mudado de "BATIDA!"
       statusClass = "meta-batida";
       valorExtra = saldoDia - metaCalculada;
 
@@ -1994,21 +1870,21 @@ const MetaDiariaManager = {
     // ✅ REGRA 3: Lucro negativo
     else if (saldoDia < 0) {
       metaFinal = metaCalculada - saldoDia;
-      rotulo = `Restando p/ ${data.rotulo_periodo || "Meta"}`;
+      rotulo = `Restando p/ ${data.rotulo_periodo || "Meta"}`; // ✅ Mudado de "RESTANDO P/"
       statusClass = "negativo";
       valorExtra = 0;
     }
     // ✅ REGRA 4: Lucro zero
     else if (saldoDia === 0) {
       metaFinal = metaCalculada;
-      rotulo = data.rotulo_periodo || "Meta do Dia";
+      rotulo = data.rotulo_periodo || "Meta do Dia"; // ✅ Mudado de "META DO DIA"
       statusClass = "neutro";
       valorExtra = 0;
     }
     // ✅ REGRA 5: Lucro positivo mas não bateu meta (saldo < meta)
     else {
       metaFinal = metaCalculada - saldoDia;
-      rotulo = `Restando p/ ${data.rotulo_periodo || "Meta"}`;
+      rotulo = `Restando p/ ${data.rotulo_periodo || "Meta"}`; // ✅ Mudado de "RESTANDO P/"
       statusClass = "lucro";
       valorExtra = 0;
     }
@@ -2065,6 +1941,11 @@ const MetaDiariaManager = {
     }
   },
 
+  // ✅ ATUALIZAR VALOR EXTRA - USANDO ESTRUTURA HTML LIMPA
+  // ========================================
+  // ADICIONAR NA FUNÇÃO atualizarValorExtra
+  // ========================================
+
   // ✅ ATUALIZAR VALOR EXTRA - COM CLASSE NO BODY
   atualizarValorExtra(valorExtra) {
     const valorUltrapassouElement =
@@ -2106,7 +1987,8 @@ const MetaDiariaManager = {
     }
   },
 
-  // ✅ ATUALIZAR BARRA PROGRESSO - VERSÃO CORRIGIDA COM LUCRO FILTRADO
+  // ✅ ATUALIZAR BARRA PROGRESSO - MODIFICADA
+  // ✅ ATUALIZAR BARRA PROGRESSO - VERSÃO CORRIGIDA
   atualizarBarraProgresso(resultado, data) {
     const barraProgresso = document.getElementById("barra-progresso");
     const saldoInfo = document.getElementById("saldo-info");
@@ -2114,7 +1996,7 @@ const MetaDiariaManager = {
 
     if (!barraProgresso) return;
 
-    const saldoDia = parseFloat(data.lucro) || 0; // ✅ Lucro filtrado
+    const saldoDia = parseFloat(data.lucro) || 0;
     const metaCalculada = parseFloat(data.meta_display) || 0;
     const bancaTotal = parseFloat(data.banca) || 0;
 
@@ -2137,7 +2019,7 @@ const MetaDiariaManager = {
 
     // ✅ SISTEMA DE CORES USANDO APENAS CLASSES CSS
     let temLucroExtra = false;
-    let classeCor = "";
+    let classeCor = ""; // Para armazenar a classe de cor atual
 
     // ✅ REMOVER TODAS AS CLASSES DE COR ANTERIORES MAS MANTER widget-barra-progresso
     barraProgresso.className = barraProgresso.className.replace(
@@ -2194,6 +2076,10 @@ const MetaDiariaManager = {
       }
     }
 
+    // ✅ SALDO INFO COM ÍCONE DINÂMICO
+    // ✅ PARTE DO SALDO NA FUNÇÃO atualizarBarraProgresso
+    // Substitua apenas esta parte na sua função:
+
     // ✅ SALDO INFO COM ESTRUTURA CORRETA PARA CORES SEPARADAS
     if (saldoInfo) {
       const saldoFormatado = saldoDia.toLocaleString("pt-BR", {
@@ -2233,113 +2119,14 @@ const MetaDiariaManager = {
     }
   },
 
-  // ✅ NOVA FUNÇÃO: BLOQUEAR CÁLCULOS TEMPORÁRIOS DURANTE MUDANÇA
-  bloquearCalculosTemporarios() {
-    // Bloquear elementos visuais que podem mostrar valores incorretos
-    const elementosBloquear = [
-      "meta-valor",
-      "barra-progresso",
-      "saldo-info",
-      "porcentagem-barra",
-    ];
-
-    elementosBloquear.forEach((id) => {
-      const elemento = document.getElementById(id);
-      if (elemento) {
-        elemento.style.opacity = "0.3";
-        elemento.style.pointerEvents = "none";
-      }
-    });
-
-    // Desbloquear após delay
-    setTimeout(() => {
-      elementosBloquear.forEach((id) => {
-        const elemento = document.getElementById(id);
-        if (elemento) {
-          elemento.style.opacity = "1";
-          elemento.style.pointerEvents = "auto";
-        }
-      });
-    }, 400);
-  },
-
-  // ✅ CONFIGURAR LISTENERS - COM BLOQUEIO DE CÁLCULOS TEMPORÁRIOS
+  // ✅ CONFIGURAR LISTENERS - ESTÁVEL
   configurarListenersPeriodo() {
     const radiosPeriodo = document.querySelectorAll('input[name="periodo"]');
     radiosPeriodo.forEach((radio) => {
-      radio.addEventListener("change", (e) => {
-        if (e.target.checked) {
-          // ✅ PREVENIR MÚLTIPLAS EXECUÇÕES
-          if (this.atualizandoAtualmente) {
-            console.log("⏳ Atualização já em andamento, ignorando...");
-            return;
-          }
-
-          // ✅ BLOQUEAR CÁLCULOS TEMPORÁRIOS IMEDIATAMENTE
-          this.bloquearCalculosTemporarios();
-
-          // ✅ MOSTRAR LOADING VISUAL IMEDIATO
-          this.mostrarLoadingTemporario();
-
-          // ✅ ATUALIZAR PERÍODO ATUAL ANTES DE CARREGAR
-          const novoPeriodo = e.target.value;
-          this.periodoAtual = novoPeriodo;
-
-          // ✅ SINCRONIZAR COM SISTEMA DE FILTRO SE EXISTIR
-          if (typeof SistemaFiltroPeriodoIntegrado !== "undefined") {
-            SistemaFiltroPeriodoIntegrado.periodoAtual = novoPeriodo;
-          }
-
-          // ✅ DELAY MAIOR PARA EVITAR CÁLCULOS COM DADOS ANTIGOS
-          setTimeout(() => {
-            this.atualizarMetaDiaria(true); // true = aguardar dados
-          }, 150); // Aumentado de 50ms para 150ms
-        }
+      radio.addEventListener("change", () => {
+        this.atualizarMetaDiaria();
       });
     });
-  },
-
-  // ✅ NOVA FUNÇÃO: MOSTRAR LOADING TEMPORÁRIO
-  mostrarLoadingTemporario() {
-    const metaElement = document.getElementById("meta-valor");
-    if (metaElement) {
-      const valorTextoEl = metaElement.querySelector(".valor-texto");
-      if (valorTextoEl) {
-        valorTextoEl.textContent = "Calculando...";
-        valorTextoEl.style.opacity = "0.6";
-
-        // Restaurar opacity após cálculo
-        setTimeout(() => {
-          valorTextoEl.style.opacity = "1";
-        }, 800);
-      }
-    }
-
-    const barraProgresso = document.getElementById("barra-progresso");
-    if (barraProgresso) {
-      barraProgresso.style.opacity = "0.5";
-      setTimeout(() => {
-        barraProgresso.style.opacity = "1";
-      }, 600);
-    }
-  },
-
-  // ✅ SINCRONIZAR COM SISTEMA DE FILTRO EXTERNO
-  sincronizarComFiltroExterno(periodo) {
-    if (periodo && periodo !== this.periodoAtual) {
-      this.periodoAtual = periodo;
-
-      // ✅ ATUALIZAR RADIO BUTTON CORRESPONDENTE
-      const radio = document.querySelector(
-        `input[name="periodo"][value="${periodo}"]`
-      );
-      if (radio && !radio.checked) {
-        radio.checked = true;
-      }
-
-      // ✅ ATUALIZAR META
-      this.atualizarMetaDiaria();
-    }
   },
 
   // ✅ MOSTRAR ERRO - USANDO CLASSES CSS
@@ -2368,14 +2155,6 @@ const MetaDiariaManager = {
         '<i class="fa-solid fa-coins"></i><span class="valor-texto loading-text">Calculando...</span>';
     }
 
-    // ✅ DETECTAR PERÍODO INICIAL DOS RADIO BUTTONS
-    const radioMarcado = document.querySelector(
-      'input[name="periodo"]:checked'
-    );
-    if (radioMarcado) {
-      this.periodoAtual = radioMarcado.value;
-    }
-
     // Configurar listeners
     this.configurarListenersPeriodo();
 
@@ -2385,98 +2164,7 @@ const MetaDiariaManager = {
 };
 
 // ========================================
-// ✅ INTEGRAÇÃO COM SISTEMA DE FILTRO EXISTENTE
-// ========================================
-
-// ✅ INTEGRAR COM SISTEMA DE FILTRO DE PERÍODO EXISTENTE
-const SistemaFiltroPeriodoIntegrado = {
-  ...(window.SistemaFiltroPeriodo || {}),
-
-  periodoAtual: "dia",
-
-  // ✅ SOBRESCREVER FUNÇÃO DE ALTERAÇÃO DE PERÍODO COM CONTROLE MELHORADO
-  async alterarPeriodo(periodo) {
-    // ✅ PREVENIR MÚLTIPLAS EXECUÇÕES SIMULTÂNEAS
-    if (this.executandoAlteracao) {
-      console.log("⏳ Alteração já em andamento, aguardando...");
-      return;
-    }
-
-    this.executandoAlteracao = true;
-    this.periodoAtual = periodo;
-
-    try {
-      this.atualizarBotoesVisuais(periodo);
-      this.mostrarLoading();
-
-      // ✅ BLOQUEAR CÁLCULOS VISUAIS TEMPORÁRIOS
-      if (typeof MetaDiariaManager !== "undefined") {
-        MetaDiariaManager.bloquearCalculosTemporarios();
-      }
-
-      // ✅ AGUARDAR MAIS TEMPO ANTES DE FAZER REQUISIÇÕES
-      await new Promise((resolve) => setTimeout(resolve, 200));
-
-      // ✅ SINCRONIZAR COM META MANAGER ANTES DA REQUISIÇÃO
-      if (typeof MetaDiariaManager !== "undefined") {
-        MetaDiariaManager.periodoAtual = periodo;
-      }
-
-      const formData = new FormData();
-      formData.append("periodo", periodo);
-
-      const response = await fetch("carregar-mentores.php", {
-        method: "POST",
-        body: formData,
-        headers: {
-          "X-Periodo-Filtro": periodo, // ✅ HEADER PARA SINCRONIZAÇÃO
-        },
-      });
-
-      if (!response.ok) throw new Error("Erro ao carregar dados");
-
-      const html = await response.text();
-      const container = document.getElementById("listaMentores");
-      if (container) {
-        container.innerHTML = html;
-        this.reaplicarEventos();
-        this.atualizarPlacar();
-        atualizarIndicadorPeriodoHeader(periodo);
-      }
-
-      // ✅ AGUARDAR OS DADOS DOS MENTORES CARREGAREM COMPLETAMENTE
-      await new Promise((resolve) => setTimeout(resolve, 300));
-
-      // ✅ FORÇAR ATUALIZAÇÃO DA META COM PERÍODO SINCRONIZADO
-      if (typeof MetaDiariaManager !== "undefined") {
-        await MetaDiariaManager.atualizarMetaDiaria(true); // true = aguardar dados
-      }
-    } catch (error) {
-      this.mostrarErro("Erro ao carregar dados do período");
-    } finally {
-      this.ocultarLoading();
-      // ✅ AGUARDAR UM POUCO MAIS ANTES DE LIBERAR
-      setTimeout(() => {
-        this.executandoAlteracao = false;
-      }, 100);
-    }
-  },
-
-  // ✅ MANTER OUTRAS FUNÇÕES EXISTENTES
-  atualizarBotoesVisuais:
-    window.SistemaFiltroPeriodo?.atualizarBotoesVisuais || function () {},
-  reaplicarEventos:
-    window.SistemaFiltroPeriodo?.reaplicarEventos || function () {},
-  atualizarPlacar:
-    window.SistemaFiltroPeriodo?.atualizarPlacar || function () {},
-  mostrarLoading: window.SistemaFiltroPeriodo?.mostrarLoading || function () {},
-  ocultarLoading: window.SistemaFiltroPeriodo?.ocultarLoading || function () {},
-  mostrarErro: window.SistemaFiltroPeriodo?.mostrarErro || function () {},
-  inicializar: window.SistemaFiltroPeriodo?.inicializar || function () {},
-};
-
-// ========================================
-// INTERCEPTAÇÃO AJAX - INTEGRADA COM PERÍODO E CONTROLE DE TIMING
+// INTERCEPTAÇÃO AJAX - ESTÁVEL
 // ========================================
 
 function configurarInterceptadores() {
@@ -2491,18 +2179,9 @@ function configurarInterceptadores() {
       args[0].includes("dados_banca.php") &&
       response.ok
     ) {
-      // ✅ AGUARDAR UM POUCO MAIS PARA GARANTIR SINCRONIZAÇÃO
       setTimeout(() => {
-        // ✅ SÓ ATUALIZAR SE NÃO ESTIVER EXECUTANDO ALTERAÇÃO DE PERÍODO
-        if (
-          typeof MetaDiariaManager !== "undefined" &&
-          !MetaDiariaManager.atualizandoAtualmente &&
-          (!SistemaFiltroPeriodoIntegrado ||
-            !SistemaFiltroPeriodoIntegrado.executandoAlteracao)
-        ) {
-          MetaDiariaManager.atualizarMetaDiaria();
-        }
-      }, 100); // ✅ Aumentado de 50ms para 100ms
+        MetaDiariaManager.atualizarMetaDiaria();
+      }, 50);
     }
 
     return response;
@@ -2521,16 +2200,8 @@ function configurarInterceptadores() {
           xhr.status === 200
         ) {
           setTimeout(() => {
-            // ✅ MESMA VERIFICAÇÃO PARA AJAX
-            if (
-              typeof MetaDiariaManager !== "undefined" &&
-              !MetaDiariaManager.atualizandoAtualmente &&
-              (!SistemaFiltroPeriodoIntegrado ||
-                !SistemaFiltroPeriodoIntegrado.executandoAlteracao)
-            ) {
-              MetaDiariaManager.atualizarMetaDiaria();
-            }
-          }, 100);
+            MetaDiariaManager.atualizarMetaDiaria();
+          }, 50);
         }
       });
 
@@ -2557,84 +2228,19 @@ window.forcarAtualizacaoMeta = () => {
 };
 
 window.alterarPeriodo = (periodo) => {
-  // ✅ PREVENIR EXECUÇÃO MÚLTIPLA
-  if (
-    SistemaFiltroPeriodoIntegrado?.executandoAlteracao ||
-    MetaDiariaManager?.atualizandoAtualmente
-  ) {
-    console.log("⏳ Sistema ocupado, aguardando...");
-    return false;
-  }
-
   const radio = document.querySelector(
     `input[name="periodo"][value="${periodo}"]`
   );
   if (radio) {
     radio.checked = true;
-    MetaDiariaManager.periodoAtual = periodo;
-
-    // ✅ NÃO CHAMAR ATUALIZAÇÃO IMEDIATA - DEIXAR O LISTENER FAZER
-    // MetaDiariaManager.atualizarMetaDiaria();
-
-    // ✅ SINCRONIZAR COM FILTRO SE EXISTIR
-    if (typeof SistemaFiltroPeriodoIntegrado !== "undefined") {
-      SistemaFiltroPeriodoIntegrado.alterarPeriodo(periodo);
-    }
-
+    MetaDiariaManager.atualizarMetaDiaria();
     return true;
   }
   return false;
 };
 
 // ========================================
-// ✅ ATUALIZAÇÃO DO SISTEMA DE DADOS MANAGER
-// ========================================
-
-// ✅ SOBRESCREVER FUNÇÃO DE ATUALIZAÇÃO DE DADOS
-if (typeof DadosManager !== "undefined") {
-  const originalAtualizarLucro = DadosManager.atualizarLucroEBancaViaAjax;
-
-  DadosManager.atualizarLucroEBancaViaAjax = function () {
-    // ✅ INCLUIR PERÍODO ATUAL NAS REQUISIÇÕES
-    const periodoAtual = MetaDiariaManager?.periodoAtual || "dia";
-
-    return fetch("dados_banca.php", {
-      headers: {
-        "X-Periodo-Filtro": periodoAtual,
-      },
-    })
-      .then((response) => {
-        if (!response.ok) throw new Error(`HTTP ${response.status}`);
-        return response.json();
-      })
-      .then((data) => {
-        if (!data.success) {
-          throw new Error(data.message || "Resposta inválida do servidor");
-        }
-
-        this.atualizarElementosLucro(data);
-        this.atualizarElementosBanca(data);
-
-        // Calcular meta com dados atualizados
-        const bancaFloat = Utils.getValorNumerico(data.banca_formatada);
-        this.calcularMeta(bancaFloat);
-
-        // ✅ SINCRONIZAR META MANAGER
-        if (typeof MetaDiariaManager !== "undefined") {
-          setTimeout(() => {
-            MetaDiariaManager.atualizarMetaDiaria();
-          }, 50);
-        }
-      })
-      .catch((error) => {
-        console.error("Erro ao atualizar dados da banca:", error);
-        ToastManager.mostrar("❌ Erro ao atualizar dados financeiros", "erro");
-      });
-  };
-}
-
-// ========================================
-// ATALHOS SIMPLES E ESTÁVEIS - INTEGRADOS
+// ATALHOS SIMPLES E ESTÁVEIS
 // ========================================
 
 window.$ = {
@@ -2644,7 +2250,7 @@ window.$ = {
   ano: () => alterarPeriodo("ano"),
 
   test: () => {
-    console.log("🧪 Teste básico integrado:");
+    console.log("🧪 Teste básico:");
     alterarPeriodo("dia");
     console.log("✅ DIA");
     setTimeout(() => {
@@ -2659,7 +2265,7 @@ window.$ = {
       alterarPeriodo("dia");
       console.log("✅ Volta DIA");
     }, 3000);
-    return "🎯 Teste iniciado - Sistema Integrado";
+    return "🎯 Teste iniciado";
   },
 
   info: () => {
@@ -2678,19 +2284,15 @@ window.$ = {
         ? !extraElement.classList.contains("oculta")
         : false,
       atualizando: MetaDiariaManager.atualizandoAtualmente,
-      periodoAtual: MetaDiariaManager.periodoAtual,
-      sistemaFiltro: typeof SistemaFiltroPeriodoIntegrado !== "undefined",
     };
 
-    console.log("📊 Info Sistema Integrado:", info);
-    return "✅ Info verificada - Sistema Integrado";
+    console.log("📊 Info:", info);
+    return "✅ Info verificada";
   },
 
-  // ✅ TESTE ESPECÍFICO DAS CORES DA BARRA - INTEGRADO
+  // ✅ TESTE ESPECÍFICO DAS CORES DA BARRA
   testCores: () => {
-    console.log(
-      "🎨 Testando cores da barra de progresso - Sistema Integrado..."
-    );
+    console.log("🎨 Testando cores da barra de progresso...");
 
     const barra = document.getElementById("barra-progresso");
     if (!barra) {
@@ -2768,12 +2370,12 @@ window.$ = {
       }, index * 1500);
     });
 
-    return "🎨 Teste de cores iniciado - Sistema Integrado - 6 cores em 9s";
+    return "🎨 Teste de cores iniciado - 6 cores em 9s";
   },
 
-  // ✅ FORÇAR LIMPEZA DE ESTILOS INLINE - INTEGRADO
+  // ✅ FORÇAR LIMPEZA DE ESTILOS INLINE
   limparEstilos: () => {
-    console.log("🧹 Limpando estilos inline da barra - Sistema Integrado...");
+    console.log("🧹 Limpando estilos inline da barra...");
 
     const barra = document.getElementById("barra-progresso");
     if (barra) {
@@ -2788,164 +2390,35 @@ window.$ = {
       console.log("✅ Estilos inline removidos");
       console.log("📏 Largura resetada para 50%");
       console.log("📋 Classes atuais:", barra.className);
-      console.log("🎯 Período atual:", MetaDiariaManager.periodoAtual);
 
-      return "✅ Limpeza concluída - Sistema Integrado";
+      return "✅ Limpeza concluída";
     } else {
       return "❌ Barra não encontrada";
     }
   },
-
-  // ✅ TESTE DE SINCRONIZAÇÃO DE PERÍODOS
-  testSincronizacao: () => {
-    console.log("🔄 Testando sincronização entre sistemas...");
-
-    const periodos = ["dia", "mes", "ano"];
-    let index = 0;
-
-    const testarProximo = () => {
-      if (index >= periodos.length) {
-        console.log("✅ Teste de sincronização concluído!");
-        return;
-      }
-
-      const periodo = periodos[index];
-      console.log(`🎯 Testando período: ${periodo}`);
-
-      // Testar MetaDiariaManager
-      MetaDiariaManager.periodoAtual = periodo;
-
-      // Testar radio buttons
-      const radio = document.querySelector(
-        `input[name="periodo"][value="${periodo}"]`
-      );
-      if (radio) {
-        radio.checked = true;
-        console.log(`  ✅ Radio button ${periodo} marcado`);
-      }
-
-      // Testar sistema de filtro
-      if (typeof SistemaFiltroPeriodoIntegrado !== "undefined") {
-        SistemaFiltroPeriodoIntegrado.periodoAtual = periodo;
-        console.log(`  ✅ Sistema filtro sincronizado para ${periodo}`);
-      }
-
-      setTimeout(() => {
-        console.log(
-          `  📊 Estado atual - Meta: ${
-            MetaDiariaManager.periodoAtual
-          }, Filtro: ${SistemaFiltroPeriodoIntegrado?.periodoAtual || "N/A"}`
-        );
-        index++;
-        testarProximo();
-      }, 1000);
-    };
-
-    testarProximo();
-    return "🔄 Teste de sincronização iniciado...";
-  },
-
-  // ✅ VERIFICAR ESTADO DO SISTEMA
-  status: () => {
-    const status = {
-      metaManager: {
-        existe: typeof MetaDiariaManager !== "undefined",
-        periodo: MetaDiariaManager?.periodoAtual || "N/A",
-        atualizando: MetaDiariaManager?.atualizandoAtualmente || false,
-      },
-      filtroSistema: {
-        existe: typeof SistemaFiltroPeriodoIntegrado !== "undefined",
-        periodo: SistemaFiltroPeriodoIntegrado?.periodoAtual || "N/A",
-      },
-      radioButtons: {
-        total: document.querySelectorAll('input[name="periodo"]').length,
-        marcado:
-          document.querySelector('input[name="periodo"]:checked')?.value ||
-          "Nenhum",
-      },
-      elementos: {
-        metaValor: !!document.getElementById("meta-valor"),
-        barraProgresso: !!document.getElementById("barra-progresso"),
-        saldoInfo: !!document.getElementById("saldo-info"),
-        listaMentores: !!document.getElementById("listaMentores"),
-      },
-    };
-
-    console.log("🔍 Status do Sistema Integrado:", status);
-    return status;
-  },
 };
 
 // ========================================
-// INICIALIZAÇÃO INTEGRADA - ESTÁVEL
+// INICIALIZAÇÃO - ESTÁVEL
 // ========================================
 
-// ✅ FUNÇÃO DE INICIALIZAÇÃO PRINCIPAL
-function inicializarSistemaIntegrado() {
-  console.log("🚀 Inicializando Sistema Integrado de Meta e Filtro...");
-
-  // 1. Inicializar MetaDiariaManager
-  if (typeof MetaDiariaManager !== "undefined") {
-    MetaDiariaManager.inicializar();
-    console.log("✅ MetaDiariaManager inicializado");
-  }
-
-  // 2. Integrar com sistema de filtro existente
-  if (typeof SistemaFiltroPeriodo !== "undefined") {
-    // Substituir sistema original pelo integrado
-    window.SistemaFiltroPeriodo = SistemaFiltroPeriodoIntegrado;
-    SistemaFiltroPeriodoIntegrado.inicializar();
-    console.log("✅ Sistema de Filtro Integrado");
-  }
-
-  // 3. Configurar interceptadores
-  configurarInterceptadores();
-  console.log("✅ Interceptadores configurados");
-
-  // 4. Sincronizar estado inicial
-  const radioMarcado = document.querySelector('input[name="periodo"]:checked');
-  if (radioMarcado) {
-    const periodoInicial = radioMarcado.value;
-    MetaDiariaManager.periodoAtual = periodoInicial;
-    if (SistemaFiltroPeriodoIntegrado) {
-      SistemaFiltroPeriodoIntegrado.periodoAtual = periodoInicial;
-    }
-    console.log(`✅ Período inicial sincronizado: ${periodoInicial}`);
-  }
-
-  console.log("🎯 Sistema Integrado inicializado com sucesso!");
-}
-
-// ✅ AGUARDAR DOM E OUTROS SISTEMAS
 if (document.readyState === "loading") {
   document.addEventListener("DOMContentLoaded", () => {
-    // Aguardar outros sistemas carregarem
-    setTimeout(inicializarSistemaIntegrado, 800);
+    MetaDiariaManager.inicializar();
+    configurarInterceptadores();
   });
 } else {
-  // DOM já carregado, aguardar outros sistemas
-  setTimeout(inicializarSistemaIntegrado, 500);
+  MetaDiariaManager.inicializar();
+  configurarInterceptadores();
 }
 
-// ========================================
-// LOGS E DEBUGGING
-// ========================================
-
-console.log(
-  "✅ Sistema Meta Diária INTEGRADO - VERSÃO COM FILTRO DE LUCRO POR PERÍODO!"
-);
-console.log("📱 Comandos Integrados:");
+console.log("✅ Sistema Meta Diária - VERSÃO ATUALIZADA!");
+console.log("📱 Comandos:");
 console.log("  $.force() - Forçar atualização");
-console.log("  $.test() - Teste de períodos integrado");
-console.log("  $.info() - Ver status integrado");
+console.log("  $.test() - Teste de períodos");
+console.log("  $.info() - Ver status");
 console.log("  $.testCores() - Testar cores da barra");
 console.log("  $.limparEstilos() - Limpar estilos inline");
-console.log("  $.testSincronizacao() - Testar sincronização");
-console.log("  $.status() - Status completo do sistema");
-
-// ✅ EXPORT PARA USO EXTERNO
-window.MetaDiariaManager = MetaDiariaManager;
-window.SistemaFiltroPeriodoIntegrado = SistemaFiltroPeriodoIntegrado;
 
 // ========================================================================================================================
 // // ✅ FIM ATUALIZADO - META DO DIA COM SUBTRAÇÃO DO SALDO DO DIA

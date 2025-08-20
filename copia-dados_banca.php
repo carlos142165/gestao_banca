@@ -1,5 +1,5 @@
 <?php
-// ✅ ARQUIVO DADOS_BANCA.PHP - OTIMIZADO PARA PERÍODOS COM LUCRO FILTRADO
+// ✅ ARQUIVO DADOS_BANCA.PHP - OTIMIZADO PARA PERÍODOS
 
 require_once 'config.php';
 require_once 'carregar_sessao.php';
@@ -35,34 +35,14 @@ function getUltimoCampo($conexao, $campo, $id_usuario) {
     return $valor;
 }
 
-// ✅ NOVA FUNÇÃO: CALCULAR LUCRO FILTRADO POR PERÍODO
-function calcularLucroFiltrado($conexao, $id_usuario, $periodo = 'total') {
-    // Definir condição de data baseada no período
-    $condicaoData = '';
-    
-    switch ($periodo) {
-        case 'dia':
-            $condicaoData = "AND DATE(data_criacao) = CURDATE()";
-            break;
-        case 'mes':
-            $condicaoData = "AND MONTH(data_criacao) = MONTH(CURDATE()) 
-                           AND YEAR(data_criacao) = YEAR(CURDATE())";
-            break;
-        case 'ano':
-            $condicaoData = "AND YEAR(data_criacao) = YEAR(CURDATE())";
-            break;
-        default:
-            // 'total' ou qualquer outro valor = sem filtro
-            $condicaoData = '';
-            break;
-    }
-    
+// ✅ FUNÇÃO PARA CALCULAR LUCRO (NÃO ALTERADA)
+function calcularLucro($conexao, $id_usuario) {
     $stmt = $conexao->prepare("
         SELECT 
-            COALESCE(SUM(valor_green), 0) as total_green,
-            COALESCE(SUM(valor_red), 0) as total_red
+            COALESCE(SUM(valor_green), 0),
+            COALESCE(SUM(valor_red), 0)
         FROM valor_mentores
-        WHERE id_usuario = ? {$condicaoData}
+        WHERE id_usuario = ?
     ");
     $stmt->bind_param("i", $id_usuario);
     $stmt->execute();
@@ -73,14 +53,8 @@ function calcularLucroFiltrado($conexao, $id_usuario, $periodo = 'total') {
     return [
         'green' => $total_green,
         'red' => $total_red,
-        'lucro' => $total_green - $total_red,
-        'periodo' => $periodo
+        'lucro' => $total_green - $total_red
     ];
-}
-
-// ✅ FUNÇÃO PARA CALCULAR LUCRO (MANTIDA PARA COMPATIBILIDADE)
-function calcularLucro($conexao, $id_usuario) {
-    return calcularLucroFiltrado($conexao, $id_usuario, 'total');
 }
 
 // ✅ FUNÇÃO PARA CALCULAR META DIÁRIA (NÃO ALTERADA)
@@ -229,26 +203,7 @@ function calcularMetasPorPeriodo($meta_diaria) {
     ];
 }
 
-// ✅ NOVA FUNÇÃO: DETECTAR PERÍODO ATIVO
-function detectarPeriodoAtivo() {
-    // Verifica se há um período específico sendo requisitado
-    $periodo_requisitado = $_GET['periodo'] ?? $_POST['periodo'] ?? null;
-    
-    if ($periodo_requisitado && in_array($periodo_requisitado, ['dia', 'mes', 'ano'])) {
-        return $periodo_requisitado;
-    }
-    
-    // Verifica através do header HTTP (usado pelo JavaScript)
-    $periodo_header = $_SERVER['HTTP_X_PERIODO_FILTRO'] ?? null;
-    if ($periodo_header && in_array($periodo_header, ['dia', 'mes', 'ano'])) {
-        return $periodo_header;
-    }
-    
-    // Padrão é 'dia'
-    return 'dia';
-}
-
-// Processar requisições POST (cadastros) - ATUALIZADO COM PERÍODO
+// Processar requisições POST (cadastros) - NÃO ALTERADO
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     $input = json_decode(file_get_contents('php://input'), true);
     
@@ -258,9 +213,6 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         $diaria = floatval($input['diaria'] ?? 2);
         $unidade = intval($input['unidade'] ?? 2);
         $odds = floatval($input['odds'] ?? 1.5);
-        
-        // ✅ DETECTAR PERÍODO ATIVO
-        $periodo_ativo = $input['periodo'] ?? detectarPeriodoAtivo();
         
         $stmt = null;
         
@@ -303,19 +255,16 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             }
         }
         
-        // ✅ CALCULAR VALORES APÓS OPERAÇÃO COM PERÍODO
+        // ✅ CALCULAR VALORES APÓS OPERAÇÃO
         $total_deposito = getSoma($conexao, 'deposito', $id_usuario);
         $total_saque = getSoma($conexao, 'saque', $id_usuario);
         
-        // ✅ CALCULAR LUCRO FILTRADO PELO PERÍODO ATIVO
-        $dados_lucro_total = calcularLucro($conexao, $id_usuario); // Lucro total (para banca)
-        $dados_lucro_filtrado = calcularLucroFiltrado($conexao, $id_usuario, $periodo_ativo); // Lucro filtrado
+        // Calcular lucro
+        $dados_lucro = calcularLucro($conexao, $id_usuario);
+        $lucro = $dados_lucro['lucro'];
         
-        $lucro_total = $dados_lucro_total['lucro'];
-        $lucro_filtrado = $dados_lucro_filtrado['lucro'];
-        
-        // Saldo total da banca (sempre com lucro total)
-        $saldo_banca_total = $total_deposito - $total_saque + $lucro_total;
+        // Saldo total da banca
+        $saldo_banca_total = $total_deposito - $total_saque + $lucro;
         
         // Calcular meta baseada apenas em (depósito - saque)
         $meta_resultado = calcularMetaDiaria($conexao, $id_usuario, $total_deposito, $total_saque);
@@ -330,13 +279,11 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             'success' => true, 
             'message' => 'Operação realizada com sucesso',
             
-            // ✅ DADOS PRINCIPAIS - BANCA SEMPRE TOTAL, LUCRO FILTRADO
+            // Dados principais
             'banca' => $saldo_banca_total,
             'banca_formatada' => 'R$ ' . number_format($saldo_banca_total, 2, ',', '.'),
-            'lucro' => $lucro_filtrado, // ✅ LUCRO FILTRADO PELO PERÍODO
-            'lucro_formatado' => 'R$ ' . number_format($lucro_filtrado, 2, ',', '.'),
-            'lucro_total' => $lucro_total, // ✅ LUCRO TOTAL PARA REFERÊNCIA
-            'periodo_ativo' => $periodo_ativo, // ✅ PERÍODO SENDO USADO
+            'lucro' => $lucro,
+            'lucro_formatado' => 'R$ ' . number_format($lucro, 2, ',', '.'),
             
             // Meta diária
             'meta_diaria' => $meta_resultado['meta_diaria'],
@@ -370,28 +317,19 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     exit;
 }
 
-// ✅ PROCESSAR REQUISIÇÕES GET (CONSULTAS) - ATUALIZADO COM PERÍODO
+// ✅ PROCESSAR REQUISIÇÕES GET (CONSULTAS)
 try {
-    // ✅ DETECTAR PERÍODO ATIVO PARA CONSULTAS
-    $periodo_ativo = detectarPeriodoAtivo();
-    
     $total_deposito = getSoma($conexao, 'deposito', $id_usuario);
     $total_saque = getSoma($conexao, 'saque', $id_usuario);
     
-    // ✅ CALCULAR LUCRO TOTAL E FILTRADO
-    $dados_lucro_total = calcularLucro($conexao, $id_usuario); // Para banca
-    $dados_lucro_filtrado = calcularLucroFiltrado($conexao, $id_usuario, $periodo_ativo); // Para exibição
+    // Calcular lucro
+    $dados_lucro = calcularLucro($conexao, $id_usuario);
+    $total_green = $dados_lucro['green'];
+    $total_red = $dados_lucro['red'];
+    $lucro = $dados_lucro['lucro'];
     
-    $total_green_total = $dados_lucro_total['green'];
-    $total_red_total = $dados_lucro_total['red'];
-    $lucro_total = $dados_lucro_total['lucro'];
-    
-    $total_green_filtrado = $dados_lucro_filtrado['green'];
-    $total_red_filtrado = $dados_lucro_filtrado['red'];
-    $lucro_filtrado = $dados_lucro_filtrado['lucro'];
-    
-    // Saldo total da banca (sempre com lucro total)
-    $saldo_banca_total = $total_deposito - $total_saque + $lucro_total;
+    // Saldo total da banca
+    $saldo_banca_total = $total_deposito - $total_saque + $lucro;
     
     // Buscar últimos valores de configuração
     $ultima_diaria = getUltimoCampo($conexao, 'diaria', $id_usuario);
@@ -407,31 +345,23 @@ try {
     // ✅ CALCULAR METAS POR PERÍODO
     $metas_periodo = calcularMetasPorPeriodo($meta_resultado['meta_diaria']);
     
-    // ✅ RESPOSTA COMPLETA OTIMIZADA COM DADOS FILTRADOS
+    // ✅ RESPOSTA COMPLETA OTIMIZADA
     echo json_encode([
         'success' => true,
         
-        // ✅ DADOS PRINCIPAIS - BANCA TOTAL, LUCRO FILTRADO
+        // Dados principais da banca
         'banca' => $saldo_banca_total,
         'banca_formatada' => 'R$ ' . number_format($saldo_banca_total, 2, ',', '.'),
         'depositos_total' => $total_deposito,
         'depositos_formatado' => 'R$ ' . number_format($total_deposito, 2, ',', '.'),
         'saques_total' => $total_saque,
         'saques_formatado' => 'R$ ' . number_format($total_saque, 2, ',', '.'),
-        
-        // ✅ LUCRO FILTRADO PELO PERÍODO (PARA EXIBIÇÃO E CÁLCULOS)
-        'lucro' => $lucro_filtrado, // ✅ AGORA É O LUCRO FILTRADO
-        'lucro_formatado' => 'R$ ' . number_format($lucro_filtrado, 2, ',', '.'),
-        'green_total' => $total_green_filtrado, // ✅ GREEN FILTRADO
-        'green_formatado' => 'R$ ' . number_format($total_green_filtrado, 2, ',', '.'),
-        'red_total' => $total_red_filtrado, // ✅ RED FILTRADO
-        'red_formatado' => 'R$ ' . number_format($total_red_filtrado, 2, ',', '.'),
-        
-        // ✅ DADOS TOTAIS (PARA REFERÊNCIA)
-        'lucro_total_historico' => $lucro_total,
-        'green_total_historico' => $total_green_total,
-        'red_total_historico' => $total_red_total,
-        'periodo_ativo' => $periodo_ativo,
+        'lucro' => $lucro,
+        'lucro_formatado' => 'R$ ' . number_format($lucro, 2, ',', '.'),
+        'green_total' => $total_green,
+        'green_formatado' => 'R$ ' . number_format($total_green, 2, ',', '.'),
+        'red_total' => $total_red,
+        'red_formatado' => 'R$ ' . number_format($total_red, 2, ',', '.'),
         
         // Configurações atuais
         'diaria' => $ultima_diaria ?? 2,
@@ -463,27 +393,16 @@ try {
         'dias_restantes_ano' => $metas_periodo['dias_restantes_ano'],
         'periodo_info' => $metas_periodo['periodo_info'],
         
-        // ✅ INFORMAÇÕES DETALHADAS PARA DEBUG - AGORA COM DADOS FILTRADOS
+        // ✅ INFORMAÇÕES DETALHADAS PARA DEBUG
         'calculo_detalhado' => [
             'saldo_banca_total' => $saldo_banca_total,
             'saldo_base_meta' => $meta_resultado['saldo_banca_meta'],
             'depositos' => $total_deposito,
             'saques' => $total_saque,
-            'lucro_filtrado' => $lucro_filtrado, // ✅ FILTRADO
-            'lucro_total' => $lucro_total, // ✅ TOTAL
-            'periodo_aplicado' => $periodo_ativo, // ✅ PERÍODO ATUAL
+            'lucro' => $lucro,
             'diaria_percentual' => $meta_resultado['diaria_usada'],
             'unidade_multiplicador' => $meta_resultado['unidade_usada'],
             'formula_meta_diaria' => "Base: R$ " . number_format($total_deposito, 2, ',', '.') . " - R$ " . number_format($total_saque, 2, ',', '.') . " = R$ " . number_format($meta_resultado['saldo_banca_meta'], 2, ',', '.') . " × {$meta_resultado['diaria_usada']}% × {$meta_resultado['unidade_usada']} = R$ " . number_format($meta_resultado['meta_diaria'], 2, ',', '.'),
-            
-            // ✅ DETALHES DO FILTRO DE LUCRO
-            'lucro_por_periodo' => [
-                'periodo_ativo' => $periodo_ativo,
-                'lucro_filtrado' => $lucro_filtrado,
-                'green_filtrado' => $total_green_filtrado,
-                'red_filtrado' => $total_red_filtrado,
-                'diferenca_total_filtrado' => $lucro_total - $lucro_filtrado
-            ],
             
             // Detalhes dos períodos
             'meta_diaria_base' => $meta_resultado['meta_diaria'],
@@ -501,8 +420,7 @@ try {
             'saldo_banca_total' => $saldo_banca_total,
             'depositos' => $total_deposito,
             'saques' => $total_saque,
-            'lucro_usado_banca' => $lucro_total, // ✅ PARA BANCA
-            'lucro_usado_calculos' => $lucro_filtrado, // ✅ PARA EXIBIÇÃO
+            'lucro' => $lucro,
             'diaria_aplicada' => $area_direita['diaria_porcentagem'],
             'resultado_unidade' => $area_direita['unidade_entrada']
         ]
@@ -523,10 +441,7 @@ try {
         'dias_restantes_mes' => 0,
         'dias_restantes_ano' => 0,
         'diaria_formatada' => '2%',
-        'unidade_entrada_formatada' => 'R$ 0,00',
-        'periodo_ativo' => 'dia',
-        'lucro' => 0,
-        'lucro_formatado' => 'R$ 0,00'
+        'unidade_entrada_formatada' => 'R$ 0,00'
     ]);
 }
 ?>
