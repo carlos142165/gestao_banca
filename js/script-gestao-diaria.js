@@ -1692,30 +1692,39 @@ window.addEventListener("beforeunload", () => {
 
 // ✅ SISTEMA INTEGRADO - META DIÁRIA COM FILTRO DE LUCRO POR PERÍODO
 
+// ========================================
+// ✅ SISTEMA META DIÁRIA COM TIPOS DE META - VERSÃO CORRIGIDA
+// ========================================
+
+// ========================================
+// ✅ SISTEMA META DIÁRIA - VERIFICAÇÃO POR COLUNA BANCO
+// ========================================
+
 const MetaDiariaManager = {
   // ✅ CONTROLE SIMPLES
   atualizandoAtualmente: false,
-  periodoAtual: "dia", // ✅ RASTREAR PERÍODO ATUAL
+  periodoAtual: "dia",
+  tipoMetaAtual: "turbo", // ✅ Será definido pelo banco
 
-  // ✅ ATUALIZAR META DIÁRIA - VERSÃO COM FILTRO DE PERÍODO E CONTROLE DE TIMING
+  // ✅ ATUALIZAR META DIÁRIA - VERSÃO SIMPLIFICADA
   async atualizarMetaDiaria(aguardarDados = false) {
     if (this.atualizandoAtualmente) return null;
 
     this.atualizandoAtualmente = true;
 
     try {
-      // ✅ SE AGUARDAR DADOS, DAR UM PEQUENO DELAY PARA SINCRONIZAÇÃO
+      // ✅ SE AGUARDAR DADOS, DAR UM PEQUENO DELAY
       if (aguardarDados) {
         await new Promise((resolve) => setTimeout(resolve, 150));
       }
 
-      // ✅ INCLUIR PERÍODO ATUAL NA REQUISIÇÃO
+      // ✅ REQUISIÇÃO SIMPLIFICADA - O PHP DETECTA TUDO
       const response = await fetch("dados_banca.php", {
         method: "GET",
         headers: {
           "Cache-Control": "no-cache",
           "X-Requested-With": "XMLHttpRequest",
-          "X-Periodo-Filtro": this.periodoAtual, // ✅ ENVIAR PERÍODO ATIVO
+          "X-Periodo-Filtro": this.periodoAtual,
         },
       });
 
@@ -1724,25 +1733,19 @@ const MetaDiariaManager = {
       const data = await response.json();
       if (!data.success) throw new Error(data.message);
 
-      // ✅ ARMAZENAR PERÍODO RETORNADO
+      // ✅ ATUALIZAR ESTADOS COM DADOS DO SERVIDOR
       if (data.periodo_ativo) {
         this.periodoAtual = data.periodo_ativo;
       }
-
-      // ✅ VERIFICAR SE OS DADOS CORRESPONDEM AO PERÍODO ATUAL
-      const dadosValidos = this.verificarConsistenciaDados(data);
-      if (!dadosValidos) {
-        console.warn("⚠️ Dados inconsistentes, tentando novamente...");
-        // Tentar novamente após pequeno delay
-        setTimeout(() => this.atualizarMetaDiaria(false), 100);
-        return null;
+      if (data.tipo_meta) {
+        this.tipoMetaAtual = data.tipo_meta;
       }
 
-      // Aplicar período e atualizar
-      const dadosComPeriodo = this.aplicarAjustePeriodo(data);
-      this.atualizarTodosElementos(dadosComPeriodo);
+      // ✅ APLICAR DADOS E ATUALIZAR INTERFACE
+      const dadosProcessados = this.aplicarAjustePeriodo(data);
+      this.atualizarTodosElementos(dadosProcessados);
 
-      return dadosComPeriodo;
+      return dadosProcessados;
     } catch (error) {
       console.error("❌ Erro:", error);
       this.mostrarErroMeta();
@@ -1752,635 +1755,687 @@ const MetaDiariaManager = {
     }
   },
 
-  // ✅ NOVA FUNÇÃO: VERIFICAR CONSISTÊNCIA DOS DADOS
-  verificarConsistenciaDados(data) {
-    // Verificar se o período retornado corresponde ao atual
-    const periodoRetornado = data.periodo_ativo || "dia";
-    if (periodoRetornado !== this.periodoAtual) {
-      console.warn(
-        `⚠️ Período inconsistente: esperado ${this.periodoAtual}, recebido ${periodoRetornado}`
-      );
-      return false;
-    }
-
-    // Verificar se há dados básicos
-    if (
-      typeof data.lucro === "undefined" ||
-      typeof data.meta_diaria === "undefined"
-    ) {
-      console.warn("⚠️ Dados básicos faltando");
-      return false;
-    }
-
-    return true;
-  },
-
-  // ✅ APLICAR AJUSTE DE PERÍODO - VERSÃO ESTÁVEL
+  // ✅ APLICAR AJUSTE DE PERÍODO - SIMPLIFICADO
   aplicarAjustePeriodo(data) {
-    const radioSelecionado = document.querySelector(
-      'input[name="periodo"]:checked'
-    );
-    const periodo = radioSelecionado?.value || this.periodoAtual || "dia";
+    try {
+      const radioSelecionado = document.querySelector(
+        'input[name="periodo"]:checked'
+      );
+      const periodo = radioSelecionado?.value || this.periodoAtual || "dia";
 
-    // ✅ SINCRONIZAR PERÍODO ATUAL
-    this.periodoAtual = periodo;
+      // ✅ SINCRONIZAR ESTADOS
+      this.periodoAtual = periodo;
+      if (data.tipo_meta) {
+        this.tipoMetaAtual = data.tipo_meta;
+      }
 
-    let metaFinal, rotuloFinal;
+      let metaFinal, rotuloFinal;
 
-    switch (periodo) {
-      case "mes":
-        metaFinal = parseFloat(data.meta_mensal) || 0;
-        rotuloFinal = "Meta do Mês";
-        break;
-      case "ano":
-        metaFinal = parseFloat(data.meta_anual) || 0;
-        rotuloFinal = "Meta do Ano";
-        break;
-      default:
-        metaFinal = parseFloat(data.meta_diaria) || 0;
-        rotuloFinal = "Meta do Dia";
-        break;
+      switch (periodo) {
+        case "mes":
+          metaFinal = parseFloat(data.meta_mensal) || 0;
+          rotuloFinal = "Meta do Mês";
+          break;
+        case "ano":
+          metaFinal = parseFloat(data.meta_anual) || 0;
+          rotuloFinal = "Meta do Ano";
+          break;
+        default:
+          metaFinal = parseFloat(data.meta_diaria) || 0;
+          rotuloFinal = "Meta do Dia";
+          break;
+      }
+
+      // ✅ INCLUIR TIPO NO RÓTULO
+      const tipoTexto = data.tipo_meta_texto || "Meta Turbo";
+      const rotuloComTipo = `${rotuloFinal} (${tipoTexto})`;
+
+      return {
+        ...data,
+        meta_display: metaFinal,
+        meta_display_formatada:
+          "R$ " +
+          metaFinal.toLocaleString("pt-BR", {
+            minimumFractionDigits: 2,
+            maximumFractionDigits: 2,
+          }),
+        rotulo_periodo: rotuloComTipo,
+        periodo_ativo: periodo,
+      };
+    } catch (error) {
+      console.error("❌ Erro ao aplicar ajuste:", error);
+      return data;
     }
-
-    return {
-      ...data,
-      meta_display: metaFinal,
-      meta_display_formatada:
-        "R$ " +
-        metaFinal.toLocaleString("pt-BR", {
-          minimumFractionDigits: 2,
-          maximumFractionDigits: 2,
-        }),
-      rotulo_periodo: rotuloFinal,
-      periodo_ativo: periodo,
-    };
   },
 
-  // ✅ ATUALIZAR TODOS OS ELEMENTOS - SEPARANDO LUCRO TOTAL DO FILTRADO
+  // ✅ ATUALIZAR TODOS OS ELEMENTOS
   atualizarTodosElementos(data) {
-    // ✅ USAR LUCRO FILTRADO PARA CÁLCULOS DA META E BARRA
-    const saldoDia = parseFloat(data.lucro) || 0; // ✅ Lucro filtrado para cálculos
-    const metaCalculada = parseFloat(data.meta_display) || 0;
-    const bancaTotal = parseFloat(data.banca) || 0;
-    const resultado = this.calcularMetaFinal(
-      saldoDia,
-      metaCalculada,
-      bancaTotal,
-      data
-    );
+    try {
+      const saldoDia = parseFloat(data.lucro) || 0;
+      const metaCalculada = parseFloat(data.meta_display) || 0;
+      const bancaTotal = parseFloat(data.banca) || 0;
+      const resultado = this.calcularMetaFinal(
+        saldoDia,
+        metaCalculada,
+        bancaTotal,
+        data
+      );
 
-    // Atualizar em sequência
-    this.atualizarAreaDireita(data);
-    this.atualizarModal(data); // ✅ Usa lucro total para o campo do topo
-    this.atualizarMetaElemento(resultado);
-    this.atualizarRotulo(resultado.rotulo);
-    this.atualizarValorExtra(resultado.valorExtra);
-    this.atualizarBarraProgresso(resultado, data); // ✅ Usa lucro filtrado
+      // Atualizar em sequência
+      this.atualizarAreaDireita(data);
+      this.atualizarModal(data);
+      this.atualizarMetaElemento(resultado);
+      this.atualizarRotulo(resultado.rotulo);
+      this.atualizarValorExtra(resultado.valorExtra);
+      this.atualizarBarraProgresso(resultado, data);
+      this.atualizarTipoMetaDisplay(data); // ✅ ATUALIZAR DISPLAY
 
-    // ✅ LOG PARA DEBUG - MOSTRANDO OS DOIS TIPOS DE LUCRO
-    console.log(
-      `🎯 Meta atualizada para período: ${
-        data.periodo_ativo || this.periodoAtual
-      }`
-    );
-    console.log(`💰 Lucro FILTRADO (para cálculos): R$ ${saldoDia.toFixed(2)}`);
-    console.log(
-      `💰 Lucro TOTAL (para topo): R$ ${(
-        parseFloat(data.lucro_total_display) || 0
-      ).toFixed(2)}`
-    );
-    console.log(`🎯 Meta: R$ ${metaCalculada.toFixed(2)}`);
+      // ✅ LOG SIMPLIFICADO
+      console.log(
+        `🎯 Meta atualizada - Período: ${
+          data.periodo_ativo || this.periodoAtual
+        }, Tipo: ${data.tipo_meta || this.tipoMetaAtual}`
+      );
+      console.log(`💰 Lucro FILTRADO: R$ ${saldoDia.toFixed(2)}`);
+      console.log(
+        `💰 Lucro TOTAL: R$ ${(
+          parseFloat(data.lucro_total_display) || 0
+        ).toFixed(2)}`
+      );
+      console.log(
+        `🎯 Meta (${
+          data.tipo_meta_texto || "Meta Turbo"
+        }): R$ ${metaCalculada.toFixed(2)}`
+      );
+
+      // ✅ LOG DOS CÁLCULOS SE DISPONÍVEL
+      if (data.calculo_detalhado) {
+        console.log(
+          `📊 Banca Inicial: R$ ${(
+            data.calculo_detalhado.banca_inicial || 0
+          ).toFixed(2)}`
+        );
+        console.log(
+          `📊 Banca Atual: R$ ${(
+            data.calculo_detalhado.banca_atual || 0
+          ).toFixed(2)}`
+        );
+        console.log(
+          `📊 Base Cálculo: R$ ${(
+            data.calculo_detalhado.base_calculo_usada || 0
+          ).toFixed(2)}`
+        );
+        console.log(`📊 Origem: ${data.tipo_meta_origem || "N/A"}`);
+      }
+    } catch (error) {
+      console.error("❌ Erro ao atualizar elementos:", error);
+    }
   },
 
-  // ✅ ATUALIZAR ÁREA DIREITA - ESTÁVEL
+  // ✅ NOVA FUNÇÃO: ATUALIZAR DISPLAY DO TIPO DE META
+  atualizarTipoMetaDisplay(data) {
+    try {
+      const metaTextElement = document.getElementById("meta-text-unico");
+      if (metaTextElement && data.tipo_meta_texto) {
+        const textoAtual = metaTextElement.textContent.trim();
+        const novoTexto = data.tipo_meta_texto.toUpperCase();
+
+        if (textoAtual !== novoTexto) {
+          metaTextElement.textContent = novoTexto;
+          console.log(
+            `🏷️ Tipo de meta atualizado: ${novoTexto} (origem: ${
+              data.tipo_meta_origem || "banco"
+            })`
+          );
+        }
+      }
+    } catch (error) {
+      console.error("❌ Erro ao atualizar display do tipo:", error);
+    }
+  },
+
+  // ✅ ATUALIZAR ÁREA DIREITA
   atualizarAreaDireita(data) {
-    const porcentagemElement = document.getElementById("porcentagem-diaria");
-    if (porcentagemElement && data.diaria_formatada) {
-      porcentagemElement.textContent = data.diaria_formatada;
-    }
+    try {
+      const porcentagemElement = document.getElementById("porcentagem-diaria");
+      if (porcentagemElement && data.diaria_formatada) {
+        porcentagemElement.textContent = data.diaria_formatada;
+      }
 
-    const valorUnidadeElement = document.getElementById("valor-unidade");
-    if (valorUnidadeElement && data.unidade_entrada_formatada) {
-      valorUnidadeElement.textContent = data.unidade_entrada_formatada;
+      const valorUnidadeElement = document.getElementById("valor-unidade");
+      if (valorUnidadeElement && data.unidade_entrada_formatada) {
+        valorUnidadeElement.textContent = data.unidade_entrada_formatada;
+      }
+    } catch (error) {
+      console.error("❌ Erro ao atualizar área direita:", error);
     }
   },
 
-  // ✅ ATUALIZAR MODAL - COM LUCRO TOTAL + CAMPO ESPECÍFICO
+  // ✅ ATUALIZAR MODAL
   atualizarModal(data) {
-    const valorBancaLabel = document.getElementById("valorBancaLabel");
-    if (valorBancaLabel && data.banca_formatada) {
-      valorBancaLabel.textContent = data.banca_formatada;
-    }
-
-    // ✅ USAR LUCRO TOTAL PARA O CAMPO DO TOPO (SEM FILTRO)
-    const valorLucroLabel = document.getElementById("valorLucroLabel");
-    if (valorLucroLabel && data.lucro_total_formatado) {
-      valorLucroLabel.textContent = data.lucro_total_formatado;
-    }
-
-    // ✅ CORREÇÃO: USAR LUCRO TOTAL PARA O CAMPO lucro_valor_entrada (SOMA COMPLETA SEM FILTRO)
-    const lucroValorEntrada = document.getElementById("lucro_valor_entrada");
-    if (lucroValorEntrada) {
-      // Usar lucro total formatado ou calcular se não disponível
-      const lucroTotalFormatado =
-        data.lucro_total_formatado ||
-        data.lucro_total_historico?.toLocaleString("pt-BR", {
-          style: "currency",
-          currency: "BRL",
-        }) ||
-        "R$ 0,00";
-
-      lucroValorEntrada.textContent = lucroTotalFormatado; // ✅ SEMPRE SOMA TOTAL
-    }
-
-    // ✅ APLICAR CORES BASEADAS NO LUCRO TOTAL (NÃO FILTRADO)
-    const lucroValorTotal =
-      parseFloat(data.lucro_total_historico) ||
-      parseFloat(data.lucro_total_display) ||
-      parseFloat(data.lucro_total) ||
-      0; // ✅ Lucro total para cores
-
-    // ✅ APLICAR CORES NO MODAL BASEADAS NO LUCRO TOTAL
-    const iconeLucro = document.getElementById("iconeLucro");
-    const lucroLabel = document.getElementById("lucroLabel");
-    if (iconeLucro && lucroLabel && valorLucroLabel) {
-      // Remover classes anteriores
-      lucroLabel.className = lucroLabel.className.replace(
-        /modal-lucro-\w+/g,
-        ""
-      );
-      valorLucroLabel.className = valorLucroLabel.className.replace(
-        /modal-lucro-\w+/g,
-        ""
-      );
-
-      if (lucroValorTotal > 0) {
-        iconeLucro.className = "fa-solid fa-money-bill-trend-up";
-        lucroLabel.classList.add("modal-lucro-positivo");
-        valorLucroLabel.classList.add("modal-lucro-positivo");
-      } else if (lucroValorTotal < 0) {
-        iconeLucro.className = "fa-solid fa-money-bill-trend-down";
-        lucroLabel.classList.add("modal-lucro-negativo");
-        valorLucroLabel.classList.add("modal-lucro-negativo");
-      } else {
-        iconeLucro.className = "fa-solid fa-money-bill-trend-up";
-        lucroLabel.classList.add("modal-lucro-neutro");
-        valorLucroLabel.classList.add("modal-lucro-neutro");
+    try {
+      const valorBancaLabel = document.getElementById("valorBancaLabel");
+      if (valorBancaLabel && data.banca_formatada) {
+        valorBancaLabel.textContent = data.banca_formatada;
       }
-    }
 
-    // ✅ APLICAR CORES NO CAMPO lucro_valor_entrada BASEADO NO LUCRO TOTAL
-    if (lucroValorEntrada) {
-      // Remover classes anteriores
-      lucroValorEntrada.classList.remove(
-        "saldo-positivo",
-        "saldo-negativo",
-        "saldo-neutro"
+      const valorLucroLabel = document.getElementById("valorLucroLabel");
+      if (valorLucroLabel && data.lucro_total_formatado) {
+        valorLucroLabel.textContent = data.lucro_total_formatado;
+      }
+
+      const lucroValorEntrada = document.getElementById("lucro_valor_entrada");
+      if (lucroValorEntrada) {
+        const lucroTotalFormatado =
+          data.lucro_total_formatado ||
+          (data.lucro_total_historico &&
+            data.lucro_total_historico.toLocaleString("pt-BR", {
+              style: "currency",
+              currency: "BRL",
+            })) ||
+          "R$ 0,00";
+
+        lucroValorEntrada.textContent = lucroTotalFormatado;
+      }
+
+      // ✅ CORES BASEADAS NO LUCRO TOTAL
+      const lucroValorTotal =
+        parseFloat(data.lucro_total_historico) ||
+        parseFloat(data.lucro_total_display) ||
+        parseFloat(data.lucro_total) ||
+        0;
+
+      const iconeLucro = document.getElementById("iconeLucro");
+      const lucroLabel = document.getElementById("lucroLabel");
+      if (iconeLucro && lucroLabel && valorLucroLabel) {
+        lucroLabel.className = lucroLabel.className.replace(
+          /modal-lucro-\w+/g,
+          ""
+        );
+        valorLucroLabel.className = valorLucroLabel.className.replace(
+          /modal-lucro-\w+/g,
+          ""
+        );
+
+        if (lucroValorTotal > 0) {
+          iconeLucro.className = "fa-solid fa-money-bill-trend-up";
+          lucroLabel.classList.add("modal-lucro-positivo");
+          valorLucroLabel.classList.add("modal-lucro-positivo");
+        } else if (lucroValorTotal < 0) {
+          iconeLucro.className = "fa-solid fa-money-bill-trend-down";
+          lucroLabel.classList.add("modal-lucro-negativo");
+          valorLucroLabel.classList.add("modal-lucro-negativo");
+        } else {
+          iconeLucro.className = "fa-solid fa-money-bill-trend-up";
+          lucroLabel.classList.add("modal-lucro-neutro");
+          valorLucroLabel.classList.add("modal-lucro-neutro");
+        }
+      }
+
+      if (lucroValorEntrada) {
+        lucroValorEntrada.classList.remove(
+          "saldo-positivo",
+          "saldo-negativo",
+          "saldo-neutro"
+        );
+
+        if (lucroValorTotal > 0) {
+          lucroValorEntrada.classList.add("saldo-positivo");
+        } else if (lucroValorTotal < 0) {
+          lucroValorEntrada.classList.add("saldo-negativo");
+        } else {
+          lucroValorEntrada.classList.add("saldo-neutro");
+        }
+      }
+
+      const lucroEntradasRotulo = document.getElementById(
+        "lucro_entradas_rotulo"
       );
-
-      // Adicionar classe baseada no valor TOTAL (sem filtro)
-      if (lucroValorTotal > 0) {
-        lucroValorEntrada.classList.add("saldo-positivo");
-      } else if (lucroValorTotal < 0) {
-        lucroValorEntrada.classList.add("saldo-negativo");
-      } else {
-        lucroValorEntrada.classList.add("saldo-neutro");
+      if (lucroEntradasRotulo) {
+        if (lucroValorTotal > 0) {
+          lucroEntradasRotulo.textContent = "Lucro:";
+        } else if (lucroValorTotal < 0) {
+          lucroEntradasRotulo.textContent = "Negativo:";
+        } else {
+          lucroEntradasRotulo.textContent = "Neutro:";
+        }
       }
-    }
-
-    // ✅ ATUALIZAR RÓTULO DO LUCRO BASEADO NO VALOR TOTAL
-    const lucroEntradasRotulo = document.getElementById(
-      "lucro_entradas_rotulo"
-    );
-    if (lucroEntradasRotulo) {
-      if (lucroValorTotal > 0) {
-        lucroEntradasRotulo.textContent = "Lucro:";
-      } else if (lucroValorTotal < 0) {
-        lucroEntradasRotulo.textContent = "Negativo:";
-      } else {
-        lucroEntradasRotulo.textContent = "Neutro:";
-      }
+    } catch (error) {
+      console.error("❌ Erro ao atualizar modal:", error);
     }
   },
 
-  // ✅ CALCULAR META FINAL - USANDO LUCRO FILTRADO
+  // ✅ CALCULAR META FINAL
   calcularMetaFinal(saldoDia, metaCalculada, bancaTotal, data) {
-    let metaFinal,
-      rotulo,
-      statusClass,
-      valorExtra = 0;
+    try {
+      let metaFinal,
+        rotulo,
+        statusClass,
+        valorExtra = 0;
 
-    // ✅ REGRA 1: Banca total <= 0 - Precisa depositar
-    if (bancaTotal <= 0) {
-      metaFinal = bancaTotal;
-      rotulo = "Deposite p/ Começar";
-      statusClass = "sem-banca";
-      valorExtra = 0;
-    }
-    // ✅ REGRA 2: Meta foi batida E tem lucro extra (lucro > meta)
-    else if (saldoDia > 0 && metaCalculada > 0 && saldoDia >= metaCalculada) {
-      metaFinal = 0;
-      rotulo = `${
-        data.rotulo_periodo || "Meta"
-      } Batida! <i class='fa-solid fa-trophy'></i>`;
-      statusClass = "meta-batida";
-      valorExtra = saldoDia - metaCalculada;
+      if (bancaTotal <= 0) {
+        metaFinal = bancaTotal;
+        rotulo = "Deposite p/ Começar";
+        statusClass = "sem-banca";
+        valorExtra = 0;
+      } else if (
+        saldoDia > 0 &&
+        metaCalculada > 0 &&
+        saldoDia >= metaCalculada
+      ) {
+        metaFinal = 0;
+        rotulo = `${
+          data.rotulo_periodo || "Meta"
+        } Batida! <i class='fa-solid fa-trophy'></i>`;
+        statusClass = "meta-batida";
+        valorExtra = saldoDia - metaCalculada;
 
-      // ✅ VERIFICAÇÃO: Se não há lucro extra real, não mostrar
-      if (valorExtra <= 0) {
+        if (valorExtra <= 0) {
+          valorExtra = 0;
+        }
+      } else if (saldoDia < 0) {
+        metaFinal = metaCalculada - saldoDia;
+        rotulo = `Restando p/ ${data.rotulo_periodo || "Meta"}`;
+        statusClass = "negativo";
+        valorExtra = 0;
+      } else if (saldoDia === 0) {
+        metaFinal = metaCalculada;
+        rotulo = data.rotulo_periodo || "Meta do Dia";
+        statusClass = "neutro";
+        valorExtra = 0;
+      } else {
+        metaFinal = metaCalculada - saldoDia;
+        rotulo = `Restando p/ ${data.rotulo_periodo || "Meta"}`;
+        statusClass = "lucro";
         valorExtra = 0;
       }
-    }
-    // ✅ REGRA 3: Lucro negativo
-    else if (saldoDia < 0) {
-      metaFinal = metaCalculada - saldoDia;
-      rotulo = `Restando p/ ${data.rotulo_periodo || "Meta"}`;
-      statusClass = "negativo";
-      valorExtra = 0;
-    }
-    // ✅ REGRA 4: Lucro zero
-    else if (saldoDia === 0) {
-      metaFinal = metaCalculada;
-      rotulo = data.rotulo_periodo || "Meta do Dia";
-      statusClass = "neutro";
-      valorExtra = 0;
-    }
-    // ✅ REGRA 5: Lucro positivo mas não bateu meta (saldo < meta)
-    else {
-      metaFinal = metaCalculada - saldoDia;
-      rotulo = `Restando p/ ${data.rotulo_periodo || "Meta"}`;
-      statusClass = "lucro";
-      valorExtra = 0;
-    }
 
-    return {
-      metaFinal,
-      metaFinalFormatada: metaFinal.toLocaleString("pt-BR", {
-        style: "currency",
-        currency: "BRL",
-      }),
-      rotulo,
-      statusClass,
-      valorExtra,
-    };
+      return {
+        metaFinal,
+        metaFinalFormatada: metaFinal.toLocaleString("pt-BR", {
+          style: "currency",
+          currency: "BRL",
+        }),
+        rotulo,
+        statusClass,
+        valorExtra,
+      };
+    } catch (error) {
+      console.error("❌ Erro ao calcular meta final:", error);
+      return {
+        metaFinal: 0,
+        metaFinalFormatada: "R$ 0,00",
+        rotulo: "Erro no cálculo",
+        statusClass: "erro",
+        valorExtra: 0,
+      };
+    }
   },
 
-  // ✅ ATUALIZAR META ELEMENTO - USANDO CLASSES CSS
+  // ✅ ATUALIZAR META ELEMENTO
   atualizarMetaElemento(resultado) {
-    const metaValor =
-      document.getElementById("meta-valor") ||
-      document.querySelector(".widget-meta-valor");
+    try {
+      const metaValor =
+        document.getElementById("meta-valor") ||
+        document.querySelector(".widget-meta-valor");
 
-    if (!metaValor) return;
+      if (!metaValor) return;
 
-    let valorTexto =
-      metaValor.querySelector(".valor-texto") ||
-      metaValor.querySelector("#valor-texto-meta");
+      let valorTexto =
+        metaValor.querySelector(".valor-texto") ||
+        metaValor.querySelector("#valor-texto-meta");
 
-    if (valorTexto) {
-      valorTexto.textContent = resultado.metaFinalFormatada;
-    } else {
-      metaValor.innerHTML = `
-        <i class="fa-solid fa-coins"></i>
-        <span class="valor-texto" id="valor-texto-meta">${resultado.metaFinalFormatada}</span>
-      `;
+      if (valorTexto) {
+        valorTexto.textContent = resultado.metaFinalFormatada;
+      } else {
+        metaValor.innerHTML = `
+          <i class="fa-solid fa-coins"></i>
+          <span class="valor-texto" id="valor-texto-meta">${resultado.metaFinalFormatada}</span>
+        `;
+      }
+
+      metaValor.className = metaValor.className.replace(
+        /\bvalor-meta\s+\w+/g,
+        ""
+      );
+      metaValor.classList.add("valor-meta", resultado.statusClass);
+    } catch (error) {
+      console.error("❌ Erro ao atualizar meta elemento:", error);
     }
-
-    // ✅ APLICAR CLASSES CSS BASEADAS NO STATUS
-    metaValor.className = metaValor.className.replace(
-      /\bvalor-meta\s+\w+/g,
-      ""
-    );
-    metaValor.classList.add("valor-meta", resultado.statusClass);
   },
 
-  // ✅ ATUALIZAR RÓTULO - ESTÁVEL
+  // ✅ ATUALIZAR RÓTULO
   atualizarRotulo(rotulo) {
-    const rotuloElement =
-      document.getElementById("rotulo-meta") ||
-      document.querySelector(".widget-meta-rotulo");
+    try {
+      const rotuloElement =
+        document.getElementById("rotulo-meta") ||
+        document.querySelector(".widget-meta-rotulo");
 
-    if (rotuloElement) {
-      rotuloElement.innerHTML = rotulo;
+      if (rotuloElement) {
+        rotuloElement.innerHTML = rotulo;
+      }
+    } catch (error) {
+      console.error("❌ Erro ao atualizar rótulo:", error);
     }
   },
 
-  // ✅ ATUALIZAR VALOR EXTRA - COM CLASSE NO BODY
+  // ✅ ATUALIZAR VALOR EXTRA
   atualizarValorExtra(valorExtra) {
-    const valorUltrapassouElement =
-      document.getElementById("valor-ultrapassou");
-    const valorExtraElement = document.getElementById("valor-extra");
+    try {
+      const valorUltrapassouElement =
+        document.getElementById("valor-ultrapassou");
+      const valorExtraElement = document.getElementById("valor-extra");
 
-    if (valorUltrapassouElement) {
-      // ✅ VERIFICAÇÃO RIGOROSA: Só mostrar se realmente há lucro extra
-      if (valorExtra > 0) {
-        const valorFormatado = valorExtra.toLocaleString("pt-BR", {
+      if (valorUltrapassouElement) {
+        if (valorExtra > 0) {
+          const valorFormatado = valorExtra.toLocaleString("pt-BR", {
+            style: "currency",
+            currency: "BRL",
+          });
+
+          if (valorExtraElement) {
+            valorExtraElement.textContent = valorFormatado;
+          }
+
+          valorUltrapassouElement.style.display = "flex";
+          valorUltrapassouElement.classList.add("mostrar");
+          document.body.classList.add("tem-lucro-extra");
+        } else {
+          valorUltrapassouElement.style.display = "none";
+          valorUltrapassouElement.classList.remove("mostrar");
+          document.body.classList.remove("tem-lucro-extra");
+
+          if (valorExtraElement) {
+            valorExtraElement.textContent = "R$ 0,00";
+          }
+        }
+      }
+    } catch (error) {
+      console.error("❌ Erro ao atualizar valor extra:", error);
+    }
+  },
+
+  // ✅ ATUALIZAR BARRA PROGRESSO
+  atualizarBarraProgresso(resultado, data) {
+    try {
+      const barraProgresso = document.getElementById("barra-progresso");
+      const saldoInfo = document.getElementById("saldo-info");
+      const porcentagemBarra = document.getElementById("porcentagem-barra");
+
+      if (!barraProgresso) return;
+
+      const saldoDia = parseFloat(data.lucro) || 0;
+      const metaCalculada = parseFloat(data.meta_display) || 0;
+      const bancaTotal = parseFloat(data.banca) || 0;
+
+      // Calcular progresso
+      let progresso = 0;
+      if (bancaTotal > 0 && metaCalculada > 0) {
+        if (resultado.statusClass === "meta-batida") {
+          progresso = 100;
+        } else if (saldoDia < 0) {
+          progresso = -Math.min(Math.abs(saldoDia / metaCalculada) * 100, 100);
+        } else {
+          progresso = Math.max(
+            0,
+            Math.min(100, (saldoDia / metaCalculada) * 100)
+          );
+        }
+      }
+
+      const larguraBarra = Math.abs(progresso);
+
+      // ✅ SISTEMA DE CORES
+      let classeCor = "";
+
+      barraProgresso.className = barraProgresso.className.replace(
+        /\bbarra-\w+/g,
+        ""
+      );
+
+      if (!barraProgresso.classList.contains("widget-barra-progresso")) {
+        barraProgresso.classList.add("widget-barra-progresso");
+      }
+
+      if (
+        resultado.valorExtra > 0 &&
+        resultado.statusClass === "meta-batida" &&
+        saldoDia > metaCalculada
+      ) {
+        classeCor = "barra-lucro-extra";
+        barraProgresso.classList.add(classeCor);
+      } else {
+        classeCor = `barra-${resultado.statusClass}`;
+        barraProgresso.classList.add(classeCor);
+      }
+
+      barraProgresso.style.width = `${larguraBarra}%`;
+      barraProgresso.style.backgroundColor = "";
+      barraProgresso.style.background = "";
+
+      // ✅ PORCENTAGEM
+      if (porcentagemBarra) {
+        const porcentagemTexto = Math.round(progresso) + "%";
+
+        porcentagemBarra.innerHTML = `
+          <span class="porcentagem-fundo ${classeCor}">${porcentagemTexto}</span>
+        `;
+
+        if (larguraBarra <= 10) {
+          porcentagemBarra.classList.add("pequeno");
+        } else {
+          porcentagemBarra.classList.remove("pequeno");
+        }
+
+        if (larguraBarra <= 0) {
+          porcentagemBarra.classList.add("oculta");
+        } else {
+          porcentagemBarra.classList.remove("oculta");
+        }
+      }
+
+      // ✅ SALDO INFO
+      if (saldoInfo) {
+        const saldoFormatado = saldoDia.toLocaleString("pt-BR", {
           style: "currency",
           currency: "BRL",
         });
 
-        // Atualizar o valor no span existente
-        if (valorExtraElement) {
-          valorExtraElement.textContent = valorFormatado;
+        let textoSaldo = "Saldo";
+        let iconeClass = "fa-solid fa-wallet";
+
+        if (saldoDia > 0) {
+          textoSaldo = "Lucro";
+          iconeClass = "fa-solid fa-chart-line";
+        } else if (saldoDia < 0) {
+          textoSaldo = "Negativo";
+          iconeClass = "fa-solid fa-arrow-trend-down";
+        } else {
+          textoSaldo = "Saldo";
+          iconeClass = "fa-solid fa-wallet";
         }
 
-        // Mostrar o elemento
-        valorUltrapassouElement.style.display = "flex";
-        valorUltrapassouElement.classList.add("mostrar");
+        saldoInfo.innerHTML = `
+          <i class="${iconeClass}"></i>
+          <span class="saldo-info-rotulo">${textoSaldo}:</span>
+          <span class="saldo-info-valor">${saldoFormatado}</span>
+        `;
 
-        // ✅ ADICIONAR CLASSE AO BODY PARA EFEITO
-        document.body.classList.add("tem-lucro-extra");
-      } else {
-        // ✅ OCULTAR O ELEMENTO
-        valorUltrapassouElement.style.display = "none";
-        valorUltrapassouElement.classList.remove("mostrar");
-
-        // ✅ REMOVER CLASSE DO BODY
-        document.body.classList.remove("tem-lucro-extra");
-
-        // ✅ LIMPAR VALOR
-        if (valorExtraElement) {
-          valorExtraElement.textContent = "R$ 0,00";
-        }
+        saldoInfo.className =
+          saldoDia > 0
+            ? "saldo-positivo"
+            : saldoDia < 0
+            ? "saldo-negativo"
+            : "saldo-zero";
       }
+    } catch (error) {
+      console.error("❌ Erro ao atualizar barra progresso:", error);
     }
   },
 
-  // ✅ ATUALIZAR BARRA PROGRESSO - VERSÃO CORRIGIDA COM LUCRO FILTRADO
-  atualizarBarraProgresso(resultado, data) {
-    const barraProgresso = document.getElementById("barra-progresso");
-    const saldoInfo = document.getElementById("saldo-info");
-    const porcentagemBarra = document.getElementById("porcentagem-barra");
-
-    if (!barraProgresso) return;
-
-    const saldoDia = parseFloat(data.lucro) || 0; // ✅ Lucro filtrado
-    const metaCalculada = parseFloat(data.meta_display) || 0;
-    const bancaTotal = parseFloat(data.banca) || 0;
-
-    // Calcular progresso
-    let progresso = 0;
-    if (bancaTotal > 0 && metaCalculada > 0) {
-      if (resultado.statusClass === "meta-batida") {
-        progresso = 100;
-      } else if (saldoDia < 0) {
-        progresso = -Math.min(Math.abs(saldoDia / metaCalculada) * 100, 100);
-      } else {
-        progresso = Math.max(
-          0,
-          Math.min(100, (saldoDia / metaCalculada) * 100)
-        );
-      }
-    }
-
-    const larguraBarra = Math.abs(progresso);
-
-    // ✅ SISTEMA DE CORES USANDO APENAS CLASSES CSS
-    let temLucroExtra = false;
-    let classeCor = "";
-
-    // ✅ REMOVER TODAS AS CLASSES DE COR ANTERIORES MAS MANTER widget-barra-progresso
-    barraProgresso.className = barraProgresso.className.replace(
-      /\bbarra-\w+/g,
-      ""
-    );
-
-    // ✅ IMPORTANTE: Garantir que a classe base permaneça
-    if (!barraProgresso.classList.contains("widget-barra-progresso")) {
-      barraProgresso.classList.add("widget-barra-progresso");
-    }
-
-    // ✅ VERIFICAR SE REALMENTE TEM LUCRO EXTRA
-    if (
-      resultado.valorExtra > 0 &&
-      resultado.statusClass === "meta-batida" &&
-      saldoDia > metaCalculada
-    ) {
-      temLucroExtra = true;
-      classeCor = "barra-lucro-extra"; // Dourado
-      barraProgresso.classList.add(classeCor);
-    } else {
-      // Aplicar classe baseada no status
-      classeCor = `barra-${resultado.statusClass}`;
-      barraProgresso.classList.add(classeCor);
-    }
-
-    // ✅ ATUALIZAR APENAS A LARGURA VIA JAVASCRIPT - COR VIA CSS
-    barraProgresso.style.width = `${larguraBarra}%`;
-    // ✅ REMOVER qualquer backgroundColor inline que possa estar conflitando
-    barraProgresso.style.backgroundColor = "";
-    barraProgresso.style.background = "";
-
-    // ✅ PORCENTAGEM COM FUNDO COLORIDO - ALTURA TOTAL
-    if (porcentagemBarra) {
-      const porcentagemTexto = Math.round(progresso) + "%";
-
-      // ✅ CRIAR ESTRUTURA COM FUNDO QUE OCUPA ALTURA TOTAL
-      porcentagemBarra.innerHTML = `
-      <span class="porcentagem-fundo ${classeCor}">${porcentagemTexto}</span>
-    `;
-
-      // Adicionar classe especial para valores pequenos
-      if (larguraBarra <= 10) {
-        porcentagemBarra.classList.add("pequeno");
-      } else {
-        porcentagemBarra.classList.remove("pequeno");
-      }
-
-      if (larguraBarra <= 0) {
-        porcentagemBarra.classList.add("oculta");
-      } else {
-        porcentagemBarra.classList.remove("oculta");
-      }
-    }
-
-    // ✅ SALDO INFO COM ESTRUTURA CORRETA PARA CORES SEPARADAS
-    if (saldoInfo) {
-      const saldoFormatado = saldoDia.toLocaleString("pt-BR", {
-        style: "currency",
-        currency: "BRL",
-      });
-
-      // ✅ DEFINIR TEXTO E ÍCONE BASEADO NO STATUS
-      let textoSaldo = "Saldo";
-      let iconeClass = "fa-solid fa-wallet"; // Ícone padrão
-
-      if (saldoDia > 0) {
-        textoSaldo = "Lucro";
-        iconeClass = "fa-solid fa-chart-line"; // Ícone de lucro
-      } else if (saldoDia < 0) {
-        textoSaldo = "Negativo";
-        iconeClass = "fa-solid fa-arrow-trend-down"; // Ícone de negativo
-      } else {
-        textoSaldo = "Saldo";
-        iconeClass = "fa-solid fa-wallet"; // Ícone de saldo neutro
-      }
-
-      // ✅ ESTRUTURA HTML COM SPANS SEPARADOS PARA RÓTULO E VALOR
-      saldoInfo.innerHTML = `
-    <i class="${iconeClass}"></i>
-    <span class="saldo-info-rotulo">${textoSaldo}:</span>
-    <span class="saldo-info-valor">${saldoFormatado}</span>
-  `;
-
-      // ✅ APLICAR CLASSES CSS BASEADAS NO STATUS
-      saldoInfo.className =
-        saldoDia > 0
-          ? "saldo-positivo"
-          : saldoDia < 0
-          ? "saldo-negativo"
-          : "saldo-zero";
-    }
-  },
-
-  // ✅ NOVA FUNÇÃO: BLOQUEAR CÁLCULOS TEMPORÁRIOS DURANTE MUDANÇA
+  // ✅ BLOQUEAR CÁLCULOS TEMPORÁRIOS
   bloquearCalculosTemporarios() {
-    // Bloquear elementos visuais que podem mostrar valores incorretos
-    const elementosBloquear = [
-      "meta-valor",
-      "barra-progresso",
-      "saldo-info",
-      "porcentagem-barra",
-    ];
+    try {
+      const elementosBloquear = [
+        "meta-valor",
+        "barra-progresso",
+        "saldo-info",
+        "porcentagem-barra",
+      ];
 
-    elementosBloquear.forEach((id) => {
-      const elemento = document.getElementById(id);
-      if (elemento) {
-        elemento.style.opacity = "0.3";
-        elemento.style.pointerEvents = "none";
-      }
-    });
-
-    // Desbloquear após delay
-    setTimeout(() => {
       elementosBloquear.forEach((id) => {
         const elemento = document.getElementById(id);
         if (elemento) {
-          elemento.style.opacity = "1";
-          elemento.style.pointerEvents = "auto";
+          elemento.style.opacity = "0.3";
+          elemento.style.pointerEvents = "none";
         }
       });
-    }, 400);
-  },
 
-  // ✅ CONFIGURAR LISTENERS - COM BLOQUEIO DE CÁLCULOS TEMPORÁRIOS
-  configurarListenersPeriodo() {
-    const radiosPeriodo = document.querySelectorAll('input[name="periodo"]');
-    radiosPeriodo.forEach((radio) => {
-      radio.addEventListener("change", (e) => {
-        if (e.target.checked) {
-          // ✅ PREVENIR MÚLTIPLAS EXECUÇÕES
-          if (this.atualizandoAtualmente) {
-            console.log("⏳ Atualização já em andamento, ignorando...");
-            return;
-          }
-
-          // ✅ BLOQUEAR CÁLCULOS TEMPORÁRIOS IMEDIATAMENTE
-          this.bloquearCalculosTemporarios();
-
-          // ✅ MOSTRAR LOADING VISUAL IMEDIATO
-          this.mostrarLoadingTemporario();
-
-          // ✅ ATUALIZAR PERÍODO ATUAL ANTES DE CARREGAR
-          const novoPeriodo = e.target.value;
-          this.periodoAtual = novoPeriodo;
-
-          // ✅ SINCRONIZAR COM SISTEMA DE FILTRO SE EXISTIR
-          if (typeof SistemaFiltroPeriodoIntegrado !== "undefined") {
-            SistemaFiltroPeriodoIntegrado.periodoAtual = novoPeriodo;
-          }
-
-          // ✅ DELAY MAIOR PARA EVITAR CÁLCULOS COM DADOS ANTIGOS
-          setTimeout(() => {
-            this.atualizarMetaDiaria(true); // true = aguardar dados
-          }, 150); // Aumentado de 50ms para 150ms
-        }
-      });
-    });
-  },
-
-  // ✅ NOVA FUNÇÃO: MOSTRAR LOADING TEMPORÁRIO
-  mostrarLoadingTemporario() {
-    const metaElement = document.getElementById("meta-valor");
-    if (metaElement) {
-      const valorTextoEl = metaElement.querySelector(".valor-texto");
-      if (valorTextoEl) {
-        valorTextoEl.textContent = "Calculando...";
-        valorTextoEl.style.opacity = "0.6";
-
-        // Restaurar opacity após cálculo
-        setTimeout(() => {
-          valorTextoEl.style.opacity = "1";
-        }, 800);
-      }
-    }
-
-    const barraProgresso = document.getElementById("barra-progresso");
-    if (barraProgresso) {
-      barraProgresso.style.opacity = "0.5";
       setTimeout(() => {
-        barraProgresso.style.opacity = "1";
-      }, 600);
+        elementosBloquear.forEach((id) => {
+          const elemento = document.getElementById(id);
+          if (elemento) {
+            elemento.style.opacity = "1";
+            elemento.style.pointerEvents = "auto";
+          }
+        });
+      }, 400);
+    } catch (error) {
+      console.error("❌ Erro ao bloquear cálculos:", error);
+    }
+  },
+
+  // ✅ CONFIGURAR LISTENERS DE PERÍODO
+  configurarListenersPeriodo() {
+    try {
+      const radiosPeriodo = document.querySelectorAll('input[name="periodo"]');
+      radiosPeriodo.forEach((radio) => {
+        radio.addEventListener("change", (e) => {
+          if (e.target.checked) {
+            if (this.atualizandoAtualmente) {
+              console.log("⏳ Atualização já em andamento, ignorando...");
+              return;
+            }
+
+            this.bloquearCalculosTemporarios();
+            this.mostrarLoadingTemporario();
+
+            const novoPeriodo = e.target.value;
+            this.periodoAtual = novoPeriodo;
+
+            if (typeof SistemaFiltroPeriodoIntegrado !== "undefined") {
+              SistemaFiltroPeriodoIntegrado.periodoAtual = novoPeriodo;
+            }
+
+            setTimeout(() => {
+              this.atualizarMetaDiaria(true);
+            }, 150);
+          }
+        });
+      });
+    } catch (error) {
+      console.error("❌ Erro ao configurar listeners:", error);
+    }
+  },
+
+  // ✅ MOSTRAR LOADING TEMPORÁRIO
+  mostrarLoadingTemporario() {
+    try {
+      const metaElement = document.getElementById("meta-valor");
+      if (metaElement) {
+        const valorTextoEl = metaElement.querySelector(".valor-texto");
+        if (valorTextoEl) {
+          valorTextoEl.textContent = "Calculando...";
+          valorTextoEl.style.opacity = "0.6";
+
+          setTimeout(() => {
+            valorTextoEl.style.opacity = "1";
+          }, 800);
+        }
+      }
+
+      const barraProgresso = document.getElementById("barra-progresso");
+      if (barraProgresso) {
+        barraProgresso.style.opacity = "0.5";
+        setTimeout(() => {
+          barraProgresso.style.opacity = "1";
+        }, 600);
+      }
+    } catch (error) {
+      console.error("❌ Erro ao mostrar loading:", error);
     }
   },
 
   // ✅ SINCRONIZAR COM SISTEMA DE FILTRO EXTERNO
   sincronizarComFiltroExterno(periodo) {
-    if (periodo && periodo !== this.periodoAtual) {
-      this.periodoAtual = periodo;
+    try {
+      if (periodo && periodo !== this.periodoAtual) {
+        this.periodoAtual = periodo;
 
-      // ✅ ATUALIZAR RADIO BUTTON CORRESPONDENTE
-      const radio = document.querySelector(
-        `input[name="periodo"][value="${periodo}"]`
-      );
-      if (radio && !radio.checked) {
-        radio.checked = true;
+        const radio = document.querySelector(
+          `input[name="periodo"][value="${periodo}"]`
+        );
+        if (radio && !radio.checked) {
+          radio.checked = true;
+        }
+
+        this.atualizarMetaDiaria();
+      }
+    } catch (error) {
+      console.error("❌ Erro ao sincronizar filtro:", error);
+    }
+  },
+
+  // ✅ MOSTRAR ERRO
+  mostrarErroMeta() {
+    try {
+      const metaElement = document.getElementById("meta-valor");
+      if (metaElement) {
+        metaElement.innerHTML =
+          '<i class="fa-solid fa-coins"></i><span class="valor-texto loading-text">R$ 0,00</span>';
+      }
+    } catch (error) {
+      console.error("❌ Erro ao mostrar erro meta:", error);
+    }
+  },
+
+  // ✅ APLICAR ANIMAÇÃO
+  aplicarAnimacao(elemento) {
+    try {
+      elemento.classList.add("atualizado");
+      setTimeout(() => {
+        elemento.classList.remove("atualizado");
+      }, 1500);
+    } catch (error) {
+      console.error("❌ Erro ao aplicar animação:", error);
+    }
+  },
+
+  // ✅ INICIALIZAÇÃO SIMPLIFICADA
+  inicializar() {
+    try {
+      const metaElement = document.getElementById("meta-valor");
+      if (metaElement) {
+        metaElement.innerHTML =
+          '<i class="fa-solid fa-coins"></i><span class="valor-texto loading-text">Calculando...</span>';
       }
 
-      // ✅ ATUALIZAR META
+      // ✅ DETECTAR PERÍODO INICIAL
+      const radioMarcado = document.querySelector(
+        'input[name="periodo"]:checked'
+      );
+      if (radioMarcado) {
+        this.periodoAtual = radioMarcado.value;
+      }
+
+      console.log(`🚀 Sistema inicializado - Período: ${this.periodoAtual}`);
+      console.log(`📊 Tipo de meta será detectado pelo banco de dados`);
+
+      this.configurarListenersPeriodo();
       this.atualizarMetaDiaria();
+    } catch (error) {
+      console.error("❌ Erro na inicialização:", error);
     }
-  },
-
-  // ✅ MOSTRAR ERRO - USANDO CLASSES CSS
-  mostrarErroMeta() {
-    const metaElement = document.getElementById("meta-valor");
-    if (metaElement) {
-      metaElement.innerHTML =
-        '<i class="fa-solid fa-coins"></i><span class="valor-texto loading-text">R$ 0,00</span>';
-    }
-  },
-
-  // ✅ APLICAR ANIMAÇÃO - USANDO CLASSES CSS
-  aplicarAnimacao(elemento) {
-    elemento.classList.add("atualizado");
-    setTimeout(() => {
-      elemento.classList.remove("atualizado");
-    }, 1500);
-  },
-
-  // ✅ INICIALIZAÇÃO - ESTÁVEL
-  inicializar() {
-    // Loading simples
-    const metaElement = document.getElementById("meta-valor");
-    if (metaElement) {
-      metaElement.innerHTML =
-        '<i class="fa-solid fa-coins"></i><span class="valor-texto loading-text">Calculando...</span>';
-    }
-
-    // ✅ DETECTAR PERÍODO INICIAL DOS RADIO BUTTONS
-    const radioMarcado = document.querySelector(
-      'input[name="periodo"]:checked'
-    );
-    if (radioMarcado) {
-      this.periodoAtual = radioMarcado.value;
-    }
-
-    // Configurar listeners
-    this.configurarListenersPeriodo();
-
-    // Primeira atualização
-    this.atualizarMetaDiaria();
   },
 };
 
@@ -2388,15 +2443,12 @@ const MetaDiariaManager = {
 // ✅ INTEGRAÇÃO COM SISTEMA DE FILTRO EXISTENTE
 // ========================================
 
-// ✅ INTEGRAR COM SISTEMA DE FILTRO DE PERÍODO EXISTENTE
 const SistemaFiltroPeriodoIntegrado = {
   ...(window.SistemaFiltroPeriodo || {}),
 
   periodoAtual: "dia",
 
-  // ✅ SOBRESCREVER FUNÇÃO DE ALTERAÇÃO DE PERÍODO COM CONTROLE MELHORADO
   async alterarPeriodo(periodo) {
-    // ✅ PREVENIR MÚLTIPLAS EXECUÇÕES SIMULTÂNEAS
     if (this.executandoAlteracao) {
       console.log("⏳ Alteração já em andamento, aguardando...");
       return;
@@ -2409,15 +2461,12 @@ const SistemaFiltroPeriodoIntegrado = {
       this.atualizarBotoesVisuais(periodo);
       this.mostrarLoading();
 
-      // ✅ BLOQUEAR CÁLCULOS VISUAIS TEMPORÁRIOS
       if (typeof MetaDiariaManager !== "undefined") {
         MetaDiariaManager.bloquearCalculosTemporarios();
       }
 
-      // ✅ AGUARDAR MAIS TEMPO ANTES DE FAZER REQUISIÇÕES
       await new Promise((resolve) => setTimeout(resolve, 200));
 
-      // ✅ SINCRONIZAR COM META MANAGER ANTES DA REQUISIÇÃO
       if (typeof MetaDiariaManager !== "undefined") {
         MetaDiariaManager.periodoAtual = periodo;
       }
@@ -2429,7 +2478,7 @@ const SistemaFiltroPeriodoIntegrado = {
         method: "POST",
         body: formData,
         headers: {
-          "X-Periodo-Filtro": periodo, // ✅ HEADER PARA SINCRONIZAÇÃO
+          "X-Periodo-Filtro": periodo,
         },
       });
 
@@ -2441,200 +2490,292 @@ const SistemaFiltroPeriodoIntegrado = {
         container.innerHTML = html;
         this.reaplicarEventos();
         this.atualizarPlacar();
-        atualizarIndicadorPeriodoHeader(periodo);
+        if (typeof atualizarIndicadorPeriodoHeader === "function") {
+          atualizarIndicadorPeriodoHeader(periodo);
+        }
       }
 
-      // ✅ AGUARDAR OS DADOS DOS MENTORES CARREGAREM COMPLETAMENTE
       await new Promise((resolve) => setTimeout(resolve, 300));
 
-      // ✅ FORÇAR ATUALIZAÇÃO DA META COM PERÍODO SINCRONIZADO
       if (typeof MetaDiariaManager !== "undefined") {
-        await MetaDiariaManager.atualizarMetaDiaria(true); // true = aguardar dados
+        await MetaDiariaManager.atualizarMetaDiaria(true);
       }
     } catch (error) {
       this.mostrarErro("Erro ao carregar dados do período");
+      console.error("❌ Erro ao alterar período:", error);
     } finally {
       this.ocultarLoading();
-      // ✅ AGUARDAR UM POUCO MAIS ANTES DE LIBERAR
       setTimeout(() => {
         this.executandoAlteracao = false;
       }, 100);
     }
   },
 
-  // ✅ MANTER OUTRAS FUNÇÕES EXISTENTES
+  // Manter outras funções existentes
   atualizarBotoesVisuais:
-    window.SistemaFiltroPeriodo?.atualizarBotoesVisuais || function () {},
+    (window.SistemaFiltroPeriodo &&
+      window.SistemaFiltroPeriodo.atualizarBotoesVisuais) ||
+    function () {},
   reaplicarEventos:
-    window.SistemaFiltroPeriodo?.reaplicarEventos || function () {},
+    (window.SistemaFiltroPeriodo &&
+      window.SistemaFiltroPeriodo.reaplicarEventos) ||
+    function () {},
   atualizarPlacar:
-    window.SistemaFiltroPeriodo?.atualizarPlacar || function () {},
-  mostrarLoading: window.SistemaFiltroPeriodo?.mostrarLoading || function () {},
-  ocultarLoading: window.SistemaFiltroPeriodo?.ocultarLoading || function () {},
-  mostrarErro: window.SistemaFiltroPeriodo?.mostrarErro || function () {},
-  inicializar: window.SistemaFiltroPeriodo?.inicializar || function () {},
+    (window.SistemaFiltroPeriodo &&
+      window.SistemaFiltroPeriodo.atualizarPlacar) ||
+    function () {},
+  mostrarLoading:
+    (window.SistemaFiltroPeriodo &&
+      window.SistemaFiltroPeriodo.mostrarLoading) ||
+    function () {},
+  ocultarLoading:
+    (window.SistemaFiltroPeriodo &&
+      window.SistemaFiltroPeriodo.ocultarLoading) ||
+    function () {},
+  mostrarErro:
+    (window.SistemaFiltroPeriodo && window.SistemaFiltroPeriodo.mostrarErro) ||
+    function () {},
+  inicializar:
+    (window.SistemaFiltroPeriodo && window.SistemaFiltroPeriodo.inicializar) ||
+    function () {},
 };
 
 // ========================================
-// INTERCEPTAÇÃO AJAX - INTEGRADA COM PERÍODO E CONTROLE DE TIMING
+// INTERCEPTAÇÃO AJAX
 // ========================================
 
 function configurarInterceptadores() {
-  const originalFetch = window.fetch;
+  try {
+    const originalFetch = window.fetch;
 
-  window.fetch = async function (...args) {
-    const response = await originalFetch.apply(this, args);
+    window.fetch = async function (...args) {
+      const response = await originalFetch.apply(this, args);
 
-    if (
-      args[0] &&
-      typeof args[0] === "string" &&
-      args[0].includes("dados_banca.php") &&
-      response.ok
-    ) {
-      // ✅ AGUARDAR UM POUCO MAIS PARA GARANTIR SINCRONIZAÇÃO
-      setTimeout(() => {
-        // ✅ SÓ ATUALIZAR SE NÃO ESTIVER EXECUTANDO ALTERAÇÃO DE PERÍODO
-        if (
-          typeof MetaDiariaManager !== "undefined" &&
-          !MetaDiariaManager.atualizandoAtualmente &&
-          (!SistemaFiltroPeriodoIntegrado ||
-            !SistemaFiltroPeriodoIntegrado.executandoAlteracao)
-        ) {
-          MetaDiariaManager.atualizarMetaDiaria();
-        }
-      }, 100); // ✅ Aumentado de 50ms para 100ms
-    }
+      if (
+        args[0] &&
+        typeof args[0] === "string" &&
+        args[0].includes("dados_banca.php") &&
+        response.ok
+      ) {
+        setTimeout(() => {
+          if (
+            typeof MetaDiariaManager !== "undefined" &&
+            !MetaDiariaManager.atualizandoAtualmente &&
+            (!SistemaFiltroPeriodoIntegrado ||
+              !SistemaFiltroPeriodoIntegrado.executandoAlteracao)
+          ) {
+            MetaDiariaManager.atualizarMetaDiaria();
+          }
+        }, 100);
+      }
 
-    return response;
-  };
-
-  const originalXHR = window.XMLHttpRequest;
-  function newXHR() {
-    const xhr = new originalXHR();
-    const originalSend = xhr.send;
-
-    xhr.send = function (...args) {
-      xhr.addEventListener("load", function () {
-        if (
-          xhr.responseURL &&
-          xhr.responseURL.includes("dados_banca.php") &&
-          xhr.status === 200
-        ) {
-          setTimeout(() => {
-            // ✅ MESMA VERIFICAÇÃO PARA AJAX
-            if (
-              typeof MetaDiariaManager !== "undefined" &&
-              !MetaDiariaManager.atualizandoAtualmente &&
-              (!SistemaFiltroPeriodoIntegrado ||
-                !SistemaFiltroPeriodoIntegrado.executandoAlteracao)
-            ) {
-              MetaDiariaManager.atualizarMetaDiaria();
-            }
-          }, 100);
-        }
-      });
-
-      return originalSend.apply(this, args);
+      return response;
     };
 
-    return xhr;
-  }
+    const originalXHR = window.XMLHttpRequest;
+    function newXHR() {
+      const xhr = new originalXHR();
+      const originalSend = xhr.send;
 
-  window.XMLHttpRequest = newXHR;
+      xhr.send = function (...args) {
+        xhr.addEventListener("load", function () {
+          if (
+            xhr.responseURL &&
+            xhr.responseURL.includes("dados_banca.php") &&
+            xhr.status === 200
+          ) {
+            setTimeout(() => {
+              if (
+                typeof MetaDiariaManager !== "undefined" &&
+                !MetaDiariaManager.atualizandoAtualmente &&
+                (!SistemaFiltroPeriodoIntegrado ||
+                  !SistemaFiltroPeriodoIntegrado.executandoAlteracao)
+              ) {
+                MetaDiariaManager.atualizarMetaDiaria();
+              }
+            }, 100);
+          }
+        });
+
+        return originalSend.apply(this, args);
+      };
+
+      return xhr;
+    }
+
+    window.XMLHttpRequest = newXHR;
+  } catch (error) {
+    console.error("❌ Erro ao configurar interceptadores:", error);
+  }
 }
 
 // ========================================
-// FUNÇÕES GLOBAIS - ESTÁVEIS
+// FUNÇÕES GLOBAIS SIMPLIFICADAS
 // ========================================
 
 window.atualizarMetaDiaria = () => {
-  return MetaDiariaManager.atualizarMetaDiaria();
+  if (typeof MetaDiariaManager !== "undefined") {
+    return MetaDiariaManager.atualizarMetaDiaria();
+  }
+  return null;
 };
 
 window.forcarAtualizacaoMeta = () => {
-  MetaDiariaManager.atualizandoAtualmente = false;
-  return MetaDiariaManager.atualizarMetaDiaria();
+  if (typeof MetaDiariaManager !== "undefined") {
+    MetaDiariaManager.atualizandoAtualmente = false;
+    return MetaDiariaManager.atualizarMetaDiaria();
+  }
+  return null;
 };
 
 window.alterarPeriodo = (periodo) => {
-  // ✅ PREVENIR EXECUÇÃO MÚLTIPLA
-  if (
-    SistemaFiltroPeriodoIntegrado?.executandoAlteracao ||
-    MetaDiariaManager?.atualizandoAtualmente
-  ) {
-    console.log("⏳ Sistema ocupado, aguardando...");
-    return false;
-  }
-
-  const radio = document.querySelector(
-    `input[name="periodo"][value="${periodo}"]`
-  );
-  if (radio) {
-    radio.checked = true;
-    MetaDiariaManager.periodoAtual = periodo;
-
-    // ✅ NÃO CHAMAR ATUALIZAÇÃO IMEDIATA - DEIXAR O LISTENER FAZER
-    // MetaDiariaManager.atualizarMetaDiaria();
-
-    // ✅ SINCRONIZAR COM FILTRO SE EXISTIR
-    if (typeof SistemaFiltroPeriodoIntegrado !== "undefined") {
-      SistemaFiltroPeriodoIntegrado.alterarPeriodo(periodo);
+  try {
+    if (
+      (typeof SistemaFiltroPeriodoIntegrado !== "undefined" &&
+        SistemaFiltroPeriodoIntegrado.executandoAlteracao) ||
+      (typeof MetaDiariaManager !== "undefined" &&
+        MetaDiariaManager.atualizandoAtualmente)
+    ) {
+      console.log("⏳ Sistema ocupado, aguardando...");
+      return false;
     }
 
-    return true;
+    const radio = document.querySelector(
+      `input[name="periodo"][value="${periodo}"]`
+    );
+    if (radio) {
+      radio.checked = true;
+      if (typeof MetaDiariaManager !== "undefined") {
+        MetaDiariaManager.periodoAtual = periodo;
+      }
+
+      if (typeof SistemaFiltroPeriodoIntegrado !== "undefined") {
+        SistemaFiltroPeriodoIntegrado.alterarPeriodo(periodo);
+      }
+
+      return true;
+    }
+    return false;
+  } catch (error) {
+    console.error("❌ Erro ao alterar período:", error);
+    return false;
   }
-  return false;
 };
 
-// ========================================
-// ✅ ATUALIZAÇÃO DO SISTEMA DE DADOS MANAGER
-// ========================================
+// ✅ NOVA FUNÇÃO: ALTERAR TIPO DE META (VIA FORMULÁRIO)
+window.alterarTipoMeta = (tipo) => {
+  try {
+    if (!["fixa", "turbo"].includes(tipo)) {
+      console.error("❌ Tipo de meta inválido. Use 'fixa' ou 'turbo'");
+      return false;
+    }
 
-// ✅ SOBRESCREVER FUNÇÃO DE ATUALIZAÇÃO DE DADOS
-if (typeof DadosManager !== "undefined") {
-  const originalAtualizarLucro = DadosManager.atualizarLucroEBancaViaAjax;
+    // ✅ SIMULAR ENVIO DE FORMULÁRIO COM TIPO DE META
+    const tipoTexto = tipo === "fixa" ? "Meta Fixa" : "Meta Turbo";
 
-  DadosManager.atualizarLucroEBancaViaAjax = function () {
-    // ✅ INCLUIR PERÍODO ATUAL NAS REQUISIÇÕES
-    const periodoAtual = MetaDiariaManager?.periodoAtual || "dia";
+    console.log(`🔄 Solicitando alteração para: ${tipoTexto}`);
 
-    return fetch("dados_banca.php", {
+    // ✅ ENVIAR PARA O SERVIDOR VIA POST
+    fetch("dados_banca.php", {
+      method: "POST",
       headers: {
-        "X-Periodo-Filtro": periodoAtual,
+        "Content-Type": "application/json",
       },
+      body: JSON.stringify({
+        acao: "alterar",
+        meta: tipoTexto, // ✅ ENVIAR TIPO DE META
+        diaria: 2, // Valores padrão
+        unidade: 2,
+        odds: 1.5,
+      }),
     })
-      .then((response) => {
-        if (!response.ok) throw new Error(`HTTP ${response.status}`);
-        return response.json();
-      })
+      .then((response) => response.json())
       .then((data) => {
-        if (!data.success) {
-          throw new Error(data.message || "Resposta inválida do servidor");
-        }
-
-        this.atualizarElementosLucro(data);
-        this.atualizarElementosBanca(data);
-
-        // Calcular meta com dados atualizados
-        const bancaFloat = Utils.getValorNumerico(data.banca_formatada);
-        this.calcularMeta(bancaFloat);
-
-        // ✅ SINCRONIZAR META MANAGER
-        if (typeof MetaDiariaManager !== "undefined") {
+        if (data.success) {
+          console.log(`✅ Tipo de meta alterado para: ${data.tipo_meta_texto}`);
+          // Forçar atualização
           setTimeout(() => {
-            MetaDiariaManager.atualizarMetaDiaria();
-          }, 50);
+            if (typeof MetaDiariaManager !== "undefined") {
+              MetaDiariaManager.atualizarMetaDiaria();
+            }
+          }, 100);
+        } else {
+          console.error("❌ Erro ao alterar tipo:", data.message);
         }
       })
       .catch((error) => {
-        console.error("Erro ao atualizar dados da banca:", error);
-        ToastManager.mostrar("❌ Erro ao atualizar dados financeiros", "erro");
+        console.error("❌ Erro na requisição:", error);
       });
-  };
+
+    return true;
+  } catch (error) {
+    console.error("❌ Erro ao alterar tipo de meta:", error);
+    return false;
+  }
+};
+
+// ========================================
+// ATUALIZAÇÃO DO SISTEMA DE DADOS MANAGER
+// ========================================
+
+if (typeof DadosManager !== "undefined") {
+  try {
+    const originalAtualizarLucro = DadosManager.atualizarLucroEBancaViaAjax;
+
+    DadosManager.atualizarLucroEBancaViaAjax = function () {
+      const periodoAtual =
+        typeof MetaDiariaManager !== "undefined"
+          ? MetaDiariaManager.periodoAtual
+          : "dia";
+
+      return fetch("dados_banca.php", {
+        headers: {
+          "X-Periodo-Filtro": periodoAtual,
+        },
+      })
+        .then((response) => {
+          if (!response.ok) throw new Error(`HTTP ${response.status}`);
+          return response.json();
+        })
+        .then((data) => {
+          if (!data.success) {
+            throw new Error(data.message || "Resposta inválida do servidor");
+          }
+
+          this.atualizarElementosLucro(data);
+          this.atualizarElementosBanca(data);
+
+          if (
+            typeof Utils !== "undefined" &&
+            typeof Utils.getValorNumerico === "function"
+          ) {
+            const bancaFloat = Utils.getValorNumerico(data.banca_formatada);
+            this.calcularMeta(bancaFloat);
+          }
+
+          if (typeof MetaDiariaManager !== "undefined") {
+            setTimeout(() => {
+              MetaDiariaManager.atualizarMetaDiaria();
+            }, 50);
+          }
+        })
+        .catch((error) => {
+          console.error("Erro ao atualizar dados da banca:", error);
+          if (typeof ToastManager !== "undefined") {
+            ToastManager.mostrar(
+              "❌ Erro ao atualizar dados financeiros",
+              "erro"
+            );
+          }
+        });
+    };
+  } catch (error) {
+    console.error("❌ Erro ao configurar DadosManager:", error);
+  }
 }
 
 // ========================================
-// ATALHOS SIMPLES E ESTÁVEIS - INTEGRADOS
+// ATALHOS SIMPLIFICADOS
 // ========================================
 
 window.$ = {
@@ -2643,287 +2784,200 @@ window.$ = {
   mes: () => alterarPeriodo("mes"),
   ano: () => alterarPeriodo("ano"),
 
+  // ✅ ATALHOS PARA TIPO DE META
+  fixa: () => alterarTipoMeta("fixa"),
+  turbo: () => alterarTipoMeta("turbo"),
+
   test: () => {
-    console.log("🧪 Teste básico integrado:");
+    console.log("🧪 Teste básico com verificação por banco:");
     alterarPeriodo("dia");
     console.log("✅ DIA");
     setTimeout(() => {
-      alterarPeriodo("mes");
-      console.log("✅ MÊS");
+      alterarTipoMeta("fixa");
+      console.log("✅ META FIXA (gravando no banco)");
     }, 1000);
     setTimeout(() => {
-      alterarPeriodo("ano");
-      console.log("✅ ANO");
+      alterarTipoMeta("turbo");
+      console.log("✅ META TURBO (gravando no banco)");
     }, 2000);
+    setTimeout(() => {
+      alterarPeriodo("mes");
+      console.log("✅ MÊS");
+    }, 3000);
     setTimeout(() => {
       alterarPeriodo("dia");
       console.log("✅ Volta DIA");
-    }, 3000);
-    return "🎯 Teste iniciado - Sistema Integrado";
+    }, 4000);
+    return "🎯 Teste iniciado - Sistema com Banco";
   },
 
   info: () => {
-    const metaElement = document.getElementById("meta-valor");
-    const rotuloElement = document.getElementById("rotulo-meta");
-    const barraElement = document.getElementById("barra-progresso");
-    const extraElement = document.getElementById("valor-ultrapassou");
+    try {
+      const metaElement = document.getElementById("meta-valor");
+      const rotuloElement = document.getElementById("rotulo-meta");
+      const barraElement = document.getElementById("barra-progresso");
+      const extraElement = document.getElementById("valor-ultrapassou");
+      const tipoElement = document.getElementById("meta-text-unico");
 
-    const info = {
-      meta: !!metaElement,
-      rotulo: !!rotuloElement,
-      barra: !!barraElement,
-      extra: !!extraElement,
-      metaContent: metaElement ? metaElement.textContent : "N/A",
-      extraVisivel: extraElement
-        ? !extraElement.classList.contains("oculta")
-        : false,
-      atualizando: MetaDiariaManager.atualizandoAtualmente,
-      periodoAtual: MetaDiariaManager.periodoAtual,
-      sistemaFiltro: typeof SistemaFiltroPeriodoIntegrado !== "undefined",
-    };
+      const info = {
+        meta: !!metaElement,
+        rotulo: !!rotuloElement,
+        barra: !!barraElement,
+        extra: !!extraElement,
+        tipoMeta: !!tipoElement,
+        metaContent: metaElement ? metaElement.textContent : "N/A",
+        tipoTexto: tipoElement ? tipoElement.textContent : "N/A",
+        extraVisivel: extraElement
+          ? !extraElement.classList.contains("oculta")
+          : false,
+        atualizando:
+          typeof MetaDiariaManager !== "undefined"
+            ? MetaDiariaManager.atualizandoAtualmente
+            : false,
+        periodoAtual:
+          typeof MetaDiariaManager !== "undefined"
+            ? MetaDiariaManager.periodoAtual
+            : "N/A",
+        tipoMetaAtual:
+          typeof MetaDiariaManager !== "undefined"
+            ? MetaDiariaManager.tipoMetaAtual
+            : "Detectado pelo banco",
+        sistemaFiltro: typeof SistemaFiltroPeriodoIntegrado !== "undefined",
+        verificacao: "Por coluna do banco de dados",
+      };
 
-    console.log("📊 Info Sistema Integrado:", info);
-    return "✅ Info verificada - Sistema Integrado";
+      console.log("📊 Info Sistema com Verificação por Banco:", info);
+      return "✅ Info verificada - Sistema com Banco";
+    } catch (error) {
+      console.error("❌ Erro ao obter info:", error);
+      return "❌ Erro ao obter informações";
+    }
   },
 
-  // ✅ TESTE ESPECÍFICO DAS CORES DA BARRA - INTEGRADO
-  testCores: () => {
-    console.log(
-      "🎨 Testando cores da barra de progresso - Sistema Integrado..."
-    );
+  // ✅ TESTE DOS TIPOS VIA BANCO
+  testTipos: () => {
+    console.log("🔧 Testando tipos de meta via banco...");
 
-    const barra = document.getElementById("barra-progresso");
-    if (!barra) {
-      console.error("❌ Barra de progresso não encontrada!");
-      return "❌ Erro: elemento não encontrado";
-    }
-
-    const coresTeste = [
-      {
-        classe: "barra-lucro",
-        cor: "#4CAF50",
-        desc: "Verde - Lucro Normal",
-        progresso: 75,
-      },
-      {
-        classe: "barra-meta-batida",
-        cor: "#2196F3",
-        desc: "Azul - Meta Batida",
-        progresso: 100,
-      },
-      {
-        classe: "barra-lucro-extra",
-        cor: "#FFD700",
-        desc: "Dourado - Lucro Extra",
-        progresso: 100,
-      },
-      {
-        classe: "barra-negativo",
-        cor: "#f44336",
-        desc: "Vermelho - Negativo",
-        progresso: 25,
-      },
-      {
-        classe: "barra-neutro",
-        cor: "#95a5a6",
-        desc: "Cinza - Neutro",
-        progresso: 0,
-      },
-      {
-        classe: "barra-sem-banca",
-        cor: "#e67e22",
-        desc: "Laranja - Sem Banca",
-        progresso: 0,
-      },
+    const tipos = [
+      { tipo: "turbo", desc: "Meta Turbo (banca atual)" },
+      { tipo: "fixa", desc: "Meta Fixa (banca inicial)" },
     ];
 
-    coresTeste.forEach((teste, index) => {
+    tipos.forEach((teste, index) => {
       setTimeout(() => {
-        console.log(`🎨 Aplicando: ${teste.desc}`);
-
-        // Limpar classes anteriores
-        barra.className = barra.className.replace(/\bbarra-\w+/g, "");
-
-        // Limpar qualquer style inline
-        barra.style.backgroundColor = "";
-        barra.style.background = "";
-
-        // Aplicar nova classe
-        barra.classList.add(teste.classe);
-        barra.style.width = `${teste.progresso}%`;
-
-        // Verificar se a cor foi aplicada
-        setTimeout(() => {
-          const computedStyle = window.getComputedStyle(barra);
-          const corAplicada = computedStyle.backgroundColor;
-
-          console.log(`  ✅ Classe: ${teste.classe}`);
-          console.log(`  🎯 Cor esperada: ${teste.cor}`);
-          console.log(`  🎨 Cor aplicada: ${corAplicada}`);
-          console.log(`  📏 Largura: ${teste.progresso}%`);
-
-          // Verificar se as classes estão presentes
-          console.log(`  📋 Classes na barra: ${barra.className}`);
-        }, 100);
-      }, index * 1500);
+        console.log(`🔧 Aplicando: ${teste.desc}`);
+        alterarTipoMeta(teste.tipo);
+      }, index * 3000); // 3 segundos entre cada teste
     });
 
-    return "🎨 Teste de cores iniciado - Sistema Integrado - 6 cores em 9s";
+    return "🔧 Teste de tipos iniciado - 2 tipos em 6s (via banco)";
   },
 
-  // ✅ FORÇAR LIMPEZA DE ESTILOS INLINE - INTEGRADO
-  limparEstilos: () => {
-    console.log("🧹 Limpando estilos inline da barra - Sistema Integrado...");
-
-    const barra = document.getElementById("barra-progresso");
-    if (barra) {
-      // Remover todos os estilos inline que podem conflitar
-      barra.style.backgroundColor = "";
-      barra.style.background = "";
-      barra.removeAttribute("style");
-
-      // Recriar o style apenas com largura
-      barra.style.width = "50%";
-
-      console.log("✅ Estilos inline removidos");
-      console.log("📏 Largura resetada para 50%");
-      console.log("📋 Classes atuais:", barra.className);
-      console.log("🎯 Período atual:", MetaDiariaManager.periodoAtual);
-
-      return "✅ Limpeza concluída - Sistema Integrado";
-    } else {
-      return "❌ Barra não encontrada";
-    }
-  },
-
-  // ✅ TESTE DE SINCRONIZAÇÃO DE PERÍODOS
-  testSincronizacao: () => {
-    console.log("🔄 Testando sincronização entre sistemas...");
-
-    const periodos = ["dia", "mes", "ano"];
-    let index = 0;
-
-    const testarProximo = () => {
-      if (index >= periodos.length) {
-        console.log("✅ Teste de sincronização concluído!");
-        return;
-      }
-
-      const periodo = periodos[index];
-      console.log(`🎯 Testando período: ${periodo}`);
-
-      // Testar MetaDiariaManager
-      MetaDiariaManager.periodoAtual = periodo;
-
-      // Testar radio buttons
-      const radio = document.querySelector(
-        `input[name="periodo"][value="${periodo}"]`
-      );
-      if (radio) {
-        radio.checked = true;
-        console.log(`  ✅ Radio button ${periodo} marcado`);
-      }
-
-      // Testar sistema de filtro
-      if (typeof SistemaFiltroPeriodoIntegrado !== "undefined") {
-        SistemaFiltroPeriodoIntegrado.periodoAtual = periodo;
-        console.log(`  ✅ Sistema filtro sincronizado para ${periodo}`);
-      }
-
-      setTimeout(() => {
-        console.log(
-          `  📊 Estado atual - Meta: ${
-            MetaDiariaManager.periodoAtual
-          }, Filtro: ${SistemaFiltroPeriodoIntegrado?.periodoAtual || "N/A"}`
-        );
-        index++;
-        testarProximo();
-      }, 1000);
-    };
-
-    testarProximo();
-    return "🔄 Teste de sincronização iniciado...";
-  },
-
-  // ✅ VERIFICAR ESTADO DO SISTEMA
   status: () => {
-    const status = {
-      metaManager: {
-        existe: typeof MetaDiariaManager !== "undefined",
-        periodo: MetaDiariaManager?.periodoAtual || "N/A",
-        atualizando: MetaDiariaManager?.atualizandoAtualmente || false,
-      },
-      filtroSistema: {
-        existe: typeof SistemaFiltroPeriodoIntegrado !== "undefined",
-        periodo: SistemaFiltroPeriodoIntegrado?.periodoAtual || "N/A",
-      },
-      radioButtons: {
-        total: document.querySelectorAll('input[name="periodo"]').length,
-        marcado:
-          document.querySelector('input[name="periodo"]:checked')?.value ||
-          "Nenhum",
-      },
-      elementos: {
-        metaValor: !!document.getElementById("meta-valor"),
-        barraProgresso: !!document.getElementById("barra-progresso"),
-        saldoInfo: !!document.getElementById("saldo-info"),
-        listaMentores: !!document.getElementById("listaMentores"),
-      },
-    };
+    try {
+      const status = {
+        metaManager: {
+          existe: typeof MetaDiariaManager !== "undefined",
+          periodo:
+            typeof MetaDiariaManager !== "undefined"
+              ? MetaDiariaManager.periodoAtual
+              : "N/A",
+          tipoMeta:
+            typeof MetaDiariaManager !== "undefined"
+              ? MetaDiariaManager.tipoMetaAtual
+              : "Detectado pelo banco",
+          atualizando:
+            typeof MetaDiariaManager !== "undefined"
+              ? MetaDiariaManager.atualizandoAtualmente
+              : false,
+        },
+        filtroSistema: {
+          existe: typeof SistemaFiltroPeriodoIntegrado !== "undefined",
+          periodo:
+            typeof SistemaFiltroPeriodoIntegrado !== "undefined"
+              ? SistemaFiltroPeriodoIntegrado.periodoAtual
+              : "N/A",
+        },
+        radioButtons: {
+          total: document.querySelectorAll('input[name="periodo"]').length,
+          marcado:
+            document.querySelector('input[name="periodo"]:checked')?.value ||
+            "Nenhum",
+        },
+        tipoMeta: {
+          elemento: !!document.getElementById("meta-text-unico"),
+          texto:
+            document.getElementById("meta-text-unico")?.textContent || "N/A",
+          verificacao: "Por coluna 'meta' no banco de dados",
+          metodo: "Último cadastro na tabela controle",
+        },
+        elementos: {
+          metaValor: !!document.getElementById("meta-valor"),
+          barraProgresso: !!document.getElementById("barra-progresso"),
+          saldoInfo: !!document.getElementById("saldo-info"),
+          listaMentores: !!document.getElementById("listaMentores"),
+        },
+      };
 
-    console.log("🔍 Status do Sistema Integrado:", status);
-    return status;
+      console.log("🔍 Status do Sistema com Verificação por Banco:", status);
+      return status;
+    } catch (error) {
+      console.error("❌ Erro ao obter status:", error);
+      return { erro: "Erro ao obter status" };
+    }
   },
 };
 
 // ========================================
-// INICIALIZAÇÃO INTEGRADA - ESTÁVEL
+// INICIALIZAÇÃO SIMPLIFICADA
 // ========================================
 
-// ✅ FUNÇÃO DE INICIALIZAÇÃO PRINCIPAL
 function inicializarSistemaIntegrado() {
-  console.log("🚀 Inicializando Sistema Integrado de Meta e Filtro...");
+  try {
+    console.log("🚀 Inicializando Sistema com Verificação por Banco...");
 
-  // 1. Inicializar MetaDiariaManager
-  if (typeof MetaDiariaManager !== "undefined") {
-    MetaDiariaManager.inicializar();
-    console.log("✅ MetaDiariaManager inicializado");
-  }
-
-  // 2. Integrar com sistema de filtro existente
-  if (typeof SistemaFiltroPeriodo !== "undefined") {
-    // Substituir sistema original pelo integrado
-    window.SistemaFiltroPeriodo = SistemaFiltroPeriodoIntegrado;
-    SistemaFiltroPeriodoIntegrado.inicializar();
-    console.log("✅ Sistema de Filtro Integrado");
-  }
-
-  // 3. Configurar interceptadores
-  configurarInterceptadores();
-  console.log("✅ Interceptadores configurados");
-
-  // 4. Sincronizar estado inicial
-  const radioMarcado = document.querySelector('input[name="periodo"]:checked');
-  if (radioMarcado) {
-    const periodoInicial = radioMarcado.value;
-    MetaDiariaManager.periodoAtual = periodoInicial;
-    if (SistemaFiltroPeriodoIntegrado) {
-      SistemaFiltroPeriodoIntegrado.periodoAtual = periodoInicial;
+    if (typeof MetaDiariaManager !== "undefined") {
+      MetaDiariaManager.inicializar();
+      console.log("✅ MetaDiariaManager inicializado (verificação por banco)");
     }
-    console.log(`✅ Período inicial sincronizado: ${periodoInicial}`);
-  }
 
-  console.log("🎯 Sistema Integrado inicializado com sucesso!");
+    if (typeof SistemaFiltroPeriodo !== "undefined") {
+      window.SistemaFiltroPeriodo = SistemaFiltroPeriodoIntegrado;
+      SistemaFiltroPeriodoIntegrado.inicializar();
+      console.log("✅ Sistema de Filtro Integrado");
+    }
+
+    configurarInterceptadores();
+    console.log("✅ Interceptadores configurados");
+
+    // ✅ SINCRONIZAR ESTADO INICIAL
+    const radioMarcado = document.querySelector(
+      'input[name="periodo"]:checked'
+    );
+    if (radioMarcado) {
+      const periodoInicial = radioMarcado.value;
+      if (typeof MetaDiariaManager !== "undefined") {
+        MetaDiariaManager.periodoAtual = periodoInicial;
+      }
+      if (typeof SistemaFiltroPeriodoIntegrado !== "undefined") {
+        SistemaFiltroPeriodoIntegrado.periodoAtual = periodoInicial;
+      }
+      console.log(`✅ Período inicial: ${periodoInicial}`);
+    }
+
+    console.log("✅ Tipo de meta será detectado automaticamente pelo banco");
+    console.log("🎯 Sistema com Verificação por Banco inicializado!");
+  } catch (error) {
+    console.error("❌ Erro na inicialização do sistema:", error);
+  }
 }
 
-// ✅ AGUARDAR DOM E OUTROS SISTEMAS
+// ✅ AGUARDAR DOM
 if (document.readyState === "loading") {
   document.addEventListener("DOMContentLoaded", () => {
-    // Aguardar outros sistemas carregarem
     setTimeout(inicializarSistemaIntegrado, 800);
   });
 } else {
-  // DOM já carregado, aguardar outros sistemas
   setTimeout(inicializarSistemaIntegrado, 500);
 }
 
@@ -2931,17 +2985,15 @@ if (document.readyState === "loading") {
 // LOGS E DEBUGGING
 // ========================================
 
-console.log(
-  "✅ Sistema Meta Diária INTEGRADO - VERSÃO COM FILTRO DE LUCRO POR PERÍODO!"
-);
-console.log("📱 Comandos Integrados:");
+console.log("✅ Sistema Meta Diária com VERIFICAÇÃO POR BANCO!");
+console.log("📱 Comandos Disponíveis:");
 console.log("  $.force() - Forçar atualização");
-console.log("  $.test() - Teste de períodos integrado");
-console.log("  $.info() - Ver status integrado");
-console.log("  $.testCores() - Testar cores da barra");
-console.log("  $.limparEstilos() - Limpar estilos inline");
-console.log("  $.testSincronizacao() - Testar sincronização");
-console.log("  $.status() - Status completo do sistema");
+console.log("  $.test() - Teste completo");
+console.log("  $.testTipos() - Testar tipos via banco");
+console.log("  $.fixa() - Alterar para Meta Fixa (grava no banco)");
+console.log("  $.turbo() - Alterar para Meta Turbo (grava no banco)");
+console.log("  $.info() - Ver status");
+console.log("  $.status() - Status completo");
 
 // ✅ EXPORT PARA USO EXTERNO
 window.MetaDiariaManager = MetaDiariaManager;
