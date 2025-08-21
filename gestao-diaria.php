@@ -626,12 +626,13 @@ ob_end_flush();
   <div class="conteudo-left">
      <!-- Container da Barra de Progresso -->
      <!-- Valor da Meta -->
-     <div class="widget-meta-valor" id="meta-valor">
-        <i class="fa-solid fa-coins"></i>
-        <span class="valor-texto" id="valor-texto-meta">
-            <span class="loading-text">Calculando...</span>
-        </span>
-      </div>
+<div class="widget-meta-valor" id="meta-valor">
+    <i class="fa-solid fa-coins"></i>
+    <div class="meta-valor-container">
+        <span class="valor-texto" id="valor-texto-meta">R$ 20,00</span>
+        <span class="meta-text meta-turbo" id="meta-text-unico">META TURBO</span>
+    </div>
+</div>
     
      <!-- Exibição do valor que ultrapassou a meta -->
      <div class="valor-ultrapassou" id="valor-ultrapassou" style="display: none;">
@@ -1118,19 +1119,21 @@ ob_end_flush();
 <!--                                           💼  FORMULARIO GERENCIAMENTO DE BANCA  PAINEL CONTROLE                               
  ====================================================================================================================================== -->
 
+<!-- Link para Font Awesome -->
+<!-- Link para Font Awesome -->
+<!-- Link Font Awesome e CSS -->
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+<link rel="stylesheet" href="modal-banca.css">
 
 <div class="modal-gerencia-banca">
   <div id="modalDeposito" class="modal-overlay">
-
     <div class="modal-content">
-      <!-- Botão de fechar -->
       <button type="button" class="btn-fechar" id="fecharModal">×</button>
       <form method="POST" action="">
         <input type="hidden" name="controle_id" value="<?= isset($controle_id) ? htmlspecialchars($controle_id) : '' ?>">
+        <input type="hidden" name="acaoBanca" id="acaoBanca">
 
-
-
-        <!-- Informações da banca e lucro -->
+        <!-- Banca e Lucro -->
         <div class="linha-banca-lucro">
           <div class="campo-banca">
             <div class="conteudo">
@@ -1141,83 +1144,138 @@ ob_end_flush();
           <div class="campo-lucro">
             <div class="conteudo">
               <label class="label-lucro">
-                <i class="fa-solid fa-money-bill-trend-up" id="iconeLucro"></i>
-                <span id="lucroLabel" class="lucro-label-texto">Lucro</span>
+                <i class="fa-solid fa-money-bill-trend-up"></i>
+                <span>Lucro</span>
               </label>
               <span id="valorLucroLabel">R$ 0,00</span>
             </div>
           </div>
         </div>
 
-        <!-- Dropdown de ações -->
-       <div class="custom-campo-opcos">  
-        <div class="custom-dropdown">
-          <button class="dropdown-toggle" type="button">
-            <i class="fa-solid fa-hand-pointer"></i> Selecione Uma Opção
-            <i class="fa-solid fa-chevron-down"></i>
-          </button>
-          <ul class="dropdown-menu">
-            <li data-value="add"><i class="fa-solid fa-money-bill-wave"></i> Depositar</li>
-            <li data-value="sacar"><i class="fa-solid fa-money-bill-transfer"></i> Sacar</li>
-            <li data-value="alterar"><i class="fa-solid fa-pen-to-square"></i> Alterar Dados</li>
-            <li data-value="resetar"><i class="fa-solid fa-trash-can"></i> Resetar Banca</li>
-          </ul>
-          <input type="hidden" name="acaoBanca" id="acaoBanca">
-        </div>
+        <!-- Dropdown de Ações -->
+        <div class="custom-campo-opcoes">  
+          <div class="custom-dropdown">
+            <button class="dropdown-toggle" type="button" id="dropdownToggle">
+              <i class="fa-solid fa-hand-pointer"></i> Selecione Uma Opção
+              <i class="fa-solid fa-chevron-down"></i>
+            </button>
+            <ul class="dropdown-menu" id="dropdownMenu">
+              <li data-value="add"><i class="fa-solid fa-money-bill-wave"></i> Depositar</li>
+              <li data-value="sacar"><i class="fa-solid fa-money-bill-transfer"></i> Sacar</li>
+              <li data-value="alterar"><i class="fa-solid fa-pen-to-square"></i> Alterar Dados</li>
+              <li data-value="resetar"><i class="fa-solid fa-trash-can"></i> Resetar Banca</li>
+            </ul>
+          </div>
 
-       
-        <div class="custom-inputbox">          
-          <div class="input-wrapper banca-wrapper">
+          <!-- Campo de Valor -->
+          <div class="banca-wrapper">          
             <input type="text" id="valorBanca" name="valorBanca" placeholder="R$ 0,00">
           </div>
-        </div>
-      </div>
 
-      <div class="custom-campo"> 
-        <div class="custom-inputbox">
-          <label for="porcentagem"><i class="fa-solid fa-chart-pie"></i> Porcentagem</label>
-          <div class="input-wrapper porc-wrapper">
-            <input type="text" name="diaria" id="porcentagem" value="<?= isset($valor_diaria) ? number_format(floatval($valor_diaria), 2, ',', '.') : '2,00' ?>">
-            <span id="resultadoCalculo"></span>
-          </div>
-        </div>
-
-        <div class="custom-inputbox">
-          <label for="unidadeMeta"><i class="fa-solid fa-bullseye"></i> Qtd de Unidade</label>
-          <div class="input-wrapper unidade-wrapper">
-            <input type="text" name="unidade" id="unidadeMeta" value="<?= isset($valor_unidade) ? intval($valor_unidade) : '2' ?>">
-            <span id="resultadoUnidade"></span>
-          </div>
-        </div>
-
-        <div class="custom-inputbox">
-          <label for="oddsMeta"><i class="fa-solid fa-percent"></i> Odds Min..</label>
-          <div class="input-wrapper odds-wrapper">
-            <input type="text" name="odds" id="oddsMeta" value="<?= isset($valor_odds) ? number_format(floatval($valor_odds), 2, ',', '') : '1,50' ?>">
-            <span id="resultadoOdds"></span>
-          </div>
-        </div>
-      </div>
-        <!-- Confirmação de reset -->
-        <div id="confirmarReset" style="display: none; margin-top: 10px;">
-          <div class="mensagem-reset">
-            Tem certeza que deseja <strong>resetar sua banca</strong>? Essa ação é irreversível.
-            <div class="botoes-reset">
-              <button type="button" id="btnConfirmarReset" class="btn-reset-confirmar">Sim, Resetar</button>
-              <button type="button" id="btnCancelarReset" class="btn-reset-cancelar">Cancelar</button>
+          <!-- Tipo de Meta -->
+          <div class="campo-tipo-meta">
+            <div class="titulo-meta">Escolha o Tipo de Meta</div>
+            <div class="opcoes-meta">
+              <div class="opcao-meta">
+                <input type="radio" name="tipoMeta" value="fixa" id="metaFixa" checked>
+                <label for="metaFixa">Meta Fixa</label>
+                <button type="button" class="info-btn" data-modal="modalFixa">
+                  <i class="fa-solid fa-circle-question"></i>
+                </button>
+              </div>
+              <div class="opcao-meta">
+                <input type="radio" name="tipoMeta" value="turbo" id="metaTurbo">
+                <label for="metaTurbo">Meta Turbo</label>
+                <button type="button" class="info-btn" data-modal="modalTurbo">
+                  <i class="fa-solid fa-circle-question"></i>
+                </button>
+              </div>
             </div>
           </div>
         </div>
 
-        <!-- Toast do modal -->
-        <div id="toastModal" style="margin-top: 10px;"></div>
+        <!-- Campos Lado a Lado -->
+        <div class="campos-inline">
+          <div class="campo-inline">
+            <input type="text" name="diaria" id="porcentagem" value="<?= isset($valor_diaria) ? number_format(floatval($valor_diaria), 0) . '%' : '2%' ?>" placeholder="2%">
+          </div>
+          <div class="campo-inline">
+            <input type="text" name="unidade" id="unidadeMeta" value="<?= isset($valor_unidade) ? intval($valor_unidade) : '2' ?>" placeholder="2">
+          </div>
+          <div class="campo-inline">
+            <input type="text" name="odds" id="oddsMeta" value="<?= isset($valor_odds) ? number_format(floatval($valor_odds), 2, ',', '') : '1,70' ?>" placeholder="1,70">
+          </div>
+        </div>
 
-        <!-- Botão principal -->
+        <!-- Labels e Explicações Abaixo dos Campos -->
+        <div class="labels-explicacao">
+          <div class="label-com-explicacao">
+            <label for="porcentagem">Porcentagem</label>
+            <button type="button" class="info-btn" data-modal="modalPorcentagem">
+              <i class="fa-solid fa-circle-question"></i>
+            </button>
+          </div>
+          <div class="label-com-explicacao">
+            <label for="unidadeMeta">Qtd de Unidade</label>
+            <button type="button" class="info-btn" data-modal="modalUnidade">
+              <i class="fa-solid fa-circle-question"></i>
+            </button>
+          </div>
+          <div class="label-com-explicacao">
+            <label for="oddsMeta">Odds Min.</label>
+            <button type="button" class="info-btn" data-modal="modalOdds">
+              <i class="fa-solid fa-circle-question"></i>
+            </button>
+          </div>
+        </div>
+
+        <!-- Campo de Resultados dos Cálculos -->
+        <div class="campo-resultados">
+          <div class="titulo-resultados">📊 Resumo dos Cálculos</div>
+          
+          <div class="resultado-item">
+            <span class="resultado-label">Sua Unidade de Entrada Nas Apostas é:</span>
+            <span class="resultado-valor" id="resultadoUnidadeEntrada">R$ 20,00</span>
+          </div>
+          
+          <div class="resultado-item">
+            <span class="resultado-label">Sua Meta do Dia é:</span>
+            <span class="resultado-valor" id="resultadoMetaDia">R$ 60,00</span>
+          </div>
+          
+          <div class="resultado-item">
+            <span class="resultado-label">Sua Meta do Mês é:</span>
+            <span class="resultado-valor" id="resultadoMetaMes">R$ 1.800,00</span>
+          </div>
+          
+          <div class="resultado-item">
+            <span class="resultado-label">Sua Meta do Ano é:</span>
+            <span class="resultado-valor" id="resultadoMetaAno">R$ 21.600,00</span>
+          </div>
+          
+          <div class="resultado-item">
+            <span class="resultado-label">Para Bater a Meta do Dia Fazer:</span>
+            <span class="resultado-valor" id="resultadoEntradas">5 Entradas Positivas</span>
+          </div>
+        </div>
+
+        <!-- Confirmação de Reset -->
+        <div id="confirmarReset" class="mensagem-reset">
+          Tem certeza que deseja <strong>resetar sua banca</strong>? Essa ação é irreversível.
+          <div class="botoes-reset">
+            <button type="button" id="btnConfirmarReset" class="btn-reset-confirmar">Sim, Resetar</button>
+            <button type="button" id="btnCancelarReset" class="btn-reset-cancelar">Cancelar</button>
+          </div>
+        </div>
+
+        <div id="toastModal"></div>
         <input type="button" id="botaoAcao" value="Cadastrar Dados" class="custom-button">
       </form>
     </div>
   </div>
 </div>
+
+
 <!-- ==================================================================================================================================== --> 
 <!--                                         💼  FIM FORMULARIO GERENCIAMENTO DE BANCA  PAINEL CONTROLE                               
  ====================================================================================================================================== -->

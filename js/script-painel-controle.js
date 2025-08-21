@@ -15,7 +15,7 @@ document.addEventListener("DOMContentLoaded", () => {
 
   let modalInicializado = false;
   let valorOriginalBanca = 0;
-
+  let metaFixaRadio, metaTurboRadio;
   // Variáveis globais necessárias em outras funções
   let diaria, unidade, oddsMeta;
   let resultadoCalculo, resultadoUnidade, resultadoOdds;
@@ -788,10 +788,13 @@ document.addEventListener("DOMContentLoaded", () => {
     });
   }
 
+  // ✅ SUBSTITUA TODA A FUNÇÃO inicializarModalDeposito() POR ESTA VERSÃO COMPLETA:
+
   function inicializarModalDeposito() {
     if (modalInicializado || !modal) return;
     modalInicializado = true;
 
+    // ✅ SELETORES DOS ELEMENTOS (INCLUINDO CAMPOS DE META)
     valorBancaInput = modal.querySelector("#valorBanca");
     const valorBancaLabel = modal.querySelector("#valorBancaLabel");
     diaria = modal.querySelector("#porcentagem");
@@ -801,6 +804,11 @@ document.addEventListener("DOMContentLoaded", () => {
     resultadoOdds = modal.querySelector("#resultadoOdds");
     oddsMeta = modal.querySelector("#oddsMeta");
 
+    // ✅ NOVOS CAMPOS DE META
+    metaFixaRadio = modal.querySelector("#metaFixa");
+    metaTurboRadio = modal.querySelector("#metaTurbo");
+
+    // ✅ CONFIGURAÇÃO DO CAMPO ODDS
     if (oddsMeta) {
       oddsMeta.addEventListener("input", () => {
         oddsMeta.value = oddsMeta.value.replace(/[^0-9.,]/g, "");
@@ -822,10 +830,12 @@ document.addEventListener("DOMContentLoaded", () => {
     const acaoSelect = modal.querySelector("#acaoBanca");
     const botaoAcao = modal.querySelector("#botaoAcao");
 
+    // ✅ CONFIGURAR SELEÇÃO AO CLICAR
     if (diaria) selecionarAoClicar(diaria);
     if (unidade) selecionarAoClicar(unidade);
     if (oddsMeta) selecionarAoClicar(oddsMeta);
 
+    // ✅ CRIAR ELEMENTOS AUXILIARES
     const legendaBanca = document.createElement("div");
     legendaBanca.id = "legendaBanca";
     legendaBanca.style = "margin-top: 5px; font-size: 0.9em; color: #7f8c8d;";
@@ -842,7 +852,7 @@ document.addEventListener("DOMContentLoaded", () => {
 
     const lucroTotalLabel = modal.querySelector("#valorLucroLabel");
 
-    // ✅ CARREGAMENTO INICIAL
+    // ✅ CARREGAMENTO INICIAL COM SUPORTE A META
     fetch("ajax_deposito.php")
       .then((response) => response.json())
       .then((data) => {
@@ -881,6 +891,23 @@ document.addEventListener("DOMContentLoaded", () => {
           oddsMeta.value = isNaN(oddsFormatada)
             ? "1.50"
             : oddsFormatada.toFixed(2);
+        }
+
+        // ✅ CARREGAR TIPO DE META DO BANCO DE DADOS
+        if (data.meta) {
+          if (data.meta === "Meta Turbo" && metaTurboRadio) {
+            metaTurboRadio.checked = true;
+            destacarMetaSelecionada("turbo");
+          } else if (metaFixaRadio) {
+            metaFixaRadio.checked = true;
+            destacarMetaSelecionada("fixa");
+          }
+        } else {
+          // Default para Meta Fixa se não houver valor no banco
+          if (metaFixaRadio) {
+            metaFixaRadio.checked = true;
+            destacarMetaSelecionada("fixa");
+          }
         }
 
         if (data.meta_diaria_formatada) {
@@ -954,7 +981,6 @@ document.addEventListener("DOMContentLoaded", () => {
     });
 
     // ✅ EVENTO INPUT DO VALOR BANCA
-    // ✅ EVENTO INPUT DO VALOR BANCA - VERSÃO CORRIGIDA SEM ERROS
     if (valorBancaInput) {
       // ✅ CONFIGURAR MÁSCARA DE DINHEIRO
       valorBancaInput.addEventListener("input", function () {
@@ -1084,7 +1110,7 @@ document.addEventListener("DOMContentLoaded", () => {
       console.log("✅ Eventos do campo valor banca configurados");
     }
 
-    // ✅ FUNÇÃO CALCULAR META TAMBÉM PRECISA SER CORRIGIDA
+    // ✅ FUNÇÃO CALCULAR META INTERNA
     function calcularMeta(bancaFloat) {
       console.log(`🎯 Calculando meta para banca: ${bancaFloat}`);
 
@@ -1129,7 +1155,7 @@ document.addEventListener("DOMContentLoaded", () => {
       console.log(`✅ Meta calculada - Unidade: ${unidadeEntrada}`);
     }
 
-    // ✅ EVENTOS DE DROPDOWN CORRIGIDOS (SE NECESSÁRIO)
+    // ✅ EVENTOS DE DROPDOWN APRIMORADOS
     if (typeof modal !== "undefined" && modal) {
       const dropdownItems = modal.querySelectorAll(".dropdown-menu li");
       const dropdownToggle = modal.querySelector(".dropdown-toggle");
@@ -1211,7 +1237,7 @@ document.addEventListener("DOMContentLoaded", () => {
       console.log("✅ Eventos do dropdown configurados");
     }
 
-    // ✅ EVENTO BOTÃO AÇÃO MODIFICADO PARA ATUALIZAR ÁREA DIREITA
+    // ✅ EVENTO BOTÃO AÇÃO COM SUPORTE A META
     if (botaoAcao) {
       botaoAcao.addEventListener("click", (e) => {
         e.preventDefault();
@@ -1225,6 +1251,22 @@ document.addEventListener("DOMContentLoaded", () => {
             "⚠️ Selecione uma opção: Depositar, Sacar, Alterar ou Resetar.",
             "aviso"
           );
+          return;
+        }
+
+        // ✅ VALIDAR SE TIPO DE META FOI SELECIONADO
+        const tipoMeta = obterTipoMetaSelecionado();
+        if (!tipoMeta) {
+          exibirToast("⚠️ Selecione o tipo de meta (Fixa ou Turbo)", "aviso");
+          // Destacar campos de meta
+          const campoTipoMeta = modal.querySelector(".campo-tipo-meta");
+          if (campoTipoMeta) {
+            campoTipoMeta.style.border = "2px solid red";
+            campoTipoMeta.style.borderRadius = "5px";
+            setTimeout(() => {
+              campoTipoMeta.style.border = "";
+            }, 3000);
+          }
           return;
         }
 
@@ -1303,20 +1345,27 @@ document.addEventListener("DOMContentLoaded", () => {
           ? parseFloat(oddsMeta.value.replace(",", "."))
           : 1.5;
 
+        // ✅ INCLUIR TIPO DE META NO ENVIO
+        const dadosEnvio = {
+          acao: acaoFinal,
+          valor: valorNumerico.toFixed(2),
+          diaria: diariaFloat,
+          unidade: unidadeInt,
+          odds: oddsValor,
+          tipoMeta: tipoMeta, // ✅ NOVO CAMPO
+        };
+
+        console.log("📤 Enviando dados:", dadosEnvio);
+
         fetch("ajax_deposito.php", {
           method: "POST",
           headers: { "Content-Type": "application/json" },
-          body: JSON.stringify({
-            acao: acaoFinal,
-            valor: valorNumerico.toFixed(2),
-            diaria: diariaFloat,
-            unidade: unidadeInt,
-            odds: oddsValor,
-          }),
+          body: JSON.stringify(dadosEnvio),
         })
           .then((res) => res.json())
           .then((resposta) => {
             if (resposta.success) {
+              // ✅ MENSAGEM PERSONALIZADA INCLUINDO TIPO DE META
               const mensagem = gerarMensagemOperacao(
                 tipoSelecionado,
                 valorNumerico
@@ -1415,8 +1464,94 @@ document.addEventListener("DOMContentLoaded", () => {
       });
     }
 
+    // ✅ CONFIGURAR EVENTOS DOS RADIO BUTTONS DE META
+    if (metaFixaRadio && metaTurboRadio) {
+      metaFixaRadio.addEventListener("change", function () {
+        if (this.checked) {
+          console.log("✅ Meta Fixa selecionada");
+          destacarMetaSelecionada("fixa");
+        }
+      });
+
+      metaTurboRadio.addEventListener("change", function () {
+        if (this.checked) {
+          console.log("✅ Meta Turbo selecionada");
+          destacarMetaSelecionada("turbo");
+        }
+      });
+
+      console.log("✅ Eventos de meta configurados");
+    }
+
+    // ✅ FINALIZAÇÃO
     configurarEventosDeMeta();
     adicionarEventosLimpezaCampos();
+  }
+
+  // ✅ ADICIONAR ESTAS FUNÇÕES APÓS A FUNÇÃO inicializarModalDeposito():
+
+  // FUNÇÃO PARA OBTER TIPO DE META SELECIONADO
+  function obterTipoMetaSelecionado() {
+    const metaTurboRadio = document.getElementById("metaTurbo");
+    const metaFixaRadio = document.getElementById("metaFixa");
+
+    if (metaTurboRadio && metaTurboRadio.checked) {
+      return "Meta Turbo";
+    } else if (metaFixaRadio && metaFixaRadio.checked) {
+      return "Meta Fixa";
+    }
+    return null; // Nenhum selecionado
+  }
+
+  // FUNÇÃO PARA DESTACAR META SELECIONADA VISUALMENTE
+  function destacarMetaSelecionada(tipo) {
+    const modal = document.getElementById("modalDeposito");
+    if (!modal) return;
+
+    const opcoes = modal.querySelectorAll(".opcao-meta");
+    opcoes.forEach((opcao) => {
+      opcao.classList.remove("selecionada");
+    });
+
+    const opcaoSelecionada = modal.querySelector(
+      tipo === "fixa" ? "#metaFixa" : "#metaTurbo"
+    );
+    if (opcaoSelecionada) {
+      const opcaoContainer = opcaoSelecionada.closest(".opcao-meta");
+      if (opcaoContainer) {
+        opcaoContainer.classList.add("selecionada");
+      }
+    }
+
+    console.log(`✅ Meta ${tipo} destacada visualmente`);
+  }
+
+  // ✅ FUNÇÃO MODIFICADA PARA INCLUIR TIPO DE META NA MENSAGEM
+  function gerarMensagemOperacao(tipoOperacao, valor = null) {
+    const tipoMeta = obterTipoMetaSelecionado();
+    const valorFormatado = valor
+      ? valor.toLocaleString("pt-BR", {
+          style: "currency",
+          currency: "BRL",
+        })
+      : "";
+
+    const metaTexto = tipoMeta ? ` (${tipoMeta})` : "";
+
+    switch (tipoOperacao) {
+      case "deposito":
+      case "add":
+        return `💰 Depósito de ${valorFormatado} realizado com sucesso!${metaTexto}`;
+      case "saque":
+      case "sacar":
+        return `💸 Saque de ${valorFormatado} realizado com sucesso!${metaTexto}`;
+      case "alterar":
+        return `⚙️ Configurações alteradas com sucesso!${metaTexto}`;
+      case "resetar":
+        return `🔄 Banca resetada com sucesso!${metaTexto}`;
+      default:
+        return `✅ Operação realizada com sucesso!${metaTexto}`;
+    }
   }
 
   function configurarEventosDeMeta() {
@@ -1735,3 +1870,12 @@ document.addEventListener("DOMContentLoaded", () => {
 
   console.log("✅ Sistema completo inicializado com sucesso!");
 });
+//
+//
+//
+//
+//
+//
+//
+//
+//
