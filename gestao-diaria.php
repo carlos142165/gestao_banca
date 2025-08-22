@@ -625,40 +625,42 @@ ob_end_flush();
 <!-- Conteúdo principal do widget -->
 <div class="widget-conteudo-principal">
   <div class="conteudo-left">
-     <!-- Container da Barra de Progresso -->
-     <!-- Valor da Meta -->
-<div class="widget-meta-valor" id="meta-valor">
-    <i class="fa-solid fa-coins"></i>
-    <div class="meta-valor-container">
-        <span class="valor-texto" id="valor-texto-meta">R$ 20,00</span>
-        
+    <!-- Widget Meta Valor -->
+    <div class="widget-meta-valor" id="meta-valor">
+        <i class="fa-solid fa-coins"></i>
+        <div class="meta-valor-container">
+            <span class="valor-texto" id="valor-texto-meta">Carregando...</span>
+        </div>
     </div>
-</div>
     
-     <!-- Exibição do valor que ultrapassou a meta -->
-     <div class="valor-ultrapassou" id="valor-ultrapassou" style="display: none;">
+    <!-- Exibição do valor que ultrapassou a meta -->
+    <div class="valor-ultrapassou" id="valor-ultrapassou" style="display: none;">
         <i class="fa-solid fa-trophy"></i>
-        <span class="texto-ultrapassou">Lucro Extra: <span id="valor-extra">R$ 0,00</span></span>
-     </div>
+        <span class="texto-ultrapassou">Lucro Extra: <span id="valor-extra">Carregando...</span></span>
+    </div>
     
-     <!-- RÓTULO QUE ESTAVA FALTANDO -->
-     <div class="widget-meta-rotulo" id="rotulo-meta">Meta do Dia</div>
+    <!-- Rótulo da Meta (sem tipo de meta) -->
+    <div class="widget-meta-rotulo" id="rotulo-meta">Meta do Dia</div>
     
-     <!-- Container da Barra de Progresso -->
-     <div class="widget-barra-container">
+    <!-- Container da Barra de Progresso com Badge -->
+    <div class="widget-barra-container">
         <div class="widget-barra-progresso" id="barra-progresso"></div>
         <div class="porcentagem-barra" id="porcentagem-barra">0%</div>
-     </div>
+        <!-- ✅ Badge do Tipo de Meta (será criado automaticamente pelo JS) -->
+        <!-- <div class="meta-tipo-badge" id="meta-tipo-badge">META TURBO</div> -->
+    </div>
     
-     <!-- Info de progresso com saldo -->
-      <div class="widget-info-progresso">
-      <span id="saldo-info" class="saldo-positivo">
-     <i class="fa-solid fa-chart-line"></i>
-     <span class="saldo-info-rotulo">Lucro:</span>
-     <span class="saldo-info-valor">R$ 75,00</span>
-     </span>
+    <!-- Info de progresso com saldo -->
+    <div class="widget-info-progresso">
+        <span id="saldo-info" class="saldo-positivo">
+            <i class="fa-solid fa-chart-line"></i>
+            <span class="saldo-info-rotulo">Lucro:</span>
+            <span class="saldo-info-valor">R$ 75,00</span>
+        </span>
     </div>
-    </div>
+    
+  
+</div>
     
 
                     </div>

@@ -1879,15 +1879,6 @@ document.addEventListener("DOMContentLoaded", () => {
 //
 //
 //
-
-//
-//
-//
-//
-//
-//
-//
-//
 //
 //
 //
@@ -2427,7 +2418,7 @@ const CalculadoraModal = {
     }
   },
 
-  // ✅ CALCULAR META DIÁRIA - COM LÓGICA DE RECUPERAÇÃO DE PREJUÍZO
+  // ✅ CALCULAR META DIÁRIA - COM LÓGICA DE RECUPERAÇÃO DE PREJUÍZO CORRIGIDA
   calcularMetaDiaria(valores) {
     try {
       if (
@@ -2440,52 +2431,49 @@ const CalculadoraModal = {
       }
 
       const porcentagemDecimal = valores.porcentagem / 100;
-      let baseCalculo = 0;
       let metaOriginal = 0;
-      let ajustePrejuizo = 0;
+      let metaFinal = 0;
 
-      // ✅ CALCULAR META ORIGINAL (sempre baseada na banca inicial)
+      // ✅ SEMPRE CALCULAR META ORIGINAL BASEADA NA BANCA INICIAL
       metaOriginal = this.banca_inicial * porcentagemDecimal * valores.unidade;
 
-      // ✅ VERIFICAR SE HÁ PREJUÍZO
+      // ✅ VERIFICAR SE HÁ PREJUÍZO (LUCRO NEGATIVO)
       if (this.lucro_atual < 0) {
-        // ✅ PREJUÍZO: Meta = Meta Original + Valor do Prejuízo
-        ajustePrejuizo = Math.abs(this.lucro_atual); // Converte negativo para positivo
-        const metaComRecuperacao = metaOriginal + ajustePrejuizo;
+        // 🔴 PREJUÍZO: Meta = Meta Original + Valor Absoluto do Prejuízo
+        const valorPrejuizo = Math.abs(this.lucro_atual);
+        metaFinal = metaOriginal + valorPrejuizo;
 
-        console.log(`💔 PREJUÍZO DETECTADO:`);
+        console.log(`💔 PREJUÍZO DETECTADO (META DIÁRIA):`);
         console.log(`   Meta Original: R$ ${metaOriginal.toFixed(2)}`);
-        console.log(`   Prejuízo: R$ ${ajustePrejuizo.toFixed(2)}`);
+        console.log(`   Prejuízo do Dia: R$ ${valorPrejuizo.toFixed(2)}`);
         console.log(
-          `   Meta + Recuperação: R$ ${metaComRecuperacao.toFixed(2)}`
+          `   Meta Final (Original + Recuperação): R$ ${metaFinal.toFixed(2)}`
         );
 
-        return metaComRecuperacao;
+        return metaFinal;
       } else if (this.lucro_atual === 0) {
-        // ✅ NEUTRO: Apenas a meta original
+        // ⚪ NEUTRO: Apenas a meta original
         console.log(
-          `⚖️ LUCRO NEUTRO - Meta Original: R$ ${metaOriginal.toFixed(2)}`
+          `⚖️ LUCRO NEUTRO - Meta Diária: R$ ${metaOriginal.toFixed(2)}`
         );
         return metaOriginal;
       } else {
-        // ✅ LUCRO POSITIVO: Aplicar lógica de Meta Fixa vs Turbo
+        // 🟢 LUCRO POSITIVO: Aplicar lógica de Meta Fixa vs Turbo
         if (this.tipoMetaSelecionado === "fixa") {
-          // Meta Fixa: sempre usa banca inicial (meta original)
+          // Meta Fixa: sempre usa banca inicial
+          metaFinal = metaOriginal;
           console.log(
-            `📈 LUCRO POSITIVO - Meta Fixa: R$ ${metaOriginal.toFixed(2)}`
+            `📈 LUCRO POSITIVO - Meta Fixa: R$ ${metaFinal.toFixed(2)}`
           );
-          return metaOriginal;
         } else {
           // Meta Turbo: usa banca atual (inicial + lucro)
-          baseCalculo = this.banca_inicial + this.lucro_atual;
-          const metaTurbo = baseCalculo * porcentagemDecimal * valores.unidade;
-
+          const bancaAtual = this.banca_inicial + this.lucro_atual;
+          metaFinal = bancaAtual * porcentagemDecimal * valores.unidade;
           console.log(`🚀 LUCRO POSITIVO - Meta Turbo:`);
-          console.log(`   Banca Atual: R$ ${baseCalculo.toFixed(2)}`);
-          console.log(`   Meta Turbo: R$ ${metaTurbo.toFixed(2)}`);
-
-          return metaTurbo;
+          console.log(`   Banca Atual: R$ ${bancaAtual.toFixed(2)}`);
+          console.log(`   Meta Turbo: R$ ${metaFinal.toFixed(2)}`);
         }
+        return metaFinal;
       }
     } catch (error) {
       console.error("❌ Erro ao calcular meta diária:", error);
@@ -2517,12 +2505,86 @@ const CalculadoraModal = {
     }
   },
 
-  // ✅ CALCULAR METAS DE PERÍODO
-  calcularMetasPeriodo(metaDiaria) {
+  // ✅ NOVA FUNÇÃO: CALCULAR METAS DE PERÍODO - CORRIGIDA PARA INCLUIR RECUPERAÇÃO DE PERDAS
+  calcularMetasPeriodo(metaDiaria, valores) {
     try {
       const diasRestantes = this.calcularDiasRestantes();
-      const metaMensal = metaDiaria * diasRestantes.mes;
-      const metaAnual = metaDiaria * diasRestantes.ano;
+
+      // ✅ VERIFICAR SE HÁ PREJUÍZO
+      if (this.lucro_atual < 0) {
+        // 🔴 COM PREJUÍZO: Meta de período = Meta Diária (que já inclui recuperação) × Dias
+        const metaMensal = metaDiaria * diasRestantes.mes;
+        const metaAnual = metaDiaria * diasRestantes.ano;
+
+        console.log(`💔 PREJUÍZO - METAS DE PERÍODO:`);
+        console.log(
+          `   Meta Diária (com recuperação): R$ ${metaDiaria.toFixed(2)}`
+        );
+        console.log(`   Dias restantes no mês: ${diasRestantes.mes}`);
+        console.log(`   Meta Mensal: R$ ${metaMensal.toFixed(2)}`);
+        console.log(`   Dias restantes no ano: ${diasRestantes.ano}`);
+        console.log(`   Meta Anual: R$ ${metaAnual.toFixed(2)}`);
+
+        return {
+          metaMensal: metaMensal,
+          metaAnual: metaAnual,
+          diasMes: diasRestantes.mes,
+          diasAno: diasRestantes.ano,
+        };
+      }
+
+      // ✅ SEM PREJUÍZO: Aplicar lógica normal
+      const porcentagemDecimal = valores.porcentagem / 100;
+      let metaMensal = 0;
+      let metaAnual = 0;
+
+      if (this.tipoMetaSelecionado === "fixa") {
+        // 🔵 META FIXA: Calcular meta total do período e subtrair lucro já conquistado
+        const metaMensalTotal =
+          this.banca_inicial *
+          porcentagemDecimal *
+          valores.unidade *
+          diasRestantes.mes;
+        const metaAnualTotal =
+          this.banca_inicial *
+          porcentagemDecimal *
+          valores.unidade *
+          diasRestantes.ano;
+
+        // Subtrair o lucro já conquistado
+        metaMensal = Math.max(0, metaMensalTotal - this.lucro_atual);
+        metaAnual = Math.max(0, metaAnualTotal - this.lucro_atual);
+
+        console.log(`📊 META FIXA - PERÍODO:`);
+        console.log(`   Meta Mensal Total: R$ ${metaMensalTotal.toFixed(2)}`);
+        console.log(`   Lucro Atual: R$ ${this.lucro_atual.toFixed(2)}`);
+        console.log(`   Meta Mensal Restante: R$ ${metaMensal.toFixed(2)}`);
+        console.log(`   Meta Anual Total: R$ ${metaAnualTotal.toFixed(2)}`);
+        console.log(`   Meta Anual Restante: R$ ${metaAnual.toFixed(2)}`);
+      } else {
+        // 🟠 META TURBO: Usar banca atual para calcular metas de período
+        const bancaAtual = this.banca_inicial + this.lucro_atual;
+        const metaMensalTotalTurbo =
+          bancaAtual * porcentagemDecimal * valores.unidade * diasRestantes.mes;
+        const metaAnualTotalTurbo =
+          bancaAtual * porcentagemDecimal * valores.unidade * diasRestantes.ano;
+
+        // Subtrair o lucro já conquistado
+        metaMensal = Math.max(0, metaMensalTotalTurbo - this.lucro_atual);
+        metaAnual = Math.max(0, metaAnualTotalTurbo - this.lucro_atual);
+
+        console.log(`🚀 META TURBO - PERÍODO:`);
+        console.log(`   Banca Atual: R$ ${bancaAtual.toFixed(2)}`);
+        console.log(
+          `   Meta Mensal Total: R$ ${metaMensalTotalTurbo.toFixed(2)}`
+        );
+        console.log(`   Lucro Atual: R$ ${this.lucro_atual.toFixed(2)}`);
+        console.log(`   Meta Mensal Restante: R$ ${metaMensal.toFixed(2)}`);
+        console.log(
+          `   Meta Anual Total: R$ ${metaAnualTotalTurbo.toFixed(2)}`
+        );
+        console.log(`   Meta Anual Restante: R$ ${metaAnual.toFixed(2)}`);
+      }
 
       return {
         metaMensal: metaMensal,
@@ -2531,6 +2593,7 @@ const CalculadoraModal = {
         diasAno: diasRestantes.ano,
       };
     } catch (error) {
+      console.error("❌ Erro ao calcular metas de período:", error);
       return {
         metaMensal: 0,
         metaAnual: 0,
@@ -2633,7 +2696,7 @@ const CalculadoraModal = {
 
       const unidadeEntrada = this.calcularUnidadeEntrada(valores);
       const metaDiaria = this.calcularMetaDiaria(valores);
-      const metasPeriodo = this.calcularMetasPeriodo(metaDiaria);
+      const metasPeriodo = this.calcularMetasPeriodo(metaDiaria, valores);
       const entradasPositivas = this.calcularEntradasPositivas(
         valores,
         metaDiaria
@@ -2735,71 +2798,169 @@ const CalculadoraModal = {
     }
   },
 
-  // ✅ NOVA FUNÇÃO: SIMULAR DIFERENTES CENÁRIOS PARA TESTE
-  // ✅ NOVA FUNÇÃO: SIMULAR DIFERENTES CENÁRIOS PARA TESTE
+  // ✅ NOVA FUNÇÃO: SIMULAR DIFERENTES CENÁRIOS PARA TESTE - ATUALIZADA COM LÓGICA CORRIGIDA
   simularCenarios() {
-    console.log("🧪 SIMULANDO DIFERENTES CENÁRIOS:");
-    console.log("================================");
+    console.log("🧪 SIMULANDO CENÁRIOS COM RECUPERAÇÃO DE PERDAS:");
+    console.log("===================================================");
 
-    // Cenário 1: Banca inicial
-    console.log("📊 CENÁRIO 1 - SITUAÇÃO INICIAL:");
-    console.log(`   Banca: R$ ${this.banca_inicial.toFixed(2)}`);
-    console.log(`   Lucro: R$ ${this.lucro_atual.toFixed(2)}`);
-
-    const valores = { porcentagem: 2, unidade: 2, odds: 1.7 };
-    const meta = this.calcularMetaDiaria(valores);
-    console.log(`   Meta Calculada: R$ ${meta.toFixed(2)}`);
-    console.log("");
-
-    // Cenário 2: Simular prejuízo
-    console.log("📊 CENÁRIO 2 - COM PREJUÍZO:");
+    // Salvar valores originais
     const lucroOriginal = this.lucro_atual;
-    this.lucro_atual = -100; // Simular perda de R$ 100
+    const tipoOriginal = this.tipoMetaSelecionado;
 
-    console.log(`   Banca: R$ ${this.banca_inicial.toFixed(2)}`);
-    console.log(`   Lucro: R$ ${this.lucro_atual.toFixed(2)} (PREJUÍZO)`);
-
-    const metaPrejuizo = this.calcularMetaDiaria(valores);
-    console.log(`   Meta com Recuperação: R$ ${metaPrejuizo.toFixed(2)}`);
+    // Parâmetros de teste
+    const valores = { porcentagem: 2, unidade: 2, odds: 1.7 };
+    console.log(`📋 PARÂMETROS DE TESTE:`);
+    console.log(`   Porcentagem: ${valores.porcentagem}%`);
+    console.log(`   Unidade: ${valores.unidade}`);
+    console.log(`   Odds: ${valores.odds}`);
+    console.log(`   Banca Inicial: R$ ${this.banca_inicial.toFixed(2)}`);
     console.log("");
 
-    // Cenário 3: Simular lucro com meta fixa
-    console.log("📊 CENÁRIO 3 - LUCRO + META FIXA:");
-    this.lucro_atual = 150; // Simular lucro de R$ 150
+    // CENÁRIO 1: Situação Inicial (sem lucro/prejuízo)
+    this.lucro_atual = 0;
+    console.log("📊 CENÁRIO 1 - SITUAÇÃO INICIAL (NEUTRO):");
+    console.log(`   Lucro Atual: R$ ${this.lucro_atual.toFixed(2)}`);
+
+    const meta1 = this.calcularMetaDiaria(valores);
+    const metas1 = this.calcularMetasPeriodo(meta1, valores);
+
+    console.log(`   ✅ Meta Diária: R$ ${meta1.toFixed(2)}`);
+    console.log(`   ✅ Meta Mensal: R$ ${metas1.metaMensal.toFixed(2)}`);
+    console.log(`   ✅ Meta Anual: R$ ${metas1.metaAnual.toFixed(2)}`);
+    console.log("");
+
+    // CENÁRIO 2: COM PREJUÍZO DE R$ 50,00
+    this.lucro_atual = -50;
+    console.log("📊 CENÁRIO 2 - COM PREJUÍZO DE R$ 50,00:");
+    console.log(`   Lucro Atual: R$ ${this.lucro_atual.toFixed(2)} (PREJUÍZO)`);
+
+    const meta2 = this.calcularMetaDiaria(valores);
+    const metas2 = this.calcularMetasPeriodo(meta2, valores);
+
+    console.log(
+      `   🔴 Meta Diária (Original + Recuperação): R$ ${meta2.toFixed(2)}`
+    );
+    console.log(
+      `   🔴 Meta Mensal (com recuperação): R$ ${metas2.metaMensal.toFixed(2)}`
+    );
+    console.log(
+      `   🔴 Meta Anual (com recuperação): R$ ${metas2.metaAnual.toFixed(2)}`
+    );
+    console.log("");
+
+    // CENÁRIO 3: COM PREJUÍZO DE R$ 100,00
+    this.lucro_atual = -100;
+    console.log("📊 CENÁRIO 3 - COM PREJUÍZO DE R$ 100,00:");
+    console.log(
+      `   Lucro Atual: R$ ${this.lucro_atual.toFixed(2)} (PREJUÍZO MAIOR)`
+    );
+
+    const meta3 = this.calcularMetaDiaria(valores);
+    const metas3 = this.calcularMetasPeriodo(meta3, valores);
+
+    console.log(
+      `   🔴 Meta Diária (Original + Recuperação): R$ ${meta3.toFixed(2)}`
+    );
+    console.log(
+      `   🔴 Meta Mensal (com recuperação): R$ ${metas3.metaMensal.toFixed(2)}`
+    );
+    console.log(
+      `   🔴 Meta Anual (com recuperação): R$ ${metas3.metaAnual.toFixed(2)}`
+    );
+    console.log("");
+
+    // CENÁRIO 4: COM LUCRO + META FIXA
+    this.lucro_atual = 80;
     this.tipoMetaSelecionado = "fixa";
+    console.log("📊 CENÁRIO 4 - LUCRO R$ 80,00 + META FIXA:");
+    console.log(`   Lucro Atual: R$ ${this.lucro_atual.toFixed(2)}`);
+    console.log(`   Tipo de Meta: ${this.tipoMetaSelecionado}`);
 
-    console.log(`   Banca: R$ ${this.banca_inicial.toFixed(2)}`);
-    console.log(`   Lucro: R$ ${this.lucro_atual.toFixed(2)}`);
-    console.log(`   Tipo: Meta Fixa`);
+    const meta4 = this.calcularMetaDiaria(valores);
+    const metas4 = this.calcularMetasPeriodo(meta4, valores);
 
-    const metaFixa = this.calcularMetaDiaria(valores);
-    console.log(`   Meta Fixa: R$ ${metaFixa.toFixed(2)}`);
+    console.log(`   🔵 Meta Diária: R$ ${meta4.toFixed(2)}`);
+    console.log(
+      `   🔵 Meta Mensal (restante): R$ ${metas4.metaMensal.toFixed(2)}`
+    );
+    console.log(
+      `   🔵 Meta Anual (restante): R$ ${metas4.metaAnual.toFixed(2)}`
+    );
     console.log("");
 
-    // Cenário 4: Simular lucro com meta turbo
-    console.log("📊 CENÁRIO 4 - LUCRO + META TURBO:");
+    // CENÁRIO 5: COM LUCRO + META TURBO
     this.tipoMetaSelecionado = "turbo";
+    console.log("📊 CENÁRIO 5 - LUCRO R$ 80,00 + META TURBO:");
+    console.log(`   Lucro Atual: R$ ${this.lucro_atual.toFixed(2)}`);
+    console.log(`   Tipo de Meta: ${this.tipoMetaSelecionado}`);
 
-    console.log(`   Banca: R$ ${this.banca_inicial.toFixed(2)}`);
-    console.log(`   Lucro: R$ ${this.lucro_atual.toFixed(2)}`);
-    console.log(`   Tipo: Meta Turbo`);
+    const meta5 = this.calcularMetaDiaria(valores);
+    const metas5 = this.calcularMetasPeriodo(meta5, valores);
 
-    const metaTurbo = this.calcularMetaDiaria(valores);
-    console.log(`   Meta Turbo: R$ ${metaTurbo.toFixed(2)}`);
+    console.log(`   🟠 Meta Diária: R$ ${meta5.toFixed(2)}`);
+    console.log(
+      `   🟠 Meta Mensal (restante): R$ ${metas5.metaMensal.toFixed(2)}`
+    );
+    console.log(
+      `   🟠 Meta Anual (restante): R$ ${metas5.metaAnual.toFixed(2)}`
+    );
     console.log("");
 
     // Restaurar valores originais
     this.lucro_atual = lucroOriginal;
-    this.tipoMetaSelecionado = "fixa";
+    this.tipoMetaSelecionado = tipoOriginal;
 
-    console.log("✅ Simulação completa! Valores originais restaurados.");
-    console.log("================================");
+    console.log("✅ SIMULAÇÃO COMPLETA! Valores originais restaurados.");
+    console.log("===================================================");
+    console.log("");
+    console.log("💡 RESUMO DA LÓGICA IMPLEMENTADA:");
+    console.log("🔴 COM PREJUÍZO:");
+    console.log(
+      "   • Meta Diária = Meta Original + Valor Absoluto do Prejuízo"
+    );
+    console.log(
+      "   • Meta Mensal/Anual = Meta Diária (com recuperação) × Dias"
+    );
+    console.log("   • Resultado: Recupera o prejuízo + cumpre a meta normal");
+    console.log("");
+    console.log("🟢 COM LUCRO:");
+    console.log("   • Meta Fixa: Subtrai lucro das metas de período");
+    console.log("   • Meta Turbo: Usa banca atual e subtrai lucro das metas");
+    console.log(
+      "   • Resultado: Mostra quanto ainda falta para atingir as metas"
+    );
+    console.log("");
+    console.log("🎯 EXEMPLO PRÁTICO:");
+    console.log("   Perdeu R$ 50,00 no dia → Precisa ganhar Meta + R$ 50,00");
+    console.log("   Meta original R$ 100,00 → Meta do dia vira R$ 150,00");
+    console.log("   Assim recupera a perda E cumpre a meta!");
 
     return {
-      inicial: meta,
-      prejuizo: metaPrejuizo,
-      fixa: metaFixa,
-      turbo: metaTurbo,
+      neutro: {
+        diaria: meta1,
+        mensal: metas1.metaMensal,
+        anual: metas1.metaAnual,
+      },
+      prejuizo50: {
+        diaria: meta2,
+        mensal: metas2.metaMensal,
+        anual: metas2.metaAnual,
+      },
+      prejuizo100: {
+        diaria: meta3,
+        mensal: metas3.metaMensal,
+        anual: metas3.metaAnual,
+      },
+      lucroFixa: {
+        diaria: meta4,
+        mensal: metas4.metaMensal,
+        anual: metas4.metaAnual,
+      },
+      lucroTurbo: {
+        diaria: meta5,
+        mensal: metas5.metaMensal,
+        anual: metas5.metaAnual,
+      },
     };
   },
 
@@ -2858,7 +3019,6 @@ window.calc = {
   parar: function () {
     return CalculadoraModal.pararPolling();
   },
-  // ✅ NOVA FUNÇÃO: TESTAR INTEGRAÇÃO
   testar: function () {
     console.log("🧪 TESTANDO INTEGRAÇÃO:");
 
@@ -2872,11 +3032,9 @@ window.calc = {
     console.log("📢 Evento bancaAtualizada disparado");
     return "🧪 Teste de integração executado";
   },
-  // ✅ NOVA FUNÇÃO: SIMULAR CENÁRIOS
   simular: function () {
     return CalculadoraModal.simularCenarios();
   },
-  // ✅ NOVA FUNÇÃO: FORÇAR APLICAÇÃO DE CORES
   cores: function () {
     if (CalculadoraModal.tipoMetaSelecionado === "turbo") {
       CalculadoraModal.aplicarEstiloMetaTurbo();
@@ -2887,6 +3045,69 @@ window.calc = {
       `🎨 Cores aplicadas para: ${CalculadoraModal.tipoMetaSelecionado}`
     );
     return "✅ Cores aplicadas com sucesso";
+  },
+  explicar: function () {
+    console.log("📚 EXPLICAÇÃO DA LÓGICA CORRIGIDA:");
+    console.log("=====================================");
+    console.log("");
+    console.log("🎯 META DIÁRIA:");
+    console.log("   🔴 PREJUÍZO: Meta Original + Valor Absoluto do Prejuízo");
+    console.log(
+      "     • Exemplo: Meta R$ 100 + Prejuízo R$ 30 = Meta Final R$ 130"
+    );
+    console.log("     • Assim recupera a perda E cumpre a meta normal");
+    console.log("");
+    console.log("   ⚪ NEUTRO: Meta Original (sem ajustes)");
+    console.log("");
+    console.log("   🟢 LUCRO POSITIVO:");
+    console.log("     • Meta Fixa: Sempre baseada na banca inicial");
+    console.log("     • Meta Turbo: Baseada na banca atual (inicial + lucro)");
+    console.log("");
+    console.log("📅 METAS MENSAIS E ANUAIS:");
+    console.log("   🔴 COM PREJUÍZO:");
+    console.log("     • Meta = Meta Diária (que já inclui recuperação) × Dias");
+    console.log("     • Não subtrai nada - precisa recuperar + meta completa");
+    console.log("");
+    console.log("   🟢 COM LUCRO:");
+    console.log("     • Calcula meta total do período");
+    console.log("     • Subtrai o lucro já conquistado");
+    console.log("     • Mostra quanto ainda falta para completar");
+    console.log("");
+    console.log("🎯 EXEMPLO PRÁTICO - PREJUÍZO:");
+    console.log("   Banca: R$ 1.000 | Perda: R$ 50 | Meta: 2% × 2 unidades");
+    console.log("   Meta Original Diária: R$ 40");
+    console.log("   Meta com Recuperação: R$ 40 + R$ 50 = R$ 90");
+    console.log("   Meta Mensal (20 dias): R$ 90 × 20 = R$ 1.800");
+    console.log("");
+    console.log("✅ AGORA AS PERDAS SÃO RECUPERADAS EM TODOS OS PERÍODOS!");
+
+    return "✅ Explicação detalhada exibida no console";
+  },
+  // ✅ NOVA FUNÇÃO: TESTAR CENÁRIO ESPECÍFICO DE PREJUÍZO
+  testarPrejuizo: function (valor = 50) {
+    console.log(`🧪 TESTANDO CENÁRIO COM PREJUÍZO DE R$ ${valor.toFixed(2)}:`);
+    console.log("===============================================");
+
+    const lucroOriginal = CalculadoraModal.lucro_atual;
+    CalculadoraModal.lucro_atual = -Math.abs(valor);
+
+    const valores = { porcentagem: 2, unidade: 2, odds: 1.7 };
+    const metaDiaria = CalculadoraModal.calcularMetaDiaria(valores);
+    const metas = CalculadoraModal.calcularMetasPeriodo(metaDiaria, valores);
+
+    console.log(`📊 RESULTADO:`);
+    console.log(`   Prejuízo: R$ ${CalculadoraModal.lucro_atual.toFixed(2)}`);
+    console.log(
+      `   Meta Diária (com recuperação): R$ ${metaDiaria.toFixed(2)}`
+    );
+    console.log(`   Meta Mensal: R$ ${metas.metaMensal.toFixed(2)}`);
+    console.log(`   Meta Anual: R$ ${metas.metaAnual.toFixed(2)}`);
+
+    // Restaurar valor original
+    CalculadoraModal.lucro_atual = lucroOriginal;
+    console.log(`✅ Valor original restaurado: R$ ${lucroOriginal.toFixed(2)}`);
+
+    return `✅ Teste com prejuízo de R$ ${valor.toFixed(2)} concluído`;
   },
 };
 
@@ -2908,14 +3129,16 @@ document.addEventListener("DOMContentLoaded", function () {
 // 📱 LOGS DE INICIALIZAÇÃO
 // ========================================
 
-console.log("✅ Sistema Integrado com Cores Dinâmicas carregado!");
+console.log("✅ Sistema Integrado com Recuperação de Perdas CORRIGIDO!");
 console.log("📱 Comandos disponíveis:");
 console.log("  calc.init() - Inicializar sistema");
 console.log("  calc.reload() - Recarregar dados da banca");
 console.log("  calc.status() - Ver status atual e valores dos inputs");
+console.log("  calc.simular() - Simular diferentes cenários");
 console.log(
-  "  calc.simular() - Simular diferentes cenários (inicial/prejuízo/fixa/turbo)"
+  "  calc.testarPrejuizo(50) - Testar cenário específico de prejuízo"
 );
+console.log("  calc.explicar() - Explicação detalhada da lógica");
 console.log("  calc.testar() - Testar integração com sistema de atualização");
 console.log("  calc.fixa() - Alterar para Meta Fixa (Azul)");
 console.log("  calc.turbo() - Alterar para Meta Turbo (Laranja)");
@@ -2931,13 +3154,21 @@ console.log(
 );
 console.log("   ✨ Transições suaves entre as cores");
 console.log("");
-console.log("💡 LÓGICA DE RECUPERAÇÃO DE PREJUÍZO:");
-console.log("   • Prejuízo: Meta = Meta Original + Valor Perdido");
-console.log("   • Neutro: Meta = Meta Original");
+console.log("💡 LÓGICA DE RECUPERAÇÃO DE PERDAS IMPLEMENTADA:");
+console.log("   🔴 COM PREJUÍZO: Meta Diária = Meta Original + Valor da Perda");
 console.log(
-  "   • Lucro + Fixa: Meta = Meta Original (baseada na banca inicial)"
+  "   📅 METAS PERÍODO: Meta Diária (com recuperação) × Dias restantes"
 );
-console.log("   • Lucro + Turbo: Meta = Nova Meta (baseada na banca atual)");
+console.log(
+  "   🎯 RESULTADO: Recupera completamente as perdas + cumpre meta normal"
+);
+console.log("   ✅ Funciona para meta diária, mensal e anual");
+console.log("");
+console.log("🧪 EXEMPLO DE USO:");
+console.log("   calc.testarPrejuizo(100) - Simula perda de R$ 100");
+console.log("   calc.simular() - Vê todos os cenários possíveis");
+console.log("");
+console.log("🚀 AGORA AS PERDAS SÃO TOTALMENTE RECUPERADAS!");
 
 // ✅ EXPORTAR PARA USO EXTERNO
 window.CalculadoraModal = CalculadoraModal;
@@ -2945,14 +3176,4 @@ window.CalculadoraModal = CalculadoraModal;
 //========================================================================================================================
 //                             FIM CALCULO DE VALOR DO PAINEL DE CONTROLE PARA EXIBIR METAS
 // ========================================================================================================================
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
 //

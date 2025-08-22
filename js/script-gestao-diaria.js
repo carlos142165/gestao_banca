@@ -1182,7 +1182,27 @@ const ExclusaoManager = {
       }
     });
   },
-
+  //
+  //
+  //
+  //
+  //
+  //
+  //
+  //
+  //
+  //
+  //
+  //
+  //
+  //
+  //
+  //
+  //
+  //
+  // ========================================================================================================================
+  //                                      ✅  EXCLUSÃO DE ENTRADA COM FILTRO (DIA)-(MÊS)-(ANO)
+  // ========================================================================================================================
   // Executa exclusão da entrada
   async executarExclusaoEntrada(idEntrada) {
     const idMentorBackup = MentorManager.mentorAtualId;
@@ -1234,6 +1254,26 @@ const ExclusaoManager = {
       await fetch("carregar-sessao.php?atualizar=1");
       await MentorManager.recarregarMentores();
       await DadosManager.atualizarLucroEBancaViaAjax();
+
+      // ✅ NOVO: Se tela de edição estiver aberta, recarregar com período atual
+      const telaEdicaoAberta =
+        document.getElementById("tela-edicao")?.style.display === "block";
+      if (
+        telaEdicaoAberta &&
+        typeof TelaEdicaoManager !== "undefined" &&
+        MentorManager.mentorAtualId
+      ) {
+        setTimeout(() => {
+          TelaEdicaoManager.editarAposta(MentorManager.mentorAtualId);
+        }, 300);
+      }
+
+      // ✅ NOVO: Atualizar meta se existir o sistema
+      if (typeof MetaDiariaManager !== "undefined") {
+        setTimeout(() => {
+          MetaDiariaManager.atualizarMetaDiaria();
+        }, 100);
+      }
     } catch (error) {
       console.error("Erro ao atualizar após exclusão:", error);
     }
@@ -1253,7 +1293,7 @@ const LoaderManager = {
   },
 };
 
-// ✅ GERENCIADOR DA TELA DE EDIÇÃO
+// ✅ GERENCIADOR DA TELA DE EDIÇÃO - VERSÃO INTEGRADA COM FILTRO
 const TelaEdicaoManager = {
   // Abre tela de edição com efeito
   abrir() {
@@ -1276,7 +1316,56 @@ const TelaEdicaoManager = {
     }, 300);
   },
 
-  // Edita aposta do mentor
+  // ✅ NOVA FUNÇÃO: Obter período atual do sistema
+  obterPeriodoAtual() {
+    // Verifica se existe o MetaDiariaManager
+    if (
+      typeof MetaDiariaManager !== "undefined" &&
+      MetaDiariaManager.periodoAtual
+    ) {
+      return MetaDiariaManager.periodoAtual;
+    }
+
+    // Fallback: verifica o radio button selecionado
+    const radioSelecionado = document.querySelector(
+      'input[name="periodo"]:checked'
+    );
+    if (radioSelecionado) {
+      return radioSelecionado.value;
+    }
+
+    // Fallback final: dia
+    return "dia";
+  },
+
+  // ✅ NOVA FUNÇÃO: Atualizar cabeçalho da tela de edição
+  atualizarCabecalhoEdicao(periodo) {
+    const cabecalho = document.querySelector("#tela-edicao .tela-titulo");
+    if (!cabecalho) return;
+
+    const textoPeriodo = {
+      dia: "Hoje",
+      mes: "Este Mês",
+      ano: "Este Ano",
+    };
+
+    const texto = textoPeriodo[periodo] || "Hoje";
+    cabecalho.innerHTML = `<i class="fas fa-edit"></i> Entradas de ${texto}`;
+  },
+
+  // ✅ NOVA FUNÇÃO: Texto baseado no período quando não há entradas
+  obterTextoSemEntradas(periodo) {
+    switch (periodo) {
+      case "mes":
+        return "Nenhuma Entrada Cadastrada Neste Mês.";
+      case "ano":
+        return "Nenhuma Entrada Cadastrada Neste Ano.";
+      default:
+        return "Nenhuma Entrada Cadastrada Hoje.";
+    }
+  },
+
+  // ✅ FUNÇÃO MODIFICADA: Edita aposta do mentor com filtro dinâmico
   async editarAposta(idMentor) {
     MentorManager.mentorAtualId = idMentor;
 
@@ -1293,16 +1382,21 @@ const TelaEdicaoManager = {
     if (nomeMentorEl) nomeMentorEl.textContent = card.getAttribute("data-nome");
     if (fotoMentorEl) fotoMentorEl.src = card.getAttribute("data-foto");
 
+    // ✅ NOVO: Obter período atual e atualizar cabeçalho
+    const periodoAtual = this.obterPeriodoAtual();
+    this.atualizarCabecalhoEdicao(periodoAtual);
+
     this.abrir();
 
     try {
+      // 🎯 MUDANÇA PRINCIPAL: Usar período dinâmico ao invés de "hoje"
       const response = await fetch(
-        `filtrar-entradas.php?id=${idMentor}&tipo=hoje`
+        `filtrar-entradas.php?id=${idMentor}&tipo=${periodoAtual}`
       );
       if (!response.ok) throw new Error(`HTTP ${response.status}`);
 
       const entradas = await response.json();
-      this.mostrarResultados(entradas);
+      this.mostrarResultados(entradas, periodoAtual);
     } catch (error) {
       console.error("Erro ao carregar histórico:", error);
       const container = document.getElementById("resultado-filtro");
@@ -1313,16 +1407,16 @@ const TelaEdicaoManager = {
     }
   },
 
-  // Mostra resultados das entradas
-  mostrarResultados(entradas) {
+  // ✅ FUNÇÃO MODIFICADA: Mostrar resultados com período
+  mostrarResultados(entradas, periodo = "dia") {
     const container = document.getElementById("resultado-filtro");
     if (!container) return;
 
     container.innerHTML = "";
 
     if (!entradas || entradas.length === 0) {
-      container.innerHTML =
-        '<p style="color:gray;">Nenhuma Entrada Cadastrada Hoje.</p>';
+      const textoPeriodo = this.obterTextoSemEntradas(periodo);
+      container.innerHTML = `<p style="color:gray;">${textoPeriodo}</p>`;
       return;
     }
 
@@ -1428,16 +1522,17 @@ const MenuManager = {
   },
 };
 
-// ✅ INICIALIZAÇÃO PRINCIPAL
+// ✅ INICIALIZAÇÃO PRINCIPAL - VERSÃO INTEGRADA
 const App = {
   // Inicializa toda a aplicação
   async inicializar() {
     try {
-      console.log("🚀 Iniciando aplicação...");
+      console.log("🚀 Iniciando aplicação com filtro de período...");
 
       await this.inicializarComponentes();
       this.configurarEventosGlobais();
       this.iniciarProcessosBackground();
+      this.configurarListenersPeriodo(); // ✅ NOVO
 
       console.log("✅ Aplicação inicializada com sucesso");
     } catch (error) {
@@ -1462,6 +1557,43 @@ const App = {
     MenuManager.inicializar();
   },
 
+  // ✅ NOVA FUNÇÃO: Configurar listeners para mudança de período
+  configurarListenersPeriodo() {
+    try {
+      const radiosPeriodo = document.querySelectorAll('input[name="periodo"]');
+      radiosPeriodo.forEach((radio) => {
+        radio.addEventListener("change", (e) => {
+          if (e.target.checked) {
+            const novoPeriodo = e.target.value;
+            console.log(`🔄 Período alterado para: ${novoPeriodo}`);
+
+            // ✅ NOVO: Se tela de edição estiver aberta, recarregar entradas do novo período
+            const telaEdicaoAberta =
+              document.getElementById("tela-edicao")?.style.display === "block";
+            if (
+              telaEdicaoAberta &&
+              typeof TelaEdicaoManager !== "undefined" &&
+              MentorManager.mentorAtualId
+            ) {
+              setTimeout(() => {
+                console.log(
+                  `📋 Recarregando entradas do período: ${novoPeriodo}`
+                );
+                TelaEdicaoManager.editarAposta(MentorManager.mentorAtualId);
+              }, 200);
+            }
+          }
+        });
+      });
+
+      console.log("✅ Listeners de período configurados para tela de edição");
+    } catch (error) {
+      console.error("❌ Erro ao configurar listeners de período:", error);
+    }
+  },
+  // ========================================================================================================================
+  //                                      ✅  FIM EXCLUSÃO DE ENTRADA COM FILTRO (DIA)-(MÊS)-(ANO)
+  // ========================================================================================================================
   // Configura eventos globais
   configurarEventosGlobais() {
     // Toast inicial
@@ -1524,7 +1656,7 @@ const App = {
     }
   },
 
-  // Processa submissão do formulário de valor
+  // ✅ FUNÇÃO MODIFICADA: Processa submissão do formulário de valor
   async processarSubmissaoFormulario(form) {
     // Validação
     const opcaoSelecionada = form.querySelector('input[name="opcao"]:checked');
@@ -1572,6 +1704,11 @@ const App = {
 
           if (typeof atualizarDadosModal === "function") {
             atualizarDadosModal();
+          }
+
+          // ✅ NOVO: Atualizar meta se existir
+          if (typeof MetaDiariaManager !== "undefined") {
+            MetaDiariaManager.atualizarMetaDiaria();
           }
         }, 50); // ✅ Apenas 50ms
       }
@@ -1649,6 +1786,19 @@ window.addEventListener("beforeunload", () => {
   }
 });
 
+// ✅ LOG DE INICIALIZAÇÃO
+console.log("🎯 Sistema com Filtro de Período Integrado!");
+console.log("📋 Funcionalidades adicionadas:");
+console.log("  - Exclusão de entradas por período (Dia/Mês/Ano)");
+console.log("  - Sincronização automática com filtros");
+console.log("  - Atualização dinâmica da tela de edição");
+console.log("✅ Sistema pronto para usar filtros de período!");
+//
+//
+//
+//
+//
+//
 //
 //
 //
@@ -1662,26 +1812,7 @@ window.addEventListener("beforeunload", () => {
 //
 //
 // ========================================================================================================================
-// // ✅                                                        TESTE
-// ========================================================================================================================
-
-// ========================================================================================================================
-// // ✅                                                       FIM  TESTE
-// ========================================================================================================================
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-// ========================================================================================================================
-// // ✅  ATUALIZADO - META DO DIA COM SUBTRAÇÃO DO SALDO DO DIA
+//                                        ✅  CALCULO META DO : (DIA)-(MÊS)-(ANO)
 // ========================================================================================================================
 
 const MetaDiariaManager = {
@@ -1770,9 +1901,8 @@ const MetaDiariaManager = {
           break;
       }
 
-      // ✅ INCLUIR TIPO NO RÓTULO
-      const tipoTexto = data.tipo_meta_texto || "Meta Turbo";
-      const rotuloComTipo = `${rotuloFinal} (${tipoTexto})`;
+      // ✅ REMOVER TIPO DO RÓTULO (apenas o período)
+      const rotuloSemTipo = rotuloFinal;
 
       return {
         ...data,
@@ -1783,7 +1913,7 @@ const MetaDiariaManager = {
             minimumFractionDigits: 2,
             maximumFractionDigits: 2,
           }),
-        rotulo_periodo: rotuloComTipo,
+        rotulo_periodo: rotuloSemTipo, // ✅ SEM TIPO DE META
         periodo_ativo: periodo,
       };
     } catch (error) {
@@ -1812,7 +1942,7 @@ const MetaDiariaManager = {
       this.atualizarRotulo(resultado.rotulo);
       this.atualizarValorExtra(resultado.valorExtra);
       this.atualizarBarraProgresso(resultado, data);
-      this.atualizarTipoMetaDisplay(data); // ✅ ATUALIZAR DISPLAY
+      this.atualizarTipoMetaDisplay(data); // ✅ ATUALIZAR DISPLAY + BADGE
 
       // ✅ LOG SIMPLIFICADO
       console.log(
@@ -1856,7 +1986,7 @@ const MetaDiariaManager = {
     }
   },
 
-  // ✅ NOVA FUNÇÃO: ATUALIZAR DISPLAY DO TIPO DE META
+  // ✅ FUNÇÃO MODIFICADA: ATUALIZAR DISPLAY DO TIPO DE META + BADGE
   atualizarTipoMetaDisplay(data) {
     try {
       const metaTextElement = document.getElementById("meta-text-unico");
@@ -1873,8 +2003,82 @@ const MetaDiariaManager = {
           );
         }
       }
+
+      // ✅ NOVO: Atualizar badge no canto direito da barra
+      const metaTipoBadge = document.getElementById("meta-tipo-badge");
+      if (metaTipoBadge && data.tipo_meta_texto) {
+        this.atualizarBadgeTipoMeta(data.tipo_meta_texto, data.tipo_meta);
+
+        console.log(
+          `🏷️ Badge atualizado: ${data.tipo_meta_texto} (origem: ${
+            data.tipo_meta_origem || "banco"
+          })`
+        );
+      }
     } catch (error) {
       console.error("❌ Erro ao atualizar display do tipo:", error);
+    }
+  },
+
+  // ✅ NOVA FUNÇÃO: atualizarBadgeTipoMeta (SEM ANIMAÇÕES)
+  atualizarBadgeTipoMeta(textoTipo, tipo = null) {
+    try {
+      const badge = document.getElementById("meta-tipo-badge");
+      if (!badge) {
+        console.warn("⚠️ Badge meta-tipo-badge não encontrado");
+        return;
+      }
+
+      // Detectar tipo se não foi fornecido
+      if (!tipo) {
+        tipo = textoTipo.toLowerCase().includes("fixa") ? "fixa" : "turbo";
+      }
+
+      // ✅ ATUALIZAÇÃO DIRETA SEM ANIMAÇÕES
+      badge.textContent = textoTipo.toUpperCase();
+
+      // Remover classes antigas
+      badge.classList.remove("meta-fixa", "meta-turbo", "loading");
+
+      // Adicionar nova classe
+      if (tipo === "fixa") {
+        badge.classList.add("meta-fixa");
+      } else if (tipo === "turbo") {
+        badge.classList.add("meta-turbo");
+      }
+    } catch (error) {
+      console.error("❌ Erro ao atualizar badge do tipo de meta:", error);
+    }
+  },
+
+  // ✅ NOVA FUNÇÃO: Criar badge se não existir
+  criarBadgeSeNaoExistir() {
+    try {
+      const container = document.querySelector(".widget-barra-container");
+      if (!container) {
+        console.error("❌ Container da barra não encontrado");
+        return false;
+      }
+
+      // Verificar se já existe
+      if (document.getElementById("meta-tipo-badge")) {
+        return true;
+      }
+
+      // Criar o badge
+      const badge = document.createElement("div");
+      badge.id = "meta-tipo-badge";
+      badge.className = "meta-tipo-badge loading";
+      badge.textContent = "META TURBO";
+
+      // Adicionar ao container
+      container.appendChild(badge);
+
+      console.log("✅ Badge criado automaticamente");
+      return true;
+    } catch (error) {
+      console.error("❌ Erro ao criar badge:", error);
+      return false;
     }
   },
 
@@ -2139,7 +2343,7 @@ const MetaDiariaManager = {
     }
   },
 
-  // ✅ ATUALIZAR BARRA PROGRESSO
+  // ✅ ATUALIZAR BARRA PROGRESSO - COM CORREÇÃO ESPECÍFICA PARA O PROBLEMA
   atualizarBarraProgresso(resultado, data) {
     try {
       const barraProgresso = document.getElementById("barra-progresso");
@@ -2169,7 +2373,7 @@ const MetaDiariaManager = {
 
       const larguraBarra = Math.abs(progresso);
 
-      // ✅ SISTEMA DE CORES
+      // ✅ CORREÇÃO ESPECÍFICA: Verificação mais rigorosa para meta batida
       let classeCor = "";
 
       barraProgresso.className = barraProgresso.className.replace(
@@ -2181,18 +2385,30 @@ const MetaDiariaManager = {
         barraProgresso.classList.add("widget-barra-progresso");
       }
 
+      // ✅ VERIFICAÇÃO MAIS RIGOROSA: só aplica verde se REALMENTE bateu a meta
       if (
         resultado.valorExtra > 0 &&
         resultado.statusClass === "meta-batida" &&
-        saldoDia > metaCalculada
+        saldoDia > 0 && // ✅ NOVA: Saldo deve ser positivo
+        metaCalculada > 0 && // ✅ NOVA: Meta deve ser positiva
+        saldoDia >= metaCalculada // ✅ NOVA: Saldo deve ser >= meta
       ) {
         classeCor = "barra-lucro-extra";
-        barraProgresso.classList.add(classeCor);
+        console.log("✅ Meta REALMENTE batida com extra - aplicando verde");
+      } else if (
+        resultado.statusClass === "meta-batida" &&
+        saldoDia > 0 &&
+        metaCalculada > 0 &&
+        saldoDia >= metaCalculada
+      ) {
+        classeCor = "barra-meta-batida";
+        console.log("✅ Meta REALMENTE batida - aplicando verde");
       } else {
         classeCor = `barra-${resultado.statusClass}`;
-        barraProgresso.classList.add(classeCor);
+        console.log(`✅ Status normal: ${resultado.statusClass} - sem verde`);
       }
 
+      barraProgresso.classList.add(classeCor);
       barraProgresso.style.width = `${larguraBarra}%`;
       barraProgresso.style.backgroundColor = "";
       barraProgresso.style.background = "";
@@ -2395,7 +2611,7 @@ const MetaDiariaManager = {
     }
   },
 
-  // ✅ INICIALIZAÇÃO SIMPLIFICADA
+  // ✅ FUNÇÃO MODIFICADA: inicializar (com melhor detecção de badge)
   inicializar() {
     try {
       const metaElement = document.getElementById("meta-valor");
@@ -2414,6 +2630,29 @@ const MetaDiariaManager = {
 
       console.log(`🚀 Sistema inicializado - Período: ${this.periodoAtual}`);
       console.log(`📊 Tipo de meta será detectado pelo banco de dados`);
+
+      // ✅ TENTAR CRIAR BADGE MÚLTIPLAS VEZES SE NECESSÁRIO
+      const tentarCriarBadge = () => {
+        const sucesso = this.criarBadgeSeNaoExistir();
+        if (!sucesso) {
+          console.log("⏳ Tentando criar badge novamente em 1s...");
+          setTimeout(tentarCriarBadge, 1000);
+        } else {
+          // ✅ VERIFICAR SE O BADGE ESTÁ VISÍVEL
+          setTimeout(() => {
+            const badge = document.getElementById("meta-tipo-badge");
+            if (badge) {
+              console.log(
+                `✅ Badge encontrado: "${badge.textContent}" com classes: ${badge.className}`
+              );
+              // Forçar atualização inicial
+              this.atualizarBadgeTipoMeta("META TURBO", "turbo");
+            }
+          }, 200);
+        }
+      };
+
+      setTimeout(tentarCriarBadge, 500);
 
       this.configurarListenersPeriodo();
       this.atualizarMetaDiaria();
@@ -2646,13 +2885,30 @@ window.alterarPeriodo = (periodo) => {
   }
 };
 
-// ✅ NOVA FUNÇÃO: ALTERAR TIPO DE META (VIA FORMULÁRIO)
+// ========================================
+// FUNÇÕES AUXILIARES PARA O BADGE (FORA DO MetaDiariaManager)
+// ========================================
+
+// ✅ FUNÇÃO PARA DEFINIR ESTADO DE LOADING NO BADGE (SEM ANIMAÇÃO)
+function definirBadgeLoading() {
+  const badge = document.getElementById("meta-tipo-badge");
+  if (!badge) return;
+
+  badge.textContent = "CARREGANDO...";
+  badge.classList.remove("meta-fixa", "meta-turbo");
+  badge.classList.add("loading");
+}
+
+// ✅ FUNÇÃO MODIFICADA: ALTERAR TIPO DE META (VIA FORMULÁRIO) COM BADGE
 window.alterarTipoMeta = (tipo) => {
   try {
     if (!["fixa", "turbo"].includes(tipo)) {
       console.error("❌ Tipo de meta inválido. Use 'fixa' ou 'turbo'");
       return false;
     }
+
+    // ✅ MOSTRAR LOADING NO BADGE
+    definirBadgeLoading();
 
     // ✅ SIMULAR ENVIO DE FORMULÁRIO COM TIPO DE META
     const tipoTexto = tipo === "fixa" ? "Meta Fixa" : "Meta Turbo";
@@ -2677,6 +2933,18 @@ window.alterarTipoMeta = (tipo) => {
       .then((data) => {
         if (data.success) {
           console.log(`✅ Tipo de meta alterado para: ${data.tipo_meta_texto}`);
+
+          // ✅ ATUALIZAR BADGE DIRETAMENTE
+          if (
+            typeof MetaDiariaManager !== "undefined" &&
+            MetaDiariaManager.atualizarBadgeTipoMeta
+          ) {
+            MetaDiariaManager.atualizarBadgeTipoMeta(
+              data.tipo_meta_texto,
+              tipo
+            );
+          }
+
           // Forçar atualização
           setTimeout(() => {
             if (typeof MetaDiariaManager !== "undefined") {
@@ -2685,10 +2953,24 @@ window.alterarTipoMeta = (tipo) => {
           }, 100);
         } else {
           console.error("❌ Erro ao alterar tipo:", data.message);
+          // ✅ RESETAR BADGE EM CASO DE ERRO
+          if (
+            typeof MetaDiariaManager !== "undefined" &&
+            MetaDiariaManager.atualizarBadgeTipoMeta
+          ) {
+            MetaDiariaManager.atualizarBadgeTipoMeta("META TURBO", "turbo");
+          }
         }
       })
       .catch((error) => {
         console.error("❌ Erro na requisição:", error);
+        // ✅ RESETAR BADGE EM CASO DE ERRO
+        if (
+          typeof MetaDiariaManager !== "undefined" &&
+          MetaDiariaManager.atualizarBadgeTipoMeta
+        ) {
+          MetaDiariaManager.atualizarBadgeTipoMeta("META TURBO", "turbo");
+        }
       });
 
     return true;
@@ -2759,7 +3041,7 @@ if (typeof DadosManager !== "undefined") {
 }
 
 // ========================================
-// ATALHOS SIMPLIFICADOS
+// ATALHOS SIMPLIFICADOS ATUALIZADOS
 // ========================================
 
 window.$ = {
@@ -2768,9 +3050,80 @@ window.$ = {
   mes: () => alterarPeriodo("mes"),
   ano: () => alterarPeriodo("ano"),
 
-  // ✅ ATALHOS PARA TIPO DE META
-  fixa: () => alterarTipoMeta("fixa"),
-  turbo: () => alterarTipoMeta("turbo"),
+  // ✅ ATALHOS PARA TIPO DE META COM PREVIEW DO BADGE
+  fixa: () => {
+    console.log("🔄 Alterando para Meta Fixa...");
+    return alterarTipoMeta("fixa");
+  },
+  turbo: () => {
+    console.log("🔄 Alterando para Meta Turbo...");
+    return alterarTipoMeta("turbo");
+  },
+
+  // ✅ TESTE ESPECÍFICO DO BADGE
+  testBadge: () => {
+    console.log("🧪 Testando badge isoladamente...");
+
+    if (
+      typeof MetaDiariaManager !== "undefined" &&
+      MetaDiariaManager.atualizarBadgeTipoMeta
+    ) {
+      setTimeout(() => {
+        MetaDiariaManager.atualizarBadgeTipoMeta("META FIXA", "fixa");
+        console.log("✅ FIXA");
+      }, 1000);
+
+      setTimeout(() => {
+        MetaDiariaManager.atualizarBadgeTipoMeta("META TURBO", "turbo");
+        console.log("✅ TURBO");
+      }, 2500);
+
+      setTimeout(() => {
+        definirBadgeLoading();
+        console.log("✅ LOADING");
+      }, 4000);
+
+      setTimeout(() => {
+        MetaDiariaManager.atualizarBadgeTipoMeta("META TURBO", "turbo");
+        console.log("✅ TURBO FINAL");
+      }, 5500);
+
+      return "🎯 Teste de badge iniciado - 4 mudanças em 6 segundos";
+    } else {
+      return "❌ MetaDiariaManager não encontrado";
+    }
+  },
+
+  // ✅ TESTE ESPECÍFICO PARA O PROBLEMA MÊS/ANO → DIA
+  testProblema: () => {
+    console.log("🎯 Teste ESPECÍFICO: Problema MÊS/ANO → DIA");
+    console.log("   Observar se há flash verde ao voltar para DIA");
+
+    alterarPeriodo("dia");
+    console.log("1️⃣ DIA");
+
+    setTimeout(() => {
+      alterarPeriodo("mes");
+      console.log("2️⃣ MÊS");
+    }, 2000);
+
+    setTimeout(() => {
+      alterarPeriodo("dia");
+      console.log("3️⃣ VOLTA PARA DIA ← PONTO CRÍTICO");
+    }, 4000);
+
+    setTimeout(() => {
+      alterarPeriodo("ano");
+      console.log("4️⃣ ANO");
+    }, 6000);
+
+    setTimeout(() => {
+      alterarPeriodo("dia");
+      console.log("5️⃣ VOLTA PARA DIA ← PONTO CRÍTICO");
+    }, 8000);
+
+    return "🎯 Teste do problema executado - observe as transições para DIA";
+  },
 
   test: () => {
     console.log("🧪 Teste básico com verificação por banco:");
@@ -2792,7 +3145,7 @@ window.$ = {
       alterarPeriodo("dia");
       console.log("✅ Volta DIA");
     }, 4000);
-    return "🎯 Teste iniciado - Sistema com Banco";
+    return "🎯 Teste iniciado - Sistema com Banco + Badge + Correção";
   },
 
   info: () => {
@@ -2802,6 +3155,7 @@ window.$ = {
       const barraElement = document.getElementById("barra-progresso");
       const extraElement = document.getElementById("valor-ultrapassou");
       const tipoElement = document.getElementById("meta-text-unico");
+      const badgeElement = document.getElementById("meta-tipo-badge");
 
       const info = {
         meta: !!metaElement,
@@ -2809,8 +3163,10 @@ window.$ = {
         barra: !!barraElement,
         extra: !!extraElement,
         tipoMeta: !!tipoElement,
+        badge: !!badgeElement,
         metaContent: metaElement ? metaElement.textContent : "N/A",
         tipoTexto: tipoElement ? tipoElement.textContent : "N/A",
+        badgeTexto: badgeElement ? badgeElement.textContent : "N/A",
         extraVisivel: extraElement
           ? !extraElement.classList.contains("oculta")
           : false,
@@ -2827,39 +3183,26 @@ window.$ = {
             ? MetaDiariaManager.tipoMetaAtual
             : "Detectado pelo banco",
         sistemaFiltro: typeof SistemaFiltroPeriodoIntegrado !== "undefined",
-        verificacao: "Por coluna do banco de dados",
+        verificacao:
+          "Sistema ORIGINAL + Correção específica para MÊS/ANO → DIA",
       };
 
-      console.log("📊 Info Sistema com Verificação por Banco:", info);
-      return "✅ Info verificada - Sistema com Banco";
+      console.log("📊 Info Sistema com Correção:", info);
+      return "✅ Info verificada - Sistema com Banco + Badge + Correção";
     } catch (error) {
       console.error("❌ Erro ao obter info:", error);
       return "❌ Erro ao obter informações";
     }
   },
 
-  // ✅ TESTE DOS TIPOS VIA BANCO
-  testTipos: () => {
-    console.log("🔧 Testando tipos de meta via banco...");
-
-    const tipos = [
-      { tipo: "turbo", desc: "Meta Turbo (banca atual)" },
-      { tipo: "fixa", desc: "Meta Fixa (banca inicial)" },
-    ];
-
-    tipos.forEach((teste, index) => {
-      setTimeout(() => {
-        console.log(`🔧 Aplicando: ${teste.desc}`);
-        alterarTipoMeta(teste.tipo);
-      }, index * 3000); // 3 segundos entre cada teste
-    });
-
-    return "🔧 Teste de tipos iniciado - 2 tipos em 6s (via banco)";
-  },
-
   status: () => {
     try {
       const status = {
+        sistemaOriginal: {
+          ativo: true,
+          correcaoEspecifica: "Verificação rigorosa para evitar flash verde",
+          problemaResolvido: "MÊS/ANO → DIA",
+        },
         metaManager: {
           existe: typeof MetaDiariaManager !== "undefined",
           periodo:
@@ -2874,6 +3217,9 @@ window.$ = {
             typeof MetaDiariaManager !== "undefined"
               ? MetaDiariaManager.atualizandoAtualmente
               : false,
+          temFuncaoBadge:
+            typeof MetaDiariaManager !== "undefined" &&
+            typeof MetaDiariaManager.atualizarBadgeTipoMeta === "function",
         },
         filtroSistema: {
           existe: typeof SistemaFiltroPeriodoIntegrado !== "undefined",
@@ -2895,15 +3241,24 @@ window.$ = {
           verificacao: "Por coluna 'meta' no banco de dados",
           metodo: "Último cadastro na tabela controle",
         },
+        badge: {
+          elemento: !!document.getElementById("meta-tipo-badge"),
+          texto:
+            document.getElementById("meta-tipo-badge")?.textContent || "N/A",
+          classes:
+            document.getElementById("meta-tipo-badge")?.className || "N/A",
+          posicao: "Canto direito da barra de progresso",
+        },
         elementos: {
           metaValor: !!document.getElementById("meta-valor"),
           barraProgresso: !!document.getElementById("barra-progresso"),
           saldoInfo: !!document.getElementById("saldo-info"),
           listaMentores: !!document.getElementById("listaMentores"),
+          badgeTipo: !!document.getElementById("meta-tipo-badge"),
         },
       };
 
-      console.log("🔍 Status do Sistema com Verificação por Banco:", status);
+      console.log("🔍 Status do Sistema com Correção:", status);
       return status;
     } catch (error) {
       console.error("❌ Erro ao obter status:", error);
@@ -2918,11 +3273,11 @@ window.$ = {
 
 function inicializarSistemaIntegrado() {
   try {
-    console.log("🚀 Inicializando Sistema com Verificação por Banco...");
+    console.log("🚀 Inicializando Sistema com Correção para MÊS/ANO → DIA...");
 
     if (typeof MetaDiariaManager !== "undefined") {
       MetaDiariaManager.inicializar();
-      console.log("✅ MetaDiariaManager inicializado (verificação por banco)");
+      console.log("✅ MetaDiariaManager inicializado com correção");
     }
 
     if (typeof SistemaFiltroPeriodo !== "undefined") {
@@ -2950,7 +3305,7 @@ function inicializarSistemaIntegrado() {
     }
 
     console.log("✅ Tipo de meta será detectado automaticamente pelo banco");
-    console.log("🎯 Sistema com Verificação por Banco inicializado!");
+    console.log("🎯 Sistema com Correção MÊS/ANO → DIA inicializado!");
   } catch (error) {
     console.error("❌ Erro na inicialização do sistema:", error);
   }
@@ -2966,25 +3321,30 @@ if (document.readyState === "loading") {
 }
 
 // ========================================
-// LOGS E DEBUGGING
+// LOGS E DEBUGGING FINAIS
 // ========================================
 
-console.log("✅ Sistema Meta Diária com VERIFICAÇÃO POR BANCO!");
+console.log("🎯 Sistema Meta Diária com CORREÇÃO ESPECÍFICA!");
 console.log("📱 Comandos Disponíveis:");
+console.log("  $.testProblema() - 🎯 TESTE para o problema MÊS/ANO → DIA");
 console.log("  $.force() - Forçar atualização");
 console.log("  $.test() - Teste completo");
-console.log("  $.testTipos() - Testar tipos via banco");
+console.log("  $.testBadge() - Testar apenas o badge");
 console.log("  $.fixa() - Alterar para Meta Fixa (grava no banco)");
 console.log("  $.turbo() - Alterar para Meta Turbo (grava no banco)");
 console.log("  $.info() - Ver status");
 console.log("  $.status() - Status completo");
+console.log(
+  "🔧 CORREÇÃO IMPLEMENTADA: Verificação rigorosa na barra de progresso"
+);
+console.log("🎯 PROBLEMA RESOLVIDO: Flash verde ao voltar de MÊS/ANO para DIA");
 
 // ✅ EXPORT PARA USO EXTERNO
 window.MetaDiariaManager = MetaDiariaManager;
 window.SistemaFiltroPeriodoIntegrado = SistemaFiltroPeriodoIntegrado;
 
 // ========================================================================================================================
-// // ✅ FIM ATUALIZADO - META DO DIA COM SUBTRAÇÃO DO SALDO DO DIA
+//                               ✅ FIM CALCULO META DO (DIA)-(MÊS)-(ANO)
 // ========================================================================================================================
 //
 //
@@ -3006,7 +3366,7 @@ window.SistemaFiltroPeriodoIntegrado = SistemaFiltroPeriodoIntegrado;
 //
 //
 // ========================================================================================================================
-// FILTRO POR PERIODO DIA MES ANO DO CAMPO MENTORES
+//                                 ✅ FILTRO POR PERIODO DIA MES ANO DOS CAMPO MENTORES
 // ========================================================================================================================
 
 function formatarDiaCurto() {
@@ -3301,7 +3661,16 @@ window.debugFiltro = () => {
 
 console.log("✅ Sistema de Filtro por Período carregado!");
 console.log("💡 Use debugFiltro() para informações de debug");
-
+// ========================================================================================================================
+//                                 ✅ FIM: FILTRO POR PERIODO DIA MES ANO DOS CAMPO MENTORES
+// ========================================================================================================================
+//
+//
+//
+//
+//
+//
+//
 //
 //
 //
@@ -3316,5 +3685,246 @@ console.log("💡 Use debugFiltro() para informações de debug");
 //
 //
 // ========================================================================================================================
-//                                      NOVO
+//                 CODIGO QUE FAZ APARECER O TEXTO : (META FIXA) - (META TURBO) E TRATA O CSS AQUI
+// ========================================================================================================================
+
+// Função para encontrar o container da barra
+function encontrarContainerBarra() {
+  const barraProgresso = document.querySelector(
+    '[style*="width:"], .widget-barra-progresso, [class*="progresso"], [class*="barra"]'
+  );
+
+  if (barraProgresso && barraProgresso.parentElement) {
+    return barraProgresso.parentElement;
+  }
+
+  return document.querySelector(".widget-barra-container");
+}
+
+// Função para criar o badge (se não existir)
+function criarBadgeMeta() {
+  // Verificar se já existe
+  if (document.getElementById("meta-tipo-badge")) {
+    console.log("✅ Badge já existe");
+    return true;
+  }
+
+  const container = encontrarContainerBarra();
+  if (!container) {
+    console.error("❌ Container não encontrado");
+    return false;
+  }
+
+  // Garantir position relative no container
+  container.style.position = "relative";
+
+  // Criar badge
+  const badge = document.createElement("div");
+  badge.id = "meta-tipo-badge";
+  badge.className = "meta-tipo-badge meta-turbo";
+  badge.textContent = "META TURBO";
+
+  // Estilos base
+  badge.style.cssText = `
+        position: absolute !important;
+        right: 53px !important;
+        top: 0px !important;
+        color: white !important;
+        font-size: 8px !important;
+        font-weight: 700 !important;
+        text-transform: uppercase !important;
+        letter-spacing: 0.3px !important;
+        padding: 4px 8px !important;
+        border-radius: 12px !important;
+        z-index: 999 !important;
+        white-space: nowrap !important;
+        display: block !important;
+        visibility: visible !important;
+        font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif !important;
+    `;
+
+  // Aplicar cor inicial (turbo)
+  aplicarCorBadge(badge, "turbo");
+
+  container.appendChild(badge);
+  console.log("✅ Badge criado com sucesso!");
+  return true;
+}
+
+// Função para aplicar cores com estilos inline
+function aplicarCorBadge(badge, tipo) {
+  if (tipo === "fixa") {
+    badge.style.setProperty(
+      "background",
+      "linear-gradient(135deg, #007bff 0%, #0056b3 100%)",
+      "important"
+    );
+    badge.style.setProperty(
+      "border",
+      "1px solid rgba(0, 123, 255, 0.3)",
+      "important"
+    );
+    badge.style.setProperty(
+      "box-shadow",
+      "0 2px 6px rgba(0, 123, 255, 0.3)",
+      "important"
+    );
+  } else {
+    badge.style.setProperty(
+      "background",
+      "linear-gradient(135deg, #ff6b35 0%, #e55a2b 100%)",
+      "important"
+    );
+    badge.style.setProperty(
+      "border",
+      "1px solid rgba(255, 107, 53, 0.3)",
+      "important"
+    );
+    badge.style.setProperty(
+      "box-shadow",
+      "0 2px 6px rgba(255, 107, 53, 0.3)",
+      "important"
+    );
+  }
+}
+
+// Função principal para atualizar o badge
+function atualizarBadgeMeta(tipo, texto = null) {
+  let badge = document.getElementById("meta-tipo-badge");
+
+  // Criar se não existir
+  if (!badge) {
+    if (!criarBadgeMeta()) return;
+    badge = document.getElementById("meta-tipo-badge");
+  }
+
+  // Remover classes antigas
+  badge.classList.remove("meta-fixa", "meta-turbo", "loading");
+
+  // Definir texto e aplicar cor
+  let textoFinal;
+
+  if (tipo === "fixa") {
+    badge.classList.add("meta-fixa");
+    textoFinal = texto || "META FIXA";
+    aplicarCorBadge(badge, "fixa");
+  } else if (tipo === "turbo") {
+    badge.classList.add("meta-turbo");
+    textoFinal = texto || "META TURBO";
+    aplicarCorBadge(badge, "turbo");
+  } else {
+    badge.classList.add("loading");
+    textoFinal = "CARREGANDO...";
+    badge.style.setProperty(
+      "background",
+      "rgba(153, 153, 153, 0.8)",
+      "important"
+    );
+  }
+
+  badge.textContent = textoFinal.toUpperCase();
+  console.log(`🏷️ Badge atualizado: ${textoFinal} (${tipo})`);
+}
+
+// Integração com MetaDiariaManager (se existir)
+if (typeof MetaDiariaManager !== "undefined") {
+  // Backup da função original
+  const originalAtualizarTipoMeta = MetaDiariaManager.atualizarTipoMetaDisplay;
+
+  // Sobrescrever com nova funcionalidade
+  MetaDiariaManager.atualizarTipoMetaDisplay = function (data) {
+    try {
+      // Executar função original
+      if (originalAtualizarTipoMeta) {
+        originalAtualizarTipoMeta.call(this, data);
+      }
+
+      // Atualizar badge
+      if (data.tipo_meta_texto) {
+        const tipo = data.tipo_meta_texto.toLowerCase().includes("fixa")
+          ? "fixa"
+          : "turbo";
+        atualizarBadgeMeta(tipo, data.tipo_meta_texto);
+      }
+    } catch (error) {
+      console.error("❌ Erro ao atualizar badge:", error);
+    }
+  };
+
+  console.log("✅ Badge integrado com MetaDiariaManager");
+}
+
+// Função de teste
+function testarBadgeCompleto() {
+  console.log("🧪 Testando sistema completo...");
+
+  // Garantir que existe
+  criarBadgeMeta();
+
+  // Teste das cores
+  setTimeout(() => {
+    atualizarBadgeMeta("fixa");
+    console.log("🔵 META FIXA (azul)");
+  }, 1000);
+
+  setTimeout(() => {
+    atualizarBadgeMeta("turbo");
+    console.log("🟠 META TURBO (laranja)");
+  }, 3000);
+
+  setTimeout(() => {
+    atualizarBadgeMeta("fixa");
+    console.log("🔵 META FIXA final");
+  }, 5000);
+}
+
+// Comandos globais
+window.criarBadgeMeta = criarBadgeMeta;
+window.atualizarBadgeMeta = atualizarBadgeMeta;
+window.testarBadgeCompleto = testarBadgeCompleto;
+
+// Atalhos
+window.badgeMeta = {
+  criar: criarBadgeMeta,
+  fixa: () => atualizarBadgeMeta("fixa"),
+  turbo: () => atualizarBadgeMeta("turbo"),
+  teste: testarBadgeCompleto,
+};
+
+// Inicialização automática
+if (document.readyState === "loading") {
+  document.addEventListener("DOMContentLoaded", criarBadgeMeta);
+} else {
+  setTimeout(criarBadgeMeta, 500);
+}
+
+console.log("🎯 Sistema Badge Meta carregado!");
+console.log(
+  "📱 Comandos: badgeMeta.criar(), badgeMeta.fixa(), badgeMeta.turbo(), badgeMeta.teste()"
+);
+// ========================================================================================================================
+//               FIM:  CODIGO QUE FAZ APARECER O TEXTO : (META FIXA) - (META TURBO) E TRATA O CSS AQUI
+// ========================================================================================================================
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+// ========================================================================================================================
+//                                                            NOVO
 // ========================================================================================================================
