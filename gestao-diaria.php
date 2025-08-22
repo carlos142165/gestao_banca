@@ -631,7 +631,7 @@ ob_end_flush();
     <i class="fa-solid fa-coins"></i>
     <div class="meta-valor-container">
         <span class="valor-texto" id="valor-texto-meta">R$ 20,00</span>
-        <span class="meta-text meta-turbo" id="meta-text-unico">META TURBO</span>
+        
     </div>
 </div>
     
