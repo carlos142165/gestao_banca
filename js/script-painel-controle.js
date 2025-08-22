@@ -2169,6 +2169,10 @@ document.addEventListener("DOMContentLoaded", () => {
 //                           CALCULO DE VALOR DO PAINEL DE CONTROLE PARA EXIBIR METAS
 // ========================================================================================================================
 
+// ========================================
+// 🔧 SISTEMA INTEGRADO - CALCULADORA + ATUALIZAÇÃO AUTOMÁTICA
+// ========================================
+
 const CalculadoraModal = {
   // ✅ CONTROLE DE ESTADO
   calculandoAtualmente: false,
@@ -2478,7 +2482,7 @@ const CalculadoraModal = {
     }
   },
 
-  // ✅ CONFIGURAR EVENTOS DO TIPO DE META
+  // ✅ CONFIGURAR EVENTOS DO TIPO DE META - COM MUDANÇA DE CORES
   configurarEventosTipoMeta() {
     try {
       const radioFixa = document.getElementById("metaFixa");
@@ -2488,6 +2492,7 @@ const CalculadoraModal = {
         radioFixa.addEventListener("change", () => {
           if (radioFixa.checked) {
             this.tipoMetaSelecionado = "fixa";
+            this.aplicarEstiloMetaFixa();
             this.calcularTodosValores();
           }
         });
@@ -2497,20 +2502,122 @@ const CalculadoraModal = {
         radioTurbo.addEventListener("change", () => {
           if (radioTurbo.checked) {
             this.tipoMetaSelecionado = "turbo";
+            this.aplicarEstiloMetaTurbo();
             this.calcularTodosValores();
           }
         });
       }
 
+      // ✅ APLICAR ESTILO INICIAL
       if (radioFixa && radioFixa.checked) {
         this.tipoMetaSelecionado = "fixa";
+        this.aplicarEstiloMetaFixa();
       } else if (radioTurbo && radioTurbo.checked) {
         this.tipoMetaSelecionado = "turbo";
+        this.aplicarEstiloMetaTurbo();
       }
 
       console.log(`✅ Tipo de meta inicial: ${this.tipoMetaSelecionado}`);
     } catch (error) {
       console.error("❌ Erro ao configurar eventos tipo de meta:", error);
+    }
+  },
+
+  // ✅ NOVA FUNÇÃO: APLICAR ESTILO META FIXA (AZUL)
+  aplicarEstiloMetaFixa() {
+    try {
+      console.log("🔵 Aplicando estilo Meta Fixa (Azul)");
+
+      // ✅ ALTERAR COR DOS VALORES PARA AZUL
+      const resultadoValores = document.querySelectorAll(".resultado-valor");
+      resultadoValores.forEach((elemento) => {
+        elemento.style.color = "#2196F3"; // Azul
+        elemento.style.fontWeight = "bold";
+        elemento.style.transition = "color 0.3s ease";
+      });
+
+      // ✅ DESTACAR OPÇÃO SELECIONADA
+      const opcaoFixa = document
+        .querySelector("#metaFixa")
+        .closest(".opcao-meta");
+      const opcaoTurbo = document
+        .querySelector("#metaTurbo")
+        .closest(".opcao-meta");
+
+      if (opcaoFixa) {
+        opcaoFixa.style.backgroundColor = "#E3F2FD"; // Azul claro
+        opcaoFixa.style.border = "2px solid #2196F3"; // Borda azul
+        opcaoFixa.style.borderRadius = "8px";
+        opcaoFixa.style.padding = "10px";
+        opcaoFixa.style.transition = "all 0.3s ease";
+      }
+
+      if (opcaoTurbo) {
+        opcaoTurbo.style.backgroundColor = "transparent";
+        opcaoTurbo.style.border = "1px solid #ddd";
+        opcaoTurbo.style.borderRadius = "8px";
+        opcaoTurbo.style.padding = "10px";
+      }
+
+      // ✅ ALTERAR COR DO TÍTULO
+      const tituloResultados = document.querySelector(".titulo-resultados");
+      if (tituloResultados) {
+        tituloResultados.style.color = "#2196F3";
+        tituloResultados.style.transition = "color 0.3s ease";
+      }
+
+      console.log("✅ Estilo Meta Fixa aplicado");
+    } catch (error) {
+      console.error("❌ Erro ao aplicar estilo Meta Fixa:", error);
+    }
+  },
+
+  // ✅ NOVA FUNÇÃO: APLICAR ESTILO META TURBO (LARANJA)
+  aplicarEstiloMetaTurbo() {
+    try {
+      console.log("🟠 Aplicando estilo Meta Turbo (Laranja)");
+
+      // ✅ ALTERAR COR DOS VALORES PARA LARANJA
+      const resultadoValores = document.querySelectorAll(".resultado-valor");
+      resultadoValores.forEach((elemento) => {
+        elemento.style.color = "#FF9800"; // Laranja
+        elemento.style.fontWeight = "bold";
+        elemento.style.transition = "color 0.3s ease";
+      });
+
+      // ✅ DESTACAR OPÇÃO SELECIONADA
+      const opcaoFixa = document
+        .querySelector("#metaFixa")
+        .closest(".opcao-meta");
+      const opcaoTurbo = document
+        .querySelector("#metaTurbo")
+        .closest(".opcao-meta");
+
+      if (opcaoTurbo) {
+        opcaoTurbo.style.backgroundColor = "#FFF3E0"; // Laranja claro
+        opcaoTurbo.style.border = "2px solid #FF9800"; // Borda laranja
+        opcaoTurbo.style.borderRadius = "8px";
+        opcaoTurbo.style.padding = "10px";
+        opcaoTurbo.style.transition = "all 0.3s ease";
+      }
+
+      if (opcaoFixa) {
+        opcaoFixa.style.backgroundColor = "transparent";
+        opcaoFixa.style.border = "1px solid #ddd";
+        opcaoFixa.style.borderRadius = "8px";
+        opcaoFixa.style.padding = "10px";
+      }
+
+      // ✅ ALTERAR COR DO TÍTULO
+      const tituloResultados = document.querySelector(".titulo-resultados");
+      if (tituloResultados) {
+        tituloResultados.style.color = "#FF9800";
+        tituloResultados.style.transition = "color 0.3s ease";
+      }
+
+      console.log("✅ Estilo Meta Turbo aplicado");
+    } catch (error) {
+      console.error("❌ Erro ao aplicar estilo Meta Turbo:", error);
     }
   },
 
@@ -2729,7 +2836,7 @@ const CalculadoraModal = {
     }
   },
 
-  // ✅ ATUALIZAR DISPLAYS NO MODAL
+  // ✅ ATUALIZAR DISPLAYS NO MODAL - COM APLICAÇÃO DE CORES
   atualizarDisplays(resultados) {
     try {
       const elementos = {
@@ -2755,7 +2862,16 @@ const CalculadoraModal = {
         resultadoEntradas.textContent = textoEntradas;
       }
 
-      console.log("✅ Displays atualizados no modal");
+      // ✅ APLICAR CORES BASEADO NO TIPO DE META SELECIONADO
+      setTimeout(() => {
+        if (this.tipoMetaSelecionado === "turbo") {
+          this.aplicarEstiloMetaTurbo();
+        } else {
+          this.aplicarEstiloMetaFixa();
+        }
+      }, 100);
+
+      console.log("✅ Displays atualizados no modal com cores aplicadas");
     } catch (error) {
       console.error("❌ Erro ao atualizar displays:", error);
     }
@@ -2858,7 +2974,7 @@ const CalculadoraModal = {
     }
   },
 
-  // ✅ FUNÇÃO PARA ALTERNAR TIPO DE META
+  // ✅ FUNÇÃO PARA ALTERNAR TIPO DE META - COM CORES
   alternarTipoMeta(tipo = null) {
     try {
       if (tipo === null) {
@@ -2871,9 +2987,11 @@ const CalculadoraModal = {
       if (tipo === "fixa" && radioFixa) {
         radioFixa.checked = true;
         this.tipoMetaSelecionado = "fixa";
+        this.aplicarEstiloMetaFixa();
       } else if (tipo === "turbo" && radioTurbo) {
         radioTurbo.checked = true;
         this.tipoMetaSelecionado = "turbo";
+        this.aplicarEstiloMetaTurbo();
       }
 
       this.calcularTodosValores();
@@ -3027,6 +3145,18 @@ window.calc = {
   simular: function () {
     return CalculadoraModal.simularCenarios();
   },
+  // ✅ NOVA FUNÇÃO: FORÇAR APLICAÇÃO DE CORES
+  cores: function () {
+    if (CalculadoraModal.tipoMetaSelecionado === "turbo") {
+      CalculadoraModal.aplicarEstiloMetaTurbo();
+    } else {
+      CalculadoraModal.aplicarEstiloMetaFixa();
+    }
+    console.log(
+      `🎨 Cores aplicadas para: ${CalculadoraModal.tipoMetaSelecionado}`
+    );
+    return "✅ Cores aplicadas com sucesso";
+  },
 };
 
 // ========================================
@@ -3047,7 +3177,7 @@ document.addEventListener("DOMContentLoaded", function () {
 // 📱 LOGS DE INICIALIZAÇÃO
 // ========================================
 
-console.log("✅ Sistema Integrado com Lógica de Recuperação carregado!");
+console.log("✅ Sistema Integrado com Cores Dinâmicas carregado!");
 console.log("📱 Comandos disponíveis:");
 console.log("  calc.init() - Inicializar sistema");
 console.log("  calc.reload() - Recarregar dados da banca");
@@ -3056,11 +3186,19 @@ console.log(
   "  calc.simular() - Simular diferentes cenários (inicial/prejuízo/fixa/turbo)"
 );
 console.log("  calc.testar() - Testar integração com sistema de atualização");
-console.log("  calc.fixa() - Alterar para Meta Fixa");
-console.log("  calc.turbo() - Alterar para Meta Turbo");
+console.log("  calc.fixa() - Alterar para Meta Fixa (Azul)");
+console.log("  calc.turbo() - Alterar para Meta Turbo (Laranja)");
 console.log("  calc.toggle() - Alternar tipo de meta");
+console.log("  calc.cores() - Forçar aplicação das cores");
 console.log("  calc.recalc() - Recalcular valores");
 console.log("  calc.parar() - Parar polling");
+console.log("");
+console.log("🎨 SISTEMA DE CORES:");
+console.log("   🔵 META FIXA: Valores em azul (#2196F3) + fundo azul claro");
+console.log(
+  "   🟠 META TURBO: Valores em laranja (#FF9800) + fundo laranja claro"
+);
+console.log("   ✨ Transições suaves entre as cores");
 console.log("");
 console.log("💡 LÓGICA DE RECUPERAÇÃO DE PREJUÍZO:");
 console.log("   • Prejuízo: Meta = Meta Original + Valor Perdido");
