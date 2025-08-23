@@ -724,7 +724,6 @@ const MentorManager = {
       // ✅ CORREÇÃO: Reaplica eventos e estilos após recarregar
       this.aplicarEstilosCorretos();
       this.atualizarDashboard(container);
-      this.adicionarEventosMentores(container);
 
       // ✅ CORREÇÃO: Restaura estado dos formulários se necessário
       if (formularioAberto && !telaEdicaoAberta) {
@@ -917,36 +916,6 @@ const MentorManager = {
     rotuloMetaSpan.innerHTML = textoRotulo;
   },
 
-  // ✅ CORREÇÃO MELHORADA: Adiciona eventos aos cards com debounce
-  adicionarEventosMentores(container) {
-    const cards = container.querySelectorAll(".mentor-card");
-
-    cards.forEach((card) => {
-      // Remove listeners anteriores clonando o elemento
-      const novoCard = card.cloneNode(true);
-      card.parentNode?.replaceChild(novoCard, card);
-
-      // ✅ CORREÇÃO: Adiciona debounce para evitar cliques múltiplos
-      const clickHandler = Utils.debounce((event) => {
-        const alvo = event.target;
-        const clicouEmBotao =
-          alvo.closest(".btn-icon") ||
-          alvo.closest(".menu-opcoes") ||
-          alvo.closest(".menu-toggle") ||
-          ["BUTTON", "I", "SPAN"].includes(alvo.tagName);
-
-        if (clicouEmBotao) return;
-
-        this.ultimoCardClicado = novoCard;
-        this.mentorAtualId = null;
-        FormularioValorManager.exibirFormularioMentor(novoCard);
-        DadosManager.atualizarLucroEBancaViaAjax();
-      }, 300);
-
-      novoCard.addEventListener("click", clickHandler);
-    });
-  },
-
   // ✅ CORREÇÃO: Atualização automática mais inteligente
   iniciarAtualizacaoAutomatica() {
     if (this.intervalUpdateId) {
@@ -997,113 +966,6 @@ const MentorManager = {
 };
 
 // ✅ GERENCIADOR DE FORMULÁRIO DE VALOR
-const FormularioValorManager = {
-  // Exibe formulário para cadastrar valor do mentor
-  exibirFormularioMentor(card) {
-    const formulario = document.querySelector(".formulario-mentor");
-    if (!formulario) {
-      console.error("❌ Formulário de mentor não encontrado");
-      return;
-    }
-
-    const elementos = this.obterElementosFormulario(formulario);
-    if (!elementos.todosPresentes) {
-      console.error("❌ Elementos internos do formulário não encontrados");
-      return;
-    }
-
-    this.preencherDadosFormulario(card, elementos);
-    this.exibirFormulario(formulario);
-    this.configurarCampoValor();
-  },
-
-  // Obtém elementos do formulário
-  obterElementosFormulario(formulario) {
-    const nomePreview = formulario.querySelector(".mentor-nome-preview");
-    const fotoPreview = formulario.querySelector(".mentor-foto-preview");
-    const idHidden = formulario.querySelector(".mentor-id-hidden");
-
-    return {
-      nomePreview,
-      fotoPreview,
-      idHidden,
-      todosPresentes: !!(nomePreview && fotoPreview && idHidden),
-    };
-  },
-
-  // Preenche dados do formulário
-  preencherDadosFormulario(card, elementos) {
-    const nomeMentor = card.getAttribute("data-nome") || "Mentor";
-    const fotoMentor = card.getAttribute("data-foto") || "default.png";
-    const idMentor = card.getAttribute("data-id") || "";
-
-    elementos.nomePreview.textContent = nomeMentor;
-    elementos.fotoPreview.src = fotoMentor;
-    elementos.idHidden.value = idMentor;
-  },
-
-  // Exibe formulário
-  exibirFormulario(formulario) {
-    formulario.style.display = "block";
-  },
-
-  // Configura campo valor com delay para elementos carregarem
-  configurarCampoValor() {
-    setTimeout(() => {
-      const campoValor = document.getElementById("valor");
-      const unidadeEntrada = document.querySelector(
-        "#listaMentores #unidade-entrada"
-      );
-
-      if (campoValor && unidadeEntrada) {
-        const valorTexto = unidadeEntrada.textContent.trim();
-        campoValor.value = valorTexto;
-        campoValor.placeholder = valorTexto;
-
-        MascaraManager.aplicarMascaraValor(campoValor);
-      }
-    }, 600);
-  },
-
-  // Processa submissão do formulário
-  async processarSubmissao(formData) {
-    try {
-      const response = await fetch("cadastrar-valor.php", {
-        method: "POST",
-        body: formData,
-      });
-
-      if (!response.ok) throw new Error(`HTTP ${response.status}`);
-
-      const resposta = await response.json();
-
-      ToastManager.mostrar(resposta.mensagem, resposta.tipo);
-
-      if (resposta.tipo === "sucesso") {
-        this.resetarFormulario();
-        await MentorManager.recarregarMentores();
-        await DadosManager.atualizarLucroEBancaViaAjax();
-
-        // Atualiza dados do modal se a função existir
-        if (typeof atualizarDadosModal === "function") {
-          atualizarDadosModal();
-        }
-      }
-    } catch (error) {
-      console.error("Erro ao enviar formulário:", error);
-      ToastManager.mostrar("❌ Erro ao enviar dados", "erro");
-    }
-  },
-
-  // Reseta formulário
-  resetarFormulario() {
-    const formMentor = document.getElementById("form-mentor");
-    const formulario = document.querySelector(".formulario-mentor");
-
-    if (formMentor) formMentor.reset();
-    if (formulario) formulario.style.display = "none";
-  },
-};
 
 // ✅ GERENCIADOR DE EXCLUSÕES
 const ExclusaoManager = {
@@ -1116,7 +978,7 @@ const ExclusaoManager = {
     }
 
     if (confirm("Tem certeza que deseja excluir este mentor?")) {
-      window.location.href = `gestao-diaria.php?excluir_mentor=${id}`;
+      window.location.href = `gestao_diaria.php?excluir_mentor=${id}`;
     }
   },
 
@@ -1136,7 +998,7 @@ const ExclusaoManager = {
       return;
     }
 
-    window.location.href = `gestao-diaria.php?excluir_mentor=${id}`;
+    window.location.href = `gestao_diaria.php?excluir_mentor=${id}`;
   },
 
   // Exclusão de entrada

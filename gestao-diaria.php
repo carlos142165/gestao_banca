@@ -1063,39 +1063,1478 @@ ob_end_flush();
     <div id="resultado-filtro"></div>   
   </div>
 
-  <!-- Formulário do Mentor -->
-  <div class="formulario-mentor" id="formulario-mentor">
-    <button type="button" class="btn-fechar" id="botao-fechar">
+  <!-- NOVO FORMULÁRIO DO MENTOR -->
+  <div class="formulario-mentor-novo" id="formulario-mentor-novo">
+    <button type="button" class="btn-fechar-novo" onclick="fecharFormularioNovo()">
       <i class="fas fa-times"></i>
     </button>
 
-    <!-- Info do mentor selecionado -->
-    <img src="" class="mentor-foto-preview" width="100" />
-    <h3 class="mentor-nome-preview">Nome do Mentor</h3>
+    <!-- Info do mentor -->
+    <div class="mentor-info-novo">
+      <img src="" class="mentor-foto-novo" alt="Foto do mentor">
+      <h3 class="mentor-nome-novo">Nome do Mentor</h3>
+    </div>
 
-    <form id="form-mentor" method="POST">
-      <input type="hidden" name="id_mentor" class="mentor-id-hidden">
+    <!-- Opções Cash, Green, Red -->
+    <div class="opcoes-container-novo">
+      <div class="opcao-novo" data-tipo="cash">
+        <input type="radio" id="opcao-cash" name="tipo-operacao" value="cash">
+        <label for="opcao-cash">Cash</label>
+      </div>
+      <div class="opcao-novo" data-tipo="green">
+        <input type="radio" id="opcao-green" name="tipo-operacao" value="green">
+        <label for="opcao-green">Green</label>
+      </div>
+      <div class="opcao-novo" data-tipo="red">
+        <input type="radio" id="opcao-red" name="tipo-operacao" value="red">
+        <label for="opcao-red">Red</label>
+      </div>
+    </div>
 
-      <!-- Seleção Green ou Red -->
-      <div class="checkbox-container">
-        <div class="checkbox-wrapper">
-          <input type="radio" id="green" name="opcao" value="green">
-          <label for="green" class="checkbox-label green-label">Green</label>
+    <form id="form-mentor-novo" method="POST">
+      <input type="hidden" name="id_mentor" class="mentor-id-novo">
+      <input type="hidden" name="tipo_operacao" class="tipo-operacao-novo">
+        <!-- Valor da unidade calculado pelo PHP -->
+        <span id="valor-unidade" style="display:none;">
+          <?php
+            // Exibe o valor da unidade calculado
+            if (isset($area_direita) && isset($area_direita['unidade_entrada_formatada'])) {
+              echo $area_direita['unidade_entrada_formatada'];
+            } else {
+              echo 'R$ 0,00';
+            }
+          ?>
+        </span>
+
+      <!-- Área de inputs -->
+      <div class="inputs-area-novo">
+        <!-- Mensagem inicial -->
+        <div class="mensagem-inicial-gestao" id="mensagem-inicial-gestao">
+          <i class="fas fa-chart-line"></i>
+          <p>Disciplina é o que separa sorte de estratégia. Mantenha-se dentro da gestão é ela que protege seu capital, guia suas decisões e constrói lucro consistente ao longo do tempo. Não é sobre ganhar sempre, é sobre jogar certo sempre.</p>
         </div>
-        <div class="checkbox-wrapper">
-          <input type="radio" id="red" name="opcao" value="red">
-          <label for="red" class="checkbox-label red-label">Red</label>
+
+        <!-- Inputs duplos para Cash/Green -->
+        <div class="inputs-duplos-novo" id="inputs-duplos">
+          <div class="campo-duplo-novo">
+            <label for="input-entrada">Unidade</label>
+            <input type="text" id="input-entrada" name="entrada" placeholder="R$ 0,00">
+            <div class="mensagem-status-input"></div>
+          </div>
+          <div class="campo-duplo-novo">
+            <label for="input-total" id="label-total">Total: Cashout</label>
+            <input type="text" id="input-total" name="total" placeholder="R$ 0,00">
+            <div class="mensagem-status-input"></div>
+          </div>
+        </div>
+
+        <!-- Input único para Red -->
+        <div class="input-unico-novo" id="input-unico">
+          <label for="input-red">Valor Red</label>
+          <input type="text" id="input-red" name="valor_red" placeholder="R$ 0,00">
+          <div class="mensagem-status-input"></div>
         </div>
       </div>
 
-      <!-- Campo de valor -->
-      <input type="text" name="valor" id="valor" class="input-valor" placeholder="R$ 0,00" required>
+      <!-- Status do cálculo -->
+      <div class="status-calculo-novo">
+        <div class="rotulo-status-novo" id="rotulo-status">Neutro</div>
+        <div class="valor-status-novo status-neutro" id="valor-status">R$ 0,00</div>
+      </div>
 
-      <button type="submit" class="botao-enviar">Enviar</button>
+      <button type="submit" class="botao-enviar-novo">Cadastrar</button>
     </form>
   </div>
 
- </div>
+</div>
+
+<style>
+/* ===== CSS DO NOVO SISTEMA DE CADASTRO ===== */
+
+/* Container principal do novo formulário */
+.formulario-mentor-novo {
+  position: fixed;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  background: linear-gradient(135deg, #f8f9fa 0%, #e9ecef 100%);
+  border-radius: 20px;
+  padding: 25px;
+  box-shadow: 0 15px 35px rgba(0, 0, 0, 0.15);
+  z-index: 1000;
+  display: none;
+  width: 380px;
+  max-height: 85vh; /* ✅ Altura máxima para evitar overflow */
+  min-width: 350px;
+  max-width: 420px;
+  border: 2px solid #e0e0e0;
+  font-family: "Poppins", sans-serif;
+  margin: 0;
+  box-sizing: border-box;
+  overflow: hidden; /* ✅ Remove barra de rolagem interna */
+  /* ✅ PREVENIR VAZAMENTO LATERAL */
+  max-width: calc(100vw - 40px); /* ✅ Nunca ultrapassar a largura da viewport */
+  max-height: calc(100vh - 40px); /* ✅ Nunca ultrapassar a altura da viewport */
+}
+
+/* ✅ OVERLAY COM TRANSPARÊNCIA MELHORADA */
+.formulario-mentor-novo::before {
+  content: '';
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100vw;
+  height: 100vh;
+  background: rgba(147, 161, 143, 0.3); /* ✅ Fundo mais sutil e transparente */
+  z-index: -1;
+  backdrop-filter: blur(2px); /* ✅ Blur mais sutil */
+}
+
+/* Botão fechar */
+.formulario-mentor-novo .btn-fechar-novo {
+  position: absolute;
+  top: 12px;
+  right: 12px;
+  background: rgba(220, 53, 69, 0.1);
+  color: #dc3545;
+  border: none;
+  border-radius: 50%;
+  width: 32px;
+  height: 32px;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: all 0.3s ease;
+  font-size: 14px;
+  z-index: 10;
+}
+
+.formulario-mentor-novo .btn-fechar-novo:hover {
+  background: #dc3545;
+  color: white;
+  transform: scale(1.1);
+}
+
+/* ✅ INFO DO MENTOR - COMPACTA */
+.mentor-info-novo {
+  text-align: center;
+  margin-bottom: 20px;
+  padding-bottom: 15px;
+  border-bottom: 2px solid #e9ecef;
+}
+
+.mentor-foto-novo {
+  width: 80px; /* ✅ Reduzido para economizar espaço */
+  height: 80px;
+  border-radius: 50%;
+  object-fit: cover;
+  border: 3px solid #007bff;
+  margin-bottom: 8px;
+  box-shadow: 0 4px 8px rgba(0, 123, 255, 0.2);
+}
+
+.mentor-nome-novo {
+  font-size: 16px; /* ✅ Reduzido para economizar espaço */
+  font-weight: 700;
+  color: #2c3e50;
+  margin: 0;
+  text-transform: capitalize;
+}
+
+/* ✅ OPÇÕES MAIS COMPACTAS */
+.opcoes-container-novo {
+  display: flex;
+  justify-content: center;
+  gap: 12px;
+  margin-bottom: 20px;
+}
+
+.opcao-novo {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  padding: 8px;
+  border-radius: 12px;
+  border: 2px solid transparent;
+  min-width: 65px;
+}
+
+.opcao-novo:hover {
+  background: rgba(0, 123, 255, 0.05);
+  border-color: rgba(0, 123, 255, 0.2);
+}
+
+.opcao-novo.selecionada {
+  background: rgba(0, 123, 255, 0.1);
+  border-color: #007bff;
+  transform: scale(1.05);
+}
+
+.opcao-novo input[type="radio"] {
+  width: 16px;
+  height: 16px;
+  margin-bottom: 6px;
+  cursor: pointer;
+  accent-color: #007bff;
+}
+
+.opcao-novo label {
+  font-size: 13px;
+  font-weight: 600;
+  color: #495057;
+  cursor: pointer;
+  transition: color 0.3s ease;
+  user-select: none;
+}
+
+.opcao-novo.selecionada label {
+  color: #007bff;
+}
+
+/* Mensagem inicial de gestão */
+.mensagem-inicial-gestao {
+  text-align: center;
+  padding: 20px;
+  background: linear-gradient(145deg, #f8f9fa 0%, #e9ecef 100%);
+  border-radius: 12px;
+  margin: 15px 0;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
+  opacity: 0;
+  transition: all 0.3s ease;
+  display: none;
+  transform: translateY(10px);
+}
+
+.mensagem-inicial-gestao i {
+  font-size: 24px;
+  color: #007bff;
+  margin-bottom: 10px;
+}
+
+.mensagem-inicial-gestao p {
+  margin: 0;
+  font-size: 13px;
+  line-height: 1.6;
+  color: #495057;
+  font-weight: 500;
+}
+
+.mensagem-inicial-gestao.ativo {
+  opacity: 1;
+  transform: translateY(0);
+}
+
+/* ✅ ÁREA DE INPUTS OTIMIZADA */
+.inputs-area-novo {
+  margin-bottom: 18px;
+  min-height: 110px; /* ✅ Altura reduzida */
+}
+
+/* Estilo para modo Cash/Green (dois campos) */
+.inputs-duplos-novo {
+  display: none;
+  opacity: 0;
+  transition: opacity 0.3s ease;
+}
+
+.inputs-duplos-novo.ativo {
+  display: block;
+  opacity: 1;
+}
+
+.campo-duplo-novo {
+  margin-bottom: 12px; /* ✅ Margem reduzida */
+}
+
+.campo-duplo-novo label {
+  display: block;
+  font-size: 12px;
+  font-weight: 600;
+  color: #6c757d;
+  margin-bottom: 4px;
+  /* REMOVIDO: text-transform: uppercase; */
+  letter-spacing: 0.5px;
+}
+
+.campo-duplo-novo input {
+  width: 100%;
+  padding: 10px 12px; /* ✅ Padding reduzido */
+  border: 2px solid #e9ecef;
+  border-radius: 10px;
+  font-size: 15px;
+  font-weight: 600;
+  color: #495057;
+  background: white;
+  transition: all 0.3s ease;
+  box-sizing: border-box;
+}
+
+.campo-duplo-novo input:focus {
+  outline: none;
+  border-color: #007bff;
+  box-shadow: 0 0 0 3px rgba(0, 123, 255, 0.1);
+}
+
+/* Estilo para modo Red (um campo) */
+.input-unico-novo {
+  display: none;
+  text-align: center;
+  opacity: 0;
+  transition: opacity 0.3s ease;
+}
+
+.input-unico-novo.ativo {
+  display: block;
+  opacity: 1;
+}
+
+.input-unico-novo label {
+  display: block;
+  font-size: 13px;
+  font-weight: 600;
+  color: #dc3545;
+  margin-bottom: 8px;
+  /* REMOVIDO: text-transform: uppercase; */
+  letter-spacing: 0.5px;
+}
+
+.input-unico-novo input {
+  width: 100%;
+  padding: 12px;
+  border: 2px solid #f8d7da;
+  border-radius: 10px;
+  font-size: 16px;
+  font-weight: 700;
+  color: #dc3545;
+  background: #fff5f5;
+  text-align: center;
+  transition: all 0.3s ease;
+  box-sizing: border-box;
+}
+
+.input-unico-novo input:focus {
+  outline: none;
+  border-color: #dc3545;
+  box-shadow: 0 0 0 3px rgba(220, 53, 69, 0.1);
+}
+
+/* ✅ STATUS MAIS COMPACTO */
+.status-calculo-novo {
+  text-align: center;
+  padding: 12px;
+  border-radius: 12px;
+  background: #f8f9fa;
+  border: 2px solid #e9ecef;
+  margin-bottom: 18px;
+  min-height: 45px;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  transition: all 0.3s ease;
+}
+
+.rotulo-status-novo {
+  font-size: 11px;
+  font-weight: 600;
+  color: #6c757d;
+  /* REMOVIDO: text-transform: uppercase; */
+  letter-spacing: 0.5px;
+  margin-bottom: 4px;
+}
+
+.valor-status-novo {
+  font-size: 16px;
+  font-weight: 700;
+  transition: all 0.3s ease;
+}
+
+/* Cores do status */
+.status-neutro {
+  color: #6c757d;
+}
+
+.status-positivo {
+  color: #28a745;
+}
+
+.status-negativo {
+  color: #dc3545;
+}
+
+.status-calculo-novo.status-positivo-ativo {
+  background: rgba(40, 167, 69, 0.05);
+  border-color: rgba(40, 167, 69, 0.2);
+}
+
+.status-calculo-novo.status-negativo-ativo {
+  background: rgba(220, 53, 69, 0.05);
+  border-color: rgba(220, 53, 69, 0.2);
+}
+
+/* ✅ BOTÃO MAIS COMPACTO */
+.botao-enviar-novo {
+  width: 100%;
+  padding: 12px;
+  background: linear-gradient(135deg, #007bff 0%, #0056b3 100%);
+  color: white;
+  border: none;
+  border-radius: 12px;
+  font-size: 15px;
+  font-weight: 700;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  /* REMOVIDO: text-transform: uppercase; */
+  letter-spacing: 0.5px;
+  box-shadow: 0 4px 12px rgba(0, 123, 255, 0.3);
+}
+
+.botao-enviar-novo:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 6px 20px rgba(0, 123, 255, 0.4);
+}
+
+.botao-enviar-novo:active {
+  transform: translateY(0);
+}
+
+.botao-enviar-novo:disabled {
+  background: #6c757d;
+  cursor: not-allowed;
+  transform: none;
+  box-shadow: none;
+}
+
+/* Loading state */
+.botao-enviar-novo.carregando {
+  position: relative;
+  color: transparent;
+}
+
+.botao-enviar-novo.carregando::after {
+  content: '';
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  width: 18px;
+  height: 18px;
+  border: 2px solid transparent;
+  border-top: 2px solid white;
+  border-radius: 50%;
+  animation: spin 1s linear infinite;
+}
+
+/* Estados de validação */
+.campo-duplo-novo input.erro,
+.input-unico-novo input.erro {
+  border-color: #dc3545;
+  box-shadow: 0 0 0 3px rgba(220, 53, 69, 0.1);
+}
+
+.campo-duplo-novo input.sucesso {
+  border-color: #28a745;
+  box-shadow: 0 0 0 3px rgba(40, 167, 69, 0.1);
+}
+
+/* Mensagens de status abaixo dos inputs */
+.mensagem-status-input {
+  font-size: 11px;
+  margin-top: 6px;
+  margin-bottom: 6px;
+  line-height: 1.4;
+  transition: all 0.3s ease;
+  padding: 6px 10px;
+  border-radius: 6px;
+  display: none;
+  text-align: center;
+  font-weight: 500;
+  max-width: 100%;
+  box-sizing: border-box;
+}
+
+.mensagem-status-input.positivo {
+  color: #1e7e34;
+  background-color: rgba(40, 167, 69, 0.1);
+}
+
+.mensagem-status-input.negativo {
+  color: #bd2130;
+  background-color: rgba(220, 53, 69, 0.1);
+}
+
+.mensagem-status-input.neutro {
+  color: #5a6268;
+  background-color: rgba(108, 117, 125, 0.1);
+}
+
+/* Animação suave das mensagens */
+.mensagem-status-input.animar {
+  animation: fadeInUp 0.3s ease-out;
+}
+
+@keyframes fadeInUp {
+  from {
+    opacity: 0;
+    transform: translateY(5px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+/* ✅ RESPONSIVIDADE OTIMIZADA */
+@media (max-width: 768px) and (min-width: 481px) {
+  .formulario-mentor-novo {
+    width: 360px;
+    min-width: 340px;
+    max-width: min(380px, calc(100vw - 40px)); /* ✅ Respeitar viewport */
+    padding: 22px;
+    max-height: min(90vh, calc(100vh - 40px)); /* ✅ Respeitar viewport */
+  }
+}
+
+@media (max-width: 480px) {
+  .formulario-mentor-novo {
+    width: 310px;
+    min-width: 290px;
+    max-width: min(330px, calc(100vw - 20px)); /* ✅ Margem menor em mobile */
+    padding: 18px;
+    max-height: min(95vh, calc(100vh - 20px)); /* ✅ Margem menor em mobile */
+  }
+  
+  .mentor-foto-novo {
+    width: 50px;
+    height: 50px;
+  }
+  
+  .mentor-nome-novo {
+    font-size: 15px;
+  }
+}
+
+@media (max-width: 320px) {
+  .formulario-mentor-novo {
+    width: 280px;
+    min-width: 260px;
+    max-width: min(300px, calc(100vw - 20px)); /* ✅ Nunca vazar */
+    padding: 15px;
+    max-height: calc(100vh - 20px); /* ✅ Altura segura */
+  }
+}
+
+/* ✅ PREVENÇÃO DE SCROLL GLOBAL E VAZAMENTO */
+body.modal-aberto {
+  overflow: hidden !important; /* ✅ Remove barra de scroll do body */
+  padding-right: 0 !important; /* ✅ Evita shift de layout */
+}
+
+/* ✅ GARANTIR QUE O FORMULÁRIO NUNCA ULTRAPASSE OS LIMITES */
+.formulario-mentor-novo {
+  /* Garantir que sempre caiba na tela */
+  right: auto !important;
+  bottom: auto !important;
+}
+
+/* ✅ AJUSTE PARA TELAS MUITO PEQUENAS */
+@media (max-width: 400px) {
+  .formulario-mentor-novo {
+    width: calc(100vw - 30px) !important;
+    min-width: 280px !important;
+    max-width: calc(100vw - 30px) !important;
+    left: 15px !important;
+    right: 15px !important;
+    transform: translateY(-50%) !important;
+    margin: 0 !important;
+  }
+}
+
+/* Animações */
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+    transform: translate(-50%, -60%);
+  }
+  to {
+    opacity: 1;
+    transform: translate(-50%, -50%);
+  }
+}
+
+@keyframes spin {
+  0% { transform: translate(-50%, -50%) rotate(0deg); }
+  100% { transform: translate(-50%, -50%) rotate(360deg); }
+}
+
+@keyframes pulse {
+  0%, 100% { transform: scale(1); }
+  50% { transform: scale(1.02); }
+}
+
+.formulario-mentor-novo.ativo {
+  display: block;
+  animation: fadeIn 0.3s ease-out;
+}
+
+.status-calculo-novo.animando {
+  animation: pulse 0.4s ease-in-out;
+}
+
+/* Prevenção de conflitos */
+.formulario-mentor-novo * {
+  box-sizing: border-box;
+}
+
+.formulario-mentor-novo .mentor-card,
+.formulario-mentor-novo .mentor-item,
+.formulario-mentor-novo .formulario-mentor {
+  all: initial;
+  font-family: inherit;
+}
+</style>
+
+<script>
+// ===== SISTEMA NOVO DE CADASTRO DE MENTORES =====
+const SistemaCadastroNovo = {
+  // Configurações
+  config: {
+    AVATAR_PADRAO: "https://cdn-icons-png.flaticon.com/512/847/847969.png",
+    TIMEOUT_ANIMACAO: 300,
+    TIMEOUT_STATUS: 200,
+  },
+
+  // Estado atual
+  estado: {
+    mentorId: null,
+    tipoOperacao: null,
+    valorEntrada: 0,
+    valorTotal: 0,
+    valorRed: 0,
+    formularioAberto: false,
+  },
+
+  // Cache de elementos DOM
+  elementos: {},
+
+  // ===== INICIALIZAÇÃO =====
+  inicializar() {
+    this.cachearElementos();
+    this.configurarEventos();
+    this.configurarMascaras();
+    this.integrarComSistemaExistente();
+    
+    console.log("🎯 Sistema Novo de Cadastro inicializado com sucesso");
+  },
+
+  // Cachear elementos DOM
+  cachearElementos() {
+    this.elementos = {
+      formulario: document.getElementById('formulario-mentor-novo'),
+      btnFechar: document.querySelector('.btn-fechar-novo'),
+      mentorFoto: document.querySelector('.mentor-foto-novo'),
+      mentorNome: document.querySelector('.mentor-nome-novo'),
+      mentorIdInput: document.querySelector('.mentor-id-novo'),
+      tipoOperacaoInput: document.querySelector('.tipo-operacao-novo'),
+      
+      // Opções
+      opcoesCash: document.querySelector('[data-tipo="cash"]'),
+      opcoesGreen: document.querySelector('[data-tipo="green"]'),
+      opcoesRed: document.querySelector('[data-tipo="red"]'),
+      
+      // Inputs duplos
+      inputsDuplos: document.getElementById('inputs-duplos'),
+      inputEntrada: document.getElementById('input-entrada'),
+      inputTotal: document.getElementById('input-total'),
+      labelTotal: document.getElementById('label-total'),
+      
+      // Input único
+      inputUnico: document.getElementById('input-unico'),
+      inputRed: document.getElementById('input-red'),
+      
+      // Status
+      statusContainer: document.querySelector('.status-calculo-novo'),
+      rotuloStatus: document.getElementById('rotulo-status'),
+      valorStatus: document.getElementById('valor-status'),
+      
+      // Form e botão
+      form: document.getElementById('form-mentor-novo'),
+      btnEnviar: document.querySelector('.botao-enviar-novo'),
+    };
+  },
+
+  // ===== EVENTOS =====
+  configurarEventos() {
+    // Opções Cash, Green, Red
+    document.querySelectorAll('.opcao-novo').forEach(opcao => {
+  opcao.addEventListener('click', (e) => {
+    const tipo = opcao.dataset.tipo;
+    this.selecionarTipo(tipo);
+    // Preencher input-entrada ou input-red com valor da unidade
+    const valorUndSpan = document.getElementById('valor-unidade');
+    if (valorUndSpan) {
+      const valorUnd = valorUndSpan.textContent.trim();
+      if (tipo === 'red') {
+        const inputRed = document.getElementById('input-red');
+        if (inputRed && valorUnd && valorUnd !== 'R$ 0,00') {
+          inputRed.value = valorUnd;
+          setTimeout(() => {
+            this.atualizarCalculoRed();
+          }, 100);
+        }
+      } else {
+        const inputEntrada = document.getElementById('input-entrada');
+        if (inputEntrada && valorUnd && valorUnd !== 'R$ 0,00') {
+          inputEntrada.value = valorUnd;
+          setTimeout(() => {
+            this.atualizarCalculo();
+          }, 100);
+        }
+      }
+    }
+  });
+});
+
+    // Inputs duplos
+    if (this.elementos.inputEntrada) {
+      this.elementos.inputEntrada.addEventListener('input', () => {
+        this.atualizarCalculo();
+      });
+    }
+
+    if (this.elementos.inputTotal) {
+      this.elementos.inputTotal.addEventListener('input', () => {
+        this.atualizarCalculo();
+      });
+    }
+
+    // Input Red
+    if (this.elementos.inputRed) {
+      this.elementos.inputRed.addEventListener('input', () => {
+        this.atualizarCalculoRed();
+      });
+    }
+
+    // Formulário
+    if (this.elementos.form) {
+      this.elementos.form.addEventListener('submit', (e) => {
+        e.preventDefault();
+        this.processarSubmissao(e.target);
+      });
+    }
+
+    // Botão fechar
+    if (this.elementos.btnFechar) {
+      this.elementos.btnFechar.addEventListener('click', () => {
+        this.fecharFormulario();
+      });
+    }
+
+    // Fechar ao clicar no overlay
+    if (this.elementos.formulario) {
+      this.elementos.formulario.addEventListener('click', (e) => {
+        if (e.target === this.elementos.formulario) {
+          this.fecharFormulario();
+        }
+      });
+    }
+
+    // ESC para fechar
+    document.addEventListener('keydown', (e) => {
+      if (e.key === 'Escape' && this.estado.formularioAberto) {
+        this.fecharFormulario();
+      }
+    });
+  },
+
+  // ===== MÁSCARAS =====
+  configurarMascaras() {
+    const inputs = [
+      this.elementos.inputEntrada,
+      this.elementos.inputTotal,
+      this.elementos.inputRed
+    ];
+    
+    inputs.forEach(input => {
+      if (input) {
+        this.aplicarMascaraMonetaria(input);
+      }
+    });
+  },
+
+  aplicarMascaraMonetaria(input) {
+    if (!input.value || input.value === '') {
+      input.value = 'R$ 0,00';
+    }
+
+    input.addEventListener('input', (e) => {
+      let valor = e.target.value.replace(/\D/g, '');
+      
+      if (valor === '') {
+        e.target.value = 'R$ 0,00';
+        return;
+      }
+      
+      if (valor.length < 3) {
+        valor = valor.padStart(3, '0');
+      }
+      
+      const reais = valor.slice(0, -2);
+      const centavos = valor.slice(-2);
+      e.target.value = `R$ ${parseInt(reais).toLocaleString('pt-BR')},${centavos}`;
+      
+      setTimeout(() => {
+        if (this.estado.tipoOperacao === 'red') {
+          this.atualizarCalculoRed();
+        } else {
+          this.atualizarCalculo();
+        }
+      }, 50);
+    });
+
+    input.addEventListener('focus', (e) => {
+      setTimeout(() => {
+        e.target.select();
+      }, 50);
+    });
+  },
+
+  // ===== CONVERSÕES =====
+  converterParaFloat(valorBRL) {
+    if (!valorBRL || typeof valorBRL !== 'string') return 0;
+    return parseFloat(
+      valorBRL
+        .replace(/[^\d,.-]/g, '')
+        .replace(/\./g, '')
+        .replace(',', '.')
+    ) || 0;
+  },
+
+  formatarParaBRL(valor) {
+    const numero = typeof valor === 'string' ? this.converterParaFloat(valor) : valor;
+    return numero.toLocaleString('pt-BR', {
+      style: 'currency',
+      currency: 'BRL'
+    });
+  },
+
+  // ===== ABERTURA =====
+  abrirFormulario(card) {
+    if (!card || this.estado.formularioAberto) {
+      return;
+    }
+
+    const nomeMentor = card.getAttribute('data-nome') || 'Mentor';
+    const fotoMentor = card.getAttribute('data-foto') || this.config.AVATAR_PADRAO;
+    const idMentor = card.getAttribute('data-id') || '';
+
+    if (!idMentor) {
+      console.error('❌ ID do mentor não encontrado');
+      if (typeof ToastManager !== 'undefined') {
+        ToastManager.mostrar('❌ Erro: ID do mentor não encontrado', 'erro');
+      }
+      return;
+    }
+
+    this.preencherInfoMentor(nomeMentor, fotoMentor, idMentor);
+    this.resetarFormulario();
+    this.mostrarFormulario();
+  },
+
+  preencherInfoMentor(nome, foto, id) {
+    if (this.elementos.mentorNome) {
+      this.elementos.mentorNome.textContent = nome;
+    }
+
+    if (this.elementos.mentorFoto) {
+      this.elementos.mentorFoto.src = foto;
+      this.elementos.mentorFoto.onerror = () => {
+        this.elementos.mentorFoto.src = this.config.AVATAR_PADRAO;
+      };
+    }
+
+    if (this.elementos.mentorIdInput) {
+      this.elementos.mentorIdInput.value = id;
+    }
+
+    this.estado.mentorId = id;
+  },
+
+  mostrarFormulario() {
+    if (!this.elementos.formulario) return;
+
+    // ✅ REMOVER SCROLL GLOBAL
+    document.body.classList.add('modal-aberto');
+
+    this.elementos.formulario.style.display = 'block';
+    this.elementos.formulario.offsetHeight;
+    this.elementos.formulario.classList.add('ativo');
+    
+    this.estado.formularioAberto = true;
+
+    // Mostrar mensagem inicial e ocultar inputs
+    const mensagemInicial = document.getElementById('mensagem-inicial-gestao');
+    if (mensagemInicial) {
+      // Ocultar inputs primeiro
+      if (this.elementos.inputsDuplos) {
+        this.elementos.inputsDuplos.classList.remove('ativo');
+        this.elementos.inputsDuplos.style.display = 'none';
+      }
+      if (this.elementos.inputUnico) {
+        this.elementos.inputUnico.classList.remove('ativo');
+        this.elementos.inputUnico.style.display = 'none';
+      }
+      
+      // Agora mostrar a mensagem com transição
+      mensagemInicial.style.display = 'block';
+      mensagemInicial.classList.add('ativo');
+      
+      // Forçar reflow e definir opacidade
+      mensagemInicial.offsetHeight;
+      mensagemInicial.style.opacity = '1';
+    }
+
+    setTimeout(() => {
+      const primeiroInput = this.elementos.formulario.querySelector('input[type="text"]:not([style*="display: none"])');
+      if (primeiroInput) {
+        primeiroInput.focus();
+      }
+    }, this.config.TIMEOUT_ANIMACAO);
+  },
+
+  // ===== SELEÇÃO DE TIPO =====
+  selecionarTipo(tipo) {
+    if (!['cash', 'green', 'red'].includes(tipo)) {
+      return;
+    }
+
+    // Remover seleção anterior
+    document.querySelectorAll('.opcao-novo').forEach(opcao => {
+      opcao.classList.remove('selecionada');
+      const radio = opcao.querySelector('input[type="radio"]');
+      if (radio) radio.checked = false;
+    });
+
+    // Ocultar mensagem inicial e mostrar inputs apropriados
+    const mensagemInicial = document.getElementById('mensagem-inicial-gestao');
+    if (mensagemInicial) {
+      // Primeiro fade out a mensagem inicial
+      mensagemInicial.style.opacity = '0';
+      
+      setTimeout(() => {
+        mensagemInicial.classList.remove('ativo');
+        mensagemInicial.style.display = 'none';
+        
+        // Depois preparar a exibição dos inputs corretos
+        if (tipo === 'red') {
+          if (this.elementos.inputsDuplos) {
+            this.elementos.inputsDuplos.classList.remove('ativo');
+            this.elementos.inputsDuplos.style.display = 'none';
+          }
+          if (this.elementos.inputUnico) {
+            this.elementos.inputUnico.style.display = 'block';
+            // Force reflow
+            this.elementos.inputUnico.offsetHeight;
+            this.elementos.inputUnico.classList.add('ativo');
+          }
+        } else {
+          if (this.elementos.inputUnico) {
+            this.elementos.inputUnico.classList.remove('ativo');
+            this.elementos.inputUnico.style.display = 'none';
+          }
+          if (this.elementos.inputsDuplos) {
+            this.elementos.inputsDuplos.style.display = 'block';
+            // Force reflow
+            this.elementos.inputsDuplos.offsetHeight;
+            this.elementos.inputsDuplos.classList.add('ativo');
+          }
+        }
+      }, 300); // Aguardar fade out da mensagem inicial
+    }
+
+    // Ocultar todas as mensagens de status
+    document.querySelectorAll('.mensagem-status-input').forEach(msg => {
+      msg.style.display = 'none';
+    });
+
+    // Selecionar novo
+    const opcaoSelecionada = document.querySelector(`[data-tipo="${tipo}"]`);
+    if (opcaoSelecionada) {
+      opcaoSelecionada.classList.add('selecionada');
+      const radio = opcaoSelecionada.querySelector('input[type="radio"]');
+      if (radio) radio.checked = true;
+    }
+
+    if (this.elementos.tipoOperacaoInput) {
+      this.elementos.tipoOperacaoInput.value = tipo;
+    }
+
+    this.mostrarCamposParaTipo(tipo);
+    this.estado.tipoOperacao = tipo;
+
+    setTimeout(() => {
+      if (tipo === 'red') {
+        this.atualizarCalculoRed();
+      } else {
+        this.atualizarCalculo();
+      }
+    }, this.config.TIMEOUT_STATUS);
+  },
+
+  mostrarCamposParaTipo(tipo) {
+    if (tipo === 'red') {
+      if (this.elementos.inputsDuplos) {
+        this.elementos.inputsDuplos.classList.remove('ativo');
+      }
+      if (this.elementos.inputUnico) {
+        this.elementos.inputUnico.classList.add('ativo');
+      }
+    } else {
+      if (this.elementos.inputUnico) {
+        this.elementos.inputUnico.classList.remove('ativo');
+      }
+     if (this.elementos.inputsDuplos) {
+       this.elementos.inputsDuplos.classList.add('ativo');
+     }
+     
+     if (this.elementos.labelTotal) {
+       const textoLabel = tipo === 'cash' ? 'Total: Cash' : 'Total: Green';
+       this.elementos.labelTotal.textContent = textoLabel;
+     }
+   }
+ },
+
+ // ===== CÁLCULOS =====
+ atualizarCalculo() {
+   if (this.estado.tipoOperacao === 'red') return;
+
+   const entrada = this.converterParaFloat(this.elementos.inputEntrada?.value || '0');
+   const total = this.converterParaFloat(this.elementos.inputTotal?.value || '0');
+
+   this.estado.valorEntrada = entrada;
+   this.estado.valorTotal = total;
+
+   // Atualiza mensagens de status dos inputs
+   const inputEntradaMsg = this.elementos.inputEntrada?.nextElementSibling;
+   const inputTotalMsg = this.elementos.inputTotal?.nextElementSibling;
+   
+   // Obtém o valor da unidade carregado
+   const valorUndSpan = document.getElementById('valor-unidade');
+   const valorCarregado = valorUndSpan ? this.converterParaFloat(valorUndSpan.textContent) : 0;
+   
+   if (inputEntradaMsg) {
+     if (entrada === 0) {
+       // Se não digitou nada, oculta a mensagem
+       inputEntradaMsg.style.display = 'none';
+     } else if (entrada > valorCarregado) {
+       // Se digitou valor maior que o carregado
+       inputEntradaMsg.style.display = 'block';
+       inputEntradaMsg.textContent = 'Atenção! Você está operando fora dos parâmetros de gestão isso pode comprometer o controle e a estratégia.';
+       inputEntradaMsg.className = 'mensagem-status-input negativo animar';
+     } else if (entrada < valorCarregado) {
+       // Se digitou valor menor que o carregado
+       inputEntradaMsg.style.display = 'block';
+       inputEntradaMsg.textContent = 'Parabéns! Você está operando com um valor abaixo da gestão, o que demonstra controle e responsabilidade.';
+       inputEntradaMsg.className = 'mensagem-status-input positivo animar';
+     }
+   }
+
+   // Mensagem do input total permanece oculta
+   if (inputTotalMsg) {
+     inputTotalMsg.style.display = 'none';
+   }
+
+   const resultado = total - entrada;
+   this.atualizarStatus(resultado);
+ },
+
+ atualizarCalculoRed() {
+   if (this.estado.tipoOperacao !== 'red') return;
+
+   const valorRed = this.converterParaFloat(this.elementos.inputRed?.value || '0');
+   this.estado.valorRed = valorRed;
+
+   // Atualiza mensagem de status do input Red
+   const inputRedMsg = this.elementos.inputRed?.nextElementSibling;
+   
+   // Obtém o valor da unidade carregado
+   const valorUndSpan = document.getElementById('valor-unidade');
+   const valorCarregado = valorUndSpan ? this.converterParaFloat(valorUndSpan.textContent) : 0;
+   
+   if (inputRedMsg) {
+     if (valorRed === 0) {
+       // Se não digitou nada, oculta a mensagem
+       inputRedMsg.style.display = 'none';
+     } else if (valorRed > valorCarregado) {
+       // Se digitou valor maior que o carregado, mostra mensagem de alerta
+       inputRedMsg.style.display = 'block';
+       inputRedMsg.textContent = 'Atenção! Você está operando fora dos parâmetros de gestão isso pode comprometer o controle e a estratégia.';
+       inputRedMsg.className = 'mensagem-status-input negativo animar';
+     } else {
+       // Para valores menores ou iguais, mostra mensagem motivacional
+       inputRedMsg.style.display = 'block';
+       inputRedMsg.textContent = 'Calma! Perder faz parte do processo. O mais importante é manter a gestão com foco no longo prazo seguindo a estratégia, o lucro vem naturalmente.';
+       inputRedMsg.className = 'mensagem-status-input neutro animar';
+     }
+   }
+
+   const resultado = -Math.abs(valorRed);
+   this.atualizarStatus(resultado);
+ },
+
+ // ===== STATUS =====
+ atualizarStatus(valor) {
+   if (!this.elementos.rotuloStatus || !this.elementos.valorStatus) return;
+
+   this.elementos.valorStatus.classList.remove('status-neutro', 'status-positivo', 'status-negativo');
+   this.elementos.statusContainer.classList.remove('status-positivo-ativo', 'status-negativo-ativo');
+
+   let rotulo = 'Neutro';
+   let classeStatus = 'status-neutro';
+   let classeContainer = '';
+
+   if (valor > 0) {
+     rotulo = 'Lucro'; // ✅ ALTERADO DE "Positivo" PARA "Lucro"
+     classeStatus = 'status-positivo';
+     classeContainer = 'status-positivo-ativo';
+   } else if (valor < 0) {
+     rotulo = 'Negativo';
+     classeStatus = 'status-negativo';
+     classeContainer = 'status-negativo-ativo';
+   }
+
+   this.elementos.rotuloStatus.textContent = rotulo;
+   this.elementos.valorStatus.textContent = this.formatarParaBRL(Math.abs(valor));
+   this.elementos.valorStatus.classList.add(classeStatus);
+   
+   if (classeContainer) {
+     this.elementos.statusContainer.classList.add(classeContainer);
+   }
+
+   this.elementos.statusContainer.classList.add('animando');
+   setTimeout(() => {
+     this.elementos.statusContainer.classList.remove('animando');
+   }, 400);
+ },
+
+ // ===== VALIDAÇÃO =====
+ validarFormulario() {
+   if (!this.estado.tipoOperacao) {
+     this.mostrarErro('⚠️ Selecione o tipo de operação (Cash, Green ou Red)');
+     return false;
+   }
+
+   if (this.estado.tipoOperacao === 'red') {
+     if (this.estado.valorRed <= 0) {
+       this.mostrarErro('⚠️ Informe um valor válido maior que zero para Red');
+       this.marcarCampoErro(this.elementos.inputRed);
+       return false;
+     }
+   } else {
+     if (this.estado.valorEntrada <= 0) {
+       this.mostrarErro('⚠️ Informe um valor válido maior que zero para Entrada');
+       this.marcarCampoErro(this.elementos.inputEntrada);
+       return false;
+     }
+     
+     if (this.estado.valorTotal <= 0) {
+       this.mostrarErro('⚠️ Informe um valor válido maior que zero para Total');
+       this.marcarCampoErro(this.elementos.inputTotal);
+       return false;
+     }
+   }
+
+   this.limparErrosCampos();
+   return true;
+ },
+
+ mostrarErro(mensagem) {
+   if (typeof ToastManager !== 'undefined') {
+     ToastManager.mostrar(mensagem, 'aviso');
+   } else {
+     alert(mensagem);
+   }
+ },
+
+ marcarCampoErro(campo) {
+   if (campo) {
+     campo.classList.add('erro');
+     setTimeout(() => {
+       campo.classList.remove('erro');
+     }, 3000);
+   }
+ },
+
+ limparErrosCampos() {
+   [this.elementos.inputEntrada, this.elementos.inputTotal, this.elementos.inputRed].forEach(campo => {
+     if (campo) {
+       campo.classList.remove('erro');
+       campo.classList.add('sucesso');
+       setTimeout(() => {
+         campo.classList.remove('sucesso');
+       }, 2000);
+     }
+   });
+ },
+
+ // ===== SUBMISSÃO =====
+ async processarSubmissao(form) {
+   console.log('📤 Iniciando submissão...');
+
+   if (!this.validarFormulario()) {
+     return;
+   }
+
+   const dadosEnvio = this.prepararDadosEnvio();
+   this.definirEstadoBotao(true);
+   
+   try {
+     console.log('📡 Enviando dados:', dadosEnvio);
+
+     const response = await fetch('cadastrar-valor-novo.php', {
+       method: 'POST',
+       headers: {
+         'Content-Type': 'application/json',
+       },
+       body: JSON.stringify(dadosEnvio)
+     });
+
+     if (!response.ok) {
+       throw new Error(`Erro HTTP ${response.status}: ${response.statusText}`);
+     }
+
+     const resultado = await response.json();
+     console.log('✅ Resposta:', resultado);
+
+     if (typeof ToastManager !== 'undefined') {
+       ToastManager.mostrar(resultado.mensagem, resultado.tipo);
+     } else {
+       alert(resultado.mensagem);
+     }
+
+     if (resultado.tipo === 'sucesso') {
+       this.fecharFormulario();
+       await this.atualizarSistemaExistente();
+     }
+
+   } catch (error) {
+     console.error('❌ Erro na submissão:', error);
+     
+     const mensagem = '❌ Erro ao cadastrar valor: ' + error.message;
+     if (typeof ToastManager !== 'undefined') {
+       ToastManager.mostrar(mensagem, 'erro');
+     } else {
+       alert(mensagem);
+     }
+   } finally {
+     this.definirEstadoBotao(false);
+   }
+ },
+
+ prepararDadosEnvio() {
+   const dados = {
+     id_mentor: this.estado.mentorId,
+     tipo_operacao: this.estado.tipoOperacao,
+   };
+
+   if (this.estado.tipoOperacao === 'red') {
+     dados.valor_red = this.estado.valorRed;
+     dados.valor_green = null;
+   } else {
+     const resultado = this.estado.valorTotal - this.estado.valorEntrada;
+     
+     if (resultado >= 0) {
+       dados.valor_green = resultado;
+       dados.valor_red = null;
+     } else {
+       dados.valor_green = null;
+       dados.valor_red = Math.abs(resultado);
+     }
+   }
+
+   return dados;
+ },
+
+ definirEstadoBotao(carregando) {
+   if (!this.elementos.btnEnviar) return;
+
+   if (carregando) {
+     this.elementos.btnEnviar.disabled = true;
+     this.elementos.btnEnviar.classList.add('carregando');
+     this.elementos.btnEnviar.textContent = 'Processando...'; // ✅ REMOVIDO CAIXA ALTA
+   } else {
+     this.elementos.btnEnviar.disabled = false;
+     this.elementos.btnEnviar.classList.remove('carregando');
+     this.elementos.btnEnviar.textContent = 'Cadastrar'; // ✅ REMOVIDO CAIXA ALTA
+   }
+ },
+
+ async atualizarSistemaExistente() {
+   console.log('🔄 Atualizando sistema...');
+
+   const atualizacoes = [];
+
+   if (typeof MentorManager !== 'undefined' && MentorManager.recarregarMentores) {
+     atualizacoes.push(MentorManager.recarregarMentores());
+   }
+
+   if (typeof DadosManager !== 'undefined' && DadosManager.atualizarLucroEBancaViaAjax) {
+     atualizacoes.push(DadosManager.atualizarLucroEBancaViaAjax());
+   }
+
+   if (typeof atualizarAreaDireita === 'function') {
+     setTimeout(atualizarAreaDireita, 50);
+   }
+
+   if (typeof atualizarDadosModal === 'function') {
+     setTimeout(atualizarDadosModal, 100);
+   }
+
+   if (typeof MetaDiariaManager !== 'undefined' && MetaDiariaManager.atualizarMetaDiaria) {
+     setTimeout(() => {
+       MetaDiariaManager.atualizarMetaDiaria();
+     }, 150);
+   }
+
+   try {
+     await Promise.all(atualizacoes);
+     console.log('✅ Sistema atualizado');
+   } catch (error) {
+     console.warn('⚠️ Erro ao atualizar:', error);
+   }
+ },
+
+ // ===== RESET E FECHAMENTO =====
+  resetarFormulario() {
+   this.estado = {
+     ...this.estado,
+     tipoOperacao: null,
+     valorEntrada: 0,
+     valorTotal: 0,
+     valorRed: 0,
+   };
+
+   // Ocultar todas as mensagens de status
+   document.querySelectorAll('.mensagem-status-input').forEach(msg => {
+     msg.style.display = 'none';
+     msg.textContent = '';
+   });
+
+   document.querySelectorAll('.opcao-novo').forEach(opcao => {
+     opcao.classList.remove('selecionada');
+   });
+
+   document.querySelectorAll('input[type="radio"]').forEach(radio => {
+     radio.checked = false;
+   });   [this.elementos.inputEntrada, this.elementos.inputTotal, this.elementos.inputRed].forEach(input => {
+     if (input) {
+       input.value = 'R$ 0,00';
+       input.classList.remove('erro', 'sucesso');
+     }
+   });
+
+   if (this.elementos.inputsDuplos) {
+     this.elementos.inputsDuplos.classList.remove('ativo');
+   }
+   if (this.elementos.inputUnico) {
+     this.elementos.inputUnico.classList.remove('ativo');
+   }
+
+   this.atualizarStatus(0);
+
+   if (this.elementos.tipoOperacaoInput) {
+     this.elementos.tipoOperacaoInput.value = '';
+   }
+ },
+
+ fecharFormulario() {
+   if (!this.elementos.formulario || !this.estado.formularioAberto) {
+     return;
+   }
+
+   this.elementos.formulario.classList.remove('ativo');
+   
+   setTimeout(() => {
+     this.elementos.formulario.style.display = 'none';
+     this.resetarFormulario();
+     this.estado.formularioAberto = false;
+     // ✅ RESTAURAR SCROLL GLOBAL
+     document.body.classList.remove('modal-aberto');
+   }, this.config.TIMEOUT_ANIMACAO);
+ },
+
+ // ===== INTEGRAÇÃO =====
+ integrarComSistemaExistente() {
+   document.addEventListener('click', (e) => {
+     const card = e.target.closest('.mentor-card');
+     
+     if (card && !this.isClickNoMenu(e)) {
+       e.preventDefault();
+       e.stopPropagation();
+       
+       console.log('🎯 Interceptando clique para novo sistema');
+       this.abrirFormulario(card);
+     }
+   });
+
+   const observer = new MutationObserver((mutations) => {
+     mutations.forEach((mutation) => {
+       if (mutation.type === 'childList') {
+         mutation.addedNodes.forEach((node) => {
+           if (node.nodeType === 1 && node.classList.contains('mentor-card')) {
+             console.log('🔄 Novo card detectado');
+           }
+         });
+       }
+     });
+   });
+
+   const containerMentores = document.getElementById('listaMentores');
+   if (containerMentores) {
+     observer.observe(containerMentores, {
+       childList: true,
+       subtree: true
+     });
+   }
+ },
+
+ isClickNoMenu(event) {
+   const elementosIgnorar = [
+     '.menu-toggle',
+     '.menu-opcoes', 
+     '.btn-icon',
+     '.btn-lixeira',
+     'button',
+     'i[class*="fa"]'
+   ];
+
+   return elementosIgnorar.some(seletor => {
+     return event.target.closest(seletor) !== null;
+   });
+ },
+};
+
+// ===== FUNÇÕES GLOBAIS =====
+window.abrirFormularioNovo = (card) => {
+ SistemaCadastroNovo.abrirFormulario(card);
+};
+
+window.fecharFormularioNovo = () => {
+ SistemaCadastroNovo.fecharFormulario();
+};
+
+// ===== INICIALIZAÇÃO =====
+document.addEventListener('DOMContentLoaded', () => {
+ setTimeout(() => {
+   SistemaCadastroNovo.inicializar();
+   console.log('🚀 Sistema Novo integrado com sucesso!');
+ }, 100);
+});
+
+window.SistemaCadastroNovo = SistemaCadastroNovo;
+</script>
 
 
 
