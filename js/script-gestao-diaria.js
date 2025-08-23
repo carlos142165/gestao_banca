@@ -119,18 +119,20 @@ const ModalManager = {
     const modal = document.getElementById(modalId);
     if (!modal) return;
 
-    // Inicia animação de saída
+    // Inicia animação de saída e remove show class
     modal.classList.remove("show");
 
-    // Aguarda fim da animação
-    setTimeout(() => {
-      modal.style.display = "none";
-      document.body.style.overflow = "";
-      this.modalAtual = null;
+    // Remove estilo display flex/block imediatamente
+    modal.style.display = "none";
 
-      // Remove listeners
-      this.removerEventosModal(modal);
-    }, 300); // Mesmo tempo da transição CSS
+    // Restaura scroll do body
+    document.body.style.overflow = "";
+
+    // Limpa estado do modal
+    this.modalAtual = null;
+
+    // Remove todos os event listeners
+    this.removerEventosModal(modal);
   },
 
   adicionarEventosModal(modal) {
@@ -1833,12 +1835,28 @@ window.prepararFormularioNovoMentor = () =>
 window.editarMentor = (id) => FormularioManager.prepararEdicaoMentor(id);
 
 // Funções de exclusão
-window.excluirMentorDiretoConfirmacaoSimples = () =>
-  ExclusaoManager.confirmarExclusaoMentor();
-window.excluirMentorDireto = () => ExclusaoManager.abrirModalExclusaoMentor();
-window.fecharModalExclusao = () => ExclusaoManager.fecharModalExclusaoMentor();
-window.confirmarExclusaoMentor = () =>
-  ExclusaoManager.confirmarExclusaoMentorModal();
+window.excluirMentorDireto = async () => {
+  const id = document.getElementById("mentor-id")?.value;
+  const nome = document.getElementById("mentor-nome-preview")?.textContent;
+  if (id && nome) {
+    await ExclusaoManager.excluirMentor(id, nome);
+  }
+};
+
+window.fecharModalExclusao = () => {
+  const modal = document.getElementById("modal-confirmacao-exclusao");
+  if (modal) {
+    modal.style.display = "none";
+  }
+};
+
+window.confirmarExclusaoMentor = () => {
+  const id = document.getElementById("mentor-id")?.value;
+  const nome = document.getElementById("mentor-nome-preview")?.textContent;
+  if (id && nome) {
+    ExclusaoManager.excluirMentor(id, nome);
+  }
+};
 
 // Funções de imagem
 window.mostrarNomeArquivo = (input) => ImagemManager.mostrarNomeArquivo(input);
@@ -1847,16 +1865,6 @@ window.removerImagem = () => ImagemManager.removerImagem();
 // Funções de edição
 window.editarAposta = (id) => TelaEdicaoManager.editarAposta(id);
 window.fecharTelaEdicao = () => TelaEdicaoManager.fechar();
-
-// Funções de formulário e exclusão
-window.fecharFormulario = () => FormularioValorManager.resetarFormulario();
-window.excluirMentorDireto = async () => {
-  const id = document.getElementById("mentor-id")?.value;
-  const nome = document.getElementById("mentor-nome-preview")?.textContent;
-  if (id && nome) {
-    await ExclusaoManager.excluirMentor(id, nome);
-  }
-};
 
 // Função de atualização
 window.atualizarLucroEBancaViaAjax = () =>
@@ -4014,5 +4022,1136 @@ console.log(
 //
 //
 // ========================================================================================================================
-//                                                            NOVO
+//                        💼   FORMULARIO DE CADASTRO DO MENTOR + MODAL EXCLUSÃO DO MENTOR
 // ========================================================================================================================
+
+(function () {
+  "use strict";
+
+  // Aguarda o sistema principal carregar
+  const init = () => {
+    if (
+      typeof FormularioManager !== "undefined" &&
+      typeof ModalManager !== "undefined"
+    ) {
+      iniciarMelhoriasVisuais();
+    } else {
+      // Tenta novamente em 100ms
+      setTimeout(init, 100);
+    }
+  };
+
+  document.addEventListener("DOMContentLoaded", init);
+
+  function iniciarMelhoriasVisuais() {
+    console.log("🎨 Aplicando melhorias visuais modernas...");
+
+    // Melhorar as funções existentes sem quebrar nada
+    melhorarFuncoesExistentes();
+
+    // Adicionar recursos modernos
+    adicionarRecursosModernos();
+
+    console.log("✅ Melhorias visuais aplicadas com sucesso!");
+  }
+
+  // ===== MELHORAR FUNÇÕES EXISTENTES =====
+  function melhorarFuncoesExistentes() {
+    // Salvar referências das funções originais
+    const originalPrepararNovoMentor = FormularioManager.prepararNovoMentor;
+    const originalPrepararEdicaoMentor = FormularioManager.prepararEdicaoMentor;
+    const originalMostrarNomeArquivo = ImagemManager.mostrarNomeArquivo;
+    const originalRemoverImagem = ImagemManager.removerImagem;
+
+    // Melhorar prepararNovoMentor
+    FormularioManager.prepararNovoMentor = function () {
+      // Executa função original
+      if (originalPrepararNovoMentor) {
+        originalPrepararNovoMentor.call(this);
+      }
+
+      // Adiciona melhorias visuais
+      setTimeout(() => {
+        aplicarMelhoriasFormulario();
+        resetarContadorCaracteres();
+      }, 50);
+    };
+
+    // Melhorar prepararEdicaoMentor
+    FormularioManager.prepararEdicaoMentor = function (id) {
+      // Executa função original
+      if (originalPrepararEdicaoMentor) {
+        originalPrepararEdicaoMentor.call(this, id);
+      }
+
+      // Adiciona melhorias visuais
+      setTimeout(() => {
+        aplicarMelhoriasFormulario();
+        const nomeAtual = document.getElementById("nome")?.value || "";
+        atualizarContadorCaracteres(nomeAtual.length);
+      }, 50);
+    };
+
+    // Melhorar mostrarNomeArquivo
+    ImagemManager.mostrarNomeArquivo = function (input) {
+      // Executa função original
+      if (originalMostrarNomeArquivo) {
+        originalMostrarNomeArquivo.call(this, input);
+      }
+
+      // Adiciona melhorias
+      melhorarPreviewArquivo();
+    };
+
+    // Melhorar removerImagem
+    ImagemManager.removerImagem = function () {
+      // Executa função original
+      if (originalRemoverImagem) {
+        originalRemoverImagem.call(this);
+      }
+
+      // Adiciona melhorias
+      resetarPreviewArquivo();
+    };
+
+    // Melhorar ExclusaoManager
+    if (typeof ExclusaoManager !== "undefined") {
+      const originalConfirmarExclusaoModal =
+        ExclusaoManager.confirmarExclusaoModal;
+
+      ExclusaoManager.confirmarExclusaoModal = function (nome) {
+        // Usar modal melhorado se disponível
+        return mostrarModalConfirmacaoModerno(nome);
+      };
+    }
+
+    // Melhorar função global excluirMentorDireto
+    window.excluirMentorDireto = function () {
+      const mentorId = document.getElementById("mentor-id")?.value;
+      const nomeAtual =
+        document.getElementById("nome")?.value ||
+        document.getElementById("mentor-nome-preview")?.textContent;
+
+      if (!mentorId) {
+        mostrarToastModerno("ID do mentor não encontrado", "erro");
+        return;
+      }
+
+      executarExclusaoComModal(mentorId, nomeAtual);
+    };
+  }
+
+  // ===== APLICAR MELHORIAS AO FORMULÁRIO =====
+  function aplicarMelhoriasFormulario() {
+    // Adicionar loading overlay se não existir
+    adicionarLoadingOverlay();
+
+    // Melhorar campo de nome
+    melhorarCampoNome();
+
+    // Configurar drag & drop
+    configurarDragDrop();
+
+    // Adicionar contador de caracteres
+    adicionarContadorCaracteres();
+
+    // Melhorar clique na imagem
+    melhorarCliqueImagem();
+
+    // Melhorar envio do formulário
+    melhorarEnvioFormulario();
+  }
+
+  function adicionarLoadingOverlay() {
+    const modalConteudo = document.querySelector(".modal-conteudo");
+    if (modalConteudo && !document.getElementById("loading-overlay-moderno")) {
+      const loadingOverlay = document.createElement("div");
+      loadingOverlay.id = "loading-overlay-moderno";
+      loadingOverlay.style.cssText = `
+                position: absolute;
+                top: 0;
+                left: 0;
+                right: 0;
+                bottom: 0;
+                background: rgba(255, 255, 255, 0.9);
+                display: none;
+                align-items: center;
+                justify-content: center;
+                border-radius: 24px;
+                z-index: 100;
+            `;
+
+      const spinner = document.createElement("div");
+      spinner.style.cssText = `
+                width: 40px;
+                height: 40px;
+                border: 4px solid #e2e8f0;
+                border-top: 4px solid #667eea;
+                border-radius: 50%;
+                animation: spin 1s linear infinite;
+            `;
+
+      loadingOverlay.appendChild(spinner);
+      modalConteudo.appendChild(loadingOverlay);
+
+      // Adicionar animação de spin
+      if (!document.getElementById("spin-animation-moderno")) {
+        const style = document.createElement("style");
+        style.id = "spin-animation-moderno";
+        style.textContent = `
+                    @keyframes spin {
+                        0% { transform: rotate(0deg); }
+                        100% { transform: rotate(360deg); }
+                    }
+                `;
+        document.head.appendChild(style);
+      }
+    }
+  }
+
+  function melhorarCampoNome() {
+    const campoNome = document.getElementById("nome");
+    const nomePreview = document.getElementById("mentor-nome-preview");
+
+    if (campoNome && nomePreview && !campoNome._melhoriaAplicada) {
+      campoNome._melhoriaAplicada = true;
+
+      // Handler para input
+      const inputHandler = function (e) {
+        const nome = e.target.value;
+        nomePreview.textContent = nome || "";
+        atualizarContadorCaracteres(nome.length);
+
+        // Limitar caracteres a 100 (removendo limitação de 17 do sistema original)
+        if (nome.length > 100) {
+          e.target.value = nome.slice(0, 100);
+          nomePreview.textContent = e.target.value;
+          atualizarContadorCaracteres(100);
+        }
+      };
+
+      // Handler para blur (capitalização)
+      const blurHandler = function () {
+        const nome = this.value.trim();
+        if (nome) {
+          const nomeFormatado = capitalizarNome(nome);
+          this.value = nomeFormatado;
+          nomePreview.textContent = nomeFormatado;
+        }
+      };
+
+      // Remover listeners existentes e adicionar novos
+      campoNome.removeEventListener("input", inputHandler);
+      campoNome.removeEventListener("blur", blurHandler);
+
+      campoNome.addEventListener("input", inputHandler);
+      campoNome.addEventListener("blur", blurHandler);
+    }
+  }
+
+  function configurarDragDrop() {
+    const labelArquivo = document.querySelector(".label-arquivo");
+    if (!labelArquivo || labelArquivo._dragDropConfigured) return;
+
+    labelArquivo._dragDropConfigured = true;
+
+    const preventDefaults = (e) => {
+      e.preventDefault();
+      e.stopPropagation();
+    };
+
+    const highlight = () => {
+      labelArquivo.style.transform = "scale(1.02)";
+      labelArquivo.style.boxShadow = "0 8px 25px rgba(102, 126, 234, 0.5)";
+    };
+
+    const unhighlight = () => {
+      labelArquivo.style.transform = "";
+      labelArquivo.style.boxShadow = "";
+    };
+
+    const handleDrop = (e) => {
+      const files = e.dataTransfer.files;
+      if (files.length > 0) {
+        const fotoInput = document.getElementById("foto");
+        if (fotoInput) {
+          fotoInput.files = files;
+          window.mostrarNomeArquivo(fotoInput);
+        }
+      }
+    };
+
+    ["dragenter", "dragover", "dragleave", "drop"].forEach((eventName) => {
+      labelArquivo.addEventListener(eventName, preventDefaults, false);
+    });
+
+    ["dragenter", "dragover"].forEach((eventName) => {
+      labelArquivo.addEventListener(eventName, highlight, false);
+    });
+
+    ["dragleave", "drop"].forEach((eventName) => {
+      labelArquivo.addEventListener(eventName, unhighlight, false);
+    });
+
+    labelArquivo.addEventListener("drop", handleDrop, false);
+  }
+
+  function adicionarContadorCaracteres() {
+    const campoNome = document.getElementById("nome");
+    if (!campoNome || document.getElementById("char-counter-moderno")) return;
+
+    const contador = document.createElement("div");
+    contador.id = "char-counter-moderno";
+    contador.style.cssText = `
+            text-align: right;
+            font-size: 12px;
+            color: #718096;
+            margin-top: 5px;
+            transition: color 0.3s ease;
+        `;
+    contador.textContent = "0/100 caracteres";
+
+    // Inserir após o campo nome
+    campoNome.parentNode.insertBefore(contador, campoNome.nextSibling);
+  }
+
+  function melhorarCliqueImagem() {
+    const previewImg = document.getElementById("preview-img");
+    if (previewImg && !previewImg._clickConfigured) {
+      previewImg._clickConfigured = true;
+      previewImg.style.cursor = "pointer";
+
+      previewImg.addEventListener("click", function () {
+        const fotoInput = document.getElementById("foto");
+        if (fotoInput) {
+          fotoInput.click();
+        }
+      });
+    }
+  }
+
+  function melhorarEnvioFormulario() {
+    const form = document.querySelector(".formulario-mentor-completo");
+    if (!form || form._envioMelhorado) return;
+
+    form._envioMelhorado = true;
+
+    // Interceptar envio do formulário
+    form.addEventListener("submit", async function (e) {
+      e.preventDefault();
+
+      const nome = document.getElementById("nome")?.value?.trim();
+
+      // Validações melhoradas
+      if (!nome || nome.length < 2) {
+        mostrarToastModerno("Nome deve ter pelo menos 2 caracteres", "erro");
+        return;
+      }
+
+      if (nome.length > 100) {
+        mostrarToastModerno("Nome deve ter no máximo 100 caracteres", "erro");
+        return;
+      }
+
+      // Usar a função original do FormularioManager
+      if (
+        typeof FormularioManager !== "undefined" &&
+        FormularioManager.processarSubmissaoMentor
+      ) {
+        mostrarLoadingModerno(true);
+
+        try {
+          await FormularioManager.processarSubmissaoMentor(this);
+        } catch (error) {
+          console.error("Erro no envio:", error);
+          mostrarToastModerno("Erro ao processar formulário", "erro");
+        } finally {
+          mostrarLoadingModerno(false);
+        }
+      }
+    });
+  }
+
+  // ===== MODAL DE CONFIRMAÇÃO MODERNO =====
+  function mostrarModalConfirmacaoModerno(nome) {
+    return new Promise((resolve) => {
+      const modal = document.getElementById("modal-confirmacao-exclusao");
+      if (!modal) {
+        console.error("Modal de confirmação não encontrado");
+        resolve(false);
+        return;
+      }
+
+      // Atualizar texto
+      const modalTexto = modal.querySelector(".modal-texto");
+      if (modalTexto) {
+        modalTexto.innerHTML = `
+                    Tem certeza que deseja excluir o mentor <strong>${nome}</strong>?<br>
+                    <br>
+                    <span style="color: #e53e3e; font-size: 14px;">
+                        Esta ação não pode ser desfeita.
+                    </span>
+                `;
+      }
+
+      // Configurar botões
+      const btnConfirmar = modal.querySelector(".botao-confirmar");
+      const btnCancelar = modal.querySelector(".botao-cancelar");
+
+      // Limpar listeners antigos clonando botões
+      if (btnConfirmar) {
+        const novoConfirmar = btnConfirmar.cloneNode(true);
+        btnConfirmar.parentNode.replaceChild(novoConfirmar, btnConfirmar);
+
+        novoConfirmar.addEventListener("click", () => {
+          fecharModalConfirmacao();
+          resolve(true);
+        });
+      }
+
+      if (btnCancelar) {
+        const novoCancelar = btnCancelar.cloneNode(true);
+        btnCancelar.parentNode.replaceChild(novoCancelar, btnCancelar);
+
+        novoCancelar.addEventListener("click", () => {
+          fecharModalConfirmacao();
+          resolve(false);
+        });
+      }
+
+      // Mostrar modal usando o ModalManager existente
+      if (typeof ModalManager !== "undefined") {
+        ModalManager.abrir("modal-confirmacao-exclusao");
+      } else {
+        modal.classList.add("show");
+        modal.style.display = "flex";
+      }
+    });
+  }
+
+  function fecharModalConfirmacao() {
+    const modal = document.getElementById("modal-confirmacao-exclusao");
+    if (modal) {
+      if (typeof ModalManager !== "undefined") {
+        ModalManager.fechar("modal-confirmacao-exclusao");
+      } else {
+        modal.classList.remove("show");
+        setTimeout(() => {
+          modal.style.display = "none";
+        }, 300);
+      }
+    }
+  }
+
+  async function executarExclusaoComModal(mentorId, nome) {
+    const confirmacao = await mostrarModalConfirmacaoModerno(nome);
+    if (!confirmacao) return;
+
+    // Usar ExclusaoManager existente se disponível
+    if (
+      typeof ExclusaoManager !== "undefined" &&
+      ExclusaoManager.excluirMentor
+    ) {
+      await ExclusaoManager.excluirMentor(mentorId, nome);
+    } else {
+      // Fallback: exclusão manual
+      await executarExclusaoManual(mentorId);
+    }
+  }
+
+  async function executarExclusaoManual(mentorId) {
+    mostrarLoadingModerno(true);
+
+    try {
+      const formData = new FormData();
+      formData.append("excluir_mentor", mentorId);
+
+      const response = await fetch("gestao-diaria.php", {
+        method: "POST",
+        body: formData,
+        headers: {
+          "X-Requested-With": "XMLHttpRequest",
+        },
+      });
+
+      if (!response.ok) {
+        throw new Error(`Erro HTTP: ${response.status}`);
+      }
+
+      let resultado;
+      try {
+        resultado = await response.json();
+      } catch (e) {
+        // Se não for JSON, tenta interpretar como sucesso
+        const text = await response.text();
+        if (text.includes("<!DOCTYPE html") || text.includes("<html")) {
+          resultado = {
+            success: true,
+            message: "Mentor excluído com sucesso!",
+          };
+        } else {
+          throw new Error("Resposta inválida do servidor");
+        }
+      }
+
+      if (resultado.success) {
+        mostrarToastModerno("✅ Mentor excluído com sucesso!", "sucesso");
+
+        // Fechar modal
+        if (typeof ModalManager !== "undefined") {
+          ModalManager.fechar("modal-form");
+        } else {
+          window.fecharModal();
+        }
+
+        // Recarregar dados
+        setTimeout(() => {
+          if (
+            typeof MentorManager !== "undefined" &&
+            MentorManager.recarregarMentores
+          ) {
+            MentorManager.recarregarMentores();
+          } else {
+            window.location.reload();
+          }
+        }, 1000);
+      } else {
+        throw new Error(resultado.message || "Erro ao excluir mentor");
+      }
+    } catch (error) {
+      console.error("Erro ao excluir mentor:", error);
+      mostrarToastModerno(`❌ ${error.message}`, "erro");
+    } finally {
+      mostrarLoadingModerno(false);
+    }
+  }
+
+  // ===== RECURSOS MODERNOS ADICIONAIS =====
+  function adicionarRecursosModernos() {
+    // Melhorar eventos ESC
+    document.addEventListener("keydown", function (e) {
+      if (e.key === "Escape") {
+        const modalConfirmacao = document.getElementById(
+          "modal-confirmacao-exclusao"
+        );
+        const modalPrincipal = document.getElementById("modal-form");
+
+        if (modalConfirmacao && modalConfirmacao.style.display === "flex") {
+          fecharModalConfirmacao();
+        } else if (
+          modalPrincipal &&
+          modalPrincipal.classList.contains("show")
+        ) {
+          window.fecharModal();
+        }
+      }
+    });
+  }
+
+  // ===== FUNÇÕES UTILITÁRIAS =====
+  function atualizarContadorCaracteres(count) {
+    const contador = document.getElementById("char-counter-moderno");
+    if (!contador) return;
+
+    contador.textContent = `${count}/100 caracteres`;
+
+    if (count > 90) {
+      contador.style.color = "#e53e3e";
+    } else if (count > 70) {
+      contador.style.color = "#d69e2e";
+    } else {
+      contador.style.color = "#718096";
+    }
+  }
+
+  function resetarContadorCaracteres() {
+    atualizarContadorCaracteres(0);
+  }
+
+  function capitalizarNome(nome) {
+    return nome
+      .toLowerCase()
+      .split(" ")
+      .map((word) => word.charAt(0).toUpperCase() + word.slice(1))
+      .join(" ");
+  }
+
+  function mostrarLoadingModerno(show) {
+    const overlay = document.getElementById("loading-overlay-moderno");
+    if (overlay) {
+      overlay.style.display = show ? "flex" : "none";
+    }
+
+    const form = document.querySelector(".formulario-mentor-completo");
+    if (form) {
+      if (show) {
+        form.style.pointerEvents = "none";
+        form.style.opacity = "0.7";
+      } else {
+        form.style.pointerEvents = "";
+        form.style.opacity = "";
+      }
+    }
+  }
+
+  function melhorarPreviewArquivo() {
+    const nomeArquivo = document.getElementById("nome-arquivo");
+    if (nomeArquivo) {
+      nomeArquivo.style.color = "#2b6cb0";
+      nomeArquivo.style.background = "#e6f3ff";
+      nomeArquivo.style.padding = "8px 16px";
+      nomeArquivo.style.borderRadius = "8px";
+      nomeArquivo.style.marginTop = "10px";
+      nomeArquivo.style.display = "block";
+    }
+  }
+
+  function resetarPreviewArquivo() {
+    const nomeArquivo = document.getElementById("nome-arquivo");
+    if (nomeArquivo) {
+      nomeArquivo.style.color = "#718096";
+      nomeArquivo.style.background = "#f7fafc";
+    }
+  }
+
+  function mostrarToastModerno(message, type = "sucesso") {
+    // Usar ToastManager existente se disponível
+    if (typeof ToastManager !== "undefined" && ToastManager.mostrar) {
+      ToastManager.mostrar(message, type);
+      return;
+    }
+
+    // Fallback: criar toast próprio
+    let toast = document.getElementById("toast-moderno");
+    if (!toast) {
+      toast = document.createElement("div");
+      toast.id = "toast-moderno";
+      toast.style.cssText = `
+                position: fixed;
+                top: 20px;
+                right: 20px;
+                background: white;
+                border-radius: 12px;
+                padding: 16px 20px;
+                box-shadow: 0 10px 25px rgba(0, 0, 0, 0.1);
+                z-index: 3000;
+                transform: translateX(400px);
+                transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+                display: flex;
+                align-items: center;
+                gap: 12px;
+                max-width: 400px;
+                font-family: 'Inter', sans-serif;
+                font-weight: 500;
+            `;
+      document.body.appendChild(toast);
+    }
+
+    // Define ícone e estilo baseado no tipo
+    let icon, borderColor;
+    switch (type) {
+      case "sucesso":
+        icon = '<i class="fas fa-check-circle" style="color: #48bb78;"></i>';
+        borderColor = "#48bb78";
+        break;
+      case "erro":
+        icon =
+          '<i class="fas fa-exclamation-circle" style="color: #e53e3e;"></i>';
+        borderColor = "#e53e3e";
+        break;
+      case "aviso":
+        icon =
+          '<i class="fas fa-exclamation-triangle" style="color: #d69e2e;"></i>';
+        borderColor = "#d69e2e";
+        break;
+      default:
+        icon = '<i class="fas fa-info-circle" style="color: #667eea;"></i>';
+        borderColor = "#667eea";
+    }
+
+    toast.innerHTML = `${icon}<span>${message}</span>`;
+    toast.style.borderLeft = `4px solid ${borderColor}`;
+    toast.style.transform = "translateX(0)";
+
+    // Remove após 4 segundos
+    setTimeout(() => {
+      toast.style.transform = "translateX(400px)";
+    }, 4000);
+  }
+
+  console.log("🎨 Melhorias visuais modernas carregadas!");
+  console.log("✅ Funcionalidades adicionadas sem quebrar o sistema:");
+  console.log("  - Design moderno e responsivo");
+  console.log("  - Drag & drop para upload");
+  console.log("  - Contador de caracteres (100 máx)");
+  console.log("  - Animações suaves");
+  console.log("  - Exclusão corrigida");
+  console.log("  - Toast notifications modernas");
+  console.log("🚀 Sistema mantido + visual moderno ativo!");
+})();
+// ===== JAVASCRIPT PARA CENTRALIZAR MODAL CORRETAMENTE =====
+
+document.addEventListener("DOMContentLoaded", function () {
+  setTimeout(function () {
+    console.log("🔧 Configurando modal centralizado...");
+
+    // Sobrescrever função excluirMentorDireto
+    window.excluirMentorDireto = function () {
+      console.log("🗑️ Executando exclusão");
+
+      const mentorId = document.getElementById("mentor-id")?.value;
+      const nomeAtual =
+        document.getElementById("nome")?.value ||
+        document.getElementById("mentor-nome-preview")?.textContent ||
+        "este mentor";
+
+      if (!mentorId) {
+        alert("ID do mentor não encontrado");
+        return;
+      }
+
+      mostrarModalCentralizado(mentorId, nomeAtual);
+    };
+
+    console.log("✅ Função de exclusão configurada");
+  }, 500);
+});
+
+function mostrarModalCentralizado(mentorId, nome) {
+  console.log("🎯 Criando modal centralizado para:", nome);
+
+  // Remover modal existente se houver
+  const modalExistente = document.getElementById("modal-exclusao-custom");
+  if (modalExistente) {
+    document.body.removeChild(modalExistente);
+  }
+
+  // Criar modal do zero
+  const modal = document.createElement("div");
+  modal.id = "modal-exclusao-custom";
+  modal.innerHTML = `
+        <div class="overlay-modal">
+            <div class="container-modal">
+                <div class="header-modal">
+                    <div class="icone-aviso">⚠️</div>
+                    <h3 class="titulo-modal">Confirmar Exclusão</h3>
+                </div>
+                
+                <div class="corpo-modal">
+                    <p class="texto-confirmacao">
+                        Tem certeza que deseja excluir o mentor <strong>${nome}</strong>?
+                    </p>
+                    <p class="texto-aviso">
+                        Esta ação não pode ser desfeita.
+                    </p>
+                </div>
+                
+                <div class="rodape-modal">
+                    <button class="btn-modal btn-cancelar" onclick="fecharModalCustom()">
+                        <span>❌ Cancelar</span>
+                    </button>
+                    <button class="btn-modal btn-confirmar" onclick="confirmarExclusaoCustom('${mentorId}', '${nome}')">
+                        <span>✅ Sim, excluir</span>
+                    </button>
+                </div>
+            </div>
+        </div>
+    `;
+
+  // Aplicar estilos inline para garantir funcionamento
+  modal.style.cssText = `
+        position: fixed;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        z-index: 999999;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        background: rgba(0, 0, 0, 0.8);
+        backdrop-filter: blur(5px);
+        animation: modalFadeIn 0.3s ease-out;
+    `;
+
+  // Adicionar estilos CSS inline
+  const style = document.createElement("style");
+  style.textContent = `
+        @keyframes modalFadeIn {
+            from { opacity: 0; }
+            to { opacity: 1; }
+        }
+        
+        @keyframes modalSlideIn {
+            from { 
+                opacity: 0;
+                transform: translateY(-30px) scale(0.95);
+            }
+            to { 
+                opacity: 1;
+                transform: translateY(0) scale(1);
+            }
+        }
+        
+        #modal-exclusao-custom .overlay-modal {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            width: 100%;
+            height: 100%;
+            padding: 20px;
+            box-sizing: border-box;
+        }
+        
+        #modal-exclusao-custom .container-modal {
+            background: white;
+            border-radius: 20px;
+            box-shadow: 0 25px 50px rgba(0, 0, 0, 0.3);
+            max-width: 450px;
+            width: 100%;
+            max-height: 90vh;
+            overflow: hidden;
+            animation: modalSlideIn 0.4s ease-out;
+            position: relative;
+        }
+        
+        #modal-exclusao-custom .header-modal {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            padding: 30px 25px;
+            text-align: center;
+            position: relative;
+            color: white;
+        }
+        
+        #modal-exclusao-custom .icone-aviso {
+            font-size: 48px;
+            margin-bottom: 15px;
+            display: block;
+            filter: drop-shadow(0 2px 4px rgba(0,0,0,0.3));
+        }
+        
+        #modal-exclusao-custom .titulo-modal {
+            margin: 0;
+            font-size: 24px;
+            font-weight: 600;
+            text-shadow: 0 1px 2px rgba(0,0,0,0.2);
+        }
+        
+        #modal-exclusao-custom .corpo-modal {
+            padding: 35px 30px;
+            text-align: center;
+        }
+        
+        #modal-exclusao-custom .texto-confirmacao {
+            font-size: 18px;
+            color: #2d3748;
+            margin: 0 0 20px 0;
+            line-height: 1.5;
+            font-weight: 500;
+        }
+        
+        #modal-exclusao-custom .texto-aviso {
+            font-size: 14px;
+            color: #e53e3e;
+            margin: 0;
+            font-weight: 600;
+        }
+        
+        #modal-exclusao-custom .rodape-modal {
+            padding: 0 30px 30px;
+            display: flex;
+            gap: 15px;
+            justify-content: center;
+        }
+        
+        #modal-exclusao-custom .btn-modal {
+            flex: 1;
+            padding: 16px 20px;
+            border: none;
+            border-radius: 12px;
+            font-size: 16px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+        }
+        
+        #modal-exclusao-custom .btn-cancelar {
+            background: #f8f9fa;
+            color: #495057;
+            border: 2px solid #dee2e6;
+        }
+        
+        #modal-exclusao-custom .btn-cancelar:hover {
+            background: #e9ecef;
+            border-color: #adb5bd;
+            transform: translateY(-2px);
+            box-shadow: 0 4px 12px rgba(0,0,0,0.15);
+        }
+        
+        #modal-exclusao-custom .btn-confirmar {
+            background: linear-gradient(135deg, #e53e3e 0%, #c53030 100%);
+            color: white;
+            border: 2px solid transparent;
+        }
+        
+        #modal-exclusao-custom .btn-confirmar:hover {
+            background: linear-gradient(135deg, #c53030 0%, #a02828 100%);
+            transform: translateY(-2px);
+            box-shadow: 0 4px 15px rgba(229, 62, 62, 0.4);
+        }
+        
+        @media (max-width: 480px) {
+            #modal-exclusao-custom .container-modal {
+                margin: 10px;
+                max-width: calc(100% - 20px);
+            }
+            
+            #modal-exclusao-custom .header-modal {
+                padding: 25px 20px;
+            }
+            
+            #modal-exclusao-custom .corpo-modal {
+                padding: 25px 20px;
+            }
+            
+            #modal-exclusao-custom .rodape-modal {
+                padding: 0 20px 25px;
+                flex-direction: column;
+            }
+            
+            #modal-exclusao-custom .icone-aviso {
+                font-size: 40px;
+            }
+            
+            #modal-exclusao-custom .titulo-modal {
+                font-size: 20px;
+            }
+        }
+    `;
+
+  // Adicionar estilos e modal ao documento
+  document.head.appendChild(style);
+  document.body.appendChild(modal);
+
+  // Evento ESC para fechar
+  const handleEsc = function (e) {
+    if (e.key === "Escape") {
+      document.removeEventListener("keydown", handleEsc);
+      fecharModalCustom();
+    }
+  };
+  document.addEventListener("keydown", handleEsc);
+
+  // Clique fora para fechar
+  modal.addEventListener("click", function (e) {
+    if (e.target === modal || e.target.classList.contains("overlay-modal")) {
+      fecharModalCustom();
+    }
+  });
+
+  console.log("✅ Modal centralizado criado e exibido");
+}
+
+// Função para fechar modal customizado
+window.fecharModalCustom = function () {
+  console.log("🚪 Fechando modal");
+
+  const modal = document.getElementById("modal-exclusao-custom");
+  if (modal) {
+    modal.style.opacity = "0";
+    modal.style.transform = "scale(0.95)";
+
+    setTimeout(() => {
+      if (modal.parentNode) {
+        document.body.removeChild(modal);
+      }
+    }, 300);
+  }
+};
+
+// Função para confirmar exclusão
+window.confirmarExclusaoCustom = function (mentorId, nome) {
+  console.log("✅ Confirmando exclusão do mentor:", nome);
+
+  fecharModalCustom();
+  executarExclusaoDefinitiva(mentorId, nome);
+};
+
+async function executarExclusaoDefinitiva(mentorId, nome) {
+  console.log("🗑️ Executando exclusão definitiva para ID:", mentorId);
+
+  // Criar loading customizado
+  const loading = document.createElement("div");
+  loading.id = "loading-exclusao-custom";
+  loading.style.cssText = `
+        position: fixed;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        background: rgba(0, 0, 0, 0.8);
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        z-index: 1000000;
+        backdrop-filter: blur(5px);
+    `;
+
+  loading.innerHTML = `
+        <div style="
+            background: white;
+            padding: 40px 35px;
+            border-radius: 20px;
+            text-align: center;
+            box-shadow: 0 20px 40px rgba(0,0,0,0.3);
+            max-width: 300px;
+            width: 90%;
+        ">
+            <div style="
+                width: 50px;
+                height: 50px;
+                border: 4px solid #f3f3f3;
+                border-top: 4px solid #667eea;
+                border-radius: 50%;
+                animation: spin 1s linear infinite;
+                margin: 0 auto 20px;
+            "></div>
+            <div style="
+                font-size: 18px;
+                font-weight: 600;
+                color: #2d3748;
+                margin-bottom: 10px;
+            ">Excluindo mentor...</div>
+            <div style="
+                font-size: 14px;
+                color: #718096;
+            ">Por favor, aguarde</div>
+        </div>
+    `;
+
+  // Adicionar animação de loading
+  const loadingStyle = document.createElement("style");
+  loadingStyle.textContent = `
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+    `;
+  document.head.appendChild(loadingStyle);
+  document.body.appendChild(loading);
+
+  try {
+    const formData = new FormData();
+    formData.append("excluir_mentor", mentorId);
+
+    const response = await fetch("gestao-diaria.php", {
+      method: "POST",
+      body: formData,
+      headers: { "X-Requested-With": "XMLHttpRequest" },
+    });
+
+    // Remover loading
+    if (loading.parentNode) {
+      document.body.removeChild(loading);
+    }
+
+    if (response.ok) {
+      // Criar toast de sucesso
+      mostrarToastCustom("✅ Mentor excluído com sucesso!", "sucesso");
+
+      // Fechar modal principal de edição
+      const modalPrincipal = document.getElementById("modal-form");
+      if (modalPrincipal) {
+        modalPrincipal.classList.remove("show");
+        modalPrincipal.style.display = "none";
+        document.body.style.overflow = "";
+      }
+
+      // Recarregar página
+      setTimeout(() => {
+        if (
+          typeof MentorManager !== "undefined" &&
+          MentorManager.recarregarMentores
+        ) {
+          MentorManager.recarregarMentores();
+        } else {
+          window.location.reload();
+        }
+      }, 1500);
+    } else {
+      throw new Error(`Erro HTTP: ${response.status}`);
+    }
+  } catch (error) {
+    console.error("❌ Erro na exclusão:", error);
+
+    // Remover loading se ainda existir
+    if (loading.parentNode) {
+      document.body.removeChild(loading);
+    }
+
+    mostrarToastCustom(`❌ Erro: ${error.message}`, "erro");
+  }
+}
+
+// Toast customizado
+function mostrarToastCustom(mensagem, tipo) {
+  const toast = document.createElement("div");
+  toast.style.cssText = `
+        position: fixed;
+        top: 30px;
+        right: 30px;
+        background: white;
+        color: #2d3748;
+        padding: 20px 25px;
+        border-radius: 12px;
+        box-shadow: 0 10px 25px rgba(0, 0, 0, 0.15);
+        z-index: 1000001;
+        font-size: 16px;
+        font-weight: 600;
+        transform: translateX(400px);
+        transition: transform 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+        border-left: 4px solid ${tipo === "sucesso" ? "#48bb78" : "#e53e3e"};
+        max-width: 350px;
+        font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+    `;
+
+  toast.textContent = mensagem;
+  document.body.appendChild(toast);
+
+  // Animar entrada
+  requestAnimationFrame(() => {
+    toast.style.transform = "translateX(0)";
+  });
+
+  // Remover após 4 segundos
+  setTimeout(() => {
+    toast.style.transform = "translateX(400px)";
+    setTimeout(() => {
+      if (toast.parentNode) {
+        document.body.removeChild(toast);
+      }
+    }, 400);
+  }, 4000);
+}
+
+console.log("🎯 Modal centralizado configurado com sucesso!");
+// ========================================================================================================================
+//                        💼  FIM FORMULARIO DE CADASTRO DO MENTOR + MODAL EXCLUSÃO DO MENTOR
+// ========================================================================================================================
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//

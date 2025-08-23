@@ -1916,3 +1916,658 @@ p {
 /* */
 /* */
 /* */
+/* =======================================================================================================================================================
+                                          💼  FORMULARIO DE CADASTRO DO MENTOR + MODAL EXCLUSÃO DO MENTOR    
+   ==========================================================================================================================================================*/
+/* ===== CSS MODERNO ADAPTADO AO SEU HTML EXISTENTE ===== */
+
+/* Import da fonte moderna */
+@import url("https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap");
+
+/* Container principal dos modais */
+.modais-container {
+  font-family: "Inter", sans-serif;
+}
+
+/* ===== MODAL PRINCIPAL MODERNIZADO ===== */
+.modais-container .modal {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: rgba(0, 0, 0, 0.8);
+  backdrop-filter: blur(10px);
+  display: none;
+  align-items: center;
+  justify-content: center;
+  z-index: 1000;
+  opacity: 0;
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.modais-container .modal.show {
+  opacity: 1;
+  display: flex;
+}
+
+/* Container do modal com design moderno */
+.modais-container .modal-conteudo {
+  background: #ffffff;
+  border-radius: 24px;
+  box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.25);
+  max-width: 500px;
+  width: 95%;
+  max-height: 90vh;
+  overflow: hidden;
+  position: relative;
+  transform: scale(0.9) translateY(20px);
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.modais-container .modal.show .modal-conteudo {
+  transform: scale(1) translateY(0);
+}
+
+/* ===== CABEÇALHO MODERNO ===== */
+.modais-container .modal-conteudo::before {
+  content: "";
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: 80px;
+  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  border-radius: 24px 24px 0 0;
+  z-index: 1;
+}
+
+/* Botão fechar modernizado */
+.modais-container .fechar {
+  position: absolute;
+  top: 20px;
+  right: 20px;
+  background: rgba(255, 255, 255, 0.2);
+  border: none;
+  width: 40px;
+  height: 40px;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  z-index: 10;
+  color: white;
+  font-size: 18px;
+  line-height: 1;
+}
+
+.modais-container .fechar:hover {
+  background: rgba(255, 255, 255, 0.3);
+  transform: rotate(90deg);
+}
+
+/* ===== FORMULÁRIO MODERNIZADO ===== */
+.modais-container .formulario-mentor-completo {
+  padding: 100px 30px 30px;
+  display: flex;
+  flex-direction: column;
+  gap: 25px;
+  position: relative;
+}
+
+/* ===== PREVIEW DA FOTO MODERNIZADO ===== */
+.modais-container .preview-foto-wrapper {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 15px;
+  margin-bottom: 20px;
+}
+
+.modais-container .preview-img {
+  width: 120px;
+  height: 120px;
+  border-radius: 50%;
+  object-fit: cover;
+  border: 6px solid #f0f0f0;
+  transition: all 0.3s ease;
+  box-shadow: 0 8px 20px rgba(0, 0, 0, 0.1);
+  cursor: pointer;
+  position: relative;
+}
+
+.modais-container .preview-img:hover {
+  border-color: #667eea;
+  transform: scale(1.05);
+  box-shadow: 0 12px 25px rgba(102, 126, 234, 0.3);
+}
+
+/* Overlay de hover na imagem */
+.modais-container .preview-img::after {
+  content: "\f030";
+  font-family: "Font Awesome 6 Free";
+  font-weight: 900;
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  color: white;
+  font-size: 24px;
+  opacity: 0;
+  transition: opacity 0.3s ease;
+  background: rgba(102, 126, 234, 0.8);
+  width: 100%;
+  height: 100%;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.modais-container .preview-img:hover::after {
+  opacity: 1;
+}
+
+/* Nome do mentor */
+.modais-container .mentor-nome-preview {
+  font-size: 20px;
+  font-weight: 600;
+  color: #2d3748;
+  margin: 0;
+  min-height: 28px;
+  text-align: center;
+}
+
+.modais-container .mentor-nome-preview:empty::before {
+  content: "Nome do Mentor";
+  color: #a0aec0;
+  font-style: italic;
+}
+
+/* ===== BOTÃO DE UPLOAD MODERNO ===== */
+.modais-container .input-group {
+  margin-bottom: 20px;
+}
+
+.modais-container .label-arquivo {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 10px;
+  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  color: white;
+  padding: 16px 24px;
+  border-radius: 16px;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  font-weight: 500;
+  font-size: 16px;
+  border: none;
+  box-shadow: 0 4px 15px rgba(102, 126, 234, 0.3);
+  position: relative;
+  overflow: hidden;
+}
+
+.modais-container .label-arquivo::before {
+  content: "";
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  width: 0;
+  height: 0;
+  background: rgba(255, 255, 255, 0.2);
+  border-radius: 50%;
+  transition: all 0.6s ease;
+  transform: translate(-50%, -50%);
+}
+
+.modais-container .label-arquivo:hover::before {
+  width: 300px;
+  height: 300px;
+}
+
+.modais-container .label-arquivo:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 6px 20px rgba(102, 126, 234, 0.4);
+}
+
+.modais-container .nome-arquivo {
+  display: block;
+  text-align: center;
+  font-size: 14px;
+  color: #718096;
+  margin-top: 10px;
+  padding: 8px 16px;
+  background: #f7fafc;
+  border-radius: 8px;
+  font-style: italic;
+}
+
+/* ===== BOTÃO REMOVER FOTO ===== */
+.modais-container .btn-remover-foto {
+  background: linear-gradient(135deg, #f56565 0%, #e53e3e 100%);
+  color: white;
+  border: none;
+  padding: 8px 16px;
+  border-radius: 20px;
+  font-size: 12px;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  font-weight: 500;
+}
+
+.modais-container .btn-remover-foto:hover {
+  transform: scale(1.05);
+  box-shadow: 0 4px 12px rgba(229, 62, 62, 0.3);
+}
+
+/* ===== CAMPO DE NOME MODERNO ===== */
+.modais-container .input-text {
+  width: 100%;
+  padding: 16px 20px;
+  border: 2px solid #e2e8f0;
+  border-radius: 16px;
+  font-size: 16px;
+  font-weight: 400;
+  color: #2d3748;
+  background: #ffffff;
+  transition: all 0.3s ease;
+  outline: none;
+  box-sizing: border-box;
+  font-family: "Inter", sans-serif;
+}
+
+.modais-container .input-text:focus {
+  border-color: #667eea;
+  box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.1);
+  transform: translateY(-1px);
+}
+
+.modais-container .input-text::placeholder {
+  color: #a0aec0;
+  font-style: italic;
+}
+
+/* ===== BOTÕES MODERNOS ===== */
+.modais-container .botoes-formulario {
+  display: flex;
+  gap: 12px;
+  margin-top: 20px;
+}
+
+.modais-container .btn-enviar,
+.modais-container .btn-excluir {
+  flex: 1;
+  padding: 16px 24px;
+  border: none;
+  border-radius: 16px;
+  font-size: 16px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  position: relative;
+  overflow: hidden;
+  font-family: "Inter", sans-serif;
+}
+
+.modais-container .btn-enviar::before,
+.modais-container .btn-excluir::before {
+  content: "";
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  width: 0;
+  height: 0;
+  background: rgba(255, 255, 255, 0.2);
+  border-radius: 50%;
+  transition: all 0.6s ease;
+  transform: translate(-50%, -50%);
+}
+
+.modais-container .btn-enviar:active::before,
+.modais-container .btn-excluir:active::before {
+  width: 300px;
+  height: 300px;
+}
+
+/* Botão principal */
+.modais-container .btn-enviar {
+  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  color: white;
+  box-shadow: 0 4px 15px rgba(102, 126, 234, 0.3);
+}
+
+.modais-container .btn-enviar:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 6px 20px rgba(102, 126, 234, 0.4);
+}
+
+/* Botão excluir */
+.modais-container .btn-excluir {
+  background: linear-gradient(135deg, #e53e3e 0%, #c53030 100%);
+  color: white;
+  box-shadow: 0 4px 15px rgba(229, 62, 62, 0.3);
+}
+
+.modais-container .btn-excluir:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 6px 20px rgba(229, 62, 62, 0.4);
+}
+
+/* ===== MODAL DE CONFIRMAÇÃO MODERNIZADO ===== */
+.modais-container .modal-confirmacao {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: rgba(0, 0, 0, 0.8);
+  backdrop-filter: blur(10px);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 2000;
+  opacity: 0;
+  visibility: hidden;
+  transition: all 0.3s ease;
+}
+
+.modais-container .modal-confirmacao.show {
+  opacity: 1;
+  visibility: visible;
+}
+
+.modais-container .modal-content {
+  background: white;
+  border-radius: 20px;
+  padding: 40px 30px;
+  max-width: 400px;
+  width: 90%;
+  text-align: center;
+  box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.25);
+  transform: scale(0.9);
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+  position: relative;
+}
+
+.modais-container .modal-confirmacao.show .modal-content {
+  transform: scale(1);
+}
+
+/* Adiciona ícone de aviso */
+.modais-container .modal-content::before {
+  content: "\f071";
+  font-family: "Font Awesome 6 Free";
+  font-weight: 900;
+  font-size: 36px;
+  color: #e53e3e;
+  display: block;
+  margin-bottom: 20px;
+  width: 80px;
+  height: 80px;
+  background: linear-gradient(135deg, #fed7d7 0%, #feb2b2 100%);
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin: 0 auto 20px;
+}
+
+.modais-container .modal-texto {
+  font-size: 18px;
+  color: #2d3748;
+  line-height: 1.5;
+  margin-bottom: 30px;
+  font-weight: 500;
+}
+
+.modais-container .botoes-modal {
+  display: flex;
+  gap: 12px;
+}
+
+.modais-container .botao-confirmar,
+.modais-container .botao-cancelar {
+  flex: 1;
+  padding: 14px 20px;
+  border: none;
+  border-radius: 12px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  font-size: 16px;
+  font-family: "Inter", sans-serif;
+}
+
+.modais-container .botao-confirmar {
+  background: linear-gradient(135deg, #e53e3e 0%, #c53030 100%);
+  color: white;
+  box-shadow: 0 4px 12px rgba(229, 62, 62, 0.3);
+}
+
+.modais-container .botao-confirmar:hover {
+  transform: translateY(-1px);
+  box-shadow: 0 6px 16px rgba(229, 62, 62, 0.4);
+}
+
+.modais-container .botao-cancelar {
+  background: #f7fafc;
+  color: #4a5568;
+  border: 2px solid #e2e8f0;
+}
+
+.modais-container .botao-cancelar:hover {
+  background: #edf2f7;
+  border-color: #cbd5e0;
+  transform: translateY(-1px);
+}
+
+/* ===== RESPONSIVIDADE ===== */
+@media (max-width: 768px) {
+  .modais-container .modal-conteudo {
+    width: 95%;
+    margin: 20px;
+  }
+
+  .modais-container .formulario-mentor-completo {
+    padding: 80px 20px 20px;
+  }
+
+  .modais-container .botoes-formulario {
+    flex-direction: column;
+  }
+
+  .modais-container .preview-img {
+    width: 100px;
+    height: 100px;
+  }
+}
+
+@media (max-width: 480px) {
+  .modais-container .formulario-mentor-completo {
+    padding: 70px 15px 15px;
+    gap: 20px;
+  }
+
+  .modais-container .modal-content {
+    padding: 30px 20px;
+    margin: 10px;
+  }
+
+  .modais-container .preview-img {
+    width: 80px;
+    height: 80px;
+  }
+}
+
+/* ===== ANIMAÇÕES ===== */
+@keyframes slideInUp {
+  from {
+    opacity: 0;
+    transform: translateY(30px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@keyframes pulse {
+  0%,
+  100% {
+    transform: scale(1);
+  }
+  50% {
+    transform: scale(1.05);
+  }
+}
+
+/* ===== ESTADOS DE LOADING ===== */
+.modais-container .formulario-mentor-completo.loading {
+  pointer-events: none;
+  opacity: 0.7;
+}
+
+.modais-container .formulario-mentor-completo.loading::after {
+  content: "";
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: rgba(255, 255, 255, 0.9);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 24px;
+}
+
+/* ===== MELHORIAS VISUAIS ===== */
+.modais-container .input-file {
+  position: absolute;
+  opacity: 0;
+  pointer-events: none;
+}
+
+/* Smooth scroll para mobile */
+@supports (-webkit-touch-callout: none) {
+  .modais-container .modal-conteudo {
+    -webkit-overflow-scrolling: touch;
+  }
+}
+
+/* Focus visible para acessibilidade */
+.modais-container button:focus-visible {
+  outline: 2px solid #667eea;
+  outline-offset: 2px;
+}
+
+.modais-container .input-text:focus-visible {
+  outline: 2px solid #667eea;
+  outline-offset: 2px;
+}
+/* ===== CSS PARA CORRIGIR MODAL =====  */
+.modais-container #modal-confirmacao-exclusao {
+  position: fixed !important;
+  top: 0 !important;
+  left: 0 !important;
+  width: 100% !important;
+  height: 100% !important;
+  background: rgba(0, 0, 0, 0.8) !important;
+  backdrop-filter: blur(10px) !important;
+  z-index: 999999 !important;
+  display: none !important;
+  align-items: center !important;
+  justify-content: center !important;
+  opacity: 0 !important;
+  transition: all 0.3s ease !important;
+}
+
+.modais-container #modal-confirmacao-exclusao.show {
+  display: flex !important;
+  opacity: 1 !important;
+}
+
+.modais-container #modal-confirmacao-exclusao .modal-content {
+  background: white !important;
+  border-radius: 20px !important;
+  padding: 40px 30px !important;
+  max-width: 400px !important;
+  width: 90% !important;
+  text-align: center !important;
+  box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.25) !important;
+  z-index: 10000 !important;
+}
+/* ===== ADICIONAR NO FINAL DO <STYLE> ===== */
+
+/* CSS FORÇADO PARA MODAL DE CONFIRMAÇÃO */
+#modal-confirmacao-exclusao {
+  position: fixed !important;
+  top: 0 !important;
+  left: 0 !important;
+  width: 100vw !important;
+  height: 100vh !important;
+  background: rgba(0, 0, 0, 0.8) !important;
+  z-index: 999999 !important;
+  display: none !important;
+  align-items: center !important;
+  justify-content: center !important;
+}
+
+#modal-confirmacao-exclusao .modal-content {
+  background: white !important;
+  border-radius: 20px !important;
+  padding: 40px 30px !important;
+  max-width: 420px !important;
+  width: 90% !important;
+  text-align: center !important;
+  box-shadow: 0 25px 50px rgba(0, 0, 0, 0.4) !important;
+  z-index: 1000000 !important;
+}
+
+#modal-confirmacao-exclusao .botao-confirmar {
+  background: linear-gradient(135deg, #e53e3e 0%, #c53030 100%) !important;
+  color: white !important;
+  border: none !important;
+  padding: 15px 20px !important;
+  border-radius: 12px !important;
+  font-weight: 600 !important;
+  cursor: pointer !important;
+  margin: 0 5px !important;
+}
+
+#modal-confirmacao-exclusao .botao-cancelar {
+  background: #f7fafc !important;
+  color: #4a5568 !important;
+  border: 2px solid #e2e8f0 !important;
+  padding: 15px 20px !important;
+  border-radius: 12px !important;
+  font-weight: 600 !important;
+  cursor: pointer !important;
+  margin: 0 5px !important;
+}
+
+/* =======================================================================================================================================================
+                                          💼  FIM FORMULARIO DE CADASTRO DO MENTOR + MODAL EXCLUSÃO DO MENTOR    
+   ==========================================================================================================================================================*/
+/* */
+/* */
+/* */
+/* */
+/* */
+/* */
+/* */
+/* */
+/* */
+/* */
+/* */
+/* */
+/* */
+/* */
+/* */

@@ -42,8 +42,13 @@ if ($saldo_banca <= 0 && $saldo_mentores < 0) {
 }
 
 // 🗑️ EXCLUSÃO DE MENTOR - CORRIGIDA
-if (isset($_GET['excluir_mentor'])) {
-  $id = intval($_GET['excluir_mentor']);
+if (isset($_POST['excluir_mentor']) || isset($_GET['excluir_mentor'])) {
+  // Verificar se é uma requisição AJAX
+  $isAjax = isset($_SERVER['HTTP_X_REQUESTED_WITH']) && 
+            strtolower($_SERVER['HTTP_X_REQUESTED_WITH']) == 'xmlhttprequest';
+  
+  $id = intval(isset($_POST['excluir_mentor']) ? $_POST['excluir_mentor'] : $_GET['excluir_mentor']);
+  $resposta = ['success' => false, 'message' => ''];
   
   if ($id > 0) {
     try {
@@ -65,22 +70,33 @@ if (isset($_GET['excluir_mentor'])) {
         $stmt->execute();
         
         if ($stmt->affected_rows > 0) {
+          $resposta = ['success' => true, 'message' => 'Mentor excluído com sucesso!'];
           setToast('Mentor excluído com sucesso!', 'sucesso');
         } else {
+          $resposta = ['success' => false, 'message' => 'Erro ao excluir mentor!'];
           setToast('Erro ao excluir mentor!', 'erro');
         }
       } else {
+        $resposta = ['success' => false, 'message' => 'Mentor não encontrado!'];
         setToast('Mentor não encontrado!', 'erro');
       }
     } catch (Exception $e) {
+      $resposta = ['success' => false, 'message' => 'Erro ao excluir mentor: ' . $e->getMessage()];
       setToast('Erro ao excluir mentor: ' . $e->getMessage(), 'erro');
     }
   } else {
+    $resposta = ['success' => false, 'message' => 'ID de mentor inválido!'];
     setToast('ID de mentor inválido!', 'erro');
   }
   
-  header('Location: gestao-diaria.php');
-  exit();
+  if ($isAjax) {
+    header('Content-Type: application/json');
+    echo json_encode($resposta);
+    exit();
+  } else {
+    header('Location: gestao-diaria.php');
+    exit();
+  }
 }
 
 // 📝 CADASTRO/EDIÇÃO DE MENTOR - CORRIGIDO
@@ -483,9 +499,7 @@ ob_end_flush();
 <script src="js/script-gestao-diaria.js" defer></script>
 <script src="js/script-painel-controle.js" defer></script>
 <script src="js/script-mes.js" defer></script>
-<!-- -->
-<!-- -->
-<!-- -->
+<script src="js/exclusao-manager-fix.js" defer></script>
 <!-- -->
 <!-- -->
 <!-- -->
@@ -954,7 +968,10 @@ ob_end_flush();
 <!-- ==================================================================================================================================== --> 
 <!--                                  💼  FORMULARIO DE CADASTRO DO MENTOR + MODAL EXCLUSÃO DO MENTOR                           
  ====================================================================================================================================== -->
-<div class="modais-container">
+ 
+
+  
+ <div class="modais-container">
 
   <div id="modal-form" class="modal">
     <div class="modal-conteudo">
@@ -1002,17 +1019,17 @@ ob_end_flush();
       </form>
     </div>
   </div>
-
-  <!-- Modal de confirmação de exclusão -->
+   <!-- Modal de confirmação de exclusão -->
   <div id="modal-confirmacao-exclusao" class="modal-confirmacao" style="display: none;">
     <div class="modal-content">
-      <p class="modal-texto">Tem certeza que deseja excluir este mentor?</p>
+      <p class="modal-texto"></p>
       <div class="botoes-modal">
-        <button class="botao-confirmar" onclick="confirmarExclusaoMentor()">Sim, excluir</button>
-        <button class="botao-cancelar" onclick="fecharModalExclusao()">Cancelar</button>
+        <button type="button" class="botao-confirmar">Sim, excluir</button>
+        <button type="button" class="botao-cancelar">Cancelar</button>
       </div>
     </div>
   </div>
+
 
 </div>
 <!-- ==================================================================================================================================== --> 
