@@ -88,34 +88,120 @@ const ToastManager = {
   },
 };
 
-// ✅ GERENCIADOR DE MODAIS
+// ✅ GERENCIADOR DE MODAIS - VERSÃO MELHORADA
 const ModalManager = {
+  modalAtual: null,
+
   abrir(modalId) {
     const modal = document.getElementById(modalId);
-    if (modal) {
-      modal.style.display = "block";
-      document.body.style.overflow = "hidden"; // Previne scroll do body
+    if (!modal) return;
+
+    // Fecha modal anterior se existir
+    if (this.modalAtual) {
+      this.fechar(this.modalAtual);
     }
+
+    // Prepara o modal
+    modal.style.display = "block";
+    document.body.style.overflow = "hidden";
+
+    // Aplica animação
+    requestAnimationFrame(() => {
+      modal.classList.add("show");
+      this.modalAtual = modalId;
+    });
+
+    // Adiciona listeners
+    this.adicionarEventosModal(modal);
   },
 
   fechar(modalId) {
     const modal = document.getElementById(modalId);
-    if (modal) {
+    if (!modal) return;
+
+    // Inicia animação de saída
+    modal.classList.remove("show");
+
+    // Aguarda fim da animação
+    setTimeout(() => {
       modal.style.display = "none";
-      document.body.style.overflow = ""; // Restaura scroll
+      document.body.style.overflow = "";
+      this.modalAtual = null;
+
+      // Remove listeners
+      this.removerEventosModal(modal);
+    }, 300); // Mesmo tempo da transição CSS
+  },
+
+  adicionarEventosModal(modal) {
+    // Fecha ao pressionar ESC
+    this.handleKeyPress = (e) => {
+      if (e.key === "Escape") {
+        this.fechar(modal.id);
+      }
+    };
+    document.addEventListener("keydown", this.handleKeyPress);
+
+    // Fecha ao clicar fora
+    this.handleOutsideClick = (e) => {
+      if (e.target === modal) {
+        this.fechar(modal.id);
+      }
+    };
+    modal.addEventListener("click", this.handleOutsideClick);
+  },
+
+  removerEventosModal(modal) {
+    document.removeEventListener("keydown", this.handleKeyPress);
+    modal.removeEventListener("click", this.handleOutsideClick);
+  },
+
+  inicializarEventosGlobais() {
+    // Registra modais para gestão
+    const modais = ["modal-form", "modal-confirmacao-exclusao"];
+
+    // Configura cada modal
+    modais.forEach((modalId) => {
+      const modal = document.getElementById(modalId);
+      if (modal) {
+        // Previne propagação de cliques dentro do conteúdo do modal
+        const conteudo = modal.querySelector(".modal-conteudo");
+        if (conteudo) {
+          conteudo.addEventListener("click", (e) => e.stopPropagation());
+        }
+      }
+    });
+
+    // Adiciona suporte a gestos touch para fechar
+    if ("ontouchstart" in window) {
+      this.inicializarGestosTouch();
     }
   },
 
-  // Fecha modal ao clicar fora
-  inicializarEventosGlobais() {
-    window.addEventListener("click", (event) => {
-      const modais = ["modal-form", "modal-confirmacao-exclusao"];
-      modais.forEach((modalId) => {
-        const modal = document.getElementById(modalId);
-        if (event.target === modal) {
-          this.fechar(modalId);
-        }
-      });
+  inicializarGestosTouch() {
+    let startY;
+    const THRESHOLD = 100;
+
+    document.addEventListener("touchstart", (e) => {
+      if (this.modalAtual) {
+        startY = e.touches[0].clientY;
+      }
+    });
+
+    document.addEventListener("touchmove", (e) => {
+      if (!startY || !this.modalAtual) return;
+
+      const deltaY = e.touches[0].clientY - startY;
+      const modal = document.getElementById(this.modalAtual);
+
+      if (deltaY > THRESHOLD && modal) {
+        this.fechar(this.modalAtual);
+        startY = null;
+      }
+    });
+
+    document.addEventListener("touchend", () => {
+      startY = null;
     });
   },
 };
@@ -967,41 +1053,174 @@ const MentorManager = {
 
 // ✅ GERENCIADOR DE FORMULÁRIO DE VALOR
 
-// ✅ GERENCIADOR DE EXCLUSÕES
+// ✅ GERENCIADOR DE EXCLUSÕES - VERSÃO ATUALIZADA
 const ExclusaoManager = {
-  // Confirmação simples de exclusão de mentor
-  confirmarExclusaoMentor() {
-    const id = document.getElementById("mentor-id")?.value;
+  async excluirMentor(id, nome) {
     if (!id) {
       ToastManager.mostrar("❌ ID do mentor não encontrado", "erro");
       return;
     }
 
-    if (confirm("Tem certeza que deseja excluir este mentor?")) {
-      window.location.href = `gestao_diaria.php?excluir_mentor=${id}`;
+    try {
+      // Mostra modal de confirmação
+      const confirmacao = await this.confirmarExclusaoModal(nome);
+      if (!confirmacao) return;
+
+      LoaderManager.mostrar();
+
+      // Faz requisição AJAX para excluir
+      const formData = new FormData();
+      formData.append("excluir_mentor", id);
+
+      // Adiciona o período atual ao formData
+      const periodoAtual =
+        typeof SistemaFiltroPeriodo !== "undefined"
+          ? SistemaFiltroPeriodo.periodoAtual
+          : "dia";
+      formData.append("periodo", periodoAtual);
+
+      const response = await fetch("gestao-diaria.php", {
+        method: "POST",
+        body: formData,
+        headers: {
+          "X-Requested-With": "XMLHttpRequest",
+          "X-Periodo-Filtro": periodoAtual,
+        },
+      });
+
+      if (!response.ok) {
+        throw new Error(`Erro HTTP: ${response.status}`);
+      }
+
+      const resultado = await response.json();
+
+      if (resultado.success) {
+        ToastManager.mostrar("✅ Mentor excluído com sucesso!", "sucesso");
+
+        // Anima remoção do card e atualiza dados
+        const card = document.querySelector(`[data-id='${id}']`);
+        if (card) {
+          card.style.animation = "slideOutAndFade 0.3s ease-out forwards";
+
+          // Aguarda animação e atualiza tudo
+          setTimeout(async () => {
+            // Atualiza lista de mentores primeiro
+            await MentorManager.recarregarMentores();
+
+            // Atualiza dados financeiros
+            if (typeof DadosManager !== "undefined") {
+              await DadosManager.atualizarLucroEBancaViaAjax();
+            }
+
+            // Atualiza meta se existir
+            if (typeof MetaDiariaManager !== "undefined") {
+              await MetaDiariaManager.atualizarMetaDiaria(true);
+            }
+
+            // Atualiza filtros se existir
+            if (typeof SistemaFiltroPeriodo !== "undefined") {
+              await SistemaFiltroPeriodo.atualizarPeriodoAtual();
+            }
+          }, 400); // Um pouco mais de tempo para a animação
+        }
+
+        // Fecha os modais
+        ModalManager.fechar("modal-confirmacao-exclusao");
+        ModalManager.fechar("modal-form");
+
+        // Se a tela de edição estiver aberta, fecha
+        const telaEdicao = document.getElementById("tela-edicao");
+        if (telaEdicao && telaEdicao.style.display === "block") {
+          if (typeof TelaEdicaoManager !== "undefined") {
+            TelaEdicaoManager.fechar();
+          }
+        }
+      } else {
+        throw new Error(resultado.message || "Erro ao excluir mentor");
+      }
+    } catch (error) {
+      console.error("Erro ao excluir mentor:", error);
+      ToastManager.mostrar(`❌ ${error.message}`, "erro");
+    } finally {
+      LoaderManager.ocultar();
     }
   },
 
-  // Modal de confirmação visual para mentor
-  abrirModalExclusaoMentor() {
-    ModalManager.abrir("modal-confirmacao-exclusao");
-  },
+  confirmarExclusaoModal(nome) {
+    return new Promise((resolve) => {
+      const modal = document.getElementById("modal-confirmacao-exclusao");
+      if (!modal) {
+        resolve(false);
+        return;
+      }
 
-  fecharModalExclusaoMentor() {
-    ModalManager.fechar("modal-confirmacao-exclusao");
-  },
+      // Atualiza texto da confirmação com período atual
+      const periodo =
+        typeof SistemaFiltroPeriodo !== "undefined"
+          ? SistemaFiltroPeriodo.periodoAtual
+          : "dia";
 
-  confirmarExclusaoMentorModal() {
-    const id = document.getElementById("mentor-id")?.value;
-    if (!id) {
-      ToastManager.mostrar("❌ ID do mentor não encontrado", "erro");
-      return;
-    }
+      const textoPeriodo =
+        {
+          dia: "hoje",
+          mes: "este mês",
+          ano: "este ano",
+        }[periodo] || "hoje";
 
-    window.location.href = `gestao_diaria.php?excluir_mentor=${id}`;
-  },
+      const texto = modal.querySelector(".modal-texto");
+      if (texto) {
+        texto.innerHTML = `
+          <i class="fas fa-exclamation-triangle" style="color: #e74c3c; font-size: 24px; margin-bottom: 10px;"></i>
+          <br>
+          Tem certeza que deseja excluir o mentor<br>
+          <strong>${nome}</strong>?
+          <br>
+          Todos os dados de <strong>${textoPeriodo}</strong> serão removidos.
+          <br><br>
+          <span style="font-size: 14px; color: #666;">
+            Esta ação não pode ser desfeita.
+          </span>
+        `;
+      }
 
-  // Exclusão de entrada
+      const btnConfirmar = modal.querySelector(".botao-confirmar");
+      const btnCancelar = modal.querySelector(".botao-cancelar");
+
+      // Remove listeners antigos clonando os botões
+      const novoConfirmar = btnConfirmar?.cloneNode(true);
+      const novoCancelar = btnCancelar?.cloneNode(true);
+
+      if (btnConfirmar?.parentNode && novoConfirmar) {
+        btnConfirmar.parentNode.replaceChild(novoConfirmar, btnConfirmar);
+      }
+
+      if (btnCancelar?.parentNode && novoCancelar) {
+        btnCancelar.parentNode.replaceChild(novoCancelar, btnCancelar);
+      }
+
+      // Adiciona novos listeners
+      const handleConfirmar = () => {
+        cleanup();
+        resolve(true);
+      };
+
+      const handleCancelar = () => {
+        cleanup();
+        resolve(false);
+      };
+
+      const cleanup = () => {
+        novoConfirmar?.removeEventListener("click", handleConfirmar);
+        novoCancelar?.removeEventListener("click", handleCancelar);
+      };
+
+      novoConfirmar?.addEventListener("click", handleConfirmar);
+      novoCancelar?.addEventListener("click", handleCancelar);
+
+      // Abre o modal
+      ModalManager.abrir("modal-confirmacao-exclusao");
+    });
+  }, // Exclusão de entrada
   async excluirEntrada(idEntrada) {
     const modal = document.getElementById("modal-confirmacao");
     if (!modal) {
@@ -1629,8 +1848,15 @@ window.removerImagem = () => ImagemManager.removerImagem();
 window.editarAposta = (id) => TelaEdicaoManager.editarAposta(id);
 window.fecharTelaEdicao = () => TelaEdicaoManager.fechar();
 
-// Função de formulário
+// Funções de formulário e exclusão
 window.fecharFormulario = () => FormularioValorManager.resetarFormulario();
+window.excluirMentorDireto = async () => {
+  const id = document.getElementById("mentor-id")?.value;
+  const nome = document.getElementById("mentor-nome-preview")?.textContent;
+  if (id && nome) {
+    await ExclusaoManager.excluirMentor(id, nome);
+  }
+};
 
 // Função de atualização
 window.atualizarLucroEBancaViaAjax = () =>
