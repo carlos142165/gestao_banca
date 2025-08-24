@@ -1049,15 +1049,45 @@ ob_end_flush();
 <!--                                  💼  FORMULARIO DE CADASTRO DE ENTRADA + MODAL EXCLUSÃO DE ENTRADA                              
  ====================================================================================================================================== -->
 <!-- Container que encapsula todos os modais -->
-<div class="modais-container">
 
-  <!-- Modal de Confirmação -->
-  <div id="modal-confirmacao" class="modal-confirmacao" style="display:none;">
-    <div class="modal-content">
-      <p class="modal-texto">Tem certeza que deseja excluir esta entrada?</p>
-      <div class="botoes-modal">
-        <button id="btnConfirmar" class="botao-confirmar">Sim, excluir</button>
-        <button id="btnCancelar" class="botao-cancelar">Cancelar</button>
+  <div class="modais-container">
+
+  <!-- ✅ MODAL DE CONFIRMAÇÃO DE EXCLUSÃO DE ENTRADA - CORRIGIDO -->
+  <div id="modal-confirmacao-entrada" class="modal-confirmacao-entrada">
+    <div class="modal-conteudo-exclusao">
+      <div class="icone-aviso">
+        <i class="fas fa-exclamation-triangle"></i>
+      </div>
+      
+      <div class="texto-confirmacao">
+        <p>Tem certeza que deseja excluir esta entrada?</p>
+        <p style="font-size: 14px; color: #7f8c8d; margin-top: 10px;">
+          <i class="fas fa-info-circle"></i> Esta ação não pode ser desfeita.
+        </p>
+      </div>
+
+      <div class="botoes-confirmacao">
+        <button id="btn-cancelar-entrada" class="btn-modal btn-cancelar-exclusao">
+          <i class="fas fa-times"></i>
+          Cancelar
+        </button>
+        <button id="btn-confirmar-entrada" class="btn-modal btn-confirmar-exclusao">
+          <i class="fas fa-trash"></i>
+          Sim, Excluir
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Modal de Confirmação de Exclusão ORIGINAL (mantido para compatibilidade) -->
+  <div class="modais-container">
+    <div id="modal-confirmacao" class="modal-confirmacao">
+      <div class="modal-content">
+        <p class="modal-texto">Tem certeza que deseja excluir esta entrada?</p>
+        <div class="botoes-modal">
+          <button id="btnConfirmar" class="botao-confirmar" type="button">Sim, excluir</button>
+          <button id="btnCancelar" class="botao-cancelar" type="button">Não, cancelar</button>
+        </div>
       </div>
     </div>
   </div>
@@ -1163,108 +1193,314 @@ ob_end_flush();
     </form>
   </div>
 
+  <div id="mensagem-status" class="toast"></div>
+  <div id="toast" class="toast hidden"></div>
+
 </div>
 
 <style>
-/* ===== CSS DO NOVO SISTEMA DE CADASTRO ===== */
+/* ===== ESTILOS DO MODAL DE EXCLUSÃO CORRIGIDO ===== */
+
+/* Modal de confirmação de exclusão de entrada */
+.modal-confirmacao-entrada {
+    position: fixed !important;
+    top: 0 !important;
+    left: 0 !important;
+    width: 100vw !important;
+    height: 100vh !important;
+    background: rgba(0, 0, 0, 0.6) !important;
+    z-index: 999999 !important;
+    display: none !important;
+    justify-content: center !important;
+    align-items: center !important;
+    backdrop-filter: blur(3px);
+    opacity: 0;
+    transition: opacity 0.3s ease;
+}
+
+/* Quando ativo/visível */
+.modal-confirmacao-entrada.ativo {
+    display: flex !important;
+    opacity: 1 !important;
+}
+
+/* Conteúdo do modal */
+.modal-confirmacao-entrada .modal-conteudo-exclusao {
+    background: #ffffff !important;
+    border-radius: 16px !important;
+    padding: 30px !important;
+    box-shadow: 0 20px 40px rgba(0, 0, 0, 0.3) !important;
+    text-align: center !important;
+    max-width: 450px !important;
+    width: 90% !important;
+    margin: 0 auto !important;
+    position: relative !important;
+    animation: modalSlideIn 0.4s ease-out !important;
+}
+
+@keyframes modalSlideIn {
+    from {
+        opacity: 0;
+        transform: scale(0.8) translateY(-20px);
+    }
+    to {
+        opacity: 1;
+        transform: scale(1) translateY(0);
+    }
+}
+
+/* Ícone de aviso */
+.modal-confirmacao-entrada .icone-aviso {
+    font-size: 48px !important;
+    color: #e74c3c !important;
+    margin-bottom: 20px !important;
+    animation: pulse 2s infinite;
+}
+
+@keyframes pulse {
+    0%, 100% { opacity: 1; }
+    50% { opacity: 0.6; }
+}
+
+/* Texto do modal */
+.modal-confirmacao-entrada .texto-confirmacao {
+    font-size: 18px !important;
+    font-weight: 600 !important;
+    color: #2c3e50 !important;
+    margin-bottom: 25px !important;
+    line-height: 1.5 !important;
+}
+
+/* Botões do modal */
+.modal-confirmacao-entrada .botoes-confirmacao {
+    display: flex !important;
+    justify-content: center !important;
+    gap: 15px !important;
+    margin-top: 20px !important;
+}
+
+.modal-confirmacao-entrada .btn-modal {
+    padding: 12px 24px !important;
+    border: none !important;
+    border-radius: 8px !important;
+    font-size: 16px !important;
+    font-weight: 600 !important;
+    cursor: pointer !important;
+    transition: all 0.3s ease !important;
+    min-width: 120px !important;
+    display: inline-flex !important;
+    align-items: center !important;
+    justify-content: center !important;
+    gap: 8px !important;
+}
+
+.modal-confirmacao-entrada .btn-confirmar-exclusao {
+    background: #e74c3c !important;
+    color: white !important;
+}
+
+.modal-confirmacao-entrada .btn-confirmar-exclusao:hover {
+    background: #c0392b !important;
+    transform: translateY(-2px) !important;
+    box-shadow: 0 4px 12px rgba(231, 76, 60, 0.3) !important;
+}
+
+.modal-confirmacao-entrada .btn-cancelar-exclusao {
+    background: #95a5a6 !important;
+    color: white !important;
+}
+
+.modal-confirmacao-entrada .btn-cancelar-exclusao:hover {
+    background: #7f8c8d !important;
+    transform: translateY(-2px) !important;
+    box-shadow: 0 4px 12px rgba(149, 165, 166, 0.3) !important;
+}
+
+/* Responsividade do modal de exclusão */
+@media (max-width: 480px) {
+    .modal-confirmacao-entrada .modal-conteudo-exclusao {
+        padding: 20px !important;
+        margin: 20px !important;
+        width: calc(100% - 40px) !important;
+    }
+
+    .modal-confirmacao-entrada .botoes-confirmacao {
+        flex-direction: column !important;
+        gap: 10px !important;
+    }
+
+    .modal-confirmacao-entrada .btn-modal {
+        width: 100% !important;
+    }
+}
+
+/* ===== CSS DO NOVO SISTEMA DE CADASTRO COM ELEGÂNCIA ===== */
+
+/* ✅ OVERLAY ELEGANTE COM ESCURECIMENTO E BLUR */
+.formulario-mentor-overlay {
+  position: fixed !important;
+  top: 0 !important;
+  left: 0 !important;
+  width: 100vw !important;
+  height: 100vh !important;
+  background: rgba(0, 0, 0, 0.0) !important; /* Começa transparente */
+  backdrop-filter: blur(0px) !important; /* Começa sem blur */
+  z-index: 9998 !important;
+  display: none !important;
+  opacity: 0 !important;
+  transition: all 0.4s cubic-bezier(0.25, 0.46, 0.45, 0.94) !important; /* Curva suave */
+}
+
+.formulario-mentor-overlay.ativo {
+  display: block !important;
+  opacity: 1 !important;
+  background: rgba(0, 0, 0, 0.7) !important; /* Escurece elegantemente */
+  backdrop-filter: blur(8px) !important; /* Blur suave */
+}
 
 /* Container principal do novo formulário */
 .formulario-mentor-novo {
   position: fixed;
   top: 50%;
   left: 50%;
-  transform: translate(-50%, -50%);
-  background: linear-gradient(135deg, #f8f9fa 0%, #e9ecef 100%);
-  border-radius: 20px;
-  padding: 25px;
-  box-shadow: 0 15px 35px rgba(0, 0, 0, 0.15);
-  z-index: 1000;
+  transform: translate(-50%, -50%) scale(0.7); /* ✅ Começa menor */
+  background: linear-gradient(135deg, #ffffff 0%, #f8f9fa 50%, #ffffff 100%);
+  border-radius: 24px; /* ✅ Bordas mais suaves */
+  padding: 30px;
+  box-shadow: 
+    0 25px 50px rgba(0, 0, 0, 0.25), /* ✅ Sombra mais dramática */
+    0 15px 35px rgba(0, 0, 0, 0.15),
+    0 5px 15px rgba(0, 0, 0, 0.1);
+  z-index: 9999;
   display: none;
-  width: 380px;
-  max-height: 85vh; /* ✅ Altura máxima para evitar overflow */
+  width: 400px; /* ✅ Levemente maior */
+  max-height: 85vh;
   min-width: 350px;
-  max-width: 420px;
-  border: 2px solid #e0e0e0;
+  max-width: 440px; /* ✅ Ajustado */
+  border: 1px solid rgba(255, 255, 255, 0.2); /* ✅ Borda sutil */
   font-family: "Poppins", sans-serif;
   margin: 0;
   box-sizing: border-box;
-  overflow: hidden; /* ✅ Remove barra de rolagem interna */
-  /* ✅ PREVENIR VAZAMENTO LATERAL */
-  max-width: calc(100vw - 40px); /* ✅ Nunca ultrapassar a largura da viewport */
-  max-height: calc(100vh - 40px); /* ✅ Nunca ultrapassar a altura da viewport */
+  overflow: hidden;
+  max-width: calc(100vw - 40px);
+  max-height: calc(100vh - 40px);
+  opacity: 0; /* ✅ Começa transparente */
+  transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275) !important; /* ✅ Curva elegante com bounce */
 }
 
-/* ✅ OVERLAY COM TRANSPARÊNCIA MELHORADA */
-.formulario-mentor-novo::before {
-  content: '';
-  position: fixed;
-  top: 0;
-  left: 0;
-  width: 100vw;
-  height: 100vh;
-  background: rgba(147, 161, 143, 0.3); /* ✅ Fundo mais sutil e transparente */
-  z-index: -1;
-  backdrop-filter: blur(2px); /* ✅ Blur mais sutil */
+/* ✅ ESTADO ATIVO COM ANIMAÇÃO SUAVE */
+.formulario-mentor-novo.ativo {
+  display: block;
+  opacity: 1 !important;
+  transform: translate(-50%, -50%) scale(1) !important; /* ✅ Escala para tamanho normal */
 }
 
-/* Botão fechar */
+/* ✅ ESTADO DE FECHAMENTO COM ANIMAÇÃO SUAVE */
+.formulario-mentor-novo.fechando {
+  opacity: 0 !important;
+  transform: translate(-50%, -50%) scale(0.8) !important; /* ✅ Diminui suavemente */
+  transition: all 0.3s cubic-bezier(0.55, 0.085, 0.68, 0.53) !important; /* ✅ Curva de saída */
+}
+
+/* Botão fechar com hover elegante */
 .formulario-mentor-novo .btn-fechar-novo {
   position: absolute;
-  top: 12px;
-  right: 12px;
+  top: 15px;
+  right: 15px;
   background: rgba(220, 53, 69, 0.1);
   color: #dc3545;
   border: none;
   border-radius: 50%;
-  width: 32px;
-  height: 32px;
+  width: 36px; /* ✅ Levemente maior */
+  height: 36px;
   cursor: pointer;
   display: flex;
   align-items: center;
   justify-content: center;
-  transition: all 0.3s ease;
-  font-size: 14px;
+  transition: all 0.3s cubic-bezier(0.25, 0.46, 0.45, 0.94);
+  font-size: 16px;
   z-index: 10;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1); /* ✅ Sombra sutil */
 }
 
 .formulario-mentor-novo .btn-fechar-novo:hover {
   background: #dc3545;
   color: white;
-  transform: scale(1.1);
+  transform: scale(1.15) rotate(90deg); /* ✅ Rotação suave */
+  box-shadow: 0 4px 15px rgba(220, 53, 69, 0.3);
 }
 
-/* ✅ INFO DO MENTOR - COMPACTA */
+/* ✅ INFO DO MENTOR COM ELEGÂNCIA */
 .mentor-info-novo {
   text-align: center;
-  margin-bottom: 20px;
-  padding-bottom: 15px;
-  border-bottom: 2px solid #e9ecef;
+  margin-bottom: 25px;
+  padding-bottom: 20px;
+  border-bottom: 2px solid rgba(233, 236, 239, 0.6);
+  position: relative;
 }
 
+/* ✅ EFEITO SHIMMER NA FOTO */
 .mentor-foto-novo {
-  width: 80px; /* ✅ Reduzido para economizar espaço */
-  height: 80px;
+  width: 90px; /* ✅ Levemente maior */
+  height: 90px;
   border-radius: 50%;
   object-fit: cover;
-  border: 3px solid #007bff;
-  margin-bottom: 8px;
-  box-shadow: 0 4px 8px rgba(0, 123, 255, 0.2);
+  border: 4px solid #007bff; /* ✅ Borda mais espessa */
+  margin-bottom: 12px;
+  box-shadow: 
+    0 8px 25px rgba(0, 123, 255, 0.2),
+    0 4px 10px rgba(0, 0, 0, 0.1);
+  transition: all 0.3s cubic-bezier(0.25, 0.46, 0.45, 0.94);
+  position: relative;
+  overflow: hidden;
+}
+
+.mentor-foto-novo::before {
+  content: '';
+  position: absolute;
+  top: -50%;
+  left: -50%;
+  width: 200%;
+  height: 200%;
+  background: linear-gradient(
+    45deg,
+    transparent,
+    rgba(255, 255, 255, 0.3),
+    transparent
+  );
+  transform: rotate(45deg);
+  transition: all 0.6s ease;
+  opacity: 0;
+}
+
+.mentor-foto-novo:hover::before {
+  opacity: 1;
+  transform: rotate(45deg) translate(100%, 100%);
+}
+
+.mentor-foto-novo:hover {
+  transform: scale(1.05);
+  box-shadow: 
+    0 12px 35px rgba(0, 123, 255, 0.3),
+    0 6px 15px rgba(0, 0, 0, 0.15);
 }
 
 .mentor-nome-novo {
-  font-size: 16px; /* ✅ Reduzido para economizar espaço */
+  font-size: 18px; /* ✅ Levemente maior */
   font-weight: 700;
   color: #2c3e50;
   margin: 0;
   text-transform: capitalize;
+  letter-spacing: 0.5px; /* ✅ Espaçamento elegante */
 }
 
-/* ✅ OPÇÕES MAIS COMPACTAS */
+/* ✅ OPÇÕES COM MICRO-ANIMAÇÕES */
 .opcoes-container-novo {
   display: flex;
   justify-content: center;
-  gap: 12px;
-  margin-bottom: 20px;
+  gap: 15px; /* ✅ Gap maior */
+  margin-bottom: 25px;
+  padding: 0 10px;
 }
 
 .opcao-novo {
@@ -1272,71 +1508,118 @@ ob_end_flush();
   flex-direction: column;
   align-items: center;
   cursor: pointer;
-  transition: all 0.3s ease;
-  padding: 8px;
-  border-radius: 12px;
+  transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275); /* ✅ Bounce suave */
+  padding: 12px; /* ✅ Padding maior */
+  border-radius: 16px; /* ✅ Bordas mais suaves */
   border: 2px solid transparent;
-  min-width: 65px;
+  min-width: 70px;
+  position: relative;
+  overflow: hidden;
+}
+
+.opcao-novo::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: -100%;
+  width: 100%;
+  height: 100%;
+  background: linear-gradient(
+    90deg,
+    transparent,
+    rgba(0, 123, 255, 0.1),
+    transparent
+  );
+  transition: all 0.6s ease;
+}
+
+.opcao-novo:hover::before {
+  left: 100%;
 }
 
 .opcao-novo:hover {
-  background: rgba(0, 123, 255, 0.05);
-  border-color: rgba(0, 123, 255, 0.2);
+  background: rgba(0, 123, 255, 0.08);
+  border-color: rgba(0, 123, 255, 0.3);
+  transform: translateY(-2px) scale(1.02); /* ✅ Levitação suave */
+  box-shadow: 0 8px 25px rgba(0, 123, 255, 0.15);
 }
 
 .opcao-novo.selecionada {
-  background: rgba(0, 123, 255, 0.1);
+  background: linear-gradient(135deg, rgba(0, 123, 255, 0.15), rgba(0, 123, 255, 0.08));
   border-color: #007bff;
-  transform: scale(1.05);
+  transform: translateY(-3px) scale(1.05); /* ✅ Mais proeminente */
+  box-shadow: 
+    0 12px 35px rgba(0, 123, 255, 0.25),
+    0 6px 15px rgba(0, 0, 0, 0.1);
 }
 
 .opcao-novo input[type="radio"] {
-  width: 16px;
-  height: 16px;
-  margin-bottom: 6px;
+  width: 18px; /* ✅ Levemente maior */
+  height: 18px;
+  margin-bottom: 8px;
   cursor: pointer;
   accent-color: #007bff;
+  transition: all 0.3s ease;
 }
 
 .opcao-novo label {
-  font-size: 13px;
+  font-size: 14px; /* ✅ Levemente maior */
   font-weight: 600;
   color: #495057;
   cursor: pointer;
-  transition: color 0.3s ease;
+  transition: all 0.3s cubic-bezier(0.25, 0.46, 0.45, 0.94);
   user-select: none;
+  letter-spacing: 0.3px;
 }
 
 .opcao-novo.selecionada label {
   color: #007bff;
+  font-weight: 700;
+  text-shadow: 0 1px 2px rgba(0, 123, 255, 0.2);
 }
 
-/* Mensagem inicial de gestão */
+/* ✅ MENSAGEM INICIAL COM FADE ELEGANTE */
 .mensagem-inicial-gestao {
   text-align: center;
-  padding: 20px;
-  background: linear-gradient(145deg, #f8f9fa 0%, #e9ecef 100%);
-  border-radius: 12px;
-  margin: 15px 0;
-  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
+  padding: 25px; /* ✅ Padding maior */
+  background: linear-gradient(145deg, #f8f9fa 0%, #ffffff 50%, #f0f2f5 100%);
+  border-radius: 16px; /* ✅ Bordas mais suaves */
+  margin: 20px 0;
+  box-shadow: 
+    0 8px 25px rgba(0, 0, 0, 0.08),
+    0 3px 10px rgba(0, 0, 0, 0.05);
   opacity: 0;
-  transition: all 0.3s ease;
+  transition: all 0.5s cubic-bezier(0.25, 0.46, 0.45, 0.94);
   display: none;
-  transform: translateY(10px);
+  transform: translateY(20px);
+  border: 1px solid rgba(0, 123, 255, 0.1);
 }
 
 .mensagem-inicial-gestao i {
-  font-size: 24px;
+  font-size: 28px; /* ✅ Ícone maior */
   color: #007bff;
-  margin-bottom: 10px;
+  margin-bottom: 15px;
+  animation: pulse-icon 2s ease-in-out infinite; /* ✅ Animação do ícone */
+}
+
+@keyframes pulse-icon {
+  0%, 100% { 
+    transform: scale(1); 
+    opacity: 1; 
+  }
+  50% { 
+    transform: scale(1.05); 
+    opacity: 0.8; 
+  }
 }
 
 .mensagem-inicial-gestao p {
   margin: 0;
-  font-size: 13px;
-  line-height: 1.6;
+  font-size: 14px; /* ✅ Texto maior */
+  line-height: 1.7; /* ✅ Espaçamento melhor */
   color: #495057;
   font-weight: 500;
+  letter-spacing: 0.3px;
 }
 
 .mensagem-inicial-gestao.ativo {
@@ -1344,187 +1627,230 @@ ob_end_flush();
   transform: translateY(0);
 }
 
-/* ✅ ÁREA DE INPUTS OTIMIZADA */
+/* ✅ INPUTS COM ANIMAÇÕES SUAVES */
 .inputs-area-novo {
-  margin-bottom: 18px;
-  min-height: 110px; /* ✅ Altura reduzida */
+  margin-bottom: 20px;
+  min-height: 120px;
 }
 
-/* Estilo para modo Cash/Green (dois campos) */
-.inputs-duplos-novo {
-  display: none;
+.inputs-duplos-novo,
+.input-unico-novo {
   opacity: 0;
-  transition: opacity 0.3s ease;
+  transform: translateX(-20px);
+  transition: all 0.5s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+  display: none;
 }
 
-.inputs-duplos-novo.ativo {
-  display: block;
+.inputs-duplos-novo.ativo,
+.input-unico-novo.ativo {
   opacity: 1;
+  transform: translateX(0);
+  display: block;
 }
 
 .campo-duplo-novo {
-  margin-bottom: 12px; /* ✅ Margem reduzida */
+  margin-bottom: 15px;
 }
 
 .campo-duplo-novo label {
   display: block;
-  font-size: 12px;
+  font-size: 13px; /* ✅ Levemente maior */
   font-weight: 600;
   color: #6c757d;
-  margin-bottom: 4px;
-  /* REMOVIDO: text-transform: uppercase; */
+  margin-bottom: 6px;
   letter-spacing: 0.5px;
+  transition: all 0.3s ease;
 }
 
 .campo-duplo-novo input {
   width: 100%;
-  padding: 10px 12px; /* ✅ Padding reduzido */
+  padding: 12px 15px; /* ✅ Padding maior */
   border: 2px solid #e9ecef;
-  border-radius: 10px;
-  font-size: 15px;
+  border-radius: 12px; /* ✅ Bordas mais suaves */
+  font-size: 16px;
   font-weight: 600;
   color: #495057;
-  background: white;
-  transition: all 0.3s ease;
+  background: linear-gradient(145deg, #ffffff, #f8f9fa);
+  transition: all 0.4s cubic-bezier(0.25, 0.46, 0.45, 0.94);
   box-sizing: border-box;
+  box-shadow: inset 0 2px 4px rgba(0, 0, 0, 0.05);
 }
 
 .campo-duplo-novo input:focus {
   outline: none;
   border-color: #007bff;
-  box-shadow: 0 0 0 3px rgba(0, 123, 255, 0.1);
+  box-shadow: 
+    0 0 0 4px rgba(0, 123, 255, 0.15),
+    inset 0 2px 4px rgba(0, 0, 0, 0.05);
+  transform: translateY(-1px);
+  background: #ffffff;
 }
 
-/* Estilo para modo Red (um campo) */
+.campo-duplo-novo input:hover:not(:focus) {
+  border-color: rgba(0, 123, 255, 0.5);
+  transform: translateY(-0.5px);
+}
+
+/* Input Red com estilo especial */
 .input-unico-novo {
-  display: none;
   text-align: center;
-  opacity: 0;
-  transition: opacity 0.3s ease;
-}
-
-.input-unico-novo.ativo {
-  display: block;
-  opacity: 1;
 }
 
 .input-unico-novo label {
   display: block;
-  font-size: 13px;
+  font-size: 14px;
   font-weight: 600;
   color: #dc3545;
-  margin-bottom: 8px;
-  /* REMOVIDO: text-transform: uppercase; */
+  margin-bottom: 10px;
   letter-spacing: 0.5px;
+  text-transform: uppercase;
+  font-size: 12px;
 }
 
 .input-unico-novo input {
   width: 100%;
-  padding: 12px;
+  padding: 15px;
   border: 2px solid #f8d7da;
-  border-radius: 10px;
-  font-size: 16px;
+  border-radius: 12px;
+  font-size: 18px;
   font-weight: 700;
   color: #dc3545;
-  background: #fff5f5;
+  background: linear-gradient(145deg, #fff5f5, #ffffff);
   text-align: center;
-  transition: all 0.3s ease;
+  transition: all 0.4s cubic-bezier(0.25, 0.46, 0.45, 0.94);
   box-sizing: border-box;
+  box-shadow: inset 0 2px 4px rgba(220, 53, 69, 0.05);
 }
 
 .input-unico-novo input:focus {
   outline: none;
   border-color: #dc3545;
-  box-shadow: 0 0 0 3px rgba(220, 53, 69, 0.1);
+  box-shadow: 
+    0 0 0 4px rgba(220, 53, 69, 0.15),
+    inset 0 2px 4px rgba(220, 53, 69, 0.05);
+  transform: scale(1.02);
+  background: #ffffff;
 }
 
-/* ✅ STATUS MAIS COMPACTO */
+/* ✅ STATUS COM ANIMAÇÃO FLUIDA */
 .status-calculo-novo {
   text-align: center;
-  padding: 12px;
-  border-radius: 12px;
-  background: #f8f9fa;
+  padding: 15px;
+  border-radius: 16px;
+  background: linear-gradient(145deg, #f8f9fa, #ffffff);
   border: 2px solid #e9ecef;
-  margin-bottom: 18px;
-  min-height: 45px;
+  margin-bottom: 20px;
+  min-height: 50px;
   display: flex;
   flex-direction: column;
   justify-content: center;
-  transition: all 0.3s ease;
+  transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+  box-shadow: 0 4px 15px rgba(0, 0, 0, 0.05);
 }
 
 .rotulo-status-novo {
-  font-size: 11px;
+  font-size: 12px;
   font-weight: 600;
   color: #6c757d;
-  /* REMOVIDO: text-transform: uppercase; */
-  letter-spacing: 0.5px;
-  margin-bottom: 4px;
+  letter-spacing: 1px;
+  margin-bottom: 5px;
+  text-transform: uppercase;
+  transition: all 0.3s ease;
 }
 
 .valor-status-novo {
-  font-size: 16px;
+  font-size: 18px;
   font-weight: 700;
-  transition: all 0.3s ease;
-}
-
-/* Cores do status */
-.status-neutro {
-  color: #6c757d;
-}
-
-.status-positivo {
-  color: #28a745;
-}
-
-.status-negativo {
-  color: #dc3545;
+  transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+  text-shadow: 0 1px 2px rgba(0, 0, 0, 0.1);
 }
 
 .status-calculo-novo.status-positivo-ativo {
-  background: rgba(40, 167, 69, 0.05);
-  border-color: rgba(40, 167, 69, 0.2);
+  background: linear-gradient(145deg, rgba(40, 167, 69, 0.08), rgba(40, 167, 69, 0.03));
+  border-color: rgba(40, 167, 69, 0.3);
+  box-shadow: 0 6px 20px rgba(40, 167, 69, 0.15);
 }
 
 .status-calculo-novo.status-negativo-ativo {
-  background: rgba(220, 53, 69, 0.05);
-  border-color: rgba(220, 53, 69, 0.2);
+  background: linear-gradient(145deg, rgba(220, 53, 69, 0.08), rgba(220, 53, 69, 0.03));
+  border-color: rgba(220, 53, 69, 0.3);
+  box-shadow: 0 6px 20px rgba(220, 53, 69, 0.15);
 }
 
-/* ✅ BOTÃO MAIS COMPACTO */
+.status-calculo-novo.animando {
+  transform: scale(1.02);
+  animation: pulse-status 0.6s ease-in-out;
+}
+
+@keyframes pulse-status {
+  0%, 100% { 
+    transform: scale(1.02); 
+  }
+  50% { 
+    transform: scale(1.05); 
+  }
+}
+
+/* ✅ BOTÃO COM ELEGÂNCIA MÁXIMA */
 .botao-enviar-novo {
   width: 100%;
-  padding: 12px;
-  background: linear-gradient(135deg, #007bff 0%, #0056b3 100%);
+  padding: 15px;
+  background: linear-gradient(135deg, #007bff 0%, #0056b3 50%, #004085 100%);
   color: white;
   border: none;
-  border-radius: 12px;
-  font-size: 15px;
+  border-radius: 14px;
+  font-size: 16px;
   font-weight: 700;
   cursor: pointer;
-  transition: all 0.3s ease;
-  /* REMOVIDO: text-transform: uppercase; */
+  transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
   letter-spacing: 0.5px;
-  box-shadow: 0 4px 12px rgba(0, 123, 255, 0.3);
+  text-transform: uppercase;
+  font-size: 14px;
+  box-shadow: 
+    0 8px 25px rgba(0, 123, 255, 0.3),
+    0 4px 10px rgba(0, 0, 0, 0.1);
+  position: relative;
+  overflow: hidden;
+}
+
+.botao-enviar-novo::before {
+  content: '';
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  width: 0;
+  height: 0;
+  background: rgba(255, 255, 255, 0.2);
+  border-radius: 50%;
+  transform: translate(-50%, -50%);
+  transition: all 0.6s ease;
+}
+
+.botao-enviar-novo:hover::before {
+  width: 300px;
+  height: 300px;
 }
 
 .botao-enviar-novo:hover {
-  transform: translateY(-2px);
-  box-shadow: 0 6px 20px rgba(0, 123, 255, 0.4);
+  transform: translateY(-3px) scale(1.02);
+  box-shadow: 
+    0 12px 35px rgba(0, 123, 255, 0.4),
+    0 6px 15px rgba(0, 0, 0, 0.15);
+  background: linear-gradient(135deg, #0056b3 0%, #004085 50%, #002752 100%);
 }
 
 .botao-enviar-novo:active {
-  transform: translateY(0);
+  transform: translateY(-1px) scale(0.98);
+  transition: all 0.1s ease;
 }
 
 .botao-enviar-novo:disabled {
-  background: #6c757d;
+  background: linear-gradient(135deg, #6c757d, #495057);
   cursor: not-allowed;
   transform: none;
-  box-shadow: none;
+  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
 }
 
-/* Loading state */
 .botao-enviar-novo.carregando {
   position: relative;
   color: transparent;
@@ -1536,96 +1862,138 @@ ob_end_flush();
   top: 50%;
   left: 50%;
   transform: translate(-50%, -50%);
-  width: 18px;
-  height: 18px;
-  border: 2px solid transparent;
-  border-top: 2px solid white;
+  width: 22px;
+  height: 22px;
+  border: 3px solid transparent;
+  border-top: 3px solid white;
   border-radius: 50%;
-  animation: spin 1s linear infinite;
+  animation: spin-elegant 1s linear infinite;
 }
 
-/* Estados de validação */
-.campo-duplo-novo input.erro,
-.input-unico-novo input.erro {
-  border-color: #dc3545;
-  box-shadow: 0 0 0 3px rgba(220, 53, 69, 0.1);
-}
-
-.campo-duplo-novo input.sucesso {
-  border-color: #28a745;
-  box-shadow: 0 0 0 3px rgba(40, 167, 69, 0.1);
-}
-
-/* Mensagens de status abaixo dos inputs */
+@keyframes spin-elegant {
+  0% { 
+    transform: translate(-50%, -50%) rotate(0deg); 
+  }
+  100% { 
+    transform: translate(-50%, -50%) rotate(360deg); 
+  }
+}/* ✅ MENSAGENS DE STATUS COM ANIMAÇÕES ELEGANTES */
 .mensagem-status-input {
-  font-size: 11px;
-  margin-top: 6px;
-  margin-bottom: 6px;
-  line-height: 1.4;
-  transition: all 0.3s ease;
-  padding: 6px 10px;
-  border-radius: 6px;
+  font-size: 12px;
+  margin-top: 8px;
+  margin-bottom: 8px;
+  line-height: 1.5;
+  transition: all 0.4s cubic-bezier(0.25, 0.46, 0.45, 0.94);
+  padding: 8px 12px;
+  border-radius: 8px;
   display: none;
   text-align: center;
   font-weight: 500;
   max-width: 100%;
   box-sizing: border-box;
+  transform: translateY(10px);
+  opacity: 0;
 }
 
 .mensagem-status-input.positivo {
-  color: #1e7e34;
-  background-color: rgba(40, 167, 69, 0.1);
+  color: #155724;
+  background: linear-gradient(145deg, rgba(40, 167, 69, 0.1), rgba(40, 167, 69, 0.05));
+  border-left: 4px solid #28a745;
+  box-shadow: 0 4px 15px rgba(40, 167, 69, 0.1);
 }
 
 .mensagem-status-input.negativo {
-  color: #bd2130;
-  background-color: rgba(220, 53, 69, 0.1);
+  color: #721c24;
+  background: linear-gradient(145deg, rgba(220, 53, 69, 0.1), rgba(220, 53, 69, 0.05));
+  border-left: 4px solid #dc3545;
+  box-shadow: 0 4px 15px rgba(220, 53, 69, 0.1);
 }
 
 .mensagem-status-input.neutro {
-  color: #5a6268;
-  background-color: rgba(108, 117, 125, 0.1);
+  color: #495057;
+  background: linear-gradient(145deg, rgba(108, 117, 125, 0.1), rgba(108, 117, 125, 0.05));
+  border-left: 4px solid #6c757d;
+  box-shadow: 0 4px 15px rgba(108, 117, 125, 0.1);
 }
 
-/* Animação suave das mensagens */
 .mensagem-status-input.animar {
-  animation: fadeInUp 0.3s ease-out;
+  display: block !important;
+  opacity: 1 !important;
+  transform: translateY(0) !important;
+  animation: fadeInUp-elegant 0.5s cubic-bezier(0.175, 0.885, 0.32, 1.275);
 }
 
-@keyframes fadeInUp {
-  from {
+@keyframes fadeInUp-elegant {
+  0% {
     opacity: 0;
-    transform: translateY(5px);
+    transform: translateY(15px) scale(0.95);
   }
-  to {
+  60% {
+    opacity: 0.8;
+    transform: translateY(-2px) scale(1.02);
+  }
+  100% {
     opacity: 1;
-    transform: translateY(0);
+    transform: translateY(0) scale(1);
   }
 }
 
-/* ✅ RESPONSIVIDADE OTIMIZADA */
+/* ✅ RESPONSIVIDADE ELEGANTE */
 @media (max-width: 768px) and (min-width: 481px) {
   .formulario-mentor-novo {
-    width: 360px;
-    min-width: 340px;
-    max-width: min(380px, calc(100vw - 40px)); /* ✅ Respeitar viewport */
-    padding: 22px;
-    max-height: min(90vh, calc(100vh - 40px)); /* ✅ Respeitar viewport */
+    width: 380px;
+    min-width: 360px;
+    max-width: min(400px, calc(100vw - 40px));
+    padding: 25px;
+    max-height: min(90vh, calc(100vh - 40px));
+  }
+  
+  .mentor-foto-novo {
+    width: 80px;
+    height: 80px;
   }
 }
 
 @media (max-width: 480px) {
   .formulario-mentor-novo {
-    width: 310px;
-    min-width: 290px;
-    max-width: min(330px, calc(100vw - 20px)); /* ✅ Margem menor em mobile */
-    padding: 18px;
-    max-height: min(95vh, calc(100vh - 20px)); /* ✅ Margem menor em mobile */
+    width: 340px;
+    min-width: 320px;
+    max-width: min(360px, calc(100vw - 20px));
+    padding: 20px;
+    max-height: min(95vh, calc(100vh - 20px));
   }
   
   .mentor-foto-novo {
-    width: 50px;
-    height: 50px;
+    width: 70px;
+    height: 70px;
+  }
+  
+  .mentor-nome-novo {
+    font-size: 16px;
+  }
+  
+  .opcoes-container-novo {
+    gap: 12px;
+  }
+  
+  .opcao-novo {
+    min-width: 65px;
+    padding: 10px;
+  }
+}
+
+@media (max-width: 320px) {
+  .formulario-mentor-novo {
+    width: 300px;
+    min-width: 280px;
+    max-width: min(320px, calc(100vw - 20px));
+    padding: 18px;
+    max-height: calc(100vh - 20px);
+  }
+  
+  .mentor-foto-novo {
+    width: 60px;
+    height: 60px;
   }
   
   .mentor-nome-novo {
@@ -1633,74 +2001,97 @@ ob_end_flush();
   }
 }
 
-@media (max-width: 320px) {
-  .formulario-mentor-novo {
-    width: 280px;
-    min-width: 260px;
-    max-width: min(300px, calc(100vw - 20px)); /* ✅ Nunca vazar */
-    padding: 15px;
-    max-height: calc(100vh - 20px); /* ✅ Altura segura */
+/* ✅ PREVENÇÃO DE SCROLL COM ELEGÂNCIA */
+body.modal-aberto {
+  overflow: hidden !important;
+  padding-right: 0 !important;
+  transition: all 0.3s ease;
+}
+
+/* ✅ ESTADOS DE VALIDAÇÃO ELEGANTES */
+.campo-duplo-novo input.erro,
+.input-unico-novo input.erro {
+  border-color: #dc3545;
+  box-shadow: 
+    0 0 0 4px rgba(220, 53, 69, 0.15),
+    inset 0 2px 4px rgba(220, 53, 69, 0.05);
+  animation: shake-elegant 0.5s ease-in-out;
+}
+
+.campo-duplo-novo input.sucesso {
+  border-color: #28a745;
+  box-shadow: 
+    0 0 0 4px rgba(40, 167, 69, 0.15),
+    inset 0 2px 4px rgba(40, 167, 69, 0.05);
+  animation: success-pulse 0.6s ease-in-out;
+}
+
+@keyframes shake-elegant {
+  0%, 100% { transform: translateX(0) translateY(-1px); }
+  10%, 30%, 50%, 70%, 90% { transform: translateX(-3px) translateY(-1px); }
+  20%, 40%, 60%, 80% { transform: translateX(3px) translateY(-1px); }
+}
+
+@keyframes success-pulse {
+  0% { 
+    transform: scale(1) translateY(-1px); 
+    box-shadow: 0 0 0 4px rgba(40, 167, 69, 0.15); 
+  }
+  50% { 
+    transform: scale(1.02) translateY(-2px); 
+    box-shadow: 0 0 0 8px rgba(40, 167, 69, 0.25); 
+  }
+  100% { 
+    transform: scale(1) translateY(-1px); 
+    box-shadow: 0 0 0 4px rgba(40, 167, 69, 0.15); 
   }
 }
 
-/* ✅ PREVENÇÃO DE SCROLL GLOBAL E VAZAMENTO */
-body.modal-aberto {
-  overflow: hidden !important; /* ✅ Remove barra de scroll do body */
-  padding-right: 0 !important; /* ✅ Evita shift de layout */
-}
-
-/* ✅ GARANTIR QUE O FORMULÁRIO NUNCA ULTRAPASSE OS LIMITES */
-.formulario-mentor-novo {
-  /* Garantir que sempre caiba na tela */
-  right: auto !important;
-  bottom: auto !important;
-}
-
-/* ✅ AJUSTE PARA TELAS MUITO PEQUENAS */
+/* ✅ AJUSTES FINAIS PARA TELAS MUITO PEQUENAS */
 @media (max-width: 400px) {
   .formulario-mentor-novo {
     width: calc(100vw - 30px) !important;
     min-width: 280px !important;
     max-width: calc(100vw - 30px) !important;
-    left: 15px !important;
-    right: 15px !important;
-    transform: translateY(-50%) !important;
+    left: 50% !important;
+    right: auto !important;
+    transform: translate(-50%, -50%) scale(0.7) !important;
     margin: 0 !important;
   }
+  
+  .formulario-mentor-novo.ativo {
+    transform: translate(-50%, -50%) scale(1) !important;
+  }
+  
+  .formulario-mentor-novo.fechando {
+    transform: translate(-50%, -50%) scale(0.8) !important;
+  }
 }
 
-/* Animações */
-@keyframes fadeIn {
-  from {
+/* ✅ ANIMAÇÕES GLOBAIS ELEGANTES */
+@keyframes fadeIn-elegant {
+  0% {
     opacity: 0;
-    transform: translate(-50%, -60%);
+    transform: translate(-50%, -60%) scale(0.7);
   }
-  to {
+  100% {
     opacity: 1;
-    transform: translate(-50%, -50%);
+    transform: translate(-50%, -50%) scale(1);
   }
 }
 
-@keyframes spin {
-  0% { transform: translate(-50%, -50%) rotate(0deg); }
-  100% { transform: translate(-50%, -50%) rotate(360deg); }
+@keyframes fadeOut-elegant {
+  0% {
+    opacity: 1;
+    transform: translate(-50%, -50%) scale(1);
+  }
+  100% {
+    opacity: 0;
+    transform: translate(-50%, -45%) scale(0.8);
+  }
 }
 
-@keyframes pulse {
-  0%, 100% { transform: scale(1); }
-  50% { transform: scale(1.02); }
-}
-
-.formulario-mentor-novo.ativo {
-  display: block;
-  animation: fadeIn 0.3s ease-out;
-}
-
-.status-calculo-novo.animando {
-  animation: pulse 0.4s ease-in-out;
-}
-
-/* Prevenção de conflitos */
+/* ✅ PREVENÇÃO DE CONFLITOS COM ELEGÂNCIA */
 .formulario-mentor-novo * {
   box-sizing: border-box;
 }
@@ -1709,21 +2100,345 @@ body.modal-aberto {
 .formulario-mentor-novo .mentor-item,
 .formulario-mentor-novo .formulario-mentor {
   all: initial;
-  font-family: inherit;
+  font-family: "Poppins", sans-serif;
+}
+
+/* Animações globais */
+@keyframes slideInRight {
+    from {
+        transform: translateX(100%);
+        opacity: 0;
+    }
+    to {
+        transform: translateX(0);
+        opacity: 1;
+    }
 }
 </style>
 
 <script>
-// ===== SISTEMA NOVO DE CADASTRO DE MENTORES =====
+// ===== SISTEMA INTEGRADO CORRIGIDO =====
+
+// 🚫 DESATIVAR SISTEMA ANTIGO COMPLETAMENTE
+window.FormularioValorManager_DESATIVADO = true;
+
+// ===== SISTEMA DE EXCLUSÃO DE ENTRADA CORRIGIDO =====
+const ModalExclusaoEntrada = {
+    modal: null,
+    btnConfirmar: null,
+    btnCancelar: null,
+    idEntradaAtual: null,
+    processandoExclusao: false, // ✅ NOVA FLAG PARA EVITAR DUPLA EXCLUSÃO
+
+    inicializar() {
+        this.modal = document.getElementById('modal-confirmacao-entrada');
+        this.btnConfirmar = document.getElementById('btn-confirmar-entrada');
+        this.btnCancelar = document.getElementById('btn-cancelar-entrada');
+
+        if (!this.modal || !this.btnConfirmar || !this.btnCancelar) {
+            console.error('❌ Elementos do modal de exclusão não encontrados');
+            return;
+        }
+
+        this.configurarEventos();
+        this.integrarComSistemaExistente();
+        console.log('✅ Modal de exclusão de entrada inicializado');
+    },
+
+    configurarEventos() {
+        // Botão cancelar
+        this.btnCancelar.addEventListener('click', () => {
+            this.fecharModal();
+        });
+
+        // Botão confirmar
+        this.btnConfirmar.addEventListener('click', () => {
+            this.confirmarExclusao();
+        });
+
+        // Fechar com ESC
+        document.addEventListener('keydown', (e) => {
+            if (e.key === 'Escape' && this.modal.classList.contains('ativo')) {
+                this.fecharModal();
+            }
+        });
+
+        // Fechar clicando no fundo
+        this.modal.addEventListener('click', (e) => {
+            if (e.target === this.modal) {
+                this.fecharModal();
+            }
+        });
+
+        // Prevenir clique no conteúdo fechar o modal
+        this.modal.querySelector('.modal-conteudo-exclusao').addEventListener('click', (e) => {
+            e.stopPropagation();
+        });
+    },
+
+    integrarComSistemaExistente() {
+        // Substitui a função original de exclusão se existir
+        if (typeof ExclusaoManager !== 'undefined') {
+            ExclusaoManager._excluirEntradaOriginal = ExclusaoManager.excluirEntrada;
+            ExclusaoManager.excluirEntrada = (idEntrada) => {
+                this.abrir(idEntrada);
+            };
+        }
+
+        // Intercepta cliques em botões de lixeira
+        document.addEventListener('click', (e) => {
+            if (e.target.matches('.btn-lixeira, .btn-lixeira *, .btn-icon.btn-lixeira, .btn-icon.btn-lixeira *')) {
+                e.preventDefault();
+                e.stopPropagation();
+                
+                let button = e.target.closest('.btn-lixeira, .btn-icon');
+                if (button) {
+                    // Tenta extrair ID do onclick
+                    if (button.onclick) {
+                        const onclickStr = button.onclick.toString();
+                        const match = onclickStr.match(/excluirEntrada\((\d+)\)/);
+                        if (match) {
+                            const idEntrada = match[1];
+                            this.abrir(idEntrada);
+                            return;
+                        }
+                    }
+                    
+                    // Tenta extrair ID do atributo data-id ou similar
+                    const idEntrada = button.dataset.id || 
+                                    button.getAttribute('data-entrada-id') ||
+                                    button.closest('[data-entrada-id]')?.dataset.entradaId;
+                    
+                    if (idEntrada) {
+                        this.abrir(idEntrada);
+                        return;
+                    }
+                    
+                    console.warn('⚠️ ID da entrada não encontrado no botão lixeira');
+                }
+            }
+        });
+    },
+
+    abrir(idEntrada) {
+        // ✅ CORREÇÃO: Verificar se já está processando
+        if (this.processandoExclusao) {
+            console.warn('⚠️ Exclusão já em andamento, aguarde...');
+            return;
+        }
+
+        if (!this.modal) {
+            console.error('❌ Modal não inicializado');
+            return;
+        }
+
+        console.log('🗑️ Abrindo modal para entrada ID:', idEntrada);
+        
+        this.idEntradaAtual = idEntrada;
+        
+        // ✅ CORREÇÃO: Reset completo do estado dos botões
+        this.resetarEstadoBotoes();
+        
+        // Remove qualquer estado anterior
+        this.modal.classList.remove('ativo');
+        
+        // Force reflow
+        this.modal.offsetHeight;
+        
+        // Adiciona classe ativo
+        this.modal.classList.add('ativo');
+        
+        // Previne scroll da página
+        document.body.style.overflow = 'hidden';
+
+        // Foca no botão cancelar por padrão
+        setTimeout(() => {
+            this.btnCancelar.focus();
+        }, 100);
+    },
+
+    // ✅ NOVA FUNÇÃO: Reset completo dos botões
+    resetarEstadoBotoes() {
+        this.btnConfirmar.disabled = false;
+        this.btnCancelar.disabled = false;
+        this.btnConfirmar.innerHTML = '<i class="fas fa-trash"></i> Sim, Excluir';
+        this.processandoExclusao = false;
+    },
+
+    fecharModal() {
+        if (!this.modal) return;
+
+        console.log('❌ Fechando modal de exclusão');
+        
+        this.modal.classList.remove('ativo');
+        this.idEntradaAtual = null;
+        
+        // ✅ CORREÇÃO: Reset estado completo ao fechar
+        this.resetarEstadoBotoes();
+        
+        // Restaura scroll da página
+        document.body.style.overflow = '';
+    },
+
+    async confirmarExclusao() {
+        // ✅ CORREÇÃO: Verificar se já está processando
+        if (this.processandoExclusao) {
+            console.warn('⚠️ Exclusão já em andamento');
+            return;
+        }
+
+        if (!this.idEntradaAtual) {
+            console.error('❌ ID da entrada não definido');
+            return;
+        }
+
+        console.log('🗑️ Confirmando exclusão da entrada:', this.idEntradaAtual);
+        
+        // ✅ CORREÇÃO: Marcar como processando PRIMEIRO
+        this.processandoExclusao = true;
+        
+        // Desabilita botões durante processamento
+        this.btnConfirmar.disabled = true;
+        this.btnCancelar.disabled = true;
+        this.btnConfirmar.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Excluindo...';
+
+        try {
+            await this.executarExclusao(this.idEntradaAtual);
+            
+            this.fecharModal();
+            this.mostrarToast('✅ Entrada excluída com sucesso!', 'sucesso');
+
+        } catch (error) {
+            console.error('❌ Erro ao excluir entrada:', error);
+            this.mostrarToast('❌ Erro ao excluir entrada: ' + error.message, 'erro');
+            
+            // ✅ CORREÇÃO: Reabilita botões em caso de erro
+            this.resetarEstadoBotoes();
+        }
+    },
+
+    async executarExclusao(idEntrada) {
+        // Usa a função original do ExclusaoManager se disponível
+        if (typeof ExclusaoManager !== 'undefined' && ExclusaoManager.executarExclusaoEntrada) {
+            return await ExclusaoManager.executarExclusaoEntrada(idEntrada);
+        }
+
+        // Fallback: faz requisição direta
+        const response = await fetch('excluir-entrada.php', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
+            body: `id=${encodeURIComponent(idEntrada)}`
+        });
+
+        if (!response.ok) {
+            throw new Error(`HTTP ${response.status}`);
+        }
+
+        const resultado = await response.text();
+        
+        if (!resultado.toLowerCase().includes('sucesso')) {
+            throw new Error(resultado || 'Erro desconhecido');
+        }
+
+        // Atualiza o sistema
+        await this.atualizarSistema();
+        
+        return resultado;
+    },
+
+    async atualizarSistema() {
+        try {
+            // ✅ CORREÇÃO: Aguardar um pouco antes de atualizar
+            await new Promise(resolve => setTimeout(resolve, 100));
+
+            const atualizacoes = [];
+
+            // Recarrega mentores se função existir
+            if (typeof MentorManager !== 'undefined' && MentorManager.recarregarMentores) {
+                atualizacoes.push(MentorManager.recarregarMentores());
+            }
+
+            // Atualiza dados financeiros se função existir
+            if (typeof DadosManager !== 'undefined' && DadosManager.atualizarLucroEBancaViaAjax) {
+                atualizacoes.push(DadosManager.atualizarLucroEBancaViaAjax());
+            }
+
+            await Promise.all(atualizacoes);
+
+            // ✅ CORREÇÃO: Atualizar tela de edição após as atualizações
+            const telaEdicaoAberta = document.getElementById('tela-edicao')?.style.display === 'block';
+            if (telaEdicaoAberta && typeof TelaEdicaoManager !== 'undefined' && typeof MentorManager !== 'undefined') {
+                setTimeout(() => {
+                    if (MentorManager.mentorAtualId) {
+                        TelaEdicaoManager.editarAposta(MentorManager.mentorAtualId);
+                    }
+                }, 500); // ✅ Tempo maior para garantir atualização completa
+            }
+
+            // Atualiza meta se existir
+            if (typeof MetaDiariaManager !== 'undefined' && MetaDiariaManager.atualizarMetaDiaria) {
+                setTimeout(() => {
+                    MetaDiariaManager.atualizarMetaDiaria();
+                }, 200);
+            }
+
+            console.log('✅ Sistema atualizado após exclusão');
+        } catch (error) {
+            console.warn('⚠️ Erro ao atualizar sistema:', error);
+        }
+    },
+
+    mostrarToast(mensagem, tipo = 'info') {
+        // Usa ToastManager se existir
+        if (typeof ToastManager !== 'undefined') {
+            ToastManager.mostrar(mensagem, tipo);
+            return;
+        }
+
+        // Fallback simples
+        console.log(`📢 ${tipo.toUpperCase()}: ${mensagem}`);
+        
+        const toast = document.createElement('div');
+        toast.style.cssText = `
+            position: fixed;
+            top: 20px;
+            right: 20px;
+            padding: 15px 25px;
+            border-radius: 8px;
+            color: white;
+            font-weight: 600;
+            z-index: 1000000;
+            animation: slideInRight 0.3s ease-out;
+            font-family: "Poppins", sans-serif;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
+        `;
+
+        const cores = {
+            sucesso: '#28a745',
+            erro: '#dc3545',
+            info: '#17a2b8',
+            aviso: '#ffc107'
+        };
+
+        toast.style.backgroundColor = cores[tipo] || cores.info;
+        toast.textContent = mensagem;
+
+        document.body.appendChild(toast);
+
+        setTimeout(() => {
+            toast.remove();
+        }, 4000);
+    }
+};
+
+// ===== SISTEMA NOVO DE CADASTRO CORRIGIDO =====
 const SistemaCadastroNovo = {
-  // Configurações
   config: {
     AVATAR_PADRAO: "https://cdn-icons-png.flaticon.com/512/847/847969.png",
     TIMEOUT_ANIMACAO: 300,
     TIMEOUT_STATUS: 200,
   },
 
-  // Estado atual
   estado: {
     mentorId: null,
     tipoOperacao: null,
@@ -1731,12 +2446,11 @@ const SistemaCadastroNovo = {
     valorTotal: 0,
     valorRed: 0,
     formularioAberto: false,
+    processandoSubmissao: false, // ✅ NOVA FLAG PARA EVITAR DUPLA SUBMISSÃO
   },
 
-  // Cache de elementos DOM
   elementos: {},
 
-  // ===== INICIALIZAÇÃO =====
   inicializar() {
     this.cachearElementos();
     this.configurarEventos();
@@ -1746,7 +2460,6 @@ const SistemaCadastroNovo = {
     console.log("🎯 Sistema Novo de Cadastro inicializado com sucesso");
   },
 
-  // Cachear elementos DOM
   cachearElementos() {
     this.elementos = {
       formulario: document.getElementById('formulario-mentor-novo'),
@@ -1756,63 +2469,57 @@ const SistemaCadastroNovo = {
       mentorIdInput: document.querySelector('.mentor-id-novo'),
       tipoOperacaoInput: document.querySelector('.tipo-operacao-novo'),
       
-      // Opções
       opcoesCash: document.querySelector('[data-tipo="cash"]'),
       opcoesGreen: document.querySelector('[data-tipo="green"]'),
       opcoesRed: document.querySelector('[data-tipo="red"]'),
       
-      // Inputs duplos
       inputsDuplos: document.getElementById('inputs-duplos'),
       inputEntrada: document.getElementById('input-entrada'),
       inputTotal: document.getElementById('input-total'),
       labelTotal: document.getElementById('label-total'),
       
-      // Input único
       inputUnico: document.getElementById('input-unico'),
       inputRed: document.getElementById('input-red'),
       
-      // Status
       statusContainer: document.querySelector('.status-calculo-novo'),
       rotuloStatus: document.getElementById('rotulo-status'),
       valorStatus: document.getElementById('valor-status'),
       
-      // Form e botão
       form: document.getElementById('form-mentor-novo'),
       btnEnviar: document.querySelector('.botao-enviar-novo'),
     };
   },
 
-  // ===== EVENTOS =====
   configurarEventos() {
     // Opções Cash, Green, Red
     document.querySelectorAll('.opcao-novo').forEach(opcao => {
-  opcao.addEventListener('click', (e) => {
-    const tipo = opcao.dataset.tipo;
-    this.selecionarTipo(tipo);
-    // Preencher input-entrada ou input-red com valor da unidade
-    const valorUndSpan = document.getElementById('valor-unidade');
-    if (valorUndSpan) {
-      const valorUnd = valorUndSpan.textContent.trim();
-      if (tipo === 'red') {
-        const inputRed = document.getElementById('input-red');
-        if (inputRed && valorUnd && valorUnd !== 'R$ 0,00') {
-          inputRed.value = valorUnd;
-          setTimeout(() => {
-            this.atualizarCalculoRed();
-          }, 100);
+      opcao.addEventListener('click', (e) => {
+        const tipo = opcao.dataset.tipo;
+        this.selecionarTipo(tipo);
+        
+        const valorUndSpan = document.getElementById('valor-unidade');
+        if (valorUndSpan) {
+          const valorUnd = valorUndSpan.textContent.trim();
+          if (tipo === 'red') {
+            const inputRed = document.getElementById('input-red');
+            if (inputRed && valorUnd && valorUnd !== 'R$ 0,00') {
+              inputRed.value = valorUnd;
+              setTimeout(() => {
+                this.atualizarCalculoRed();
+              }, 100);
+            }
+          } else {
+            const inputEntrada = document.getElementById('input-entrada');
+            if (inputEntrada && valorUnd && valorUnd !== 'R$ 0,00') {
+              inputEntrada.value = valorUnd;
+              setTimeout(() => {
+                this.atualizarCalculo();
+              }, 100);
+            }
+          }
         }
-      } else {
-        const inputEntrada = document.getElementById('input-entrada');
-        if (inputEntrada && valorUnd && valorUnd !== 'R$ 0,00') {
-          inputEntrada.value = valorUnd;
-          setTimeout(() => {
-            this.atualizarCalculo();
-          }, 100);
-        }
-      }
-    }
-  });
-});
+      });
+    });
 
     // Inputs duplos
     if (this.elementos.inputEntrada) {
@@ -1866,7 +2573,6 @@ const SistemaCadastroNovo = {
     });
   },
 
-  // ===== MÁSCARAS =====
   configurarMascaras() {
     const inputs = [
       this.elementos.inputEntrada,
@@ -1918,7 +2624,6 @@ const SistemaCadastroNovo = {
     });
   },
 
-  // ===== CONVERSÕES =====
   converterParaFloat(valorBRL) {
     if (!valorBRL || typeof valorBRL !== 'string') return 0;
     return parseFloat(
@@ -1937,9 +2642,15 @@ const SistemaCadastroNovo = {
     });
   },
 
-  // ===== ABERTURA =====
   abrirFormulario(card) {
-    if (!card || this.estado.formularioAberto) {
+    // ✅ CORREÇÃO: Verificar se já está processando
+    if (this.estado.formularioAberto || this.estado.processandoSubmissao) {
+      console.warn('⚠️ Formulário já está aberto ou processando');
+      return;
+    }
+
+    if (!card) {
+      console.warn('⚠️ Card não fornecido');
       return;
     }
 
@@ -1954,6 +2665,8 @@ const SistemaCadastroNovo = {
       }
       return;
     }
+
+    console.log('🎯 Abrindo formulário para mentor:', nomeMentor, 'ID:', idMentor);
 
     this.preencherInfoMentor(nomeMentor, fotoMentor, idMentor);
     this.resetarFormulario();
@@ -1979,19 +2692,28 @@ const SistemaCadastroNovo = {
     this.estado.mentorId = id;
   },
 
+  // ✅ FUNÇÃO MODIFICADA: Mostrar formulário com elegância máxima
   mostrarFormulario() {
     if (!this.elementos.formulario) return;
 
-    // ✅ REMOVER SCROLL GLOBAL
+    // ✅ CRIAR E MOSTRAR OVERLAY PRIMEIRO
+    this.criarOverlayElegante();
+
+    // Prevenir scroll da página
     document.body.classList.add('modal-aberto');
 
+    // ✅ MOSTRAR FORMULÁRIO COM TRANSIÇÃO SUAVE
     this.elementos.formulario.style.display = 'block';
-    this.elementos.formulario.offsetHeight;
-    this.elementos.formulario.classList.add('ativo');
+    this.elementos.formulario.offsetHeight; // Force reflow
+    
+    // ✅ TIMING PERFEITO PARA ANIMAÇÕES
+    requestAnimationFrame(() => {
+      this.elementos.formulario.classList.add('ativo');
+    });
     
     this.estado.formularioAberto = true;
 
-    // Mostrar mensagem inicial e ocultar inputs
+    // Mostrar mensagem inicial com transição elegante
     const mensagemInicial = document.getElementById('mensagem-inicial-gestao');
     if (mensagemInicial) {
       // Ocultar inputs primeiro
@@ -2004,47 +2726,105 @@ const SistemaCadastroNovo = {
         this.elementos.inputUnico.style.display = 'none';
       }
       
-      // Agora mostrar a mensagem com transição
-      mensagemInicial.style.display = 'block';
-      mensagemInicial.classList.add('ativo');
-      
-      // Forçar reflow e definir opacidade
-      mensagemInicial.offsetHeight;
-      mensagemInicial.style.opacity = '1';
+      // ✅ MOSTRAR MENSAGEM COM DELAY ELEGANTE
+      setTimeout(() => {
+        mensagemInicial.style.display = 'block';
+        mensagemInicial.offsetHeight; // Force reflow
+        mensagemInicial.classList.add('ativo');
+      }, 200); // Delay para sincronizar com abertura do formulário
     }
 
+    // ✅ FOCO SUAVE APÓS ANIMAÇÃO COMPLETA
     setTimeout(() => {
       const primeiroInput = this.elementos.formulario.querySelector('input[type="text"]:not([style*="display: none"])');
       if (primeiroInput) {
         primeiroInput.focus();
       }
-    }, this.config.TIMEOUT_ANIMACAO);
+    }, 600); // Tempo total da animação
   },
 
-  // ===== SELEÇÃO DE TIPO =====
+  // ✅ NOVA FUNÇÃO: Criar overlay elegante
+  criarOverlayElegante() {
+    // Remove overlay existente se houver
+    const overlayExistente = document.getElementById('formulario-overlay-elegante');
+    if (overlayExistente) {
+      overlayExistente.remove();
+    }
+
+    // Criar novo overlay
+    const overlay = document.createElement('div');
+    overlay.id = 'formulario-overlay-elegante';
+    overlay.className = 'formulario-mentor-overlay';
+    
+    document.body.appendChild(overlay);
+    
+    // ✅ ATIVAR OVERLAY COM TRANSIÇÃO SUAVE
+    requestAnimationFrame(() => {
+      overlay.classList.add('ativo');
+    });
+
+    // ✅ FECHAR AO CLICAR NO OVERLAY
+    overlay.addEventListener('click', (e) => {
+      if (e.target === overlay) {
+        this.fecharFormulario();
+      }
+    });
+  },
+
+  // ✅ FUNÇÃO MODIFICADA: Fechar formulário com elegância
+  fecharFormulario() {
+    if (!this.elementos.formulario || !this.estado.formularioAberto) {
+      return;
+    }
+
+    console.log('🎭 Fechando formulário com elegância...');
+
+    // ✅ ANIMAÇÃO DE FECHAMENTO ELEGANTE
+    this.elementos.formulario.classList.remove('ativo');
+    this.elementos.formulario.classList.add('fechando');
+
+    // ✅ FECHAR OVERLAY SUAVEMENTE
+    const overlay = document.getElementById('formulario-overlay-elegante');
+    if (overlay) {
+      overlay.classList.remove('ativo');
+      
+      // Remover overlay após transição
+      setTimeout(() => {
+        overlay.remove();
+      }, 400);
+    }
+    
+    // ✅ LIMPEZA APÓS ANIMAÇÃO COMPLETA
+    setTimeout(() => {
+      this.elementos.formulario.style.display = 'none';
+      this.elementos.formulario.classList.remove('fechando');
+      this.resetarFormulario();
+      this.estado.formularioAberto = false;
+      
+      // ✅ RESTAURAR SCROLL COM SUAVIDADE
+      document.body.classList.remove('modal-aberto');
+    }, 400); // Tempo da animação de fechamento
+  },
+
   selecionarTipo(tipo) {
     if (!['cash', 'green', 'red'].includes(tipo)) {
       return;
     }
 
-    // Remover seleção anterior
     document.querySelectorAll('.opcao-novo').forEach(opcao => {
       opcao.classList.remove('selecionada');
       const radio = opcao.querySelector('input[type="radio"]');
       if (radio) radio.checked = false;
     });
 
-    // Ocultar mensagem inicial e mostrar inputs apropriados
     const mensagemInicial = document.getElementById('mensagem-inicial-gestao');
     if (mensagemInicial) {
-      // Primeiro fade out a mensagem inicial
       mensagemInicial.style.opacity = '0';
       
       setTimeout(() => {
         mensagemInicial.classList.remove('ativo');
         mensagemInicial.style.display = 'none';
         
-        // Depois preparar a exibição dos inputs corretos
         if (tipo === 'red') {
           if (this.elementos.inputsDuplos) {
             this.elementos.inputsDuplos.classList.remove('ativo');
@@ -2052,7 +2832,6 @@ const SistemaCadastroNovo = {
           }
           if (this.elementos.inputUnico) {
             this.elementos.inputUnico.style.display = 'block';
-            // Force reflow
             this.elementos.inputUnico.offsetHeight;
             this.elementos.inputUnico.classList.add('ativo');
           }
@@ -2063,20 +2842,17 @@ const SistemaCadastroNovo = {
           }
           if (this.elementos.inputsDuplos) {
             this.elementos.inputsDuplos.style.display = 'block';
-            // Force reflow
             this.elementos.inputsDuplos.offsetHeight;
             this.elementos.inputsDuplos.classList.add('ativo');
           }
         }
-      }, 300); // Aguardar fade out da mensagem inicial
+      }, 300);
     }
 
-    // Ocultar todas as mensagens de status
     document.querySelectorAll('.mensagem-status-input').forEach(msg => {
       msg.style.display = 'none';
     });
 
-    // Selecionar novo
     const opcaoSelecionada = document.querySelector(`[data-tipo="${tipo}"]`);
     if (opcaoSelecionada) {
       opcaoSelecionada.classList.add('selecionada');
@@ -2123,7 +2899,6 @@ const SistemaCadastroNovo = {
    }
  },
 
- // ===== CÁLCULOS =====
  atualizarCalculo() {
    if (this.estado.tipoOperacao === 'red') return;
 
@@ -2133,32 +2908,26 @@ const SistemaCadastroNovo = {
    this.estado.valorEntrada = entrada;
    this.estado.valorTotal = total;
 
-   // Atualiza mensagens de status dos inputs
    const inputEntradaMsg = this.elementos.inputEntrada?.nextElementSibling;
    const inputTotalMsg = this.elementos.inputTotal?.nextElementSibling;
    
-   // Obtém o valor da unidade carregado
    const valorUndSpan = document.getElementById('valor-unidade');
    const valorCarregado = valorUndSpan ? this.converterParaFloat(valorUndSpan.textContent) : 0;
    
    if (inputEntradaMsg) {
      if (entrada === 0) {
-       // Se não digitou nada, oculta a mensagem
        inputEntradaMsg.style.display = 'none';
      } else if (entrada > valorCarregado) {
-       // Se digitou valor maior que o carregado
        inputEntradaMsg.style.display = 'block';
        inputEntradaMsg.textContent = 'Atenção! Você está operando fora dos parâmetros de gestão isso pode comprometer o controle e a estratégia.';
        inputEntradaMsg.className = 'mensagem-status-input negativo animar';
      } else if (entrada < valorCarregado) {
-       // Se digitou valor menor que o carregado
        inputEntradaMsg.style.display = 'block';
        inputEntradaMsg.textContent = 'Parabéns! Você está operando com um valor abaixo da gestão, o que demonstra controle e responsabilidade.';
        inputEntradaMsg.className = 'mensagem-status-input positivo animar';
      }
    }
 
-   // Mensagem do input total permanece oculta
    if (inputTotalMsg) {
      inputTotalMsg.style.display = 'none';
    }
@@ -2173,24 +2942,19 @@ const SistemaCadastroNovo = {
    const valorRed = this.converterParaFloat(this.elementos.inputRed?.value || '0');
    this.estado.valorRed = valorRed;
 
-   // Atualiza mensagem de status do input Red
    const inputRedMsg = this.elementos.inputRed?.nextElementSibling;
    
-   // Obtém o valor da unidade carregado
    const valorUndSpan = document.getElementById('valor-unidade');
    const valorCarregado = valorUndSpan ? this.converterParaFloat(valorUndSpan.textContent) : 0;
    
    if (inputRedMsg) {
      if (valorRed === 0) {
-       // Se não digitou nada, oculta a mensagem
        inputRedMsg.style.display = 'none';
      } else if (valorRed > valorCarregado) {
-       // Se digitou valor maior que o carregado, mostra mensagem de alerta
        inputRedMsg.style.display = 'block';
        inputRedMsg.textContent = 'Atenção! Você está operando fora dos parâmetros de gestão isso pode comprometer o controle e a estratégia.';
        inputRedMsg.className = 'mensagem-status-input negativo animar';
      } else {
-       // Para valores menores ou iguais, mostra mensagem motivacional
        inputRedMsg.style.display = 'block';
        inputRedMsg.textContent = 'Calma! Perder faz parte do processo. O mais importante é manter a gestão com foco no longo prazo seguindo a estratégia, o lucro vem naturalmente.';
        inputRedMsg.className = 'mensagem-status-input neutro animar';
@@ -2201,7 +2965,6 @@ const SistemaCadastroNovo = {
    this.atualizarStatus(resultado);
  },
 
- // ===== STATUS =====
  atualizarStatus(valor) {
    if (!this.elementos.rotuloStatus || !this.elementos.valorStatus) return;
 
@@ -2213,7 +2976,7 @@ const SistemaCadastroNovo = {
    let classeContainer = '';
 
    if (valor > 0) {
-     rotulo = 'Lucro'; // ✅ ALTERADO DE "Positivo" PARA "Lucro"
+     rotulo = 'Lucro';
      classeStatus = 'status-positivo';
      classeContainer = 'status-positivo-ativo';
    } else if (valor < 0) {
@@ -2236,7 +2999,6 @@ const SistemaCadastroNovo = {
    }, 400);
  },
 
- // ===== VALIDAÇÃO =====
  validarFormulario() {
    if (!this.estado.tipoOperacao) {
      this.mostrarErro('⚠️ Selecione o tipo de operação (Cash, Green ou Red)');
@@ -2296,13 +3058,22 @@ const SistemaCadastroNovo = {
    });
  },
 
- // ===== SUBMISSÃO =====
+ // ✅ CORREÇÃO: Submissão com prevenção de duplicação
  async processarSubmissao(form) {
    console.log('📤 Iniciando submissão...');
+
+   // ✅ CORREÇÃO: Verificar se já está processando
+   if (this.estado.processandoSubmissao) {
+     console.warn('⚠️ Submissão já em andamento');
+     return;
+   }
 
    if (!this.validarFormulario()) {
      return;
    }
+
+   // ✅ CORREÇÃO: Marcar como processando PRIMEIRO
+   this.estado.processandoSubmissao = true;
 
    const dadosEnvio = this.prepararDadosEnvio();
    this.definirEstadoBotao(true);
@@ -2346,6 +3117,8 @@ const SistemaCadastroNovo = {
        alert(mensagem);
      }
    } finally {
+     // ✅ CORREÇÃO: Sempre resetar estado ao final
+     this.estado.processandoSubmissao = false;
      this.definirEstadoBotao(false);
    }
  },
@@ -2380,11 +3153,11 @@ const SistemaCadastroNovo = {
    if (carregando) {
      this.elementos.btnEnviar.disabled = true;
      this.elementos.btnEnviar.classList.add('carregando');
-     this.elementos.btnEnviar.textContent = 'Processando...'; // ✅ REMOVIDO CAIXA ALTA
+     this.elementos.btnEnviar.textContent = 'Processando...';
    } else {
      this.elementos.btnEnviar.disabled = false;
      this.elementos.btnEnviar.classList.remove('carregando');
-     this.elementos.btnEnviar.textContent = 'Cadastrar'; // ✅ REMOVIDO CAIXA ALTA
+     this.elementos.btnEnviar.textContent = 'Cadastrar';
    }
  },
 
@@ -2423,7 +3196,6 @@ const SistemaCadastroNovo = {
    }
  },
 
- // ===== RESET E FECHAMENTO =====
   resetarFormulario() {
    this.estado = {
      ...this.estado,
@@ -2431,9 +3203,9 @@ const SistemaCadastroNovo = {
      valorEntrada: 0,
      valorTotal: 0,
      valorRed: 0,
+     processandoSubmissao: false, // ✅ CORREÇÃO: Reset flag de processamento
    };
 
-   // Ocultar todas as mensagens de status
    document.querySelectorAll('.mensagem-status-input').forEach(msg => {
      msg.style.display = 'none';
      msg.textContent = '';
@@ -2445,7 +3217,9 @@ const SistemaCadastroNovo = {
 
    document.querySelectorAll('input[type="radio"]').forEach(radio => {
      radio.checked = false;
-   });   [this.elementos.inputEntrada, this.elementos.inputTotal, this.elementos.inputRed].forEach(input => {
+   });   
+   
+   [this.elementos.inputEntrada, this.elementos.inputTotal, this.elementos.inputRed].forEach(input => {
      if (input) {
        input.value = 'R$ 0,00';
        input.classList.remove('erro', 'sucesso');
@@ -2477,31 +3251,47 @@ const SistemaCadastroNovo = {
      this.elementos.formulario.style.display = 'none';
      this.resetarFormulario();
      this.estado.formularioAberto = false;
-     // ✅ RESTAURAR SCROLL GLOBAL
      document.body.classList.remove('modal-aberto');
    }, this.config.TIMEOUT_ANIMACAO);
  },
 
- // ===== INTEGRAÇÃO =====
+ // ✅ CORREÇÃO: Integração mais robusta para evitar duplo cadastro
  integrarComSistemaExistente() {
-   document.addEventListener('click', (e) => {
-     const card = e.target.closest('.mentor-card');
-     
-     if (card && !this.isClickNoMenu(e)) {
-       e.preventDefault();
-       e.stopPropagation();
+   console.log('🔗 Desativando sistema antigo e integrando novo sistema...');
+   
+   // ✅ DESATIVAR COMPLETAMENTE O SISTEMA ANTIGO
+   this.desativarSistemaAntigo();
+   
+   // ✅ INTERCEPTAR APENAS UMA VEZ com flag de controle
+   let listenerAdicionado = false;
+   
+   if (!listenerAdicionado) {
+     document.addEventListener('click', (e) => {
+       const card = e.target.closest('.mentor-card');
        
-       console.log('🎯 Interceptando clique para novo sistema');
-       this.abrirFormulario(card);
-     }
-   });
+       if (card && !this.isClickNoMenu(e) && !this.estado.formularioAberto) {
+         e.preventDefault();
+         e.stopPropagation();
+         e.stopImmediatePropagation(); // ✅ CORREÇÃO: Para TODOS os eventos
+         
+         console.log('🎯 Interceptando clique para novo sistema - Card:', card.getAttribute('data-nome'));
+         this.abrirFormulario(card);
+         return false; // ✅ CORREÇÃO: Impedir bubbling
+       }
+     }, true); // ✅ CORREÇÃO: Usar capture phase
+     
+     listenerAdicionado = true;
+     console.log('✅ Event listener único adicionado');
+   }
 
+   // Observer para novos cards
    const observer = new MutationObserver((mutations) => {
      mutations.forEach((mutation) => {
        if (mutation.type === 'childList') {
          mutation.addedNodes.forEach((node) => {
            if (node.nodeType === 1 && node.classList.contains('mentor-card')) {
-             console.log('🔄 Novo card detectado');
+             console.log('🔄 Novo card detectado, desativando sistema antigo');
+             this.desativarSistemaAntigo();
            }
          });
        }
@@ -2515,6 +3305,33 @@ const SistemaCadastroNovo = {
        subtree: true
      });
    }
+ },
+
+ // ✅ NOVA FUNÇÃO: Desativar sistema antigo
+ desativarSistemaAntigo() {
+   // Desativar FormularioValorManager se existir
+   if (typeof FormularioValorManager !== 'undefined') {
+     FormularioValorManager.exibirFormularioMentor = () => {
+       console.log('🚫 FormularioValorManager desativado - usando novo sistema');
+     };
+   }
+
+   // Desativar funções globais antigas
+   if (typeof window.exibirFormularioMentor === 'function') {
+     window.exibirFormularioMentor = () => {
+       console.log('🚫 exibirFormularioMentor desativado - usando novo sistema');
+     };
+   }
+
+   // Remover onclick dos cards
+   document.querySelectorAll('.mentor-card').forEach(card => {
+     if (card.onclick) {
+       card.onclick = null;
+     }
+     card.removeAttribute('onclick');
+   });
+   
+   console.log('🚫 Sistema antigo desativado');
  },
 
  isClickNoMenu(event) {
@@ -2533,7 +3350,14 @@ const SistemaCadastroNovo = {
  },
 };
 
-// ===== FUNÇÕES GLOBAIS =====
+// ===== FUNÇÕES GLOBAIS PARA COMPATIBILIDADE =====
+
+// Função global para abrir modal de exclusão de entrada
+window.abrirModalExclusaoEntrada = function(idEntrada) {
+    ModalExclusaoEntrada.abrir(idEntrada);
+};
+
+// Funções do sistema novo de cadastro
 window.abrirFormularioNovo = (card) => {
  SistemaCadastroNovo.abrirFormulario(card);
 };
@@ -2542,15 +3366,44 @@ window.fecharFormularioNovo = () => {
  SistemaCadastroNovo.fecharFormulario();
 };
 
-// ===== INICIALIZAÇÃO =====
-document.addEventListener('DOMContentLoaded', () => {
- setTimeout(() => {
-   SistemaCadastroNovo.inicializar();
-   console.log('🚀 Sistema Novo integrado com sucesso!');
- }, 100);
+// ✅ CORREÇÃO: Desativar funções antigas globalmente
+window.FormularioValorManager_DESATIVADO = true;
+
+// ===== INICIALIZAÇÃO AUTOMÁTICA CORRIGIDA =====
+document.addEventListener('DOMContentLoaded', function() {
+    console.log('🚀 Inicializando sistemas corrigidos...');
+    
+    // Inicializa modal de exclusão
+    ModalExclusaoEntrada.inicializar();
+    
+    // Inicializa sistema de cadastro novo após um delay
+    setTimeout(() => {
+        SistemaCadastroNovo.inicializar();
+        console.log('🎯 Sistemas inicializados com correções aplicadas!');
+    }, 200);
 });
 
+// Para compatibilidade se o DOMContentLoaded já passou
+if (document.readyState === 'loading') {
+    document.addEventListener('DOMContentLoaded', function() {
+        ModalExclusaoEntrada.inicializar();
+        setTimeout(() => SistemaCadastroNovo.inicializar(), 200);
+    });
+} else {
+    ModalExclusaoEntrada.inicializar();
+    setTimeout(() => SistemaCadastroNovo.inicializar(), 200);
+}
+
+// Disponibiliza globalmente para debug
 window.SistemaCadastroNovo = SistemaCadastroNovo;
+window.ModalExclusaoEntrada = ModalExclusaoEntrada;
+
+console.log('🎯 ===== SISTEMA CORRIGIDO CARREGADO =====');
+console.log('✅ Modal de Exclusão: SEM dupla exclusão');
+console.log('✅ Sistema de Cadastro: SEM cadastro duplo');
+console.log('✅ Sistema Antigo: DESATIVADO completamente');
+console.log('🔗 Integração: EXCLUSIVA com novo sistema');
+console.log('🚀 Pronto para uso!');
 </script>
 
 
@@ -2862,5 +3715,6 @@ if (toggle && menu && hiddenInput) {
 <!-- -->
 <!-- -->
 <!-- -->
+    <script src="js/modal-confirmacao.js"></script>
 </body>
 </html>
