@@ -644,7 +644,7 @@ ob_end_flush();
 <div class="widget-meta-valor" id="meta-valor">
     <i class="fa-solid fa-coins"></i>
     <div class="meta-valor-container">
-        <span class="valor-texto" id="valor-texto-meta">R$ 20,00</span>
+        <span class="valor-texto" id="valor-texto-meta">carregando..</span>
         
     </div>
 </div>
@@ -882,31 +882,45 @@ ob_end_flush();
             document.getElementById("tituloMes").textContent = `${mesAtual} ${anoAtual}`;
           </script>
 
-          <!-- Meta mensal (100%) -->
-          <div class="grupo-barra">
-            <span class="valor-meta"><i class="fas fa-bullseye"></i> <?php echo $meta_mensal_formatada; ?></span>
-            <div class="container-barra-horizontal">
-              <div class="progresso-dourado"></div>
-              <span class="porcento-barra">100%</span>
-            </div>
-            <span class="rotulo-meta-mes"><i class="fas fa-calendar-day"></i> Meta do Mês</span>
-          </div>
+<!-- Conteúdo principal do widget -->
+<div class="widget-conteudo-principal-2">
+  <div class="conteudo-left-2">
+     <!-- Container da Barra de Progresso -->
+     <!-- Valor da Meta -->
+<div class="widget-meta-valor-2" id="meta-valor-2">
+    <i class="fa-solid-2 fa-coins-2"></i>
+    <div class="meta-valor-container-2">
+        <span class="valor-texto-2" id="valor-texto-meta-2">carregando..</span>
+        
+    </div>
+</div>
+    
+     <!-- Exibição do valor que ultrapassou a meta -->
+     <div class="valor-ultrapassou-2" id="valor-ultrapassou-2" style="display: none;">
+        <i class="fa-solid-2 fa-trophy-2"></i>
+        <span class="texto-ultrapassou-2">Lucro Extra: <span id="valor-extra-2">R$ 0,00</span></span>
+     </div>
+    
+     <!-- RÓTULO QUE ESTAVA FALTANDO -->
+     <div class="widget-meta-rotulo-2" id="rotulo-meta-2">Meta do Dia</div>
+    
+     <!-- Container da Barra de Progresso -->
+     <div class="widget-barra-container-2">
+        <div class="widget-barra-progresso-2" id="barra-progresso-2"></div>
+        <div class="porcentagem-barra-2" id="porcentagem-barra-2">0%</div>
+     </div>
+    
+     <!-- Info de progresso com saldo -->
+      <div class="widget-info-progresso-2">
+      <span id="saldo-info-2" class="saldo-positivo-2">
+     <i class="fa-solid-2 fa-chart-line-2"></i>
+     <span class="saldo-info-rotulo-2">Lucro:</span>
+     <span class="saldo-info-valor-2">carregando..</span>
+     </span>
+    </div>
+    </div>
 
-          <!-- Progresso atual da meta -->
-          <div class="grupo-barra">
-            <span class="valor-meta">
-              <i class="fas fa-wallet"></i> <?php echo $saldo_mes_formatado; ?>
-              <?php if ($meta_batida): ?>
-                <span class="rotulo-meta-mes sucesso"><i class="fas fa-trophy"></i> Meta Batida</span>
-              <?php endif; ?>
-            </span>
-            <div class="container-barra-horizontal">
-              
-              <span class="porcento-barra"><?php echo $porcentagem_meta_arredondada; ?>%</span>
-            </div>
-            <span class="rotulo-meta-mes"><i class="fas fa-coins"></i> Saldo do Mês</span>
-          </div>
-        </div>
+
 
         <!-- Lista de dias do mês com resultados -->
         <div class="lista-dias">
@@ -1588,10 +1602,10 @@ ob_end_flush();
   box-shadow: 
     0 8px 25px rgba(0, 0, 0, 0.08),
     0 3px 10px rgba(0, 0, 0, 0.05);
-  opacity: 0;
+  opacity: 1; /* Mantém visível */
   transition: all 0.5s cubic-bezier(0.25, 0.46, 0.45, 0.94);
-  display: none;
-  transform: translateY(20px);
+  display: block; /* Sempre visível */
+  transform: translateY(0); /* Sem translação inicial */
   border: 1px solid rgba(0, 123, 255, 0.1);
 }
 
@@ -1625,11 +1639,13 @@ ob_end_flush();
 .mensagem-inicial-gestao.ativo {
   opacity: 1;
   transform: translateY(0);
+  display: block !important; /* Força a exibição mesmo quando outras classes tentarem esconder */
+  visibility: visible !important; /* Garante que fique visível */
 }
 
 /* ✅ INPUTS COM ANIMAÇÕES SUAVES */
 .inputs-area-novo {
-  margin-bottom: 20px;
+  margin-bottom: 10px; /* Reduzido de 20px para 10px */
   min-height: 120px;
 }
 
@@ -1664,9 +1680,9 @@ ob_end_flush();
 
 .campo-duplo-novo input {
   width: 100%;
-  padding: 12px 15px; /* ✅ Padding maior */
+  padding: 12px 15px;
   border: 2px solid #e9ecef;
-  border-radius: 12px; /* ✅ Bordas mais suaves */
+  border-radius: 12px;
   font-size: 16px;
   font-weight: 600;
   color: #495057;
@@ -1685,26 +1701,9 @@ ob_end_flush();
   transform: translateY(-1px);
   background: #ffffff;
 }
-
 .campo-duplo-novo input:hover:not(:focus) {
   border-color: rgba(0, 123, 255, 0.5);
   transform: translateY(-0.5px);
-}
-
-/* Input Red com estilo especial */
-.input-unico-novo {
-  text-align: center;
-}
-
-.input-unico-novo label {
-  display: block;
-  font-size: 14px;
-  font-weight: 600;
-  color: #dc3545;
-  margin-bottom: 10px;
-  letter-spacing: 0.5px;
-  text-transform: uppercase;
-  font-size: 12px;
 }
 
 .input-unico-novo input {
@@ -1721,7 +1720,6 @@ ob_end_flush();
   box-sizing: border-box;
   box-shadow: inset 0 2px 4px rgba(220, 53, 69, 0.05);
 }
-
 .input-unico-novo input:focus {
   outline: none;
   border-color: #dc3545;
@@ -1731,15 +1729,41 @@ ob_end_flush();
   transform: scale(1.02);
   background: #ffffff;
 }
+.input-unico-novo {
+  text-align: center;
+}
+.campo-duplo-novo input.erro,
+.input-unico-novo input.erro {
+  border-color: #dc3545;
+  box-shadow: 
+    0 0 0 4px rgba(220, 53, 69, 0.15),
+    inset 0 2px 4px rgba(220, 53, 69, 0.05);
+  animation: shake-elegant 0.5s ease-in-out;
+}
+.input-unico-novo label {
+  display: block;
+  font-size: 14px;
+  font-weight: 600;
+  color: #dc3545;
+  margin-bottom: 10px;
+  letter-spacing: 0.5px;
+  text-transform: uppercase;
+  font-size: 12px;
+}
+
+
+
+
 
 /* ✅ STATUS COM ANIMAÇÃO FLUIDA */
 .status-calculo-novo {
   text-align: center;
-  padding: 15px;
+  padding: 12px;
   border-radius: 16px;
   background: linear-gradient(145deg, #f8f9fa, #ffffff);
   border: 2px solid #e9ecef;
-  margin-bottom: 20px;
+  margin-bottom: 8px; /* Reduzido ainda mais */
+  margin-top: 8px; /* Ajustado para equilibrar */
   min-height: 50px;
   display: flex;
   flex-direction: column;
@@ -1795,6 +1819,7 @@ ob_end_flush();
 .botao-enviar-novo {
   width: 100%;
   padding: 15px;
+  margin-top: 5px; /* Adicionado para aproximar */
   background: linear-gradient(135deg, #007bff 0%, #0056b3 50%, #004085 100%);
   color: white;
   border: none;
@@ -1883,122 +1908,147 @@ ob_end_flush();
   margin-top: 8px;
   margin-bottom: 8px;
   line-height: 1.5;
-  transition: all 0.4s cubic-bezier(0.25, 0.46, 0.45, 0.94);
   padding: 8px 12px;
   border-radius: 8px;
-  display: none;
+  display: block !important;
   text-align: center;
   font-weight: 500;
   max-width: 100%;
   box-sizing: border-box;
-  transform: translateY(10px);
+  
+  /* ✅ ALTURA FIXA PARA EVITAR MOVIMENTAÇÃO */
+  min-height: 45px;
+  height: auto;
+  
+  /* ✅ TRANSIÇÕES SUAVES E ELEGANTES */
+  transition: 
+    opacity 0.4s cubic-bezier(0.4, 0, 0.2, 1), 
+    transform 0.4s cubic-bezier(0.4, 0, 0.2, 1),
+    background-color 0.3s ease,
+    border-color 0.3s ease,
+    box-shadow 0.3s ease;
+  
+  /* ✅ FLEXBOX PARA CENTRALIZAR TEXTO VERTICALMENTE */
+  display: flex !important;
+  align-items: center;
+  justify-content: center;
+  
+  /* ✅ EVITAR MUDANÇAS BRUSCAS NO LAYOUT */
+  overflow: hidden;
+  word-wrap: break-word;
+  white-space: normal;
+  
+  /* ✅ ESTADO INICIAL - INVISÍVEL MAS OCUPANDO ESPAÇO */
   opacity: 0;
+  transform: translateY(-5px);
+  
+  /* ✅ BACKGROUND PADRÃO TRANSPARENTE */
+  background: transparent;
+  border: 1px solid transparent;
+  box-shadow: none;
 }
 
 .mensagem-status-input.positivo {
+  opacity: 1 !important;
+  transform: translateY(0) !important;
   color: #155724;
-  background: linear-gradient(145deg, rgba(40, 167, 69, 0.1), rgba(40, 167, 69, 0.05));
+  background: linear-gradient(145deg, rgba(40, 167, 69, 0.12), rgba(40, 167, 69, 0.06));
+  border: 1px solid rgba(40, 167, 69, 0.2);
   border-left: 4px solid #28a745;
-  box-shadow: 0 4px 15px rgba(40, 167, 69, 0.1);
+  box-shadow: 
+    0 2px 8px rgba(40, 167, 69, 0.15),
+    0 1px 3px rgba(40, 167, 69, 0.1);
 }
 
 .mensagem-status-input.negativo {
+  opacity: 1 !important;
+  transform: translateY(0) !important;
   color: #721c24;
-  background: linear-gradient(145deg, rgba(220, 53, 69, 0.1), rgba(220, 53, 69, 0.05));
+  background: linear-gradient(145deg, rgba(220, 53, 69, 0.12), rgba(220, 53, 69, 0.06));
+  border: 1px solid rgba(220, 53, 69, 0.2);
   border-left: 4px solid #dc3545;
-  box-shadow: 0 4px 15px rgba(220, 53, 69, 0.1);
+  box-shadow: 
+    0 2px 8px rgba(220, 53, 69, 0.15),
+    0 1px 3px rgba(220, 53, 69, 0.1);
 }
 
 .mensagem-status-input.neutro {
+  opacity: 1 !important;
+  transform: translateY(0) !important;
   color: #495057;
-  background: linear-gradient(145deg, rgba(108, 117, 125, 0.1), rgba(108, 117, 125, 0.05));
+  background: linear-gradient(145deg, rgba(108, 117, 125, 0.12), rgba(108, 117, 125, 0.06));
+  border: 1px solid rgba(108, 117, 125, 0.2);
   border-left: 4px solid #6c757d;
-  box-shadow: 0 4px 15px rgba(108, 117, 125, 0.1);
+  box-shadow: 
+    0 2px 8px rgba(108, 117, 125, 0.15),
+    0 1px 3px rgba(108, 117, 125, 0.1);
 }
 
 .mensagem-status-input.animar {
-  display: block !important;
-  opacity: 1 !important;
-  transform: translateY(0) !important;
-  animation: fadeInUp-elegant 0.5s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+  animation: fadeInUp-suave 0.5s cubic-bezier(0.4, 0, 0.2, 1) forwards;
 }
 
-@keyframes fadeInUp-elegant {
+@keyframes fadeInUp-suave {
   0% {
     opacity: 0;
-    transform: translateY(15px) scale(0.95);
+    transform: translateY(-8px) scale(0.98);
   }
-  60% {
-    opacity: 0.8;
-    transform: translateY(-2px) scale(1.02);
+  50% {
+    opacity: 0.7;
+    transform: translateY(-2px) scale(1.01);
   }
   100% {
     opacity: 1;
     transform: translateY(0) scale(1);
   }
 }
+.mensagem-status-input:empty {
+  min-height: 45px;
+  opacity: 0;
+}
+.mensagem-status-input:empty::after {
+  content: " ";
+  white-space: pre;
+  display: block;
+  height: 1px;
+}
 
 /* ✅ RESPONSIVIDADE ELEGANTE */
-@media (max-width: 768px) and (min-width: 481px) {
-  .formulario-mentor-novo {
-    width: 380px;
-    min-width: 360px;
-    max-width: min(400px, calc(100vw - 40px));
-    padding: 25px;
-    max-height: min(90vh, calc(100vh - 40px));
-  }
-  
-  .mentor-foto-novo {
-    width: 80px;
-    height: 80px;
-  }
-}
-
 @media (max-width: 480px) {
-  .formulario-mentor-novo {
-    width: 340px;
-    min-width: 320px;
-    max-width: min(360px, calc(100vw - 20px));
-    padding: 20px;
-    max-height: min(95vh, calc(100vh - 20px));
-  }
-  
-  .mentor-foto-novo {
-    width: 70px;
-    height: 70px;
-  }
-  
-  .mentor-nome-novo {
-    font-size: 16px;
-  }
-  
-  .opcoes-container-novo {
-    gap: 12px;
-  }
-  
-  .opcao-novo {
-    min-width: 65px;
-    padding: 10px;
+  .mensagem-status-input {
+    font-size: 11px;
+    min-height: 40px;
+    padding: 6px 10px;
+    margin-top: 6px;
+    margin-bottom: 6px;
   }
 }
 
-@media (max-width: 320px) {
-  .formulario-mentor-novo {
-    width: 300px;
-    min-width: 280px;
-    max-width: min(320px, calc(100vw - 20px));
-    padding: 18px;
-    max-height: calc(100vh - 20px);
-  }
-  
-  .mentor-foto-novo {
-    width: 60px;
-    height: 60px;
-  }
-  
-  .mentor-nome-novo {
-    font-size: 15px;
-  }
+/* ✅ HOVER SUAVE NAS MENSAGENS VISÍVEIS */
+.mensagem-status-input.positivo:hover,
+.mensagem-status-input.negativo:hover,
+.mensagem-status-input.neutro:hover {
+  transform: translateY(-1px) !important;
+  box-shadow: 
+    0 4px 12px rgba(0, 0, 0, 0.1),
+    0 2px 6px rgba(0, 0, 0, 0.05);
+}
+
+/* ✅ CORREÇÃO PARA EVITAR FLICKER */
+.mensagem-status-input * {
+  transition: inherit;
+}
+
+/* ✅ SMOOTH SCROLL PARA O CONTAINER */
+.inputs-area-novo {
+  scroll-behavior: smooth;
+}
+
+/* ✅ ESTABILIZAÇÃO FINAL DO LAYOUT */
+.formulario-mentor-novo .campo-duplo-novo,
+.formulario-mentor-novo .input-unico-novo {
+  contain: layout style;
+  will-change: auto;
 }
 
 /* ✅ PREVENÇÃO DE SCROLL COM ELEGÂNCIA */
@@ -2009,13 +2059,11 @@ body.modal-aberto {
 }
 
 /* ✅ ESTADOS DE VALIDAÇÃO ELEGANTES */
-.campo-duplo-novo input.erro,
-.input-unico-novo input.erro {
-  border-color: #dc3545;
-  box-shadow: 
-    0 0 0 4px rgba(220, 53, 69, 0.15),
-    inset 0 2px 4px rgba(220, 53, 69, 0.05);
-  animation: shake-elegant 0.5s ease-in-out;
+.campo-duplo-novo,
+.input-unico-novo {
+  margin-bottom: 15px;
+  position: relative;
+  min-height: auto; /* Deixar altura automática */
 }
 
 .campo-duplo-novo input.sucesso {
@@ -2120,6 +2168,12 @@ body.modal-aberto {
 // ===== SISTEMA INTEGRADO CORRIGIDO =====
 
 // 🚫 DESATIVAR SISTEMA ANTIGO COMPLETAMENTE
+// ===== SISTEMA INTEGRADO COMPLETO E FUNCIONANDO =====
+
+// 🚫 DESATIVAR SISTEMA ANTIGO COMPLETAMENTE
+// ===== SISTEMA INTEGRADO COMPLETO E FUNCIONANDO =====
+
+// 🚫 DESATIVAR SISTEMA ANTIGO COMPLETAMENTE
 window.FormularioValorManager_DESATIVADO = true;
 
 // ===== SISTEMA DE EXCLUSÃO DE ENTRADA CORRIGIDO =====
@@ -2128,7 +2182,7 @@ const ModalExclusaoEntrada = {
     btnConfirmar: null,
     btnCancelar: null,
     idEntradaAtual: null,
-    processandoExclusao: false, // ✅ NOVA FLAG PARA EVITAR DUPLA EXCLUSÃO
+    processandoExclusao: false,
 
     inicializar() {
         this.modal = document.getElementById('modal-confirmacao-entrada');
@@ -2146,38 +2200,32 @@ const ModalExclusaoEntrada = {
     },
 
     configurarEventos() {
-        // Botão cancelar
         this.btnCancelar.addEventListener('click', () => {
             this.fecharModal();
         });
 
-        // Botão confirmar
         this.btnConfirmar.addEventListener('click', () => {
             this.confirmarExclusao();
         });
 
-        // Fechar com ESC
         document.addEventListener('keydown', (e) => {
             if (e.key === 'Escape' && this.modal.classList.contains('ativo')) {
                 this.fecharModal();
             }
         });
 
-        // Fechar clicando no fundo
         this.modal.addEventListener('click', (e) => {
             if (e.target === this.modal) {
                 this.fecharModal();
             }
         });
 
-        // Prevenir clique no conteúdo fechar o modal
         this.modal.querySelector('.modal-conteudo-exclusao').addEventListener('click', (e) => {
             e.stopPropagation();
         });
     },
 
     integrarComSistemaExistente() {
-        // Substitui a função original de exclusão se existir
         if (typeof ExclusaoManager !== 'undefined') {
             ExclusaoManager._excluirEntradaOriginal = ExclusaoManager.excluirEntrada;
             ExclusaoManager.excluirEntrada = (idEntrada) => {
@@ -2185,7 +2233,6 @@ const ModalExclusaoEntrada = {
             };
         }
 
-        // Intercepta cliques em botões de lixeira
         document.addEventListener('click', (e) => {
             if (e.target.matches('.btn-lixeira, .btn-lixeira *, .btn-icon.btn-lixeira, .btn-icon.btn-lixeira *')) {
                 e.preventDefault();
@@ -2193,7 +2240,6 @@ const ModalExclusaoEntrada = {
                 
                 let button = e.target.closest('.btn-lixeira, .btn-icon');
                 if (button) {
-                    // Tenta extrair ID do onclick
                     if (button.onclick) {
                         const onclickStr = button.onclick.toString();
                         const match = onclickStr.match(/excluirEntrada\((\d+)\)/);
@@ -2204,7 +2250,6 @@ const ModalExclusaoEntrada = {
                         }
                     }
                     
-                    // Tenta extrair ID do atributo data-id ou similar
                     const idEntrada = button.dataset.id || 
                                     button.getAttribute('data-entrada-id') ||
                                     button.closest('[data-entrada-id]')?.dataset.entradaId;
@@ -2221,7 +2266,6 @@ const ModalExclusaoEntrada = {
     },
 
     abrir(idEntrada) {
-        // ✅ CORREÇÃO: Verificar se já está processando
         if (this.processandoExclusao) {
             console.warn('⚠️ Exclusão já em andamento, aguarde...');
             return;
@@ -2235,29 +2279,19 @@ const ModalExclusaoEntrada = {
         console.log('🗑️ Abrindo modal para entrada ID:', idEntrada);
         
         this.idEntradaAtual = idEntrada;
-        
-        // ✅ CORREÇÃO: Reset completo do estado dos botões
         this.resetarEstadoBotoes();
         
-        // Remove qualquer estado anterior
         this.modal.classList.remove('ativo');
-        
-        // Force reflow
         this.modal.offsetHeight;
-        
-        // Adiciona classe ativo
         this.modal.classList.add('ativo');
         
-        // Previne scroll da página
         document.body.style.overflow = 'hidden';
 
-        // Foca no botão cancelar por padrão
         setTimeout(() => {
             this.btnCancelar.focus();
         }, 100);
     },
 
-    // ✅ NOVA FUNÇÃO: Reset completo dos botões
     resetarEstadoBotoes() {
         this.btnConfirmar.disabled = false;
         this.btnCancelar.disabled = false;
@@ -2272,16 +2306,11 @@ const ModalExclusaoEntrada = {
         
         this.modal.classList.remove('ativo');
         this.idEntradaAtual = null;
-        
-        // ✅ CORREÇÃO: Reset estado completo ao fechar
         this.resetarEstadoBotoes();
-        
-        // Restaura scroll da página
         document.body.style.overflow = '';
     },
 
     async confirmarExclusao() {
-        // ✅ CORREÇÃO: Verificar se já está processando
         if (this.processandoExclusao) {
             console.warn('⚠️ Exclusão já em andamento');
             return;
@@ -2294,10 +2323,8 @@ const ModalExclusaoEntrada = {
 
         console.log('🗑️ Confirmando exclusão da entrada:', this.idEntradaAtual);
         
-        // ✅ CORREÇÃO: Marcar como processando PRIMEIRO
         this.processandoExclusao = true;
         
-        // Desabilita botões durante processamento
         this.btnConfirmar.disabled = true;
         this.btnCancelar.disabled = true;
         this.btnConfirmar.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Excluindo...';
@@ -2311,19 +2338,15 @@ const ModalExclusaoEntrada = {
         } catch (error) {
             console.error('❌ Erro ao excluir entrada:', error);
             this.mostrarToast('❌ Erro ao excluir entrada: ' + error.message, 'erro');
-            
-            // ✅ CORREÇÃO: Reabilita botões em caso de erro
             this.resetarEstadoBotoes();
         }
     },
 
     async executarExclusao(idEntrada) {
-        // Usa a função original do ExclusaoManager se disponível
         if (typeof ExclusaoManager !== 'undefined' && ExclusaoManager.executarExclusaoEntrada) {
             return await ExclusaoManager.executarExclusaoEntrada(idEntrada);
         }
 
-        // Fallback: faz requisição direta
         const response = await fetch('excluir-entrada.php', {
             method: 'POST',
             headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
@@ -2340,42 +2363,35 @@ const ModalExclusaoEntrada = {
             throw new Error(resultado || 'Erro desconhecido');
         }
 
-        // Atualiza o sistema
         await this.atualizarSistema();
-        
         return resultado;
     },
 
     async atualizarSistema() {
         try {
-            // ✅ CORREÇÃO: Aguardar um pouco antes de atualizar
             await new Promise(resolve => setTimeout(resolve, 100));
 
             const atualizacoes = [];
 
-            // Recarrega mentores se função existir
             if (typeof MentorManager !== 'undefined' && MentorManager.recarregarMentores) {
                 atualizacoes.push(MentorManager.recarregarMentores());
             }
 
-            // Atualiza dados financeiros se função existir
             if (typeof DadosManager !== 'undefined' && DadosManager.atualizarLucroEBancaViaAjax) {
                 atualizacoes.push(DadosManager.atualizarLucroEBancaViaAjax());
             }
 
             await Promise.all(atualizacoes);
 
-            // ✅ CORREÇÃO: Atualizar tela de edição após as atualizações
             const telaEdicaoAberta = document.getElementById('tela-edicao')?.style.display === 'block';
             if (telaEdicaoAberta && typeof TelaEdicaoManager !== 'undefined' && typeof MentorManager !== 'undefined') {
                 setTimeout(() => {
                     if (MentorManager.mentorAtualId) {
                         TelaEdicaoManager.editarAposta(MentorManager.mentorAtualId);
                     }
-                }, 500); // ✅ Tempo maior para garantir atualização completa
+                }, 500);
             }
 
-            // Atualiza meta se existir
             if (typeof MetaDiariaManager !== 'undefined' && MetaDiariaManager.atualizarMetaDiaria) {
                 setTimeout(() => {
                     MetaDiariaManager.atualizarMetaDiaria();
@@ -2389,13 +2405,11 @@ const ModalExclusaoEntrada = {
     },
 
     mostrarToast(mensagem, tipo = 'info') {
-        // Usa ToastManager se existir
         if (typeof ToastManager !== 'undefined') {
             ToastManager.mostrar(mensagem, tipo);
             return;
         }
 
-        // Fallback simples
         console.log(`📢 ${tipo.toUpperCase()}: ${mensagem}`);
         
         const toast = document.createElement('div');
@@ -2446,10 +2460,11 @@ const SistemaCadastroNovo = {
     valorTotal: 0,
     valorRed: 0,
     formularioAberto: false,
-    processandoSubmissao: false, // ✅ NOVA FLAG PARA EVITAR DUPLA SUBMISSÃO
+    processandoSubmissao: false,
   },
 
   elementos: {},
+  overlayAtual: null,
 
   inicializar() {
     this.cachearElementos();
@@ -2490,6 +2505,7 @@ const SistemaCadastroNovo = {
     };
   },
 
+  // ✅ FUNÇÃO CORRIGIDA: Configurar eventos com mensagem Red automática
   configurarEventos() {
     // Opções Cash, Green, Red
     document.querySelectorAll('.opcao-novo').forEach(opcao => {
@@ -2497,31 +2513,42 @@ const SistemaCadastroNovo = {
         const tipo = opcao.dataset.tipo;
         this.selecionarTipo(tipo);
         
+        // ✅ CORREÇÃO: Preencher valor automaticamente e mostrar mensagem
         const valorUndSpan = document.getElementById('valor-unidade');
         if (valorUndSpan) {
           const valorUnd = valorUndSpan.textContent.trim();
-          if (tipo === 'red') {
-            const inputRed = document.getElementById('input-red');
-            if (inputRed && valorUnd && valorUnd !== 'R$ 0,00') {
-              inputRed.value = valorUnd;
-              setTimeout(() => {
-                this.atualizarCalculoRed();
-              }, 100);
+          
+          // Aguardar campos aparecerem antes de preencher
+          setTimeout(() => {
+            if (tipo === 'red') {
+              const inputRed = document.getElementById('input-red');
+              if (inputRed && valorUnd && valorUnd !== 'R$ 0,00') {
+                inputRed.value = valorUnd;
+                // ✅ CORREÇÃO: Aguardar mais um pouco para garantir que tudo está pronto
+                setTimeout(() => {
+                  this.atualizarCalculoRed();
+                }, 200);
+              } else {
+                // ✅ MESMO SEM VALOR, mostrar mensagem padrão
+                setTimeout(() => {
+                  this.mostrarMensagemAutomaticaRed();
+                }, 300);
+              }
+            } else {
+              const inputEntrada = document.getElementById('input-entrada');
+              if (inputEntrada && valorUnd && valorUnd !== 'R$ 0,00') {
+                inputEntrada.value = valorUnd;
+                setTimeout(() => {
+                  this.atualizarCalculo();
+                }, 200);
+              }
             }
-          } else {
-            const inputEntrada = document.getElementById('input-entrada');
-            if (inputEntrada && valorUnd && valorUnd !== 'R$ 0,00') {
-              inputEntrada.value = valorUnd;
-              setTimeout(() => {
-                this.atualizarCalculo();
-              }, 100);
-            }
-          }
+          }, 400); // Aguardar transição dos campos
         }
       });
     });
 
-    // Inputs duplos
+    // Resto dos eventos
     if (this.elementos.inputEntrada) {
       this.elementos.inputEntrada.addEventListener('input', () => {
         this.atualizarCalculo();
@@ -2534,14 +2561,12 @@ const SistemaCadastroNovo = {
       });
     }
 
-    // Input Red
     if (this.elementos.inputRed) {
       this.elementos.inputRed.addEventListener('input', () => {
         this.atualizarCalculoRed();
       });
     }
 
-    // Formulário
     if (this.elementos.form) {
       this.elementos.form.addEventListener('submit', (e) => {
         e.preventDefault();
@@ -2549,14 +2574,12 @@ const SistemaCadastroNovo = {
       });
     }
 
-    // Botão fechar
     if (this.elementos.btnFechar) {
       this.elementos.btnFechar.addEventListener('click', () => {
         this.fecharFormulario();
       });
     }
 
-    // Fechar ao clicar no overlay
     if (this.elementos.formulario) {
       this.elementos.formulario.addEventListener('click', (e) => {
         if (e.target === this.elementos.formulario) {
@@ -2565,7 +2588,6 @@ const SistemaCadastroNovo = {
       });
     }
 
-    // ESC para fechar
     document.addEventListener('keydown', (e) => {
       if (e.key === 'Escape' && this.estado.formularioAberto) {
         this.fecharFormulario();
@@ -2643,7 +2665,6 @@ const SistemaCadastroNovo = {
   },
 
   abrirFormulario(card) {
-    // ✅ CORREÇÃO: Verificar se já está processando
     if (this.estado.formularioAberto || this.estado.processandoSubmissao) {
       console.warn('⚠️ Formulário já está aberto ou processando');
       return;
@@ -2692,31 +2713,23 @@ const SistemaCadastroNovo = {
     this.estado.mentorId = id;
   },
 
-  // ✅ FUNÇÃO MODIFICADA: Mostrar formulário com elegância máxima
   mostrarFormulario() {
     if (!this.elementos.formulario) return;
 
-    // ✅ CRIAR E MOSTRAR OVERLAY PRIMEIRO
     this.criarOverlayElegante();
-
-    // Prevenir scroll da página
     document.body.classList.add('modal-aberto');
 
-    // ✅ MOSTRAR FORMULÁRIO COM TRANSIÇÃO SUAVE
     this.elementos.formulario.style.display = 'block';
-    this.elementos.formulario.offsetHeight; // Force reflow
+    this.elementos.formulario.offsetHeight;
     
-    // ✅ TIMING PERFEITO PARA ANIMAÇÕES
     requestAnimationFrame(() => {
       this.elementos.formulario.classList.add('ativo');
     });
     
     this.estado.formularioAberto = true;
 
-    // Mostrar mensagem inicial com transição elegante
     const mensagemInicial = document.getElementById('mensagem-inicial-gestao');
     if (mensagemInicial) {
-      // Ocultar inputs primeiro
       if (this.elementos.inputsDuplos) {
         this.elementos.inputsDuplos.classList.remove('ativo');
         this.elementos.inputsDuplos.style.display = 'none';
@@ -2726,89 +2739,177 @@ const SistemaCadastroNovo = {
         this.elementos.inputUnico.style.display = 'none';
       }
       
-      // ✅ MOSTRAR MENSAGEM COM DELAY ELEGANTE
+      mensagemInicial.style.display = 'none';
+      mensagemInicial.style.opacity = '0';
+      mensagemInicial.classList.remove('ativo');
+      
       setTimeout(() => {
         mensagemInicial.style.display = 'block';
-        mensagemInicial.offsetHeight; // Force reflow
+        mensagemInicial.offsetHeight;
+        mensagemInicial.style.opacity = '1';
         mensagemInicial.classList.add('ativo');
-      }, 200); // Delay para sincronizar com abertura do formulário
+      }, 200);
     }
 
-    // ✅ FOCO SUAVE APÓS ANIMAÇÃO COMPLETA
     setTimeout(() => {
       const primeiroInput = this.elementos.formulario.querySelector('input[type="text"]:not([style*="display: none"])');
       if (primeiroInput) {
         primeiroInput.focus();
       }
-    }, 600); // Tempo total da animação
+    }, 600);
   },
 
-  // ✅ NOVA FUNÇÃO: Criar overlay elegante
   criarOverlayElegante() {
-    // Remove overlay existente se houver
-    const overlayExistente = document.getElementById('formulario-overlay-elegante');
-    if (overlayExistente) {
-      overlayExistente.remove();
-    }
+    console.log('🔄 Criando overlay...');
+    
+    this.removerTodosOverlays();
 
-    // Criar novo overlay
     const overlay = document.createElement('div');
     overlay.id = 'formulario-overlay-elegante';
     overlay.className = 'formulario-mentor-overlay';
     
-    document.body.appendChild(overlay);
+    this.overlayAtual = overlay;
     
-    // ✅ ATIVAR OVERLAY COM TRANSIÇÃO SUAVE
+    document.body.appendChild(overlay);
+    overlay.offsetHeight;
+    
     requestAnimationFrame(() => {
       overlay.classList.add('ativo');
+      console.log('✅ Overlay ativado');
     });
 
-    // ✅ FECHAR AO CLICAR NO OVERLAY
     overlay.addEventListener('click', (e) => {
       if (e.target === overlay) {
         this.fecharFormulario();
       }
     });
+
+    return overlay;
   },
 
-  // ✅ FUNÇÃO MODIFICADA: Fechar formulário com elegância
   fecharFormulario() {
     if (!this.elementos.formulario || !this.estado.formularioAberto) {
       return;
     }
 
-    console.log('🎭 Fechando formulário com elegância...');
+    console.log('🎭 Fechando formulário com limpeza completa...');
 
-    // ✅ ANIMAÇÃO DE FECHAMENTO ELEGANTE
+    this.removerOverlayCompleto();
     this.elementos.formulario.classList.remove('ativo');
     this.elementos.formulario.classList.add('fechando');
-
-    // ✅ FECHAR OVERLAY SUAVEMENTE
-    const overlay = document.getElementById('formulario-overlay-elegante');
-    if (overlay) {
-      overlay.classList.remove('ativo');
-      
-      // Remover overlay após transição
-      setTimeout(() => {
-        overlay.remove();
-      }, 400);
-    }
+    document.body.classList.remove('modal-aberto');
     
-    // ✅ LIMPEZA APÓS ANIMAÇÃO COMPLETA
     setTimeout(() => {
       this.elementos.formulario.style.display = 'none';
       this.elementos.formulario.classList.remove('fechando');
       this.resetarFormulario();
       this.estado.formularioAberto = false;
       
-      // ✅ RESTAURAR SCROLL COM SUAVIDADE
-      document.body.classList.remove('modal-aberto');
-    }, 400); // Tempo da animação de fechamento
+      setTimeout(() => {
+        this.verificarLimpezaCompleta();
+      }, 100);
+    }, 400);
   },
 
+  removerOverlayCompleto() {
+    console.log('🔄 Removendo overlay...');
+    
+    if (this.overlayAtual) {
+      this.overlayAtual.classList.remove('ativo');
+      
+      setTimeout(() => {
+        if (this.overlayAtual && this.overlayAtual.parentNode) {
+          this.overlayAtual.parentNode.removeChild(this.overlayAtual);
+          console.log('✅ Overlay removido via referência');
+        }
+        this.overlayAtual = null;
+      }, 50);
+    }
+    
+    setTimeout(() => {
+      this.removerTodosOverlays();
+    }, 100);
+  },
+
+  removerTodosOverlays() {
+    const seletoresOverlay = [
+      '#formulario-overlay-elegante',
+      '.formulario-mentor-overlay',
+      '[id*="overlay"]'
+    ];
+
+    let overlaysRemovidos = 0;
+
+    seletoresOverlay.forEach(seletor => {
+      const overlays = document.querySelectorAll(seletor);
+      overlays.forEach(overlay => {
+        if (overlay && overlay.parentNode) {
+          overlay.remove();
+          overlaysRemovidos++;
+        }
+      });
+    });
+
+    if (overlaysRemovidos > 0) {
+      console.log(`🗑️ Removidos ${overlaysRemovidos} overlays`);
+    }
+
+    this.overlayAtual = null;
+  },
+
+  verificarLimpezaCompleta() {
+    const overlaysRestantes = document.querySelectorAll('.formulario-mentor-overlay');
+    
+    if (overlaysRestantes.length > 0) {
+      console.warn('⚠️ Encontrados overlays restantes, removendo...');
+      this.removerTodosOverlays();
+    } else {
+      console.log('✅ Limpeza completa confirmada');
+    }
+
+    if (document.body.classList.contains('modal-aberto')) {
+      document.body.classList.remove('modal-aberto');
+      console.log('🔧 Scroll restaurado forçadamente');
+    }
+
+    document.body.style.overflow = '';
+    document.body.style.backgroundColor = '';
+  },
+
+  // ✅ FUNÇÃO CORRIGIDA: selecionarTipo com mensagem fixa para Cash/Green
   selecionarTipo(tipo) {
     if (!['cash', 'green', 'red'].includes(tipo)) {
       return;
+    }
+
+    // Armazenar o tipo selecionado
+    this.estado.tipoOperacao = tipo;
+    
+    // Mostrar mensagens iniciais fixas para todos os tipos
+    if (tipo === 'cash' || tipo === 'green') {
+      const inputEntradaMsg = this.elementos.inputEntrada?.nextElementSibling;
+      if (inputEntradaMsg) {
+        this.garantirEspacoMensagem(inputEntradaMsg);
+        this.mostrarMensagemSuave(
+          inputEntradaMsg,
+          true,
+          'neutro',
+          'Atenção: este é o valor definido pela gestão. Siga sempre com foco e disciplina.',
+          true // mensagem fixa
+        );
+      }
+    } else if (tipo === 'red') {
+      const inputRedMsg = this.elementos.inputRed?.nextElementSibling;
+      if (inputRedMsg) {
+        this.garantirEspacoMensagem(inputRedMsg);
+        this.mostrarMensagemSuave(
+          inputRedMsg,
+          true,
+          'neutro',
+          'Calma! Perder faz parte do processo. O mais importante é manter a gestão com foco no longo prazo seguindo a estratégia, o lucro vem naturalmente.',
+          true // mensagem fixa
+        );
+      }
     }
 
     document.querySelectorAll('.opcao-novo').forEach(opcao => {
@@ -2849,10 +2950,6 @@ const SistemaCadastroNovo = {
       }, 300);
     }
 
-    document.querySelectorAll('.mensagem-status-input').forEach(msg => {
-      msg.style.display = 'none';
-    });
-
     const opcaoSelecionada = document.querySelector(`[data-tipo="${tipo}"]`);
     if (opcaoSelecionada) {
       opcaoSelecionada.classList.add('selecionada');
@@ -2866,6 +2963,14 @@ const SistemaCadastroNovo = {
 
     this.mostrarCamposParaTipo(tipo);
     this.estado.tipoOperacao = tipo;
+    this.resetarValoresInputs();
+
+    // ✅ CORREÇÃO: Mostrar mensagem automática para Red
+    if (tipo === 'red') {
+      setTimeout(() => {
+        this.mostrarMensagemAutomaticaRed();
+      }, 500); // Aguardar campos aparecerem
+    }
 
     setTimeout(() => {
       if (tipo === 'red') {
@@ -2874,6 +2979,23 @@ const SistemaCadastroNovo = {
         this.atualizarCalculo();
       }
     }, this.config.TIMEOUT_STATUS);
+  },
+
+  // ✅ NOVA FUNÇÃO: Mostrar mensagem automática do Red
+  mostrarMensagemAutomaticaRed() {
+    if (this.estado.tipoOperacao !== 'red') return;
+    
+    const inputRedMsg = this.elementos.inputRed?.nextElementSibling;
+    if (!inputRedMsg) return;
+
+    console.log('🔴 Mostrando mensagem automática do Red');
+    
+    // Garantir espaço e mostrar mensagem padrão do Red
+    this.garantirEspacoMensagem(inputRedMsg);
+    
+    const textoMensagem = 'Calma! Perder faz parte do processo. O mais importante é manter a gestão com foco no longo prazo seguindo a estratégia, o lucro vem naturalmente.';
+    
+    this.mostrarMensagemSuave(inputRedMsg, true, 'neutro', textoMensagem);
   },
 
   mostrarCamposParaTipo(tipo) {
@@ -2899,511 +3021,765 @@ const SistemaCadastroNovo = {
    }
  },
 
- atualizarCalculo() {
-   if (this.estado.tipoOperacao === 'red') return;
+  atualizarCalculo() {
+    if (this.estado.tipoOperacao === 'red') return;
 
-   const entrada = this.converterParaFloat(this.elementos.inputEntrada?.value || '0');
-   const total = this.converterParaFloat(this.elementos.inputTotal?.value || '0');
+    const entrada = this.converterParaFloat(this.elementos.inputEntrada?.value || '0');
+    const total = this.converterParaFloat(this.elementos.inputTotal?.value || '0');
 
-   this.estado.valorEntrada = entrada;
-   this.estado.valorTotal = total;
+    this.estado.valorEntrada = entrada;
+    this.estado.valorTotal = total;
 
-   const inputEntradaMsg = this.elementos.inputEntrada?.nextElementSibling;
-   const inputTotalMsg = this.elementos.inputTotal?.nextElementSibling;
-   
-   const valorUndSpan = document.getElementById('valor-unidade');
-   const valorCarregado = valorUndSpan ? this.converterParaFloat(valorUndSpan.textContent) : 0;
-   
-   if (inputEntradaMsg) {
-     if (entrada === 0) {
-       inputEntradaMsg.style.display = 'none';
-     } else if (entrada > valorCarregado) {
-       inputEntradaMsg.style.display = 'block';
-       inputEntradaMsg.textContent = 'Atenção! Você está operando fora dos parâmetros de gestão isso pode comprometer o controle e a estratégia.';
-       inputEntradaMsg.className = 'mensagem-status-input negativo animar';
-     } else if (entrada < valorCarregado) {
-       inputEntradaMsg.style.display = 'block';
-       inputEntradaMsg.textContent = 'Parabéns! Você está operando com um valor abaixo da gestão, o que demonstra controle e responsabilidade.';
-       inputEntradaMsg.className = 'mensagem-status-input positivo animar';
-     }
-   }
+    const inputEntradaMsg = this.elementos.inputEntrada?.nextElementSibling;
+    const inputTotalMsg = this.elementos.inputTotal?.nextElementSibling;
+    
+    const valorUndSpan = document.getElementById('valor-unidade');
+    const valorCarregado = valorUndSpan ? this.converterParaFloat(valorUndSpan.textContent) : 0;
+    
+    if (inputEntradaMsg) {
+      this.garantirEspacoMensagem(inputEntradaMsg);
+      
+      // Mantém a mensagem inicial fixa por padrão
+      let deveMostrar = true;
+      let tipoMensagem = 'neutro';
+      let textoMensagem = 'Atenção: este é o valor definido pela gestão. Siga sempre com foco e disciplina.';
+      let manterFixa = true;
+      
+      // Só altera a mensagem se houver valor de entrada e valor carregado
+      if (entrada > 0 && valorCarregado > 0) {
+        if (entrada > valorCarregado) {
+          tipoMensagem = 'negativo';
+          textoMensagem = 'Atenção! Você está operando fora dos parâmetros de gestão isso pode comprometer o controle e a estratégia.';
+          manterFixa = false;
+        } else if (entrada < valorCarregado) {
+          tipoMensagem = 'positivo';
+          textoMensagem = 'Parabéns! Você está operando com um valor abaixo da gestão, o que demonstra controle e responsabilidade.';
+          manterFixa = false;
+        }
+      }
+      
+      this.mostrarMensagemSuave(inputEntradaMsg, deveMostrar, tipoMensagem, textoMensagem, manterFixa);
+    }
 
-   if (inputTotalMsg) {
-     inputTotalMsg.style.display = 'none';
-   }
+    if (inputTotalMsg) {
+      this.ocultarMensagemSuave(inputTotalMsg);
+    }
 
-   const resultado = total - entrada;
-   this.atualizarStatus(resultado);
- },
+    const resultado = total - entrada;
+    this.atualizarStatus(resultado);
+  },
 
- atualizarCalculoRed() {
-   if (this.estado.tipoOperacao !== 'red') return;
+  // ✅ FUNÇÃO CORRIGIDA: atualizarCalculoRed com lógica melhorada
+  atualizarCalculoRed() {
+    if (this.estado.tipoOperacao !== 'red') return;
 
-   const valorRed = this.converterParaFloat(this.elementos.inputRed?.value || '0');
-   this.estado.valorRed = valorRed;
+    const valorRed = this.converterParaFloat(this.elementos.inputRed?.value || '0');
+    this.estado.valorRed = valorRed;
 
-   const inputRedMsg = this.elementos.inputRed?.nextElementSibling;
-   
-   const valorUndSpan = document.getElementById('valor-unidade');
-   const valorCarregado = valorUndSpan ? this.converterParaFloat(valorUndSpan.textContent) : 0;
-   
-   if (inputRedMsg) {
-     if (valorRed === 0) {
-       inputRedMsg.style.display = 'none';
-     } else if (valorRed > valorCarregado) {
-       inputRedMsg.style.display = 'block';
-       inputRedMsg.textContent = 'Atenção! Você está operando fora dos parâmetros de gestão isso pode comprometer o controle e a estratégia.';
-       inputRedMsg.className = 'mensagem-status-input negativo animar';
-     } else {
-       inputRedMsg.style.display = 'block';
-       inputRedMsg.textContent = 'Calma! Perder faz parte do processo. O mais importante é manter a gestão com foco no longo prazo seguindo a estratégia, o lucro vem naturalmente.';
-       inputRedMsg.className = 'mensagem-status-input neutro animar';
-     }
-   }
+    const inputRedMsg = this.elementos.inputRed?.nextElementSibling;
+    
+    const valorUndSpan = document.getElementById('valor-unidade');
+    const valorCarregado = valorUndSpan ? this.converterParaFloat(valorUndSpan.textContent) : 0;
+    
+    if (inputRedMsg) {
+      this.garantirEspacoMensagem(inputRedMsg);
+      
+      // Mantém a mensagem inicial fixa por padrão
+      let deveMostrar = true;
+      let tipoMensagem = 'neutro';
+      let textoMensagem = 'Calma! Perder faz parte do processo. O mais importante é manter a gestão com foco no longo prazo seguindo a estratégia, o lucro vem naturalmente.';
+      let manterFixa = true;
+      
+      // Só altera a mensagem se houver valor e for maior que a gestão
+      if (valorRed > 0 && valorRed > valorCarregado && valorCarregado > 0) {
+        tipoMensagem = 'negativo';
+        textoMensagem = 'Atenção! Você está operando fora dos parâmetros de gestão isso pode comprometer o controle e a estratégia.';
+        manterFixa = false;
+      }
+      
+      this.mostrarMensagemSuave(inputRedMsg, deveMostrar, tipoMensagem, textoMensagem, manterFixa);
+    }
 
-   const resultado = -Math.abs(valorRed);
-   this.atualizarStatus(resultado);
- },
+    const resultado = -Math.abs(valorRed);
+    this.atualizarStatus(resultado);
+  },
 
- atualizarStatus(valor) {
-   if (!this.elementos.rotuloStatus || !this.elementos.valorStatus) return;
+  atualizarStatus(valor) {
+    if (!this.elementos.rotuloStatus || !this.elementos.valorStatus) return;
 
-   this.elementos.valorStatus.classList.remove('status-neutro', 'status-positivo', 'status-negativo');
-   this.elementos.statusContainer.classList.remove('status-positivo-ativo', 'status-negativo-ativo');
+    this.elementos.valorStatus.classList.remove('status-neutro', 'status-positivo', 'status-negativo');
+    this.elementos.statusContainer.classList.remove('status-positivo-ativo', 'status-negativo-ativo');
 
-   let rotulo = 'Neutro';
-   let classeStatus = 'status-neutro';
-   let classeContainer = '';
+    let rotulo = 'Neutro';
+    let classeStatus = 'status-neutro';
+    let classeContainer = '';
 
-   if (valor > 0) {
-     rotulo = 'Lucro';
-     classeStatus = 'status-positivo';
-     classeContainer = 'status-positivo-ativo';
-   } else if (valor < 0) {
-     rotulo = 'Negativo';
-     classeStatus = 'status-negativo';
-     classeContainer = 'status-negativo-ativo';
-   }
+    if (valor > 0) {
+      rotulo = 'Lucro';
+      classeStatus = 'status-positivo';
+      classeContainer = 'status-positivo-ativo';
+    } else if (valor < 0) {
+      rotulo = 'Negativo';
+      classeStatus = 'status-negativo';
+      classeContainer = 'status-negativo-ativo';
+    }
 
-   this.elementos.rotuloStatus.textContent = rotulo;
-   this.elementos.valorStatus.textContent = this.formatarParaBRL(Math.abs(valor));
-   this.elementos.valorStatus.classList.add(classeStatus);
-   
-   if (classeContainer) {
-     this.elementos.statusContainer.classList.add(classeContainer);
-   }
+    this.elementos.rotuloStatus.textContent = rotulo;
+    this.elementos.valorStatus.textContent = this.formatarParaBRL(Math.abs(valor));
+    this.elementos.valorStatus.classList.add(classeStatus);
+    
+    if (classeContainer) {
+      this.elementos.statusContainer.classList.add(classeContainer);
+    }
 
-   this.elementos.statusContainer.classList.add('animando');
-   setTimeout(() => {
-     this.elementos.statusContainer.classList.remove('animando');
-   }, 400);
- },
+    this.elementos.statusContainer.classList.add('animando');
+    setTimeout(() => {
+      this.elementos.statusContainer.classList.remove('animando');
+    }, 400);
+  },
 
- validarFormulario() {
-   if (!this.estado.tipoOperacao) {
-     this.mostrarErro('⚠️ Selecione o tipo de operação (Cash, Green ou Red)');
-     return false;
-   }
+  // ✅ FUNÇÕES PARA ANIMAÇÕES SUAVES
+  garantirEspacoMensagem(elemento) {
+    if (!elemento || !elemento.classList.contains('mensagem-status-input')) return;
+    
+    elemento.style.display = 'block';
+    elemento.style.minHeight = '45px';
+    elemento.style.marginTop = '8px';
+    elemento.style.marginBottom = '8px';
+    elemento.style.transition = 'all 0.5s ease-out';
+    elemento.style.textAlign = 'left';
+    elemento.style.paddingLeft = '5px';
+    elemento.style.transform = 'translateX(0)';
+    elemento.style.opacity = '0.9';
+    
+    if (!elemento.textContent || elemento.textContent.trim() === '') {
+      elemento.style.opacity = '0';
+      elemento.style.transform = 'translateX(-10px)';
+      elemento.innerHTML = '&nbsp;';
+    }
+  },
 
-   if (this.estado.tipoOperacao === 'red') {
-     if (this.estado.valorRed <= 0) {
-       this.mostrarErro('⚠️ Informe um valor válido maior que zero para Red');
-       this.marcarCampoErro(this.elementos.inputRed);
-       return false;
-     }
-   } else {
-     if (this.estado.valorEntrada <= 0) {
-       this.mostrarErro('⚠️ Informe um valor válido maior que zero para Entrada');
-       this.marcarCampoErro(this.elementos.inputEntrada);
-       return false;
-     }
-     
-     if (this.estado.valorTotal <= 0) {
-       this.mostrarErro('⚠️ Informe um valor válido maior que zero para Total');
-       this.marcarCampoErro(this.elementos.inputTotal);
-       return false;
-     }
-   }
+  mostrarMensagemSuave(elemento, deveMostrar, tipo, texto, fixar = false) {
+    if (!elemento) return;
+    
+    // Se a mensagem estiver fixa e for a mesma, não fazer nada
+    if (elemento.dataset.fixa === 'true' && elemento.textContent === texto) {
+      return;
+    }
+    
+    if (deveMostrar && texto) {
+      elemento.style.opacity = '0';
+      elemento.style.transform = 'translateX(-10px)';
+      elemento.textContent = texto;
+      elemento.className = `mensagem-status-input ${tipo}`;
+      elemento.style.textAlign = 'left';
+      elemento.style.paddingLeft = '5px';
+      
+      // Marcar a mensagem como fixa se necessário
+      if (fixar) {
+        elemento.dataset.fixa = 'true';
+      } else {
+        delete elemento.dataset.fixa;
+      }
+      
+      setTimeout(() => {
+        elemento.style.opacity = '0.9';
+        elemento.style.transform = 'translateX(0)';
+      }, 50);
+      
+    } else if (!elemento.dataset.fixa) { // Só oculta se não estiver fixa
+      this.ocultarMensagemSuave(elemento);
+    }
+  },
 
-   this.limparErrosCampos();
-   return true;
- },
+  ocultarMensagemSuave(elemento) {
+    if (!elemento) return;
+    
+    elemento.style.opacity = '0';
+    elemento.style.transform = 'translateX(-10px)';
+    
+    setTimeout(() => {
+      elemento.textContent = '';
+      elemento.innerHTML = '&nbsp;';
+      elemento.className = 'mensagem-status-input';
+      elemento.style.textAlign = 'left';
+      elemento.style.paddingLeft = '5px';
+    }, 300);
+  },
 
- mostrarErro(mensagem) {
-   if (typeof ToastManager !== 'undefined') {
-     ToastManager.mostrar(mensagem, 'aviso');
-   } else {
-     alert(mensagem);
-   }
- },
+  limparTodasMensagensInput() {
+    console.log('🧹 Limpando todas as mensagens de input suavemente...');
+    
+    const todasMensagens = document.querySelectorAll(
+      '.mensagem-status-input, ' +
+      '.campo-duplo-novo .mensagem-status-input, ' +
+      '.input-unico-novo .mensagem-status-input'
+    );
+    
+    todasMensagens.forEach(mensagem => {
+      this.ocultarMensagemSuave(mensagem);
+    });
+    
+    [this.elementos.inputEntrada, this.elementos.inputTotal, this.elementos.inputRed].forEach(input => {
+      if (input && input.nextElementSibling) {
+        const msg = input.nextElementSibling;
+        if (msg.classList.contains('mensagem-status-input')) {
+          this.ocultarMensagemSuave(msg);
+        }
+      }
+    });
+  },
 
- marcarCampoErro(campo) {
-   if (campo) {
-     campo.classList.add('erro');
-     setTimeout(() => {
-       campo.classList.remove('erro');
-     }, 3000);
-   }
- },
+  resetarValoresInputs() {
+    console.log('🔄 Resetando valores dos inputs...');
+    
+    [this.elementos.inputEntrada, this.elementos.inputTotal, this.elementos.inputRed].forEach(input => {
+      if (input) {
+        input.value = 'R$ 0,00';
+        input.classList.remove('erro', 'sucesso');
+        
+        const mensagem = input.nextElementSibling;
+        if (mensagem && mensagem.classList.contains('mensagem-status-input')) {
+          this.garantirEspacoMensagem(mensagem);
+          this.ocultarMensagemSuave(mensagem);
+        }
+      }
+    });
+    
+    this.estado.valorEntrada = 0;
+    this.estado.valorTotal = 0;
+    this.estado.valorRed = 0;
+    
+    this.atualizarStatus(0);
+  },
 
- limparErrosCampos() {
-   [this.elementos.inputEntrada, this.elementos.inputTotal, this.elementos.inputRed].forEach(campo => {
-     if (campo) {
-       campo.classList.remove('erro');
-       campo.classList.add('sucesso');
-       setTimeout(() => {
-         campo.classList.remove('sucesso');
-       }, 2000);
-     }
-   });
- },
+  validarFormulario() {
+    if (!this.estado.tipoOperacao) {
+      this.mostrarErro('⚠️ Selecione o tipo de operação (Cash, Green ou Red)');
+      return false;
+    }
 
- // ✅ CORREÇÃO: Submissão com prevenção de duplicação
- async processarSubmissao(form) {
-   console.log('📤 Iniciando submissão...');
+    if (this.estado.tipoOperacao === 'red') {
+      if (this.estado.valorRed <= 0) {
+        this.mostrarErro('⚠️ Informe um valor válido maior que zero para Red');
+        this.marcarCampoErro(this.elementos.inputRed);
+        return false;
+      }
+    } else {
+      if (this.estado.valorEntrada <= 0) {
+        this.mostrarErro('⚠️ Informe um valor válido maior que zero para Entrada');
+        this.marcarCampoErro(this.elementos.inputEntrada);
+        return false;
+      }
+      
+      if (this.estado.valorTotal <= 0) {
+        this.mostrarErro('⚠️ Informe um valor válido maior que zero para Total');
+        this.marcarCampoErro(this.elementos.inputTotal);
+        return false;
+      }
+    }
 
-   // ✅ CORREÇÃO: Verificar se já está processando
-   if (this.estado.processandoSubmissao) {
-     console.warn('⚠️ Submissão já em andamento');
-     return;
-   }
+    this.limparErrosCampos();
+    return true;
+  },
 
-   if (!this.validarFormulario()) {
-     return;
-   }
+  mostrarErro(mensagem) {
+    if (typeof ToastManager !== 'undefined') {
+      ToastManager.mostrar(mensagem, 'aviso');
+    } else {
+      alert(mensagem);
+    }
+  },
 
-   // ✅ CORREÇÃO: Marcar como processando PRIMEIRO
-   this.estado.processandoSubmissao = true;
+  marcarCampoErro(campo) {
+    if (campo) {
+      campo.classList.add('erro');
+      setTimeout(() => {
+        campo.classList.remove('erro');
+      }, 3000);
+    }
+  },
 
-   const dadosEnvio = this.prepararDadosEnvio();
-   this.definirEstadoBotao(true);
-   
-   try {
-     console.log('📡 Enviando dados:', dadosEnvio);
+  limparErrosCampos() {
+    [this.elementos.inputEntrada, this.elementos.inputTotal, this.elementos.inputRed].forEach(campo => {
+      if (campo) {
+        campo.classList.remove('erro');
+        campo.classList.add('sucesso');
+        setTimeout(() => {
+          campo.classList.remove('sucesso');
+        }, 2000);
+      }
+    });
+  },
 
-     const response = await fetch('cadastrar-valor-novo.php', {
-       method: 'POST',
-       headers: {
-         'Content-Type': 'application/json',
-       },
-       body: JSON.stringify(dadosEnvio)
-     });
+  async processarSubmissao(form) {
+    console.log('📤 Iniciando submissão...');
 
-     if (!response.ok) {
-       throw new Error(`Erro HTTP ${response.status}: ${response.statusText}`);
-     }
+    if (this.estado.processandoSubmissao) {
+      console.warn('⚠️ Submissão já em andamento');
+      return;
+    }
 
-     const resultado = await response.json();
-     console.log('✅ Resposta:', resultado);
+    if (!this.validarFormulario()) {
+      return;
+    }
 
-     if (typeof ToastManager !== 'undefined') {
-       ToastManager.mostrar(resultado.mensagem, resultado.tipo);
-     } else {
-       alert(resultado.mensagem);
-     }
+    this.estado.processandoSubmissao = true;
 
-     if (resultado.tipo === 'sucesso') {
-       this.fecharFormulario();
-       await this.atualizarSistemaExistente();
-     }
+    const dadosEnvio = this.prepararDadosEnvio();
+    this.definirEstadoBotao(true);
+    
+    try {
+      console.log('📡 Enviando dados:', dadosEnvio);
 
-   } catch (error) {
-     console.error('❌ Erro na submissão:', error);
-     
-     const mensagem = '❌ Erro ao cadastrar valor: ' + error.message;
-     if (typeof ToastManager !== 'undefined') {
-       ToastManager.mostrar(mensagem, 'erro');
-     } else {
-       alert(mensagem);
-     }
-   } finally {
-     // ✅ CORREÇÃO: Sempre resetar estado ao final
-     this.estado.processandoSubmissao = false;
-     this.definirEstadoBotao(false);
-   }
- },
+      const response = await fetch('cadastrar-valor-novo.php', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify(dadosEnvio)
+      });
 
- prepararDadosEnvio() {
-   const dados = {
-     id_mentor: this.estado.mentorId,
-     tipo_operacao: this.estado.tipoOperacao,
-   };
+      if (!response.ok) {
+        throw new Error(`Erro HTTP ${response.status}: ${response.statusText}`);
+      }
 
-   if (this.estado.tipoOperacao === 'red') {
-     dados.valor_red = this.estado.valorRed;
-     dados.valor_green = null;
-   } else {
-     const resultado = this.estado.valorTotal - this.estado.valorEntrada;
-     
-     if (resultado >= 0) {
-       dados.valor_green = resultado;
-       dados.valor_red = null;
-     } else {
-       dados.valor_green = null;
-       dados.valor_red = Math.abs(resultado);
-     }
-   }
+      const resultado = await response.json();
+      console.log('✅ Resposta:', resultado);
 
-   return dados;
- },
+      if (typeof ToastManager !== 'undefined') {
+        ToastManager.mostrar(resultado.mensagem, resultado.tipo);
+      } else {
+        alert(resultado.mensagem);
+      }
 
- definirEstadoBotao(carregando) {
-   if (!this.elementos.btnEnviar) return;
+      if (resultado.tipo === 'sucesso') {
+        this.fecharFormulario();
+        await this.atualizarSistemaExistente();
 
-   if (carregando) {
-     this.elementos.btnEnviar.disabled = true;
-     this.elementos.btnEnviar.classList.add('carregando');
-     this.elementos.btnEnviar.textContent = 'Processando...';
-   } else {
-     this.elementos.btnEnviar.disabled = false;
-     this.elementos.btnEnviar.classList.remove('carregando');
-     this.elementos.btnEnviar.textContent = 'Cadastrar';
-   }
- },
+        // ✅ Forçar atualização imediata do lucro/meta: obter dados atualizados do servidor
+        (async () => {
+          // Tentativa imediata + retries com atraso caso o servidor demore a propagar o novo registro
+          const maxAttempts = 2; // além da tentativa inicial
+          const delays = [0, 400, 900]; // ms: imediata, pequena espera, espera maior
 
- async atualizarSistemaExistente() {
-   console.log('🔄 Atualizando sistema...');
+          const fetchAndApply = async (attempt = 0) => {
+            try {
+              console.log(`🔄 [${attempt + 1}] Buscando dados atualizados (dados_banca.php) pós-cadastro...`);
+              const resp = await fetch('dados_banca.php', {
+                method: 'GET',
+                headers: {
+                  'Cache-Control': 'no-cache',
+                  'X-Requested-With': 'XMLHttpRequest'
+                }
+              });
 
-   const atualizacoes = [];
+              if (!resp || !resp.ok) throw new Error('Resposta inválida de dados_banca.php');
 
-   if (typeof MentorManager !== 'undefined' && MentorManager.recarregarMentores) {
-     atualizacoes.push(MentorManager.recarregarMentores());
-   }
+              const dadosJson = await resp.json();
+              if (dadosJson && dadosJson.success) {
+                console.log('✅ dados_banca.php retornou sucesso, aplicando em MetaDiariaManager');
+                console.log('🔎 dados_banca.php payload:', dadosJson);
+                if (typeof MetaDiariaManager !== 'undefined') {
+                  try {
+                    const dadosProcessados = MetaDiariaManager.aplicarAjustePeriodo(dadosJson);
+                    MetaDiariaManager.atualizarTodosElementos(dadosProcessados);
 
-   if (typeof DadosManager !== 'undefined' && DadosManager.atualizarLucroEBancaViaAjax) {
-     atualizacoes.push(DadosManager.atualizarLucroEBancaViaAjax());
-   }
+                    // Também atualiza componentes independentes (segurança)
+                    if (typeof DadosManager !== 'undefined' && DadosManager.atualizarLucroEBancaViaAjax) {
+                      // não aguardamos para não bloquear a UI, mas tentamos sincronizar elementos
+                      DadosManager.atualizarLucroEBancaViaAjax().catch(() => {});
+                    }
 
-   if (typeof atualizarAreaDireita === 'function') {
-     setTimeout(atualizarAreaDireita, 50);
-   }
+                    // Garantia extra: solicitar atualização de meta e verificar lucro extra
+                    try {
+                      if (typeof MetaDiariaManager.atualizarMetaDiaria === 'function') {
+                        MetaDiariaManager.atualizarMetaDiaria(true);
+                        console.log('🔔 MetaDiariaManager.atualizarMetaDiaria(true) chamado');
+                      }
+                    } catch (inner) {
+                      console.warn('⚠️ Falha ao chamar atualizarMetaDiaria:', inner);
+                    }
 
-   if (typeof atualizarDadosModal === 'function') {
-     setTimeout(atualizarDadosModal, 100);
-   }
+                    if (typeof verificarECorrigirLucroExtra === 'function') {
+                      try {
+                        verificarECorrigirLucroExtra();
+                        console.log('🔔 verificarECorrigirLucroExtra() executado (pós-cadastro)');
+                      } catch (inner2) {
+                        console.warn('⚠️ Falha ao executar verificarECorrigirLucroExtra:', inner2);
+                      }
+                    }
 
-   if (typeof MetaDiariaManager !== 'undefined' && MetaDiariaManager.atualizarMetaDiaria) {
-     setTimeout(() => {
-       MetaDiariaManager.atualizarMetaDiaria();
-     }, 150);
-   }
+                    return; // sucesso, não precisa de mais attempts
+                  } catch (e) {
+                    console.error('❌ Erro ao aplicar dados no MetaDiariaManager:', e);
+                    if (typeof window.forcarAtualizacaoLucroExtra === 'function') {
+                      window.forcarAtualizacaoLucroExtra();
+                    }
+                    return;
+                  }
+                }
+              }
 
-   try {
-     await Promise.all(atualizacoes);
-     console.log('✅ Sistema atualizado');
-   } catch (error) {
-     console.warn('⚠️ Erro ao atualizar:', error);
-   }
- },
+              // Se chegou aqui, não obtivemos sucesso válido
+              throw new Error('dados_banca.php não trouxe success=true');
+            } catch (err) {
+              console.warn(`⚠️ Falha ao buscar/apply dados (tentativa ${attempt + 1}):`, err);
+              if (attempt < maxAttempts) {
+                const nextDelay = delays[Math.min(attempt + 1, delays.length - 1)] || 500;
+                console.log(`⏳ Retentando em ${nextDelay}ms...`);
+                setTimeout(() => fetchAndApply(attempt + 1), nextDelay);
+              } else {
+                console.error('❌ Não foi possível atualizar pós-cadastro, acionando fallback');
+                if (typeof window.forcarAtualizacaoLucroExtra === 'function') {
+                  window.forcarAtualizacaoLucroExtra();
+                }
+              }
+            }
+          };
+
+          // Inicia a primeira tentativa
+          fetchAndApply(0);
+        })();
+      }
+
+    } catch (error) {
+      console.error('❌ Erro na submissão:', error);
+      
+      const mensagem = '❌ Erro ao cadastrar valor: ' + error.message;
+      if (typeof ToastManager !== 'undefined') {
+        ToastManager.mostrar(mensagem, 'erro');
+      } else {
+        alert(mensagem);
+      }
+    } finally {
+      this.estado.processandoSubmissao = false;
+      this.definirEstadoBotao(false);
+    }
+  },
+
+  prepararDadosEnvio() {
+    const dados = {
+      id_mentor: this.estado.mentorId,
+      tipo_operacao: this.estado.tipoOperacao,
+    };
+
+    if (this.estado.tipoOperacao === 'red') {
+      dados.valor_red = this.estado.valorRed;
+      dados.valor_green = null;
+    } else {
+      const resultado = this.estado.valorTotal - this.estado.valorEntrada;
+      
+      if (resultado >= 0) {
+        dados.valor_green = resultado;
+        dados.valor_red = null;
+      } else {
+        dados.valor_green = null;
+        dados.valor_red = Math.abs(resultado);
+      }
+    }
+
+    return dados;
+  },
+
+  definirEstadoBotao(carregando) {
+    if (!this.elementos.btnEnviar) return;
+
+    if (carregando) {
+      this.elementos.btnEnviar.disabled = true;
+      this.elementos.btnEnviar.classList.add('carregando');
+      this.elementos.btnEnviar.textContent = 'Processando...';
+    } else {
+      this.elementos.btnEnviar.disabled = false;
+      this.elementos.btnEnviar.classList.remove('carregando');
+      this.elementos.btnEnviar.textContent = 'Cadastrar';
+    }
+  },
+
+  async atualizarSistemaExistente() {
+    console.log('🔄 Atualizando sistema...');
+
+    const atualizacoes = [];
+
+    if (typeof MentorManager !== 'undefined' && MentorManager.recarregarMentores) {
+      atualizacoes.push(MentorManager.recarregarMentores());
+    }
+
+    if (typeof DadosManager !== 'undefined' && DadosManager.atualizarLucroEBancaViaAjax) {
+      atualizacoes.push(DadosManager.atualizarLucroEBancaViaAjax());
+    }
+
+    if (typeof atualizarAreaDireita === 'function') {
+      setTimeout(atualizarAreaDireita, 50);
+    }
+
+    if (typeof atualizarDadosModal === 'function') {
+      setTimeout(atualizarDadosModal, 100);
+    }
+
+    if (typeof MetaDiariaManager !== 'undefined' && MetaDiariaManager.atualizarMetaDiaria) {
+      setTimeout(() => {
+        MetaDiariaManager.atualizarMetaDiaria();
+      }, 150);
+    }
+
+    try {
+      await Promise.all(atualizacoes);
+      console.log('✅ Sistema atualizado');
+    } catch (error) {
+      console.warn('⚠️ Erro ao atualizar:', error);
+    }
+  },
 
   resetarFormulario() {
-   this.estado = {
-     ...this.estado,
-     tipoOperacao: null,
-     valorEntrada: 0,
-     valorTotal: 0,
-     valorRed: 0,
-     processandoSubmissao: false, // ✅ CORREÇÃO: Reset flag de processamento
-   };
+    this.estado = {
+      ...this.estado,
+      tipoOperacao: null,
+      valorEntrada: 0,
+      valorTotal: 0,
+      valorRed: 0,
+      processandoSubmissao: false,
+    };
 
-   document.querySelectorAll('.mensagem-status-input').forEach(msg => {
-     msg.style.display = 'none';
-     msg.textContent = '';
-   });
+    this.limparTodasMensagensInput();
 
-   document.querySelectorAll('.opcao-novo').forEach(opcao => {
-     opcao.classList.remove('selecionada');
-   });
+    document.querySelectorAll('.opcao-novo').forEach(opcao => {
+      opcao.classList.remove('selecionada');
+    });
 
-   document.querySelectorAll('input[type="radio"]').forEach(radio => {
-     radio.checked = false;
-   });   
-   
-   [this.elementos.inputEntrada, this.elementos.inputTotal, this.elementos.inputRed].forEach(input => {
-     if (input) {
-       input.value = 'R$ 0,00';
-       input.classList.remove('erro', 'sucesso');
-     }
-   });
+    document.querySelectorAll('input[type="radio"]').forEach(radio => {
+      radio.checked = false;
+    });   
+    
+    [this.elementos.inputEntrada, this.elementos.inputTotal, this.elementos.inputRed].forEach(input => {
+      if (input) {
+        input.value = 'R$ 0,00';
+        input.classList.remove('erro', 'sucesso');
+      }
+    });
 
-   if (this.elementos.inputsDuplos) {
-     this.elementos.inputsDuplos.classList.remove('ativo');
-   }
-   if (this.elementos.inputUnico) {
-     this.elementos.inputUnico.classList.remove('ativo');
-   }
+    if (this.elementos.inputsDuplos) {
+      this.elementos.inputsDuplos.classList.remove('ativo');
+      this.elementos.inputsDuplos.style.display = 'none';
+    }
+    if (this.elementos.inputUnico) {
+      this.elementos.inputUnico.classList.remove('ativo');
+      this.elementos.inputUnico.style.display = 'none';
+    }
 
-   this.atualizarStatus(0);
+    this.atualizarStatus(0);
 
-   if (this.elementos.tipoOperacaoInput) {
-     this.elementos.tipoOperacaoInput.value = '';
-   }
- },
+    if (this.elementos.tipoOperacaoInput) {
+      this.elementos.tipoOperacaoInput.value = '';
+    }
 
- fecharFormulario() {
-   if (!this.elementos.formulario || !this.estado.formularioAberto) {
-     return;
-   }
+    const mensagemInicial = document.getElementById('mensagem-inicial-gestao');
+    if (mensagemInicial) {
+      mensagemInicial.style.display = 'none';
+      mensagemInicial.style.opacity = '0';
+      mensagemInicial.classList.remove('ativo');
+    }
+  },
 
-   this.elementos.formulario.classList.remove('ativo');
-   
-   setTimeout(() => {
-     this.elementos.formulario.style.display = 'none';
-     this.resetarFormulario();
-     this.estado.formularioAberto = false;
-     document.body.classList.remove('modal-aberto');
-   }, this.config.TIMEOUT_ANIMACAO);
- },
+  integrarComSistemaExistente() {
+    console.log('🔗 Integrando sistema novo de cadastro...');
+    
+    this.desativarSistemaAntigo();
+    
+    document.addEventListener('click', (e) => {
+      const card = e.target.closest('.mentor-card');
+      
+      if (card && !this.isClickNoMenu(e) && !this.estado.formularioAberto) {
+        const idMentor = card.getAttribute('data-id');
+        const nomeMentor = card.getAttribute('data-nome');
+        
+        if (idMentor && nomeMentor) {
+          e.preventDefault();
+          e.stopPropagation();
+          e.stopImmediatePropagation();
+          
+          console.log('🎯 Clique interceptado no card:', nomeMentor, 'ID:', idMentor);
+          this.abrirFormulario(card);
+          return false;
+        } else {
+          console.warn('⚠️ Card sem dados necessários:', card);
+        }
+      }
+    }, true);
 
- // ✅ CORREÇÃO: Integração mais robusta para evitar duplo cadastro
- integrarComSistemaExistente() {
-   console.log('🔗 Desativando sistema antigo e integrando novo sistema...');
-   
-   // ✅ DESATIVAR COMPLETAMENTE O SISTEMA ANTIGO
-   this.desativarSistemaAntigo();
-   
-   // ✅ INTERCEPTAR APENAS UMA VEZ com flag de controle
-   let listenerAdicionado = false;
-   
-   if (!listenerAdicionado) {
-     document.addEventListener('click', (e) => {
-       const card = e.target.closest('.mentor-card');
-       
-       if (card && !this.isClickNoMenu(e) && !this.estado.formularioAberto) {
-         e.preventDefault();
-         e.stopPropagation();
-         e.stopImmediatePropagation(); // ✅ CORREÇÃO: Para TODOS os eventos
-         
-         console.log('🎯 Interceptando clique para novo sistema - Card:', card.getAttribute('data-nome'));
-         this.abrirFormulario(card);
-         return false; // ✅ CORREÇÃO: Impedir bubbling
-       }
-     }, true); // ✅ CORREÇÃO: Usar capture phase
-     
-     listenerAdicionado = true;
-     console.log('✅ Event listener único adicionado');
-   }
+    const observer = new MutationObserver((mutations) => {
+      mutations.forEach((mutation) => {
+        if (mutation.type === 'childList') {
+          mutation.addedNodes.forEach((node) => {
+            if (node.nodeType === 1 && node.classList.contains('mentor-card')) {
+              console.log('🔄 Novo card detectado, desativando sistema antigo');
+              this.desativarSistemaAntigo();
+            }
+          });
+        }
+      });
+    });
 
-   // Observer para novos cards
-   const observer = new MutationObserver((mutations) => {
-     mutations.forEach((mutation) => {
-       if (mutation.type === 'childList') {
-         mutation.addedNodes.forEach((node) => {
-           if (node.nodeType === 1 && node.classList.contains('mentor-card')) {
-             console.log('🔄 Novo card detectado, desativando sistema antigo');
-             this.desativarSistemaAntigo();
-           }
-         });
-       }
-     });
-   });
+    const containerMentores = document.getElementById('listaMentores');
+    if (containerMentores) {
+      observer.observe(containerMentores, {
+        childList: true,
+        subtree: true
+      });
+    }
 
-   const containerMentores = document.getElementById('listaMentores');
-   if (containerMentores) {
-     observer.observe(containerMentores, {
-       childList: true,
-       subtree: true
-     });
-   }
- },
+    console.log('✅ Integração completa do sistema novo');
+  },
 
- // ✅ NOVA FUNÇÃO: Desativar sistema antigo
- desativarSistemaAntigo() {
-   // Desativar FormularioValorManager se existir
-   if (typeof FormularioValorManager !== 'undefined') {
-     FormularioValorManager.exibirFormularioMentor = () => {
-       console.log('🚫 FormularioValorManager desativado - usando novo sistema');
-     };
-   }
+  desativarSistemaAntigo() {
+    if (typeof FormularioValorManager !== 'undefined') {
+      FormularioValorManager.exibirFormularioMentor = () => {
+        console.log('🚫 FormularioValorManager desativado - usando novo sistema');
+      };
+    }
 
-   // Desativar funções globais antigas
-   if (typeof window.exibirFormularioMentor === 'function') {
-     window.exibirFormularioMentor = () => {
-       console.log('🚫 exibirFormularioMentor desativado - usando novo sistema');
-     };
-   }
+    if (typeof window.exibirFormularioMentor === 'function') {
+      window.exibirFormularioMentor = () => {
+        console.log('🚫 exibirFormularioMentor desativado - usando novo sistema');
+      };
+    }
 
-   // Remover onclick dos cards
-   document.querySelectorAll('.mentor-card').forEach(card => {
-     if (card.onclick) {
-       card.onclick = null;
-     }
-     card.removeAttribute('onclick');
-   });
-   
-   console.log('🚫 Sistema antigo desativado');
- },
+    document.querySelectorAll('.mentor-card').forEach(card => {
+      if (card.onclick) {
+        card.onclick = null;
+      }
+      card.removeAttribute('onclick');
+      
+      const newCard = card.cloneNode(true);
+      card.parentNode.replaceChild(newCard, card);
+    });
+    
+    console.log('🚫 Sistema antigo desativado');
+  },
 
- isClickNoMenu(event) {
-   const elementosIgnorar = [
-     '.menu-toggle',
-     '.menu-opcoes', 
-     '.btn-icon',
-     '.btn-lixeira',
-     'button',
-     'i[class*="fa"]'
-   ];
+  isClickNoMenu(event) {
+    const elementosIgnorar = [
+      '.menu-toggle',
+      '.menu-opcoes', 
+      '.btn-icon',
+      '.btn-lixeira',
+      'button',
+      'i[class*="fa"]'
+    ];
 
-   return elementosIgnorar.some(seletor => {
-     return event.target.closest(seletor) !== null;
-   });
- },
+    return elementosIgnorar.some(seletor => {
+      return event.target.closest(seletor) !== null;
+    });
+  },
 };
 
 // ===== FUNÇÕES GLOBAIS PARA COMPATIBILIDADE =====
-
-// Função global para abrir modal de exclusão de entrada
 window.abrirModalExclusaoEntrada = function(idEntrada) {
     ModalExclusaoEntrada.abrir(idEntrada);
 };
 
-// Funções do sistema novo de cadastro
 window.abrirFormularioNovo = (card) => {
- SistemaCadastroNovo.abrirFormulario(card);
+  SistemaCadastroNovo.abrirFormulario(card);
 };
 
 window.fecharFormularioNovo = () => {
- SistemaCadastroNovo.fecharFormulario();
+  SistemaCadastroNovo.fecharFormulario();
 };
 
-// ✅ CORREÇÃO: Desativar funções antigas globalmente
-window.FormularioValorManager_DESATIVADO = true;
+window.limparOverlaysEmergencia = function() {
+  console.log('🚨 Limpeza de emergência ativada...');
+  
+  const overlays = document.querySelectorAll('.formulario-mentor-overlay, [id*="overlay"]');
+  overlays.forEach(overlay => overlay.remove());
+  
+  document.body.classList.remove('modal-aberto');
+  document.body.style.overflow = '';
+  document.body.style.backgroundColor = '';
+  
+  const modais = document.querySelectorAll('.formulario-mentor-novo');
+  modais.forEach(modal => {
+    modal.style.display = 'none';
+    modal.classList.remove('ativo', 'fechando');
+  });
+  
+  console.log('✅ Limpeza de emergência concluída');
+  alert('🔧 Limpeza realizada! A página deve estar normal agora.');
+};
 
-// ===== INICIALIZAÇÃO AUTOMÁTICA CORRIGIDA =====
+document.addEventListener('keydown', function(e) {
+  if (e.key === 'Escape') {
+    const overlaysVisiveis = document.querySelectorAll('.formulario-mentor-overlay.ativo');
+    if (overlaysVisiveis.length > 0) {
+      if (typeof SistemaCadastroNovo !== 'undefined' && SistemaCadastroNovo.fecharFormulario) {
+        SistemaCadastroNovo.fecharFormulario();
+      } else {
+        window.limparOverlaysEmergencia();
+      }
+    }
+  }
+});
+
+const OverlayObserver = {
+  inicializar() {
+    setInterval(() => {
+      const overlays = document.querySelectorAll('.formulario-mentor-overlay');
+      const modalsAtivos = document.querySelectorAll('.formulario-mentor-novo.ativo');
+      
+      if (overlays.length > 0 && modalsAtivos.length === 0) {
+        console.warn('🧹 Overlay órfão detectado, removendo...');
+        overlays.forEach(overlay => overlay.remove());
+        document.body.classList.remove('modal-aberto');
+      }
+    }, 2000);
+  }
+};
+
+// ===== INICIALIZAÇÃO AUTOMÁTICA =====
 document.addEventListener('DOMContentLoaded', function() {
     console.log('🚀 Inicializando sistemas corrigidos...');
     
-    // Inicializa modal de exclusão
     ModalExclusaoEntrada.inicializar();
     
-    // Inicializa sistema de cadastro novo após um delay
     setTimeout(() => {
         SistemaCadastroNovo.inicializar();
-        console.log('🎯 Sistemas inicializados com correções aplicadas!');
-    }, 200);
+        console.log('🎯 Sistemas inicializados e funcionando!');
+        
+        const cards = document.querySelectorAll('.mentor-card');
+        console.log(`📊 ${cards.length} cards de mentor encontrados`);
+        
+        cards.forEach((card, index) => {
+          const id = card.getAttribute('data-id');
+          const nome = card.getAttribute('data-nome');
+          console.log(`Card ${index + 1}: ${nome} (ID: ${id})`);
+        });
+        
+    }, 500);
+    
+    OverlayObserver.inicializar();
 });
 
-// Para compatibilidade se o DOMContentLoaded já passou
 if (document.readyState === 'loading') {
-    document.addEventListener('DOMContentLoaded', function() {
-        ModalExclusaoEntrada.inicializar();
-        setTimeout(() => SistemaCadastroNovo.inicializar(), 200);
-    });
+    // Aguarda o DOMContentLoaded
 } else {
-    ModalExclusaoEntrada.inicializar();
-    setTimeout(() => SistemaCadastroNovo.inicializar(), 200);
+    setTimeout(() => {
+        ModalExclusaoEntrada.inicializar();
+        SistemaCadastroNovo.inicializar();
+        OverlayObserver.inicializar();
+        console.log('🚀 Sistemas inicializados (DOM já carregado)');
+    }, 100);
 }
 
-// Disponibiliza globalmente para debug
 window.SistemaCadastroNovo = SistemaCadastroNovo;
 window.ModalExclusaoEntrada = ModalExclusaoEntrada;
 
-console.log('🎯 ===== SISTEMA CORRIGIDO CARREGADO =====');
-console.log('✅ Modal de Exclusão: SEM dupla exclusão');
-console.log('✅ Sistema de Cadastro: SEM cadastro duplo');
-console.log('✅ Sistema Antigo: DESATIVADO completamente');
-console.log('🔗 Integração: EXCLUSIVA com novo sistema');
-console.log('🚀 Pronto para uso!');
+console.log('🎯 ===== SISTEMA FINAL CORRIGIDO E FUNCIONANDO =====');
+console.log('✅ Modal de Exclusão: Funcional');
+console.log('✅ Sistema de Cadastro: Funcional com clique nos cards');  
+console.log('✅ Mensagem Red automática: Implementada');
+console.log('✅ Animações suaves: Implementadas');
+console.log('✅ Overlay removido completamente: Corrigido');
+console.log('🔧 Para testar: Clique em qualquer card de mentor');
+
 </script>
 
 

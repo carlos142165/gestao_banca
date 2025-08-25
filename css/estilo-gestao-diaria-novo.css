@@ -2568,6 +2568,222 @@ p {
 /* */
 /* */
 /* */
+/* =======================================================================================================================================================
+                                          💼  CODIGO RESPONSAVEL PELO TEXTO LUCRO EXTRA   
+   ==========================================================================================================================================================*/
+
+/* ========================================
+   🎨 ESTILOS PARA EFEITOS VISUAIS DO LUCRO EXTRA
+   ======================================== */
+
+/* ✅ ANIMAÇÕES PRINCIPAIS */
+@keyframes pulse-suave-lucro {
+  0%,
+  100% {
+    transform: scale(1);
+    opacity: 1;
+    filter: brightness(1);
+  }
+  50% {
+    transform: scale(1.03);
+    opacity: 0.95;
+    filter: brightness(1.1);
+  }
+}
+
+@keyframes brilho-dourado {
+  0%,
+  100% {
+    text-shadow: 0 2px 4px rgba(218, 165, 32, 0.3);
+  }
+  50% {
+    text-shadow: 0 2px 8px rgba(218, 165, 32, 0.6),
+      0 0 20px rgba(218, 165, 32, 0.3);
+  }
+}
+
+@keyframes trofeu-celebracao {
+  0% {
+    transform: scale(1) rotate(0deg);
+  }
+  25% {
+    transform: scale(1.1) rotate(5deg);
+  }
+  50% {
+    transform: scale(1.15) rotate(-5deg);
+  }
+  75% {
+    transform: scale(1.1) rotate(3deg);
+  }
+  100% {
+    transform: scale(1) rotate(0deg);
+  }
+}
+
+@keyframes fadeIn-lucro-extra {
+  0% {
+    opacity: 0;
+    transform: translateY(10px) scale(0.9);
+  }
+  100% {
+    opacity: 1;
+    transform: translateY(0) scale(1);
+  }
+}
+
+@keyframes barra-sucesso {
+  0% {
+    background-position: 0% 50%;
+  }
+  100% {
+    background-position: 100% 50%;
+  }
+}
+
+/* ✅ CLASSES PARA LUCRO EXTRA */
+.lucro-extra-ativo {
+  animation: fadeIn-lucro-extra 0.6s ease-out !important;
+}
+
+.pulsante-suave {
+  animation: pulse-suave-lucro 2.5s ease-in-out infinite !important;
+}
+
+.brilho-dourado {
+  animation: brilho-dourado 3s ease-in-out infinite !important;
+}
+
+/* ✅ ESTILO DO TROFÉU */
+.trophy-icon {
+  color: #daa520 !important;
+  filter: drop-shadow(0 2px 6px rgba(218, 165, 32, 0.4)) !important;
+  margin-right: 8px !important;
+  font-size: 1.1em !important;
+  animation: trofeu-celebracao 2s ease-in-out infinite !important;
+}
+
+.trophy-text {
+  color: #daa520 !important;
+  text-shadow: 0 2px 6px rgba(218, 165, 32, 0.4) !important;
+  font-weight: 700 !important;
+  letter-spacing: 0.5px !important;
+  display: inline-flex !important;
+  align-items: center !important;
+  animation: brilho-dourado 3s ease-in-out infinite !important;
+}
+
+/* ✅ VALOR EXTRA DOURADO */
+#valor-extra {
+  transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1) !important;
+}
+
+#valor-extra.dourado {
+  color: #daa520 !important;
+  text-shadow: 0 2px 6px rgba(218, 165, 32, 0.5) !important;
+  font-weight: 700 !important;
+  font-size: 1.15em !important;
+  letter-spacing: 0.5px !important;
+}
+
+#rotulo-extra.azul-destaque {
+  color: #2563eb !important;
+  font-weight: 600 !important;
+  text-shadow: 0 1px 3px rgba(37, 99, 235, 0.3) !important;
+}
+
+/* ✅ CONTAINER DO VALOR ULTRAPASSOU */
+#valor-ultrapassou {
+  transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1) !important;
+}
+
+#valor-ultrapassou.mostrar {
+  animation: fadeIn-lucro-extra 0.6s ease-out !important;
+}
+
+#valor-ultrapassou.celebracao {
+  background: linear-gradient(
+    135deg,
+    rgba(218, 165, 32, 0.1) 0%,
+    rgba(37, 99, 235, 0.05) 50%,
+    rgba(218, 165, 32, 0.1) 100%
+  ) !important;
+  border-radius: 12px !important;
+  padding: 8px 16px !important;
+  border: 2px solid rgba(218, 165, 32, 0.3) !important;
+  box-shadow: 0 4px 15px rgba(218, 165, 32, 0.2) !important;
+}
+
+/* ✅ BARRA DE PROGRESSO COM EFEITO ESPECIAL */
+.barra-lucro-extra {
+  background: linear-gradient(
+    90deg,
+    #28a745 0%,
+    #20c997 25%,
+    #daa520 50%,
+    #20c997 75%,
+    #28a745 100%
+  ) !important;
+  background-size: 200% 100% !important;
+  animation: barra-sucesso 3s ease-in-out infinite !important;
+  box-shadow: 0 3px 12px rgba(40, 167, 69, 0.4) !important;
+  border-radius: 8px !important;
+}
+
+.barra-lucro-extra::after {
+  content: "" !important;
+  position: absolute !important;
+  top: 0 !important;
+  left: 0 !important;
+  right: 0 !important;
+  bottom: 0 !important;
+  background: linear-gradient(
+    90deg,
+    transparent 0%,
+    rgba(255, 255, 255, 0.3) 50%,
+    transparent 100%
+  ) !important;
+  border-radius: inherit !important;
+  animation: brilho-sweep 2s ease-in-out infinite !important;
+}
+
+@keyframes brilho-sweep {
+  0% {
+    transform: translateX(-100%);
+  }
+  100% {
+    transform: translateX(100%);
+  }
+}
+
+/* ✅ ESTADOS ESPECIAIS PARA RÓTULOS */
+#rotulo-meta.meta-batida {
+  background: linear-gradient(
+    135deg,
+    rgba(218, 165, 32, 0.1) 0%,
+    rgba(218, 165, 32, 0.05) 100%
+  ) !important;
+  padding: 6px 12px !important;
+  border-radius: 20px !important;
+  border: 1px solid rgba(218, 165, 32, 0.3) !important;
+  display: inline-block !important;
+  margin: 4px 0 !important;
+}
+
+/* ✅ EFEITOS HOVER */
+.trophy-icon:hover {
+  transform: scale(1.1);
+}
+/* =======================================================================================================================================================
+                                          💼  FIM CODIGO RESPONSAVEL PELO TEXTO LUCRO EXTRA   
+   ==========================================================================================================================================================*/
+/* */
+/* */
+/* */
+/* */
+/* */
+/* */
+/* */
+/* */
 /* */
 /* */
 /* */

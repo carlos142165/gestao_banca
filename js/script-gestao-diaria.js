@@ -1889,6 +1889,9 @@ console.log("  - Exclusão de entradas por período (Dia/Mês/Ano)");
 console.log("  - Sincronização automática com filtros");
 console.log("  - Atualização dinâmica da tela de edição");
 console.log("✅ Sistema pronto para usar filtros de período!");
+// ========================================================================================================================
+//
+// ========================================================================================================================
 //
 //
 //
@@ -2018,17 +2021,24 @@ const MetaDiariaManager = {
     }
   },
 
-  // ✅ ATUALIZAR TODOS OS ELEMENTOS
+  // ✅ ATUALIZAR TODOS OS ELEMENTOS - VERSÃO SIMPLIFICADA SEM LUCRO EXTRA
   atualizarTodosElementos(data) {
     try {
       const saldoDia = parseFloat(data.lucro) || 0;
       const metaCalculada = parseFloat(data.meta_display) || 0;
       const bancaTotal = parseFloat(data.banca) || 0;
+
+      // ✅ ADICIONAR META ORIGINAL AOS DADOS SE DISPONÍVEL
+      const dadosComplementados = {
+        ...data,
+        meta_original: data.meta_original || metaCalculada,
+      };
+
       const resultado = this.calcularMetaFinal(
         saldoDia,
         metaCalculada,
         bancaTotal,
-        data
+        dadosComplementados
       );
 
       // Atualizar em sequência
@@ -2036,7 +2046,6 @@ const MetaDiariaManager = {
       this.atualizarModal(data);
       this.atualizarMetaElemento(resultado);
       this.atualizarRotulo(resultado.rotulo);
-      this.atualizarValorExtra(resultado.valorExtra);
       this.atualizarBarraProgresso(resultado, data);
       this.atualizarTipoMetaDisplay(data); // ✅ ATUALIZAR DISPLAY + BADGE
 
@@ -2289,52 +2298,64 @@ const MetaDiariaManager = {
     }
   },
 
-  // ✅ CALCULAR META FINAL
+  // ✅ CALCULAR META FINAL - VERSÃO SIMPLIFICADA SEM LUCRO EXTRA
   calcularMetaFinal(saldoDia, metaCalculada, bancaTotal, data) {
     try {
-      let metaFinal,
-        rotulo,
-        statusClass,
-        valorExtra = 0;
+      let metaFinal, rotulo, statusClass;
+
+      console.log(`🔍 DEBUG CALCULAR META:`);
+      console.log(`   Saldo: R$ ${saldoDia.toFixed(2)}`);
+      console.log(`   Meta: R$ ${metaCalculada.toFixed(2)}`);
+      console.log(`   Banca: R$ ${bancaTotal.toFixed(2)}`);
 
       if (bancaTotal <= 0) {
         metaFinal = bancaTotal;
         rotulo = "Deposite p/ Começar";
         statusClass = "sem-banca";
-        valorExtra = 0;
-      } else if (
-        saldoDia > 0 &&
-        metaCalculada > 0 &&
-        saldoDia >= metaCalculada
-      ) {
+        console.log(`📊 RESULTADO: Sem banca`);
+      }
+      // ✅ META BATIDA OU SUPERADA - SEM EXIBIR VALOR EXTRA
+      else if (saldoDia > 0 && metaCalculada > 0 && saldoDia >= metaCalculada) {
         metaFinal = 0;
         rotulo = `${
           data.rotulo_periodo || "Meta"
         } Batida! <i class='fa-solid fa-trophy'></i>`;
         statusClass = "meta-batida";
-        valorExtra = saldoDia - metaCalculada;
 
-        if (valorExtra <= 0) {
-          valorExtra = 0;
-        }
+        console.log(`🎯 META BATIDA:`);
+        console.log(`   ${saldoDia.toFixed(2)} >= ${metaCalculada.toFixed(2)}`);
+      }
+      // ✅ CASO ESPECIAL: Meta é zero (já foi batida)
+      else if (metaCalculada === 0 && saldoDia > 0) {
+        metaFinal = 0;
+        rotulo = `${
+          data.rotulo_periodo || "Meta"
+        } Batida! <i class='fa-solid fa-trophy'></i>`;
+        statusClass = "meta-batida";
+
+        console.log(`🎯 META ZERO (já batida)`);
       } else if (saldoDia < 0) {
         metaFinal = metaCalculada - saldoDia;
         rotulo = `Restando p/ ${data.rotulo_periodo || "Meta"}`;
         statusClass = "negativo";
-        valorExtra = 0;
+
+        console.log(`📊 RESULTADO: Negativo`);
       } else if (saldoDia === 0) {
         metaFinal = metaCalculada;
         rotulo = data.rotulo_periodo || "Meta do Dia";
         statusClass = "neutro";
-        valorExtra = 0;
+
+        console.log(`📊 RESULTADO: Neutro`);
       } else {
+        // ✅ Lucro positivo mas menor que a meta
         metaFinal = metaCalculada - saldoDia;
         rotulo = `Restando p/ ${data.rotulo_periodo || "Meta"}`;
         statusClass = "lucro";
-        valorExtra = 0;
+
+        console.log(`📊 RESULTADO: Lucro insuficiente`);
       }
 
-      return {
+      const resultado = {
         metaFinal,
         metaFinalFormatada: metaFinal.toLocaleString("pt-BR", {
           style: "currency",
@@ -2342,8 +2363,12 @@ const MetaDiariaManager = {
         }),
         rotulo,
         statusClass,
-        valorExtra,
       };
+
+      console.log(`🏁 RESULTADO FINAL:`);
+      console.log(`   Status: ${statusClass}`);
+
+      return resultado;
     } catch (error) {
       console.error("❌ Erro ao calcular meta final:", error);
       return {
@@ -2351,7 +2376,6 @@ const MetaDiariaManager = {
         metaFinalFormatada: "R$ 0,00",
         rotulo: "Erro no cálculo",
         statusClass: "erro",
-        valorExtra: 0,
       };
     }
   },
@@ -2403,43 +2427,7 @@ const MetaDiariaManager = {
     }
   },
 
-  // ✅ ATUALIZAR VALOR EXTRA
-  atualizarValorExtra(valorExtra) {
-    try {
-      const valorUltrapassouElement =
-        document.getElementById("valor-ultrapassou");
-      const valorExtraElement = document.getElementById("valor-extra");
-
-      if (valorUltrapassouElement) {
-        if (valorExtra > 0) {
-          const valorFormatado = valorExtra.toLocaleString("pt-BR", {
-            style: "currency",
-            currency: "BRL",
-          });
-
-          if (valorExtraElement) {
-            valorExtraElement.textContent = valorFormatado;
-          }
-
-          valorUltrapassouElement.style.display = "flex";
-          valorUltrapassouElement.classList.add("mostrar");
-          document.body.classList.add("tem-lucro-extra");
-        } else {
-          valorUltrapassouElement.style.display = "none";
-          valorUltrapassouElement.classList.remove("mostrar");
-          document.body.classList.remove("tem-lucro-extra");
-
-          if (valorExtraElement) {
-            valorExtraElement.textContent = "R$ 0,00";
-          }
-        }
-      }
-    } catch (error) {
-      console.error("❌ Erro ao atualizar valor extra:", error);
-    }
-  },
-
-  // ✅ ATUALIZAR BARRA PROGRESSO - COM CORREÇÃO ESPECÍFICA PARA O PROBLEMA
+  // ✅ ATUALIZAR BARRA PROGRESSO - VERSÃO SIMPLIFICADA
   atualizarBarraProgresso(resultado, data) {
     try {
       const barraProgresso = document.getElementById("barra-progresso");
@@ -2469,9 +2457,8 @@ const MetaDiariaManager = {
 
       const larguraBarra = Math.abs(progresso);
 
-      // ✅ CORREÇÃO ESPECÍFICA: Verificação mais rigorosa para meta batida
+      // ✅ LIMPAR CLASSES ANTIGAS
       let classeCor = "";
-
       barraProgresso.className = barraProgresso.className.replace(
         /\bbarra-\w+/g,
         ""
@@ -2481,29 +2468,24 @@ const MetaDiariaManager = {
         barraProgresso.classList.add("widget-barra-progresso");
       }
 
-      // ✅ VERIFICAÇÃO MAIS RIGOROSA: só aplica verde se REALMENTE bateu a meta
-      if (
-        resultado.valorExtra > 0 &&
-        resultado.statusClass === "meta-batida" &&
-        saldoDia > 0 && // ✅ NOVA: Saldo deve ser positivo
-        metaCalculada > 0 && // ✅ NOVA: Meta deve ser positiva
-        saldoDia >= metaCalculada // ✅ NOVA: Saldo deve ser >= meta
-      ) {
-        classeCor = "barra-lucro-extra";
-        console.log("✅ Meta REALMENTE batida com extra - aplicando verde");
-      } else if (
-        resultado.statusClass === "meta-batida" &&
-        saldoDia > 0 &&
-        metaCalculada > 0 &&
-        saldoDia >= metaCalculada
-      ) {
+      // ✅ LÓGICA SIMPLIFICADA SEM BARRA VERDE DE LUCRO EXTRA
+      if (resultado.statusClass === "meta-batida") {
         classeCor = "barra-meta-batida";
-        console.log("✅ Meta REALMENTE batida - aplicando verde");
+        console.log(
+          `✅ BARRA META BATIDA - Saldo: R$ ${saldoDia.toFixed(
+            2
+          )}, Meta: R$ ${metaCalculada.toFixed(2)}`
+        );
       } else {
         classeCor = `barra-${resultado.statusClass}`;
-        console.log(`✅ Status normal: ${resultado.statusClass} - sem verde`);
+        console.log(
+          `✅ BARRA NORMAL - Status: ${
+            resultado.statusClass
+          }, Saldo: R$ ${saldoDia.toFixed(2)}`
+        );
       }
 
+      // ✅ APLICAR CLASSE E ESTILOS
       barraProgresso.classList.add(classeCor);
       barraProgresso.style.width = `${larguraBarra}%`;
       barraProgresso.style.backgroundColor = "";
@@ -2579,15 +2561,19 @@ const MetaDiariaManager = {
         "porcentagem-barra",
       ];
 
+      console.log("🔒 Bloqueando elementos temporariamente...");
+
       elementosBloquear.forEach((id) => {
         const elemento = document.getElementById(id);
         if (elemento) {
           elemento.style.opacity = "0.3";
           elemento.style.pointerEvents = "none";
+          elemento.style.transition = "opacity 0.2s ease";
         }
       });
 
       setTimeout(() => {
+        console.log("🔓 Desbloqueando elementos...");
         elementosBloquear.forEach((id) => {
           const elemento = document.getElementById(id);
           if (elemento) {
@@ -2605,9 +2591,21 @@ const MetaDiariaManager = {
   configurarListenersPeriodo() {
     try {
       const radiosPeriodo = document.querySelectorAll('input[name="periodo"]');
+
+      if (radiosPeriodo.length === 0) {
+        console.warn("⚠️ Nenhum radio button encontrado para período");
+        return;
+      }
+
+      console.log(
+        `✅ Configurando ${radiosPeriodo.length} listeners de período`
+      );
+
       radiosPeriodo.forEach((radio) => {
         radio.addEventListener("change", (e) => {
           if (e.target.checked) {
+            console.log(`🔄 Mudança de período detectada: ${e.target.value}`);
+
             if (this.atualizandoAtualmente) {
               console.log("⏳ Atualização já em andamento, ignorando...");
               return;
@@ -2982,7 +2980,7 @@ window.alterarPeriodo = (periodo) => {
 };
 
 // ========================================
-// FUNÇÕES AUXILIARES PARA O BADGE (FORA DO MetaDiariaManager)
+// FUNÇÕES AUXILIARES PARA O BADGE
 // ========================================
 
 // ✅ FUNÇÃO PARA DEFINIR ESTADO DE LOADING NO BADGE (SEM ANIMAÇÃO)
@@ -3190,66 +3188,11 @@ window.$ = {
     }
   },
 
-  // ✅ TESTE ESPECÍFICO PARA O PROBLEMA MÊS/ANO → DIA
-  testProblema: () => {
-    console.log("🎯 Teste ESPECÍFICO: Problema MÊS/ANO → DIA");
-    console.log("   Observar se há flash verde ao voltar para DIA");
-
-    alterarPeriodo("dia");
-    console.log("1️⃣ DIA");
-
-    setTimeout(() => {
-      alterarPeriodo("mes");
-      console.log("2️⃣ MÊS");
-    }, 2000);
-
-    setTimeout(() => {
-      alterarPeriodo("dia");
-      console.log("3️⃣ VOLTA PARA DIA ← PONTO CRÍTICO");
-    }, 4000);
-
-    setTimeout(() => {
-      alterarPeriodo("ano");
-      console.log("4️⃣ ANO");
-    }, 6000);
-
-    setTimeout(() => {
-      alterarPeriodo("dia");
-      console.log("5️⃣ VOLTA PARA DIA ← PONTO CRÍTICO");
-    }, 8000);
-
-    return "🎯 Teste do problema executado - observe as transições para DIA";
-  },
-
-  test: () => {
-    console.log("🧪 Teste básico com verificação por banco:");
-    alterarPeriodo("dia");
-    console.log("✅ DIA");
-    setTimeout(() => {
-      alterarTipoMeta("fixa");
-      console.log("✅ META FIXA (gravando no banco)");
-    }, 1000);
-    setTimeout(() => {
-      alterarTipoMeta("turbo");
-      console.log("✅ META TURBO (gravando no banco)");
-    }, 2000);
-    setTimeout(() => {
-      alterarPeriodo("mes");
-      console.log("✅ MÊS");
-    }, 3000);
-    setTimeout(() => {
-      alterarPeriodo("dia");
-      console.log("✅ Volta DIA");
-    }, 4000);
-    return "🎯 Teste iniciado - Sistema com Banco + Badge + Correção";
-  },
-
   info: () => {
     try {
       const metaElement = document.getElementById("meta-valor");
       const rotuloElement = document.getElementById("rotulo-meta");
       const barraElement = document.getElementById("barra-progresso");
-      const extraElement = document.getElementById("valor-ultrapassou");
       const tipoElement = document.getElementById("meta-text-unico");
       const badgeElement = document.getElementById("meta-tipo-badge");
 
@@ -3257,15 +3200,11 @@ window.$ = {
         meta: !!metaElement,
         rotulo: !!rotuloElement,
         barra: !!barraElement,
-        extra: !!extraElement,
         tipoMeta: !!tipoElement,
         badge: !!badgeElement,
         metaContent: metaElement ? metaElement.textContent : "N/A",
         tipoTexto: tipoElement ? tipoElement.textContent : "N/A",
         badgeTexto: badgeElement ? badgeElement.textContent : "N/A",
-        extraVisivel: extraElement
-          ? !extraElement.classList.contains("oculta")
-          : false,
         atualizando:
           typeof MetaDiariaManager !== "undefined"
             ? MetaDiariaManager.atualizandoAtualmente
@@ -3279,12 +3218,11 @@ window.$ = {
             ? MetaDiariaManager.tipoMetaAtual
             : "Detectado pelo banco",
         sistemaFiltro: typeof SistemaFiltroPeriodoIntegrado !== "undefined",
-        verificacao:
-          "Sistema ORIGINAL + Correção específica para MÊS/ANO → DIA",
+        verificacao: "Sistema SEM lucro extra",
       };
 
-      console.log("📊 Info Sistema com Correção:", info);
-      return "✅ Info verificada - Sistema com Banco + Badge + Correção";
+      console.log("📊 Info Sistema Simplificado:", info);
+      return "✅ Info verificada - Sistema sem lucro extra";
     } catch (error) {
       console.error("❌ Erro ao obter info:", error);
       return "❌ Erro ao obter informações";
@@ -3294,10 +3232,16 @@ window.$ = {
   status: () => {
     try {
       const status = {
-        sistemaOriginal: {
+        sistemaSimplificado: {
           ativo: true,
-          correcaoEspecifica: "Verificação rigorosa para evitar flash verde",
-          problemaResolvido: "MÊS/ANO → DIA",
+          versao: "Sem Lucro Extra",
+          caracteristicas: [
+            "Meta batida simples - sem valor extra",
+            "Barra de progresso padrão",
+            "Badge de tipo de meta mantido",
+            "Sistema de períodos mantido",
+            "Funcionalidade de lucro extra removida completamente",
+          ],
         },
         metaManager: {
           existe: typeof MetaDiariaManager !== "undefined",
@@ -3313,9 +3257,14 @@ window.$ = {
             typeof MetaDiariaManager !== "undefined"
               ? MetaDiariaManager.atualizandoAtualmente
               : false,
-          temFuncaoBadge:
-            typeof MetaDiariaManager !== "undefined" &&
-            typeof MetaDiariaManager.atualizarBadgeTipoMeta === "function",
+          temFuncoes: {
+            badge:
+              typeof MetaDiariaManager !== "undefined" &&
+              typeof MetaDiariaManager.atualizarBadgeTipoMeta === "function",
+            calcularMeta:
+              typeof MetaDiariaManager !== "undefined" &&
+              typeof MetaDiariaManager.calcularMetaFinal === "function",
+          },
         },
         filtroSistema: {
           existe: typeof SistemaFiltroPeriodoIntegrado !== "undefined",
@@ -3354,7 +3303,7 @@ window.$ = {
         },
       };
 
-      console.log("🔍 Status do Sistema com Correção:", status);
+      console.log("🔍 Status do Sistema Simplificado:", status);
       return status;
     } catch (error) {
       console.error("❌ Erro ao obter status:", error);
@@ -3369,11 +3318,11 @@ window.$ = {
 
 function inicializarSistemaIntegrado() {
   try {
-    console.log("🚀 Inicializando Sistema com Correção para MÊS/ANO → DIA...");
+    console.log("🚀 Inicializando Sistema SIMPLIFICADO (sem lucro extra)...");
 
     if (typeof MetaDiariaManager !== "undefined") {
       MetaDiariaManager.inicializar();
-      console.log("✅ MetaDiariaManager inicializado com correção");
+      console.log("✅ MetaDiariaManager inicializado");
     }
 
     if (typeof SistemaFiltroPeriodo !== "undefined") {
@@ -3401,7 +3350,13 @@ function inicializarSistemaIntegrado() {
     }
 
     console.log("✅ Tipo de meta será detectado automaticamente pelo banco");
-    console.log("🎯 Sistema com Correção MÊS/ANO → DIA inicializado!");
+    console.log("🎯 Sistema SIMPLIFICADO inicializado!");
+    console.log("📝 Funcionalidades mantidas:");
+    console.log("   ✅ Cálculo de meta diária/mensal/anual");
+    console.log("   ✅ Badge de tipo de meta (Fixa/Turbo)");
+    console.log("   ✅ Barra de progresso");
+    console.log("   ✅ Sistema de filtro por período");
+    console.log("   ❌ Lucro extra REMOVIDO completamente");
   } catch (error) {
     console.error("❌ Erro na inicialização do sistema:", error);
   }
@@ -3420,20 +3375,25 @@ if (document.readyState === "loading") {
 // LOGS E DEBUGGING FINAIS
 // ========================================
 
-console.log("🎯 Sistema Meta Diária com CORREÇÃO ESPECÍFICA!");
+console.log("🎯 Sistema Meta Diária SIMPLIFICADO!");
 console.log("📱 Comandos Disponíveis:");
-console.log("  $.testProblema() - 🎯 TESTE para o problema MÊS/ANO → DIA");
 console.log("  $.force() - Forçar atualização");
-console.log("  $.test() - Teste completo");
 console.log("  $.testBadge() - Testar apenas o badge");
 console.log("  $.fixa() - Alterar para Meta Fixa (grava no banco)");
 console.log("  $.turbo() - Alterar para Meta Turbo (grava no banco)");
+console.log("  $.dia() - Alterar período para dia");
+console.log("  $.mes() - Alterar período para mês");
+console.log("  $.ano() - Alterar período para ano");
 console.log("  $.info() - Ver status");
 console.log("  $.status() - Status completo");
-console.log(
-  "🔧 CORREÇÃO IMPLEMENTADA: Verificação rigorosa na barra de progresso"
-);
-console.log("🎯 PROBLEMA RESOLVIDO: Flash verde ao voltar de MÊS/ANO para DIA");
+console.log("");
+console.log("✅ FUNCIONALIDADE DE LUCRO EXTRA REMOVIDA COMPLETAMENTE!");
+console.log("📝 Sistema agora funciona de forma simplificada:");
+console.log("   • Meta batida = Mostra troféu e valor R$ 0,00");
+console.log("   • Meta não batida = Mostra valor restante");
+console.log("   • Badge de tipo de meta mantido");
+console.log("   • Sistema de períodos mantido");
+console.log("   • Barra de progresso padrão");
 
 // ✅ EXPORT PARA USO EXTERNO
 window.MetaDiariaManager = MetaDiariaManager;
