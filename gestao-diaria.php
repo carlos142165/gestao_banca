@@ -887,13 +887,13 @@ ob_end_flush();
   <div class="conteudo-left-2">
      <!-- Container da Barra de Progresso -->
      <!-- Valor da Meta -->
-<div class="widget-meta-valor-2" id="meta-valor-2">
+ <div class="widget-meta-valor-2" id="meta-valor-2">
     <i class="fa-solid-2 fa-coins-2"></i>
     <div class="meta-valor-container-2">
         <span class="valor-texto-2" id="valor-texto-meta-2">carregando..</span>
         
     </div>
-</div>
+ </div>
     
      <!-- Exibição do valor que ultrapassou a meta -->
      <div class="valor-ultrapassou-2" id="valor-ultrapassou-2" style="display: none;">
@@ -919,6 +919,14 @@ ob_end_flush();
      </span>
     </div>
     </div>
+
+            <div class="area-central-2">
+                <div class="pontuacao-2" id="pontuacao-2">
+                    <span class="placar-green-2">0</span>
+                    <span class="separador-2">×</span>
+                    <span class="placar-red-2">0</span>
+                </div>
+            </div>
 
 
 
@@ -947,17 +955,30 @@ ob_end_flush();
               ? 'dia-hoje ' . ($saldo_dia >= 0 ? 'borda-verde' : 'borda-vermelha')
               : 'dia-normal';
 
-            $classe_destaque = ($data_mysql < $hoje && $saldo_dia > 0) ? 'dia-destaque' : '';
+            // Dê destaque lateral para dias com saldo positivo ou negativo (apenas passado)
+            // padrão: sem background adicional, apenas borda-left colorida
+            if ($data_mysql < $hoje && $saldo_dia > 0) {
+              $classe_destaque = 'dia-destaque';
+            } elseif ($data_mysql < $hoje && $saldo_dia < 0) {
+              $classe_destaque = 'dia-destaque-negativo';
+            } else {
+              $classe_destaque = '';
+            }
+
+            // marcar datas ainda não usadas (futuras) com borda-left cinza
+            $classe_nao_usada = ($data_mysql > $hoje) ? 'dia-nao-usada' : '';
+            // marcar dias passados sem valores com borda-left cinza suave
+            $classe_sem_valor = ($data_mysql < $hoje && (int)$dados['total_green'] === 0 && (int)$dados['total_red'] === 0) ? 'dia-sem-valor' : '';
 
             echo '
-              <div class="linha-dia '.$classe_dia.' '.$classe_destaque.'">
+              <div class="linha-dia '.$classe_dia.' '.$classe_destaque.' '.$classe_nao_usada.' '.$classe_sem_valor.'">
                 <span class="data '.$classe_texto.'"><i class="fas fa-calendar-day"></i> '.$data_exibicao.'</span>
                 <div class="placar-dia">
                   <span class="placar verde-bold '.$placar_cinza.'">'.(int)$dados['total_green'].'</span>
                   <span class="placar separador '.$placar_cinza.'">x</span>
                   <span class="placar vermelho-bold '.$placar_cinza.'">'.(int)$dados['total_red'].'</span>
                 </div>
-                <span class="valor '.$cor_valor.'"><i class="fas fa-dollar-sign"></i> R$ '.$saldo_formatado.'</span>
+                <span class="valor '.$cor_valor.'">R$ '.$saldo_formatado.'</span>
                 <span class="icone '.$classe_texto.'"><i class="fas fa-check"></i></span>
               </div>
             ';
@@ -2162,6 +2183,7 @@ body.modal-aberto {
         opacity: 1;
     }
 }
+/* Estilos do Bloco 2 movidos para: css/estilo-campo-mes.css */
 </style>
 
 <script>
@@ -4092,5 +4114,8 @@ if (toggle && menu && hiddenInput) {
 <!-- -->
 <!-- -->
     <script src="js/modal-confirmacao.js"></script>
+
 </body>
 </html>
+
+

@@ -3592,6 +3592,31 @@ const SistemaFiltroPeriodo = {
       if (placarRed) placarRed.textContent = totalRed;
     }
 
+    // Atualiza também o placar do mês (elementos -2) quando existirem.
+    try {
+      const placarGreen2 = document.querySelector(".placar-green-2");
+      const placarRed2 = document.querySelector(".placar-red-2");
+
+      // Se há elementos de total vindos do servidor, reutiliza-os
+      const totalGreenValue =
+        document.querySelector("#total-green-dia")?.dataset?.green || "0";
+      const totalRedValue =
+        document.querySelector("#total-red-dia")?.dataset?.red || "0";
+
+      // Só preenche os placares -2 quando o período atual estiver como 'mes'
+      if (this.periodoAtual === "mes") {
+        if (placarGreen2) placarGreen2.textContent = totalGreenValue;
+        if (placarRed2) placarRed2.textContent = totalRedValue;
+      } else {
+        // Caso contrário limpa os campos -2 (evita mostrar dados errados)
+        if (placarGreen2) placarGreen2.textContent = "0";
+        if (placarRed2) placarRed2.textContent = "0";
+      }
+    } catch (e) {
+      // Silenciar erros não críticos
+      console.debug("atualizarPlacar - placar -2 update skipped:", e);
+    }
+
     this.atualizarValoresGerais();
   },
 
