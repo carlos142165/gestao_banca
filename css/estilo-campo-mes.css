@@ -1,166 +1,32 @@
 /* =======================================================================================================================================================
-                                          CSS BLOCO 2 - TOTALMENTE ENCAPSULADO - SÓ AFETA BLOCO 2
+                                                        CSS CONTAINER QUE ARMAZENA ELEMENTOS DENTRO
    =======================================================================================================================================================*/
 
-/* ===== ENCAPSULAMENTO TOTAL - SÓ BLOCO 2 ===== */
-.container .bloco.bloco-2 {
-  padding: 0 !important;
-  margin: 0 !important;
+.conteudo-left-2 {
+  margin-left: 0 !important;
+}
+
+.container /* NOVO: largura ajustada para 800px */
+.bloco.bloco-2 {
+  /* NOVO: remover centramento automático para permitir que o bloco-2 fique colado ao bloco-1 */
+  max-width: 420px !important;
   width: 100% !important;
-  max-width: 450px !important; /* ✅ LARGURA REDUZIDA */
-  min-height: 400px !important;
-  display: flex !important;
-  flex-direction: column !important;
   box-sizing: border-box !important;
-  margin-top: 20px !important;
+  margin: 0 !important; /* remover margin-left/right:auto que centralizava o bloco */
+  flex: 0 0 440px !important; /* fixa a largura do bloco para facilitar alinhamento com bloco-1 */
+  background: transparent !important; /* remover cor de fundo */
+  border-radius: 15px !important;
 }
-
-.container .bloco.bloco-2 .resumo-mes {
-  margin: 0 !important;
-  padding: 0 !important;
-  width: 100% !important;
-  max-width: 100% !important;
-  min-width: 100% !important;
-  flex: 1 !important;
-  display: flex !important;
-  flex-direction: column !important;
-  font-family: "Poppins", sans-serif !important;
-}
-
-/* ===== BLOCO META SIMPLES - SÓ BLOCO 2 ===== */
-.container .bloco.bloco-2 .resumo-mes .bloco-meta-simples {
-  width: calc(100% - 30px) !important;
-  max-width: calc(100% - 30px) !important;
-  box-sizing: border-box !important;
-  background-color: #f7f6f6 !important;
-  border-radius: 12px !important;
-  padding: 20px !important;
-  margin: 0 15px 15px 15px !important;
-  height: 737px !important;
-}
-
-.container .bloco.bloco-2 .resumo-mes .bloco-meta-simples.fixo-topo {
-  position: sticky !important;
-  top: 0 !important;
-  z-index: 100 !important;
-  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1) !important;
-}
-
-/* ===== TÍTULO - SÓ BLOCO 2 ===== */
-.container .bloco.bloco-2 .resumo-mes .titulo-bloco {
-  font-size: 22px !important;
-  font-weight: bold !important;
-  color: #2c3e50 !important;
-  margin: 0 15px 15px 15px !important;
-  padding: 15px 0 !important;
-  text-align: center !important;
-  display: flex !important;
-  align-items: center !important;
-  justify-content: center !important;
-  gap: 10px !important;
-}
-
-.container .bloco.bloco-2 .resumo-mes .titulo-bloco i {
-  color: #3498db !important;
-  font-size: 20px !important;
-}
-
-/* ===== GRUPO BARRA - SÓ BLOCO 2 ===== */
-.container .bloco.bloco-2 .resumo-mes .grupo-barra {
-  display: flex !important;
-  flex-direction: column !important;
-  gap: 8px !important;
-  margin: 0 15px 15px 15px !important;
-  background: #ffffff !important;
-  padding: 15px !important;
-  border-radius: 10px !important;
-  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.08) !important;
-}
-
-.container .bloco.bloco-2 .resumo-mes .valor-meta {
-  font-size: 16px !important;
-  font-weight: bold !important;
-  color: #2c3e50 !important;
-  display: flex !important;
-  align-items: center !important;
-  gap: 8px !important;
-}
-
-.container .bloco.bloco-2 .resumo-mes .valor-meta i {
-  color: #e67e22 !important;
-  font-size: 14px !important;
-}
-
-.container .bloco.bloco-2 .resumo-mes .container-barra-horizontal {
-  position: relative !important;
-  width: 100% !important;
-  height: 24px !important;
-  background-color: #ecf0f1 !important;
-  border-radius: 12px !important;
-  overflow: hidden !important;
-  border: 1px solid #bdc3c7 !important;
-}
-
-.container .bloco.bloco-2 .resumo-mes .progresso-dourado {
-  height: 100% !important;
-  width: 100% !important;
-  background: linear-gradient(90deg, #f39c12, #e67e22) !important;
-  border-radius: 12px !important;
-  transition: width 0.3s ease !important;
-}
-
-.container .bloco.bloco-2 .resumo-mes .progresso-verde {
-  height: 100% !important;
-  width: var(--largura-barra, 0%) !important;
-  background: linear-gradient(90deg, #27ae60, #2ecc71) !important;
-  border-radius: 12px !important;
-  transition: width 0.3s ease !important;
-}
-
-.container .bloco.bloco-2 .resumo-mes .porcento-barra {
-  position: absolute !important;
-  top: 50% !important;
-  right: 8px !important;
-  transform: translateY(-50%) !important;
-  font-size: 12px !important;
-  font-weight: bold !important;
-  color: #ffffff !important;
-  text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.5) !important;
-}
-
-.container .bloco.bloco-2 .resumo-mes .rotulo-meta-mes {
-  font-size: 13px !important;
-  color: #7f8c8d !important;
-  display: flex !important;
-  align-items: center !important;
-  gap: 6px !important;
-  font-weight: 500 !important;
-}
-
-.container .bloco.bloco-2 .resumo-mes .rotulo-meta-mes i {
-  color: #95a5a6 !important;
-  font-size: 12px !important;
-}
-
-.container .bloco.bloco-2 .resumo-mes .rotulo-meta-mes.sucesso {
-  color: #27ae60 !important;
-  font-weight: bold !important;
-}
-
-.container .bloco.bloco-2 .resumo-mes .rotulo-meta-mes.sucesso i {
-  color: #f1c40f !important;
-}
-
-/* ===== LISTA DIAS - SÓ BLOCO 2 COM SCROLL ===== */
+/* CSS Container responsavel polo campo (DATA - PLACAR - SALDO) */
 .container .bloco.bloco-2 .resumo-mes .lista-dias {
   width: 100% !important;
   max-width: 100% !important;
   box-sizing: border-box !important;
   overflow-x: hidden !important;
   overflow-y: auto !important;
-  max-height: 720px !important;
-  background: transparent !important;
-  border-radius: 0 !important;
+  height: 508px !important; /* NOVO: altura fixa solicitada */
+  max-height: 550px !important;
+  border-radius: 15px !important;
   padding: 0 8px !important;
   margin: 0 !important;
   border-left: none !important;
@@ -169,213 +35,53 @@
   flex: 1 !important;
   scrollbar-width: none !important;
   -ms-overflow-style: none !important;
-  margin-top: 30px !important;
+  margin-top: 60px !important; /* NOVO: aumentar espaço entre cabeçalho e lista de dias */
+  background: rgba(247, 246, 246, 0.95) !important;
+}
+/* CSS Container responsavel polo campo onde armazena todo o conteudo interno */
+.container .bloco.bloco-2 .resumo-mes .bloco-meta-simples {
+  /* cabeçalho interno: fundo cinza */
+  background: rgba(247, 246, 246, 0.95) !important;
+  border: 2px solid #9e9e9e !important; /* NOVO: borda solicitada */
 }
 
-.container .bloco.bloco-2 .resumo-mes .lista-dias::-webkit-scrollbar {
-  width: 0px !important;
-  background: transparent !important;
-  display: none !important;
-}
-
-.container .bloco.bloco-2 .resumo-mes .lista-dias::-webkit-scrollbar-thumb {
-  background: transparent !important;
-}
-
-/* ===== LINHA DIA - SÓ BLOCO 2 ===== */
-.container .bloco.bloco-2 .resumo-mes .linha-dia {
-  display: grid !important;
-  grid-template-columns: 1.8fr 0.8fr 2fr 25px !important;
-  align-items: center !important;
-  gap: 8px !important;
-  padding: 6px 8px !important;
-  margin: 0 0 1px 0 !important;
-  border-radius: 6px !important;
-  background-color: rgba(255, 255, 255, 0.7) !important;
-  border: 1px solid rgba(0, 0, 0, 0.05) !important;
-  transition: all 0.3s ease !important;
-  font-size: 12px !important;
-  min-height: 32px !important;
+/* =======================================================================================================================================================
+                                                       FIM CSS CONTAINER QUE ARMAZENA ELEMENTOS DENTRO
+   =======================================================================================================================================================*/
+/* Ensure the resumo area inside bloco-2 uses full available width */
+.container .bloco.bloco-2 .resumo-mes {
+  width: 100% !important;
   box-sizing: border-box !important;
 }
 
-.container .bloco.bloco-2 .resumo-mes .linha-dia:hover {
-  background-color: rgba(255, 255, 255, 0.9) !important;
-  transform: translateX(2px) !important;
-  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.1) !important;
+/* NOVO: reduzir tamanho do título do mês (ex: AGOSTO 2025) */
+.container .bloco.bloco-2 .bloco-meta-simples .titulo-bloco {
+  font-size: 16px !important;
+  font-weight: 600 !important;
+  margin: 0 0 8px !important;
+  line-height: 1 !important;
 }
 
-.container .bloco.bloco-2 .resumo-mes .linha-dia:first-child {
-  margin-top: 5px !important;
+.container .bloco.bloco-2 .bloco-meta-simples .titulo-bloco i {
+  font-size: 14px !important;
+  vertical-align: middle !important;
+  margin-right: -5px !important;
 }
 
-.container .bloco.bloco-2 .resumo-mes .linha-dia:last-child {
-  margin-bottom: 8px !important;
+/* NOVO: espaçamento superior entre título do mês e valor da meta */
+.container .bloco.bloco-2 .bloco-meta-simples .widget-meta-valor-2 {
+  margin-top: 50px !important;
 }
 
-.container .bloco.bloco-2 .resumo-mes .linha-dia.dia-normal {
-  border-color: #dee2e6 !important;
-}
+/* ========================================
+   SEÇÃO 2: VALOR DA META E ÍCONE DA MOEDA
+   Exibe o valor da meta atual com ícone de moeda personalizado
+   ======================================== */
 
-.container .bloco.bloco-2 .resumo-mes .linha-dia.dia-hoje {
-  /* destaque do dia atual: sem borda esquerda, fundo ligeiramente mais forte */
-  background: linear-gradient(
-    135deg,
-    #fff8e1 0%,
-    #e9fff1 100%
-  ) !important; /* tonalidade um pouco mais saturada */
-  font-weight: 400 !important; /* texto normal */
-  box-shadow: 0 8px 22px rgba(34, 139, 34, 0.08) !important; /* sombra um pouco mais visível */
-  border: 1px solid rgba(0, 0, 0, 0.06) !important; /* contorno sutil */
-  border-left: none !important; /* remover acento esquerdo */
-  transform: translateX(2px) scale(1.01) !important;
-}
+@import url("https://fonts.googleapis.com/css2?family=Rajdhani:wght@600&display=swap");
 
-/* Se o dia atual estiver negativo, trocar o acento esquerdo para vermelho */
-.container .bloco.bloco-2 .resumo-mes .linha-dia.dia-hoje.borda-vermelha {
-  /* dia atual negativo: fundo vermelho leve mais forte, sem borda */
-  border-left: none !important;
-  background: linear-gradient(135deg, #fdecea 0%, #f5d6d8 100%) !important;
-  box-shadow: 0 8px 22px rgba(220, 53, 69, 0.08) !important;
-}
-
-/* Remover borda esquerda de dias de destaque (apenas cor de fundo permanece) */
-.container .bloco.bloco-2 .resumo-mes .linha-dia.dia-destaque {
-  background: linear-gradient(135deg, #eaf7ed 0%, #e1f3e6 100%) !important;
-  border-left: none !important;
-}
-
-.container .bloco.bloco-2 .resumo-mes .linha-dia.dia-destaque-negativo {
-  background: linear-gradient(135deg, #fdecea 0%, #f8d1d4 100%) !important;
-  border-left: none !important;
-}
-
-/* manter data do dia atual com ênfase de cor, mas texto normal */
-.container .bloco.bloco-2 .resumo-mes .linha-dia.dia-hoje .data {
-  font-weight: 400 !important; /* não bold */
-  color: #1b5e20 !important;
-  letter-spacing: 0.4px !important;
-}
-
-/* não forçar negrito apenas pela cor (verde/vermelho) */
-.container .bloco.bloco-2 .resumo-mes .verde-bold {
-  color: #28a745 !important;
-  font-weight: 400 !important;
-}
-
-.container .bloco.bloco-2 .resumo-mes .vermelho-bold {
-  color: #dc3545 !important;
-  font-weight: 400 !important;
-}
-
-/* garantir: apenas linhas com classe dia-destaque têm texto em negrito */
-.container .bloco.bloco-2 .resumo-mes .linha-dia.dia-destaque .data,
-.container .bloco.bloco-2 .resumo-mes .linha-dia.dia-destaque .placar-dia,
-.container .bloco.bloco-2 .resumo-mes .linha-dia.dia-destaque .valor,
-.container .bloco.bloco-2 .resumo-mes .linha-dia.dia-destaque-negativo .data,
-.container
-  .bloco.bloco-2
-  .resumo-mes
-  .linha-dia.dia-destaque-negativo
-  .placar-dia,
-.container .bloco.bloco-2 .resumo-mes .linha-dia.dia-destaque-negativo .valor {
-  font-weight: 700 !important;
-}
-
-.container .bloco.bloco-2 .resumo-mes .linha-dia .valor i {
-  color: #28a745 !important;
-  font-size: 10px !important;
-  width: 10px !important;
-  text-align: center !important;
-}
-
-.container .bloco.bloco-2 .resumo-mes .linha-dia .icone {
-  display: flex !important;
-  align-items: center !important;
-  justify-content: center !important;
-  width: 20px !important;
-  height: 20px !important;
-  border-radius: 50% !important;
-  background: transparent !important; /* remove colored badge background */
-  transition: all 0.3s ease !important;
-}
-
-.container .bloco.bloco-2 .resumo-mes .linha-dia .icone i {
-  color: #28a745 !important;
-  font-size: 10px !important;
-}
-
-.container .bloco.bloco-2 .resumo-mes .linha-dia .icone.texto-cinza {
-  background: rgba(108, 117, 125, 0.1) !important;
-}
-
-.container .bloco.bloco-2 .resumo-mes .linha-dia .icone.texto-cinza i {
-  color: #6c757d !important;
-}
-
-/* ===== CLASSES DE COR - SÓ BLOCO 2 ===== */
-.container .bloco.bloco-2 .resumo-mes .verde-bold {
-  color: #28a745 !important;
-  font-weight: 700 !important;
-}
-
-.container .bloco.bloco-2 .resumo-mes .vermelho-bold {
-  color: #dc3545 !important;
-  font-weight: 700 !important;
-}
-
-.container .bloco.bloco-2 .resumo-mes .texto-cinza {
-  color: #6c757d !important;
-  opacity: 0.7 !important;
-}
-
-/* ===== HOVER EFFECTS - SÓ BLOCO 2 ===== */
-.container .bloco.bloco-2 .resumo-mes .linha-dia:hover .placar {
-  transform: scale(1.03) !important;
-}
-
-.container .bloco.bloco-2 .resumo-mes .linha-dia:hover .icone {
-  transform: scale(1.05) !important;
-  background: rgba(40, 167, 69, 0.2) !important;
-}
-
-.container .bloco.bloco-2 .resumo-mes .linha-dia:hover .icone.texto-cinza {
-  background: rgba(108, 117, 125, 0.2) !important;
-}
-
-/* ===== WIDGET CONTEÚDO PRINCIPAL - SÓ BLOCO 2 ===== */
-.container .bloco.bloco-2 .widget-conteudo-principal-2 {
-  background: #f8f9fa !important;
-  border-radius: 12px !important;
-  padding: 12px 0 !important;
-  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05) !important;
-  display: flex !important;
-  flex-direction: column !important;
-  align-items: flex-start !important;
-  width: 100% !important;
-  max-width: 100% !important;
-  box-sizing: border-box !important;
-  margin: 0 !important;
-  overflow: hidden !important;
-  height: 635px !important;
-}
-
-.container .bloco.bloco-2 .widget-conteudo-principal-2 > div {
-  width: 100% !important;
-}
-
-.container .bloco.bloco-2 .conteudo-left-2 {
-  width: 100% !important;
-  display: flex !important;
-  flex-direction: column !important;
-  align-items: flex-start !important;
-  margin: 0 !important;
-  padding: 0 8px !important;
-}
-
-/* ===== META VALOR - SÓ BLOCO 2 ===== */
-.container .bloco.bloco-2 .widget-meta-valor-2,
-.container .bloco.bloco-2 #meta-valor-2 {
+.widget-meta-valor-2,
+#meta-valor-2 {
   display: flex !important;
   align-items: center !important;
   justify-content: flex-start !important;
@@ -385,71 +91,101 @@
   transition: all 0.3s ease !important;
   margin-bottom: 8px !important;
   margin-left: 0px !important;
-  margin-right: 0px !important;
   padding-left: 0 !important;
   width: auto !important;
 }
 
-.container .bloco.bloco-2 .widget-meta-valor-2 .fa-solid,
-.container .bloco.bloco-2 .widget-meta-valor-2 .fa-coins,
-.container .bloco.bloco-2 #meta-valor-2 .fa-solid,
-.container .bloco.bloco-2 #meta-valor-2 .fa-coins,
-.container .bloco.bloco-2 .fa-solid-2.fa-coins-2,
-.container .bloco.bloco-2 .fa-coins-2 {
+.widget-meta-valor-2 .fa-solid-2.fa-coins-2 {
+  font-size: clamp(16px, 4vw, 26px);
+  color: #f39c12;
+}
+
+/* ÍCONE DA MOEDA - FORÇADO PARA HTML 2 */
+.widget-meta-valor-2 .fa-coins-2,
+#meta-valor-2 .fa-coins-2,
+.widget-meta-valor-2 .fa-solid,
+.widget-meta-valor-2 .fa-coins,
+#meta-valor-2 .fa-solid,
+#meta-valor-2 .fa-coins,
+.fa-solid-2.fa-coins-2,
+.fa-coins-2 {
+  margin-right: 0px !important;
   font-size: 20px !important;
-  color: #f39c12 !important;
-  margin-right: 0 !important;
-  margin-left: 0 !important;
+  color: #f3b200 !important;
+  margin-left: 0px;
   flex-shrink: 0 !important;
 }
 
-.container .bloco.bloco-2 .valor-texto-2 {
-  font-weight: 700 !important;
-  font-size: 19px !important;
-  letter-spacing: -0.5px !important;
-  margin: 0 !important;
+.valor-texto-2 {
+  font-weight: 700;
+  font-size: 19px;
+  letter-spacing: -0.5px;
 }
 
-/* ===== RÓTULO META - SÓ BLOCO 2 ===== */
-.container .bloco.bloco-2 .widget-meta-rotulo-2 {
+/* Estados de cor do valor da meta baseados no status atual */
+.valor-meta-2.sem-banca .valor-texto-2 {
+  color: #e67e22;
+}
+
+.valor-meta-2.meta-batida .valor-texto-2 {
+  color: #2196f3;
+}
+
+.valor-meta-2.negativo .valor-texto-2 {
+  color: #f53520;
+}
+
+.valor-meta-2.neutro .valor-texto-2 {
+  color: #7f8c8d;
+}
+
+.valor-meta-2.lucro .valor-texto-2 {
+  color: #00a651;
+}
+
+/* ========================================
+   SEÇÃO 4: RÓTULO DA META
+   Exibe o texto indicativo "Meta do Dia" com espaçamento ajustado
+   ======================================== */
+
+.widget-meta-rotulo-2 {
   font-size: 14px !important;
   color: #7f8c8d !important;
-  margin-bottom: 15px !important;
+  margin-bottom: 8px !important; /* REDUZIDO DE 18px PARA 8px */
+  margin-top: 6px !important; /* REDUZIDO DE 12px PARA 6px */
   margin-left: 0px !important;
-  margin-right: 0px !important;
   padding-left: 0 !important;
   font-weight: 500 !important;
   text-transform: none !important;
   letter-spacing: 0.5px !important;
   text-align: left !important;
   display: block !important;
-  width: 100% !important;
-  align-self: flex-start !important;
+  width: auto !important;
 }
 
-.container .bloco.bloco-2 #rotulo-meta-2 {
+#rotulo-meta-2 {
   text-transform: none !important;
-  margin-left: 0px !important;
+  margin-left: 0px;
 }
 
-/* ===== BARRA CONTAINER - SÓ BLOCO 2 ===== */
-.container .bloco.bloco-2 .widget-barra-container-2 {
+/* ========================================
+   SEÇÃO 5: BARRA DE PROGRESSO
+   Container e barra visual que mostra o progresso em relação à meta
+   ======================================== */
+
+.widget-barra-container-2 {
   background: #ecf0f1 !important;
   border-radius: 20px !important;
   height: 22px !important;
   position: relative !important;
   overflow: hidden !important;
   box-shadow: inset 0 2px 4px rgba(0, 0, 0, 0.1) !important;
-  margin-top: -10px !important;
-  margin-left: 0 !important;
-  margin-right: 0 !important;
-  width: 100% !important;
+  margin-top: -2px !important; /* REDUZIDO DE -10px PARA -2px */
+  width: 350px !important; /* NOVO: largura fixa da barra de progresso */
   max-width: 100% !important;
-  align-self: flex-start !important;
-  box-sizing: border-box !important;
 }
 
-.container .bloco.bloco-2 .widget-barra-progresso-2 {
+.widget-barra-progresso-2 {
   height: 100% !important;
   border-radius: 25px !important;
   transition: all 0.5s cubic-bezier(0.4, 0, 0.2, 1) !important;
@@ -458,31 +194,41 @@
   align-items: center !important;
   background: none !important;
   box-shadow: none !important;
-  margin-top: 0px !important;
+  margin-top: 0px;
 }
 
-.container .bloco.bloco-2 .widget-barra-progresso-2.barra-lucro-2 {
+/* Cores das barras baseadas no estado atual do progresso */
+.widget-barra-progresso-2.barra-lucro-2 {
   background: linear-gradient(90deg, #4caf50, #66bb6a) !important;
 }
 
-.container .bloco.bloco-2 .widget-barra-progresso-2.barra-meta-batida-2 {
+.widget-barra-progresso-2.barra-meta-batida-2 {
   background: linear-gradient(90deg, #2196f3, #42a5f5) !important;
 }
 
-.container .bloco.bloco-2 .widget-barra-progresso-2.barra-negativo-2 {
+.widget-barra-progresso-2.barra-lucro-extra-2 {
+  background: linear-gradient(90deg, #ffd700, #ffa500) !important;
+  animation: shimmer 2s linear infinite !important;
+}
+
+.widget-barra-progresso-2.barra-negativo-2 {
   background: linear-gradient(90deg, #f44336, #ef5350) !important;
 }
 
-.container .bloco.bloco-2 .widget-barra-progresso-2.barra-neutro-2 {
+.widget-barra-progresso-2.barra-neutro-2 {
   background: linear-gradient(90deg, #95a5a6, #b4bcc2) !important;
 }
 
-.container .bloco.bloco-2 .widget-barra-progresso-2.barra-sem-banca-2 {
+.widget-barra-progresso-2.barra-sem-banca-2 {
   background: linear-gradient(90deg, #e67e22, #f39c12) !important;
 }
 
-/* ===== PORCENTAGEM - SÓ BLOCO 2 ===== */
-.container .bloco.bloco-2 .porcentagem-barra-2 {
+/* ========================================
+   SEÇÃO 6: INDICADOR DE PORCENTAGEM NA BARRA
+   Mostra a porcentagem de progresso dentro da barra com cores dinâmicas
+   ======================================== */
+
+.porcentagem-barra-2 {
   position: absolute !important;
   right: 0 !important;
   top: 0 !important;
@@ -491,9 +237,11 @@
   display: flex !important;
   align-items: center !important;
   overflow: hidden !important;
+  font-size: inherit !important;
+  font-weight: inherit !important;
 }
 
-.container .bloco.bloco-2 .porcentagem-fundo-2 {
+.porcentagem-fundo-2 {
   display: flex !important;
   align-items: center !important;
   justify-content: center !important;
@@ -507,285 +255,34 @@
   min-width: 40px !important;
   position: relative !important;
   border-radius: 0 25px 25px 0 !important;
+  border-top-left-radius: 0 !important;
+  border-bottom-left-radius: 0 !important;
+  border-top-right-radius: 25px !important;
+  border-bottom-right-radius: 25px !important;
   border-left: 2px solid rgba(255, 255, 255, 0.3) !important;
 }
 
-/* ===== SALDO INFO - SÓ BLOCO 2 ===== */
+/* Saldo info encapsulado */
 .container .bloco.bloco-2 .widget-info-progresso-2 {
-  margin-top: 10px !important;
+  margin-top: 8px !important; /* REDUZIDO DE 15px PARA 8px */
   display: flex !important;
   justify-content: flex-start !important;
   width: 100% !important;
   font-size: clamp(10px, 2vw, 13px) !important;
   color: #576574 !important;
   font-weight: 600 !important;
-  align-self: flex-start !important;
-  margin-left: 0 !important;
-  margin-right: 0 !important;
-}
-
-.container .bloco.bloco-2 .widget-info-progresso-2 span {
-  display: flex !important;
-  align-items: center !important;
-  gap: 5px !important;
-}
-
-.container .bloco.bloco-2 #saldo-info-2 {
-  display: inline-flex !important;
-  align-items: center !important;
-  gap: 5px !important;
-}
-
-.container .bloco.bloco-2 .saldo-info-rotulo-2 {
-  font-weight: bold !important;
-  font-size: 13px !important;
-  color: #5d6360 !important;
-}
-
-.container .bloco.bloco-2 .saldo-info-valor-2 {
-  font-weight: bold !important;
-  font-size: 13px !important;
-}
-
-/* ===== RESPONSIVIDADE - SÓ BLOCO 2 ===== */
-@media (max-width: 768px) {
-  .container .bloco.bloco-2 {
-    max-width: 380px !important;
-  }
-
-  .container .bloco.bloco-2 .resumo-mes .bloco-meta-simples.fixo-topo {
-    margin: 0 10px !important;
-    width: calc(100% - 20px) !important;
-  }
-
-  .container .bloco.bloco-2 .resumo-mes .grupo-barra {
-    margin: 0 10px 10px 10px !important;
-  }
-
-  .container .bloco.bloco-2 .resumo-mes .titulo-bloco {
-    margin: 0 10px 10px 10px !important;
-    font-size: 18px !important;
-  }
-
-  .container .bloco.bloco-2 .conteudo-left-2 {
-    padding: 0 6px !important;
-  }
-
-  .container .bloco.bloco-2 .resumo-mes .lista-dias {
-    padding: 0 6px !important;
-    max-height: 250px !important;
-  }
-}
-
-@media (max-width: 480px) {
-  .container .bloco.bloco-2 {
-    max-width: 100% !important;
-  }
-
-  .container .bloco.bloco-2 .resumo-mes .linha-dia {
-    grid-template-columns: 1fr !important;
-    grid-template-rows: auto auto auto !important;
-    gap: 4px !important;
-    text-align: center !important;
-    min-height: auto !important;
-    padding: 8px !important;
-  }
-
-  .container .bloco.bloco-2 .resumo-mes .linha-dia .icone {
-    display: none !important;
-  }
-}
-
-/* =======================================================================================================================================================
-                                          FIM CSS BLOCO 2 - TOTALMENTE ENCAPSULADO
-   =======================================================================================================================================================*/
-
-/* Normalizar peso das fontes para elementos de valor: deixar fino (400) por padrão */
-.container .bloco.bloco-2 .resumo-mes .linha-dia .data,
-.container .bloco.bloco-2 .resumo-mes .linha-dia .placar-day,
-.container .bloco.bloco-2 .resumo-mes .linha-dia .placar-dia,
-.container .bloco.bloco-2 .resumo-mes .linha-dia .valor,
-.container .bloco.bloco-2 .resumo-mes .linha-dia .valor span,
-.container .bloco.bloco-2 .valor-texto-2,
-.container .bloco.bloco-2 .porcentagem-fundo-2,
-.container .bloco.bloco-2 .saldo-info-valor-2 {
-  font-weight: 400 !important; /* deixar fino */
-}
-
-/* Garantir que dias de destaque NÃO fiquem em negrito (overrides anteriores) */
-.container .bloco.bloco-2 .resumo-mes .linha-dia.dia-destaque .data,
-.container .bloco.bloco-2 .resumo-mes .linha-dia.dia-destaque .placar-dia,
-.container .bloco.bloco-2 .resumo-mes .linha-dia.dia-destaque .valor,
-.container .bloco.bloco-2 .resumo-mes .linha-dia.dia-destaque-negativo .data,
-.container
-  .bloco.bloco-2
-  .resumo-mes
-  .linha-dia.dia-destaque-negativo
-  .placar-dia,
-.container .bloco.bloco-2 .resumo-mes .linha-dia.dia-destaque-negativo .valor {
-  font-weight: 400 !important; /* destacar por fundo apenas, não por peso */
-}
-
-/* Somente o dia atual (dia-hoje) terá texto em negrito */
-.container .bloco.bloco-2 .resumo-mes .linha-dia.dia-hoje .data,
-.container .bloco.bloco-2 .resumo-mes .linha-dia.dia-hoje .placar-dia,
-.container .bloco.bloco-2 .resumo-mes .linha-dia.dia-hoje .valor {
-  font-weight: 700 !important; /* negrito apenas no dia atual */
-}
-
-/* Garantir que os valores do placar apareçam finos por padrão */
-.container .bloco.bloco-2 .resumo-mes span.placar,
-.container .bloco.bloco-2 .resumo-mes .placar-green,
-.container .bloco.bloco-2 .resumo-mes .placar-red,
-.container .bloco.bloco-2 .resumo-mes .placar-green-2,
-.container .bloco.bloco-2 .resumo-mes .placar-red-2 {
-  font-weight: 400 !important; /* deixar fino */
-}
-
-/* Caso o placar esteja dentro da linha do dia atual, deixá-lo em negrito */
-.container .bloco.bloco-2 .resumo-mes .linha-dia.dia-hoje span.placar,
-.container .bloco.bloco-2 .resumo-mes .linha-dia.dia-hoje .placar-green,
-.container .bloco.bloco-2 .resumo-mes .linha-dia.dia-hoje .placar-red,
-.container .bloco.bloco-2 .resumo-mes .linha-dia.dia-hoje .placar-green-2,
-.container .bloco.bloco-2 .resumo-mes .linha-dia.dia-hoje .placar-red-2 {
-  font-weight: 700 !important;
-}
-
-/* Ajuste de espaçamento entre placares e separador, e deslocamento para centralizar entre data e saldo */
-.container .bloco.bloco-2 .resumo-mes .linha-dia .placar-dia {
-  display: flex !important;
-  align-items: center !important;
-  justify-content: center !important;
-  gap: 0 !important; /* usar margens simétricas nos elementos internos */
-  padding-left: 10px !important; /* pequeno deslocamento para centralizar */
-  font-weight: 400 !important;
-  font-size: 12px !important;
-  margin-left: 0 !important; /* remover deslocamento fixo */
-}
-
-/* garantir espaçamento específico no separador 'x' */
-.container .bloco.bloco-2 .resumo-mes .linha-dia .placar-dia .separador {
-  margin: 0 8px !important; /* espaço equilibrado ao redor do separador */
-  color: #6c757d !important;
-  font-weight: 400 !important;
-  font-size: 10px !important;
-}
-
-/* pequenos ajustes no próprio número do placar para garantir alinhamento */
-.container .bloco.bloco-2 .resumo-mes .linha-dia .placar-dia .placar {
-  min-width: 18px !important;
-  text-align: center !important;
-  padding: 2px 6px !important;
-  border-radius: 3px !important;
-  font-size: 14px !important;
-  margin: 0 4px !important; /* margem simétrica para centralizar entre separador */
-}
-
-/* Override final: dia de hoje com borda fina de 1px e data com peso normal */
-.container .bloco.bloco-2 .resumo-mes .linha-dia.dia-hoje {
-  border: 1px solid #28a745 !important; /* borda fina verde por padrão */
-  border-radius: 6px !important;
-  background: linear-gradient(
-    135deg,
-    #f8fff8 0%,
-    #eefef0 100%
-  ) !important; /* leve destaque */
-  box-shadow: none !important; /* reduzir sombra para ficar sutil */
-  font-weight: 400 !important; /* texto normal */
-  transform: none !important;
-}
-
-.container .bloco.bloco-2 .resumo-mes .linha-dia.dia-hoje.borda-vermelha {
-  border: 1px solid #dc3545 !important; /* borda fina vermelha se negativo */
-  background: linear-gradient(135deg, #fff5f5 0%, #f9e9ea 100%) !important;
-}
-
-.container .bloco.bloco-2 .resumo-mes .linha-dia.dia-hoje .data {
-  font-weight: 400 !important; /* garantir data normal */
-  color: #495057 !important; /* mesma cor das outras datas */
-}
-
-/* Alinhar os saldos (R$) à esquerda para ficarem um embaixo do outro */
-.container .bloco.bloco-2 .resumo-mes .linha-dia .valor {
-  justify-content: flex-start !important; /* alinhar conteúdo à esquerda */
-  text-align: left !important; /* garantir alinhamento do texto */
-  padding-left: 8px !important; /* pequeno espaçamento a partir da coluna */
-}
-
-/* garantir que o span de valor não tenha alinhamentos deslocados */
-.container .bloco.bloco-2 .resumo-mes .linha-dia .valor span,
-.container .bloco.bloco-2 .resumo-mes .linha-dia .valor .valor {
-  display: inline-block !important;
-  text-align: left !important;
-  min-width: 60px !important; /* assegura colunas com largura consistente */
-}
-
-/* Colorir o ícone de verificação ao lado do valor conforme o estado do saldo */
-.container .bloco.bloco-2 .resumo-mes .linha-dia .valor.verde-bold + .icone i {
-  color: #28a745 !important; /* verde para positivo */
-}
-
-.container
-  .bloco.bloco-2
-  .resumo-mes
-  .linha-dia
-  .valor.vermelho-bold
-  + .icone
-  i {
-  color: #dc3545 !important; /* vermelho para negativo */
-}
-
-.container .bloco.bloco-2 .resumo-mes .linha-dia .valor.texto-cinza + .icone i {
-  color: #6c757d !important; /* cinza para zero/neutro */
-}
-
-/* Forçar a mesma estrutura/medidas para o span de valor em todas as linhas */
-.container .bloco.bloco-2 .resumo-mes .linha-dia .valor {
-  display: inline-block !important; /* tornar previsível dentro da grid */
-  min-width: 80px !important; /* garantir coluna consistente para o R$ */
-  padding-left: 8px !important; /* alinhar ao mesmo espaçamento */
-  text-align: left !important;
-  vertical-align: middle !important;
-  line-height: 20px !important;
-}
-
-/* Garantir que o dia atual use exatamente as mesmas regras de alinhamento */
-.container .bloco.bloco-2 .resumo-mes .linha-dia.dia-hoje .valor {
-  display: inline-block !important;
-  min-width: 80px !important;
-  padding-left: 8px !important;
-  text-align: left !important;
-  font-weight: 400 !important; /* evitar diferenças de largura por negrito */
-  line-height: 20px !important;
 }
 
 /* =======================================================================================================================================================
                                                       CSS BLOCO DO CAMPO DE LISTA DE VALORES 
    =======================================================================================================================================================*/
 
-/* CONTEUDO DO CAMPO DE LISTA DE VALORES */
+/* ========================================
+   SEÇÃO 13: CONTAINER DA LISTA DE DIAS
+   Define o layout principal da área que contém todos os dias do mês
+   ======================================== */
 
-/* Container da lista de dias */
-.container .bloco.bloco-2 .resumo-mes .lista-dias {
-  width: 100% !important;
-  max-width: 100% !important;
-  box-sizing: border-box !important;
-  overflow-x: hidden !important;
-  overflow-y: auto !important;
-  max-height: 720px !important;
-  background: transparent !important;
-  border-radius: 0 !important;
-  padding: 0 8px !important;
-  margin: 0 !important;
-  border-left: none !important;
-  border-right: none !important;
-  box-shadow: none !important;
-  flex: 1 !important;
-  scrollbar-width: none !important;
-  -ms-overflow-style: none !important;
-  margin-top: 30px !important;
-}
-
+/* Oculta a scrollbar mantendo funcionalidade */
 .container .bloco.bloco-2 .resumo-mes .lista-dias::-webkit-scrollbar {
   width: 0px !important;
   background: transparent !important;
@@ -796,21 +293,34 @@
   background: transparent !important;
 }
 
-/* Linha do dia: grid com colunas data / placar / valor / icone */
+/* ========================================
+   SEÇÃO 14: LINHA INDIVIDUAL DE CADA DIA
+   Layout em grid para organizar data, placar, valor e ícone em colunas
+   ======================================== */
+
+/* CSS dos: (Data - placar - valor) que não teve aposta */
 .container .bloco.bloco-2 .resumo-mes .linha-dia {
   display: grid !important;
   grid-template-columns: 1.8fr 0.8fr 2fr 25px !important;
   align-items: center !important;
   gap: 8px !important;
   padding: 6px 8px !important;
-  margin: 0 0 1px 0 !important;
-  border-radius: 6px !important;
-  background-color: rgba(255, 255, 255, 0.7) !important;
+
   border: 1px solid rgba(0, 0, 0, 0.05) !important;
   transition: all 0.3s ease !important;
   font-size: 12px !important;
   min-height: 32px !important;
   box-sizing: border-box !important;
+}
+
+/* Garantir que a área de mentores/coluna esquerda acompanhe a altura fixa do container de dias */
+.container .bloco.bloco-2 .resumo-mes .campo_mentores,
+.container .bloco.bloco-2 .resumo-mes #listaMentores,
+.container .bloco.bloco-2 .resumo-mes .mentor-wrapper {
+  height: 800px !important;
+  max-height: 800px !important;
+  min-height: 800px !important;
+  overflow-y: auto !important;
 }
 
 .container .bloco.bloco-2 .resumo-mes .linha-dia:hover {
@@ -827,36 +337,48 @@
   margin-bottom: 8px !important;
 }
 
-/* estados do dia */
+/* ========================================
+   SEÇÃO 15: ESTADOS VISUAIS DOS DIAS
+   Diferentes aparências baseadas no status do dia (atual, passado, futuro)
+   ======================================== */
+
 .container .bloco.bloco-2 .resumo-mes .linha-dia.dia-normal {
   border-color: #dee2e6 !important;
 }
 
+/* Destaque especial para o dia atual */
 .container .bloco.bloco-2 .resumo-mes .linha-dia.dia-hoje {
-  background: linear-gradient(135deg, #fff8e1 0%, #e9fff1 100%) !important;
+  background: linear-gradient(135deg, #d0f1dc 0%, #b1f0c8 100%) !important;
   font-weight: 400 !important;
   box-shadow: 0 8px 22px rgba(34, 139, 34, 0.08) !important;
   border: 1px solid rgba(0, 0, 0, 0.06) !important;
   border-left: none !important;
 }
 
+/* Dia atual com saldo negativo */
 .container .bloco.bloco-2 .resumo-mes .linha-dia.dia-hoje.borda-vermelha {
   border-left: none !important;
-  background: linear-gradient(135deg, #fdecea 0%, #f5d6d8 100%) !important;
+  background: linear-gradient(135deg, #f1c2bc 0%, #f0a7ac 100%) !important;
   box-shadow: 0 8px 22px rgba(220, 53, 69, 0.08) !important;
 }
 
+/* Dias passados com lucro */
 .container .bloco.bloco-2 .resumo-mes .linha-dia.dia-destaque {
-  background: linear-gradient(135deg, #eaf7ed 0%, #e1f3e6 100%) !important;
+  background: linear-gradient(135deg, #ecf8f0 0%, #ecf8f0 100%) !important;
   border-left: none !important;
 }
 
+/* Dias passados com prejuízo */
 .container .bloco.bloco-2 .resumo-mes .linha-dia.dia-destaque-negativo {
-  background: linear-gradient(135deg, #fdecea 0%, #f8d1d4 100%) !important;
+  background: linear-gradient(135deg, #f8ebec 0%, #f8ebec 100%) !important;
   border-left: none !important;
 }
 
-/* data dentro da linha */
+/* ========================================
+   SEÇÃO 16: ELEMENTO DATA DENTRO DA LINHA
+   Formatação da data exibida em cada linha de dia
+   ======================================== */
+
 .container .bloco.bloco-2 .resumo-mes .linha-dia .data {
   font-weight: 400 !important;
 }
@@ -867,7 +389,11 @@
   letter-spacing: 0.4px !important;
 }
 
-/* placar */
+/* ========================================
+   SEÇÃO 17: PLACAR DE OPERAÇÕES (VERDE x VERMELHO)
+   Mostra quantidades de operações positivas vs negativas do dia
+   ======================================== */
+/* campo dos placar */
 .container .bloco.bloco-2 .resumo-mes .linha-dia .placar-dia {
   display: flex !important;
   align-items: center !important;
@@ -895,19 +421,29 @@
   margin: 0 4px !important;
 }
 
-/* classes de cor */
+/* ========================================
+   SEÇÃO 18: CLASSES DE CORES PARA PLACARES E VALORES
+   Define as cores dos elementos baseadas no resultado (lucro/prejuízo)
+   ======================================== */
+
 .container .bloco.bloco-2 .resumo-mes .verde-bold {
   color: #28a745 !important;
 }
+
 .container .bloco.bloco-2 .resumo-mes .vermelho-bold {
   color: #dc3545 !important;
 }
+
 .container .bloco.bloco-2 .resumo-mes .texto-cinza {
   color: #6c757d !important;
   opacity: 0.7 !important;
 }
 
-/* ícone e badge */
+/* ========================================
+   SEÇÃO 19: ÍCONES E BADGES INDICATIVOS
+   Ícones que aparecem no final de cada linha para indicar o status do dia
+   ======================================== */
+
 .container .bloco.bloco-2 .resumo-mes .linha-dia .icone {
   display: flex !important;
   align-items: center !important;
@@ -925,23 +461,34 @@
 .container .bloco.bloco-2 .resumo-mes .linha-dia .icone.texto-cinza {
   background: rgba(108, 117, 125, 0.1) !important;
 }
+
 .container .bloco.bloco-2 .resumo-mes .linha-dia .icone.texto-cinza i {
   color: #6c757d !important;
 }
 
-/* hover effects para placar e icone */
+/* ========================================
+   SEÇÃO 20: EFEITOS DE HOVER NAS LINHAS
+   Animações e transformações quando o usuário passa o mouse sobre os elementos
+   ======================================== */
+
 .container .bloco.bloco-2 .resumo-mes .linha-dia:hover .placar {
   transform: scale(1.03) !important;
 }
+
 .container .bloco.bloco-2 .resumo-mes .linha-dia:hover .icone {
   transform: scale(1.05) !important;
   background: rgba(40, 167, 69, 0.2) !important;
 }
+
 .container .bloco.bloco-2 .resumo-mes .linha-dia:hover .icone.texto-cinza {
   background: rgba(108, 117, 125, 0.2) !important;
 }
 
-/* responsivo: lista e linha */
+/* ========================================
+   SEÇÃO 21: RESPONSIVIDADE PARA LISTA DE DIAS
+   Ajustes para dispositivos móveis e tablets
+   ======================================== */
+
 @media (max-width: 768px) {
   .container .bloco.bloco-2 .resumo-mes .lista-dias {
     padding: 0 6px !important;
@@ -958,12 +505,17 @@
     min-height: auto !important;
     padding: 8px !important;
   }
+
   .container .bloco.bloco-2 .resumo-mes .linha-dia .icone {
     display: none !important;
   }
 }
 
-/* alinhamento final dos saldos e ícones */
+/* ========================================
+   SEÇÃO 22: ALINHAMENTO E FORMATAÇÃO DE VALORES
+   Ajustes finais para alinhamento de saldos e comportamento dos ícones
+   ======================================== */
+
 .container .bloco.bloco-2 .resumo-mes .linha-dia .valor {
   display: inline-block !important;
   min-width: 80px !important;
@@ -973,9 +525,11 @@
   line-height: 20px !important;
 }
 
+/* Cores dinâmicas dos ícones baseadas no valor do saldo */
 .container .bloco.bloco-2 .resumo-mes .linha-dia .valor.verde-bold + .icone i {
   color: #28a745 !important;
 }
+
 .container
   .bloco.bloco-2
   .resumo-mes
@@ -985,10 +539,209 @@
   i {
   color: #dc3545 !important;
 }
+
 .container .bloco.bloco-2 .resumo-mes .linha-dia .valor.texto-cinza + .icone i {
   color: #6c757d !important;
+  border-left: 2px solid rgba(255, 255, 255, 0.3) !important;
+}
+/* CSS do fundo da porcentagem */
+.porcentagem-barra-2.pequeno .porcentagem-fundo-2 {
+  border-radius: 0 25px 25px 0 !important;
+  border-top-left-radius: 0 !important;
+  border-bottom-left-radius: 0 !important;
+  border-top-right-radius: 25px !important;
+  border-bottom-right-radius: 25px !important;
+  min-width: 45px !important;
+  padding: 0 8px !important;
 }
 
-/* =======================================================================================================================================================
-                                                    FIM CSS BLOCO DO CAMPO DE LISTA DE VALORES 
-   =======================================================================================================================================================*/
+/* Cores específicas da porcentagem baseadas no estado da barra */
+.porcentagem-fundo-2.barra-lucro-2 {
+  background: rgba(76, 175, 80, 0.9) !important;
+  backdrop-filter: blur(5px) !important;
+  border-top-left-radius: 0 !important;
+  border-bottom-left-radius: 0 !important;
+  border-top-right-radius: 25px !important;
+  border-bottom-right-radius: 25px !important;
+}
+
+.porcentagem-fundo-2.barra-meta-batida-2 {
+  background: rgba(33, 150, 243, 0.9) !important;
+  backdrop-filter: blur(5px) !important;
+  border-top-left-radius: 0 !important;
+  border-bottom-left-radius: 0 !important;
+  border-top-right-radius: 25px !important;
+  border-bottom-right-radius: 25px !important;
+}
+
+.porcentagem-fundo-2.barra-negativo-2 {
+  background: rgba(244, 67, 54, 0.9) !important;
+  backdrop-filter: blur(5px) !important;
+  border-top-left-radius: 0 !important;
+  border-bottom-left-radius: 0 !important;
+  border-top-right-radius: 25px !important;
+  border-bottom-right-radius: 25px !important;
+}
+
+.porcentagem-fundo-2.barra-neutro-2 {
+  background: rgba(149, 165, 166, 0.9) !important;
+  backdrop-filter: blur(5px) !important;
+  border-top-left-radius: 0 !important;
+  border-bottom-left-radius: 0 !important;
+  border-top-right-radius: 25px !important;
+  border-bottom-right-radius: 25px !important;
+}
+
+.porcentagem-fundo-2.barra-sem-banca-2 {
+  background: rgba(230, 126, 34, 0.9) !important;
+  backdrop-filter: blur(5px) !important;
+  border-top-left-radius: 0 !important;
+  border-bottom-left-radius: 0 !important;
+  border-top-right-radius: 25px !important;
+  border-bottom-right-radius: 25px !important;
+}
+
+.porcentagem-fundo-2:hover {
+  padding: 0 12px !important;
+  font-size: 13px !important;
+  filter: brightness(1.1) !important;
+  cursor: default !important;
+  border-top-left-radius: 0 !important;
+  border-bottom-left-radius: 0 !important;
+  border-top-right-radius: 25px !important;
+  border-bottom-right-radius: 25px !important;
+}
+
+/* Regra global para forçar bordas - Widget 2 */
+[class*="porcentagem-fundo-2"] {
+  border-top-left-radius: 0 !important;
+  border-bottom-left-radius: 0 !important;
+  border-top-right-radius: 25px !important;
+  border-bottom-right-radius: 25px !important;
+}
+
+/* ========================================
+   SEÇÃO 7: INFORMAÇÕES DE SALDO (LUCRO/PREJUÍZO)
+   Exibe o saldo atual com ícones dinâmicos baseados no resultado
+   ======================================== */
+
+.widget-info-progresso-2 {
+  margin-top: 8px !important; /* REDUZIDO DE 15px PARA 8px */
+  display: flex !important;
+  justify-content: flex-start !important;
+  width: 100% !important;
+  margin-left: 0px;
+  font-size: clamp(10px, 2vw, 13px);
+  color: #576574;
+  font-weight: 600;
+}
+
+.widget-info-progresso-2 span {
+  display: flex;
+  align-items: center;
+  gap: 5px;
+}
+
+#saldo-info-2 {
+  margin-top: 0px !important; /* REDUZIDO DE 10px PARA 0px */
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+}
+
+.saldo-info-rotulo-2 {
+  font-weight: bold;
+  margin-right: 1px;
+  font-size: 13px;
+  color: #5d6360;
+}
+
+.saldo-info-valor-2 {
+  font-weight: bold;
+  font-size: 13px;
+}
+
+#saldo-info-2 i {
+  margin-right: 0px;
+  font-size: 1em;
+}
+
+/* Estados do saldo com ícones dinâmicos baseados no resultado */
+.saldo-positivo-2 i {
+  color: #4caf50;
+}
+
+.saldo-negativo-2 i {
+  color: #f44336;
+}
+
+.saldo-zero-2 i {
+  color: #95a5a6;
+}
+
+/* ÍCONES ESPECÍFICOS DINÂMICOS para cada tipo de saldo */
+.saldo-positivo-2 .fa-chart-line-2 {
+  color: #4caf50 !important;
+}
+
+.saldo-negativo-2 .fa-arrow-trend-down-2 {
+  color: #f44336 !important;
+}
+
+.saldo-zero-2 .fa-wallet-2 {
+  color: #95a5a6 !important;
+}
+
+.saldo-positivo-2 .saldo-info-valor-2 {
+  color: #00a651;
+}
+
+.saldo-negativo-2 .saldo-info-valor-2 {
+  color: #f44336;
+}
+
+.saldo-zero-2 .saldo-info-valor-2 {
+  color: #666;
+}
+
+.saldo-positivo-2 .saldo-info-rotulo-2,
+.saldo-negativo-2 .saldo-info-rotulo-2,
+.saldo-zero-2 .saldo-info-rotulo-2 {
+  color: #5d6360;
+}
+
+/* ========================================
+   SEÇÃO 8: CLASSES UTILITÁRIAS E ESTADOS
+   Classes auxiliares para diferentes estados e efeitos visuais
+   ======================================== */
+
+.valor-positivo-2 {
+  color: #27ae60 !important;
+  text-shadow: 0 1px 2px rgba(39, 174, 96, 0.4) !important;
+}
+
+.valor-negativo-2 {
+  color: #e74c3c !important;
+  text-shadow: 0 1px 2px rgba(231, 76, 60, 0.4) !important;
+}
+
+.valor-neutro-2 {
+  color: #7f8c8d !important;
+  text-shadow: 0 1px 2px rgba(127, 140, 141, 0.4) !important;
+}
+
+.atualizado-2 {
+  animation: pulse-update 1.5s ease-in-out;
+}
+
+.modal-lucro-positivo-2 {
+  color: #4caf50 !important;
+}
+
+.modal-lucro-negativo-2 {
+  color: #f44336 !important;
+}
+
+.modal-lucro-neutro-2 {
+  color: #95a5a6 !important;
+}
