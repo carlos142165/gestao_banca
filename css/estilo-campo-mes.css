@@ -181,7 +181,7 @@
   overflow: hidden !important;
   box-shadow: inset 0 2px 4px rgba(0, 0, 0, 0.1) !important;
   margin-top: -2px !important; /* REDUZIDO DE -10px PARA -2px */
-  width: 350px !important; /* NOVO: largura fixa da barra de progresso */
+  width: 330px !important; /* NOVO: largura fixa da barra de progresso */
   max-width: 100% !important;
 }
 

@@ -1539,7 +1539,429 @@ window.PlacarMensalManager = PlacarMensalManager;
 //
 //
 //
-// ========================================
+// ========================================================================================================================
+//                     CARREGA OS DADOS DOS VALORES DE ( DATA - PLACAR - SALDO ) VIA AJAX IMEDIATO
+// ========================================================================================================================
+
+const ListaDiasRealtimeManager = {
+  // Controle de estado
+  atualizandoAtualmente: false,
+  intervaloAtualizacao: null,
+  ultimaAtualizacao: null,
+  hashUltimosDados: "",
+
+  // Configurações
+  INTERVALO_MS: 5000, // Atualiza a cada 5 segundos
+  TIMEOUT_MS: 5000, // Timeout para requisições
+
+  // Inicializar sistema
+  inicializar() {
+    console.log("🚀 Inicializando sistema de atualização da lista de dias...");
+
+    // Primeira atualização imediata
+    this.atualizarListaDias();
+
+    // Configurar intervalo de atualização
+    this.intervaloAtualizacao = setInterval(() => {
+      this.atualizarListaDias();
+    }, this.INTERVALO_MS);
+
+    // Configurar interceptadores de eventos
+    this.configurarInterceptadores();
+
+    console.log("✅ Sistema de lista de dias em tempo real ativo!");
+  },
+
+  // Função principal de atualização
+  async atualizarListaDias() {
+    if (this.atualizandoAtualmente) return;
+
+    this.atualizandoAtualmente = true;
+
+    try {
+      // Buscar dados atualizados do servidor
+      const response = await fetch("obter_dados_mes.php", {
+        method: "GET",
+        headers: {
+          "Cache-Control": "no-cache",
+          "X-Requested-With": "XMLHttpRequest",
+        },
+        signal: AbortSignal.timeout(this.TIMEOUT_MS),
+      });
+
+      if (!response.ok) throw new Error(`HTTP ${response.status}`);
+
+      const dados = await response.json();
+
+      // Verificar se houve mudança nos dados
+      const hashAtual = this.gerarHashDados(dados);
+      if (hashAtual === this.hashUltimosDados) {
+        // Dados não mudaram, não precisa atualizar DOM
+        return;
+      }
+
+      this.hashUltimosDados = hashAtual;
+
+      // Atualizar a lista de dias no DOM
+      this.renderizarListaDias(dados);
+
+      this.ultimaAtualizacao = new Date();
+    } catch (error) {
+      console.error("❌ Erro ao atualizar lista de dias:", error);
+    } finally {
+      this.atualizandoAtualmente = false;
+    }
+  },
+
+  // Renderizar lista de dias no DOM
+  renderizarListaDias(responseData) {
+    const container = document.querySelector(".lista-dias");
+    if (!container) return;
+
+    // Salvar scroll position
+    const scrollTop = container.scrollTop;
+
+    // Extrair dados da resposta
+    const dados = responseData.dados || responseData;
+    const mes = responseData.mes || new Date().getMonth() + 1;
+    const ano = responseData.ano || new Date().getFullYear();
+    const diasNoMes =
+      responseData.dias_no_mes || new Date(ano, mes, 0).getDate();
+
+    // Obter data de hoje
+    const hoje = new Date().toISOString().split("T")[0];
+
+    // Criar fragmento para melhor performance
+    const fragment = document.createDocumentFragment();
+
+    // Gerar HTML para cada dia
+    for (let dia = 1; dia <= diasNoMes; dia++) {
+      const diaStr = dia.toString().padStart(2, "0");
+      const mesStr = mes.toString().padStart(2, "0");
+      const data_mysql = `${ano}-${mesStr}-${diaStr}`;
+      const data_exibicao = `${diaStr}/${mesStr}/${ano}`;
+
+      // Obter dados do dia ou usar valores padrão
+      const dadosDia = dados[data_mysql] || {
+        total_valor_green: 0,
+        total_valor_red: 0,
+        total_green: 0,
+        total_red: 0,
+      };
+
+      // Calcular saldo
+      const saldo_dia =
+        parseFloat(dadosDia.total_valor_green) -
+        parseFloat(dadosDia.total_valor_red);
+      const saldo_formatado = saldo_dia.toLocaleString("pt-BR", {
+        minimumFractionDigits: 2,
+        maximumFractionDigits: 2,
+      });
+
+      // FILTRO: Só mostrar dias com valores ou dia de hoje
+      const temValores =
+        parseInt(dadosDia.total_green) > 0 || parseInt(dadosDia.total_red) > 0;
+      const ehHoje = data_mysql === hoje;
+
+      // Pular dias sem valores (exceto hoje)
+      if (!temValores && !ehHoje) {
+        continue;
+      }
+
+      // Determinar classes CSS
+      const cor_valor =
+        saldo_dia === 0
+          ? "texto-cinza"
+          : saldo_dia > 0
+          ? "verde-bold"
+          : "vermelho-bold";
+      const classe_texto = saldo_dia === 0 ? "texto-cinza" : "";
+      const placar_cinza =
+        parseInt(dadosDia.total_green) === 0 &&
+        parseInt(dadosDia.total_red) === 0
+          ? "texto-cinza"
+          : "";
+
+      let classe_dia = "dia-normal";
+      let classe_destaque = "";
+
+      if (data_mysql === hoje) {
+        classe_dia =
+          "dia-hoje " + (saldo_dia >= 0 ? "borda-verde" : "borda-vermelha");
+      } else if (data_mysql < hoje) {
+        if (saldo_dia > 0) {
+          classe_destaque = "dia-destaque";
+        } else if (saldo_dia < 0) {
+          classe_destaque = "dia-destaque-negativo";
+        }
+      }
+
+      const classe_nao_usada = data_mysql > hoje ? "dia-nao-usada" : "";
+      const classe_sem_valor =
+        data_mysql < hoje &&
+        parseInt(dadosDia.total_green) === 0 &&
+        parseInt(dadosDia.total_red) === 0
+          ? "dia-sem-valor"
+          : "";
+
+      // Verificar se o elemento já existe
+      const elementoExistente = container.querySelector(
+        `[data-date="${data_mysql}"]`
+      );
+
+      if (elementoExistente) {
+        // Atualizar apenas os valores se o elemento já existe
+        const placarGreen =
+          elementoExistente.querySelector(".placar.verde-bold");
+        const placarRed = elementoExistente.querySelector(
+          ".placar.vermelho-bold"
+        );
+        const valor = elementoExistente.querySelector(".valor");
+
+        if (placarGreen)
+          placarGreen.textContent = parseInt(dadosDia.total_green);
+        if (placarRed) placarRed.textContent = parseInt(dadosDia.total_red);
+        if (valor) {
+          valor.textContent = `R$ ${saldo_formatado}`;
+          valor.className = `valor ${cor_valor}`;
+        }
+
+        // Atualizar classes do dia se mudou
+        elementoExistente.className = `linha-dia ${classe_dia} ${classe_destaque} ${classe_nao_usada} ${classe_sem_valor}`;
+      } else {
+        // Criar novo elemento
+        const divDia = document.createElement("div");
+        divDia.className = `linha-dia ${classe_dia} ${classe_destaque} ${classe_nao_usada} ${classe_sem_valor}`;
+        divDia.setAttribute("data-date", data_mysql);
+
+        divDia.innerHTML = `
+                    <span class="data ${classe_texto}">
+                        <i class="fas fa-calendar-day"></i> ${data_exibicao}
+                    </span>
+                    <div class="placar-dia">
+                        <span class="placar verde-bold ${placar_cinza}">${parseInt(
+          dadosDia.total_green
+        )}</span>
+                        <span class="placar separador ${placar_cinza}">x</span>
+                        <span class="placar vermelho-bold ${placar_cinza}">${parseInt(
+          dadosDia.total_red
+        )}</span>
+                    </div>
+                    <span class="valor ${cor_valor}">R$ ${saldo_formatado}</span>
+                    <span class="icone ${classe_texto}"><i class="fas fa-check"></i></span>
+                `;
+
+        fragment.appendChild(divDia);
+      }
+    }
+
+    // Adicionar novos elementos apenas se houver
+    if (fragment.childNodes.length > 0) {
+      container.innerHTML = "";
+      container.appendChild(fragment);
+    }
+
+    // Restaurar scroll position
+    container.scrollTop = scrollTop;
+
+    // Disparar evento customizado
+    window.dispatchEvent(
+      new CustomEvent("listaDiasAtualizada", {
+        detail: { dados: responseData, timestamp: new Date() },
+      })
+    );
+  },
+
+  // Gerar hash dos dados para detectar mudanças
+  gerarHashDados(dados) {
+    return JSON.stringify(dados);
+  },
+
+  // Configurar interceptadores para atualização imediata
+  configurarInterceptadores() {
+    // Interceptar submissão de formulários
+    document.addEventListener("submit", (e) => {
+      // Aguardar processamento do servidor e atualizar
+      setTimeout(() => {
+        this.atualizandoAtualmente = false;
+        this.atualizarListaDias();
+      }, 500);
+    });
+
+    // Interceptar cliques em botões importantes
+    document.addEventListener("click", (e) => {
+      if (e.target.matches('button, .btn, input[type="submit"]')) {
+        setTimeout(() => {
+          this.atualizandoAtualmente = false;
+          this.atualizarListaDias();
+        }, 500);
+      }
+    });
+
+    // Interceptar mudanças no filtro de período
+    document.querySelectorAll('input[name="periodo"]').forEach((radio) => {
+      radio.addEventListener("change", () => {
+        this.atualizandoAtualmente = false;
+        this.atualizarListaDias();
+      });
+    });
+
+    // Hook em fetch para detectar mudanças
+    const originalFetch = window.fetch;
+    window.fetch = async function (...args) {
+      const response = await originalFetch.apply(this, args);
+
+      // Se for uma requisição que altera dados, atualizar lista
+      const url = args[0]?.toString() || "";
+      if (
+        url.includes("dados_banca") ||
+        url.includes("carregar-mentores") ||
+        url.includes("cadastrar-valor") ||
+        url.includes("excluir-entrada")
+      ) {
+        setTimeout(() => {
+          if (typeof ListaDiasRealtimeManager !== "undefined") {
+            ListaDiasRealtimeManager.atualizandoAtualmente = false;
+            ListaDiasRealtimeManager.atualizarListaDias();
+          }
+        }, 300);
+      }
+
+      return response;
+    };
+
+    // Atualizar quando outros componentes atualizarem
+    window.addEventListener("metaAtualizada", () => {
+      this.atualizarListaDias();
+    });
+
+    window.addEventListener("mentoresAtualizados", () => {
+      this.atualizarListaDias();
+    });
+  },
+
+  // Parar sistema
+  parar() {
+    if (this.intervaloAtualizacao) {
+      clearInterval(this.intervaloAtualizacao);
+      this.intervaloAtualizacao = null;
+      console.log("🛑 Sistema de atualização parado");
+    }
+  },
+
+  // Forçar atualização
+  forcarAtualizacao() {
+    this.atualizandoAtualmente = false;
+    return this.atualizarListaDias();
+  },
+};
+
+// ================================================
+// CRIAR ARQUIVO PHP PARA FORNECER DADOS
+// ================================================
+// Crie um arquivo chamado "obter_dados_mes.php" com este conteúdo:
+/*
+<?php
+require_once 'config.php';
+require_once 'carregar_sessao.php';
+
+header('Content-Type: application/json');
+header('Cache-Control: no-cache');
+
+$id_usuario = $_SESSION['usuario_id'] ?? null;
+if (!$id_usuario) {
+    echo json_encode(['error' => 'Usuário não autenticado']);
+    exit;
+}
+
+// Obter mês e ano atual
+$mes = date('m');
+$ano = date('Y');
+
+// Se período foi enviado, usar ele
+if (isset($_GET['periodo']) && $_GET['periodo'] === 'mes') {
+    // Usar mês atual
+} else {
+    // Para outros períodos, ajustar conforme necessário
+}
+
+// Buscar dados do banco
+$sql = "
+    SELECT 
+        DATE(vm.data_criacao) as data,
+        SUM(CASE WHEN vm.green = 1 THEN vm.valor_green ELSE 0 END) as total_valor_green,
+        SUM(CASE WHEN vm.red = 1 THEN vm.valor_red ELSE 0 END) as total_valor_red,
+        SUM(CASE WHEN vm.green = 1 THEN 1 ELSE 0 END) as total_green,
+        SUM(CASE WHEN vm.red = 1 THEN 1 ELSE 0 END) as total_red
+    FROM valor_mentores vm
+    INNER JOIN mentores m ON vm.id_mentores = m.id
+    WHERE m.id_usuario = ?
+    AND MONTH(vm.data_criacao) = ?
+    AND YEAR(vm.data_criacao) = ?
+    GROUP BY DATE(vm.data_criacao)
+";
+
+$stmt = $conexao->prepare($sql);
+$stmt->bind_param("iii", $id_usuario, $mes, $ano);
+$stmt->execute();
+$result = $stmt->get_result();
+
+$dados_por_dia = [];
+while ($row = $result->fetch_assoc()) {
+    $dados_por_dia[$row['data']] = [
+        'total_valor_green' => $row['total_valor_green'] ?: 0,
+        'total_valor_red' => $row['total_valor_red'] ?: 0,
+        'total_green' => $row['total_green'] ?: 0,
+        'total_red' => $row['total_red'] ?: 0
+    ];
+}
+
+echo json_encode($dados_por_dia);
+?>
+*/
+
+// ================================================
+// INICIALIZAÇÃO AUTOMÁTICA
+// ================================================
+
+// Aguardar DOM carregar
+if (document.readyState === "loading") {
+  document.addEventListener("DOMContentLoaded", () => {
+    setTimeout(() => {
+      ListaDiasRealtimeManager.inicializar();
+    }, 1000);
+  });
+} else {
+  setTimeout(() => {
+    ListaDiasRealtimeManager.inicializar();
+  }, 500);
+}
+
+// Comandos globais para debug
+window.ListaDias = {
+  parar: () => ListaDiasRealtimeManager.parar(),
+  iniciar: () => ListaDiasRealtimeManager.inicializar(),
+  atualizar: () => ListaDiasRealtimeManager.forcarAtualizacao(),
+  status: () => ({
+    ativo: !!ListaDiasRealtimeManager.intervaloAtualizacao,
+    atualizando: ListaDiasRealtimeManager.atualizandoAtualmente,
+    ultimaAtualizacao: ListaDiasRealtimeManager.ultimaAtualizacao,
+  }),
+};
+
+console.log("📅 Sistema de atualização da lista de dias carregado!");
+console.log(
+  "Comandos: ListaDias.parar(), ListaDias.iniciar(), ListaDias.atualizar(), ListaDias.status()"
+);
+
+// ========================================================================================================================
+//                    CARREGA OS DADOS DOS VALORES DE ( DATA - PLACAR - SALDO ) VIA AJAX IMEDIATO
+// ========================================================================================================================
 //
 //
-// ========================================
+//
+//
+//
+//
+//
+//

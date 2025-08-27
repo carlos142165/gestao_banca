@@ -931,60 +931,83 @@ ob_end_flush();
 
 
         <!-- Lista de dias do mês com resultados -->
-        <div class="lista-dias">
-          <?php
-          for ($dia = 1; $dia <= $diasNoMes; $dia++) {
-            $data_mysql = $ano . '-' . str_pad($mes, 2, "0", STR_PAD_LEFT) . '-' . str_pad($dia, 2, "0", STR_PAD_LEFT);
-            $data_exibicao = str_pad($dia, 2, "0", STR_PAD_LEFT) . "/" . str_pad($mes, 2, "0", STR_PAD_LEFT) . "/" . $ano;
+<div class="lista-dias">
+<?php
+// Array para armazenar apenas dias com valores
+$dias_com_valores = [];
 
-            $dados = $dados_por_dia[$data_mysql] ?? [
-              'total_valor_green' => 0,
-              'total_valor_red' => 0,
-              'total_green' => 0,
-              'total_red' => 0
-            ];
+// Primeiro, coletar todos os dias que têm valores
+foreach ($dados_por_dia as $data => $dados) {
+    if ((int)$dados['total_green'] > 0 || (int)$dados['total_red'] > 0) {
+        $dias_com_valores[$data] = $dados;
+    }
+}
 
-            $saldo_dia = floatval($dados['total_valor_green']) - floatval($dados['total_valor_red']);
-            $saldo_formatado = number_format($saldo_dia, 2, ',', '.');
+// Adicionar o dia de hoje se não estiver na lista
+if (!isset($dias_com_valores[$hoje])) {
+    $dias_com_valores[$hoje] = [
+        'total_valor_green' => 0,
+        'total_valor_red' => 0,
+        'total_green' => 0,
+        'total_red' => 0
+    ];
+}
 
-            $cor_valor = ($saldo_dia == 0) ? 'texto-cinza' : ($saldo_dia > 0 ? 'verde-bold' : 'vermelho-bold');
-            $classe_texto = ($saldo_dia == 0) ? 'texto-cinza' : '';
-            $placar_cinza = ((int)$dados['total_green'] === 0 && (int)$dados['total_red'] === 0) ? 'texto-cinza' : '';
+// Ordenar por data
+ksort($dias_com_valores);
 
-            $classe_dia = ($data_mysql === $hoje)
-              ? 'dia-hoje ' . ($saldo_dia >= 0 ? 'borda-verde' : 'borda-vermelha')
-              : 'dia-normal';
-
-            // Dê destaque lateral para dias com saldo positivo ou negativo (apenas passado)
-            // padrão: sem background adicional, apenas borda-left colorida
-            if ($data_mysql < $hoje && $saldo_dia > 0) {
-              $classe_destaque = 'dia-destaque';
-            } elseif ($data_mysql < $hoje && $saldo_dia < 0) {
-              $classe_destaque = 'dia-destaque-negativo';
-            } else {
-              $classe_destaque = '';
-            }
-
-            // marcar datas ainda não usadas (futuras) com borda-left cinza
-            $classe_nao_usada = ($data_mysql > $hoje) ? 'dia-nao-usada' : '';
-            // marcar dias passados sem valores com borda-left cinza suave
-            $classe_sem_valor = ($data_mysql < $hoje && (int)$dados['total_green'] === 0 && (int)$dados['total_red'] === 0) ? 'dia-sem-valor' : '';
-
-            echo '
-              <div class="linha-dia '.$classe_dia.' '.$classe_destaque.' '.$classe_nao_usada.' '.$classe_sem_valor.'">
-                <span class="data '.$classe_texto.'"><i class="fas fa-calendar-day"></i> '.$data_exibicao.'</span>
-                <div class="placar-dia">
-                  <span class="placar verde-bold '.$placar_cinza.'">'.(int)$dados['total_green'].'</span>
-                  <span class="placar separador '.$placar_cinza.'">x</span>
-                  <span class="placar vermelho-bold '.$placar_cinza.'">'.(int)$dados['total_red'].'</span>
-                </div>
-                <span class="valor '.$cor_valor.'">R$ '.$saldo_formatado.'</span>
-                <span class="icone '.$classe_texto.'"><i class="fas fa-check"></i></span>
-              </div>
-            ';
-          }
-          ?>
+// Exibir apenas os dias filtrados
+foreach ($dias_com_valores as $data_mysql => $dados) {
+    // Extrair dia, mês e ano da data
+    list($ano_data, $mes_data, $dia_data) = explode('-', $data_mysql);
+    $data_exibicao = $dia_data . "/" . $mes_data . "/" . $ano_data;
+    
+    $saldo_dia = floatval($dados['total_valor_green']) - floatval($dados['total_valor_red']);
+    $saldo_formatado = number_format($saldo_dia, 2, ',', '.');
+    
+    $cor_valor = ($saldo_dia == 0) ? 'texto-cinza' : ($saldo_dia > 0 ? 'verde-bold' : 'vermelho-bold');
+    $classe_texto = ($saldo_dia == 0) ? 'texto-cinza' : '';
+    $placar_cinza = ((int)$dados['total_green'] === 0 && (int)$dados['total_red'] === 0) ? 'texto-cinza' : '';
+    
+    $classe_dia = ($data_mysql === $hoje)
+        ? 'dia-hoje ' . ($saldo_dia >= 0 ? 'borda-verde' : 'borda-vermelha')
+        : 'dia-normal';
+    
+    // Destaque para dias passados com saldo
+    if ($data_mysql < $hoje && $saldo_dia > 0) {
+        $classe_destaque = 'dia-destaque';
+    } elseif ($data_mysql < $hoje && $saldo_dia < 0) {
+        $classe_destaque = 'dia-destaque-negativo';
+    } else {
+        $classe_destaque = '';
+    }
+    
+    // Classes para dias futuros ou sem valor (apenas para o dia de hoje sem valores)
+    $classe_nao_usada = ($data_mysql > $hoje) ? 'dia-nao-usada' : '';
+    $classe_sem_valor = ($data_mysql < $hoje && (int)$dados['total_green'] === 0 && (int)$dados['total_red'] === 0) ? 'dia-sem-valor' : '';
+    
+    echo '
+        <div class="linha-dia '.$classe_dia.' '.$classe_destaque.' '.$classe_nao_usada.' '.$classe_sem_valor.'" data-date="'.$data_mysql.'">
+            <span class="data '.$classe_texto.'"><i class="fas fa-calendar-day"></i> '.$data_exibicao.'</span>
+            <div class="placar-dia">
+                <span class="placar verde-bold '.$placar_cinza.'">'.(int)$dados['total_green'].'</span>
+                <span class="placar separador '.$placar_cinza.'">x</span>
+                <span class="placar vermelho-bold '.$placar_cinza.'">'.(int)$dados['total_red'].'</span>
+            </div>
+            <span class="valor '.$cor_valor.'">R$ '.$saldo_formatado.'</span>
+            <span class="icone '.$classe_texto.'"><i class="fas fa-check"></i></span>
         </div>
+    ';
+}
+
+// Se não houver nenhum dado, mostrar mensagem
+if (empty($dias_com_valores)) {
+    echo '<div class="linha-dia dia-hoje">
+            <span class="data">Nenhuma operação registrada este mês</span>
+          </div>';
+}
+?>
+</div>
     </div>
 </div>
 <!-- ==================================================================================================================================== --> 

@@ -1561,7 +1561,7 @@ p {
   position: relative !important;
   overflow: hidden !important;
   box-shadow: inset 0 2px 4px rgba(0, 0, 0, 0.1) !important;
-  margin-top: -10px !important;
+  margin-top: 5px !important;
   width: 85% !important; /* ✅ Ocupa toda largura disponível */
 }
 
@@ -1824,7 +1824,12 @@ p {
 /* Garantir que o texto não seja forçado para maiúsculas em nenhum lugar */
 #rotulo-meta {
   text-transform: none !important;
-  margin-left: 0px;
+  /* NOVO: garantir que o rótulo fique colado no canto esquerdo do widget (alinhado ao ícone de moeda) */
+  margin-left: 0 !important;
+  padding-left: 0 !important;
+  text-align: left !important;
+  display: block !important;
+  margin-bottom: 4px !important;
 }
 
 /* ========================================
