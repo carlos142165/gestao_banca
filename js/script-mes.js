@@ -1549,6 +1549,8 @@ const ListaDiasRealtimeManager = {
   intervaloAtualizacao: null,
   ultimaAtualizacao: null,
   hashUltimosDados: "",
+  primeiraVez: true,
+  metaDiaria: null,
 
   // Configurações
   INTERVALO_MS: 5000, // Atualiza a cada 5 segundos
@@ -1614,7 +1616,7 @@ const ListaDiasRealtimeManager = {
   },
 
   // Renderizar lista de dias no DOM
-  renderizarListaDias(responseData) {
+  async renderizarListaDias(responseData) {
     const container = document.querySelector(".lista-dias");
     if (!container) return;
 
@@ -1629,7 +1631,14 @@ const ListaDiasRealtimeManager = {
       responseData.dias_no_mes || new Date(ano, mes, 0).getDate();
 
     // Obter data de hoje
-    const hoje = new Date().toISOString().split("T")[0];
+    // Usar data local (evita problemas de timezone que podem avançar o dia)
+    const hoje = (() => {
+      const d = new Date();
+      const yy = d.getFullYear();
+      const mm = String(d.getMonth() + 1).padStart(2, "0");
+      const dd = String(d.getDate()).padStart(2, "0");
+      return `${yy}-${mm}-${dd}`;
+    })();
 
     // Criar fragmento para melhor performance
     const fragment = document.createDocumentFragment();
@@ -1682,6 +1691,9 @@ const ListaDiasRealtimeManager = {
           ? "texto-cinza"
           : "";
 
+      // Verificar se meta foi batida para este dia
+      const metaBatida = await this.verificarMetaBatida(data_mysql, saldo_dia);
+
       let classe_dia = "dia-normal";
       let classe_destaque = "";
 
@@ -1727,12 +1739,36 @@ const ListaDiasRealtimeManager = {
         }
 
         // Atualizar classes do dia se mudou
-        elementoExistente.className = `linha-dia ${classe_dia} ${classe_destaque} ${classe_nao_usada} ${classe_sem_valor}`;
+        // Preservar classes de animação temporárias (ex: dia-pulse, dia-foco)
+        const preservadas = ["dia-pulse", "dia-foco"];
+        const classesPreservadas = Array.from(
+          elementoExistente.classList
+        ).filter((c) => preservadas.includes(c));
+
+        const novasClasses = [
+          ...classesPreservadas,
+          "linha-dia",
+          classe_dia,
+          classe_destaque,
+          classe_nao_usada,
+          classe_sem_valor,
+        ]
+          .filter(Boolean)
+          .join(" ");
+
+        elementoExistente.className = novasClasses;
+        // Garantir que o atributo data-meta-batida refleta o estado (ativa CSS de troféu/badge)
+        elementoExistente.setAttribute(
+          "data-meta-batida",
+          metaBatida ? "true" : "false"
+        );
       } else {
         // Criar novo elemento
         const divDia = document.createElement("div");
         divDia.className = `linha-dia ${classe_dia} ${classe_destaque} ${classe_nao_usada} ${classe_sem_valor}`;
         divDia.setAttribute("data-date", data_mysql);
+        // Marcar se meta foi batida para ativar estilos de troféu/badge
+        divDia.setAttribute("data-meta-batida", metaBatida ? "true" : "false");
 
         divDia.innerHTML = `
                     <span class="data ${classe_texto}">
@@ -1747,22 +1783,33 @@ const ListaDiasRealtimeManager = {
           dadosDia.total_red
         )}</span>
                     </div>
-                    <span class="valor ${cor_valor}">R$ ${saldo_formatado}</span>
-                    <span class="icone ${classe_texto}"><i class="fas fa-check"></i></span>
+          <span class="valor ${cor_valor}">R$ ${saldo_formatado}</span>
+          <span class="icone ${classe_texto}">
+            <i class="fa-solid ${metaBatida ? "fa-trophy" : "fa-check"}" ${
+          metaBatida ? 'style="color: #FFD700;"' : ""
+        }></i>
+          </span>
                 `;
 
         fragment.appendChild(divDia);
       }
     }
 
-    // Adicionar novos elementos apenas se houver
+    // Adicionar apenas novos elementos (não limpar todo o container) para evitar flicker
     if (fragment.childNodes.length > 0) {
-      container.innerHTML = "";
       container.appendChild(fragment);
     }
 
-    // Restaurar scroll position
-    container.scrollTop = scrollTop;
+    // Focar no dia de hoje automaticamente
+    this.focarDiaAtual();
+
+    // Restaurar scroll position OU focar no dia atual
+    if (!this.primeiraVez) {
+      container.scrollTop = scrollTop;
+    } else {
+      this.scrollParaDiaAtual();
+      this.primeiraVez = false;
+    }
 
     // Disparar evento customizado
     window.dispatchEvent(
@@ -1770,11 +1817,144 @@ const ListaDiasRealtimeManager = {
         detail: { dados: responseData, timestamp: new Date() },
       })
     );
+
+    // Sincronizar marcações do dia 'hoje' para a data local do navegador
+    this.sincronizarDiaHojeLocal();
+  },
+
+  // Garante que apenas a data local marcada como hoje receba a classe dia-hoje
+  sincronizarDiaHojeLocal() {
+    try {
+      const d = new Date();
+      const yy = d.getFullYear();
+      const mm = String(d.getMonth() + 1).padStart(2, "0");
+      const dd = String(d.getDate()).padStart(2, "0");
+      const hojeLocal = `${yy}-${mm}-${dd}`;
+
+      // Remover dia-hoje de outros elementos
+      document.querySelectorAll(".linha-dia.dia-hoje").forEach((el) => {
+        if (el.getAttribute("data-date") !== hojeLocal) {
+          el.classList.remove("dia-hoje");
+        }
+      });
+
+      // Aplicar dia-hoje no elemento local se existir
+      const elemento = document.querySelector(
+        `.linha-dia[data-date="${hojeLocal}"]`
+      );
+      if (elemento) {
+        elemento.classList.add("dia-hoje");
+      }
+    } catch (e) {
+      console.error("Erro ao sincronizar dia hoje local:", e);
+    }
   },
 
   // Gerar hash dos dados para detectar mudanças
   gerarHashDados(dados) {
     return JSON.stringify(dados);
+  },
+
+  // Verificar se a meta do dia foi batida
+  async verificarMetaBatida(dataDia, saldoDia) {
+    try {
+      // Se não tem meta diária carregada, buscar
+      if (this.metaDiaria === null) {
+        await this.obterMetaDiaria();
+      }
+
+      // Verifica se o saldo do dia é maior ou igual à meta
+      return saldoDia >= this.metaDiaria;
+    } catch (error) {
+      console.error("Erro ao verificar meta:", error);
+      return false;
+    }
+  },
+
+  // Obter meta diária do sistema
+  async obterMetaDiaria() {
+    try {
+      // Se existe o MetaDiariaManager, usar ele
+      if (
+        typeof MetaDiariaManager !== "undefined" &&
+        MetaDiariaManager.periodoAtual === "dia"
+      ) {
+        const response = await fetch("dados_banca.php");
+        const data = await response.json();
+        this.metaDiaria = parseFloat(data.meta_diaria) || 0;
+      } else {
+        // Valor padrão se não conseguir obter
+        this.metaDiaria = 0;
+      }
+    } catch (error) {
+      console.error("Erro ao obter meta diária:", error);
+      this.metaDiaria = 0;
+    }
+  },
+
+  // Focar no dia atual
+  focarDiaAtual() {
+    // Usar data local (evita problemas de timezone que podem avançar o dia)
+    const hoje = (() => {
+      const d = new Date();
+      const yy = d.getFullYear();
+      const mm = String(d.getMonth() + 1).padStart(2, "0");
+      const dd = String(d.getDate()).padStart(2, "0");
+      return `${yy}-${mm}-${dd}`;
+    })();
+    const diaHoje = document.querySelector(`[data-date="${hoje}"]`);
+
+    if (diaHoje) {
+      // Adicionar classe de destaque temporário
+      diaHoje.classList.add("dia-foco");
+
+      // Remover destaque após 2 segundos
+      setTimeout(() => {
+        diaHoje.classList.remove("dia-foco");
+      }, 2000);
+    }
+  },
+
+  // Fazer scroll para o dia atual
+  scrollParaDiaAtual() {
+    const container = document.querySelector(".lista-dias");
+    if (!container) return;
+
+    // Usar data local (evita problemas de timezone que podem avançar o dia)
+    const hoje = (() => {
+      const d = new Date();
+      const yy = d.getFullYear();
+      const mm = String(d.getMonth() + 1).padStart(2, "0");
+      const dd = String(d.getDate()).padStart(2, "0");
+      return `${yy}-${mm}-${dd}`;
+    })();
+    const diaHoje = container.querySelector(`[data-date="${hoje}"]`);
+
+    if (diaHoje) {
+      // Calcular posição para centralizar o dia atual
+      const containerHeight = container.clientHeight;
+      const elementTop = diaHoje.offsetTop;
+      const elementHeight = diaHoje.offsetHeight;
+
+      // Centralizar o elemento na viewport
+      const scrollPosition =
+        elementTop - containerHeight / 2 + elementHeight / 2;
+
+      // Fazer scroll suave
+      container.scrollTo({
+        top: Math.max(0, scrollPosition),
+        behavior: "smooth",
+      });
+
+      // Adicionar animação de destaque
+      setTimeout(() => {
+        // Use class-based animation to avoid inline style override flicker
+        diaHoje.classList.add("dia-pulse");
+        setTimeout(() => {
+          diaHoje.classList.remove("dia-pulse");
+        }, 1000);
+      }, 500);
+    }
   },
 
   // Configurar interceptadores para atualização imediata

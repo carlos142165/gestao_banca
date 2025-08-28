@@ -459,7 +459,6 @@ ob_end_flush();
 <!--                                                 💼  LINK DOS ICONES                    
  ====================================================================================================================================== -->
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
-<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
 
 <!-- -->
 <!-- -->
@@ -995,7 +994,7 @@ foreach ($dias_com_valores as $data_mysql => $dados) {
                 <span class="placar vermelho-bold '.$placar_cinza.'">'.(int)$dados['total_red'].'</span>
             </div>
             <span class="valor '.$cor_valor.'">R$ '.$saldo_formatado.'</span>
-            <span class="icone '.$classe_texto.'"><i class="fas fa-check"></i></span>
+            <span class="icone '.$classe_texto.'"><i class="fa-solid '.($saldo_dia >= $meta_diaria ? 'fa-trophy' : 'fa-check').'"'.($saldo_dia >= $meta_diaria ? ' style="color: #FFD700;"' : '').'></i></span>
         </div>
     ';
 }
