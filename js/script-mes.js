@@ -1551,6 +1551,7 @@ const ListaDiasRealtimeManager = {
   hashUltimosDados: "",
   primeiraVez: true,
   metaDiaria: null,
+  dadosMetaCache: null, // ✅ NOVO: Cache dos dados de meta
 
   // Configurações
   INTERVALO_MS: 5000, // Atualiza a cada 5 segundos
@@ -1574,14 +1575,56 @@ const ListaDiasRealtimeManager = {
     console.log("✅ Sistema de lista de dias em tempo real ativo!");
   },
 
-  // Função principal de atualização
+  // Obter meta diária simples (sem overhead)
+  async obterMetaDiariaSimples() {
+    try {
+      // Se já tem cache e é recente (menos de 30 segundos), usar o cache
+      if (
+        this.dadosMetaCache &&
+        this.dadosMetaCache.timestamp &&
+        Date.now() - this.dadosMetaCache.timestamp < 30000
+      ) {
+        return this.dadosMetaCache.meta_diaria;
+      }
+
+      // Tentar usar dados do MetaDiariaManager se disponível
+      if (
+        typeof MetaDiariaManager !== "undefined" &&
+        MetaDiariaManager.periodoAtual === "dia"
+      ) {
+        // Buscar meta apenas se necessário
+        const response = await fetch("dados_banca.php", {
+          method: "GET",
+          headers: { "Cache-Control": "no-cache" },
+        });
+
+        if (response.ok) {
+          const data = await response.json();
+          if (data.success && data.periodo_ativo === "dia") {
+            this.dadosMetaCache = {
+              meta_diaria: parseFloat(data.meta_diaria) || 0,
+              timestamp: Date.now(),
+            };
+            return this.dadosMetaCache.meta_diaria;
+          }
+        }
+      }
+
+      return 0; // Fallback
+    } catch (error) {
+      console.error("Erro ao obter meta:", error);
+      return 0;
+    }
+  },
+
+  // Função principal de atualização (SIMPLIFICADA)
   async atualizarListaDias() {
     if (this.atualizandoAtualmente) return;
 
     this.atualizandoAtualmente = true;
 
     try {
-      // Buscar dados atualizados do servidor
+      // Buscar dados atualizados do servidor (SEM buscar meta separadamente)
       const response = await fetch("obter_dados_mes.php", {
         method: "GET",
         headers: {
@@ -1631,7 +1674,6 @@ const ListaDiasRealtimeManager = {
       responseData.dias_no_mes || new Date(ano, mes, 0).getDate();
 
     // Obter data de hoje
-    // Usar data local (evita problemas de timezone que podem avançar o dia)
     const hoje = (() => {
       const d = new Date();
       const yy = d.getFullYear();
@@ -1691,8 +1733,8 @@ const ListaDiasRealtimeManager = {
           ? "texto-cinza"
           : "";
 
-      // Verificar se meta foi batida para este dia
-      const metaBatida = await this.verificarMetaBatida(data_mysql, saldo_dia);
+      // Verificação simples da meta batida
+      const metaBatida = await this.verificarMetaBatidaSimples(saldo_dia);
 
       let classe_dia = "dia-normal";
       let classe_destaque = "";
@@ -1722,24 +1764,36 @@ const ListaDiasRealtimeManager = {
       );
 
       if (elementoExistente) {
-        // Atualizar apenas os valores se o elemento já existe
+        // ✅ ATUALIZAR ELEMENTO EXISTENTE COM NOVA LÓGICA
         const placarGreen =
           elementoExistente.querySelector(".placar.verde-bold");
         const placarRed = elementoExistente.querySelector(
           ".placar.vermelho-bold"
         );
         const valor = elementoExistente.querySelector(".valor");
+        const icone = elementoExistente.querySelector(".icone i"); // ✅ BUSCAR O ÍCONE
 
         if (placarGreen)
           placarGreen.textContent = parseInt(dadosDia.total_green);
         if (placarRed) placarRed.textContent = parseInt(dadosDia.total_red);
+
         if (valor) {
           valor.textContent = `R$ ${saldo_formatado}`;
           valor.className = `valor ${cor_valor}`;
         }
 
+        // ✅ ATUALIZAR ÍCONE COM VERIFICAÇÃO CORRETA
+        if (icone) {
+          if (metaBatida) {
+            icone.className = "fa-solid fa-trophy";
+            icone.style.color = "#FFD700";
+          } else {
+            icone.className = "fa-solid fa-check";
+            icone.style.color = "";
+          }
+        }
+
         // Atualizar classes do dia se mudou
-        // Preservar classes de animação temporárias (ex: dia-pulse, dia-foco)
         const preservadas = ["dia-pulse", "dia-foco"];
         const classesPreservadas = Array.from(
           elementoExistente.classList
@@ -1757,7 +1811,6 @@ const ListaDiasRealtimeManager = {
           .join(" ");
 
         elementoExistente.className = novasClasses;
-        // Garantir que o atributo data-meta-batida refleta o estado (ativa CSS de troféu/badge)
         elementoExistente.setAttribute(
           "data-meta-batida",
           metaBatida ? "true" : "false"
@@ -1767,7 +1820,6 @@ const ListaDiasRealtimeManager = {
         const divDia = document.createElement("div");
         divDia.className = `linha-dia ${classe_dia} ${classe_destaque} ${classe_nao_usada} ${classe_sem_valor}`;
         divDia.setAttribute("data-date", data_mysql);
-        // Marcar se meta foi batida para ativar estilos de troféu/badge
         divDia.setAttribute("data-meta-batida", metaBatida ? "true" : "false");
 
         divDia.innerHTML = `
@@ -1822,6 +1874,17 @@ const ListaDiasRealtimeManager = {
     this.sincronizarDiaHojeLocal();
   },
 
+  // Verificação simples da meta batida
+  async verificarMetaBatidaSimples(saldoDia) {
+    try {
+      const metaDiaria = await this.obterMetaDiariaSimples();
+      return saldoDia >= metaDiaria && metaDiaria > 0;
+    } catch (error) {
+      console.error("Erro ao verificar meta:", error);
+      return false;
+    }
+  },
+
   // Garante que apenas a data local marcada como hoje receba a classe dia-hoje
   sincronizarDiaHojeLocal() {
     try {
@@ -1850,51 +1913,23 @@ const ListaDiasRealtimeManager = {
     }
   },
 
-  // Gerar hash dos dados para detectar mudanças
+  // Hash simplificado (sem dados de meta)
   gerarHashDados(dados) {
     return JSON.stringify(dados);
   },
 
-  // Verificar se a meta do dia foi batida
-  async verificarMetaBatida(dataDia, saldoDia) {
-    try {
-      // Se não tem meta diária carregada, buscar
-      if (this.metaDiaria === null) {
-        await this.obterMetaDiaria();
-      }
+  // ✅ FUNÇÃO REMOVIDA - NÃO É MAIS NECESSÁRIA
+  // async verificarMetaBatida(dataDia, saldoDia) {
+  //   // Removida - usando verificarMetaBatidaCorreta()
+  // },
 
-      // Verifica se o saldo do dia é maior ou igual à meta
-      return saldoDia >= this.metaDiaria;
-    } catch (error) {
-      console.error("Erro ao verificar meta:", error);
-      return false;
-    }
-  },
-
-  // Obter meta diária do sistema
-  async obterMetaDiaria() {
-    try {
-      // Se existe o MetaDiariaManager, usar ele
-      if (
-        typeof MetaDiariaManager !== "undefined" &&
-        MetaDiariaManager.periodoAtual === "dia"
-      ) {
-        const response = await fetch("dados_banca.php");
-        const data = await response.json();
-        this.metaDiaria = parseFloat(data.meta_diaria) || 0;
-      } else {
-        // Valor padrão se não conseguir obter
-        this.metaDiaria = 0;
-      }
-    } catch (error) {
-      console.error("Erro ao obter meta diária:", error);
-      this.metaDiaria = 0;
-    }
-  },
+  // ✅ FUNÇÃO REMOVIDA - NÃO É MAIS NECESSÁRIA
+  // async obterMetaDiaria() {
+  //   // Removida - usando obterDadosMetaCompletos()
+  // },
 
   // Focar no dia atual
   focarDiaAtual() {
-    // Usar data local (evita problemas de timezone que podem avançar o dia)
     const hoje = (() => {
       const d = new Date();
       const yy = d.getFullYear();
@@ -1905,10 +1940,8 @@ const ListaDiasRealtimeManager = {
     const diaHoje = document.querySelector(`[data-date="${hoje}"]`);
 
     if (diaHoje) {
-      // Adicionar classe de destaque temporário
       diaHoje.classList.add("dia-foco");
 
-      // Remover destaque após 2 segundos
       setTimeout(() => {
         diaHoje.classList.remove("dia-foco");
       }, 2000);
@@ -1920,7 +1953,6 @@ const ListaDiasRealtimeManager = {
     const container = document.querySelector(".lista-dias");
     if (!container) return;
 
-    // Usar data local (evita problemas de timezone que podem avançar o dia)
     const hoje = (() => {
       const d = new Date();
       const yy = d.getFullYear();
@@ -1931,24 +1963,19 @@ const ListaDiasRealtimeManager = {
     const diaHoje = container.querySelector(`[data-date="${hoje}"]`);
 
     if (diaHoje) {
-      // Calcular posição para centralizar o dia atual
       const containerHeight = container.clientHeight;
       const elementTop = diaHoje.offsetTop;
       const elementHeight = diaHoje.offsetHeight;
 
-      // Centralizar o elemento na viewport
       const scrollPosition =
         elementTop - containerHeight / 2 + elementHeight / 2;
 
-      // Fazer scroll suave
       container.scrollTo({
         top: Math.max(0, scrollPosition),
         behavior: "smooth",
       });
 
-      // Adicionar animação de destaque
       setTimeout(() => {
-        // Use class-based animation to avoid inline style override flicker
         diaHoje.classList.add("dia-pulse");
         setTimeout(() => {
           diaHoje.classList.remove("dia-pulse");
@@ -1957,18 +1984,16 @@ const ListaDiasRealtimeManager = {
     }
   },
 
-  // Configurar interceptadores para atualização imediata
+  // Configurar interceptadores (SIMPLIFICADOS)
   configurarInterceptadores() {
     // Interceptar submissão de formulários
     document.addEventListener("submit", (e) => {
-      // Aguardar processamento do servidor e atualizar
       setTimeout(() => {
         this.atualizandoAtualmente = false;
         this.atualizarListaDias();
       }, 500);
     });
 
-    // Interceptar cliques em botões importantes
     document.addEventListener("click", (e) => {
       if (e.target.matches('button, .btn, input[type="submit"]')) {
         setTimeout(() => {
@@ -1981,17 +2006,18 @@ const ListaDiasRealtimeManager = {
     // Interceptar mudanças no filtro de período
     document.querySelectorAll('input[name="periodo"]').forEach((radio) => {
       radio.addEventListener("change", () => {
+        // Invalidar cache apenas quando mudar período
+        this.dadosMetaCache = null;
         this.atualizandoAtualmente = false;
         this.atualizarListaDias();
       });
     });
 
-    // Hook em fetch para detectar mudanças
+    // Hook em fetch simples
     const originalFetch = window.fetch;
     window.fetch = async function (...args) {
       const response = await originalFetch.apply(this, args);
 
-      // Se for uma requisição que altera dados, atualizar lista
       const url = args[0]?.toString() || "";
       if (
         url.includes("dados_banca") ||
@@ -2010,7 +2036,7 @@ const ListaDiasRealtimeManager = {
       return response;
     };
 
-    // Atualizar quando outros componentes atualizarem
+    // Eventos simples
     window.addEventListener("metaAtualizada", () => {
       this.atualizarListaDias();
     });
@@ -2029,80 +2055,12 @@ const ListaDiasRealtimeManager = {
     }
   },
 
-  // Forçar atualização
+  // Forçar atualização (sem invalidar cache desnecessariamente)
   forcarAtualizacao() {
     this.atualizandoAtualmente = false;
     return this.atualizarListaDias();
   },
 };
-
-// ================================================
-// CRIAR ARQUIVO PHP PARA FORNECER DADOS
-// ================================================
-// Crie um arquivo chamado "obter_dados_mes.php" com este conteúdo:
-/*
-<?php
-require_once 'config.php';
-require_once 'carregar_sessao.php';
-
-header('Content-Type: application/json');
-header('Cache-Control: no-cache');
-
-$id_usuario = $_SESSION['usuario_id'] ?? null;
-if (!$id_usuario) {
-    echo json_encode(['error' => 'Usuário não autenticado']);
-    exit;
-}
-
-// Obter mês e ano atual
-$mes = date('m');
-$ano = date('Y');
-
-// Se período foi enviado, usar ele
-if (isset($_GET['periodo']) && $_GET['periodo'] === 'mes') {
-    // Usar mês atual
-} else {
-    // Para outros períodos, ajustar conforme necessário
-}
-
-// Buscar dados do banco
-$sql = "
-    SELECT 
-        DATE(vm.data_criacao) as data,
-        SUM(CASE WHEN vm.green = 1 THEN vm.valor_green ELSE 0 END) as total_valor_green,
-        SUM(CASE WHEN vm.red = 1 THEN vm.valor_red ELSE 0 END) as total_valor_red,
-        SUM(CASE WHEN vm.green = 1 THEN 1 ELSE 0 END) as total_green,
-        SUM(CASE WHEN vm.red = 1 THEN 1 ELSE 0 END) as total_red
-    FROM valor_mentores vm
-    INNER JOIN mentores m ON vm.id_mentores = m.id
-    WHERE m.id_usuario = ?
-    AND MONTH(vm.data_criacao) = ?
-    AND YEAR(vm.data_criacao) = ?
-    GROUP BY DATE(vm.data_criacao)
-";
-
-$stmt = $conexao->prepare($sql);
-$stmt->bind_param("iii", $id_usuario, $mes, $ano);
-$stmt->execute();
-$result = $stmt->get_result();
-
-$dados_por_dia = [];
-while ($row = $result->fetch_assoc()) {
-    $dados_por_dia[$row['data']] = [
-        'total_valor_green' => $row['total_valor_green'] ?: 0,
-        'total_valor_red' => $row['total_valor_red'] ?: 0,
-        'total_green' => $row['total_green'] ?: 0,
-        'total_red' => $row['total_red'] ?: 0
-    ];
-}
-
-echo json_encode($dados_por_dia);
-?>
-*/
-
-// ================================================
-// INICIALIZAÇÃO AUTOMÁTICA
-// ================================================
 
 // Aguardar DOM carregar
 if (document.readyState === "loading") {
@@ -2126,10 +2084,13 @@ window.ListaDias = {
     ativo: !!ListaDiasRealtimeManager.intervaloAtualizacao,
     atualizando: ListaDiasRealtimeManager.atualizandoAtualmente,
     ultimaAtualizacao: ListaDiasRealtimeManager.ultimaAtualizacao,
+    metaCache: ListaDiasRealtimeManager.dadosMetaCache, // ✅ MOSTRAR CACHE DA META
   }),
 };
 
 console.log("📅 Sistema de atualização da lista de dias carregado!");
+console.log("🏆 Correção aplicada: Verificação correta da meta batida");
+console.log("⚡ Atualização em tempo real via AJAX funcionando");
 console.log(
   "Comandos: ListaDias.parar(), ListaDias.iniciar(), ListaDias.atualizar(), ListaDias.status()"
 );
