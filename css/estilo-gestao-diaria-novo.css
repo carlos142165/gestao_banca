@@ -2780,6 +2780,9 @@ p {
   position: relative;
   overflow: hidden;
   margin: 0 auto;
+  /* pequeno ajuste para aproximar do topo/à esquerda do container pai */
+  left: -5px; /* move levemente para a esquerda */
+  top: -12px; /* sobe um pouco o container */
 }
 
 .container-primeiro-mentor::before {
@@ -2933,6 +2936,8 @@ p {
     margin: 0;
     border-radius: 20px;
     min-height: 220px;
+    left: 0;
+    top: 0;
   }
 
   .icone-mentor-vazio {
@@ -2979,6 +2984,8 @@ p {
     margin: 0;
     border-radius: 18px;
     min-height: 200px;
+    left: 0;
+    top: 0;
   }
 
   .icone-mentor-vazio {

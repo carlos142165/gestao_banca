@@ -16,6 +16,33 @@ document.addEventListener("DOMContentLoaded", () => {
   let modalInicializado = false;
   let valorOriginalBanca = 0;
   let metaFixaRadio, metaTurboRadio;
+  // Expor wrappers globais para permitir que outros scripts abram/inicializem o modal
+  try {
+    window.abrirModalDeposito = function () {
+      if (modal) {
+        modal.style.display = "flex";
+        modal.classList.add("ativo");
+        document.body.style.overflow = "hidden";
+        try {
+          if (typeof inicializarModalDeposito === "function")
+            inicializarModalDeposito();
+        } catch (e) {
+          console.warn("Falha ao inicializar modal via wrapper:", e);
+        }
+      }
+    };
+
+    window.inicializarModalDeposito = function () {
+      try {
+        if (typeof inicializarModalDeposito === "function")
+          inicializarModalDeposito();
+      } catch (e) {
+        console.warn("Falha ao chamar inicializarModalDeposito():", e);
+      }
+    };
+  } catch (e) {
+    // não crítico
+  }
   // Variáveis globais necessárias em outras funções
   let diaria, unidade, oddsMeta;
   let resultadoCalculo, resultadoUnidade, resultadoOdds;

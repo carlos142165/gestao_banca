@@ -1281,7 +1281,7 @@ if (empty($dias_com_valores)) {
         <!-- Mensagem inicial -->
         <div class="mensagem-inicial-gestao" id="mensagem-inicial-gestao">
           <i class="fas fa-chart-line"></i>
-          <p>Disciplina é o que separa sorte de estratégia. Mantenha-se dentro da gestão é ela que protege seu capital, guia suas decisões e constrói lucro consistente ao longo do tempo. Não é sobre ganhar sempre, é sobre jogar certo sempre.</p>
+          <p>Disciplina transforma sorte em estratégia. Gestão protege, guia e constrói lucro. Não é sobre vencer sempre, é sobre jogar certo sempre.</p>
         </div>
 
         <!-- Inputs duplos para Cash/Green -->
@@ -1926,7 +1926,7 @@ if (empty($dias_com_valores)) {
 
 /* ✅ INPUTS COM ANIMAÇÕES SUAVES */
 .inputs-area-novo {
-  margin-bottom: 10px; /* Reduzido de 20px para 10px */
+  margin-bottom: 6px; /* Ajustado para reduzir espaçamento vertical entre blocos */
   min-height: 120px;
 }
 
@@ -1946,7 +1946,22 @@ if (empty($dias_com_valores)) {
 }
 
 .campo-duplo-novo {
-  margin-bottom: 15px;
+  margin-bottom: 8px; /* espaço reduzido entre os campos duplos */
+}
+
+/* Espaçamento específico: deixar ~25px entre Unidade (primeiro campo) e Total (segundo campo) */
+.inputs-duplos-novo .campo-duplo-novo:first-child {
+  margin-bottom: -25px;
+}
+
+/* Espaço maior entre o bloco de inputs e o bloco de resultado/status (~40px) */
+.inputs-duplos-novo {
+  margin-bottom: -10px;
+}
+
+/* Para Red (input único) também aplicar espaço maior antes do status */
+.input-unico-novo {
+  margin-bottom: -10px;
 }
 
 .campo-duplo-novo label {
@@ -2039,8 +2054,8 @@ if (empty($dias_com_valores)) {
   border-radius: 16px;
   background: linear-gradient(145deg, #f8f9fa, #ffffff);
   border: 2px solid #e9ecef;
-  margin-bottom: 8px; /* Reduzido ainda mais */
-  margin-top: 8px; /* Ajustado para equilibrar */
+  margin-bottom: 6px; /* reduzir espaço entre status e botão */
+  margin-top: 6px; /* ajuste sutil no topo */
   min-height: 50px;
   display: flex;
   flex-direction: column;
@@ -2096,7 +2111,7 @@ if (empty($dias_com_valores)) {
 .botao-enviar-novo {
   width: 100%;
   padding: 15px;
-  margin-top: 5px; /* Adicionado para aproximar */
+  margin-top: 2px; /* Aproximação menor entre status e botão */
   background: linear-gradient(135deg, #007bff 0%, #0056b3 50%, #004085 100%);
   color: white;
   border: none;
@@ -2184,8 +2199,8 @@ if (empty($dias_com_valores)) {
 /* ✅ MENSAGENS DE STATUS COM ANIMAÇÕES ELEGANTES */
 .mensagem-status-input {
   font-size: 12px;
-  margin-top: 8px;
-  margin-bottom: 8px;
+  margin-top: 6px; /* reduzir espaço vertical interno */
+  margin-bottom: 6px;
   line-height: 1.5;
   padding: 8px 12px;
   border-radius: 8px;
@@ -2196,7 +2211,7 @@ if (empty($dias_com_valores)) {
   box-sizing: border-box;
   
   /* ✅ ALTURA FIXA PARA EVITAR MOVIMENTAÇÃO */
-  min-height: 45px;
+  min-height: 36px; /* reduzido para aproximar visualmente os campos */
   height: auto;
   
   /* ✅ TRANSIÇÕES SUAVES E ELEGANTES */
@@ -2588,10 +2603,25 @@ const VerificacaoDeposito = {
             if (!modalAberto) {
                 const modalDeposito = document.getElementById('modalDeposito');
                 if (modalDeposito) {
-                    modalDeposito.style.display = 'flex';
-                    document.body.style.overflow = 'hidden';
-                    modalAberto = true;
-                    console.log('Modal aberto por ID modalDeposito');
+          // Mostrar modal e tentar inicializar seu script se disponível
+          modalDeposito.style.display = 'flex';
+          modalDeposito.classList.add('ativo');
+          document.body.style.overflow = 'hidden';
+          modalAberto = true;
+          console.log('Modal aberto por ID modalDeposito');
+
+          // Garantir inicialização dos handlers/máscaras do modal
+          try {
+            if (typeof inicializarModalDeposito === 'function') {
+              console.log('Chamando inicializarModalDeposito() após abrir por ID');
+              inicializarModalDeposito();
+            } else if (typeof window.inicializarModalDeposito === 'function') {
+              console.log('Chamando window.inicializarModalDeposito() após abrir por ID');
+              window.inicializarModalDeposito();
+            }
+          } catch (e) {
+            console.warn('Erro ao inicializar modal de deposito automaticamente:', e);
+          }
                 }
             }
             
@@ -2599,11 +2629,23 @@ const VerificacaoDeposito = {
             if (!modalAberto) {
                 const modalBanca = document.querySelector('.modal-gerencia-banca, .modal-overlay, .modal-deposito');
                 if (modalBanca) {
-                    modalBanca.style.display = 'flex';
-                    modalBanca.classList.add('ativo');
-                    document.body.style.overflow = 'hidden';
-                    modalAberto = true;
-                    console.log('Modal aberto por classe CSS');
+          modalBanca.style.display = 'flex';
+          modalBanca.classList.add('ativo');
+          document.body.style.overflow = 'hidden';
+          modalAberto = true;
+          console.log('Modal aberto por classe CSS');
+
+          // Tentar inicializar também
+          try {
+            if (typeof inicializarModalDeposito === 'function') {
+              console.log('Chamando inicializarModalDeposito() após abrir por classe');
+              inicializarModalDeposito();
+            } else if (typeof window.inicializarModalDeposito === 'function') {
+              window.inicializarModalDeposito();
+            }
+          } catch (e) {
+            console.warn('Erro ao inicializar modal de deposito após abrir por classe:', e);
+          }
                 }
             }
             
@@ -2623,7 +2665,26 @@ const VerificacaoDeposito = {
             
             if (!modalAberto) {
                 console.warn('⚠️ Não foi possível abrir o modal de banca automaticamente');
-                alert('Por favor, clique no botão de "Gerenciar Banca" ou "Depositar" na sua interface principal para fazer um depósito.');
+        // Como último recurso, tentar acionar o botão do topo que já possui o fluxo de inicialização
+        const botaoTopo = document.getElementById('abrirGerenciaBanca');
+        if (botaoTopo) {
+          try {
+            console.log('Tentando acionar o botão de gerência do topo para abrir o modal (fluxo padrão)');
+            botaoTopo.click();
+            // A função atrelada ao clique faz sessionStorage + reload, então retornamos aqui
+            return;
+          } catch (e) {
+            console.warn('Erro ao clicar no botão do topo:', e);
+          }
+        }
+
+        // Se não houver botão ou falhar, usar o reload fallback
+        try {
+          sessionStorage.setItem('abrirModalGerencia', 'true');
+          location.reload();
+        } catch (e) {
+          alert('Por favor, clique no botão de "Gerenciar Banca" ou "Depositar" na sua interface principal para fazer um depósito.');
+        }
             }
         }, 200);
     },
@@ -3629,6 +3690,51 @@ SistemaCadastroNovo.selecionarTipo = function(tipo) {
 
     this.mostrarCamposParaTipo(tipo);
     this.resetarValoresInputs();
+
+    // Ao selecionar um tipo, esconder a mensagem inicial para mostrar os inputs e mensagens de verificação
+    try {
+      const mensagemInicial = document.getElementById('mensagem-inicial-gestao');
+      const tempoAnim = (this.config && this.config.TIMEOUT_ANIMACAO) ? this.config.TIMEOUT_ANIMACAO : 300;
+      if (mensagemInicial) {
+        // começar animação de saída
+        mensagemInicial.style.opacity = '0';
+        mensagemInicial.classList.remove('ativo');
+
+        // após animação, ocultar por completo
+        setTimeout(() => {
+          mensagemInicial.style.display = 'none';
+        }, tempoAnim);
+      }
+    } catch (err) {
+      console.warn('Erro ao tentar esconder mensagem inicial:', err);
+    }
+
+    // Limpar/ocultar todas as mensagens internas ao selecionar qualquer opção
+    try {
+      const limparMensagens = () => {
+        if (this.elementos.inputsDuplos) {
+          this.elementos.inputsDuplos.querySelectorAll('.mensagem-status-input').forEach(ms => {
+            ms.textContent = '';
+            ms.style.opacity = '0';
+            // manter display:block para preservar altura definida pelo CSS
+            ms.style.display = 'block';
+            ms.classList.remove('positivo', 'negativo', 'neutro', 'animar');
+          });
+        }
+        if (this.elementos.inputUnico) {
+          const ms = this.elementos.inputUnico.querySelector('.mensagem-status-input');
+          if (ms) {
+            ms.textContent = '';
+            ms.style.opacity = '0';
+            ms.style.display = 'block';
+            ms.classList.remove('positivo', 'negativo', 'neutro', 'animar');
+          }
+        }
+      };
+      limparMensagens();
+    } catch (err) {
+      console.warn('Erro ao limpar mensagens de verificação:', err);
+    }
 
     setTimeout(() => {
       if (tipo === 'red') {
