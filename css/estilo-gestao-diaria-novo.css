@@ -2743,3 +2743,384 @@ p {
 /* */
 /* */
 /* */
+/* =======================================================================================================================================================
+                                          💼  CSS PARA TELA SEM CADASTRO DE MENTORES COM BOTÃO ADD+
+   ==========================================================================================================================================================*/
+/* ===== CSS PARA TELA SEM MENTORES ===== */
+
+/* ===== CSS PARA TELA SEM MENTORES ===== */
+
+.mentor-item.sem-mentores {
+  width: 100%;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  min-height: 100%;
+  margin: 0;
+  padding: 20px;
+  box-sizing: border-box;
+}
+
+.container-primeiro-mentor {
+  background: linear-gradient(135deg, #f8fafc 0%, #e2e8f0 100%);
+  border: 2px dashed #cbd5e0;
+  border-radius: 24px;
+  padding: 40px 30px;
+  text-align: center;
+  width: 100%;
+  max-width: 100%;
+  height: auto;
+  min-height: 280px;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  transition: all 0.3s ease;
+  box-shadow: 0 4px 15px rgba(0, 0, 0, 0.08);
+  position: relative;
+  overflow: hidden;
+  margin: 0 auto;
+}
+
+.container-primeiro-mentor::before {
+  content: "";
+  position: absolute;
+  top: -50%;
+  left: -50%;
+  width: 200%;
+  height: 200%;
+  background: linear-gradient(
+    45deg,
+    transparent 30%,
+    rgba(255, 255, 255, 0.1) 50%,
+    transparent 70%
+  );
+  transform: rotate(45deg);
+  animation: shimmer 3s infinite;
+}
+
+@keyframes shimmer {
+  0% {
+    transform: translateX(-100%) translateY(-100%) rotate(45deg);
+  }
+  100% {
+    transform: translateX(100%) translateY(100%) rotate(45deg);
+  }
+}
+
+.container-primeiro-mentor:hover {
+  border-color: #667eea;
+  box-shadow: 0 8px 25px rgba(102, 126, 234, 0.15);
+  transform: translateY(-5px);
+}
+
+.icone-mentor-vazio {
+  width: 60px;
+  height: 60px;
+  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin: 0 auto 20px;
+  font-size: 24px;
+  color: white;
+  box-shadow: 0 6px 15px rgba(102, 126, 234, 0.3);
+  transition: all 0.3s ease;
+  animation: pulse 2s infinite;
+  flex-shrink: 0;
+}
+
+@keyframes pulse {
+  0% {
+    box-shadow: 0 8px 20px rgba(102, 126, 234, 0.3);
+  }
+  50% {
+    box-shadow: 0 8px 30px rgba(102, 126, 234, 0.5);
+    transform: scale(1.05);
+  }
+  100% {
+    box-shadow: 0 8px 20px rgba(102, 126, 234, 0.3);
+  }
+}
+
+.titulo-sem-mentores {
+  font-size: 20px;
+  font-weight: 700;
+  color: #2d3748;
+  margin: 0 0 10px 0;
+  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+  line-height: 1.2;
+}
+
+.descricao-sem-mentores {
+  font-size: 14px;
+  color: #718096;
+  margin: 0 0 25px 0;
+  line-height: 1.5;
+  font-weight: 500;
+}
+
+.btn-primeiro-mentor {
+  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  border: none;
+  color: white;
+  padding: 14px 24px;
+  font-size: 16px;
+  font-weight: 600;
+  border-radius: 14px;
+  cursor: pointer;
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+  box-shadow: 0 6px 15px rgba(102, 126, 234, 0.3);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 10px;
+  margin: 0 auto;
+  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+  position: relative;
+  overflow: hidden;
+  transform: perspective(1px) translateZ(0);
+  width: auto;
+  max-width: 100%;
+  flex-shrink: 0;
+}
+
+.btn-primeiro-mentor::before {
+  content: "";
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  width: 0;
+  height: 0;
+  background: rgba(255, 255, 255, 0.2);
+  border-radius: 50%;
+  transition: all 0.6s ease;
+  transform: translate(-50%, -50%);
+}
+
+.btn-primeiro-mentor:hover::before {
+  width: 300px;
+  height: 300px;
+}
+
+.btn-primeiro-mentor:hover {
+  transform: translateY(-3px) scale(1.02);
+  box-shadow: 0 12px 30px rgba(102, 126, 234, 0.4);
+  background: linear-gradient(135deg, #5a67d8 0%, #6b46c1 100%);
+}
+
+.btn-primeiro-mentor:active {
+  transform: translateY(-1px) scale(0.98);
+  box-shadow: 0 6px 15px rgba(102, 126, 234, 0.3);
+}
+
+.btn-primeiro-mentor i {
+  font-size: 20px;
+  filter: drop-shadow(0 1px 2px rgba(0, 0, 0, 0.1));
+}
+
+/* ===== RESPONSIVIDADE ===== */
+
+@media (max-width: 768px) {
+  .mentor-item.sem-mentores {
+    min-height: auto;
+    padding: 15px;
+  }
+
+  .container-primeiro-mentor {
+    padding: 25px 20px;
+    margin: 0;
+    border-radius: 20px;
+    min-height: 220px;
+  }
+
+  .icone-mentor-vazio {
+    width: 50px;
+    height: 50px;
+    font-size: 20px;
+    margin-bottom: 15px;
+  }
+
+  .titulo-sem-mentores {
+    font-size: 18px;
+    margin-bottom: 8px;
+  }
+
+  .descricao-sem-mentores {
+    font-size: 13px;
+    margin-bottom: 20px;
+    padding: 0 5px;
+  }
+
+  .btn-primeiro-mentor {
+    padding: 12px 20px;
+    font-size: 15px;
+    border-radius: 12px;
+    gap: 8px;
+    width: auto;
+    max-width: 100%;
+  }
+
+  .btn-primeiro-mentor i {
+    font-size: 16px;
+  }
+}
+
+@media (max-width: 480px) {
+  .mentor-item.sem-mentores {
+    min-height: auto;
+    margin: 10px 0;
+    padding: 10px;
+  }
+
+  .container-primeiro-mentor {
+    padding: 20px 15px;
+    margin: 0;
+    border-radius: 18px;
+    min-height: 200px;
+  }
+
+  .icone-mentor-vazio {
+    width: 45px;
+    height: 45px;
+    font-size: 18px;
+    margin-bottom: 12px;
+  }
+
+  .titulo-sem-mentores {
+    font-size: 16px;
+    margin-bottom: 6px;
+  }
+
+  .descricao-sem-mentores {
+    font-size: 12px;
+    margin-bottom: 15px;
+    padding: 0 5px;
+  }
+
+  .btn-primeiro-mentor {
+    padding: 10px 18px;
+    font-size: 14px;
+    border-radius: 10px;
+    gap: 6px;
+    width: auto;
+    max-width: 100%;
+  }
+
+  .btn-primeiro-mentor i {
+    font-size: 14px;
+  }
+}
+
+/* ===== ANIMAÇÕES EXTRAS ===== */
+
+.container-primeiro-mentor {
+  animation: slideUp 0.6s ease-out;
+}
+
+@keyframes slideUp {
+  from {
+    opacity: 0;
+    transform: translateY(30px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+/* ===== HOVER ESPECIAL NO CONTAINER ===== */
+.container-primeiro-mentor:hover .icone-mentor-vazio {
+  transform: scale(1.1) rotate(360deg);
+  transition: all 0.8s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.container-primeiro-mentor:hover .titulo-sem-mentores {
+  color: #667eea;
+  transition: color 0.3s ease;
+}
+
+/* ===== EFEITO LOADING NO BOTÃO ===== */
+.btn-primeiro-mentor.carregando {
+  pointer-events: none;
+  opacity: 0.7;
+}
+
+.btn-primeiro-mentor.carregando::after {
+  content: "";
+  position: absolute;
+  width: 20px;
+  height: 20px;
+  border: 2px solid transparent;
+  border-top: 2px solid white;
+  border-radius: 50%;
+  animation: spin 1s linear infinite;
+  right: 20px;
+}
+
+@keyframes spin {
+  0% {
+    transform: rotate(0deg);
+  }
+  100% {
+    transform: rotate(360deg);
+  }
+}
+
+/* ===== DARK MODE SUPPORT ===== */
+@media (prefers-color-scheme: dark) {
+  .container-primeiro-mentor {
+    background: linear-gradient(135deg, #2d3748 0%, #4a5568 100%);
+    border-color: #4a5568;
+  }
+
+  .titulo-sem-mentores {
+    color: #e2e8f0;
+  }
+
+  .descricao-sem-mentores {
+    color: #a0aec0;
+  }
+}
+
+/* ===== ACESSIBILIDADE ===== */
+.btn-primeiro-mentor:focus {
+  outline: none;
+  box-shadow: 0 8px 20px rgba(102, 126, 234, 0.3),
+    0 0 0 3px rgba(102, 126, 234, 0.2);
+}
+
+.btn-primeiro-mentor:focus-visible {
+  outline: 2px solid #667eea;
+  outline-offset: 2px;
+}
+
+/* ===== REDUZIR MOVIMENTO PARA USUÁRIOS SENSÍVEIS ===== */
+@media (prefers-reduced-motion: reduce) {
+  .container-primeiro-mentor::before,
+  .icone-mentor-vazio,
+  .btn-primeiro-mentor,
+  .container-primeiro-mentor {
+    animation: none;
+  }
+
+  .container-primeiro-mentor:hover .icone-mentor-vazio {
+    transform: scale(1.05);
+    transition: transform 0.2s ease;
+  }
+}
+/* =======================================================================================================================================================
+                                          💼  FIM CSS PARA TELA SEM CADASTRO DE MENTORES COM BOTÃO ADD+
+   ==========================================================================================================================================================*/
+/* */
+/* */
+/* */
+/* */
+/* */
+/* */
+/* */
+/* */
+/* */
+/* */
+/* */

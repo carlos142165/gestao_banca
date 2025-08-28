@@ -1,5 +1,5 @@
 <?php
-// carregar-mentores.php - VERSÃO INTEGRADA COM FILTRO E SINCRONIZAÇÃO
+// carregar-mentores.php - VERSÃO COM MENTOR OCULTO PARA EVITAR ERROS
 
 require_once 'config.php';
 require_once 'carregar_sessao.php';
@@ -71,20 +71,17 @@ date_default_timezone_set('America/Bahia');
 
 switch ($periodo) {
     case 'dia':
-        // Apenas registros de hoje
         $condicaoData = "AND DATE(vm.data_criacao) = CURDATE()";
         error_log("DEBUG: Aplicando filtro DIA - " . date('Y-m-d'));
         break;
         
     case 'mes':
-        // Registros do mês atual
         $condicaoData = "AND MONTH(vm.data_criacao) = MONTH(CURDATE()) 
                         AND YEAR(vm.data_criacao) = YEAR(CURDATE())";
         error_log("DEBUG: Aplicando filtro MÊS - " . date('Y-m'));
         break;
         
     case 'ano':
-        // Registros do ano atual
         $condicaoData = "AND YEAR(vm.data_criacao) = YEAR(CURDATE())";
         error_log("DEBUG: Aplicando filtro ANO - " . date('Y'));
         break;
@@ -106,14 +103,16 @@ $lista_mentores = [];
 $total_geral_saldo = 0;
 $total_geral_green = 0;
 $total_geral_red = 0;
+$tem_mentores_reais = false;
 
-// ✅ PROCESSAMENTO DOS MENTORES COM LOG DETALHADO
+// ✅ PROCESSAMENTO DOS MENTORES REAIS
 while ($mentor = $result->fetch_assoc()) {
+  $tem_mentores_reais = true;
   $id_mentor   = $mentor['id'];
   $nome_mentor = htmlspecialchars($mentor['nome'] ?? 'Mentor', ENT_QUOTES, 'UTF-8');
   $foto_mentor = htmlspecialchars($mentor['foto'], ENT_QUOTES, 'UTF-8');
 
-  // ✅ QUERY COM FILTRO DE PERÍODO APLICADO + LOG
+  // Query com filtro de período aplicado
   $sql_valores = "
     SELECT 
       COALESCE(SUM(CASE WHEN green = 1 THEN 1 ELSE 0 END), 0) AS total_green,
@@ -132,7 +131,6 @@ while ($mentor = $result->fetch_assoc()) {
   $valores = $stmt_val->get_result()->fetch_assoc();
   $stmt_val->close();
 
-  // ✅ LOG DETALHADO PARA DEBUG
   error_log("DEBUG Mentor $nome_mentor (ID: $id_mentor): Green={$valores['total_green']}, Red={$valores['total_red']}, Registros={$valores['total_registros']}");
 
   $saldo = $valores['total_valor_green'] - $valores['total_valor_red'];
@@ -148,68 +146,115 @@ while ($mentor = $result->fetch_assoc()) {
   $total_geral_red     += $valores['total_red'];
 }
 
+// ✅ NOVO: ADICIONAR MENTOR OCULTO SE NÃO HOUVER MENTORES REAIS
+if (!$tem_mentores_reais) {
+    $mentor_oculto = [
+        'id' => 0,
+        'nome' => 'Sistema',
+        'foto' => '',
+        'valores' => [
+            'total_green' => 0,
+            'total_red' => 0,
+            'total_valor_green' => 0,
+            'total_valor_red' => 0,
+            'total_registros' => 0
+        ],
+        'saldo' => 0,
+        'oculto' => true // Marca como oculto
+    ];
+    
+    $lista_mentores[] = $mentor_oculto;
+    error_log("DEBUG: Mentor oculto adicionado para evitar erros de cálculo");
+}
+
 // ✅ LOG DO RESULTADO GERAL
-error_log("DEBUG Total Geral: Saldo=R$ $total_geral_saldo, Green=$total_geral_green, Red=$total_geral_red, Período=$periodo");
+error_log("DEBUG Total Geral: Saldo=R$ $total_geral_saldo, Green=$total_geral_green, Red=$total_geral_red, Período=$periodo, Mentores Reais=" . ($tem_mentores_reais ? 'Sim' : 'Não'));
 
 // Ordena por saldo (mantido igual)
 usort($lista_mentores, fn($a, $b) => $b['saldo'] <=> $a['saldo']);
 
 // ✅ CABEÇALHO COM INFORMAÇÕES DO PERÍODO (OPCIONAL - PARA DEBUG)
 if (isset($_GET['debug']) && $_GET['debug'] === '1') {
-    echo "<!-- DEBUG: Período=$periodo, Condição=$condicaoData, Mentores=" . count($lista_mentores) . " -->\n";
+    echo "<!-- DEBUG: Período=$periodo, Condição=$condicaoData, Mentores=" . count($lista_mentores) . ", Reais=$tem_mentores_reais -->\n";
 }
 
-// ✅ EXIBE OS MENTORES COM VALORES FILTRADOS (mantido igual)
-foreach ($lista_mentores as $posicao => $mentor) {
-  $rank             = $posicao + 1;
-  $valores          = $mentor['valores'];
-  $saldo_formatado  = number_format($mentor['saldo'], 2, ',', '.');
-
-  $classe_borda = $mentor['saldo'] == 0
-    ? 'card-neutro'
-    : ($mentor['saldo'] > 0 ? 'card-positivo' : 'card-negativo');
-
-  // Verificação da foto
-  $foto_path = 'uploads/' . $mentor['foto'];
-  if (!file_exists($foto_path) || empty($mentor['foto'])) {
-    $foto_path = 'https://cdn-icons-png.flaticon.com/512/847/847969.png';
-  }
-
-  echo "
-    <div class='mentor-item'>
-      <div class='mentor-rank-externo'>{$rank}º</div>
-
-      <div class='mentor-card {$classe_borda}' 
-           data-nome='{$mentor['nome']}'
-           data-foto='{$foto_path}'
-           data-id='{$mentor['id']}'>
-        <div class='mentor-header'>
-          <img src='{$foto_path}' alt='Foto de {$mentor['nome']}' class='mentor-img' 
-               onerror=\"this.src='https://cdn-icons-png.flaticon.com/512/847/847969.png'\" />
-          <h3 class='mentor-nome'>{$mentor['nome']}</h3>
+// ✅ NOVO: SE NÃO HÁ MENTORES REAIS, MOSTRAR BOTÃO PARA CADASTRAR
+if (!$tem_mentores_reais) {
+    echo "
+    <div class='mentor-item sem-mentores'>
+        <div class='container-primeiro-mentor'>
+            <div class='icone-mentor-vazio'>
+                <i class='fas fa-user-plus'></i>
+            </div>
+            <h3 class='titulo-sem-mentores'>Nenhum Mentor Cadastrado</h3>
+            <p class='descricao-sem-mentores'>Para começar a usar o sistema, você precisa cadastrar seu primeiro mentor.</p>
+            <button class='btn-primeiro-mentor' onclick='prepararFormularioNovoMentor()'>
+                <i class='fas fa-user-plus'></i>
+                Cadastre Seu Primeiro Mentor
+            </button>
         </div>
-        <div class='mentor-right'>
-          <div class='mentor-values-inline'>
-            <div class='value-box-green green'><p>Green</p><p>{$valores['total_green']}</p></div>
-            <div class='value-box-red red'><p>Red</p><p>{$valores['total_red']}</p></div>
-            <div class='value-box-saldo saldo'><p>Saldo</p><p>R$ {$saldo_formatado}</p></div>
+    </div>
+    ";
+} else {
+    // ✅ EXIBE OS MENTORES REAIS COM VALORES FILTRADOS
+    $rank = 1;
+    foreach ($lista_mentores as $posicao => $mentor) {
+        // Pula mentor oculto na exibição
+        if (isset($mentor['oculto']) && $mentor['oculto']) {
+            continue;
+        }
+        
+        $valores          = $mentor['valores'];
+        $saldo_formatado  = number_format($mentor['saldo'], 2, ',', '.');
+
+        $classe_borda = $mentor['saldo'] == 0
+            ? 'card-neutro'
+            : ($mentor['saldo'] > 0 ? 'card-positivo' : 'card-negativo');
+
+        // Verificação da foto
+        $foto_path = 'uploads/' . $mentor['foto'];
+        if (!file_exists($foto_path) || empty($mentor['foto'])) {
+            $foto_path = 'https://cdn-icons-png.flaticon.com/512/847/847969.png';
+        }
+
+        echo "
+        <div class='mentor-item'>
+          <div class='mentor-rank-externo'>{$rank}º</div>
+
+          <div class='mentor-card {$classe_borda}' 
+               data-nome='{$mentor['nome']}'
+               data-foto='{$foto_path}'
+               data-id='{$mentor['id']}'>
+            <div class='mentor-header'>
+              <img src='{$foto_path}' alt='Foto de {$mentor['nome']}' class='mentor-img' 
+                   onerror=\"this.src='https://cdn-icons-png.flaticon.com/512/847/847969.png'\" />
+              <h3 class='mentor-nome'>{$mentor['nome']}</h3>
+            </div>
+            <div class='mentor-right'>
+              <div class='mentor-values-inline'>
+                <div class='value-box-green green'><p>Green</p><p>{$valores['total_green']}</p></div>
+                <div class='value-box-red red'><p>Red</p><p>{$valores['total_red']}</p></div>
+                <div class='value-box-saldo saldo'><p>Saldo</p><p>R$ {$saldo_formatado}</p></div>
+              </div>
+            </div>
+          </div>
+
+          <div class='mentor-menu-externo'>
+            <span class='menu-toggle' title='Mais opções'>⋮</span>
+            <div class='menu-opcoes'>
+              <button onclick='editarAposta({$mentor["id"]})'>
+                <i class='fas fa-trash'></i> Excluir Entrada
+              </button>
+              <button onclick='editarMentor({$mentor["id"]})'>
+                <i class='fas fa-user-edit'></i> Editar Mentor
+              </button>
+            </div>
           </div>
         </div>
-      </div>
-
-      <div class='mentor-menu-externo'>
-        <span class='menu-toggle' title='Mais opções'>⋮</span>
-        <div class='menu-opcoes'>
-          <button onclick='editarAposta({$mentor["id"]})'>
-            <i class='fas fa-trash'></i> Excluir Entrada
-          </button>
-          <button onclick='editarMentor({$mentor["id"]})'>
-            <i class='fas fa-user-edit'></i> Editar Mentor
-          </button>
-        </div>
-      </div>
-    </div>
-  ";
+        ";
+        
+        $rank++; // Incrementa rank apenas para mentores reais
+    }
 }
 
 // ✅ ELEMENTOS COM DADOS DO PERÍODO SELECIONADO + INFORMAÇÕES EXTRAS
@@ -236,10 +281,8 @@ echo "<div id='filtro-info' data-periodo='{$periodo}' data-total-mentores='" . c
 // ✅ DADOS PARA INTEGRAÇÃO COM dados_banca.php
 echo "<div id='lucro-filtrado' data-green='{$total_geral_green}' data-red='{$total_geral_red}' data-lucro='" . number_format($total_geral_saldo, 2, ',', '.') . "' data-periodo='{$periodo}' style='display:none;'></div>";
 
-// ✅ MENSAGEM SE NÃO HOUVER MENTORES
-if (empty($lista_mentores)) {
-  echo "<div class='mentor-card card-neutro'>Sem mentores cadastrados.</div>";
-}
+// ✅ NOVO: INDICADOR DE ESTADO PARA JAVASCRIPT
+echo "<div id='estado-mentores' data-tem-mentores='" . ($tem_mentores_reais ? 'true' : 'false') . "' data-total-reais='" . ($tem_mentores_reais ? count($lista_mentores) - 1 : 0) . "' style='display:none;'></div>";
 
 // ✅ DADOS PARA JAVASCRIPT - SINCRONIZAÇÃO
 echo "<script>
@@ -258,10 +301,19 @@ echo "<script>
     radioCorreto.checked = true;
   }
   
+  // ✅ NOVO: Verificar estado dos mentores
+  const temMentores = " . ($tem_mentores_reais ? 'true' : 'false') . ";
+  if (typeof window.estadoMentores !== 'undefined') {
+    window.estadoMentores.temMentores = temMentores;
+    window.estadoMentores.totalReais = " . ($tem_mentores_reais ? count($lista_mentores) - 1 : 0) . ";
+  }
+  
   // ✅ LOG para debug
   console.log('📊 Mentores carregados:', {
     periodo: '{$periodo}',
     totalMentores: " . count($lista_mentores) . ",
+    mentoresReais: " . ($tem_mentores_reais ? count($lista_mentores) - 1 : 0) . ",
+    temMentores: temMentores,
     totalGreen: {$total_geral_green},
     totalRed: {$total_geral_red},
     saldoTotal: '{$total_geral_saldo}',
@@ -270,6 +322,6 @@ echo "<script>
 </script>";
 
 // ✅ LOG FINAL
-error_log("DEBUG carregar-mentores.php finalizado: Período=$periodo, Mentores=" . count($lista_mentores) . ", Saldo Total=R$ $total_geral_saldo");
+error_log("DEBUG carregar-mentores.php finalizado: Período=$periodo, Mentores=" . count($lista_mentores) . ", Mentores Reais=" . ($tem_mentores_reais ? 'Sim' : 'Não') . ", Saldo Total=R$ $total_geral_saldo");
 
 ?>

@@ -1,3 +1,18 @@
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
 // ================================================
 // SISTEMA DE GESTÃO DE MENTORES - VERSÃO COMPLETA CORRIGIDA
 // ================================================
@@ -4923,3 +4938,460 @@ console.log("🎯 Modal centralizado configurado com sucesso!");
 //
 //
 //
+// ========================================================================================================================
+//                                      VERIFICAÇÃO DE MENTORES CADASTRADO PARA NÃO DA ERRO
+// ========================================================================================================================
+// ========================================================================================================================
+//                             SISTEMA DE MENTOR OCULTO PARA EVITAR ERROS DE CÁLCULO
+// ========================================================================================================================
+
+// Estado global para controlar mentores
+// ========================================================================================================================
+//                             SISTEMA DE MENTOR OCULTO PARA EVITAR ERROS DE CÁLCULO
+// ========================================================================================================================
+
+// Estado global para controlar mentores
+window.estadoMentores = {
+  temMentores: false,
+  totalReais: 0,
+  mentorOcultoAtivo: false,
+  ultimaVerificacao: null,
+};
+
+// ===== EXTENSÕES PARA O MENTOR MANAGER =====
+if (typeof MentorManager !== "undefined") {
+  // Backup da função original
+  const originalRecarregarMentores = MentorManager.recarregarMentores;
+
+  // Sobrescrever com verificação de mentor oculto
+  MentorManager.recarregarMentores = async function () {
+    try {
+      // Incluir período atual sempre
+      const formData = new FormData();
+      if (typeof SistemaFiltroPeriodo !== "undefined") {
+        formData.append("periodo", SistemaFiltroPeriodo.periodoAtual);
+      }
+
+      const response = await fetch("carregar-mentores.php", {
+        method: "POST",
+        body: formData,
+        headers: {
+          "Cache-Control": "no-cache",
+          "X-Requested-With": "XMLHttpRequest",
+        },
+      });
+
+      if (!response.ok) {
+        throw new Error(`HTTP ${response.status}: ${response.statusText}`);
+      }
+
+      const html = await response.text();
+      const container = document.getElementById("listaMentores");
+
+      if (!container) {
+        throw new Error("Container de mentores não encontrado");
+      }
+
+      // Atualiza o conteúdo
+      container.innerHTML = html;
+
+      // Verifica estado dos mentores após carregamento
+      verificarEstadoMentores();
+
+      // Reaplica eventos e estilos
+      this.aplicarEstilosCorretos();
+      this.atualizarDashboard(container);
+
+      console.log("Mentores recarregados com verificação de estado");
+    } catch (error) {
+      console.error("Erro ao recarregar mentores:", error);
+      // Em caso de erro, garante valores seguros
+      garantirValoresSegurosSemMentores();
+
+      if (typeof ToastManager !== "undefined") {
+        ToastManager.mostrar(
+          "Erro ao carregar mentores: " + error.message,
+          "erro"
+        );
+      }
+    }
+  };
+
+  // Backup da função original de atualizar dashboard
+  const originalAtualizarDashboard = MentorManager.atualizarDashboard;
+
+  // Sobrescrever com valores seguros
+  MentorManager.atualizarDashboard = function (container) {
+    try {
+      // Verificar se há mentores reais antes de atualizar
+      const estadoElement = document.getElementById("estado-mentores");
+      const temMentores = estadoElement
+        ? estadoElement.dataset.temMentores === "true"
+        : false;
+
+      if (!temMentores) {
+        // Usar valores seguros para dashboard sem mentores
+        atualizarDashboardSemMentores();
+        return;
+      }
+
+      // Se há mentores, usar função original
+      if (originalAtualizarDashboard) {
+        originalAtualizarDashboard.call(this, container);
+      }
+    } catch (error) {
+      console.error("Erro ao atualizar dashboard:", error);
+      atualizarDashboardSemMentores();
+    }
+  };
+}
+
+// ===== FUNÇÃO PRINCIPAL PARA VERIFICAR ESTADO =====
+function verificarEstadoMentores() {
+  try {
+    const estadoElement = document.getElementById("estado-mentores");
+
+    if (estadoElement) {
+      const temMentores = estadoElement.dataset.temMentores === "true";
+      const totalReais = parseInt(estadoElement.dataset.totalReais) || 0;
+
+      // Atualizar estado global
+      window.estadoMentores.temMentores = temMentores;
+      window.estadoMentores.totalReais = totalReais;
+      window.estadoMentores.ultimaVerificacao = new Date();
+
+      console.log("Estado dos mentores verificado:", {
+        temMentores,
+        totalReais,
+        timestamp: new Date().toLocaleTimeString(),
+      });
+
+      // Configurar comportamento baseado no estado
+      if (!temMentores) {
+        configurarComportamentoSemMentores();
+      } else {
+        configurarComportamentoComMentores();
+      }
+    } else {
+      console.warn("Elemento de estado dos mentores não encontrado");
+      // Fallback: assumir que não há mentores e aplicar valores seguros
+      garantirValoresSegurosSemMentores();
+    }
+  } catch (error) {
+    console.error("Erro ao verificar estado dos mentores:", error);
+    garantirValoresSegurosSemMentores();
+  }
+}
+
+// ===== CONFIGURAÇÕES PARA QUANDO NÃO HÁ MENTORES =====
+function configurarComportamentoSemMentores() {
+  console.log("Configurando comportamento para estado SEM MENTORES");
+
+  // Garantir valores seguros no dashboard
+  atualizarDashboardSemMentores();
+
+  // Desabilitar funcionalidades que dependem de mentores
+  desabilitarFuncionalidadesMentores();
+
+  // Configurar botão de primeiro mentor se existir
+  configurarBotaoPrimeiroMentor();
+
+  // Evitar atualizações automáticas desnecessárias
+  if (typeof MentorManager !== "undefined" && MentorManager.intervalUpdateId) {
+    clearInterval(MentorManager.intervalUpdateId);
+    MentorManager.intervalUpdateId = null;
+    console.log("Atualização automática pausada (sem mentores)");
+  }
+}
+
+// ===== CONFIGURAÇÕES PARA QUANDO HÁ MENTORES =====
+function configurarComportamentoComMentores() {
+  console.log("Configurando comportamento para estado COM MENTORES");
+
+  // Reabilitar funcionalidades
+  habilitarFuncionalidadesMentores();
+
+  // Reativar atualizações automáticas se necessário
+  if (typeof MentorManager !== "undefined" && !MentorManager.intervalUpdateId) {
+    MentorManager.iniciarAtualizacaoAutomatica();
+    console.log("Atualização automática reativada");
+  }
+}
+
+// ===== ATUALIZAR DASHBOARD SEM MENTORES =====
+function atualizarDashboardSemMentores() {
+  try {
+    // Valores seguros para placar
+    const placarGreen = document.querySelector(".placar-green");
+    const placarRed = document.querySelector(".placar-red");
+
+    if (placarGreen) placarGreen.textContent = "0";
+    if (placarRed) placarRed.textContent = "0";
+
+    // Valores seguros para saldo
+    const valorSpan = document.querySelector(".valor-saldo");
+    if (valorSpan) {
+      valorSpan.textContent = "R$ 0,00";
+      valorSpan.classList.remove("saldo-positivo", "saldo-negativo");
+      valorSpan.classList.add("saldo-neutro");
+    }
+
+    // Valores seguros para meta
+    const metaSpan = document.querySelector("#meta-dia");
+    const rotuloMetaSpan = document.querySelector(".rotulo-meta");
+
+    if (metaSpan && rotuloMetaSpan) {
+      // Manter a meta original, apenas zerar o progresso
+      rotuloMetaSpan.innerHTML = "Meta do Dia";
+      // Não alterar o valor da meta, apenas o progresso
+    }
+
+    console.log(
+      "Dashboard atualizado com valores seguros para estado sem mentores"
+    );
+  } catch (error) {
+    console.error("Erro ao atualizar dashboard sem mentores:", error);
+  }
+}
+
+// ===== GARANTIR VALORES SEGUROS =====
+function garantirValoresSegurosSemMentores() {
+  try {
+    // Criar elementos de dados seguros se não existirem
+    const elementosSeguros = [
+      { id: "total-green-dia", attr: "green", valor: "0" },
+      { id: "total-red-dia", attr: "red", valor: "0" },
+      { id: "saldo-dia", attr: "total", valor: "0,00" },
+    ];
+
+    elementosSeguros.forEach(({ id, attr, valor }) => {
+      let elemento = document.getElementById(id);
+      if (!elemento) {
+        elemento = document.createElement("div");
+        elemento.id = id;
+        elemento.style.display = "none";
+        document.body.appendChild(elemento);
+      }
+      elemento.dataset[attr] = valor;
+    });
+
+    // Atualizar estado global
+    window.estadoMentores.temMentores = false;
+    window.estadoMentores.totalReais = 0;
+    window.estadoMentores.mentorOcultoAtivo = true;
+
+    console.log("Valores seguros garantidos para sistema sem mentores");
+  } catch (error) {
+    console.error("Erro ao garantir valores seguros:", error);
+  }
+}
+
+// ===== CONFIGURAR BOTÃO PRIMEIRO MENTOR (VERSÃO DIRETA) =====
+function configurarBotaoPrimeiroMentor() {
+  const botao = document.querySelector(".btn-primeiro-mentor");
+  if (!botao || botao.dataset.configurado === "true") return;
+
+  botao.addEventListener("click", function () {
+    // Chamada DIRETA sem interceptações ou delays
+    if (typeof prepararFormularioNovoMentor !== "undefined") {
+      prepararFormularioNovoMentor();
+    } else if (typeof FormularioManager !== "undefined") {
+      FormularioManager.prepararNovoMentor();
+    }
+  });
+
+  botao.dataset.configurado = "true";
+}
+
+// ===== DESABILITAR FUNCIONALIDADES =====
+function desabilitarFuncionalidadesMentores() {
+  // Lista de seletores para desabilitar
+  const seletoresDesabilitar = [
+    ".mentor-card:not(.sem-mentores)",
+    ".menu-toggle",
+    ".mentor-menu-externo",
+  ];
+
+  seletoresDesabilitar.forEach((seletor) => {
+    const elementos = document.querySelectorAll(seletor);
+    elementos.forEach((el) => {
+      el.style.pointerEvents = "none";
+      el.style.opacity = "0.5";
+    });
+  });
+}
+
+// ===== HABILITAR FUNCIONALIDADES =====
+function habilitarFuncionalidadesMentores() {
+  // Lista de seletores para habilitar
+  const seletoresHabilitar = [
+    ".mentor-card",
+    ".menu-toggle",
+    ".mentor-menu-externo",
+  ];
+
+  seletoresHabilitar.forEach((seletor) => {
+    const elementos = document.querySelectorAll(seletor);
+    elementos.forEach((el) => {
+      el.style.pointerEvents = "";
+      el.style.opacity = "";
+    });
+  });
+}
+
+// ===== EXTENSÃO PARA FORMULÁRIO VALOR MANAGER =====
+if (typeof FormularioValorManager !== "undefined") {
+  // Backup da função original
+  const originalExibirFormulario =
+    FormularioValorManager.exibirFormularioMentor;
+
+  // Sobrescrever para verificar estado
+  FormularioValorManager.exibirFormularioMentor = function (card) {
+    // Verificar se existem mentores reais
+    if (!window.estadoMentores.temMentores) {
+      if (typeof ToastManager !== "undefined") {
+        ToastManager.mostrar(
+          "Cadastre um mentor primeiro para começar a usar o sistema",
+          "aviso"
+        );
+      } else {
+        alert("Cadastre um mentor primeiro para começar a usar o sistema");
+      }
+      return;
+    }
+
+    // Se há mentores, usar função original
+    if (originalExibirFormulario) {
+      originalExibirFormulario.call(this, card);
+    }
+  };
+}
+
+// ===== EXTENSÃO PARA META DIÁRIA MANAGER =====
+if (typeof MetaDiariaManager !== "undefined") {
+  // Backup da função original
+  const originalAtualizarMeta = MetaDiariaManager.atualizarMetaDiaria;
+
+  // Sobrescrever com verificação de estado
+  MetaDiariaManager.atualizarMetaDiaria = async function (
+    aguardarDados = false
+  ) {
+    try {
+      // Verificar estado dos mentores
+      const temMentores = window.estadoMentores.temMentores;
+
+      // Se não há mentores, usar valores seguros mas manter cálculo da meta
+      if (!temMentores) {
+        console.log("MetaDiariaManager: Usando valores seguros (sem mentores)");
+
+        // Ainda assim, buscar dados da banca para calcular meta correta
+        const response = await fetch("dados_banca.php", {
+          method: "GET",
+          headers: {
+            "Cache-Control": "no-cache",
+            "X-Requested-With": "XMLHttpRequest",
+          },
+        });
+
+        if (response.ok) {
+          const data = await response.json();
+          if (data.success) {
+            // Forçar lucro zero mas manter meta real
+            const dataSemMentores = {
+              ...data,
+              lucro: 0,
+              lucro_formatado: "R$ 0,00",
+            };
+
+            this.atualizarTodosElementos(dataSemMentores);
+            return dataSemMentores;
+          }
+        }
+
+        // Fallback: valores mínimos seguros
+        return null;
+      }
+
+      // Se há mentores, usar função original
+      if (originalAtualizarMeta) {
+        return await originalAtualizarMeta.call(this, aguardarDados);
+      }
+    } catch (error) {
+      console.error("Erro no MetaDiariaManager com mentor oculto:", error);
+      return null;
+    }
+  };
+}
+
+// ===== INTERCEPTAÇÃO REMOVIDA =====
+// FUNÇÃO REMOVIDA: interceptarCadastroMentor()
+// Esta função estava causando delays desnecessários no primeiro cadastro
+
+// ===== FUNÇÃO DE DEBUG =====
+window.debugMentorOculto = function () {
+  const info = {
+    estadoGlobal: window.estadoMentores,
+    elementoEstado: document.getElementById("estado-mentores")?.dataset || null,
+    elementosSeguros: {
+      green:
+        document.getElementById("total-green-dia")?.dataset?.green || "N/A",
+      red: document.getElementById("total-red-dia")?.dataset?.red || "N/A",
+      saldo: document.getElementById("saldo-dia")?.dataset?.total || "N/A",
+    },
+    botaoPrimeiro: !!document.querySelector(".btn-primeiro-mentor"),
+    containerSemMentores: !!document.querySelector(".sem-mentores"),
+    mentoresVisiveis: document.querySelectorAll(
+      ".mentor-card:not(.sem-mentores)"
+    ).length,
+  };
+
+  console.log("🔍 Debug Mentor Oculto:", info);
+  return info;
+};
+
+// ===== INICIALIZAÇÃO MÍNIMA (SEM INTERCEPTAÇÕES) =====
+function inicializarSistemaMentorOculto() {
+  // Apenas verificar estado inicial - SEM interceptações
+  setTimeout(() => {
+    verificarEstadoMentores();
+    // REMOVIDO: interceptarCadastroMentor() - estava causando delay
+  }, 100);
+
+  // Verificação menos frequente
+  setInterval(verificarEstadoMentores, 15000);
+}
+
+// Auto-inicialização imediata
+if (document.readyState === "loading") {
+  document.addEventListener("DOMContentLoaded", inicializarSistemaMentorOculto);
+} else {
+  inicializarSistemaMentorOculto();
+}
+
+// ===== EXPORT PARA ACESSO GLOBAL =====
+window.SistemaMentorOculto = {
+  verificarEstado: verificarEstadoMentores,
+  configurarSemMentores: configurarComportamentoSemMentores,
+  configurarComMentores: configurarComportamentoComMentores,
+  garantirValoresSegurosSem: garantirValoresSegurosSemMentores,
+  debug: window.debugMentorOculto,
+};
+
+console.log("Sistema de Mentor Oculto carregado!");
+console.log("Funcionalidades:");
+console.log("- Mentor oculto para evitar erros de cálculo");
+console.log("- Botão 'Cadastre Seu Primeiro Mentor'");
+console.log("- Valores seguros quando não há mentores");
+console.log("- Verificação automática de estado");
+console.log("- Debug com debugMentorOculto()");
+
+// ========================================================================================================================
+//                                    FIM DO SISTEMA DE MENTOR OCULTO
+// ========================================================================================================================
+
+// ========================================================================================================================
+//                                    FIM DO SISTEMA DE MENTOR OCULTO
+// ========================================================================================================================
+// ========================================================================================================================
+//                                  ✅  FIM VERIFICAÇÃO DE MENTORES CADASTRADO PARA NÃO DA ERRO
+// ========================================================================================================================
