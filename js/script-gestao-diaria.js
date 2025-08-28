@@ -441,37 +441,60 @@ const FormularioManager = {
     try {
       LoaderManager.mostrar();
 
-      const response = await fetch("gestao-diaria.php", {
+      // Envia X-Requested-With para sinalizar requisição AJAX e receber JSON
+      const response = await fetch("cadastrar-mentor-ajax.php", {
         method: "POST",
         body: formData,
+        headers: {
+          "X-Requested-With": "XMLHttpRequest",
+        },
       });
 
       if (!response.ok) {
         throw new Error(`HTTP ${response.status}: ${response.statusText}`);
       }
 
-      // ✅ CORREÇÃO: Aguarda a resposta e processa o redirecionamento
-      const responseText = await response.text();
+      // Tenta interpretar como JSON (rápido), senão como texto
+      const contentType = response.headers.get("content-type") || "";
+      if (contentType.indexOf("application/json") !== -1) {
+        const json = await response.json();
 
-      // Se a resposta contém HTML (redirecionamento), significa sucesso
-      if (
-        responseText.includes("<!DOCTYPE html") ||
-        responseText.includes("<html")
-      ) {
+        if (json.success) {
+          const mensagem =
+            json.mensagem ||
+            (acao === "cadastrar_mentor"
+              ? "✅ Mentor cadastrado com sucesso!"
+              : "✅ Mentor atualizado com sucesso!");
+          ToastManager.mostrar(mensagem, "sucesso");
+
+          // Fecha modal
+          ModalManager.fechar("modal-form");
+
+          // Se o servidor retornou dados do mentor recém-criado, atualiza a lista de forma otimista
+          if (json.mentor && typeof MentorManager === "object") {
+            // Recarrega mentores para garantir consistência com o servidor
+            await MentorManager.recarregarMentores();
+          } else {
+            await MentorManager.recarregarMentores();
+          }
+
+          return true;
+        }
+
+        throw new Error(json.message || "Resposta inválida do servidor");
+      } else {
+        // Fallback: resposta em HTML — interpreta como sucesso e recarrega
+        const responseText = await response.text();
+
         const mensagem =
           acao === "cadastrar_mentor"
             ? "✅ Mentor cadastrado com sucesso!"
             : "✅ Mentor atualizado com sucesso!";
 
         ToastManager.mostrar(mensagem, "sucesso");
-
-        // Fecha modal e recarrega mentores
         ModalManager.fechar("modal-form");
         await MentorManager.recarregarMentores();
-
         return true;
-      } else {
-        throw new Error("Resposta inesperada do servidor");
       }
     } catch (error) {
       console.error("Erro ao enviar formulário:", error);
@@ -4941,14 +4964,6 @@ console.log("🎯 Modal centralizado configurado com sucesso!");
 // ========================================================================================================================
 //                                      VERIFICAÇÃO DE MENTORES CADASTRADO PARA NÃO DA ERRO
 // ========================================================================================================================
-// ========================================================================================================================
-//                             SISTEMA DE MENTOR OCULTO PARA EVITAR ERROS DE CÁLCULO
-// ========================================================================================================================
-
-// Estado global para controlar mentores
-// ========================================================================================================================
-//                             SISTEMA DE MENTOR OCULTO PARA EVITAR ERROS DE CÁLCULO
-// ========================================================================================================================
 
 // Estado global para controlar mentores
 window.estadoMentores = {
@@ -5385,13 +5400,6 @@ console.log("- Valores seguros quando não há mentores");
 console.log("- Verificação automática de estado");
 console.log("- Debug com debugMentorOculto()");
 
-// ========================================================================================================================
-//                                    FIM DO SISTEMA DE MENTOR OCULTO
-// ========================================================================================================================
-
-// ========================================================================================================================
-//                                    FIM DO SISTEMA DE MENTOR OCULTO
-// ========================================================================================================================
 // ========================================================================================================================
 //                                  ✅  FIM VERIFICAÇÃO DE MENTORES CADASTRADO PARA NÃO DA ERRO
 // ========================================================================================================================

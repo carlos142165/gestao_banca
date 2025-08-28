@@ -232,8 +232,48 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['acao']) &&
     setToast('Erro no banco de dados: ' . $e->getMessage(), 'erro');
   }
 
-  header('Location: gestao-diaria.php');
-  exit();
+    // Se for requisição AJAX, retornar JSON rápido para o client processar sem redirecionamento
+    $isAjax = isset($_SERVER['HTTP_X_REQUESTED_WITH']) &&
+              strtolower($_SERVER['HTTP_X_REQUESTED_WITH']) === 'xmlhttprequest';
+
+    if ($isAjax) {
+      // Obter último ID inserido para retornar dados básicos do mentor
+      $mentorInfo = null;
+      try {
+        if ($acao === 'cadastrar_mentor') {
+          $lastId = $conexao->insert_id;
+          if ($lastId && $lastId > 0) {
+            $stmt_info = $conexao->prepare('SELECT id, nome, foto FROM mentores WHERE id = ? AND id_usuario = ? LIMIT 1');
+            $stmt_info->bind_param('ii', $lastId, $usuario_id);
+            $stmt_info->execute();
+            $mentorInfo = $stmt_info->get_result()->fetch_assoc();
+          }
+        } elseif ($acao === 'editar_mentor') {
+          // Retornar os dados do mentor editado
+          $stmt_info = $conexao->prepare('SELECT id, nome, foto FROM mentores WHERE id = ? AND id_usuario = ? LIMIT 1');
+          $stmt_info->bind_param('ii', $mentor_id, $usuario_id);
+          $stmt_info->execute();
+          $mentorInfo = $stmt_info->get_result()->fetch_assoc();
+        }
+      } catch (Exception $e) {
+        // não fatal — apenas não teremos dados extras
+        $mentorInfo = null;
+      }
+
+      $responseJson = [
+        'success' => true,
+        'mensagem' => $mensagem_sucesso ?? 'Operação realizada',
+        'mentor' => $mentorInfo,
+      ];
+
+      header('Content-Type: application/json');
+      echo json_encode($responseJson);
+      exit();
+    }
+
+    // Fallback para requisição padrão — redireciona
+    header('Location: gestao-diaria.php');
+    exit();
 }
 
 // 🔎 Meta formatada
