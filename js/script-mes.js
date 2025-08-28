@@ -59,10 +59,10 @@ const MetaMensalManager = {
 
     try {
       if (aguardarDados) {
-        await new Promise((resolve) => setTimeout(resolve, 150));
+        await new Promise((resolve) => setTimeout(resolve, 100));
       }
 
-      const response = await fetch("dados_banca.php", {
+      const response = await fetch("dados_banca.php?periodo=mes", {
         method: "GET",
         headers: {
           "Cache-Control": "no-cache",
@@ -119,7 +119,117 @@ const MetaMensalManager = {
     }
   },
 
-  // Atualizar todos os elementos - versão para bloco 2
+  // ✅ NOVA FUNÇÃO: CALCULAR META FINAL MENSAL COM VALOR TACHADO E EXTRA
+  calcularMetaFinalMensalComExtra(saldoMes, metaCalculada, bancaTotal, data) {
+    try {
+      let metaFinal,
+        rotulo,
+        statusClass,
+        valorExtra = 0,
+        mostrarTachado = false;
+
+      console.log(`🔍 DEBUG CALCULAR META MENSAL COM EXTRA:`);
+      console.log(`   Saldo Mês: R$ ${saldoMes.toFixed(2)}`);
+      console.log(`   Meta Mês: R$ ${metaCalculada.toFixed(2)}`);
+      console.log(`   Banca: R$ ${bancaTotal.toFixed(2)}`);
+
+      if (bancaTotal <= 0) {
+        metaFinal = bancaTotal;
+        rotulo = "Deposite p/ Começar";
+        statusClass = "sem-banca";
+        console.log(`📊 RESULTADO MENSAL: Sem banca`);
+      }
+      // ✅ META BATIDA OU SUPERADA - COM VALOR EXTRA
+      else if (saldoMes > 0 && metaCalculada > 0 && saldoMes >= metaCalculada) {
+        valorExtra = saldoMes - metaCalculada;
+        mostrarTachado = true;
+        metaFinal = metaCalculada; // Mostra o valor da meta original
+
+        if (valorExtra > 0) {
+          rotulo = `Meta do Mês Superada! <i class='fa-solid fa-trophy'></i>`;
+          statusClass = "meta-superada";
+          console.log(
+            `🏆 META MENSAL SUPERADA: Extra de R$ ${valorExtra.toFixed(2)}`
+          );
+        } else {
+          rotulo = `Meta do Mês Batida! <i class='fa-solid fa-trophy'></i>`;
+          statusClass = "meta-batida";
+          console.log(`🎯 META MENSAL EXATA`);
+        }
+      }
+      // ✅ CASO ESPECIAL: Meta é zero (já foi batida)
+      else if (metaCalculada === 0 && saldoMes > 0) {
+        metaFinal = 0;
+        valorExtra = saldoMes;
+        mostrarTachado = false;
+        rotulo = `Meta do Mês Batida! <i class='fa-solid fa-trophy'></i>`;
+        statusClass = "meta-batida";
+        console.log(`🎯 META MENSAL ZERO (já batida)`);
+      } else if (saldoMes < 0) {
+        metaFinal = metaCalculada - saldoMes;
+        rotulo = `Restando p/ Meta do Mês`;
+        statusClass = "negativo";
+        console.log(`📊 RESULTADO MENSAL: Negativo`);
+      } else if (saldoMes === 0) {
+        metaFinal = metaCalculada;
+        rotulo = "Meta do Mês";
+        statusClass = "neutro";
+        console.log(`📊 RESULTADO MENSAL: Neutro`);
+      } else {
+        // Lucro positivo mas menor que a meta
+        metaFinal = metaCalculada - saldoMes;
+        rotulo = `Restando p/ Meta do Mês`;
+        statusClass = "lucro";
+        console.log(`📊 RESULTADO MENSAL: Lucro insuficiente`);
+      }
+
+      const resultado = {
+        metaFinal,
+        metaOriginal: metaCalculada,
+        valorExtra,
+        mostrarTachado,
+        metaFinalFormatada: metaFinal.toLocaleString("pt-BR", {
+          style: "currency",
+          currency: "BRL",
+        }),
+        metaOriginalFormatada: metaCalculada.toLocaleString("pt-BR", {
+          style: "currency",
+          currency: "BRL",
+        }),
+        valorExtraFormatado:
+          valorExtra > 0
+            ? valorExtra.toLocaleString("pt-BR", {
+                style: "currency",
+                currency: "BRL",
+              })
+            : null,
+        rotulo,
+        statusClass,
+      };
+
+      console.log(`🏁 RESULTADO FINAL MENSAL COM EXTRA:`);
+      console.log(`   Status: ${statusClass}`);
+      console.log(`   Valor Extra: R$ ${valorExtra.toFixed(2)}`);
+      console.log(`   Mostrar Tachado: ${mostrarTachado}`);
+
+      return resultado;
+    } catch (error) {
+      console.error("Erro ao calcular meta final mensal com extra:", error);
+      return {
+        metaFinal: 0,
+        metaOriginal: 0,
+        valorExtra: 0,
+        mostrarTachado: false,
+        metaFinalFormatada: "R$ 0,00",
+        metaOriginalFormatada: "R$ 0,00",
+        valorExtraFormatado: null,
+        rotulo: "Erro no cálculo",
+        statusClass: "erro",
+      };
+    }
+  },
+
+  // Atualizar todos os elementos - versão para bloco 2 COM EXTRA
   atualizarTodosElementosMensais(data) {
     try {
       const saldoMes =
@@ -132,7 +242,8 @@ const MetaMensalManager = {
         meta_original: data.meta_original || metaCalculada,
       };
 
-      const resultado = this.calcularMetaFinalMensal(
+      // ✅ USAR NOVA FUNÇÃO COM VALOR EXTRA
+      const resultado = this.calcularMetaFinalMensalComExtra(
         saldoMes,
         metaCalculada,
         bancaTotal,
@@ -141,70 +252,82 @@ const MetaMensalManager = {
 
       // Atualizar elementos do bloco 2
       this.garantirIconeMoeda();
-      this.atualizarMetaElementoMensal(resultado);
+      this.atualizarMetaElementoMensalComExtra(resultado); // ✅ NOVA FUNÇÃO
       this.atualizarRotuloMensal(resultado.rotulo);
       this.atualizarBarraProgressoMensal(resultado, data);
 
-      console.log(`Meta MENSAL atualizada`);
+      console.log(`Meta MENSAL atualizada COM EXTRA`);
       console.log(`Lucro do MÊS: R$ ${saldoMes.toFixed(2)}`);
       console.log(`Meta MENSAL: R$ ${metaCalculada.toFixed(2)}`);
+
+      if (resultado.valorExtra > 0) {
+        console.log(
+          `🏆 Valor Extra MENSAL: R$ ${resultado.valorExtra.toFixed(2)}`
+        );
+      }
     } catch (error) {
       console.error("Erro ao atualizar elementos mensais:", error);
     }
   },
 
-  // Calcular meta final - versão para mensal
-  calcularMetaFinalMensal(saldoMes, metaCalculada, bancaTotal, data) {
+  // ✅ NOVA FUNÇÃO: ATUALIZAR META ELEMENTO MENSAL COM VALOR TACHADO E EXTRA
+  atualizarMetaElementoMensalComExtra(resultado) {
     try {
-      let metaFinal, rotulo, statusClass;
-
-      if (bancaTotal <= 0) {
-        metaFinal = bancaTotal;
-        rotulo = "Deposite p/ Começar";
-        statusClass = "sem-banca";
-      } else if (
-        saldoMes > 0 &&
-        metaCalculada > 0 &&
-        saldoMes >= metaCalculada
-      ) {
-        metaFinal = 0;
-        rotulo = `Meta do Mês Batida! <i class='fa-solid fa-trophy'></i>`;
-        statusClass = "meta-batida";
-      } else if (metaCalculada === 0 && saldoMes > 0) {
-        metaFinal = 0;
-        rotulo = `Meta do Mês Batida! <i class='fa-solid fa-trophy'></i>`;
-        statusClass = "meta-batida";
-      } else if (saldoMes < 0) {
-        metaFinal = metaCalculada - saldoMes;
-        rotulo = `Restando p/ Meta do Mês`;
-        statusClass = "negativo";
-      } else if (saldoMes === 0) {
-        metaFinal = metaCalculada;
-        rotulo = "Meta do Mês";
-        statusClass = "neutro";
-      } else {
-        metaFinal = metaCalculada - saldoMes;
-        rotulo = `Restando p/ Meta do Mês`;
-        statusClass = "lucro";
+      const metaValor = document.getElementById("meta-valor-2");
+      if (!metaValor) {
+        console.warn("Elemento meta-valor-2 não encontrado");
+        return;
       }
 
-      return {
-        metaFinal,
-        metaFinalFormatada: metaFinal.toLocaleString("pt-BR", {
-          style: "currency",
-          currency: "BRL",
-        }),
-        rotulo,
-        statusClass,
-      };
+      // ✅ LIMPAR CLASSES ANTIGAS
+      metaValor.className = metaValor.className.replace(
+        /\bvalor-meta-2\s+\w+/g,
+        ""
+      );
+
+      let htmlConteudo = "";
+
+      if (resultado.mostrarTachado && resultado.valorExtra >= 0) {
+        // ✅ META BATIDA/SUPERADA - MOSTRAR VALOR TACHADO + EXTRA
+        htmlConteudo = `
+          <i class="fa-solid fa-coins"></i>
+          <div class="meta-valor-container-2">
+            <span class="valor-tachado-2">${
+              resultado.metaOriginalFormatada
+            }</span>
+            ${
+              resultado.valorExtra > 0
+                ? `<span class="valor-extra-2">+ ${resultado.valorExtraFormatado}</span>`
+                : ""
+            }
+          </div>
+        `;
+
+        metaValor.classList.add("valor-meta-2", "meta-com-extra-2");
+        console.log(
+          `✅ Valor tachado MENSAL aplicado: ${resultado.metaOriginalFormatada}`
+        );
+
+        if (resultado.valorExtra > 0) {
+          console.log(
+            `✅ Valor extra MENSAL aplicado: + ${resultado.valorExtraFormatado}`
+          );
+        }
+      } else {
+        // ✅ EXIBIÇÃO NORMAL
+        htmlConteudo = `
+          <i class="fa-solid fa-coins"></i>
+          <div class="meta-valor-container-2">
+            <span class="valor-texto-2" id="valor-texto-meta-2">${resultado.metaFinalFormatada}</span>
+          </div>
+        `;
+
+        metaValor.classList.add("valor-meta-2", resultado.statusClass);
+      }
+
+      metaValor.innerHTML = htmlConteudo;
     } catch (error) {
-      console.error("Erro ao calcular meta final mensal:", error);
-      return {
-        metaFinal: 0,
-        metaFinalFormatada: "R$ 0,00",
-        rotulo: "Erro no cálculo",
-        statusClass: "erro",
-      };
+      console.error("Erro ao atualizar meta elemento mensal com extra:", error);
     }
   },
 
@@ -224,45 +347,15 @@ const MetaMensalManager = {
           // USAR CLASSES CORRETAS DO FONT AWESOME
           metaValor.innerHTML = `
             <i class="fa-solid fa-coins"></i>
-            <span class="valor-texto-2">${textoAtual}</span>
+            <div class="meta-valor-container-2">
+              <span class="valor-texto-2">${textoAtual}</span>
+            </div>
           `;
           console.log("Ícone da moeda adicionado ao HTML 2");
         }
       }
     } catch (error) {
       console.error("Erro ao garantir ícone da moeda:", error);
-    }
-  },
-
-  // Atualizar meta elemento - bloco 2 (com ícone garantido)
-  atualizarMetaElementoMensal(resultado) {
-    try {
-      const metaValor = document.getElementById("meta-valor-2");
-      if (!metaValor) {
-        console.warn("Elemento meta-valor-2 não encontrado");
-        return;
-      }
-
-      let valorTexto = metaValor.querySelector(".valor-texto-2");
-
-      if (valorTexto) {
-        valorTexto.textContent = resultado.metaFinalFormatada;
-      } else {
-        // USAR CLASSES CORRETAS DO FONT AWESOME
-        metaValor.innerHTML = `
-          <i class="fa-solid fa-coins"></i>
-          <span class="valor-texto-2" id="valor-texto-meta-2">${resultado.metaFinalFormatada}</span>
-        `;
-      }
-
-      // Aplicar classes com sufixo -2
-      metaValor.className = metaValor.className.replace(
-        /\bvalor-meta-2\s+\w+/g,
-        ""
-      );
-      metaValor.classList.add("valor-meta-2", resultado.statusClass);
-    } catch (error) {
-      console.error("Erro ao atualizar meta elemento mensal:", error);
     }
   },
 
@@ -326,7 +419,49 @@ const MetaMensalManager = {
     }
   },
 
-  // Atualizar barra progresso - bloco 2 (com ícones dinâmicos)
+  // ✅ NOVA FUNÇÃO: LIMPAR COMPLETAMENTE O ESTADO DA BARRA
+  limparEstadoBarraMensal() {
+    try {
+      const barraProgresso = document.getElementById("barra-progresso-2");
+      const porcentagemBarra = document.getElementById("porcentagem-barra-2");
+
+      if (barraProgresso) {
+        // Remover todas as classes possíveis
+        barraProgresso.classList.remove(
+          "barra-meta-batida-2",
+          "barra-meta-superada-2",
+          "barra-negativo-2",
+          "barra-lucro-2",
+          "barra-neutro-2",
+          "barra-sem-banca-2",
+          "barra-erro-2"
+        );
+
+        // Limpar estilos inline
+        barraProgresso.style.width = "0%";
+        barraProgresso.style.backgroundColor = "";
+        barraProgresso.style.background = "";
+        barraProgresso.style.filter = "";
+        barraProgresso.style.animation = "";
+
+        // Garantir classe base
+        if (!barraProgresso.classList.contains("widget-barra-progresso-2")) {
+          barraProgresso.classList.add("widget-barra-progresso-2");
+        }
+      }
+
+      if (porcentagemBarra) {
+        porcentagemBarra.innerHTML =
+          '<span class="porcentagem-fundo-2">0%</span>';
+        porcentagemBarra.classList.remove("pequeno", "oculta");
+        porcentagemBarra.classList.add("oculta");
+      }
+
+      console.log("Barra mensal limpa completamente");
+    } catch (error) {
+      console.error("Erro ao limpar estado da barra mensal:", error);
+    }
+  },
   atualizarBarraProgressoMensal(resultado, data) {
     try {
       const barraProgresso = document.getElementById("barra-progresso-2");
@@ -346,7 +481,10 @@ const MetaMensalManager = {
       // Calcular progresso
       let progresso = 0;
       if (bancaTotal > 0 && metaCalculada > 0) {
-        if (resultado.statusClass === "meta-batida") {
+        if (
+          resultado.statusClass === "meta-batida" ||
+          resultado.statusClass === "meta-superada"
+        ) {
           progresso = 100;
         } else if (saldoMes < 0) {
           progresso = -Math.min(Math.abs(saldoMes / metaCalculada) * 100, 100);
@@ -360,29 +498,58 @@ const MetaMensalManager = {
 
       const larguraBarra = Math.abs(progresso);
 
-      // Limpar classes antigas com sufixo -2
+      // ✅ LIMPEZA COMPLETA DAS CLASSES ANTIGAS
       let classeCor = "";
-      barraProgresso.className = barraProgresso.className.replace(
-        /\bbarra-\w+-2/g,
-        ""
+
+      // Remover TODAS as classes de cor possíveis
+      barraProgresso.classList.remove(
+        "barra-meta-batida-2",
+        "barra-meta-superada-2",
+        "barra-negativo-2",
+        "barra-lucro-2",
+        "barra-neutro-2",
+        "barra-sem-banca-2",
+        "barra-erro-2"
       );
 
+      // Garantir classe base
       if (!barraProgresso.classList.contains("widget-barra-progresso-2")) {
         barraProgresso.classList.add("widget-barra-progresso-2");
       }
 
       // Aplicar classe correta com sufixo -2
-      if (resultado.statusClass === "meta-batida") {
+      if (
+        resultado.statusClass === "meta-batida" ||
+        resultado.statusClass === "meta-superada"
+      ) {
         classeCor = "barra-meta-batida-2";
+        console.log(
+          `✅ BARRA MENSAL META BATIDA/SUPERADA - Saldo: R$ ${saldoMes.toFixed(
+            2
+          )}, Meta: R$ ${metaCalculada.toFixed(2)}`
+        );
       } else {
         classeCor = `barra-${resultado.statusClass}-2`;
+        console.log(
+          `✅ BARRA MENSAL NORMAL - Status: ${
+            resultado.statusClass
+          }, Saldo: R$ ${saldoMes.toFixed(2)}`
+        );
       }
 
-      // Aplicar classe e estilos
+      // Aplicar classe e estilos com limpeza forçada
       barraProgresso.classList.add(classeCor);
+
+      // ✅ FORÇAR RESET DE ESTILOS INLINE ANTIGOS
       barraProgresso.style.width = `${larguraBarra}%`;
       barraProgresso.style.backgroundColor = "";
       barraProgresso.style.background = "";
+      barraProgresso.style.filter = "";
+      barraProgresso.style.animation = "";
+
+      console.log(
+        `✅ BARRA MENSAL - Classe aplicada: ${classeCor}, Largura: ${larguraBarra}%`
+      );
 
       // Porcentagem
       if (porcentagemBarra) {
@@ -418,7 +585,7 @@ const MetaMensalManager = {
       if (metaElement) {
         // USAR CLASSES CORRETAS DO FONT AWESOME
         metaElement.innerHTML =
-          '<i class="fa-solid fa-coins"></i><span class="valor-texto-2 loading-text-2">R$ 0,00</span>';
+          '<i class="fa-solid fa-coins"></i><div class="meta-valor-container-2"><span class="valor-texto-2 loading-text-2">R$ 0,00</span></div>';
       }
     } catch (error) {
       console.error("Erro ao mostrar erro meta mensal:", error);
@@ -432,10 +599,10 @@ const MetaMensalManager = {
       if (metaElement) {
         // USAR CLASSES CORRETAS DO FONT AWESOME
         metaElement.innerHTML =
-          '<i class="fa-solid fa-coins"></i><span class="valor-texto-2 loading-text-2">Calculando...</span>';
+          '<i class="fa-solid fa-coins"></i><div class="meta-valor-container-2"><span class="valor-texto-2 loading-text-2">Calculando...</span></div>';
       }
 
-      console.log(`Sistema Meta MENSAL inicializado`);
+      console.log(`Sistema Meta MENSAL COM VALOR TACHADO E EXTRA inicializado`);
 
       // Garantir ícone da moeda após delay
       setTimeout(() => {
@@ -488,37 +655,59 @@ window.$2 = {
     return null;
   },
 
-  // Função para testar as melhorias
-  test: () => {
-    console.log("Testando melhorias HTML 2...");
+  // ✅ NOVO: Função para testar valor tachado e extra
+  testExtra: () => {
+    console.log("Testando valor tachado e extra MENSAL...");
 
     if (typeof MetaMensalManager === "undefined") {
       return "MetaMensalManager não encontrado";
     }
 
-    // Testar ícones dinâmicos
+    // Simular diferentes cenários de teste
+    const testData = {
+      meta_display: 1000,
+      meta_display_formatada: "R$ 1.000,00",
+      banca: 5000,
+      rotulo_periodo: "Meta do Mês",
+    };
+
+    // Teste 1: Meta exatamente batida
     setTimeout(() => {
-      MetaMensalManager.atualizarIconesSaldoDinamicos(150.75); // Positivo
-      console.log("Teste 1: Saldo positivo");
+      console.log("Teste 1: Meta MENSAL exatamente batida (R$ 1000)");
+      const resultado = MetaMensalManager.calcularMetaFinalMensalComExtra(
+        1000,
+        1000,
+        5000,
+        testData
+      );
+      MetaMensalManager.atualizarMetaElementoMensalComExtra(resultado);
     }, 1000);
 
+    // Teste 2: Meta superada
     setTimeout(() => {
-      MetaMensalManager.atualizarIconesSaldoDinamicos(-85.3); // Negativo
-      console.log("Teste 2: Saldo negativo");
-    }, 2000);
+      console.log("Teste 2: Meta MENSAL superada (R$ 1250 - extra R$ 250)");
+      const resultado = MetaMensalManager.calcularMetaFinalMensalComExtra(
+        1250,
+        1000,
+        5000,
+        testData
+      );
+      MetaMensalManager.atualizarMetaElementoMensalComExtra(resultado);
+    }, 2500);
 
+    // Teste 3: Meta não batida
     setTimeout(() => {
-      MetaMensalManager.atualizarIconesSaldoDinamicos(0); // Zero
-      console.log("Teste 3: Saldo zero");
-    }, 3000);
-
-    // Testar ícone da moeda
-    setTimeout(() => {
-      MetaMensalManager.garantirIconeMoeda();
-      console.log("Teste 4: Ícone da moeda");
+      console.log("Teste 3: Meta MENSAL não batida (R$ 750)");
+      const resultado = MetaMensalManager.calcularMetaFinalMensalComExtra(
+        750,
+        1000,
+        5000,
+        testData
+      );
+      MetaMensalManager.atualizarMetaElementoMensalComExtra(resultado);
     }, 4000);
 
-    return "Teste completo em 4 segundos";
+    return "Teste MENSAL completo em 4 segundos - valor tachado e extra";
   },
 
   info: () => {
@@ -532,11 +721,13 @@ window.$2 = {
         iconeMoeda: !!metaElement?.querySelector(".fa-coins"),
         iconeAtual: saldoElement?.querySelector("i")?.className || "N/A",
         metaContent: metaElement ? metaElement.textContent : "N/A",
-        verificacao: "Sistema Meta Mensal com ícones corretos",
+        temTachado: !!metaElement?.querySelector(".valor-tachado-2"),
+        temExtra: !!metaElement?.querySelector(".valor-extra-2"),
+        verificacao: "Sistema Meta Mensal COM valor tachado e extra",
       };
 
-      console.log("Info Sistema Meta Mensal:", info);
-      return "Info Meta Mensal verificada";
+      console.log("Info Sistema Meta Mensal COM EXTRA:", info);
+      return "Info Meta Mensal COM VALOR TACHADO E EXTRA verificada";
     } catch (error) {
       console.error("Erro ao obter info mensal:", error);
       return "Erro ao obter informações mensais";
@@ -550,87 +741,32 @@ window.$2 = {
 
 function inicializarSistemaMetaMensal() {
   try {
-    console.log("Inicializando Sistema Meta MENSAL com ícones corretos...");
+    console.log(
+      "Inicializando Sistema Meta MENSAL COM VALOR TACHADO E EXTRA..."
+    );
 
     if (typeof MetaMensalManager !== "undefined") {
       MetaMensalManager.inicializar();
-      console.log("MetaMensalManager inicializado");
+      console.log("MetaMensalManager COM EXTRA inicializado");
     }
 
-    console.log("Sistema Meta MENSAL inicializado!");
+    console.log("Sistema Meta MENSAL COM VALOR TACHADO E EXTRA inicializado!");
     console.log("Características:");
-    console.log("   Sempre mostra META DO MÊS");
-    console.log("   Ícone da moeda garantido");
-    console.log("   Ícones dinâmicos do saldo");
-    console.log("   Barra de progresso reduzida");
-    console.log("   Classes Font Awesome corretas");
+    console.log("   ✅ Sempre mostra META DO MÊS");
+    console.log("   ✅ Ícone da moeda garantido");
+    console.log("   ✅ Ícones dinâmicos do saldo");
+    console.log("   ✅ Barra de progresso reduzida");
+    console.log("   ✅ Classes Font Awesome corretas");
+    console.log("   ✅ VALOR TACHADO quando meta batida");
+    console.log("   ✅ VALOR EXTRA em dourado quando meta superada");
   } catch (error) {
     console.error("Erro na inicialização sistema mensal:", error);
   }
 }
 
-// Aguardar DOM
-if (document.readyState === "loading") {
-  document.addEventListener("DOMContentLoaded", () => {
-    setTimeout(inicializarSistemaMetaMensal, 1200);
-  });
-} else {
-  setTimeout(inicializarSistemaMetaMensal, 800);
-}
-
-console.log("Sistema Meta MENSAL COM ÍCONES CORRETOS carregado!");
-console.log("Comandos:");
-console.log("  $2.force() - Forçar atualização");
-console.log("  $2.test() - Testar ícones");
-console.log("  $2.info() - Ver status");
-
-// AQUI PARTE DO CODIGO QUE QTUALIZA EM TEMPO REAL VIA AJAX OS VALORES
-window.MetaMensalManager = MetaMensalManager;
-MetaMensalManager.atualizarMetaMensal = async function (aguardarDados = false) {
-  if (this.atualizandoAtualmente) return null;
-  this.atualizandoAtualmente = true;
-
-  try {
-    // Remover delay desnecessário - só usar quando especificado
-    if (aguardarDados) {
-      await new Promise((resolve) => setTimeout(resolve, 100)); // Reduzido de 150ms
-    }
-
-    const response = await fetch("dados_banca.php?periodo=mes", {
-      method: "GET",
-      headers: {
-        "Cache-Control": "no-cache",
-        "X-Requested-With": "XMLHttpRequest",
-        "X-Periodo-Filtro": "mes",
-      },
-    });
-
-    if (!response.ok) throw new Error(`HTTP ${response.status}`);
-
-    const data = await response.json();
-    if (!data.success) throw new Error(data.message);
-
-    const dadosProcessados = {
-      ...data,
-      meta_display: parseFloat(data.meta_mensal) || 0,
-      meta_display_formatada: data.meta_mensal_formatada || "R$ 0,00",
-      rotulo_periodo: "Meta do Mês",
-      periodo_ativo: "mes",
-      lucro_periodo: parseFloat(data.lucro) || 0,
-    };
-
-    this.atualizarTodosElementosMensais(dadosProcessados);
-    console.log("Meta mensal atualizada rapidamente");
-
-    return dadosProcessados;
-  } catch (error) {
-    console.error("Erro Meta Mensal:", error);
-    this.mostrarErroMetaMensal();
-    return null;
-  } finally {
-    this.atualizandoAtualmente = false;
-  }
-};
+// ========================================
+// SISTEMA DE INTERCEPTAÇÃO RÁPIDA
+// ========================================
 
 // Sistema de interceptação rápida (melhorado)
 (function () {
@@ -675,47 +811,6 @@ MetaMensalManager.atualizarMetaMensal = async function (aguardarDados = false) {
     true
   );
 
-  // Radios / selects / inputs importantes
-  document.querySelectorAll('input[name="periodo"]').forEach((radio) => {
-    radio.addEventListener("change", () => atualizarRapido());
-  });
-
-  // Observador de mudanças no DOM para elementos chave (quando valores são atualizados via AJAX)
-  const observerTargets = [
-    "#meta-valor-2",
-    "#saldo-info-2",
-    "#pontuacao-2",
-    ".lista-dias",
-  ];
-
-  const observer = new MutationObserver((mutations) => {
-    // Quando qualquer mutação relevante ocorrer, solicitar atualização rápida
-    for (const m of mutations) {
-      if (
-        m.type === "childList" ||
-        m.type === "characterData" ||
-        m.type === "subtree"
-      ) {
-        atualizarRapido();
-        break;
-      }
-    }
-  });
-
-  observerTargets.forEach((sel) => {
-    try {
-      document.querySelectorAll(sel).forEach((node) => {
-        observer.observe(node, {
-          childList: true,
-          characterData: true,
-          subtree: true,
-        });
-      });
-    } catch (e) {
-      // silencioso se não existir no momento
-    }
-  });
-
   // Hook em fetch para detectar requisições que alteram dados e disparar atualização após retorno
   try {
     const _fetch = window.fetch;
@@ -735,38 +830,7 @@ MetaMensalManager.atualizarMetaMensal = async function (aguardarDados = false) {
     };
   } catch (e) {
     console.warn(
-      "Não foi possível hookar fetch para atualizações automáticas",
-      e
-    );
-  }
-
-  // Hook em XHR (caso o app ainda use XMLHttpRequest)
-  try {
-    const _XHR_send = XMLHttpRequest.prototype.send;
-    const _XHR_open = XMLHttpRequest.prototype.open;
-
-    XMLHttpRequest.prototype.open = function (method, url) {
-      this.__trackedUrl = url;
-      return _XHR_open.apply(this, arguments);
-    };
-
-    XMLHttpRequest.prototype.send = function () {
-      this.addEventListener("load", function () {
-        try {
-          if (
-            /dados_banca|carregar-mentores|controle|valor_mentores/i.test(
-              this.__trackedUrl || ""
-            )
-          ) {
-            setTimeout(atualizarRapido, 50);
-          }
-        } catch (e) {}
-      });
-      return _XHR_send.apply(this, arguments);
-    };
-  } catch (e) {
-    console.warn(
-      "Não foi possível hookar XHR para atualizações automáticas",
+      "Não foi possível hookar fetch para atualizações automáticas MENSAL",
       e
     );
   }
@@ -778,12 +842,31 @@ MetaMensalManager.atualizarMetaMensal = async function (aguardarDados = false) {
   setTimeout(atualizarRapido, 50);
 
   // Expor utilitário
-  window.atualizarRapido = atualizarRapido;
+  window.atualizarRapidoMensal = atualizarRapido;
 
   console.log(
-    "Sistema rápido (melhorado) ativo - responde imediatamente a mudanças"
+    "Sistema rápido MENSAL (melhorado) ativo - responde imediatamente a mudanças"
   );
 })();
+
+// Aguardar DOM
+if (document.readyState === "loading") {
+  document.addEventListener("DOMContentLoaded", () => {
+    setTimeout(inicializarSistemaMetaMensal, 1200);
+  });
+} else {
+  setTimeout(inicializarSistemaMetaMensal, 800);
+}
+
+console.log("Sistema Meta MENSAL COM VALOR TACHADO E EXTRA carregado!");
+console.log("Comandos MENSAIS:");
+console.log("  $2.force() - Forçar atualização");
+console.log("  $2.testExtra() - Testar valor tachado e extra");
+console.log("  $2.sync() - Sincronizar com bloco 1");
+console.log("  $2.info() - Ver status completo");
+
+// Export para uso externo
+window.MetaMensalManager = MetaMensalManager;
 // AQUI FINAL PARTE DO CODIGO QUE QTUALIZA EM TEMPO REAL VIA AJAX OS VALORES
 // ========================================================================================================================
 //                               FIM JS DAOS CAMPOS ONDE FILTRA O MÊS BARRA DE PROGRESSO META E SALDO

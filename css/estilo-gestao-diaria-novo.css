@@ -2621,11 +2621,116 @@ p {
 /* */
 /* */
 /* =======================================================================================================================================================
-                                          💼  CODIGO RESPONSAVEL PELO TEXTO LUCRO EXTRA   
+                                          💼  CODIGO RESPONSAVEL PELO TEXTO LUCRO EXTRA   + VALOR TAXADO
    ==========================================================================================================================================================*/
+/* ✅ CSS PARA VALOR TACHADO E EXTRA */
 
+/* Container da meta valor */
+.meta-valor-container {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 4px;
+}
+
+/* Meta com valor extra */
+.meta-com-extra {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+/* Valor tachado (cinza com linha no meio) */
+.valor-tachado {
+  position: relative;
+  color: #888;
+  font-weight: bold;
+  text-decoration: line-through;
+  text-decoration-color: #666;
+  text-decoration-thickness: 2px;
+  opacity: 0.8;
+}
+
+/* Valor extra (dourado) */
+.valor-extra {
+  color: #ffd700;
+  font-weight: bold;
+  text-shadow: 0 0 5px rgba(255, 215, 0, 0.3);
+  animation: brilhoDourado 2s ease-in-out infinite alternate;
+}
+
+/* Animação do brilho dourado */
+@keyframes brilhoDourado {
+  0% {
+    text-shadow: 0 0 5px rgba(255, 215, 0, 0.3);
+  }
+  100% {
+    text-shadow: 0 0 10px rgba(255, 215, 0, 0.6);
+  }
+}
+
+/* Status de meta superada */
+.valor-meta.meta-superada {
+  border-color: #ffd700;
+  box-shadow: 0 0 10px rgba(255, 215, 0, 0.2);
+}
+
+/* Barra de progresso para meta superada */
+.barra-meta-superada {
+  background: linear-gradient(45deg, #28a745, #ffd700);
+  animation: barraDourada 1.5s ease-in-out infinite alternate;
+}
+
+/* Animação da barra dourada */
+@keyframes barraDourada {
+  0% {
+    filter: brightness(1);
+  }
+  100% {
+    filter: brightness(1.2);
+  }
+}
+
+/* Responsividade para telas menores */
+@media (max-width: 768px) {
+  .meta-valor-container {
+    gap: 2px;
+  }
+
+  .valor-tachado,
+  .valor-extra {
+    font-size: 0.9em;
+  }
+}
+
+/* Variações de cor para diferentes tipos de meta */
+.meta-fixa .valor-extra {
+  color: #ff6b35;
+  text-shadow: 0 0 5px rgba(255, 107, 53, 0.3);
+}
+
+.meta-turbo .valor-extra {
+  color: #ffd700;
+  text-shadow: 0 0 5px rgba(255, 215, 0, 0.3);
+}
+
+/* Estado de loading para o valor */
+.loading-text {
+  opacity: 0.6;
+  animation: pulsarLoading 1.5s ease-in-out infinite;
+}
+
+@keyframes pulsarLoading {
+  0%,
+  100% {
+    opacity: 0.6;
+  }
+  50% {
+    opacity: 1;
+  }
+}
 /* =======================================================================================================================================================
-                                          💼  FIM CODIGO RESPONSAVEL PELO TEXTO LUCRO EXTRA   
+                                          💼  FIM CODIGO RESPONSAVEL PELO TEXTO LUCRO EXTRA   + VALOR TAXADO
    ==========================================================================================================================================================*/
 /* */
 /* */

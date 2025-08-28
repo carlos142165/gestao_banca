@@ -1023,3 +1023,286 @@
 /* */
 /* */
 /* */
+/* =======================================================================================================================================================
+                                          💼  CODIGO RESPONSAVEL PELO TEXTO LUCRO EXTRA   + VALOR TAXADO
+   ==========================================================================================================================================================*/
+
+/* Encapsular tudo dentro do elemento específico da meta mensal */
+#meta-valor-2 {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  min-height: 40px;
+}
+
+/* Container da meta valor - APENAS para meta-valor-2 */
+#meta-valor-2 .meta-valor-container-2 {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 4px;
+}
+
+/* Meta com valor extra - APENAS dentro de meta-valor-2 */
+#meta-valor-2.meta-com-extra-2 {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+/* Valor tachado - APENAS dentro de meta-valor-2 */
+#meta-valor-2 .valor-tachado-2 {
+  position: relative;
+  color: #888;
+  font-weight: bold;
+  text-decoration: line-through;
+  text-decoration-color: #666;
+  text-decoration-thickness: 2px;
+  opacity: 0.8;
+}
+
+/* Valor extra - APENAS dentro de meta-valor-2 */
+#meta-valor-2 .valor-extra-2 {
+  color: #ffd700;
+  font-weight: bold;
+  text-shadow: 0 0 5px rgba(255, 215, 0, 0.3);
+  animation: brilhoDouradoMensal 2s ease-in-out infinite alternate;
+}
+
+/* Animação do brilho dourado - versão mensal */
+@keyframes brilhoDouradoMensal {
+  0% {
+    text-shadow: 0 0 5px rgba(255, 215, 0, 0.3);
+  }
+  100% {
+    text-shadow: 0 0 10px rgba(255, 215, 0, 0.6);
+  }
+}
+
+/* Classes de estado APENAS para meta-valor-2 */
+#meta-valor-2.valor-meta-2.meta-batida {
+  border-color: #28a745;
+  color: #28a745;
+}
+
+#meta-valor-2.valor-meta-2.meta-superada {
+  border-color: #ffd700;
+  color: #ffd700;
+  box-shadow: 0 0 10px rgba(255, 215, 0, 0.2);
+}
+
+#meta-valor-2.valor-meta-2.negativo {
+  border-color: #dc3545;
+  color: #dc3545;
+}
+
+#meta-valor-2.valor-meta-2.lucro {
+  border-color: #17a2b8;
+  color: #17a2b8;
+}
+
+#meta-valor-2.valor-meta-2.neutro {
+  border-color: #6c757d;
+  color: #6c757d;
+}
+
+#meta-valor-2.valor-meta-2.sem-banca {
+  border-color: #ffc107;
+  color: #ffc107;
+}
+
+/* Ícone da moeda - APENAS dentro de meta-valor-2 */
+#meta-valor-2 .fa-coins {
+  color: #ffc107;
+  margin-right: 8px;
+  font-size: 1.2em;
+}
+
+/* Texto normal - APENAS dentro de meta-valor-2 */
+#meta-valor-2 .valor-texto-2 {
+  font-weight: bold;
+  font-size: 1.1em;
+}
+
+/* Estado de loading - APENAS dentro de meta-valor-2 */
+#meta-valor-2 .loading-text-2 {
+  opacity: 0.6;
+  animation: pulsarLoadingMensal 1.5s ease-in-out infinite;
+}
+
+@keyframes pulsarLoadingMensal {
+  0%,
+  100% {
+    opacity: 0.6;
+  }
+  50% {
+    opacity: 1;
+  }
+}
+
+/* Barra de progresso - APENAS para barra-progresso-2 */
+#barra-progresso-2.widget-barra-progresso-2 {
+  height: 20px;
+  background-color: #e9ecef;
+  border-radius: 10px;
+  overflow: hidden;
+  transition: width 0.5s ease-in-out;
+}
+
+/* Classes da barra de progresso - APENAS para barra-progresso-2 */
+#barra-progresso-2.barra-meta-batida-2 {
+  background-color: #28a745;
+  background: linear-gradient(90deg, #28a745, #20c997);
+}
+
+#barra-progresso-2.barra-meta-superada-2 {
+  background: linear-gradient(45deg, #28a745, #ffd700);
+  animation: barraDouradaMensal 1.5s ease-in-out infinite alternate;
+}
+
+#barra-progresso-2.barra-negativo-2 {
+  background-color: #dc3545;
+  background: linear-gradient(90deg, #dc3545, #e74c3c);
+}
+
+#barra-progresso-2.barra-lucro-2 {
+  background-color: #17a2b8;
+  background: linear-gradient(90deg, #17a2b8, #20c997);
+}
+
+#barra-progresso-2.barra-neutro-2 {
+  background-color: #6c757d;
+}
+
+#barra-progresso-2.barra-sem-banca-2 {
+  background-color: #ffc107;
+}
+
+/* Animação da barra dourada - versão mensal */
+@keyframes barraDouradaMensal {
+  0% {
+    filter: brightness(1);
+  }
+  100% {
+    filter: brightness(1.2);
+  }
+}
+
+/* Porcentagem da barra - APENAS para porcentagem-barra-2 */
+#porcentagem-barra-2 .porcentagem-fundo-2 {
+  background-color: rgba(255, 255, 255, 0.9);
+  padding: 2px 6px;
+  border-radius: 4px;
+  font-weight: bold;
+  font-size: 0.9em;
+  color: #333;
+}
+
+#porcentagem-barra-2 .porcentagem-fundo-2.barra-meta-batida-2 {
+  background-color: rgba(40, 167, 69, 0.1);
+  color: #28a745;
+}
+
+#porcentagem-barra-2 .porcentagem-fundo-2.barra-meta-superada-2 {
+  background-color: rgba(255, 215, 0, 0.1);
+  color: #ffd700;
+}
+
+#porcentagem-barra-2 .porcentagem-fundo-2.barra-negativo-2 {
+  background-color: rgba(220, 53, 69, 0.1);
+  color: #dc3545;
+}
+
+#porcentagem-barra-2 .porcentagem-fundo-2.barra-lucro-2 {
+  background-color: rgba(23, 162, 184, 0.1);
+  color: #17a2b8;
+}
+
+/* Classes de estado do saldo - APENAS para saldo-info-2 */
+#saldo-info-2.saldo-positivo-2 {
+  color: #28a745;
+}
+
+#saldo-info-2.saldo-positivo-2 i {
+  color: #28a745;
+}
+
+#saldo-info-2.saldo-negativo-2 {
+  color: #dc3545;
+}
+
+#saldo-info-2.saldo-negativo-2 i {
+  color: #dc3545;
+}
+
+#saldo-info-2.saldo-zero-2 {
+  color: #6c757d;
+}
+
+#saldo-info-2.saldo-zero-2 i {
+  color: #6c757d;
+}
+
+/* Elementos de texto específicos - APENAS dentro de saldo-info-2 */
+#saldo-info-2 .saldo-info-rotulo-2 {
+  font-weight: 500;
+  margin-right: 4px;
+}
+
+#saldo-info-2 .saldo-info-valor-2 {
+  font-weight: bold;
+}
+
+/* Hover effects - APENAS dentro dos elementos específicos */
+#meta-valor-2 .valor-extra-2:hover {
+  transform: scale(1.05);
+  transition: transform 0.2s ease;
+}
+
+#meta-valor-2 .valor-tachado-2:hover {
+  opacity: 1;
+  transition: opacity 0.2s ease;
+}
+
+/* Variações de tipo de meta - APENAS dentro de meta-valor-2 */
+#meta-valor-2.meta-fixa-2 .valor-extra-2 {
+  color: #ff6b35;
+  text-shadow: 0 0 5px rgba(255, 107, 53, 0.3);
+}
+
+#meta-valor-2.meta-turbo-2 .valor-extra-2 {
+  color: #ffd700;
+  text-shadow: 0 0 5px rgba(255, 215, 0, 0.3);
+}
+
+/* Responsividade - APENAS para elementos específicos */
+@media (max-width: 768px) {
+  #meta-valor-2 .meta-valor-container-2 {
+    gap: 2px;
+  }
+
+  #meta-valor-2 .valor-tachado-2,
+  #meta-valor-2 .valor-extra-2 {
+    font-size: 0.9em;
+  }
+
+  #saldo-info-2 .saldo-info-rotulo-2,
+  #saldo-info-2 .saldo-info-valor-2 {
+    font-size: 0.9em;
+  }
+}
+/* =======================================================================================================================================================
+                                          💼  FIM CODIGO RESPONSAVEL PELO TEXTO LUCRO EXTRA   + VALOR TAXADO
+   ==========================================================================================================================================================*/
+/* */
+/* */
+/* */
+/* */
+/* */
+/* */
+/* */
+/* */
+/* */
+/* */
+/* */
