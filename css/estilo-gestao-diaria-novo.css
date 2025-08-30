@@ -1,19 +1,23 @@
 /* ===== CSS LAYOUT COMPLETO COM FLEXIBILIDADE TOTAL ===== */
-
+html,
 body {
-  background: linear-gradient(135deg, #e1e1e4 0%, #b5ccc9 100%);
   margin: 0;
-  padding: 12px; /* reduzido para aproximar os blocos da borda da página */
+  padding: 0;
+  height: 100vh;
+  overflow: hidden;
   font-family: "Poppins", sans-serif;
+  background: rgba(206, 214, 209, 0.95) !important;
 }
-
 .container {
   display: flex;
-  gap: 18px; /* NOVO: gap reduzido para aproximar bloco-1 e bloco-2 */
-  max-width: 1200px;
-  margin: 0 auto;
-  align-items: stretch; /* NOVO: estica ambos os blocos para a mesma altura */
-  margin-top: 20px;
+  justify-content: center; /* Centraliza horizontalmente */
+  align-items: stretch;
+  height: 100vh;
+  max-height: 100vh;
+  overflow: hidden;
+  gap: 18px;
+  padding: 12px;
+  box-sizing: border-box;
 }
 
 .bloco {
@@ -27,15 +31,38 @@ body {
 
 /* ===== BLOCO 1 - TOTALMENTE FLEXÍVEL ===== */
 .bloco-1 {
-  display: flex;
-  flex-direction: column;
-  gap: 12px;
-  padding: 10px;
-  width: 420px; /* AUMENTADO: mais espaço interno para os elementos */
-  flex: 0 0 420px; /* NOVO: flex-basis aumentado para 420px */
-  height: 800px;
-  background: transparent !important; /* Remover fundo do bloco-1 */
-  border-radius: 15px !important;
+  flex: 0 0 420px;
+  width: 420px;
+  height: 100%;
+  overflow-y: auto;
+  overflow-x: hidden;
+  background: transparent;
+  border-radius: 15px;
+  box-sizing: border-box;
+}
+
+.bloco-2 {
+  flex: 1;
+  height: 100vh;
+  overflow-y: auto;
+  overflow-x: hidden;
+  background: transparent;
+  border-radius: 15px;
+  box-sizing: border-box;
+  overflow: hidden; /* impede que o conteúdo interno force expansão */
+}
+/* Scrollbar customizada para blocos */
+/* Scrollbar customizada para blocos */
+/* Scrollbar customizada para blocos */
+.bloco-1::-webkit-scrollbar,
+.bloco-2::-webkit-scrollbar {
+  width: 6px;
+}
+
+.bloco-1::-webkit-scrollbar-thumb,
+.bloco-2::-webkit-scrollbar-thumb {
+  background-color: rgba(0, 0, 0, 0.2);
+  border-radius: 10px;
 }
 
 /* NOVO: colar o primeiro elemento interno do bloco-1 no teto (top) */
@@ -55,15 +82,6 @@ body {
 }
 
 /* ===== BLOCO 2 - TOTALMENTE FLEXÍVEL ===== */
-.bloco-2 {
-  display: flex;
-  flex-direction: column;
-  padding-top: 0 !important; /* NOVO: colar o topo do bloco-2 no teto (remover espaçamento interno superior) */
-  margin-top: 0 !important; /* O bloco 2 se ajusta automaticamente ao espaço restante */
-  padding: 0px;
-  height: 800px;
-  background: transparent !important; /* Remover fundo do bloco-2 */
-}
 
 /* ===== CONTAINER RESUMOS - AGORA 100% FLEXÍVEL ===== */
 .container-resumos {
@@ -395,7 +413,7 @@ body {
 .campo_mentores {
   position: relative;
   width: 100%; /* Sempre 100% da largura do bloco pai */
-  height: 560px;
+  height: 580px;
   background: rgba(247, 246, 246, 0.95);
   backdrop-filter: blur(5px);
   display: flex;
@@ -406,8 +424,7 @@ body {
   padding: 0;
   box-sizing: border-box;
   overflow: hidden;
-  box-shadow: 0 8px 20px rgba(0, 0, 0, 0.1);
-  margin-top: -9px;
+  margin-top: clamp(2px, 3vh, 2px);
 }
 
 /* ===== BARRA SUPERIOR RESPONSIVA ===== */

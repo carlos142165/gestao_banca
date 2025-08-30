@@ -2457,6 +2457,46 @@ body.modal-aberto {
     }
 }
 /* Estilos do Bloco 2 movidos para: css/estilo-campo-mes.css */
+.botao-enviar-novo.bloqueado {
+    background: #dc3545 !important;
+    cursor: not-allowed !important;
+    opacity: 0.7 !important;
+    transition: all 0.3s ease;
+}
+
+.botao-enviar-novo.bloqueado:hover {
+    background: #dc3545 !important;
+    transform: none !important;
+}
+
+.mensagem-status-input.negativo {
+    color: #dc3545 !important;
+    font-size: 0.75rem !important;
+    font-weight: 600 !important;
+    animation: pulse 0.5s ease-in-out !important;
+    margin-top: 5px;
+}
+
+@keyframes pulse {
+    0% { opacity: 0; transform: translateY(-5px); }
+    100% { opacity: 1; transform: translateY(0); }
+}
+
+.formulario-mentor-overlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: rgba(0, 0, 0, 0.5);
+    z-index: 999999;
+    opacity: 0;
+    transition: opacity 0.3s ease;
+}
+
+.formulario-mentor-overlay.ativo {
+    opacity: 1;
+}
 </style>
 
 <script>
@@ -2486,24 +2526,20 @@ const VerificacaoDeposito = {
     },
 
     configurarEventos() {
-        // Fechar modal de aviso
         this.btnFecharAviso.addEventListener('click', () => {
             this.fecharModalAviso();
         });
 
-        // Abrir modal de banca
         this.btnAbrirBanca.addEventListener('click', () => {
             this.abrirModalBanca();
         });
 
-        // Fechar modal ao clicar no overlay
         this.modal.addEventListener('click', (e) => {
             if (e.target === this.modal) {
                 this.fecharModalAviso();
             }
         });
 
-        // Fechar com ESC
         document.addEventListener('keydown', (e) => {
             if (e.key === 'Escape' && this.modal.classList.contains('ativo')) {
                 this.fecharModalAviso();
@@ -2564,7 +2600,6 @@ const VerificacaoDeposito = {
         
         document.body.style.overflow = 'hidden';
 
-        // Foco no botão principal
         setTimeout(() => {
             this.btnAbrirBanca.focus();
         }, 300);
@@ -2585,10 +2620,8 @@ const VerificacaoDeposito = {
         this.fecharModalAviso();
         
         setTimeout(() => {
-            // Tentar várias formas de abrir o modal de banca
             let modalAberto = false;
             
-            // Método 1: Função global abrirModalDeposito
             if (typeof abrirModalDeposito === 'function') {
                 try {
                     abrirModalDeposito();
@@ -2599,57 +2632,51 @@ const VerificacaoDeposito = {
                 }
             }
             
-            // Método 2: Procurar modal por ID
             if (!modalAberto) {
                 const modalDeposito = document.getElementById('modalDeposito');
                 if (modalDeposito) {
-          // Mostrar modal e tentar inicializar seu script se disponível
-          modalDeposito.style.display = 'flex';
-          modalDeposito.classList.add('ativo');
-          document.body.style.overflow = 'hidden';
-          modalAberto = true;
-          console.log('Modal aberto por ID modalDeposito');
+                    modalDeposito.style.display = 'flex';
+                    modalDeposito.classList.add('ativo');
+                    document.body.style.overflow = 'hidden';
+                    modalAberto = true;
+                    console.log('Modal aberto por ID modalDeposito');
 
-          // Garantir inicialização dos handlers/máscaras do modal
-          try {
-            if (typeof inicializarModalDeposito === 'function') {
-              console.log('Chamando inicializarModalDeposito() após abrir por ID');
-              inicializarModalDeposito();
-            } else if (typeof window.inicializarModalDeposito === 'function') {
-              console.log('Chamando window.inicializarModalDeposito() após abrir por ID');
-              window.inicializarModalDeposito();
-            }
-          } catch (e) {
-            console.warn('Erro ao inicializar modal de deposito automaticamente:', e);
-          }
+                    try {
+                        if (typeof inicializarModalDeposito === 'function') {
+                            console.log('Chamando inicializarModalDeposito() após abrir por ID');
+                            inicializarModalDeposito();
+                        } else if (typeof window.inicializarModalDeposito === 'function') {
+                            console.log('Chamando window.inicializarModalDeposito() após abrir por ID');
+                            window.inicializarModalDeposito();
+                        }
+                    } catch (e) {
+                        console.warn('Erro ao inicializar modal de deposito automaticamente:', e);
+                    }
                 }
             }
             
-            // Método 3: Procurar modal por classe
             if (!modalAberto) {
                 const modalBanca = document.querySelector('.modal-gerencia-banca, .modal-overlay, .modal-deposito');
                 if (modalBanca) {
-          modalBanca.style.display = 'flex';
-          modalBanca.classList.add('ativo');
-          document.body.style.overflow = 'hidden';
-          modalAberto = true;
-          console.log('Modal aberto por classe CSS');
+                    modalBanca.style.display = 'flex';
+                    modalBanca.classList.add('ativo');
+                    document.body.style.overflow = 'hidden';
+                    modalAberto = true;
+                    console.log('Modal aberto por classe CSS');
 
-          // Tentar inicializar também
-          try {
-            if (typeof inicializarModalDeposito === 'function') {
-              console.log('Chamando inicializarModalDeposito() após abrir por classe');
-              inicializarModalDeposito();
-            } else if (typeof window.inicializarModalDeposito === 'function') {
-              window.inicializarModalDeposito();
-            }
-          } catch (e) {
-            console.warn('Erro ao inicializar modal de deposito após abrir por classe:', e);
-          }
+                    try {
+                        if (typeof inicializarModalDeposito === 'function') {
+                            console.log('Chamando inicializarModalDeposito() após abrir por classe');
+                            inicializarModalDeposito();
+                        } else if (typeof window.inicializarModalDeposito === 'function') {
+                            window.inicializarModalDeposito();
+                        }
+                    } catch (e) {
+                        console.warn('Erro ao inicializar modal de deposito após abrir por classe:', e);
+                    }
                 }
             }
             
-            // Método 4: Criar evento customizado para tentar disparar abertura
             if (!modalAberto) {
                 try {
                     const evento = new CustomEvent('abrirModalBanca', {
@@ -2665,26 +2692,24 @@ const VerificacaoDeposito = {
             
             if (!modalAberto) {
                 console.warn('⚠️ Não foi possível abrir o modal de banca automaticamente');
-        // Como último recurso, tentar acionar o botão do topo que já possui o fluxo de inicialização
-        const botaoTopo = document.getElementById('abrirGerenciaBanca');
-        if (botaoTopo) {
-          try {
-            console.log('Tentando acionar o botão de gerência do topo para abrir o modal (fluxo padrão)');
-            botaoTopo.click();
-            // A função atrelada ao clique faz sessionStorage + reload, então retornamos aqui
-            return;
-          } catch (e) {
-            console.warn('Erro ao clicar no botão do topo:', e);
-          }
-        }
+                
+                const botaoTopo = document.getElementById('abrirGerenciaBanca');
+                if (botaoTopo) {
+                    try {
+                        console.log('Tentando acionar o botão de gerência do topo para abrir o modal (fluxo padrão)');
+                        botaoTopo.click();
+                        return;
+                    } catch (e) {
+                        console.warn('Erro ao clicar no botão do topo:', e);
+                    }
+                }
 
-        // Se não houver botão ou falhar, usar o reload fallback
-        try {
-          sessionStorage.setItem('abrirModalGerencia', 'true');
-          location.reload();
-        } catch (e) {
-          alert('Por favor, clique no botão de "Gerenciar Banca" ou "Depositar" na sua interface principal para fazer um depósito.');
-        }
+                try {
+                    sessionStorage.setItem('abrirModalGerencia', 'true');
+                    location.reload();
+                } catch (e) {
+                    alert('Por favor, clique no botão de "Gerenciar Banca" ou "Depositar" na sua interface principal para fazer um depósito.');
+                }
             }
         }, 200);
     },
@@ -2692,10 +2717,8 @@ const VerificacaoDeposito = {
     prosseguirComCadastro(card) {
         console.log('✅ Prosseguindo com cadastro para:', card ? card.getAttribute('data-nome') : 'Sistema');
         
-        // CORREÇÃO: Chamar diretamente o método abrirFormulario do SistemaCadastroNovo
         if (typeof SistemaCadastroNovo !== 'undefined' && SistemaCadastroNovo.abrirFormulario && card) {
             console.log('🎯 Abrindo formulário via SistemaCadastroNovo');
-            // Usar setTimeout para evitar conflitos de estado
             setTimeout(() => {
                 SistemaCadastroNovo.abrirFormulario(card);
             }, 100);
@@ -2709,7 +2732,6 @@ const VerificacaoDeposito = {
             console.log('SistemaCadastroNovo disponível:', typeof SistemaCadastroNovo !== 'undefined');
             console.log('Card fornecido:', !!card);
             
-            // Fallback: tentar método alternativo
             if (card) {
                 const evento = new CustomEvent('abrirFormularioMentor', {
                     detail: { 
@@ -2995,188 +3017,329 @@ const ModalExclusaoEntrada = {
     }
 };
 
-// ===== SISTEMA NOVO DE CADASTRO CORRIGIDO =====
+// ===== SISTEMA NOVO DE CADASTRO COM VERIFICAÇÃO DE SALDO =====
 const SistemaCadastroNovo = {
-  config: {
-    AVATAR_PADRAO: "https://cdn-icons-png.flaticon.com/512/847/847969.png",
-    TIMEOUT_ANIMACAO: 300,
-    TIMEOUT_STATUS: 200,
-  },
+    config: {
+        AVATAR_PADRAO: "https://cdn-icons-png.flaticon.com/512/847/847969.png",
+        TIMEOUT_ANIMACAO: 300,
+        TIMEOUT_STATUS: 200,
+    },
 
-  estado: {
-    mentorId: null,
-    tipoOperacao: null,
-    valorEntrada: 0,
-    valorTotal: 0,
-    valorRed: 0,
-    formularioAberto: false,
-    processandoSubmissao: false,
-  },
+    estado: {
+        mentorId: null,
+        tipoOperacao: null,
+        valorEntrada: 0,
+        valorTotal: 0,
+        valorRed: 0,
+        formularioAberto: false,
+        processandoSubmissao: false,
+        saldoInsuficiente: false,
+    },
 
-  elementos: {},
+    elementos: {},
   overlayAtual: null,
+  saldoCache: null,
+  _verificarSaldoTimeout: null,
 
-  inicializar() {
-    this.cachearElementos();
-    this.configurarEventos();
-    this.configurarMascaras();
-    this.integrarComSistemaExistente();
-    
-    console.log("Sistema Novo de Cadastro inicializado com sucesso");
-  },
-
-  cachearElementos() {
-    this.elementos = {
-      formulario: document.getElementById('formulario-mentor-novo'),
-      btnFechar: document.querySelector('.btn-fechar-novo'),
-      mentorFoto: document.querySelector('.mentor-foto-novo'),
-      mentorNome: document.querySelector('.mentor-nome-novo'),
-      mentorIdInput: document.querySelector('.mentor-id-novo'),
-      tipoOperacaoInput: document.querySelector('.tipo-operacao-novo'),
-      
-      opcoesCash: document.querySelector('[data-tipo="cash"]'),
-      opcoesGreen: document.querySelector('[data-tipo="green"]'),
-      opcoesRed: document.querySelector('[data-tipo="red"]'),
-      
-      inputsDuplos: document.getElementById('inputs-duplos'),
-      inputEntrada: document.getElementById('input-entrada'),
-      inputTotal: document.getElementById('input-total'),
-      labelTotal: document.getElementById('label-total'),
-      
-      inputUnico: document.getElementById('input-unico'),
-      inputRed: document.getElementById('input-red'),
-      
-      statusContainer: document.querySelector('.status-calculo-novo'),
-      rotuloStatus: document.getElementById('rotulo-status'),
-      valorStatus: document.getElementById('valor-status'),
-      
-      form: document.getElementById('form-mentor-novo'),
-      btnEnviar: document.querySelector('.botao-enviar-novo'),
-    };
-  },
-
-  configurarEventos() {
-    // Opções Cash, Green, Red
-    document.querySelectorAll('.opcao-novo').forEach(opcao => {
-      opcao.addEventListener('click', (e) => {
-        const tipo = opcao.dataset.tipo;
-        this.selecionarTipo(tipo);
+    inicializar() {
+        this.cachearElementos();
+        this.configurarEventos();
+        this.configurarMascaras();
+        this.integrarComSistemaExistente();
         
-        // Preencher valor automaticamente e mostrar mensagem
-        const valorUndSpan = document.getElementById('valor-unidade');
-        if (valorUndSpan) {
-          const valorUnd = valorUndSpan.textContent.trim();
-          
-          // Aguardar campos aparecerem antes de preencher
-          setTimeout(() => {
-            if (tipo === 'red') {
-              const inputRed = document.getElementById('input-red');
-              if (inputRed && valorUnd && valorUnd !== 'R$ 0,00') {
-                inputRed.value = valorUnd;
-                setTimeout(() => {
-                  this.atualizarCalculoRed();
-                }, 200);
-              } else {
-                setTimeout(() => {
-                  this.mostrarMensagemAutomaticaRed();
-                }, 300);
-              }
-            } else {
-              const inputEntrada = document.getElementById('input-entrada');
-              if (inputEntrada && valorUnd && valorUnd !== 'R$ 0,00') {
-                inputEntrada.value = valorUnd;
-                setTimeout(() => {
-                  this.atualizarCalculo();
-                }, 200);
-              }
+        console.log("Sistema Novo de Cadastro inicializado com sucesso");
+    },
+
+    cachearElementos() {
+        this.elementos = {
+            formulario: document.getElementById('formulario-mentor-novo'),
+            btnFechar: document.querySelector('.btn-fechar-novo'),
+            mentorFoto: document.querySelector('.mentor-foto-novo'),
+            mentorNome: document.querySelector('.mentor-nome-novo'),
+            mentorIdInput: document.querySelector('.mentor-id-novo'),
+            tipoOperacaoInput: document.querySelector('.tipo-operacao-novo'),
+            
+            opcoesCash: document.querySelector('[data-tipo="cash"]'),
+            opcoesGreen: document.querySelector('[data-tipo="green"]'),
+            opcoesRed: document.querySelector('[data-tipo="red"]'),
+            
+            inputsDuplos: document.getElementById('inputs-duplos'),
+            inputEntrada: document.getElementById('input-entrada'),
+            inputTotal: document.getElementById('input-total'),
+            labelTotal: document.getElementById('label-total'),
+            
+            inputUnico: document.getElementById('input-unico'),
+            inputRed: document.getElementById('input-red'),
+            
+            statusContainer: document.querySelector('.status-calculo-novo'),
+            rotuloStatus: document.getElementById('rotulo-status'),
+            valorStatus: document.getElementById('valor-status'),
+            
+            form: document.getElementById('form-mentor-novo'),
+            btnEnviar: document.querySelector('.botao-enviar-novo'),
+        };
+    },
+
+    configurarEventos() {
+        document.querySelectorAll('.opcao-novo').forEach(opcao => {
+            opcao.addEventListener('click', (e) => {
+                const tipo = opcao.dataset.tipo;
+                this.selecionarTipo(tipo);
+                
+                const valorUndSpan = document.getElementById('valor-unidade');
+                if (valorUndSpan) {
+                    const valorUnd = valorUndSpan.textContent.trim();
+                    
+                    setTimeout(() => {
+                        if (tipo === 'red') {
+                            const inputRed = document.getElementById('input-red');
+                            if (inputRed && valorUnd && valorUnd !== 'R$ 0,00') {
+                                inputRed.value = valorUnd;
+                                setTimeout(() => {
+                                    this.atualizarCalculoRed();
+                                    this.verificarSaldoInput(inputRed);
+                                }, 200);
+                            } else {
+                                setTimeout(() => {
+                                    this.mostrarMensagemAutomaticaRed();
+                                }, 300);
+                            }
+                        } else {
+                            const inputEntrada = document.getElementById('input-entrada');
+                            if (inputEntrada && valorUnd && valorUnd !== 'R$ 0,00') {
+                                inputEntrada.value = valorUnd;
+                                setTimeout(() => {
+                                    this.atualizarCalculo();
+                                }, 200);
+                            }
+                        }
+                    }, 400);
+                }
+            });
+        });
+
+        if (this.elementos.inputEntrada) {
+            this.elementos.inputEntrada.addEventListener('input', () => {
+                this.atualizarCalculo();
+            });
+        }
+
+        if (this.elementos.inputTotal) {
+            this.elementos.inputTotal.addEventListener('input', () => {
+                this.atualizarCalculo();
+                this.verificarSaldoInput(this.elementos.inputTotal);
+            });
+        }
+
+        if (this.elementos.inputRed) {
+            this.elementos.inputRed.addEventListener('input', () => {
+                this.atualizarCalculoRed();
+                this.verificarSaldoInput(this.elementos.inputRed);
+            });
+        }
+
+        if (this.elementos.form) {
+            this.elementos.form.addEventListener('submit', (e) => {
+                e.preventDefault();
+                this.processarSubmissao(e.target);
+            });
+        }
+
+        if (this.elementos.btnFechar) {
+            this.elementos.btnFechar.addEventListener('click', () => {
+                this.fecharFormulario();
+            });
+        }
+
+        if (this.elementos.formulario) {
+            this.elementos.formulario.addEventListener('click', (e) => {
+                if (e.target === this.elementos.formulario) {
+                    this.fecharFormulario();
+                }
+            });
+        }
+
+        document.addEventListener('keydown', (e) => {
+            if (e.key === 'Escape' && this.estado.formularioAberto) {
+                this.fecharFormulario();
             }
-          }, 400);
+        });
+    },
+
+    // FUNÇÃO CORRIGIDA PARA VERIFICAÇÃO DE SALDO
+    verificarSaldoInput(inputElement) {
+        if (!inputElement) {
+            console.warn('Input element não fornecido');
+            return;
         }
-      });
-    });
-
-    // Resto dos eventos
-    if (this.elementos.inputEntrada) {
-      this.elementos.inputEntrada.addEventListener('input', () => {
-        this.atualizarCalculo();
-      });
-    }
-
-    if (this.elementos.inputTotal) {
-      this.elementos.inputTotal.addEventListener('input', () => {
-        this.atualizarCalculo();
-      });
-    }
-
-    if (this.elementos.inputRed) {
-      this.elementos.inputRed.addEventListener('input', () => {
-        this.atualizarCalculoRed();
-      });
-    }
-
-    if (this.elementos.form) {
-      this.elementos.form.addEventListener('submit', (e) => {
-        e.preventDefault();
-        this.processarSubmissao(e.target);
-      });
-    }
-
-    if (this.elementos.btnFechar) {
-      this.elementos.btnFechar.addEventListener('click', () => {
-        this.fecharFormulario();
-      });
-    }
-
-    if (this.elementos.formulario) {
-      this.elementos.formulario.addEventListener('click', (e) => {
-        if (e.target === this.elementos.formulario) {
-          this.fecharFormulario();
+        
+    // Debounce curto para garantir que a máscara de input tenha terminado de modificar o valor
+    if (this._verificarSaldoInputDelay) clearTimeout(this._verificarSaldoInputDelay);
+    this._verificarSaldoInputDelay = setTimeout(() => {
+      const valorDigitado = inputElement.value;
+      const mensagem = inputElement.parentElement.querySelector('.mensagem-status-input');
+        
+        if (!mensagem) {
+            console.warn('Elemento .mensagem-status-input não encontrado para:', inputElement.id);
+            // Criar o elemento se não existir
+            const novoElemento = document.createElement('div');
+            novoElemento.className = 'mensagem-status-input';
+            novoElemento.style.cssText = 'display: block; margin-top: 5px; font-size: 12px; font-weight: 600; min-height: 16px;';
+            inputElement.parentElement.appendChild(novoElemento);
+            console.log('Elemento .mensagem-status-input criado para:', inputElement.id);
         }
-      });
+
+            const mensagemElement = inputElement.parentElement.querySelector('.mensagem-status-input');
+
+            console.log('=== VERIFICAÇÃO DE SALDO ===');
+            console.log('Input ID:', inputElement.id);
+            console.log('Valor digitado:', valorDigitado);
+
+            // Converter diretamente para centavos e manter float secundário
+            const valorCentavosInicial = this.converterParaCentavos(valorDigitado);
+            const valorConvertido = valorCentavosInicial / 100;
+            console.log('Valor convertido (float):', valorConvertido, ' - centavos:', valorCentavosInicial);
+
+      if (valorConvertido <= 0) {
+      console.log('Valor zero ou negativo, não verificando saldo');
+      // limpar mensagem
+      if (mensagemElement) {
+        mensagemElement.textContent = '';
+        mensagemElement.classList.remove('negativo');
+        mensagemElement.style.opacity = '0';
+      }
+        return;
     }
 
-    document.addEventListener('keydown', (e) => {
-      if (e.key === 'Escape' && this.estado.formularioAberto) {
-        this.fecharFormulario();
-      }
-    });
-  },
+  const avaliarComparacao = (saldoDisponivelRaw) => {
+      const saldoDisponivel = parseFloat(saldoDisponivelRaw) || 0;
+      // Use centavos inteiros para evitar erros de ponto-flutuante
+  const valorCentavos = this.converterParaCentavos(valorConvertido);
+            const saldoCentavos = this.converterParaCentavos(saldoDisponivel);
 
-  configurarMascaras() {
-    const inputs = [
-      this.elementos.inputEntrada,
-      this.elementos.inputTotal,
-      this.elementos.inputRed
-    ];
-    
-    inputs.forEach(input => {
-      if (input) {
-        this.aplicarMascaraMonetaria(input);
-      }
-    });
-  },
+      console.log('Comparando (centavos) (cache/servidor):', valorCentavos, '>', saldoCentavos, '=', valorCentavos > saldoCentavos);
 
-  aplicarMascaraMonetaria(input) {
-    if (!input.value || input.value === '') {
-      input.value = 'R$ 0,00';
-    }
+      if (valorCentavos > saldoCentavos) {
+        this.estado.saldoInsuficiente = true;
+        if (mensagemElement) {
+        mensagemElement.textContent = `Saldo Insuficiente! Disponível: R$ ${(saldoCentavos/100).toLocaleString('pt-BR', {minimumFractionDigits:2})}`;
+          mensagemElement.classList.add('negativo');
+          mensagemElement.classList.remove('positivo', 'neutro');
+          mensagemElement.style.opacity = '1';
+          mensagemElement.style.display = 'block';
+          mensagemElement.style.color = '#dc3545';
+        }
+        if (this.elementos.btnEnviar) {
+          this.elementos.btnEnviar.disabled = true;
+          this.elementos.btnEnviar.classList.add('bloqueado');
+          this.elementos.btnEnviar.textContent = 'Saldo Insuficiente';
+          this.elementos.btnEnviar.style.backgroundColor = '#dc3545';
+          this.elementos.btnEnviar.style.cursor = 'not-allowed';
+        }
+      } else {
+        this.estado.saldoInsuficiente = false;
+        if (mensagemElement && mensagemElement.classList.contains('negativo') && mensagemElement.textContent.includes('Saldo Insuficiente')) {
+          mensagemElement.textContent = '';
+          mensagemElement.classList.remove('negativo');
+          mensagemElement.style.opacity = '0';
+        }
+        if (this.elementos.btnEnviar && !this.estado.processandoSubmissao) {
+          this.elementos.btnEnviar.disabled = false;
+          this.elementos.btnEnviar.classList.remove('bloqueado');
+          this.elementos.btnEnviar.textContent = 'Cadastrar';
+          this.elementos.btnEnviar.style.backgroundColor = '';
+          this.elementos.btnEnviar.style.cursor = '';
+        }
+      }
+    };
+
+      // Se temos saldo em cache, use imediatamente para feedback instantâneo
+      if (this.saldoCache !== null) {
+        console.log('Usando saldo em cache para resposta rápida:', this.saldoCache);
+        avaliarComparacao(this.saldoCache);
+      }
+
+      // Debounce: aguardar usuário parar de digitar antes de consultar o servidor
+      if (this._verificarSaldoTimeout) clearTimeout(this._verificarSaldoTimeout);
+      this._verificarSaldoTimeout = setTimeout(() => {
+        fetch('verificar_deposito.php')
+        .then(response => {
+          if (!response.ok) throw new Error(`HTTP ${response.status}`);
+          return response.json();
+        })
+        .then(data => {
+          console.log('Resposta completa do PHP:', data);
+          if (!data.success) {
+            console.error('Erro na resposta PHP:', data.message);
+            return;
+          }
+
+          // Preferir o saldo calculado pelo servidor (já inclui lucro)
+          const saldoServidor = parseFloat(data.saldo) || 0;
+          const lucroServidor = ('lucro_total' in data) ? parseFloat(data.lucro_total) || 0 : null;
+
+          // atualizar cache e reavaliar usando o saldo do servidor imediatamente
+          this.saldoCache = saldoServidor;
+          console.log('Saldo atualizado em cache (servidor):', this.saldoCache, 'lucro:', lucroServidor);
+          avaliarComparacao(this.saldoCache);
+        })
+        .catch(error => {
+          console.error('Erro ao verificar saldo:', error);
+          // Em caso de erro, não bloquear o usuário; manter estado atual
+          this.estado.saldoInsuficiente = false;
+        });
+      }, 300);
+    }, 60);
+    },
+
+    configurarMascaras() {
+        const inputs = [
+            this.elementos.inputEntrada,
+            this.elementos.inputTotal,
+            this.elementos.inputRed
+        ];
+        
+        inputs.forEach(input => {
+            if (input) {
+                this.aplicarMascaraMonetaria(input);
+            }
+        });
+    },
+
+    aplicarMascaraMonetaria(input) {
+        if (!input.value || input.value === '') {
+            input.value = 'R$ 0,00';
+        }
 
     input.addEventListener('input', (e) => {
-      let valor = e.target.value.replace(/\D/g, '');
-      
-      if (valor === '') {
-        e.target.value = 'R$ 0,00';
-        return;
+      const raw = e.target.value || '';
+      let onlyDigits = raw.replace(/\D/g, '');
+
+      // Se usuário incluiu separador decimal (vírgula ou ponto), manter o comportamento anterior
+      if (raw.indexOf(',') !== -1 || raw.indexOf('.') !== -1) {
+        if (onlyDigits === '') {
+          e.target.value = 'R$ 0,00';
+          return;
+        }
+
+        if (onlyDigits.length < 3) {
+          onlyDigits = onlyDigits.padStart(3, '0');
+        }
+
+        const reais = onlyDigits.slice(0, -2);
+        const centavos = onlyDigits.slice(-2);
+        e.target.value = `R$ ${parseInt(reais).toLocaleString('pt-BR')},${centavos}`;
+      } else {
+        // Sem separador: tratar todos os dígitos como reais (usuário digitou '10' esperando R$ 10,00)
+        if (onlyDigits === '') {
+          e.target.value = 'R$ 0,00';
+          return;
+        }
+
+        const reaisNum = parseInt(onlyDigits, 10) || 0;
+        e.target.value = `R$ ${reaisNum.toLocaleString('pt-BR')},00`;
       }
-      
-      if (valor.length < 3) {
-        valor = valor.padStart(3, '0');
-      }
-      
-      const reais = valor.slice(0, -2);
-      const centavos = valor.slice(-2);
-      e.target.value = `R$ ${parseInt(reais).toLocaleString('pt-BR')},${centavos}`;
-      
+
       setTimeout(() => {
         if (this.estado.tipoOperacao === 'red') {
           this.atualizarCalculoRed();
@@ -3186,766 +3349,798 @@ const SistemaCadastroNovo = {
       }, 50);
     });
 
-    input.addEventListener('focus', (e) => {
-      setTimeout(() => {
-        e.target.select();
-      }, 50);
-    });
+        input.addEventListener('focus', (e) => {
+            setTimeout(() => {
+                e.target.select();
+            }, 50);
+        });
+    },
+
+    converterParaFloat(valorBRL) {
+        if (!valorBRL || typeof valorBRL !== 'string') return 0;
+        return parseFloat(
+            valorBRL
+                .replace(/[^\d,.-]/g, '')
+                .replace(/\./g, '')
+                .replace(',', '.')
+        ) || 0;
+    },
+
+  // Conversão robusta para centavos inteiros (aceita número ou string BRL)
+  converterParaCentavos(valor) {
+    if (typeof valor === 'number') {
+      return Math.round(valor * 100);
+    }
+    if (!valor) return 0;
+    try {
+      const asFloat = this.converterParaFloat(String(valor));
+      return Math.round(asFloat * 100);
+    } catch (e) {
+      return 0;
+    }
   },
 
-  converterParaFloat(valorBRL) {
-    if (!valorBRL || typeof valorBRL !== 'string') return 0;
-    return parseFloat(
-      valorBRL
-        .replace(/[^\d,.-]/g, '')
-        .replace(/\./g, '')
-        .replace(',', '.')
-    ) || 0;
-  },
+    formatarParaBRL(valor) {
+        const numero = typeof valor === 'string' ? this.converterParaFloat(valor) : valor;
+        return numero.toLocaleString('pt-BR', {
+            style: 'currency',
+            currency: 'BRL'
+        });
+    },
 
-  formatarParaBRL(valor) {
-    const numero = typeof valor === 'string' ? this.converterParaFloat(valor) : valor;
-    return numero.toLocaleString('pt-BR', {
-      style: 'currency',
-      currency: 'BRL'
-    });
-  },
-
-  abrirFormulario(card) {
-    if (this.estado.formularioAberto || this.estado.processandoSubmissao) {
-      console.warn('Formulário já está aberto ou processando');
-      return;
-    }
-
-    if (!card) {
-      console.warn('Card não fornecido');
-      return;
-    }
-
-    const nomeMentor = card.getAttribute('data-nome') || 'Mentor';
-    const fotoMentor = card.getAttribute('data-foto') || this.config.AVATAR_PADRAO;
-    const idMentor = card.getAttribute('data-id') || '';
-
-    if (!idMentor) {
-      console.error('ID do mentor não encontrado');
-      if (typeof ToastManager !== 'undefined') {
-        ToastManager.mostrar('Erro: ID do mentor não encontrado', 'erro');
-      }
-      return;
-    }
-
-    console.log('Abrindo formulário para mentor:', nomeMentor, 'ID:', idMentor);
-
-    this.preencherInfoMentor(nomeMentor, fotoMentor, idMentor);
-    this.resetarFormulario();
-    this.mostrarFormulario();
-  },
-
-  preencherInfoMentor(nome, foto, id) {
-    if (this.elementos.mentorNome) {
-      this.elementos.mentorNome.textContent = nome;
-    }
-
-    if (this.elementos.mentorFoto) {
-      this.elementos.mentorFoto.src = foto;
-      this.elementos.mentorFoto.onerror = () => {
-        this.elementos.mentorFoto.src = this.config.AVATAR_PADRAO;
-      };
-    }
-
-    if (this.elementos.mentorIdInput) {
-      this.elementos.mentorIdInput.value = id;
-    }
-
-    this.estado.mentorId = id;
-  },
-
-  mostrarFormulario() {
-    if (!this.elementos.formulario) return;
-
-    this.criarOverlayElegante();
-    document.body.classList.add('modal-aberto');
-
-    this.elementos.formulario.style.display = 'block';
-    this.elementos.formulario.offsetHeight;
-    
-    requestAnimationFrame(() => {
-      this.elementos.formulario.classList.add('ativo');
-    });
-    
-    this.estado.formularioAberto = true;
-
-    const mensagemInicial = document.getElementById('mensagem-inicial-gestao');
-    if (mensagemInicial) {
-      if (this.elementos.inputsDuplos) {
-        this.elementos.inputsDuplos.classList.remove('ativo');
-        this.elementos.inputsDuplos.style.display = 'none';
-      }
-      if (this.elementos.inputUnico) {
-        this.elementos.inputUnico.classList.remove('ativo');
-        this.elementos.inputUnico.style.display = 'none';
-      }
-      
-      mensagemInicial.style.display = 'none';
-      mensagemInicial.style.opacity = '0';
-      mensagemInicial.classList.remove('ativo');
-      
-      setTimeout(() => {
-        mensagemInicial.style.display = 'block';
-        mensagemInicial.offsetHeight;
-        mensagemInicial.style.opacity = '1';
-        mensagemInicial.classList.add('ativo');
-      }, 200);
-    }
-
-    setTimeout(() => {
-      const primeiroInput = this.elementos.formulario.querySelector('input[type="text"]:not([style*="display: none"])');
-      if (primeiroInput) {
-        primeiroInput.focus();
-      }
-    }, 600);
-  },
-
-  criarOverlayElegante() {
-    console.log('Criando overlay...');
-    
-    this.removerTodosOverlays();
-
-    const overlay = document.createElement('div');
-    overlay.id = 'formulario-overlay-elegante';
-    overlay.className = 'formulario-mentor-overlay';
-    
-    this.overlayAtual = overlay;
-    
-    document.body.appendChild(overlay);
-    overlay.offsetHeight;
-    
-    requestAnimationFrame(() => {
-      overlay.classList.add('ativo');
-      console.log('Overlay ativado');
-    });
-
-    overlay.addEventListener('click', (e) => {
-      if (e.target === overlay) {
-        this.fecharFormulario();
-      }
-    });
-
-    return overlay;
-  },
-
-  fecharFormulario() {
-    if (!this.elementos.formulario || !this.estado.formularioAberto) {
-      return;
-    }
-
-    console.log('Fechando formulário com limpeza completa...');
-
-    this.removerOverlayCompleto();
-    this.elementos.formulario.classList.remove('ativo');
-    this.elementos.formulario.classList.add('fechando');
-    document.body.classList.remove('modal-aberto');
-    
-    setTimeout(() => {
-      this.elementos.formulario.style.display = 'none';
-      this.elementos.formulario.classList.remove('fechando');
-      this.resetarFormulario();
-      this.estado.formularioAberto = false;
-      
-      setTimeout(() => {
-        this.verificarLimpezaCompleta();
-      }, 100);
-    }, 400);
-  },
-
-  removerOverlayCompleto() {
-    console.log('Removendo overlay...');
-    
-    if (this.overlayAtual) {
-      this.overlayAtual.classList.remove('ativo');
-      
-      setTimeout(() => {
-        if (this.overlayAtual && this.overlayAtual.parentNode) {
-          this.overlayAtual.parentNode.removeChild(this.overlayAtual);
-          console.log('Overlay removido via referência');
+    abrirFormulario(card) {
+        if (this.estado.formularioAberto || this.estado.processandoSubmissao) {
+            console.warn('Formulário já está aberto ou processando');
+            return;
         }
-        this.overlayAtual = null;
-      }, 50);
-    }
-    
-    setTimeout(() => {
-      this.removerTodosOverlays();
-    }, 100);
-  },
 
-  removerTodosOverlays() {
-    const seletoresOverlay = [
-      '#formulario-overlay-elegante',
-      '.formulario-mentor-overlay',
-      '[id*="overlay"]'
-    ];
-
-    let overlaysRemovidos = 0;
-
-    seletoresOverlay.forEach(seletor => {
-      const overlays = document.querySelectorAll(seletor);
-      overlays.forEach(overlay => {
-        if (overlay && overlay.parentNode) {
-          overlay.remove();
-          overlaysRemovidos++;
+        if (!card) {
+            console.warn('Card não fornecido');
+            return;
         }
-      });
-    });
 
-    if (overlaysRemovidos > 0) {
-      console.log(`Removidos ${overlaysRemovidos} overlays`);
-    }
+        const nomeMentor = card.getAttribute('data-nome') || 'Mentor';
+        const fotoMentor = card.getAttribute('data-foto') || this.config.AVATAR_PADRAO;
+        const idMentor = card.getAttribute('data-id') || '';
 
-    this.overlayAtual = null;
-  },
-
-  verificarLimpezaCompleta() {
-    const overlaysRestantes = document.querySelectorAll('.formulario-mentor-overlay');
-    
-    if (overlaysRestantes.length > 0) {
-      console.warn('Encontrados overlays restantes, removendo...');
-      this.removerTodosOverlays();
-    } else {
-      console.log('Limpeza completa confirmada');
-    }
-
-    if (document.body.classList.contains('modal-aberto')) {
-      document.body.classList.remove('modal-aberto');
-      console.log('Scroll restaurado forçadamente');
-    }
-
-    document.body.style.overflow = '';
-    document.body.style.backgroundColor = '';
-  },
-
-  // Integração com verificação de depósito - CORRIGIDA
-  integrarComSistemaExistente() {
-    console.log('Integrando sistema novo de cadastro...');
-    
-    this.desativarSistemaAntigo();
-    
-    // CORREÇÃO: Remover a integração que bloqueia o formulário
-    // A verificação de depósito será feita pelo VerificacaoDeposito, não aqui
-    
-    document.addEventListener('click', (e) => {
-      const card = e.target.closest('.mentor-card');
-      
-      if (card && !this.isClickNoMenu(e) && !this.estado.formularioAberto) {
-        const idMentor = card.getAttribute('data-id');
-        const nomeMentor = card.getAttribute('data-nome');
-        
-        if (idMentor && nomeMentor) {
-          e.preventDefault();
-          e.stopPropagation();
-          e.stopImmediatePropagation();
-          
-          console.log('Clique interceptado no card:', nomeMentor, 'ID:', idMentor);
-          
-          // CORREÇÃO: Verificação de depósito será feita pelo VerificacaoDeposito
-          // Aqui apenas interceptamos cliques em cards que NÃO têm verificação ativa
-          
-          // Se VerificacaoDeposito estiver ativo, ele cuidará da verificação
-          // Senão, abrimos o formulário diretamente
-          if (typeof VerificacaoDeposito !== 'undefined' && VerificacaoDeposito.verificarEPermitirCadastro) {
-            VerificacaoDeposito.verificarEPermitirCadastro(card);
-          } else {
-            // Fallback: abrir formulário diretamente
-            this.abrirFormulario(card);
-          }
-          
-          return false;
-        } else {
-          console.warn('Card sem dados necessários:', card);
-        }
-      }
-    }, true);
-
-    const observer = new MutationObserver((mutations) => {
-      mutations.forEach((mutation) => {
-        if (mutation.type === 'childList') {
-          mutation.addedNodes.forEach((node) => {
-            if (node.nodeType === 1 && node.classList.contains('mentor-card')) {
-              console.log('Novo card detectado, desativando sistema antigo');
-              this.desativarSistemaAntigo();
+        if (!idMentor) {
+            console.error('ID do mentor não encontrado');
+            if (typeof ToastManager !== 'undefined') {
+                ToastManager.mostrar('Erro: ID do mentor não encontrado', 'erro');
             }
-          });
+            return;
         }
-      });
-    });
 
-    const containerMentores = document.getElementById('listaMentores');
-    if (containerMentores) {
-      observer.observe(containerMentores, {
-        childList: true,
-        subtree: true
-      });
-    }
+        console.log('Abrindo formulário para mentor:', nomeMentor, 'ID:', idMentor);
 
-    console.log('Integração completa do sistema novo');
-  },
+        this.preencherInfoMentor(nomeMentor, fotoMentor, idMentor);
+        this.resetarFormulario();
+        this.mostrarFormulario();
+    },
 
-  desativarSistemaAntigo() {
-    if (typeof FormularioValorManager !== 'undefined') {
-      FormularioValorManager.exibirFormularioMentor = () => {
-        console.log('FormularioValorManager desativado - usando novo sistema');
-      };
-    }
+    preencherInfoMentor(nome, foto, id) {
+        if (this.elementos.mentorNome) {
+            this.elementos.mentorNome.textContent = nome;
+        }
 
-    if (typeof window.exibirFormularioMentor === 'function') {
-      window.exibirFormularioMentor = () => {
-        console.log('exibirFormularioMentor desativado - usando novo sistema');
-      };
-    }
+        if (this.elementos.mentorFoto) {
+            this.elementos.mentorFoto.src = foto;
+            this.elementos.mentorFoto.onerror = () => {
+                this.elementos.mentorFoto.src = this.config.AVATAR_PADRAO;
+            };
+        }
 
-    document.querySelectorAll('.mentor-card').forEach(card => {
-      if (card.onclick) {
-        card.onclick = null;
-      }
-      card.removeAttribute('onclick');
-      
-      const newCard = card.cloneNode(true);
-      card.parentNode.replaceChild(newCard, card);
-    });
-    
-    console.log('Sistema antigo desativado');
-  },
+        if (this.elementos.mentorIdInput) {
+            this.elementos.mentorIdInput.value = id;
+        }
 
-  isClickNoMenu(event) {
-    const elementosIgnorar = [
-      '.menu-toggle',
-      '.menu-opcoes', 
-      '.btn-icon',
-      '.btn-lixeira',
-      'button',
-      'i[class*="fa"]'
-    ];
+        this.estado.mentorId = id;
+    },
 
-    return elementosIgnorar.some(seletor => {
-      return event.target.closest(seletor) !== null;
-    });
-  },
+    mostrarFormulario() {
+        if (!this.elementos.formulario) return;
 
-  // Resto dos métodos do SistemaCadastroNovo...
-  // (Vou incluir apenas os principais devido ao limite de espaço)
+        this.criarOverlayElegante();
+        document.body.classList.add('modal-aberto');
 
-  async processarSubmissao(form) {
-    console.log('Iniciando submissão...');
+        this.elementos.formulario.style.display = 'block';
+        this.elementos.formulario.offsetHeight;
+        
+        requestAnimationFrame(() => {
+            this.elementos.formulario.classList.add('ativo');
+        });
+        
+        this.estado.formularioAberto = true;
 
-    if (this.estado.processandoSubmissao) {
-      console.warn('Submissão já em andamento');
-      return;
-    }
+        const mensagemInicial = document.getElementById('mensagem-inicial-gestao');
+        if (mensagemInicial) {
+            if (this.elementos.inputsDuplos) {
+                this.elementos.inputsDuplos.classList.remove('ativo');
+                this.elementos.inputsDuplos.style.display = 'none';
+            }
+            if (this.elementos.inputUnico) {
+                this.elementos.inputUnico.classList.remove('ativo');
+                this.elementos.inputUnico.style.display = 'none';
+            }
+            
+            mensagemInicial.style.display = 'none';
+            mensagemInicial.style.opacity = '0';
+            mensagemInicial.classList.remove('ativo');
+            
+            setTimeout(() => {
+                mensagemInicial.style.display = 'block';
+                mensagemInicial.offsetHeight;
+                mensagemInicial.style.opacity = '1';
+                mensagemInicial.classList.add('ativo');
+            }, 200);
+        }
 
-    if (!this.validarFormulario()) {
-      return;
-    }
-
-    this.estado.processandoSubmissao = true;
-
-    const dadosEnvio = this.prepararDadosEnvio();
-    this.definirEstadoBotao(true);
-    
-    try {
-      console.log('Enviando dados:', dadosEnvio);
-
-      const response = await fetch('cadastrar-valor-novo.php', {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify(dadosEnvio)
-      });
-
-      if (!response.ok) {
-        throw new Error(`Erro HTTP ${response.status}: ${response.statusText}`);
-      }
-
-      const resultado = await response.json();
-      console.log('Resposta:', resultado);
-
-      if (typeof ToastManager !== 'undefined') {
-        ToastManager.mostrar(resultado.mensagem, resultado.tipo);
-      } else {
-        alert(resultado.mensagem);
-      }
-
-      if (resultado.tipo === 'sucesso') {
-        this.fecharFormulario();
-        await this.atualizarSistemaExistente();
-      }
-
-    } catch (error) {
-      console.error('Erro na submissão:', error);
-      
-      const mensagem = 'Erro ao cadastrar valor: ' + error.message;
-      if (typeof ToastManager !== 'undefined') {
-        ToastManager.mostrar(mensagem, 'erro');
-      } else {
-        alert(mensagem);
-      }
-    } finally {
-      this.estado.processandoSubmissao = false;
-      this.definirEstadoBotao(false);
-    }
-  },
-
-  prepararDadosEnvio() {
-    const dados = {
-      id_mentor: this.estado.mentorId,
-      tipo_operacao: this.estado.tipoOperacao,
-    };
-
-    if (this.estado.tipoOperacao === 'red') {
-      dados.valor_red = this.estado.valorRed;
-      dados.valor_green = null;
-    } else {
-      const resultado = this.estado.valorTotal - this.estado.valorEntrada;
-      
-      if (resultado >= 0) {
-        dados.valor_green = resultado;
-        dados.valor_red = null;
-      } else {
-        dados.valor_green = null;
-        dados.valor_red = Math.abs(resultado);
-      }
-    }
-
-    return dados;
-  },
-
-  definirEstadoBotao(carregando) {
-    if (!this.elementos.btnEnviar) return;
-
-    if (carregando) {
-      this.elementos.btnEnviar.disabled = true;
-      this.elementos.btnEnviar.classList.add('carregando');
-      this.elementos.btnEnviar.textContent = 'Processando...';
-    } else {
-      this.elementos.btnEnviar.disabled = false;
-      this.elementos.btnEnviar.classList.remove('carregando');
-      this.elementos.btnEnviar.textContent = 'Cadastrar';
-    }
-  },
-
-  validarFormulario() {
-    if (!this.estado.tipoOperacao) {
-      this.mostrarErro('Selecione o tipo de operação (Cash, Green ou Red)');
-      return false;
-    }
-
-    if (this.estado.tipoOperacao === 'red') {
-      if (this.estado.valorRed <= 0) {
-        this.mostrarErro('Informe um valor válido maior que zero para Red');
-        this.marcarCampoErro(this.elementos.inputRed);
-        return false;
-      }
-    } else {
-      if (this.estado.valorEntrada <= 0) {
-        this.mostrarErro('Informe um valor válido maior que zero para Entrada');
-        this.marcarCampoErro(this.elementos.inputEntrada);
-        return false;
-      }
-      
-      if (this.estado.valorTotal <= 0) {
-        this.mostrarErro('Informe um valor válido maior que zero para Total');
-        this.marcarCampoErro(this.elementos.inputTotal);
-        return false;
-      }
-    }
-
-    this.limparErrosCampos();
-    return true;
-  }
-};
-
-// CORREÇÃO ADICIONAL: Adicionar métodos faltantes ao SistemaCadastroNovo
-SistemaCadastroNovo.selecionarTipo = function(tipo) {
-    if (!['cash', 'green', 'red'].includes(tipo)) {
-      return;
-    }
-
-    this.estado.tipoOperacao = tipo;
-    
-    document.querySelectorAll('.opcao-novo').forEach(opcao => {
-      opcao.classList.remove('selecionada');
-      const radio = opcao.querySelector('input[type="radio"]');
-      if (radio) radio.checked = false;
-    });
-
-    const opcaoSelecionada = document.querySelector(`[data-tipo="${tipo}"]`);
-    if (opcaoSelecionada) {
-      opcaoSelecionada.classList.add('selecionada');
-      const radio = opcaoSelecionada.querySelector('input[type="radio"]');
-      if (radio) radio.checked = true;
-    }
-
-    if (this.elementos.tipoOperacaoInput) {
-      this.elementos.tipoOperacaoInput.value = tipo;
-    }
-
-    this.mostrarCamposParaTipo(tipo);
-    this.resetarValoresInputs();
-
-    // Ao selecionar um tipo, esconder a mensagem inicial para mostrar os inputs e mensagens de verificação
-    try {
-      const mensagemInicial = document.getElementById('mensagem-inicial-gestao');
-      const tempoAnim = (this.config && this.config.TIMEOUT_ANIMACAO) ? this.config.TIMEOUT_ANIMACAO : 300;
-      if (mensagemInicial) {
-        // começar animação de saída
-        mensagemInicial.style.opacity = '0';
-        mensagemInicial.classList.remove('ativo');
-
-        // após animação, ocultar por completo
         setTimeout(() => {
-          mensagemInicial.style.display = 'none';
-        }, tempoAnim);
-      }
-    } catch (err) {
-      console.warn('Erro ao tentar esconder mensagem inicial:', err);
-    }
+            const primeiroInput = this.elementos.formulario.querySelector('input[type="text"]:not([style*="display: none"])');
+            if (primeiroInput) {
+                primeiroInput.focus();
+            }
+        }, 600);
+    },
 
-    // Limpar/ocultar todas as mensagens internas ao selecionar qualquer opção
-    try {
-      const limparMensagens = () => {
+    criarOverlayElegante() {
+        console.log('Criando overlay...');
+        
+        this.removerTodosOverlays();
+
+        const overlay = document.createElement('div');
+        overlay.id = 'formulario-overlay-elegante';
+        overlay.className = 'formulario-mentor-overlay';
+        
+        this.overlayAtual = overlay;
+        
+        document.body.appendChild(overlay);
+        overlay.offsetHeight;
+        
+        requestAnimationFrame(() => {
+            overlay.classList.add('ativo');
+            console.log('Overlay ativado');
+        });
+
+        overlay.addEventListener('click', (e) => {
+            if (e.target === overlay) {
+                this.fecharFormulario();
+            }
+        });
+
+        return overlay;
+    },
+
+    fecharFormulario() {
+        if (!this.elementos.formulario || !this.estado.formularioAberto) {
+            return;
+        }
+
+        console.log('Fechando formulário com limpeza completa...');
+
+        this.removerOverlayCompleto();
+        this.elementos.formulario.classList.remove('ativo');
+        this.elementos.formulario.classList.add('fechando');
+        document.body.classList.remove('modal-aberto');
+        
+        setTimeout(() => {
+            this.elementos.formulario.style.display = 'none';
+            this.elementos.formulario.classList.remove('fechando');
+            this.resetarFormulario();
+            this.estado.formularioAberto = false;
+            
+            setTimeout(() => {
+                this.verificarLimpezaCompleta();
+            }, 100);
+        }, 400);
+    },
+
+    removerOverlayCompleto() {
+        console.log('Removendo overlay...');
+        
+        if (this.overlayAtual) {
+            this.overlayAtual.classList.remove('ativo');
+            
+            setTimeout(() => {
+                if (this.overlayAtual && this.overlayAtual.parentNode) {
+                    this.overlayAtual.parentNode.removeChild(this.overlayAtual);
+                    console.log('Overlay removido via referência');
+                }
+                this.overlayAtual = null;
+            }, 50);
+        }
+        
+        setTimeout(() => {
+            this.removerTodosOverlays();
+        }, 100);
+    },
+
+    removerTodosOverlays() {
+        const seletoresOverlay = [
+            '#formulario-overlay-elegante',
+            '.formulario-mentor-overlay',
+            '[id*="overlay"]'
+        ];
+
+        let overlaysRemovidos = 0;
+
+        seletoresOverlay.forEach(seletor => {
+            const overlays = document.querySelectorAll(seletor);
+            overlays.forEach(overlay => {
+                if (overlay && overlay.parentNode) {
+                    overlay.remove();
+                    overlaysRemovidos++;
+                }
+            });
+        });
+
+        if (overlaysRemovidos > 0) {
+            console.log(`Removidos ${overlaysRemovidos} overlays`);
+        }
+
+        this.overlayAtual = null;
+    },
+
+    verificarLimpezaCompleta() {
+        const overlaysRestantes = document.querySelectorAll('.formulario-mentor-overlay');
+        
+        if (overlaysRestantes.length > 0) {
+            console.warn('Encontrados overlays restantes, removendo...');
+            this.removerTodosOverlays();
+        } else {
+            console.log('Limpeza completa confirmada');
+        }
+
+        if (document.body.classList.contains('modal-aberto')) {
+            document.body.classList.remove('modal-aberto');
+            console.log('Scroll restaurado forçadamente');
+        }
+
+        document.body.style.overflow = '';
+        document.body.style.backgroundColor = '';
+    },
+
+    integrarComSistemaExistente() {
+        console.log('Integrando sistema novo de cadastro...');
+        
+        this.desativarSistemaAntigo();
+        
+        document.addEventListener('click', (e) => {
+            const card = e.target.closest('.mentor-card');
+            
+            if (card && !this.isClickNoMenu(e) && !this.estado.formularioAberto) {
+                const idMentor = card.getAttribute('data-id');
+                const nomeMentor = card.getAttribute('data-nome');
+                
+                if (idMentor && nomeMentor) {
+                    e.preventDefault();
+                    e.stopPropagation();
+                    e.stopImmediatePropagation();
+                    
+                    console.log('Clique interceptado no card:', nomeMentor, 'ID:', idMentor);
+                    
+                    if (typeof VerificacaoDeposito !== 'undefined' && VerificacaoDeposito.verificarEPermitirCadastro) {
+                        VerificacaoDeposito.verificarEPermitirCadastro(card);
+                    } else {
+                        this.abrirFormulario(card);
+                    }
+                    
+                    return false;
+                } else {
+                    console.warn('Card sem dados necessários:', card);
+                }
+            }
+        }, true);
+
+        const observer = new MutationObserver((mutations) => {
+            mutations.forEach((mutation) => {
+                if (mutation.type === 'childList') {
+                    mutation.addedNodes.forEach((node) => {
+                        if (node.nodeType === 1 && node.classList.contains('mentor-card')) {
+                            console.log('Novo card detectado, desativando sistema antigo');
+                            this.desativarSistemaAntigo();
+                        }
+                    });
+                }
+            });
+        });
+
+        const containerMentores = document.getElementById('listaMentores');
+        if (containerMentores) {
+            observer.observe(containerMentores, {
+                childList: true,
+                subtree: true
+            });
+        }
+
+        console.log('Integração completa do sistema novo');
+    },
+
+    desativarSistemaAntigo() {
+        if (typeof FormularioValorManager !== 'undefined') {
+            FormularioValorManager.exibirFormularioMentor = () => {
+                console.log('FormularioValorManager desativado - usando novo sistema');
+            };
+        }
+
+        if (typeof window.exibirFormularioMentor === 'function') {
+            window.exibirFormularioMentor = () => {
+                console.log('exibirFormularioMentor desativado - usando novo sistema');
+            };
+        }
+
+        document.querySelectorAll('.mentor-card').forEach(card => {
+            if (card.onclick) {
+                card.onclick = null;
+            }
+            card.removeAttribute('onclick');
+            
+            const newCard = card.cloneNode(true);
+            card.parentNode.replaceChild(newCard, card);
+        });
+        
+        console.log('Sistema antigo desativado');
+    },
+
+    isClickNoMenu(event) {
+        const elementosIgnorar = [
+            '.menu-toggle',
+            '.menu-opcoes', 
+            '.btn-icon',
+            '.btn-lixeira',
+            'button',
+            'i[class*="fa"]'
+        ];
+
+        return elementosIgnorar.some(seletor => {
+            return event.target.closest(seletor) !== null;
+        });
+    },
+
+    async processarSubmissao(form) {
+        console.log('Iniciando submissão...');
+
+        if (this.estado.processandoSubmissao) {
+            console.warn('Submissão já em andamento');
+            return;
+        }
+
+        if (!this.validarFormulario()) {
+            return;
+        }
+
+        this.estado.processandoSubmissao = true;
+
+        const dadosEnvio = this.prepararDadosEnvio();
+        this.definirEstadoBotao(true);
+        
+        try {
+            console.log('Enviando dados:', dadosEnvio);
+
+            const response = await fetch('cadastrar-valor-novo.php', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify(dadosEnvio)
+            });
+
+            if (!response.ok) {
+                throw new Error(`Erro HTTP ${response.status}: ${response.statusText}`);
+            }
+
+            const resultado = await response.json();
+            console.log('Resposta:', resultado);
+
+            if (typeof ToastManager !== 'undefined') {
+                ToastManager.mostrar(resultado.mensagem, resultado.tipo);
+            } else {
+                alert(resultado.mensagem);
+            }
+
+            if (resultado.tipo === 'sucesso') {
+                this.fecharFormulario();
+                await this.atualizarSistemaExistente();
+            }
+
+        } catch (error) {
+            console.error('Erro na submissão:', error);
+            
+            const mensagem = 'Erro ao cadastrar valor: ' + error.message;
+            if (typeof ToastManager !== 'undefined') {
+                ToastManager.mostrar(mensagem, 'erro');
+            } else {
+                alert(mensagem);
+            }
+        } finally {
+            this.estado.processandoSubmissao = false;
+            this.definirEstadoBotao(false);
+        }
+    },
+
+    prepararDadosEnvio() {
+        const dados = {
+            id_mentor: this.estado.mentorId,
+            tipo_operacao: this.estado.tipoOperacao,
+        };
+
+        if (this.estado.tipoOperacao === 'red') {
+            dados.valor_red = this.estado.valorRed;
+            dados.valor_green = null;
+        } else {
+            const resultado = this.estado.valorTotal - this.estado.valorEntrada;
+            
+            if (resultado >= 0) {
+                dados.valor_green = resultado;
+                dados.valor_red = null;
+            } else {
+                dados.valor_green = null;
+                dados.valor_red = Math.abs(resultado);
+            }
+        }
+
+        return dados;
+    },
+
+    // VALIDAÇÃO CORRIGIDA COM VERIFICAÇÃO DE SALDO
+    validarFormulario() {
+        if (!this.estado.tipoOperacao) {
+            this.mostrarErro('Selecione o tipo de operação (Cash, Green ou Red)');
+            return false;
+        }
+
+        // NOVA VALIDAÇÃO: Verificar saldo insuficiente
+        if (this.estado.saldoInsuficiente) {
+            this.mostrarErro('Não é possível cadastrar: saldo insuficiente na banca');
+            return false;
+        }
+
+        if (this.estado.tipoOperacao === 'red') {
+            if (this.estado.valorRed <= 0) {
+                this.mostrarErro('Informe um valor válido maior que zero para Red');
+                this.marcarCampoErro(this.elementos.inputRed);
+                return false;
+            }
+        } else {
+            if (this.estado.valorEntrada <= 0) {
+                this.mostrarErro('Informe um valor válido maior que zero para Entrada');
+                this.marcarCampoErro(this.elementos.inputEntrada);
+                return false;
+            }
+            
+            if (this.estado.valorTotal <= 0) {
+                this.mostrarErro('Informe um valor válido maior que zero para Total');
+                this.marcarCampoErro(this.elementos.inputTotal);
+                return false;
+            }
+        }
+
+        this.limparErrosCampos();
+        return true;
+    },
+
+    // DEFINIR ESTADO DO BOTÃO CORRIGIDO
+    definirEstadoBotao(carregando) {
+        if (!this.elementos.btnEnviar) return;
+
+        if (carregando) {
+            this.elementos.btnEnviar.disabled = true;
+            this.elementos.btnEnviar.classList.add('carregando');
+            this.elementos.btnEnviar.textContent = 'Processando...';
+        } else {
+            // Só liberar se não tiver saldo insuficiente
+            if (!this.estado.saldoInsuficiente) {
+                this.elementos.btnEnviar.disabled = false;
+                this.elementos.btnEnviar.classList.remove('carregando', 'bloqueado');
+                this.elementos.btnEnviar.textContent = 'Cadastrar';
+            } else {
+                this.elementos.btnEnviar.disabled = true;
+                this.elementos.btnEnviar.classList.remove('carregando');
+                this.elementos.btnEnviar.classList.add('bloqueado');
+                this.elementos.btnEnviar.textContent = 'Saldo Insuficiente';
+            }
+        }
+    },
+
+    mostrarErro(mensagem) {
+        if (typeof ToastManager !== 'undefined') {
+            ToastManager.mostrar(mensagem, 'aviso');
+        } else {
+            alert(mensagem);
+        }
+    },
+
+    marcarCampoErro(campo) {
+        if (campo) {
+            campo.classList.add('erro');
+            setTimeout(() => {
+                campo.classList.remove('erro');
+            }, 3000);
+        }
+    },
+
+    limparErrosCampos() {
+        [this.elementos.inputEntrada, this.elementos.inputTotal, this.elementos.inputRed].forEach(campo => {
+            if (campo) {
+                campo.classList.remove('erro');
+                campo.classList.add('sucesso');
+                setTimeout(() => {
+                    campo.classList.remove('sucesso');
+                }, 2000);
+            }
+        });
+    },
+
+    async atualizarSistemaExistente() {
+        console.log('Atualizando sistema...');
+
+        const atualizacoes = [];
+
+        if (typeof MentorManager !== 'undefined' && MentorManager.recarregarMentores) {
+            atualizacoes.push(MentorManager.recarregarMentores());
+        }
+
+        if (typeof DadosManager !== 'undefined' && DadosManager.atualizarLucroEBancaViaAjax) {
+            atualizacoes.push(DadosManager.atualizarLucroEBancaViaAjax());
+        }
+
+        try {
+            await Promise.all(atualizacoes);
+            console.log('Sistema atualizado');
+        } catch (error) {
+            console.warn('Erro ao atualizar:', error);
+        }
+    },
+
+    // MÉTODOS AUXILIARES DO SISTEMA
+    selecionarTipo(tipo) {
+        if (!['cash', 'green', 'red'].includes(tipo)) {
+            return;
+        }
+
+        this.estado.tipoOperacao = tipo;
+        
+        document.querySelectorAll('.opcao-novo').forEach(opcao => {
+            opcao.classList.remove('selecionada');
+            const radio = opcao.querySelector('input[type="radio"]');
+            if (radio) radio.checked = false;
+        });
+
+        const opcaoSelecionada = document.querySelector(`[data-tipo="${tipo}"]`);
+        if (opcaoSelecionada) {
+            opcaoSelecionada.classList.add('selecionada');
+            const radio = opcaoSelecionada.querySelector('input[type="radio"]');
+            if (radio) radio.checked = true;
+        }
+
+        if (this.elementos.tipoOperacaoInput) {
+            this.elementos.tipoOperacaoInput.value = tipo;
+        }
+
+        this.mostrarCamposParaTipo(tipo);
+        this.resetarValoresInputs();
+
+        try {
+            const mensagemInicial = document.getElementById('mensagem-inicial-gestao');
+            const tempoAnim = (this.config && this.config.TIMEOUT_ANIMACAO) ? this.config.TIMEOUT_ANIMACAO : 300;
+            if (mensagemInicial) {
+                mensagemInicial.style.opacity = '0';
+                mensagemInicial.classList.remove('ativo');
+
+                setTimeout(() => {
+                    mensagemInicial.style.display = 'none';
+                }, tempoAnim);
+            }
+        } catch (err) {
+            console.warn('Erro ao tentar esconder mensagem inicial:', err);
+        }
+
+        try {
+            const limparMensagens = () => {
+                if (this.elementos.inputsDuplos) {
+                    this.elementos.inputsDuplos.querySelectorAll('.mensagem-status-input').forEach(ms => {
+                        ms.textContent = '';
+                        ms.style.opacity = '0';
+                        ms.style.display = 'block';
+                        ms.classList.remove('positivo', 'negativo', 'neutro', 'animar');
+                    });
+                }
+                if (this.elementos.inputUnico) {
+                    const ms = this.elementos.inputUnico.querySelector('.mensagem-status-input');
+                    if (ms) {
+                        ms.textContent = '';
+                        ms.style.opacity = '0';
+                        ms.style.display = 'block';
+                        ms.classList.remove('positivo', 'negativo', 'neutro', 'animar');
+                    }
+                }
+            };
+            limparMensagens();
+        } catch (err) {
+            console.warn('Erro ao limpar mensagens de verificação:', err);
+        }
+
+        setTimeout(() => {
+            if (tipo === 'red') {
+                this.atualizarCalculoRed();
+                this.mostrarMensagemAutomaticaRed();
+            } else {
+                this.atualizarCalculo();
+            }
+        }, 200);
+    },
+
+    mostrarCamposParaTipo(tipo) {
+        if (tipo === 'red') {
+            if (this.elementos.inputsDuplos) {
+                this.elementos.inputsDuplos.classList.remove('ativo');
+                this.elementos.inputsDuplos.style.display = 'none';
+            }
+            if (this.elementos.inputUnico) {
+                this.elementos.inputUnico.style.display = 'block';
+                this.elementos.inputUnico.offsetHeight;
+                this.elementos.inputUnico.classList.add('ativo');
+            }
+        } else {
+            if (this.elementos.inputUnico) {
+                this.elementos.inputUnico.classList.remove('ativo');
+                this.elementos.inputUnico.style.display = 'none';
+            }
+            if (this.elementos.inputsDuplos) {
+                this.elementos.inputsDuplos.style.display = 'block';
+                this.elementos.inputsDuplos.offsetHeight;
+                this.elementos.inputsDuplos.classList.add('ativo');
+            }
+            
+            if (this.elementos.labelTotal) {
+                const textoLabel = tipo === 'cash' ? 'Total: Cash' : 'Total: Green';
+                this.elementos.labelTotal.textContent = textoLabel;
+            }
+        }
+    },
+
+    atualizarCalculo() {
+        if (this.estado.tipoOperacao === 'red') return;
+
+        const entrada = this.converterParaFloat(this.elementos.inputEntrada?.value || '0');
+        const total = this.converterParaFloat(this.elementos.inputTotal?.value || '0');
+
+        this.estado.valorEntrada = entrada;
+        this.estado.valorTotal = total;
+
+        const resultado = total - entrada;
+        this.atualizarStatus(resultado);
+    },
+
+    atualizarCalculoRed() {
+        if (this.estado.tipoOperacao !== 'red') return;
+
+        const valorRed = this.converterParaFloat(this.elementos.inputRed?.value || '0');
+        this.estado.valorRed = valorRed;
+
+        const resultado = -Math.abs(valorRed);
+        this.atualizarStatus(resultado);
+    },
+
+    atualizarStatus(valor) {
+        if (!this.elementos.rotuloStatus || !this.elementos.valorStatus) return;
+
+        this.elementos.valorStatus.classList.remove('status-neutro', 'status-positivo', 'status-negativo');
+        this.elementos.statusContainer.classList.remove('status-positivo-ativo', 'status-negativo-ativo');
+
+        let rotulo = 'Neutro';
+        let classeStatus = 'status-neutro';
+        let classeContainer = '';
+
+        if (valor > 0) {
+            rotulo = 'Lucro';
+            classeStatus = 'status-positivo';
+            classeContainer = 'status-positivo-ativo';
+        } else if (valor < 0) {
+            rotulo = 'Negativo';
+            classeStatus = 'status-negativo';
+            classeContainer = 'status-negativo-ativo';
+        }
+
+        this.elementos.rotuloStatus.textContent = rotulo;
+        this.elementos.valorStatus.textContent = this.formatarParaBRL(Math.abs(valor));
+        this.elementos.valorStatus.classList.add(classeStatus);
+        
+        if (classeContainer) {
+            this.elementos.statusContainer.classList.add(classeContainer);
+        }
+    },
+
+    mostrarMensagemAutomaticaRed() {
+        console.log('Mensagem automática do Red ativada');
+    },
+
+    resetarValoresInputs() {
+        [this.elementos.inputEntrada, this.elementos.inputTotal, this.elementos.inputRed].forEach(input => {
+            if (input) {
+                input.value = 'R$ 0,00';
+                input.classList.remove('erro', 'sucesso');
+            }
+        });
+        
+        this.estado.valorEntrada = 0;
+        this.estado.valorTotal = 0;
+        this.estado.valorRed = 0;
+        
+        this.atualizarStatus(0);
+    },
+
+    // RESET FORMULÁRIO CORRIGIDO COM LIMPEZA DE SALDO
+    resetarFormulario() {
+        this.estado = {
+            ...this.estado,
+            tipoOperacao: null,
+            valorEntrada: 0,
+            valorTotal: 0,
+            valorRed: 0,
+            processandoSubmissao: false,
+            saldoInsuficiente: false, // RESETAR ESTADO DE SALDO
+        };
+
+        document.querySelectorAll('.opcao-novo').forEach(opcao => {
+            opcao.classList.remove('selecionada');
+        });
+
+        document.querySelectorAll('input[type="radio"]').forEach(radio => {
+            radio.checked = false;
+        });   
+        
+        [this.elementos.inputEntrada, this.elementos.inputTotal, this.elementos.inputRed].forEach(input => {
+            if (input) {
+                input.value = 'R$ 0,00';
+                input.classList.remove('erro', 'sucesso');
+            }
+        });
+
         if (this.elementos.inputsDuplos) {
-          this.elementos.inputsDuplos.querySelectorAll('.mensagem-status-input').forEach(ms => {
-            ms.textContent = '';
-            ms.style.opacity = '0';
-            // manter display:block para preservar altura definida pelo CSS
-            ms.style.display = 'block';
-            ms.classList.remove('positivo', 'negativo', 'neutro', 'animar');
-          });
+            this.elementos.inputsDuplos.classList.remove('ativo');
+            this.elementos.inputsDuplos.style.display = 'none';
         }
         if (this.elementos.inputUnico) {
-          const ms = this.elementos.inputUnico.querySelector('.mensagem-status-input');
-          if (ms) {
-            ms.textContent = '';
-            ms.style.opacity = '0';
-            ms.style.display = 'block';
-            ms.classList.remove('positivo', 'negativo', 'neutro', 'animar');
-          }
+            this.elementos.inputUnico.classList.remove('ativo');
+            this.elementos.inputUnico.style.display = 'none';
         }
-      };
-      limparMensagens();
-    } catch (err) {
-      console.warn('Erro ao limpar mensagens de verificação:', err);
-    }
 
-    setTimeout(() => {
-      if (tipo === 'red') {
-        this.atualizarCalculoRed();
-        this.mostrarMensagemAutomaticaRed();
-      } else {
-        this.atualizarCalculo();
-      }
-    }, 200);
-};
+        this.atualizarStatus(0);
 
-SistemaCadastroNovo.mostrarCamposParaTipo = function(tipo) {
-    if (tipo === 'red') {
-      if (this.elementos.inputsDuplos) {
-        this.elementos.inputsDuplos.classList.remove('ativo');
-        this.elementos.inputsDuplos.style.display = 'none';
-      }
-      if (this.elementos.inputUnico) {
-        this.elementos.inputUnico.style.display = 'block';
-        this.elementos.inputUnico.offsetHeight;
-        this.elementos.inputUnico.classList.add('ativo');
-      }
-    } else {
-      if (this.elementos.inputUnico) {
-        this.elementos.inputUnico.classList.remove('ativo');
-        this.elementos.inputUnico.style.display = 'none';
-      }
-     if (this.elementos.inputsDuplos) {
-       this.elementos.inputsDuplos.style.display = 'block';
-       this.elementos.inputsDuplos.offsetHeight;
-       this.elementos.inputsDuplos.classList.add('ativo');
-     }
-     
-     if (this.elementos.labelTotal) {
-       const textoLabel = tipo === 'cash' ? 'Total: Cash' : 'Total: Green';
-       this.elementos.labelTotal.textContent = textoLabel;
-     }
-   }
-};
+        if (this.elementos.tipoOperacaoInput) {
+            this.elementos.tipoOperacaoInput.value = '';
+        }
 
-SistemaCadastroNovo.atualizarCalculo = function() {
-    if (this.estado.tipoOperacao === 'red') return;
+        // Liberar botão de envio e limpar mensagens de saldo
+        if (this.elementos.btnEnviar) {
+            this.elementos.btnEnviar.disabled = false;
+            this.elementos.btnEnviar.classList.remove('bloqueado');
+            this.elementos.btnEnviar.textContent = 'Cadastrar';
+        }
 
-    const entrada = this.converterParaFloat(this.elementos.inputEntrada?.value || '0');
-    const total = this.converterParaFloat(this.elementos.inputTotal?.value || '0');
-
-    this.estado.valorEntrada = entrada;
-    this.estado.valorTotal = total;
-
-    const resultado = total - entrada;
-    this.atualizarStatus(resultado);
-};
-
-SistemaCadastroNovo.atualizarCalculoRed = function() {
-    if (this.estado.tipoOperacao !== 'red') return;
-
-    const valorRed = this.converterParaFloat(this.elementos.inputRed?.value || '0');
-    this.estado.valorRed = valorRed;
-
-    const resultado = -Math.abs(valorRed);
-    this.atualizarStatus(resultado);
-};
-
-SistemaCadastroNovo.atualizarStatus = function(valor) {
-    if (!this.elementos.rotuloStatus || !this.elementos.valorStatus) return;
-
-    this.elementos.valorStatus.classList.remove('status-neutro', 'status-positivo', 'status-negativo');
-    this.elementos.statusContainer.classList.remove('status-positivo-ativo', 'status-negativo-ativo');
-
-    let rotulo = 'Neutro';
-    let classeStatus = 'status-neutro';
-    let classeContainer = '';
-
-    if (valor > 0) {
-      rotulo = 'Lucro';
-      classeStatus = 'status-positivo';
-      classeContainer = 'status-positivo-ativo';
-    } else if (valor < 0) {
-      rotulo = 'Negativo';
-      classeStatus = 'status-negativo';
-      classeContainer = 'status-negativo-ativo';
-    }
-
-    this.elementos.rotuloStatus.textContent = rotulo;
-    this.elementos.valorStatus.textContent = this.formatarParaBRL(Math.abs(valor));
-    this.elementos.valorStatus.classList.add(classeStatus);
-    
-    if (classeContainer) {
-      this.elementos.statusContainer.classList.add(classeContainer);
+        // Limpar todas as mensagens de saldo insuficiente
+        document.querySelectorAll('.mensagem-status-input').forEach(mensagem => {
+            if (mensagem.textContent.includes('Saldo Insuficiente')) {
+                mensagem.textContent = '';
+                mensagem.classList.remove('negativo');
+                mensagem.style.opacity = '0';
+            }
+        });
     }
 };
 
-SistemaCadastroNovo.mostrarMensagemAutomaticaRed = function() {
-    console.log('Mensagem automática do Red ativada');
-};
-
-SistemaCadastroNovo.resetarValoresInputs = function() {
-    [this.elementos.inputEntrada, this.elementos.inputTotal, this.elementos.inputRed].forEach(input => {
-      if (input) {
-        input.value = 'R$ 0,00';
-        input.classList.remove('erro', 'sucesso');
-      }
-    });
-    
-    this.estado.valorEntrada = 0;
-    this.estado.valorTotal = 0;
-    this.estado.valorRed = 0;
-    
-    this.atualizarStatus(0);
-};
-
-SistemaCadastroNovo.resetarFormulario = function() {
-    this.estado = {
-      ...this.estado,
-      tipoOperacao: null,
-      valorEntrada: 0,
-      valorTotal: 0,
-      valorRed: 0,
-      processandoSubmissao: false,
-    };
-
-    document.querySelectorAll('.opcao-novo').forEach(opcao => {
-      opcao.classList.remove('selecionada');
-    });
-
-    document.querySelectorAll('input[type="radio"]').forEach(radio => {
-      radio.checked = false;
-    });   
-    
-    [this.elementos.inputEntrada, this.elementos.inputTotal, this.elementos.inputRed].forEach(input => {
-      if (input) {
-        input.value = 'R$ 0,00';
-        input.classList.remove('erro', 'sucesso');
-      }
-    });
-
-    if (this.elementos.inputsDuplos) {
-      this.elementos.inputsDuplos.classList.remove('ativo');
-      this.elementos.inputsDuplos.style.display = 'none';
-    }
-    if (this.elementos.inputUnico) {
-      this.elementos.inputUnico.classList.remove('ativo');
-      this.elementos.inputUnico.style.display = 'none';
-    }
-
-    this.atualizarStatus(0);
-
-    if (this.elementos.tipoOperacaoInput) {
-      this.elementos.tipoOperacaoInput.value = '';
-    }
-};
-
-SistemaCadastroNovo.mostrarErro = function(mensagem) {
-    if (typeof ToastManager !== 'undefined') {
-      ToastManager.mostrar(mensagem, 'aviso');
-    } else {
-      alert(mensagem);
-    }
-};
-
-SistemaCadastroNovo.marcarCampoErro = function(campo) {
-    if (campo) {
-      campo.classList.add('erro');
-      setTimeout(() => {
-        campo.classList.remove('erro');
-      }, 3000);
-    }
-};
-
-SistemaCadastroNovo.limparErrosCampos = function() {
-    [this.elementos.inputEntrada, this.elementos.inputTotal, this.elementos.inputRed].forEach(campo => {
-      if (campo) {
-        campo.classList.remove('erro');
-        campo.classList.add('sucesso');
-        setTimeout(() => {
-          campo.classList.remove('sucesso');
-        }, 2000);
-      }
-    });
-};
-
-SistemaCadastroNovo.atualizarSistemaExistente = async function() {
-    console.log('Atualizando sistema...');
-
-    const atualizacoes = [];
-
-    if (typeof MentorManager !== 'undefined' && MentorManager.recarregarMentores) {
-      atualizacoes.push(MentorManager.recarregarMentores());
-    }
-
-    if (typeof DadosManager !== 'undefined' && DadosManager.atualizarLucroEBancaViaAjax) {
-      atualizacoes.push(DadosManager.atualizarLucroEBancaViaAjax());
-    }
-
-    try {
-      await Promise.all(atualizacoes);
-      console.log('Sistema atualizado');
-    } catch (error) {
-      console.warn('Erro ao atualizar:', error);
-    }
-};
+// FUNÇÕES GLOBAIS
 window.abrirModalExclusaoEntrada = function(idEntrada) {
     ModalExclusaoEntrada.abrir(idEntrada);
 };
 
 window.abrirFormularioNovo = (card) => {
-  SistemaCadastroNovo.abrirFormulario(card);
+    SistemaCadastroNovo.abrirFormulario(card);
 };
 
 window.fecharFormularioNovo = () => {
-  SistemaCadastroNovo.fecharFormulario();
+    SistemaCadastroNovo.fecharFormulario();
 };
 
 // INICIALIZAÇÃO AUTOMÁTICA
@@ -3963,9 +4158,9 @@ document.addEventListener('DOMContentLoaded', function() {
         console.log(`${cards.length} cards de mentor encontrados`);
         
         cards.forEach((card, index) => {
-          const id = card.getAttribute('data-id');
-          const nome = card.getAttribute('data-nome');
-          console.log(`Card ${index + 1}: ${nome} (ID: ${id})`);
+            const id = card.getAttribute('data-id');
+            const nome = card.getAttribute('data-nome');
+            console.log(`Card ${index + 1}: ${nome} (ID: ${id})`);
         });
         
     }, 500);
@@ -3982,21 +4177,21 @@ if (document.readyState === 'loading') {
     }, 100);
 }
 
+// EXPORTAR PARA WINDOW
 window.SistemaCadastroNovo = SistemaCadastroNovo;
 window.ModalExclusaoEntrada = ModalExclusaoEntrada;
 window.VerificacaoDeposito = VerificacaoDeposito;
 
-console.log('===== SISTEMA FINAL CORRIGIDO E FUNCIONANDO =====');
+console.log('===== SISTEMA COMPLETO COM VERIFICAÇÃO DE SALDO =====');
 console.log('✅ Modal de Exclusão: Funcional');
 console.log('✅ Sistema de Cadastro: Funcional com clique nos cards');  
 console.log('✅ Verificação de Depósito: Implementada');
+console.log('✅ Verificação de Saldo: Implementada com bloqueio');
 console.log('✅ Mensagem Red automática: Implementada');
 console.log('✅ Animações suaves: Implementadas');
 console.log('✅ Overlay removido completamente: Corrigido');
 console.log('🔧 Para testar: Clique em qualquer card de mentor');
-
 </script>
-
 
 
   <div id="mensagem-status" class="toast"></div>
