@@ -2,26 +2,26 @@
 
 /* Toast principal da página - Centralizado abaixo do menu */
 .toast {
+  /* Toast como overlay fixo no topo, não deve influenciar o fluxo do documento */
   position: fixed;
-  top: 80px; /* Posicionado abaixo do menu (altura do menu + margem) */
+  top: 22px; /* leve no topo */
   left: 50%;
-  transform: translateX(-50%);
+  transform: translateX(-50%) translateY(-10px);
   min-width: auto;
   max-width: 90%;
   padding: 8px 12px;
-  border-radius: 4px;
+  border-radius: 6px;
   font-size: 14px;
   font-weight: 500;
   font-family: "Segoe UI", sans-serif;
   text-align: center;
-  background: transparent;
-  border: none;
-  box-shadow: none;
+  background: rgba(255, 255, 255, 0.95);
+  border: 1px solid rgba(0, 0, 0, 0.06);
+  box-shadow: 0 6px 20px rgba(0, 0, 0, 0.08);
   z-index: 99999;
   opacity: 0;
-  transition: opacity 0.3s ease;
-  display: none;
-  position: relative;
+  transition: opacity 0.35s ease, transform 0.35s ease;
+  display: none; /* oculto por padrão */
   padding-left: 28px;
 }
 
@@ -29,6 +29,7 @@
 .toast.ativo {
   display: block !important;
   opacity: 1 !important;
+  transform: translateX(-50%) translateY(0) !important;
 }
 
 .toast.hidden {
@@ -239,23 +240,23 @@
   }
 }
 #mensagem-status {
+  /* Toast de status (centralizado no topo) */
   position: fixed;
-  top: 20px;
-  right: 20px;
-  padding: 6px 8px;
-  border-radius: 4px;
+  top: 22px;
+  left: 50%;
+  transform: translateX(-50%) translateY(-10px);
+  padding: 8px 12px;
+  border-radius: 6px;
   font-size: 14px;
   font-weight: 500;
   font-family: "Segoe UI", sans-serif;
-  background: transparent;
-  border: none;
-  box-shadow: none;
+  background: rgba(255, 255, 255, 0.95);
+  border: 1px solid rgba(0, 0, 0, 0.06);
+  box-shadow: 0 6px 20px rgba(0, 0, 0, 0.08);
   z-index: 99999;
   opacity: 0;
-  transition: all 0.3s ease;
-  transform: translateX(100%);
+  transition: opacity 0.35s ease, transform 0.35s ease;
   padding-left: 24px;
-  position: relative;
 }
 
 #mensagem-status::before {
@@ -270,7 +271,7 @@
 
 #mensagem-status.ativo {
   opacity: 1;
-  transform: translateX(0);
+  transform: translateX(-50%) translateY(0);
 }
 
 #mensagem-status.sucesso {

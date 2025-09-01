@@ -20,19 +20,10 @@ body {
   box-sizing: border-box;
 }
 
-.bloco {
-  flex: 1;
-  background-color: transparent !important; /* Removido fundo para não mostrar cor */
-  padding: 0px;
-  border-radius: 8px;
-  box-shadow: none !important; /* remover sombra para aparência limpa */
-  min-height: 400px;
-}
-
 /* ===== BLOCO 1 - TOTALMENTE FLEXÍVEL ===== */
 .bloco-1 {
   flex: 0 0 420px;
-  width: 420px;
+  width: 400px;
   height: 100%;
   overflow-y: auto;
   overflow-x: hidden;
@@ -41,26 +32,12 @@ body {
   box-sizing: border-box;
 }
 
-.bloco-2 {
-  flex: 1;
-  height: 100vh;
-  overflow-y: auto;
-  overflow-x: hidden;
-  background: transparent;
-  border-radius: 15px;
-  box-sizing: border-box;
-  overflow: hidden; /* impede que o conteúdo interno force expansão */
-}
 /* Scrollbar customizada para blocos */
-/* Scrollbar customizada para blocos */
-/* Scrollbar customizada para blocos */
-.bloco-1::-webkit-scrollbar,
-.bloco-2::-webkit-scrollbar {
+.bloco-1::-webkit-scrollbar {
   width: 6px;
 }
 
-.bloco-1::-webkit-scrollbar-thumb,
-.bloco-2::-webkit-scrollbar-thumb {
+.bloco-1::-webkit-scrollbar-thumb {
   background-color: rgba(0, 0, 0, 0.2);
   border-radius: 10px;
 }
@@ -84,28 +61,6 @@ body {
 /* ===== BLOCO 2 - TOTALMENTE FLEXÍVEL ===== */
 
 /* ===== CONTAINER RESUMOS - AGORA 100% FLEXÍVEL ===== */
-.container-resumos {
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  gap: 20px;
-  width: 100%; /* Sempre 100% da largura do bloco pai */
-  margin: 0;
-  padding: 0;
-  box-sizing: border-box;
-  font-family: "Poppins", sans-serif;
-}
-
-/* NOVO: garantir que blocos no container fiquem colados sem margens inesperadas */
-.container > .bloco {
-  margin: 0 !important;
-  box-sizing: border-box !important;
-}
-
-/* Garantir que blocos estiquem na cross-axis quando necessário */
-.container > .bloco {
-  align-self: stretch !important;
-}
 
 /* NOVO: reduzir gap em visualizações menores se necessário */
 @media (max-width: 1024px) {
@@ -119,6 +74,12 @@ body {
   .bloco-2 {
     flex: 0 0 calc(100% - 380px) !important;
     width: calc(100% - 380px) !important;
+  }
+
+  /* Override global: reduzir padding interno do Bloco 2 para aumentar espaço útil */
+  .bloco-2 {
+    padding: 6px !important;
+    box-sizing: border-box !important;
   }
 }
 
@@ -916,7 +877,13 @@ body {
 
 .dia-hoje {
   box-shadow: 0 4px 15px rgba(0, 0, 0, 0.15);
-  transform: scale(1.02);
+  /* Remover qualquer escala/zoom aplicada ao dia de hoje */
+  transform: none !important;
+}
+
+/* Garantir que o elemento de data dentro de .dia-hoje não receba zoom por herança */
+.dia-hoje .data {
+  transform: none !important;
 }
 
 .dia-hoje.borda-verde {
@@ -1034,7 +1001,6 @@ body {
   .data-header-integrada {
     height: 50px;
   }
-
   .barra-superior {
     height: 50px;
   }

@@ -972,82 +972,117 @@ ob_end_flush();
         <!-- Lista de dias do mês com resultados -->
 <div class="lista-dias">
 <?php
-// Array para armazenar apenas dias com valores
-$dias_com_valores = [];
+// Obter configurações de meta
+$meta_diaria = isset($_SESSION['meta_diaria']) ? floatval($_SESSION['meta_diaria']) : 0;
+$meta_mensal = isset($_SESSION['meta_mensal']) ? floatval($_SESSION['meta_mensal']) : 0;
+$meta_anual = isset($_SESSION['meta_anual']) ? floatval($_SESSION['meta_anual']) : 0;
 
-// Primeiro, coletar todos os dias que têm valores
-foreach ($dados_por_dia as $data => $dados) {
-    if ((int)$dados['total_green'] > 0 || (int)$dados['total_red'] > 0) {
-        $dias_com_valores[$data] = $dados;
-    }
-}
+// Determinar qual meta usar baseado no período atual (se disponível)
+$periodo_atual = $_SESSION['periodo_filtro'] ?? 'dia';
+$meta_atual = ($periodo_atual === 'mes') ? $meta_mensal : 
+              (($periodo_atual === 'ano') ? $meta_anual : $meta_diaria);
 
-// Adicionar o dia de hoje se não estiver na lista
-if (!isset($dias_com_valores[$hoje])) {
-    $dias_com_valores[$hoje] = [
+// Obter data atual
+$hoje = date('Y-m-d');
+
+// Obter primeiro e último dia do mês atual
+$mes_atual = date('m');
+$ano_atual = date('Y');
+$total_dias_mes = date('t');
+
+// Loop através de TODOS os dias do mês
+for ($dia = 1; $dia <= $total_dias_mes; $dia++) {
+    $dia_formatado = str_pad($dia, 2, '0', STR_PAD_LEFT);
+    $data_mysql = $ano_atual . '-' . $mes_atual . '-' . $dia_formatado;
+    $data_exibicao = $dia_formatado . '/' . $mes_atual . '/' . $ano_atual;
+    
+    // Buscar dados do dia (se existirem)
+    $dados_dia = isset($dados_por_dia[$data_mysql]) ? $dados_por_dia[$data_mysql] : [
         'total_valor_green' => 0,
         'total_valor_red' => 0,
         'total_green' => 0,
         'total_red' => 0
     ];
-}
-
-// Ordenar por data
-ksort($dias_com_valores);
-
-// Exibir apenas os dias filtrados
-foreach ($dias_com_valores as $data_mysql => $dados) {
-    // Extrair dia, mês e ano da data
-    list($ano_data, $mes_data, $dia_data) = explode('-', $data_mysql);
-    $data_exibicao = $dia_data . "/" . $mes_data . "/" . $ano_data;
     
-    $saldo_dia = floatval($dados['total_valor_green']) - floatval($dados['total_valor_red']);
+    // Calcular saldo do dia
+    $saldo_dia = floatval($dados_dia['total_valor_green']) - floatval($dados_dia['total_valor_red']);
     $saldo_formatado = number_format($saldo_dia, 2, ',', '.');
     
-    $cor_valor = ($saldo_dia == 0) ? 'texto-cinza' : ($saldo_dia > 0 ? 'verde-bold' : 'vermelho-bold');
-    $classe_texto = ($saldo_dia == 0) ? 'texto-cinza' : '';
-    $placar_cinza = ((int)$dados['total_green'] === 0 && (int)$dados['total_red'] === 0) ? 'texto-cinza' : '';
-    
-    $classe_dia = ($data_mysql === $hoje)
-        ? 'dia-hoje ' . ($saldo_dia >= 0 ? 'borda-verde' : 'borda-vermelha')
-        : 'dia-normal';
-    
-    // Destaque para dias passados com saldo
-    if ($data_mysql < $hoje && $saldo_dia > 0) {
-        $classe_destaque = 'dia-destaque';
-    } elseif ($data_mysql < $hoje && $saldo_dia < 0) {
-        $classe_destaque = 'dia-destaque-negativo';
-    } else {
-        $classe_destaque = '';
+    // Verificar se meta foi batida (CORRIGIDO)
+    $meta_batida = false;
+    if ($meta_atual > 0 && $saldo_dia >= $meta_atual) {
+        $meta_batida = true;
     }
     
-    // Classes para dias futuros ou sem valor (apenas para o dia de hoje sem valores)
-    $classe_nao_usada = ($data_mysql > $hoje) ? 'dia-nao-usada' : '';
-    $classe_sem_valor = ($data_mysql < $hoje && (int)$dados['total_green'] === 0 && (int)$dados['total_red'] === 0) ? 'dia-sem-valor' : '';
+    // Determinar cores e classes
+    $cor_valor = ($saldo_dia == 0) ? 'texto-cinza' : ($saldo_dia > 0 ? 'verde-bold' : 'vermelho-bold');
+    $classe_texto = ($saldo_dia == 0) ? 'texto-cinza' : '';
+    $placar_cinza = ((int)$dados_dia['total_green'] === 0 && (int)$dados_dia['total_red'] === 0) ? 'texto-cinza' : '';
+    
+    // Classes do dia
+    $classes_dia = [];
+    
+    if ($data_mysql === $hoje) {
+        $classes_dia[] = 'dia-hoje';
+        $classes_dia[] = ($saldo_dia >= 0) ? 'borda-verde' : 'borda-vermelha';
+    } else {
+        $classes_dia[] = 'dia-normal';
+    }
+    
+    // Destaque para dias passados
+    if ($data_mysql < $hoje) {
+        if ($saldo_dia > 0) {
+            $classes_dia[] = 'dia-destaque';
+        } elseif ($saldo_dia < 0) {
+            $classes_dia[] = 'dia-destaque-negativo';
+        }
+        
+        // Classe para dias sem valor
+        if ((int)$dados_dia['total_green'] === 0 && (int)$dados_dia['total_red'] === 0) {
+            $classes_dia[] = 'dia-sem-valor';
+        }
+    }
+    
+    // Dias futuros
+    if ($data_mysql > $hoje) {
+        $classes_dia[] = 'dia-futuro';
+    }
+    
+    // Definir ícone baseado na meta
+    $icone_classe = $meta_batida ? 'fa-trophy' : 'fa-check';
+    $icone_estilo = $meta_batida ? 'style="color: #FFD700;"' : '';
+    
+    $classe_dia_string = 'linha-dia ' . implode(' ', $classes_dia);
+    $data_meta_attr = $meta_batida ? 'true' : 'false';
     
     echo '
-        <div class="linha-dia '.$classe_dia.' '.$classe_destaque.' '.$classe_nao_usada.' '.$classe_sem_valor.'" data-date="'.$data_mysql.'">
-            <span class="data '.$classe_texto.'"><i class="fas fa-calendar-day"></i> '.$data_exibicao.'</span>
-            <div class="placar-dia">
-                <span class="placar verde-bold '.$placar_cinza.'">'.(int)$dados['total_green'].'</span>
-                <span class="placar separador '.$placar_cinza.'">x</span>
-                <span class="placar vermelho-bold '.$placar_cinza.'">'.(int)$dados['total_red'].'</span>
-            </div>
-            <span class="valor '.$cor_valor.'">R$ '.$saldo_formatado.'</span>
-            <span class="icone '.$classe_texto.'"><i class="fas fa-check"></i></span>
+    <div class="'.$classe_dia_string.'" data-date="'.$data_mysql.'" data-meta-batida="'.$data_meta_attr.'">
+        <span class="data '.$classe_texto.'">
+            <i class="fas fa-calendar-day"></i> '.$data_exibicao.'
+        </span>
+        <div class="placar-dia">
+            <span class="placar verde-bold '.$placar_cinza.'">'.(int)$dados_dia['total_green'].'</span>
+            <span class="placar separador '.$placar_cinza.'">x</span>
+            <span class="placar vermelho-bold '.$placar_cinza.'">'.(int)$dados_dia['total_red'].'</span>
         </div>
-    ';
-}
-
-// Se não houver nenhum dado, mostrar mensagem
-if (empty($dias_com_valores)) {
-    echo '<div class="linha-dia dia-hoje">
-            <span class="data">Nenhuma operação registrada este mês</span>
-          </div>';
+        <span class="valor '.$cor_valor.'">R$ '.$saldo_formatado.'</span>
+        <span class="icone '.$classe_texto.'">
+            <i class="fa-solid '.$icone_classe.'" '.$icone_estilo.'></i>
+        </span>
+    </div>';
 }
 ?>
+
+<!-- Elemento oculto para informações de estado (necessário para o JavaScript) -->
+<div id="dados-mes-info" style="display: none;" 
+     data-mes="<?php echo $mes_atual; ?>" 
+     data-ano="<?php echo $ano_atual; ?>" 
+     data-meta-diaria="<?php echo $meta_diaria; ?>"
+     data-meta-mensal="<?php echo $meta_mensal; ?>"
+     data-meta-anual="<?php echo $meta_anual; ?>"
+     data-periodo-atual="<?php echo $periodo_atual; ?>">
 </div>
-    </div>
+</div>
 </div>
 <!-- ==================================================================================================================================== --> 
 <!--                                                  💼  FIM DO FILTRO BLOCO MÊS                          

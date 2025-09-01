@@ -22,6 +22,7 @@ document.addEventListener("DOMContentLoaded", function () {
     console.warn("❌ Formulário #form-mentor não encontrado.");
   }
 });
+
 //
 //
 //
@@ -1164,14 +1165,11 @@ const PlacarMensalManager = {
       const valorAtual = parseInt(elemento.textContent) || 0;
 
       if (valorAtual !== novoValor) {
-        // Efeito de pulse na mudança
-        elemento.style.transform = "scale(1.1)";
-        elemento.style.transition = "all 0.3s ease";
-
+        // Atualização direta sem animação para evitar movimento
+        // Pequeno timeout para permitir coalescência de múltiplas atualizações
         setTimeout(() => {
           elemento.textContent = novoValor;
-          elemento.style.transform = "scale(1)";
-        }, 150);
+        }, 10);
       }
     } catch (error) {
       console.error("❌ Erro na animação:", error);
@@ -1371,7 +1369,7 @@ const cssPlaccar2 = `
 .area-central-2 {
   position: absolute;
   left: 47%;
-  top: 225px;
+  top: 249px;
   transform: translate(-50%, -50%);
   display: flex;
   align-items: center;
@@ -1626,23 +1624,27 @@ window.PlacarMensalManager = PlacarMensalManager;
 //                     CARREGA OS DADOS DOS VALORES DE ( DATA - PLACAR - SALDO ) VIA AJAX IMEDIATO
 // ========================================================================================================================
 
-const ListaDiasRealtimeManager = {
+const ListaDiasManagerCorrigido = {
   // Controle de estado
   atualizandoAtualmente: false,
   intervaloAtualizacao: null,
   ultimaAtualizacao: null,
   hashUltimosDados: "",
-  primeiraVez: true,
-  metaDiaria: null,
-  dadosMetaCache: null, // ✅ NOVO: Cache dos dados de meta
+  metaAtual: 0,
+  periodoAtual: "dia",
 
   // Configurações
-  INTERVALO_MS: 5000, // Atualiza a cada 5 segundos
-  TIMEOUT_MS: 5000, // Timeout para requisições
+  INTERVALO_MS: 3000, // Atualiza a cada 3 segundos
+  TIMEOUT_MS: 5000,
 
   // Inicializar sistema
   inicializar() {
-    console.log("🚀 Inicializando sistema de atualização da lista de dias...");
+    console.log(
+      "🚀 Inicializando sistema corrigido de atualização da lista de dias..."
+    );
+
+    // Detectar meta inicial
+    this.detectarMetaEPeriodo();
 
     // Primeira atualização imediata
     this.atualizarListaDias();
@@ -1655,59 +1657,52 @@ const ListaDiasRealtimeManager = {
     // Configurar interceptadores de eventos
     this.configurarInterceptadores();
 
-    console.log("✅ Sistema de lista de dias em tempo real ativo!");
+    console.log("✅ Sistema corrigido ativo!");
   },
 
-  // Obter meta diária simples (sem overhead)
-  async obterMetaDiariaSimples() {
+  // Detectar meta e período atual
+  detectarMetaEPeriodo() {
     try {
-      // Se já tem cache e é recente (menos de 30 segundos), usar o cache
-      if (
-        this.dadosMetaCache &&
-        this.dadosMetaCache.timestamp &&
-        Date.now() - this.dadosMetaCache.timestamp < 30000
-      ) {
-        return this.dadosMetaCache.meta_diaria;
-      }
+      const dadosInfo = document.getElementById("dados-mes-info");
+      if (dadosInfo) {
+        this.periodoAtual = dadosInfo.dataset.periodoAtual || "dia";
 
-      // Tentar usar dados do MetaDiariaManager se disponível
-      if (
-        typeof MetaDiariaManager !== "undefined" &&
-        MetaDiariaManager.periodoAtual === "dia"
-      ) {
-        // Buscar meta apenas se necessário
-        const response = await fetch("dados_banca.php", {
-          method: "GET",
-          headers: { "Cache-Control": "no-cache" },
-        });
-
-        if (response.ok) {
-          const data = await response.json();
-          if (data.success && data.periodo_ativo === "dia") {
-            this.dadosMetaCache = {
-              meta_diaria: parseFloat(data.meta_diaria) || 0,
-              timestamp: Date.now(),
-            };
-            return this.dadosMetaCache.meta_diaria;
-          }
+        switch (this.periodoAtual) {
+          case "mes":
+            this.metaAtual = parseFloat(dadosInfo.dataset.metaMensal) || 0;
+            break;
+          case "ano":
+            this.metaAtual = parseFloat(dadosInfo.dataset.metaAnual) || 0;
+            break;
+          default:
+            this.metaAtual = parseFloat(dadosInfo.dataset.metaDiaria) || 0;
         }
       }
 
-      return 0; // Fallback
+      // Fallback: tentar detectar do radio button
+      const radioSelecionado = document.querySelector(
+        'input[name="periodo"]:checked'
+      );
+      if (radioSelecionado) {
+        this.periodoAtual = radioSelecionado.value;
+      }
+
+      console.log(
+        `Meta detectada: R$ ${this.metaAtual.toFixed(2)} (${this.periodoAtual})`
+      );
     } catch (error) {
-      console.error("Erro ao obter meta:", error);
-      return 0;
+      console.error("Erro ao detectar meta:", error);
+      this.metaAtual = 0;
     }
   },
 
-  // Função principal de atualização (SIMPLIFICADA)
+  // Atualização principal
   async atualizarListaDias() {
     if (this.atualizandoAtualmente) return;
 
     this.atualizandoAtualmente = true;
 
     try {
-      // Buscar dados atualizados do servidor (SEM buscar meta separadamente)
       const response = await fetch("obter_dados_mes.php", {
         method: "GET",
         headers: {
@@ -1721,61 +1716,72 @@ const ListaDiasRealtimeManager = {
 
       const dados = await response.json();
 
-      // Verificar se houve mudança nos dados
+      // Verificar se houve mudança
       const hashAtual = this.gerarHashDados(dados);
       if (hashAtual === this.hashUltimosDados) {
-        // Dados não mudaram, não precisa atualizar DOM
-        return;
+        return; // Sem mudanças
       }
 
       this.hashUltimosDados = hashAtual;
 
-      // Atualizar a lista de dias no DOM
-      this.renderizarListaDias(dados);
+      // Renderizar todos os dias do mês
+      this.renderizarMesCompleto(dados);
 
       this.ultimaAtualizacao = new Date();
+      console.log(
+        "✅ Lista atualizada:",
+        this.ultimaAtualizacao.toLocaleTimeString()
+      );
     } catch (error) {
-      console.error("❌ Erro ao atualizar lista de dias:", error);
+      console.error("❌ Erro na atualização:", error);
     } finally {
       this.atualizandoAtualmente = false;
     }
   },
 
-  // Renderizar lista de dias no DOM
-  async renderizarListaDias(responseData) {
+  // Renderizar mês completo
+  renderizarMesCompleto(responseData) {
     const container = document.querySelector(".lista-dias");
     if (!container) return;
 
-    // Salvar scroll position
+    // Preservar posição do scroll
     const scrollTop = container.scrollTop;
 
-    // Extrair dados da resposta
-    const dados = responseData.dados || responseData;
+    // Mapear estado atual de troféus para evitar flicker ao re-renderizar
+    const metaExistenteMap = {};
+    container.querySelectorAll(".linha-dia").forEach((el) => {
+      const date = el.getAttribute("data-date");
+      if (date) {
+        metaExistenteMap[date] = el.getAttribute("data-meta-batida") === "true";
+      }
+    });
+
+    // Dados do response
+    const dados = responseData.dados || {};
     const mes = responseData.mes || new Date().getMonth() + 1;
     const ano = responseData.ano || new Date().getFullYear();
     const diasNoMes =
       responseData.dias_no_mes || new Date(ano, mes, 0).getDate();
 
-    // Obter data de hoje
-    const hoje = (() => {
-      const d = new Date();
-      const yy = d.getFullYear();
-      const mm = String(d.getMonth() + 1).padStart(2, "0");
-      const dd = String(d.getDate()).padStart(2, "0");
-      return `${yy}-${mm}-${dd}`;
-    })();
+    // Data de hoje
+    const hoje = this.obterDataHoje();
 
-    // Criar fragmento para melhor performance
+    // Limpar container preservando altura para evitar flicker
+    const prevMinHeight = container.style.minHeight;
+    // Fixar a altura atual do container para evitar colapso visual durante o rebuild
+    container.style.minHeight = container.clientHeight + "px";
+    container.innerHTML = "";
+
+    // Gerar todos os dias do mês
     const fragment = document.createDocumentFragment();
 
-    // Gerar HTML para cada dia
     for (let dia = 1; dia <= diasNoMes; dia++) {
       const diaStr = dia.toString().padStart(2, "0");
       const mesStr = mes.toString().padStart(2, "0");
       const data_mysql = `${ano}-${mesStr}-${diaStr}`;
       const data_exibicao = `${diaStr}/${mesStr}/${ano}`;
 
-      // Obter dados do dia ou usar valores padrão
+      // Dados do dia (ou padrão se não existir)
       const dadosDia = dados[data_mysql] || {
         total_valor_green: 0,
         total_valor_red: 0,
@@ -1792,17 +1798,10 @@ const ListaDiasRealtimeManager = {
         maximumFractionDigits: 2,
       });
 
-      // FILTRO: Só mostrar dias com valores ou dia de hoje
-      const temValores =
-        parseInt(dadosDia.total_green) > 0 || parseInt(dadosDia.total_red) > 0;
-      const ehHoje = data_mysql === hoje;
+      // Verificar meta batida (CORRIGIDO)
+      const metaBatida = this.metaAtual > 0 && saldo_dia >= this.metaAtual;
 
-      // Pular dias sem valores (exceto hoje)
-      if (!temValores && !ehHoje) {
-        continue;
-      }
-
-      // Determinar classes CSS
+      // Classes e estilos
       const cor_valor =
         saldo_dia === 0
           ? "texto-cinza"
@@ -1816,311 +1815,204 @@ const ListaDiasRealtimeManager = {
           ? "texto-cinza"
           : "";
 
-      // Verificação simples da meta batida
-      const metaBatida = await this.verificarMetaBatidaSimples(saldo_dia);
-
-      let classe_dia = "dia-normal";
-      let classe_destaque = "";
+      // Classes do dia
+      const classes = ["linha-dia"];
 
       if (data_mysql === hoje) {
-        classe_dia =
-          "dia-hoje " + (saldo_dia >= 0 ? "borda-verde" : "borda-vermelha");
-      } else if (data_mysql < hoje) {
+        classes.push("dia-hoje");
+        classes.push(saldo_dia >= 0 ? "borda-verde" : "borda-vermelha");
+      } else {
+        classes.push("dia-normal");
+      }
+
+      // Destaque para dias passados
+      if (data_mysql < hoje) {
         if (saldo_dia > 0) {
-          classe_destaque = "dia-destaque";
+          classes.push("dia-destaque");
         } else if (saldo_dia < 0) {
-          classe_destaque = "dia-destaque-negativo";
+          classes.push("dia-destaque-negativo");
+        }
+
+        if (
+          parseInt(dadosDia.total_green) === 0 &&
+          parseInt(dadosDia.total_red) === 0
+        ) {
+          classes.push("dia-sem-valor");
         }
       }
 
-      const classe_nao_usada = data_mysql > hoje ? "dia-nao-usada" : "";
-      const classe_sem_valor =
-        data_mysql < hoje &&
-        parseInt(dadosDia.total_green) === 0 &&
-        parseInt(dadosDia.total_red) === 0
-          ? "dia-sem-valor"
-          : "";
+      // Dias futuros
+      if (data_mysql > hoje) {
+        classes.push("dia-futuro");
+      }
 
-      // Verificar se o elemento já existe
-      const elementoExistente = container.querySelector(
-        `[data-date="${data_mysql}"]`
+      // Ícone baseado na meta. Se havia troféu aplicado anteriormente, respeitar esse estado
+      const finalMetaBatida = metaBatida || !!metaExistenteMap[data_mysql];
+      const iconeClasse = finalMetaBatida
+        ? "fa-trophy trofeu-icone"
+        : "fa-check";
+      const iconeClassesFull = `fa-solid ${iconeClasse}`;
+
+      // Criar elemento
+      const divDia = document.createElement("div");
+      divDia.className = classes.join(" ");
+      divDia.setAttribute("data-date", data_mysql);
+      // Usar finalMetaBatida (que respeita estado anterior) para evitar flicker do ícone
+      divDia.setAttribute(
+        "data-meta-batida",
+        finalMetaBatida ? "true" : "false"
       );
 
-      if (elementoExistente) {
-        // ✅ ATUALIZAR ELEMENTO EXISTENTE COM NOVA LÓGICA
-        const placarGreen =
-          elementoExistente.querySelector(".placar.verde-bold");
-        const placarRed = elementoExistente.querySelector(
-          ".placar.vermelho-bold"
-        );
-        const valor = elementoExistente.querySelector(".valor");
-        const icone = elementoExistente.querySelector(".icone i"); // ✅ BUSCAR O ÍCONE
+      divDia.innerHTML = `
+        <span class="data ${classe_texto}">
+          <i class="fas fa-calendar-day"></i> ${data_exibicao}
+        </span>
+        <div class="placar-dia">
+          <span class="placar verde-bold ${placar_cinza}">${parseInt(
+        dadosDia.total_green
+      )}</span>
+          <span class="placar separador ${placar_cinza}">x</span>
+          <span class="placar vermelho-bold ${placar_cinza}">${parseInt(
+        dadosDia.total_red
+      )}</span>
+        </div>
+        <span class="valor ${cor_valor}">R$ ${saldo_formatado}</span>
+        <span class="icone ${classe_texto}">
+          <i class="${iconeClassesFull}"></i>
+        </span>
+      `;
 
-        if (placarGreen)
-          placarGreen.textContent = parseInt(dadosDia.total_green);
-        if (placarRed) placarRed.textContent = parseInt(dadosDia.total_red);
-
-        if (valor) {
-          valor.textContent = `R$ ${saldo_formatado}`;
-          valor.className = `valor ${cor_valor}`;
-        }
-
-        // ✅ ATUALIZAR ÍCONE COM VERIFICAÇÃO CORRETA
-        if (icone) {
-          if (metaBatida) {
-            icone.className = "fa-solid fa-trophy";
-            icone.style.color = "#FFD700";
-          } else {
-            icone.className = "fa-solid fa-check";
-            icone.style.color = "";
-          }
-        }
-
-        // Atualizar classes do dia se mudou
-        const preservadas = ["dia-pulse", "dia-foco"];
-        const classesPreservadas = Array.from(
-          elementoExistente.classList
-        ).filter((c) => preservadas.includes(c));
-
-        const novasClasses = [
-          ...classesPreservadas,
-          "linha-dia",
-          classe_dia,
-          classe_destaque,
-          classe_nao_usada,
-          classe_sem_valor,
-        ]
-          .filter(Boolean)
-          .join(" ");
-
-        elementoExistente.className = novasClasses;
-        elementoExistente.setAttribute(
-          "data-meta-batida",
-          metaBatida ? "true" : "false"
-        );
-      } else {
-        // Criar novo elemento
-        const divDia = document.createElement("div");
-        divDia.className = `linha-dia ${classe_dia} ${classe_destaque} ${classe_nao_usada} ${classe_sem_valor}`;
-        divDia.setAttribute("data-date", data_mysql);
-        divDia.setAttribute("data-meta-batida", metaBatida ? "true" : "false");
-
-        divDia.innerHTML = `
-                    <span class="data ${classe_texto}">
-                        <i class="fas fa-calendar-day"></i> ${data_exibicao}
-                    </span>
-                    <div class="placar-dia">
-                        <span class="placar verde-bold ${placar_cinza}">${parseInt(
-          dadosDia.total_green
-        )}</span>
-                        <span class="placar separador ${placar_cinza}">x</span>
-                        <span class="placar vermelho-bold ${placar_cinza}">${parseInt(
-          dadosDia.total_red
-        )}</span>
-                    </div>
-          <span class="valor ${cor_valor}">R$ ${saldo_formatado}</span>
-          <span class="icone ${classe_texto}">
-            <i class="fa-solid ${metaBatida ? "fa-trophy" : "fa-check"}" ${
-          metaBatida ? 'style="color: #FFD700;"' : ""
-        }></i>
-          </span>
-                `;
-
-        fragment.appendChild(divDia);
-      }
+      fragment.appendChild(divDia);
     }
 
-    // Adicionar apenas novos elementos (não limpar todo o container) para evitar flicker
-    if (fragment.childNodes.length > 0) {
-      container.appendChild(fragment);
+    // Adicionar ao container
+    container.appendChild(fragment);
+
+    // Restaurar scroll e restaurar min-height preservado
+    container.scrollTop = scrollTop;
+    container.style.minHeight = prevMinHeight || "";
+
+    // Focar no dia atual se primeira vez
+    if (!this.ultimaAtualizacao) {
+      setTimeout(() => this.focarDiaAtual(), 500);
     }
 
-    // Focar no dia de hoje automaticamente
-    this.focarDiaAtual();
-
-    // Restaurar scroll position OU focar no dia atual
-    if (!this.primeiraVez) {
-      container.scrollTop = scrollTop;
-    } else {
-      this.scrollParaDiaAtual();
-      this.primeiraVez = false;
-    }
-
-    // Disparar evento customizado
+    // Disparar evento
     window.dispatchEvent(
       new CustomEvent("listaDiasAtualizada", {
         detail: { dados: responseData, timestamp: new Date() },
       })
     );
-
-    // Sincronizar marcações do dia 'hoje' para a data local do navegador
-    this.sincronizarDiaHojeLocal();
   },
 
-  // Verificação simples da meta batida
-  async verificarMetaBatidaSimples(saldoDia) {
-    try {
-      const metaDiaria = await this.obterMetaDiariaSimples();
-      return saldoDia >= metaDiaria && metaDiaria > 0;
-    } catch (error) {
-      console.error("Erro ao verificar meta:", error);
-      return false;
-    }
+  // Obter data de hoje
+  obterDataHoje() {
+    const d = new Date();
+    const yy = d.getFullYear();
+    const mm = String(d.getMonth() + 1).padStart(2, "0");
+    const dd = String(d.getDate()).padStart(2, "0");
+    return `${yy}-${mm}-${dd}`;
   },
-
-  // Garante que apenas a data local marcada como hoje receba a classe dia-hoje
-  sincronizarDiaHojeLocal() {
-    try {
-      const d = new Date();
-      const yy = d.getFullYear();
-      const mm = String(d.getMonth() + 1).padStart(2, "0");
-      const dd = String(d.getDate()).padStart(2, "0");
-      const hojeLocal = `${yy}-${mm}-${dd}`;
-
-      // Remover dia-hoje de outros elementos
-      document.querySelectorAll(".linha-dia.dia-hoje").forEach((el) => {
-        if (el.getAttribute("data-date") !== hojeLocal) {
-          el.classList.remove("dia-hoje");
-        }
-      });
-
-      // Aplicar dia-hoje no elemento local se existir
-      const elemento = document.querySelector(
-        `.linha-dia[data-date="${hojeLocal}"]`
-      );
-      if (elemento) {
-        elemento.classList.add("dia-hoje");
-      }
-    } catch (e) {
-      console.error("Erro ao sincronizar dia hoje local:", e);
-    }
-  },
-
-  // Hash simplificado (sem dados de meta)
-  gerarHashDados(dados) {
-    return JSON.stringify(dados);
-  },
-
-  // ✅ FUNÇÃO REMOVIDA - NÃO É MAIS NECESSÁRIA
-  // async verificarMetaBatida(dataDia, saldoDia) {
-  //   // Removida - usando verificarMetaBatidaCorreta()
-  // },
-
-  // ✅ FUNÇÃO REMOVIDA - NÃO É MAIS NECESSÁRIA
-  // async obterMetaDiaria() {
-  //   // Removida - usando obterDadosMetaCompletos()
-  // },
 
   // Focar no dia atual
   focarDiaAtual() {
-    const hoje = (() => {
-      const d = new Date();
-      const yy = d.getFullYear();
-      const mm = String(d.getMonth() + 1).padStart(2, "0");
-      const dd = String(d.getDate()).padStart(2, "0");
-      return `${yy}-${mm}-${dd}`;
-    })();
+    const hoje = this.obterDataHoje();
     const diaHoje = document.querySelector(`[data-date="${hoje}"]`);
 
     if (diaHoje) {
-      diaHoje.classList.add("dia-foco");
+      const container = document.querySelector(".lista-dias");
+      if (container) {
+        const containerHeight = container.clientHeight;
+        const elementTop = diaHoje.offsetTop;
+        const elementHeight = diaHoje.offsetHeight;
 
+        const scrollPosition =
+          elementTop - containerHeight / 2 + elementHeight / 2;
+
+        container.scrollTo({
+          top: Math.max(0, scrollPosition),
+          behavior: "smooth",
+        });
+      }
+
+      // Adicionar classe de destaque temporário
+      diaHoje.classList.add("dia-foco");
       setTimeout(() => {
         diaHoje.classList.remove("dia-foco");
       }, 2000);
     }
   },
 
-  // Fazer scroll para o dia atual
-  scrollParaDiaAtual() {
-    const container = document.querySelector(".lista-dias");
-    if (!container) return;
-
-    const hoje = (() => {
-      const d = new Date();
-      const yy = d.getFullYear();
-      const mm = String(d.getMonth() + 1).padStart(2, "0");
-      const dd = String(d.getDate()).padStart(2, "0");
-      return `${yy}-${mm}-${dd}`;
-    })();
-    const diaHoje = container.querySelector(`[data-date="${hoje}"]`);
-
-    if (diaHoje) {
-      const containerHeight = container.clientHeight;
-      const elementTop = diaHoje.offsetTop;
-      const elementHeight = diaHoje.offsetHeight;
-
-      const scrollPosition =
-        elementTop - containerHeight / 2 + elementHeight / 2;
-
-      container.scrollTo({
-        top: Math.max(0, scrollPosition),
-        behavior: "smooth",
-      });
-
-      setTimeout(() => {
-        diaHoje.classList.add("dia-pulse");
-        setTimeout(() => {
-          diaHoje.classList.remove("dia-pulse");
-        }, 1000);
-      }, 500);
-    }
+  // Hash dos dados
+  gerarHashDados(dados) {
+    return JSON.stringify(dados);
   },
 
-  // Configurar interceptadores (SIMPLIFICADOS)
+  // Configurar interceptadores
   configurarInterceptadores() {
     // Interceptar submissão de formulários
     document.addEventListener("submit", (e) => {
-      setTimeout(() => {
-        this.atualizandoAtualmente = false;
-        this.atualizarListaDias();
-      }, 500);
-    });
-
-    document.addEventListener("click", (e) => {
-      if (e.target.matches('button, .btn, input[type="submit"]')) {
+      const form = e.target;
+      if (
+        form.id === "form-mentor" ||
+        form.classList.contains("formulario-mentor")
+      ) {
         setTimeout(() => {
           this.atualizandoAtualmente = false;
           this.atualizarListaDias();
-        }, 500);
+        }, 300);
+      }
+    });
+
+    // Interceptar cliques em botões
+    document.addEventListener("click", (e) => {
+      if (
+        e.target.matches('button[type="submit"], .btn-enviar, .btn-confirmar')
+      ) {
+        setTimeout(() => {
+          this.atualizandoAtualmente = false;
+          this.atualizarListaDias();
+        }, 300);
       }
     });
 
     // Interceptar mudanças no filtro de período
     document.querySelectorAll('input[name="periodo"]').forEach((radio) => {
-      radio.addEventListener("change", () => {
-        // Invalidar cache apenas quando mudar período
-        this.dadosMetaCache = null;
-        this.atualizandoAtualmente = false;
-        this.atualizarListaDias();
+      radio.addEventListener("change", (e) => {
+        if (e.target.checked) {
+          this.periodoAtual = e.target.value;
+          this.detectarMetaEPeriodo();
+          this.atualizandoAtualmente = false;
+          this.atualizarListaDias();
+        }
       });
     });
 
-    // Hook em fetch simples
+    // Hook no fetch
     const originalFetch = window.fetch;
     window.fetch = async function (...args) {
       const response = await originalFetch.apply(this, args);
 
       const url = args[0]?.toString() || "";
       if (
-        url.includes("dados_banca") ||
-        url.includes("carregar-mentores") ||
         url.includes("cadastrar-valor") ||
-        url.includes("excluir-entrada")
+        url.includes("excluir-entrada") ||
+        url.includes("dados_banca")
       ) {
         setTimeout(() => {
-          if (typeof ListaDiasRealtimeManager !== "undefined") {
-            ListaDiasRealtimeManager.atualizandoAtualmente = false;
-            ListaDiasRealtimeManager.atualizarListaDias();
+          if (typeof ListaDiasManagerCorrigido !== "undefined") {
+            ListaDiasManagerCorrigido.atualizandoAtualmente = false;
+            ListaDiasManagerCorrigido.atualizarListaDias();
           }
-        }, 300);
+        }, 200);
       }
 
       return response;
     };
 
-    // Eventos simples
+    // Eventos customizados
     window.addEventListener("metaAtualizada", () => {
+      this.detectarMetaEPeriodo();
       this.atualizarListaDias();
     });
 
@@ -2134,52 +2026,646 @@ const ListaDiasRealtimeManager = {
     if (this.intervaloAtualizacao) {
       clearInterval(this.intervaloAtualizacao);
       this.intervaloAtualizacao = null;
-      console.log("🛑 Sistema de atualização parado");
+      console.log("🛑 Sistema parado");
     }
   },
 
-  // Forçar atualização (sem invalidar cache desnecessariamente)
+  // Forçar atualização
   forcarAtualizacao() {
     this.atualizandoAtualmente = false;
+    this.detectarMetaEPeriodo();
     return this.atualizarListaDias();
   },
+
+  // Status do sistema
+  status() {
+    return {
+      ativo: !!this.intervaloAtualizacao,
+      atualizando: this.atualizandoAtualmente,
+      ultimaAtualizacao: this.ultimaAtualizacao,
+      metaAtual: this.metaAtual,
+      periodoAtual: this.periodoAtual,
+    };
+  },
 };
+
+// ========================================================================================================================
+//                                    INTEGRAÇÃO COM SISTEMA EXISTENTE
+// ========================================================================================================================
+
+// Substituir o sistema anterior se existir
+if (typeof ListaDiasRealtimeManager !== "undefined") {
+  // Parar sistema antigo
+  if (ListaDiasRealtimeManager.intervaloAtualizacao) {
+    clearInterval(ListaDiasRealtimeManager.intervaloAtualizacao);
+  }
+  console.log("Sistema anterior parado, substituindo...");
+}
 
 // Aguardar DOM carregar
 if (document.readyState === "loading") {
   document.addEventListener("DOMContentLoaded", () => {
     setTimeout(() => {
-      ListaDiasRealtimeManager.inicializar();
+      ListaDiasManagerCorrigido.inicializar();
     }, 1000);
   });
 } else {
   setTimeout(() => {
-    ListaDiasRealtimeManager.inicializar();
+    ListaDiasManagerCorrigido.inicializar();
   }, 500);
 }
 
-// Comandos globais para debug
-window.ListaDias = {
-  parar: () => ListaDiasRealtimeManager.parar(),
-  iniciar: () => ListaDiasRealtimeManager.inicializar(),
-  atualizar: () => ListaDiasRealtimeManager.forcarAtualizacao(),
-  status: () => ({
-    ativo: !!ListaDiasRealtimeManager.intervaloAtualizacao,
-    atualizando: ListaDiasRealtimeManager.atualizandoAtualmente,
-    ultimaAtualizacao: ListaDiasRealtimeManager.ultimaAtualizacao,
-    metaCache: ListaDiasRealtimeManager.dadosMetaCache, // ✅ MOSTRAR CACHE DA META
-  }),
+// ========================================================================================================================
+//                                        COMANDOS GLOBAIS
+// ========================================================================================================================
+
+window.ListaDiasCorrigido = {
+  parar: () => ListaDiasManagerCorrigido.parar(),
+  iniciar: () => ListaDiasManagerCorrigido.inicializar(),
+  atualizar: () => ListaDiasManagerCorrigido.forcarAtualizacao(),
+  status: () => ListaDiasManagerCorrigido.status(),
+  focar: () => ListaDiasManagerCorrigido.focarDiaAtual(),
 };
 
-console.log("📅 Sistema de atualização da lista de dias carregado!");
-console.log("🏆 Correção aplicada: Verificação correta da meta batida");
-console.log("⚡ Atualização em tempo real via AJAX funcionando");
+// Substituir comandos antigos
+window.ListaDias = window.ListaDiasCorrigido;
+
+console.log("📅 Sistema corrigido da lista de dias carregado!");
+console.log("🔧 Correções aplicadas:");
+console.log("  ✅ Exibe TODOS os dias do mês");
+console.log("  ✅ Atualização em tempo real funcionando");
+console.log("  ✅ Ícone de troféu para meta batida");
+console.log("  ✅ Detecção automática da meta atual");
 console.log(
-  "Comandos: ListaDias.parar(), ListaDias.iniciar(), ListaDias.atualizar(), ListaDias.status()"
+  "Comandos: ListaDias.atualizar(), ListaDias.status(), ListaDias.focar()"
 );
 
 // ========================================================================================================================
-//                    CARREGA OS DADOS DOS VALORES DE ( DATA - PLACAR - SALDO ) VIA AJAX IMEDIATO
+//                   FIM CARREGA OS DADOS DOS VALORES DE ( DATA - PLACAR - SALDO ) VIA AJAX IMEDIATO
+// ========================================================================================================================
+//
+//
+//
+//
+//
+//
+//
+//
+// ========================================================================================================================
+//                                  TROFÉU - PARA APARECER  QUANDO A META É BATIDA
+// ========================================================================================================================
+
+const SistemaTrofeuCompleto = {
+  // Configurações
+  INTERVALO_MS: 2000, // Atualiza a cada 2 segundos
+  TIMEOUT_MS: 5000,
+  META_FALLBACK: 50, // Meta padrão se não conseguir detectar
+
+  // Estado
+  atualizandoAtualmente: false,
+  intervaloAtualizacao: null,
+  ultimaAtualizacao: null,
+  hashUltimosDados: "",
+  metaAtual: 0,
+  periodoAtual: "dia",
+
+  // ===== INICIALIZAÇÃO =====
+  inicializar() {
+    console.log("🚀 Iniciando sistema completo de troféu...");
+
+    // Detectar meta inicial
+    this.detectarMeta();
+
+    // Aplicar troféus imediatamente
+    this.aplicarTrofeus();
+
+    // Sistema de atualização via AJAX
+    this.iniciarAtualizacaoAjax();
+
+    // Sistema de monitoramento automático
+    this.iniciarMonitoramento();
+
+    // Configurar interceptadores
+    this.configurarInterceptadores();
+
+    console.log("✅ Sistema completo ativo!");
+  },
+
+  // ===== DETECÇÃO DE META =====
+  detectarMeta() {
+    try {
+      // Verificar período atual
+      const radioSelecionado = document.querySelector(
+        'input[name="periodo"]:checked'
+      );
+      if (radioSelecionado) {
+        this.periodoAtual = radioSelecionado.value;
+      }
+
+      // Obter meta do elemento dados-mes-info
+      const dadosInfo = document.getElementById("dados-mes-info");
+      if (dadosInfo) {
+        switch (this.periodoAtual) {
+          case "mes":
+            this.metaAtual =
+              parseFloat(dadosInfo.dataset.metaMensal) || this.META_FALLBACK;
+            break;
+          case "ano":
+            this.metaAtual =
+              parseFloat(dadosInfo.dataset.metaAnual) || this.META_FALLBACK;
+            break;
+          default:
+            this.metaAtual =
+              parseFloat(dadosInfo.dataset.metaDiaria) || this.META_FALLBACK;
+        }
+      } else {
+        // Fallback: tentar MetaDiariaManager
+        if (
+          typeof MetaDiariaManager !== "undefined" &&
+          MetaDiariaManager.dadosMetaCache
+        ) {
+          this.metaAtual =
+            parseFloat(MetaDiariaManager.dadosMetaCache.meta_diaria) ||
+            this.META_FALLBACK;
+        } else {
+          this.metaAtual = this.META_FALLBACK;
+        }
+      }
+
+      console.log(
+        `🎯 Meta detectada: R$ ${this.metaAtual.toFixed(2)} (${
+          this.periodoAtual
+        })`
+      );
+    } catch (error) {
+      console.error("❌ Erro ao detectar meta:", error);
+      this.metaAtual = this.META_FALLBACK;
+    }
+  },
+
+  // ===== APLICAÇÃO DE TROFÉUS =====
+  aplicarTrofeus() {
+    let trofeus = 0;
+
+    document.querySelectorAll(".linha-dia").forEach((elemento) => {
+      try {
+        const valorEl = elemento.querySelector(".valor");
+        const iconeEl = elemento.querySelector(".icone i");
+
+        if (valorEl && iconeEl) {
+          // Extrair valor numérico
+          const texto = valorEl.textContent;
+          const valor = this.extrairValorNumerico(texto);
+
+          // Verificar meta batida
+          const metaBatida = this.metaAtual > 0 && valor >= this.metaAtual;
+
+          if (metaBatida) {
+            // Aplicar troféu dourado de forma estática (sem inline styles)
+            iconeEl.classList.remove("fa-check");
+            iconeEl.classList.add("fa-trophy", "trofeu-icone", "fa-solid");
+            elemento.setAttribute("data-meta-batida", "true");
+            trofeus++;
+          } else {
+            // Aplicar check normal sem estilos inline
+            iconeEl.classList.remove("fa-trophy", "trofeu-icone");
+            iconeEl.classList.add("fa-check", "fa-solid");
+            elemento.setAttribute("data-meta-batida", "false");
+          }
+        }
+      } catch (error) {
+        // Silenciar erros de elementos individuais
+      }
+    });
+
+    if (trofeus > 0) {
+      console.log(
+        `🏆 ${trofeus} troféus aplicados (meta: R$ ${this.metaAtual.toFixed(
+          2
+        )})`
+      );
+    }
+
+    return trofeus;
+  },
+
+  // ===== SISTEMA DE ATUALIZAÇÃO AJAX =====
+  iniciarAtualizacaoAjax() {
+    // Atualização periódica via AJAX
+    this.intervaloAtualizacao = setInterval(() => {
+      this.atualizarViaAjax();
+    }, this.INTERVALO_MS);
+
+    // Primeira atualização
+    this.atualizarViaAjax();
+  },
+
+  async atualizarViaAjax() {
+    if (this.atualizandoAtualmente) return;
+
+    this.atualizandoAtualmente = true;
+
+    try {
+      const response = await fetch("obter_dados_mes.php", {
+        method: "GET",
+        headers: {
+          "Cache-Control": "no-cache",
+          "X-Requested-With": "XMLHttpRequest",
+        },
+        signal: AbortSignal.timeout(this.TIMEOUT_MS),
+      });
+
+      if (!response.ok) throw new Error(`HTTP ${response.status}`);
+
+      const dados = await response.json();
+
+      // Verificar mudanças
+      const hashAtual = JSON.stringify(dados);
+      if (hashAtual === this.hashUltimosDados) {
+        return; // Sem mudanças
+      }
+
+      this.hashUltimosDados = hashAtual;
+
+      // Atualizar elementos existentes
+      this.atualizarElementosExistentes(dados);
+
+      this.ultimaAtualizacao = new Date();
+    } catch (error) {
+      console.error("❌ Erro na atualização AJAX:", error);
+    } finally {
+      this.atualizandoAtualmente = false;
+    }
+  },
+
+  atualizarElementosExistentes(responseData) {
+    const dados = responseData.dados || {};
+    const mes = responseData.mes || new Date().getMonth() + 1;
+    const ano = responseData.ano || new Date().getFullYear();
+    const diasNoMes =
+      responseData.dias_no_mes || new Date(ano, mes, 0).getDate();
+
+    // Atualizar apenas elementos existentes para evitar flicker
+    for (let dia = 1; dia <= diasNoMes; dia++) {
+      const diaStr = dia.toString().padStart(2, "0");
+      const mesStr = mes.toString().padStart(2, "0");
+      const data_mysql = `${ano}-${mesStr}-${diaStr}`;
+
+      const elemento = document.querySelector(`[data-date="${data_mysql}"]`);
+      if (!elemento) continue;
+
+      const dadosDia = dados[data_mysql] || {
+        total_valor_green: 0,
+        total_valor_red: 0,
+        total_green: 0,
+        total_red: 0,
+      };
+
+      const saldo_dia =
+        parseFloat(dadosDia.total_valor_green) -
+        parseFloat(dadosDia.total_valor_red);
+      const metaBatida = this.metaAtual > 0 && saldo_dia >= this.metaAtual;
+
+      // Atualizar placar
+      const placarGreen = elemento.querySelector(".placar.verde-bold");
+      const placarRed = elemento.querySelector(".placar.vermelho-bold");
+      if (placarGreen) placarGreen.textContent = parseInt(dadosDia.total_green);
+      if (placarRed) placarRed.textContent = parseInt(dadosDia.total_red);
+
+      // Atualizar valor
+      const valor = elemento.querySelector(".valor");
+      if (valor) {
+        const saldo_formatado = saldo_dia.toLocaleString("pt-BR", {
+          minimumFractionDigits: 2,
+          maximumFractionDigits: 2,
+        });
+        valor.textContent = `R$ ${saldo_formatado}`;
+
+        // Atualizar classes de cor
+        valor.classList.remove("verde-bold", "vermelho-bold", "texto-cinza");
+        const corClasse =
+          saldo_dia === 0
+            ? "texto-cinza"
+            : saldo_dia > 0
+            ? "verde-bold"
+            : "vermelho-bold";
+        valor.classList.add(corClasse);
+      }
+
+      // Atualizar ícone
+      const icone = elemento.querySelector(".icone i");
+      if (icone) {
+        if (metaBatida) {
+          icone.classList.remove("fa-check");
+          icone.classList.add("fa-trophy", "trofeu-icone", "fa-solid");
+        } else {
+          icone.classList.remove("fa-trophy", "trofeu-icone");
+          icone.classList.add("fa-check", "fa-solid");
+        }
+      }
+
+      elemento.setAttribute("data-meta-batida", metaBatida ? "true" : "false");
+    }
+
+    console.log("✅ Elementos atualizados via AJAX");
+  },
+
+  // ===== SISTEMA DE MONITORAMENTO =====
+  iniciarMonitoramento() {
+    // Observer para mudanças no DOM
+    this.configurarObserver();
+
+    // Aplicar troféus a cada intervalo como backup
+    setInterval(() => {
+      this.aplicarTrofeus();
+    }, 3000);
+  },
+
+  configurarObserver() {
+    const container = document.querySelector(".lista-dias");
+    if (!container) return;
+
+    const observer = new MutationObserver((mutations) => {
+      let precisaAtualizar = false;
+
+      mutations.forEach((mutation) => {
+        if (
+          mutation.type === "childList" ||
+          mutation.type === "characterData"
+        ) {
+          const elemento = mutation.target.closest(".linha-dia");
+          if (elemento) {
+            precisaAtualizar = true;
+          }
+        }
+      });
+
+      if (precisaAtualizar) {
+        setTimeout(() => this.aplicarTrofeus(), 100);
+      }
+    });
+
+    observer.observe(container, {
+      childList: true,
+      subtree: true,
+      characterData: true,
+    });
+  },
+
+  // ===== INTERCEPTADORES =====
+  configurarInterceptadores() {
+    // Interceptar submissão de formulários
+    document.addEventListener("submit", (e) => {
+      const form = e.target;
+      if (
+        form.id === "form-mentor" ||
+        form.classList.contains("formulario-mentor")
+      ) {
+        setTimeout(() => {
+          this.detectarMeta();
+          this.aplicarTrofeus();
+          this.atualizandoAtualmente = false;
+        }, 300);
+      }
+    });
+
+    // Interceptar mudanças de período
+    document.querySelectorAll('input[name="periodo"]').forEach((radio) => {
+      radio.addEventListener("change", (e) => {
+        if (e.target.checked) {
+          this.periodoAtual = e.target.value;
+          this.detectarMeta();
+          this.aplicarTrofeus();
+          this.atualizandoAtualmente = false;
+        }
+      });
+    });
+
+    // Hook no fetch
+    this.configurarHookFetch();
+
+    // Eventos customizados
+    window.addEventListener("listaDiasAtualizada", () => {
+      setTimeout(() => this.aplicarTrofeus(), 100);
+    });
+
+    window.addEventListener("metaAtualizada", () => {
+      this.detectarMeta();
+      this.aplicarTrofeus();
+    });
+  },
+
+  configurarHookFetch() {
+    const originalFetch = window.fetch;
+
+    window.fetch = async function (...args) {
+      const response = await originalFetch.apply(this, args);
+
+      const url = args[0]?.toString() || "";
+
+      if (
+        url.includes("cadastrar-valor") ||
+        url.includes("obter_dados_mes") ||
+        url.includes("dados_banca") ||
+        url.includes("excluir-entrada")
+      ) {
+        setTimeout(() => {
+          if (typeof SistemaTrofeuCompleto !== "undefined") {
+            SistemaTrofeuCompleto.detectarMeta();
+            SistemaTrofeuCompleto.aplicarTrofeus();
+            SistemaTrofeuCompleto.atualizandoAtualmente = false;
+          }
+        }, 200);
+      }
+
+      return response;
+    };
+  },
+
+  // ===== UTILITÁRIOS =====
+  extrairValorNumerico(texto) {
+    if (!texto) return 0;
+
+    const numeroLimpo = texto
+      .replace(/[R$\s]/g, "")
+      .replace(",", ".")
+      .replace(/[^\d.-]/g, "");
+
+    return parseFloat(numeroLimpo) || 0;
+  },
+
+  obterDataHoje() {
+    const d = new Date();
+    const yy = d.getFullYear();
+    const mm = String(d.getMonth() + 1).padStart(2, "0");
+    const dd = String(d.getDate()).padStart(2, "0");
+    return `${yy}-${mm}-${dd}`;
+  },
+
+  // ===== CONTROLES =====
+  parar() {
+    if (this.intervaloAtualizacao) {
+      clearInterval(this.intervaloAtualizacao);
+      this.intervaloAtualizacao = null;
+    }
+  },
+
+  forcarAtualizacao() {
+    this.detectarMeta();
+    this.aplicarTrofeus();
+    this.atualizandoAtualmente = false;
+    return this.atualizarViaAjax();
+  },
+
+  status() {
+    return {
+      ativo: !!this.intervaloAtualizacao,
+      atualizando: this.atualizandoAtualmente,
+      metaAtual: this.metaAtual,
+      periodoAtual: this.periodoAtual,
+      ultimaAtualizacao: this.ultimaAtualizacao,
+      hashDados: this.hashUltimosDados ? "dados carregados" : "sem dados",
+    };
+  },
+};
+
+// ========================================================================================================================
+//                                    INTEGRAÇÃO E SUBSTITUIÇÃO
+// ========================================================================================================================
+
+// Parar sistemas anteriores se existirem
+if (
+  typeof ListaDiasRealtimeManager !== "undefined" &&
+  ListaDiasRealtimeManager.intervaloAtualizacao
+) {
+  clearInterval(ListaDiasRealtimeManager.intervaloAtualizacao);
+  console.log("🛑 ListaDiasRealtimeManager parado");
+}
+
+if (
+  typeof ListaDiasComTrofeu !== "undefined" &&
+  ListaDiasComTrofeu.intervaloAtualizacao
+) {
+  clearInterval(ListaDiasComTrofeu.intervaloAtualizacao);
+  console.log("🛑 ListaDiasComTrofeu parado");
+}
+
+// Inicializar sistema único
+if (document.readyState === "loading") {
+  document.addEventListener("DOMContentLoaded", () => {
+    setTimeout(() => SistemaTrofeuCompleto.inicializar(), 1000);
+  });
+} else {
+  setTimeout(() => SistemaTrofeuCompleto.inicializar(), 500);
+}
+
+// ========================================================================================================================
+//                                    COMANDOS GLOBAIS
+// ========================================================================================================================
+
+// Comandos simplificados para console
+window.Trofeu = {
+  aplicar: () => SistemaTrofeuCompleto.aplicarTrofeus(),
+  forcar: () => SistemaTrofeuCompleto.forcarAtualizacao(),
+  status: () => SistemaTrofeuCompleto.status(),
+  meta: () => SistemaTrofeuCompleto.metaAtual,
+  parar: () => SistemaTrofeuCompleto.parar(),
+  iniciar: () => SistemaTrofeuCompleto.inicializar(),
+
+  // Forçar troféu em data específica
+  forcaData: (data) => {
+    const elemento = document.querySelector(`[data-date="${data}"]`);
+    if (elemento) {
+      const icone = elemento.querySelector(".icone i");
+      if (icone) {
+        icone.classList.remove("fa-check");
+        icone.classList.add("fa-trophy", "fa-solid", "trofeu-icone");
+        elemento.setAttribute("data-meta-batida", "true");
+        console.log(`🏆 Troféu forçado em ${data}`);
+      }
+    }
+  },
+
+  // Debug rápido
+  debug: () => {
+    const dadosInfo = document.getElementById("dados-mes-info");
+    console.log("🔍 DEBUG RÁPIDO:");
+    console.log("  Meta atual:", SistemaTrofeuCompleto.metaAtual);
+    console.log("  Período:", SistemaTrofeuCompleto.periodoAtual);
+    console.log("  Elemento dados-mes-info:", !!dadosInfo);
+    if (dadosInfo) {
+      console.log("  Meta diária:", dadosInfo.dataset.metaDiaria);
+      console.log("  Meta mensal:", dadosInfo.dataset.metaMensal);
+    }
+    console.log(
+      "  Sistema ativo:",
+      !!SistemaTrofeuCompleto.intervaloAtualizacao
+    );
+    return SistemaTrofeuCompleto.status();
+  },
+};
+
+// Manter compatibilidade com comandos antigos
+window.ListaDias = {
+  parar: () => SistemaTrofeuCompleto.parar(),
+  iniciar: () => SistemaTrofeuCompleto.inicializar(),
+  atualizar: () => SistemaTrofeuCompleto.forcarAtualizacao(),
+  status: () => SistemaTrofeuCompleto.status(),
+};
+
+// Export para uso externo
+window.SistemaTrofeuCompleto = SistemaTrofeuCompleto;
+
+console.log("🏆 SISTEMA COMPLETO DE TROFÉU CARREGADO!");
+console.log("✅ Funcionalidades integradas:");
+console.log("   - Detecção automática de meta (dia/mês/ano)");
+console.log("   - Atualização em tempo real via AJAX");
+console.log("   - Monitoramento de mudanças no DOM");
+console.log("   - Interceptação de eventos e formulários");
+console.log("   - Aplicação automática de troféus");
+console.log("");
+console.log("🔧 Comandos:");
+console.log("   Trofeu.aplicar() - Aplicar troféus manualmente");
+console.log("   Trofeu.status() - Ver status do sistema");
+console.log("   Trofeu.debug() - Debug rápido");
+console.log("   Trofeu.forcaData('2025-09-01') - Forçar troféu em data");
+console.log("");
+console.log("⚡ Sistema iniciado automaticamente!");
+
+// Garantir CSS estático global (sem transições / animações / transformações)
+(function () {
+  try {
+    const css = `
+      /* Troféu estático */
+      .trofeu-icone{ color: #FFD700 !important; /* dourado estático */ transition: none !important; animation: none !important; transform: none !important; }
+      .trofeu-icone *{ transition: none !important; animation: none !important; transform: none !important; }
+
+      /* Check estático */
+      .fa-solid.fa-check{ color: inherit !important; transition: none !important; animation: none !important; transform: none !important; }
+
+      /* Ícones dentro da lista não devem animar */
+      .lista-dias .linha-dia .icone i { transition: none !important; animation: none !important; transform: none !important; }
+
+      /* Placar e spans não devem animar ou transformar */
+      .placar, .placar * { transition: none !important; animation: none !important; transform: none !important; }
+
+      /* Remover efeitos aplicados por classes antigas */
+      .placar-atualizado, .placar-erro { transition: none !important; animation: none !important; }
+  /* Forçar tamanho fixo dos ícones para evitar shift quando troca de glyph */
+  .lista-dias .icone { width: 28px !important; display: inline-flex !important; align-items: center; justify-content: center; }
+  .lista-dias .icone i { width: 18px !important; height: 18px !important; font-size: 12px !important; line-height: 1 !important; display: inline-block !important; }
+  .lista-dias .icone i::before { display: inline-block; width: 18px; }
+  .lista-dias .linha-dia { will-change: auto !important; }
+    `;
+
+    const style = document.createElement("style");
+    style.setAttribute("data-injected", "trofeu-static");
+    style.textContent = css;
+    document.head && document.head.appendChild(style);
+  } catch (e) {}
+})();
+// ========================================================================================================================
+//                                  TROFÉU - PARA APARECER  QUANDO A META É BATIDA
 // ========================================================================================================================
 //
 //

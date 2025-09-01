@@ -5403,3 +5403,39 @@ console.log("- Debug com debugMentorOculto()");
 // ========================================================================================================================
 //                                  ✅  FIM VERIFICAÇÃO DE MENTORES CADASTRADO PARA NÃO DA ERRO
 // ========================================================================================================================
+
+// ===== WORKAROUND: mover contêineres de modal para o <body> para evitar problemas
+// com stacking context (transform, z-index em ancestrais). Isso garante que o
+// overlay do modal cubra toda a página sempre.
+function moverModaisParaBody() {
+  try {
+    const modais = document.querySelectorAll(".modais-container");
+    modais.forEach((m) => {
+      if (m.parentElement !== document.body) {
+        document.body.appendChild(m);
+      }
+    });
+  } catch (e) {
+    console.warn("Não foi possível mover modais para body:", e);
+  }
+}
+
+if (document.readyState === "loading") {
+  document.addEventListener("DOMContentLoaded", () => {
+    moverModaisParaBody();
+    if (
+      typeof ModalManager !== "undefined" &&
+      ModalManager.inicializarEventosGlobais
+    ) {
+      ModalManager.inicializarEventosGlobais();
+    }
+  });
+} else {
+  moverModaisParaBody();
+  if (
+    typeof ModalManager !== "undefined" &&
+    ModalManager.inicializarEventosGlobais
+  ) {
+    ModalManager.inicializarEventosGlobais();
+  }
+}

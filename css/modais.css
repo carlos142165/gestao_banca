@@ -256,7 +256,9 @@
 .modais-container .modal {
   display: none;
   position: fixed;
-  z-index: 1000;
+  /* Elevado para garantir que o overlay do modal cubra todos os elementos da página
+     (alguns arquivos definem z-index muito altos em outros componentes). */
+  z-index: 1000000 !important;
   left: 0;
   top: 0;
   width: 100%;
@@ -288,6 +290,8 @@
   text-align: center;
   transform: translateY(0);
   transition: transform 0.3s ease-out;
+  /* Garantir que o conteúdo do modal fique acima do overlay e de outros elementos */
+  z-index: 1000001 !important;
 }
 
 @keyframes modalSlideIn {
