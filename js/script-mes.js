@@ -1368,7 +1368,7 @@ const cssPlaccar2 = `
 /* ===== PLACAR-2 - CLONE DO PLACAR ORIGINAL ===== */
 .area-central-2 {
   position: absolute;
-  left: 47%;
+  left: 46.5%;
   top: 249px;
   transform: translate(-50%, -50%);
   display: flex;

@@ -1306,6 +1306,7 @@
   /* Força posicionamento */
   order: 2 !important;
   margin-right: 0px !important;
+  margin-left: 20px !important; /* adicionada margem esquerda de 8px conforme pedido */
 }
 
 .gd-linha-dia .placar-dia .placar,
@@ -1388,7 +1389,7 @@
 }
 
 /* ========================================
-   COLUNA 4: ÍCONE
+   ICONE ICONE  ICONE ICONE ICONE 
 ======================================== */
 
 .gd-linha-dia .icone {
@@ -1448,9 +1449,32 @@
   color: #94a3b8 !important;
 }
 
-/* ========================================
-   FORÇA ANTI-EMPILHAMENTO
-======================================== */
+/* TIGHTEN ICON SPACING: deixar o ícone mais próximo do valor (R$) */
+.gd-linha-dia .valor {
+  /* reduzir a margem direita para trazer o ícone para mais perto
+     e aplicar margem esquerda solicitada pelo usuário */
+  margin-right: 6px !important;
+  margin-left: 15px !important; /* margem esquerda de 15px conforme pedido */
+}
+
+.gd-linha-dia .valor-com-icone {
+  display: inline-flex !important;
+  align-items: center !important;
+  gap: 4px !important; /* menor gap entre valor e ícone */
+}
+
+.gd-linha-dia .icone {
+  /* reduzir espaço à esquerda do ícone */
+  margin-left: -14px !important;
+  width: auto !important;
+  min-width: 18px !important;
+  margin-top: 5px !important;
+  margin-left: 9px !important;
+}
+
+.gd-linha-dia .icone i {
+  margin-left: 0 !important; /* garantir que o próprio <i> não tenha margem extra */
+}
 
 /* Reset completo para evitar qualquer empilhamento */
 .gd-linha-dia {
@@ -1478,6 +1502,9 @@
 .gd-linha-dia i {
   display: inline-block !important;
 }
+/* ========================================
+   ICONE ICONE  ICONE ICONE ICONE 
+======================================== */
 
 /* ========================================
    RESPONSIVIDADE
@@ -1621,6 +1648,32 @@
   margin-top: 65px !important;
 }
 
+/* HIDE SCROLLBAR: remover barra de rolagem lateral visual mantendo a rolagem por toque/scroll
+   - Aplicado com especificidade alta e !important para sobrescrever regras conflitantes */
+.container .bloco.bloco-2 .resumo-mes .lista-dias,
+.container .bloco.bloco-2 .resumo-mes.resumo-mes-externo .lista-dias,
+.lista-dias {
+  scrollbar-width: none !important; /* Firefox */
+  -ms-overflow-style: none !important; /* IE 10+ */
+}
+
+.container .bloco.bloco-2 .resumo-mes .lista-dias::-webkit-scrollbar,
+.container
+  .bloco.bloco-2
+  .resumo-mes.resumo-mes-externo
+  .lista-dias::-webkit-scrollbar,
+.lista-dias::-webkit-scrollbar {
+  width: 0px !important;
+  height: 0px !important;
+  display: none !important;
+}
+
+/* Fallback: esconder qualquer outline/space gerado por barras de rolagem customizadas */
+.container .bloco.bloco-2 .resumo-mes .lista-dias[style] {
+  overflow-y: auto !important;
+  margin-right: 0 !important;
+}
+
 /* Ajustes para telas muito curtas (altura limitada) */
 @media (max-height: 700px) {
   .container .bloco.bloco-2 {
@@ -1654,44 +1707,20 @@
    Para garantir que as cores apareçam
 ======================================== */
 
-/* VALOR POSITIVO - Verde com borda esquerda */
+/* VALOR POSITIVO - Verde (mais escuro) com borda esquerda */
 .container .bloco.bloco-2 .resumo-mes .lista-dias .gd-linha-dia.valor-positivo,
 .gd-linha-dia.valor-positivo {
   background: rgba(141, 219, 170, 0.12) !important;
-  border-left: 4px solid #063d1a !important;
-  border-color: rgba(34, 197, 94, 0.3) !important;
+  border-left: 4px solid #03884a !important;
   padding-left: 13px !important;
-}
-
-.container
-  .bloco.bloco-2
-  .resumo-mes
-  .lista-dias
-  .gd-linha-dia.valor-positivo:hover,
-.gd-linha-dia.valor-positivo:hover {
-  background: rgba(34, 197, 94, 0.18) !important;
-  border-left: 4px solid #063d1a !important;
-  border-color: rgba(34, 197, 94, 0.4) !important;
 }
 
 /* VALOR NEGATIVO - Vermelho com borda esquerda */
 .container .bloco.bloco-2 .resumo-mes .lista-dias .gd-linha-dia.valor-negativo,
 .gd-linha-dia.valor-negativo {
-  background: rgba(239, 68, 68, 0.12) !important;
-  border-left: 4px solid #ef4444 !important;
-  border-color: rgba(239, 68, 68, 0.3) !important;
+  background: rgb(247, 224, 224) !important;
+  border-left: 4px solid #cf0101 !important;
   padding-left: 13px !important;
-}
-
-.container
-  .bloco.bloco-2
-  .resumo-mes
-  .lista-dias
-  .gd-linha-dia.valor-negativo:hover,
-.gd-linha-dia.valor-negativo:hover {
-  background: rgba(239, 68, 68, 0.18) !important;
-  border-left: 4px solid #dc2626 !important;
-  border-color: rgba(239, 68, 68, 0.4) !important;
 }
 
 /* VALOR ZERO - Branco com borda cinza */
@@ -1742,6 +1771,32 @@
   font-size: 14px !important;
   color: #475569 !important;
   text-align: left !important;
+  margin-left: 0px !important;
+}
+
+/* FORCE DATA TO LEFT EDGE: remover margem/padding esquerdo para ficar no canto */
+.gd-linha-dia .data,
+.container .bloco.bloco-2 .resumo-mes .lista-dias .linha-dia .data,
+.container .bloco.bloco-2 .resumo-mes .linha-dia .data {
+  margin-left: 0 !important;
+  padding-left: 0 !important;
+  text-align: left !important;
+}
+
+/* OVERRIDE PARENTS: remover padding esquerdo que empurra a coluna DATA
+   - Ajustes aplicados ao container da lista e às linhas para zerar deslocamentos */
+.container .bloco.bloco-2 .resumo-mes .lista-dias {
+  padding-left: 0 !important;
+}
+
+.container .bloco.bloco-2 .resumo-mes .lista-dias .gd-linha-dia,
+.gd-linha-dia {
+  padding-left: 0 !important; /* remove o padding que empurra os filhos */
+}
+
+.gd-linha-dia > .data {
+  margin-left: 0 !important;
+  padding-left: 0 !important;
 }
 
 .gd-linha-dia .placar-dia {
