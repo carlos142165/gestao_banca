@@ -142,11 +142,15 @@ const MetaMensalManager = {
       }
       // ✅ META BATIDA OU SUPERADA - COM VALOR EXTRA
       else if (saldoMes > 0 && metaCalculada > 0 && saldoMes >= metaCalculada) {
-        valorExtra = saldoMes - metaCalculada;
+        // Evitar problemas de ponto flutuante: comparar por centavos (inteiro)
+        const rawExtra = saldoMes - metaCalculada;
+        const extraCentavos = Math.round(rawExtra * 100);
+
+        valorExtra = extraCentavos > 0 ? extraCentavos / 100 : 0;
         mostrarTachado = true;
         metaFinal = metaCalculada; // Mostra o valor da meta original
 
-        if (valorExtra > 0) {
+        if (extraCentavos > 0) {
           rotulo = `Meta do Mês Superada! <i class='fa-solid fa-trophy'></i>`;
           statusClass = "meta-superada";
           console.log(
@@ -2224,6 +2228,29 @@ console.log(
 
   console.log("🚀 Iniciando Sistema Completo de Troféu...");
 
+  // Debounce por linha para evitar flicker ao aplicar/remover troféus
+  const debounceTrofeuMs = 400; // ajuste finamente se necessário
+  const ultimoTrofeuChange = new Map(); // key: data-date -> timestamp
+
+  function podeAplicarTrofeu(linha) {
+    if (!linha) return true;
+    const key =
+      linha.getAttribute("data-date") || linha.dataset.date || "_global";
+    const now = Date.now();
+    const last = ultimoTrofeuChange.get(key) || 0;
+    if (now - last < debounceTrofeuMs) return false;
+    // reservar timestamp para evitar concorrência imediata
+    ultimoTrofeuChange.set(key, now);
+    return true;
+  }
+
+  function marcarRemocaoTrofeu(linha) {
+    if (!linha) return;
+    const key =
+      linha.getAttribute("data-date") || linha.dataset.date || "_global";
+    ultimoTrofeuChange.set(key, Date.now());
+  }
+
   // ========================================
   // FASE 1: LIMPEZA COMPLETA DO SISTEMA
   // ========================================
@@ -2280,14 +2307,61 @@ console.log(
 
     removerTodosTrofeus();
 
+    // 5.1. Injetar CSS para manter troféus pequenos com posição ajustável
+    const cssFixo = document.createElement("style");
+    cssFixo.setAttribute("data-trofeu-fixo", "true");
+    cssFixo.textContent = `
+            .gd-linha-dia .icone i.fa-trophy {
+                font-size: 12px !important;
+                width: 12px !important;
+                height: 12px !important;
+                line-height: 12px !important;
+                color: #FFD700 !important;
+                margin-top: -3px !important;
+                display: inline-block !important;
+            }
+            .trofeu-icone {
+                font-size: 12px !important;
+                width: 12px !important;
+                height: 12px !important;
+                line-height: 12px !important;
+                color: #FFD700 !important;
+                margin-top: -3px !important;
+                display: inline-block !important;
+            }
+        `;
+    document.head.appendChild(cssFixo);
+
     // 6. Criar proteção contra troféus indesejados
+    // Proteção temporária contra troféus mal aplicados.
+    // Observador ignora troféus que foram explicitamente permitidos (data-trofeu-permitido)
+    // e será desconectado automaticamente após um curto período para evitar conflitos
     const protecao = new MutationObserver((mutations) => {
       mutations.forEach((mutation) => {
         if (mutation.type === "attributes" || mutation.type === "childList") {
           const elemento = mutation.target;
-          if (elemento.classList && elemento.classList.contains("fa-trophy")) {
-            elemento.className = "fa-solid fa-check";
-            elemento.style.cssText = "color: #64748b !important;";
+          try {
+            const linha = elemento.closest && elemento.closest(".gd-linha-dia");
+            // Se a linha sinalizou que o troféu é permitido, não interferir
+            if (
+              linha &&
+              linha.dataset &&
+              (linha.dataset.trofeuPermitido === "1" ||
+                linha.dataset.trofeuPreservado === "1" ||
+                linha.getAttribute("data-meta-batida") === "true")
+            ) {
+              return;
+            }
+
+            if (
+              elemento.classList &&
+              elemento.classList.contains("fa-trophy")
+            ) {
+              elemento.className = "fa-solid fa-check";
+              elemento.style.cssText = "color: #64748b !important;";
+            }
+          } catch (e) {
+            // silencioso
           }
         }
       });
@@ -2299,6 +2373,13 @@ console.log(
         attributeFilter: ["class", "style"],
       });
     });
+
+    // Desconectar proteção após tempo curto (permite troféus legítimos aplicarem sem flicker)
+    setTimeout(() => {
+      try {
+        protecao.disconnect();
+      } catch (e) {}
+    }, 1200);
 
     console.log("✅ Limpeza completa finalizada");
     return true;
@@ -2324,51 +2405,138 @@ console.log(
       console.log("✅ Sistema final ativo - monitora apenas rótulo da meta");
     },
 
-    verificarEAplicar() {
+    async verificarEAplicar() {
       if (!this.ativo) return;
 
+      // utilitário local para converter 'R$ 1.234,56' em number
+      const parseBRL = (txt) => {
+        if (!txt) return 0;
+        try {
+          return (
+            parseFloat(
+              String(txt)
+                .replace(/\s/g, "")
+                .replace(/R\$/g, "")
+                .replace(/\./g, "")
+                .replace(/,/g, ".")
+            ) || 0
+          );
+        } catch (e) {
+          return 0;
+        }
+      };
+
       try {
-        // Encontrar rótulo da meta
-        const rotuloElement =
-          document.getElementById("rotulo-meta") ||
-          document.querySelector(".widget-meta-rotulo") ||
-          document.querySelector("[id*='rotulo']") ||
-          document.querySelector("[class*='rotulo']");
+        // Obter elemento do dia atual
+        const hoje = this.obterDataHoje();
+        const elementoHoje = document.querySelector(`[data-date="${hoje}"]`);
 
-        if (!rotuloElement) {
-          console.log("⚠️ Rótulo não encontrado - mantendo sem troféus");
+        if (!elementoHoje) {
+          // se não há o dia atual no DOM, remover troféus por segurança
           this.garantirSemTrofeus();
           return;
         }
 
-        const rotuloTexto = (
-          rotuloElement.textContent ||
-          rotuloElement.innerHTML ||
-          ""
-        )
-          .toLowerCase()
-          .trim();
+        // Se o MetaDiariaManager estiver disponível, usar o cálculo canônico
+        if (typeof MetaDiariaManager !== "undefined") {
+          try {
+            // Atualiza/obtém dados processados (usa aplicarAjustePeriodo internamente)
+            const dados = await MetaDiariaManager.atualizarMetaDiaria(true);
 
-        // Evitar verificações repetitivas
-        if (rotuloTexto === this.ultimaVerificacao) {
-          return;
+            if (dados) {
+              const saldoDia = parseFloat(dados.lucro) || 0;
+              const metaCalculada = parseFloat(dados.meta_display) || 0;
+              const bancaTotal = parseFloat(dados.banca) || 0;
+
+              const resultado = MetaDiariaManager.calcularMetaFinalComExtra(
+                saldoDia,
+                metaCalculada,
+                bancaTotal,
+                dados
+              );
+
+              // Decisão numérica: garantir comparação exata (evita depender de statusClass)
+              const batida =
+                (metaCalculada === 0 && saldoDia > 0) ||
+                (metaCalculada > 0 && saldoDia >= metaCalculada);
+
+              console.log(
+                `🔍 Verificação via MetaDiariaManager: período=${
+                  dados.periodo_ativo || MetaDiariaManager.periodoAtual
+                }, status=${resultado.statusClass}, metaFinal=${
+                  resultado.metaFinal
+                }, valorExtra=${resultado.valorExtra}`
+              );
+
+              if (batida) this.aplicarTrofeuDiaAtual();
+              else this.garantirSemTrofeus();
+
+              return;
+            }
+          } catch (e) {
+            console.warn(
+              "⚠️ Falha ao obter cálculo do MetaDiariaManager, fallback para DOM:",
+              e
+            );
+            // cair para o fallback abaixo
+          }
         }
 
-        console.log(`🔍 Rótulo detectado: "${rotuloTexto}"`);
-        this.ultimaVerificacao = rotuloTexto;
+        // Fallback: cálculo baseado no DOM (compatibilidade)
+        const valorEl = elementoHoje.querySelector(".valor");
+        const saldoHoje = parseBRL(valorEl ? valorEl.textContent : "0");
 
-        // Verificar se meta foi batida
-        const metaBatida = this.interpretarRotulo(rotuloTexto);
-        console.log(`🎯 Meta batida: ${metaBatida}`);
+        // Determinar meta a partir de várias fontes (dados-mes-info ou elementos visuais)
+        let periodo = "dia";
+        let meta = 0;
 
-        // Aplicar lógica
-        if (metaBatida) {
-          this.aplicarTrofeuDiaAtual();
-        } else {
-          this.garantirSemTrofeus();
+        const dadosMesEl = document.getElementById("dados-mes-info");
+        if (dadosMesEl) {
+          periodo =
+            dadosMesEl.dataset.periodoAtual ||
+            dadosMesEl.dataset.periodo ||
+            periodo;
         }
+
+        if (dadosMesEl) {
+          const mdia = parseBRL(
+            dadosMesEl.dataset.metaDiaria || dadosMesEl.dataset.meta || "0"
+          );
+          const mmes = parseBRL(
+            dadosMesEl.dataset.metaMensal || dadosMesEl.dataset.metaMes || "0"
+          );
+          const mano = parseBRL(
+            dadosMesEl.dataset.metaAnual || dadosMesEl.dataset.metaAno || "0"
+          );
+
+          if (periodo === "mes") meta = mmes || mdia || 0;
+          else if (periodo === "ano") meta = mano || mdia || 0;
+          else meta = mdia || 0;
+        }
+
+        // Fallback visual
+        if (!meta || meta === 0) {
+          const metaVisivel = document.querySelector(
+            "#meta-valor .valor-texto, #valor-texto-meta, .widget-meta-valor .valor-texto"
+          );
+          if (metaVisivel)
+            meta = parseBRL(metaVisivel.textContent || metaVisivel.innerText);
+        }
+
+        // Regra: se meta === 0 e existe saldo positivo, considerar meta batida
+        const metaBatida =
+          (meta === 0 && saldoHoje > 0) || (meta > 0 && saldoHoje >= meta);
+
+        console.log(
+          `🔍 Fallback verificação por DOM: período=${periodo}, meta=${meta.toFixed(
+            2
+          )}, saldoHoje=${saldoHoje.toFixed(2)}, batida=${metaBatida}`
+        );
+
+        if (metaBatida) this.aplicarTrofeuDiaAtual();
+        else this.garantirSemTrofeus();
       } catch (error) {
-        console.error("❌ Erro na verificação:", error);
+        console.error("❌ Erro na verificação de troféu por cálculo:", error);
         this.garantirSemTrofeus();
       }
     },
@@ -2430,7 +2598,7 @@ console.log(
       return false;
     },
 
-    aplicarTrofeuDiaAtual() {
+    async aplicarTrofeuDiaAtual() {
       const hoje = this.obterDataHoje();
       const elementoHoje = document.querySelector(`[data-date="${hoje}"]`);
 
@@ -2451,11 +2619,55 @@ console.log(
         return;
       }
 
-      // Aplicar troféu com força
+      // Debounce: evitar reaplicação rápida
+      if (!podeAplicarTrofeu(elementoHoje)) {
+        console.log("⏳ Ignorando reaplicação rápida do troféu (debounce)");
+        return;
+      }
+
+      // Verificação canônica extra: checar com MetaDiariaManager antes de aplicar
+      if (typeof MetaDiariaManager !== "undefined") {
+        try {
+          const dados = await MetaDiariaManager.atualizarMetaDiaria(true);
+          if (!dados) {
+            console.log(
+              "⚠️ MetaDiariaManager não retornou dados ao verificar aplicação do troféu"
+            );
+            // Não aplicar troféu sem confirmação do manager
+            return;
+          }
+
+          const saldoDia = parseFloat(dados.lucro) || 0;
+          const metaCalculada = parseFloat(dados.meta_display) || 0;
+
+          const batida =
+            (metaCalculada === 0 && saldoDia > 0) ||
+            (metaCalculada > 0 && saldoDia >= metaCalculada);
+
+          if (!batida) {
+            console.log(
+              `⛔ Meta não confirmada pelo MetaDiariaManager (saldo=${saldoDia}, meta=${metaCalculada}) - pulando aplicação do troféu`
+            );
+            return;
+          }
+        } catch (e) {
+          console.warn(
+            "⚠️ Falha ao consultar MetaDiariaManager antes de aplicar troféu:",
+            e
+          );
+          return; // evitar aplicar em caso de erro
+        }
+      }
+
+      // Aplicar troféu com força (tamanho reduzido fixo e posição ajustável)
       iconeHoje.className = "fa-solid fa-trophy trofeu-icone";
       iconeHoje.style.cssText =
-        'color: #FFD700 !important; font-family: "Font Awesome 6 Free" !important; font-weight: 900 !important;';
+        'color: #FFD700 !important; font-family: "Font Awesome 6 Free" !important; font-weight: 900 !important; font-size: 12px !important; width: 12px !important; height: 12px !important; line-height: 12px !important; margin-top: 2px !important; display: inline-block !important;';
       elementoHoje.setAttribute("data-meta-batida", "true");
+      // Marcar explicitamente que este troféu foi permitido pelo sistema (evita remoção pela proteção)
+      elementoHoje.dataset.trofeuPermitido = "1";
+      // Preservar exibição mesmo ao mudar período
+      elementoHoje.dataset.trofeuPreservado = "1";
 
       console.log(`🏆 Troféu aplicado no dia atual (${hoje})`);
     },
@@ -2465,15 +2677,30 @@ console.log(
 
       document.querySelectorAll(".gd-linha-dia .icone i").forEach((icone) => {
         if (icone.classList.contains("fa-trophy")) {
+          const linha = icone.closest(".gd-linha-dia");
+          // Se a linha indicou que o troféu era permitido, removê-lo normalmente e limpar a marca
+          // Debounce na remoção para evitar flicker
+          if (linha && !podeAplicarTrofeu(linha)) {
+            // já houve alteração recente, marcar remoção e pular
+            marcarRemocaoTrofeu(linha);
+            return;
+          }
+
           icone.className = "fa-solid fa-check";
           icone.style.cssText =
             'color: #64748b !important; font-family: "Font Awesome 6 Free" !important; font-weight: 900 !important;';
 
-          const linha = icone.closest(".gd-linha-dia");
           if (linha) {
-            linha.setAttribute("data-meta-batida", "false");
+            // Se o troféu estiver marcado como preservado, não remover automaticamente
+            if (linha.dataset.trofeuPreservado === "1") {
+              console.log("🔒 Troféu preservado — pulando remoção");
+            } else {
+              linha.setAttribute("data-meta-batida", "false");
+              delete linha.dataset.trofeuPermitido;
+            }
           }
 
+          marcarRemocaoTrofeu(linha);
           removidos++;
         }
       });
@@ -2722,7 +2949,7 @@ const SistemaUnicoSemConflito = {
   _ultimaExecucaoProcessar: 0,
 
   // Função principal que faz TUDO de uma vez
-  processarCompleto() {
+  async processarCompleto() {
     const agoraTs = Date.now();
     // Evitar reexecuções muito rápidas que competem com re-renders
     if (agoraTs - this._ultimaExecucaoProcessar < 400) return;
@@ -2732,6 +2959,28 @@ const SistemaUnicoSemConflito = {
     if (linhas.length === 0) return;
 
     let alteracoes = 0;
+
+    // Tentar obter cálculo canônico do MetaDiariaManager para o dia de hoje
+    let batidaHoje = null;
+    try {
+      if (typeof MetaDiariaManager !== "undefined") {
+        const dados = await MetaDiariaManager.atualizarMetaDiaria(true);
+        if (dados) {
+          const lucroHoje = parseFloat(dados.lucro) || 0;
+          const metaHoje = parseFloat(dados.meta_display) || 0;
+          // Decisão numérica direta
+          batidaHoje =
+            (metaHoje === 0 && lucroHoje > 0) ||
+            (metaHoje > 0 && lucroHoje >= metaHoje);
+        }
+      }
+    } catch (e) {
+      console.warn(
+        "⚠️ Falha ao obter cálculo do MetaDiariaManager em processarCompleto:",
+        e
+      );
+      batidaHoje = null;
+    }
 
     linhas.forEach((linha) => {
       const valorElemento = linha.querySelector(".valor");
@@ -2761,19 +3010,65 @@ const SistemaUnicoSemConflito = {
         alteracoes++;
       }
 
-      // Aplicar ícone de troféu se meta batida
+      // Aplicar ícone de troféu - preferir cálculo canônico para o dia atual
       const iconeEl = linha.querySelector(".icone i");
-      if (iconeEl && valor >= this.metaAtual) {
+      const dataDate = linha.getAttribute("data-date") || linha.dataset.date;
+      const d = new Date();
+      const hojeStr = `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(
+        2,
+        "0"
+      )}-${String(d.getDate()).padStart(2, "0")}`;
+
+      // Forçar: para o dia atual sempre usar o cálculo canônico do MetaDiariaManager.
+      // Se o manager não estiver disponível (batidaHoje === null) assumimos que
+      // a meta não foi batida — NÃO FAZER fallback para o DOM nesse caso.
+      let deveTerTrofeu = false;
+      let origemDecisao = "DOM/metaAtual";
+      if (dataDate === hojeStr) {
+        deveTerTrofeu = !!batidaHoje; // null/undefined => false
+        origemDecisao = "MetaDiariaManager";
+      } else {
+        deveTerTrofeu = iconeEl && valor >= this.metaAtual;
+        origemDecisao = "DOM/metaAtual";
+      }
+
+      // Debug: registrar valores de decisão para diagnóstico
+      if (window && window.console && window.console.debug) {
+        console.debug("TrofeuDecision", {
+          dataDate,
+          hojeStr,
+          origemDecisao,
+          valor,
+          metaAtual: this.metaAtual,
+          batidaHoje,
+          deveTerTrofeu,
+        });
+      }
+
+      if (iconeEl && deveTerTrofeu) {
         if (!iconeEl.classList.contains("fa-trophy")) {
-          iconeEl.classList.remove("fa-check");
-          iconeEl.classList.add("fa-trophy", "trofeu-icone", "fa-solid");
-          linha.setAttribute("data-meta-batida", "true");
+          // Debounce: evitar reaplicação rápida
+          if (!podeAplicarTrofeu(linha)) {
+            // pular aplicação agora
+          } else {
+            iconeEl.classList.remove("fa-check");
+            iconeEl.classList.add("fa-trophy", "trofeu-icone", "fa-solid");
+            linha.setAttribute("data-meta-batida", "true");
+            linha.dataset.trofeuPermitido = "1";
+          }
         }
       } else if (iconeEl) {
         if (!iconeEl.classList.contains("fa-check")) {
-          iconeEl.classList.remove("fa-trophy", "trofeu-icone");
-          iconeEl.classList.add("fa-check", "fa-solid");
-          linha.setAttribute("data-meta-batida", "false");
+          // Debounce na remoção
+          if (!podeAplicarTrofeu(linha)) {
+            marcarRemocaoTrofeu(linha);
+          } else {
+            iconeEl.classList.remove("fa-trophy", "trofeu-icone");
+            iconeEl.classList.add("fa-check", "fa-solid");
+            linha.setAttribute("data-meta-batida", "false");
+            delete linha.dataset.trofeuPermitido;
+            marcarRemocaoTrofeu(linha);
+          }
         }
       }
     });
@@ -2931,6 +3226,33 @@ console.log("   SistemaUnico.parar() - Parar sistema");
 
 // Export para uso
 window.SistemaUnicoSemConflito = SistemaUnicoSemConflito;
+// Delegated listener: ao clicar em um mentor-card, abrir o formulário (fallback)
+document.addEventListener("click", function (e) {
+  try {
+    const card = e.target.closest && e.target.closest(".mentor-card");
+    if (!card) return;
+
+    // Evitar interferir com menus/inputs
+    if (e.target.closest(".menu, .btn, a, input, button")) return;
+
+    const id = card.getAttribute("data-id") || card.dataset.id || null;
+    const nome = card.getAttribute("data-nome") || card.dataset.nome || "";
+    const foto = card.getAttribute("data-foto") || card.dataset.foto || "";
+
+    if (typeof window.abrirFormularioMentor === "function") {
+      window.abrirFormularioMentor(id, nome, foto);
+      return;
+    }
+
+    // fallback: disparar evento custom (alguns trechos do PHP escutam isso)
+    const evento = new CustomEvent("abrirFormularioMentor", {
+      detail: { card: card, id: id, nome: nome, foto: foto },
+    });
+    document.dispatchEvent(evento);
+  } catch (err) {
+    // silencioso
+  }
+});
 // ========================================================================================================================
 //                                FIM AS CORES DO CSS PARA FICAR FIXA FUNCIONANDO
 // ========================================================================================================================

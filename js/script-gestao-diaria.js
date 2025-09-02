@@ -2073,17 +2073,23 @@ const MetaDiariaManager = {
       }
       // ✅ META BATIDA OU SUPERADA - COM VALOR EXTRA
       else if (saldoDia > 0 && metaCalculada > 0 && saldoDia >= metaCalculada) {
-        valorExtra = saldoDia - metaCalculada;
+        // Evitar problemas de ponto flutuante: comparar por centavos (inteiro)
+        const rawExtra = saldoDia - metaCalculada;
+        const extraCentavos = Math.round(rawExtra * 100);
+
+        // valorExtra só será considerado se ultrapassar ao menos 1 centavo
+        valorExtra = extraCentavos > 0 ? extraCentavos / 100 : 0;
         mostrarTachado = true;
         metaFinal = metaCalculada; // Mostra o valor da meta original
 
-        if (valorExtra > 0) {
+        if (extraCentavos > 0) {
           rotulo = `${
             data.rotulo_periodo || "Meta"
           } Superada! <i class='fa-solid fa-trophy'></i>`;
           statusClass = "meta-superada";
           console.log(`🏆 META SUPERADA: Extra de R$ ${valorExtra.toFixed(2)}`);
         } else {
+          // Quando extraCentavos === 0 consideramos como META BATIDA (exata)
           rotulo = `${
             data.rotulo_periodo || "Meta"
           } Batida! <i class='fa-solid fa-trophy'></i>`;
