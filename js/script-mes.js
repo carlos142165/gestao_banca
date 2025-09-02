@@ -2218,554 +2218,437 @@ console.log(
 //                                  TROFÉU - PARA APARECER  QUANDO A META É BATIDA
 // ========================================================================================================================
 
-const SistemaTrofeuCompleto = {
-  // Configurações
-  INTERVALO_MS: 2000, // Atualiza a cada 2 segundos
-  TIMEOUT_MS: 5000,
-  META_FALLBACK: 50, // Meta padrão se não conseguir detectar
+// SISTEMA COMPLETO DE TROFÉU - LIMPEZA + FUNCIONALIDADE BASEADA NO RÓTULO
+(function () {
+  "use strict";
 
-  // Estado
-  atualizandoAtualmente: false,
-  intervaloAtualizacao: null,
-  ultimaAtualizacao: null,
-  hashUltimosDados: "",
-  metaAtual: 0,
-  periodoAtual: "dia",
+  console.log("🚀 Iniciando Sistema Completo de Troféu...");
 
-  // ===== INICIALIZAÇÃO =====
-  inicializar() {
-    console.log("🚀 Iniciando sistema completo de troféu...");
+  // ========================================
+  // FASE 1: LIMPEZA COMPLETA DO SISTEMA
+  // ========================================
 
-    // Detectar meta inicial
-    this.detectarMeta();
+  function limpezaCompleta() {
+    console.log("🛑 FASE 1: Limpeza completa de sistemas anteriores...");
 
-    // Aplicar troféus imediatamente
-    this.aplicarTrofeus();
-
-    // Sistema de atualização via AJAX
-    this.iniciarAtualizacaoAjax();
-
-    // Sistema de monitoramento automático
-    this.iniciarMonitoramento();
-
-    // Configurar interceptadores
-    this.configurarInterceptadores();
-
-    console.log("✅ Sistema completo ativo!");
-  },
-
-  // ===== DETECÇÃO DE META =====
-  detectarMeta() {
-    try {
-      // Verificar período atual
-      const radioSelecionado = document.querySelector(
-        'input[name="periodo"]:checked'
-      );
-      if (radioSelecionado) {
-        this.periodoAtual = radioSelecionado.value;
-      }
-
-      // Obter meta do elemento dados-mes-info
-      const dadosInfo = document.getElementById("dados-mes-info");
-      if (dadosInfo) {
-        switch (this.periodoAtual) {
-          case "mes":
-            this.metaAtual =
-              parseFloat(dadosInfo.dataset.metaMensal) || this.META_FALLBACK;
-            break;
-          case "ano":
-            this.metaAtual =
-              parseFloat(dadosInfo.dataset.metaAnual) || this.META_FALLBACK;
-            break;
-          default:
-            this.metaAtual =
-              parseFloat(dadosInfo.dataset.metaDiaria) || this.META_FALLBACK;
-        }
-      } else {
-        // Fallback: tentar MetaDiariaManager
-        if (
-          typeof MetaDiariaManager !== "undefined" &&
-          MetaDiariaManager.dadosMetaCache
-        ) {
-          this.metaAtual =
-            parseFloat(MetaDiariaManager.dadosMetaCache.meta_diaria) ||
-            this.META_FALLBACK;
-        } else {
-          this.metaAtual = this.META_FALLBACK;
-        }
-      }
-
-      console.log(
-        `🎯 Meta detectada: R$ ${this.metaAtual.toFixed(2)} (${
-          this.periodoAtual
-        })`
-      );
-    } catch (error) {
-      console.error("❌ Erro ao detectar meta:", error);
-      this.metaAtual = this.META_FALLBACK;
+    // 1. Parar TODOS os intervalos e timeouts
+    const maxId = setTimeout(() => {}, 0);
+    for (let i = 1; i <= maxId; i++) {
+      clearInterval(i);
+      clearTimeout(i);
     }
-  },
 
-  // ===== APLICAÇÃO DE TROFÉUS =====
-  aplicarTrofeus() {
-    let trofeus = 0;
+    // 2. Desconectar observers existentes
+    if (window.trofeuObserver) window.trofeuObserver.disconnect();
+    if (window.MutationObserver) {
+      document.querySelectorAll("*").forEach((el) => {
+        if (el._observer) el._observer.disconnect();
+      });
+    }
 
-    document.querySelectorAll(".gd-linha-dia").forEach((elemento) => {
-      try {
-        const valorEl = elemento.querySelector(".valor");
-        const iconeEl = elemento.querySelector(".icone i");
+    // 3. Limpar listeners problemáticos (APENAS elementos relacionados a troféu)
+    // Não remover listeners dos cards de mentores
+    const elementosTrofeu = document.querySelectorAll(
+      '.gd-linha-dia, .lista-dias, [class*="trofeu"]'
+    );
+    elementosTrofeu.forEach((el) => {
+      const clone = el.cloneNode(true);
+      if (el.parentNode) {
+        el.parentNode.replaceChild(clone, el);
+      }
+    });
 
-        if (valorEl && iconeEl) {
-          // Extrair valor numérico
-          const texto = valorEl.textContent;
-          const valor = this.extrairValorNumerico(texto);
+    // 4. Sobrescrever fetch para controlar callbacks
+    const originalFetch = window.fetch;
+    window.fetch = function (...args) {
+      return originalFetch.apply(this, args);
+    };
 
-          // Verificar meta batida
-          const metaBatida = this.metaAtual > 0 && valor >= this.metaAtual;
+    // 5. Remover troféus com força máxima
+    function removerTodosTrofeus() {
+      document.querySelectorAll(".gd-linha-dia").forEach((linha) => {
+        const icone = linha.querySelector(".icone i");
+        if (icone) {
+          icone.className = "fa-solid fa-check";
+          icone.style.cssText =
+            'color: #64748b !important; font-family: "Font Awesome 6 Free" !important; font-weight: 900 !important;';
+          icone.innerHTML = "";
+          linha.setAttribute("data-meta-batida", "false");
+        }
+      });
+    }
 
-          if (metaBatida) {
-            // Aplicar troféu dourado de forma estática (sem inline styles)
-            iconeEl.classList.remove("fa-check");
-            iconeEl.classList.add("fa-trophy", "trofeu-icone", "fa-solid");
-            elemento.setAttribute("data-meta-batida", "true");
-            trofeus++;
-          } else {
-            // Aplicar check normal sem estilos inline
-            iconeEl.classList.remove("fa-trophy", "trofeu-icone");
-            iconeEl.classList.add("fa-check", "fa-solid");
-            elemento.setAttribute("data-meta-batida", "false");
+    removerTodosTrofeus();
+
+    // 6. Criar proteção contra troféus indesejados
+    const protecao = new MutationObserver((mutations) => {
+      mutations.forEach((mutation) => {
+        if (mutation.type === "attributes" || mutation.type === "childList") {
+          const elemento = mutation.target;
+          if (elemento.classList && elemento.classList.contains("fa-trophy")) {
+            elemento.className = "fa-solid fa-check";
+            elemento.style.cssText = "color: #64748b !important;";
           }
+        }
+      });
+    });
+
+    document.querySelectorAll(".gd-linha-dia .icone i").forEach((icone) => {
+      protecao.observe(icone, {
+        attributes: true,
+        attributeFilter: ["class", "style"],
+      });
+    });
+
+    console.log("✅ Limpeza completa finalizada");
+    return true;
+  }
+
+  // ========================================
+  // FASE 2: SISTEMA BASEADO NO RÓTULO
+  // ========================================
+
+  const SistemaTrofeuFinal = {
+    ativo: false,
+    ultimaVerificacao: "",
+    observer: null,
+    intervaloPrincipal: null,
+
+    inicializar() {
+      console.log("🏆 FASE 2: Iniciando sistema baseado no rótulo...");
+
+      this.ativo = true;
+      this.configurarMonitoramento();
+      this.verificarEAplicar();
+
+      console.log("✅ Sistema final ativo - monitora apenas rótulo da meta");
+    },
+
+    verificarEAplicar() {
+      if (!this.ativo) return;
+
+      try {
+        // Encontrar rótulo da meta
+        const rotuloElement =
+          document.getElementById("rotulo-meta") ||
+          document.querySelector(".widget-meta-rotulo") ||
+          document.querySelector("[id*='rotulo']") ||
+          document.querySelector("[class*='rotulo']");
+
+        if (!rotuloElement) {
+          console.log("⚠️ Rótulo não encontrado - mantendo sem troféus");
+          this.garantirSemTrofeus();
+          return;
+        }
+
+        const rotuloTexto = (
+          rotuloElement.textContent ||
+          rotuloElement.innerHTML ||
+          ""
+        )
+          .toLowerCase()
+          .trim();
+
+        // Evitar verificações repetitivas
+        if (rotuloTexto === this.ultimaVerificacao) {
+          return;
+        }
+
+        console.log(`🔍 Rótulo detectado: "${rotuloTexto}"`);
+        this.ultimaVerificacao = rotuloTexto;
+
+        // Verificar se meta foi batida
+        const metaBatida = this.interpretarRotulo(rotuloTexto);
+        console.log(`🎯 Meta batida: ${metaBatida}`);
+
+        // Aplicar lógica
+        if (metaBatida) {
+          this.aplicarTrofeuDiaAtual();
+        } else {
+          this.garantirSemTrofeus();
         }
       } catch (error) {
-        // Silenciar erros de elementos individuais
+        console.error("❌ Erro na verificação:", error);
+        this.garantirSemTrofeus();
       }
-    });
+    },
 
-    if (trofeus > 0) {
-      console.log(
-        `🏆 ${trofeus} troféus aplicados (meta: R$ ${this.metaAtual.toFixed(
-          2
-        )})`
+    interpretarRotulo(rotuloTexto) {
+      if (!rotuloTexto) return false;
+
+      // Palavras que indicam meta NÃO atingida
+      const indicadoresNaoAtingida = [
+        "restando",
+        "restam",
+        "faltam",
+        "falta",
+        "para meta",
+        "p/ meta",
+        "ainda",
+        "necessário",
+        "precisam",
+        "precisa",
+        "restante",
+        "pendente",
+      ];
+
+      // Se contém indicador de "ainda faltando"
+      const temIndicadorFaltando = indicadoresNaoAtingida.some((palavra) =>
+        rotuloTexto.includes(palavra)
       );
-    }
 
-    return trofeus;
-  },
-
-  // ===== SISTEMA DE ATUALIZAÇÃO AJAX =====
-  iniciarAtualizacaoAjax() {
-    // Atualização periódica via AJAX
-    this.intervaloAtualizacao = setInterval(() => {
-      this.atualizarViaAjax();
-    }, this.INTERVALO_MS);
-
-    // Primeira atualização
-    this.atualizarViaAjax();
-  },
-
-  async atualizarViaAjax() {
-    if (this.atualizandoAtualmente) return;
-
-    this.atualizandoAtualmente = true;
-
-    try {
-      const response = await fetch("obter_dados_mes.php", {
-        method: "GET",
-        headers: {
-          "Cache-Control": "no-cache",
-          "X-Requested-With": "XMLHttpRequest",
-        },
-        signal: AbortSignal.timeout(this.TIMEOUT_MS),
-      });
-
-      if (!response.ok) throw new Error(`HTTP ${response.status}`);
-
-      const dados = await response.json();
-
-      // Verificar mudanças
-      const hashAtual = JSON.stringify(dados);
-      if (hashAtual === this.hashUltimosDados) {
-        return; // Sem mudanças
+      if (temIndicadorFaltando) {
+        console.log("❌ Rótulo indica que falta para a meta");
+        return false;
       }
 
-      this.hashUltimosDados = hashAtual;
+      // Palavras que indicam meta ATINGIDA
+      const indicadoresBatida = [
+        "batida",
+        "atingida",
+        "alcançada",
+        "superada",
+        "parabéns",
+        "sucesso",
+        "completa",
+        "conquistada",
+        "objetivo alcançado",
+        "meta completa",
+      ];
 
-      // Atualizar elementos existentes
-      this.atualizarElementosExistentes(dados);
+      const temIndicadorBatida = indicadoresBatida.some((palavra) =>
+        rotuloTexto.includes(palavra)
+      );
 
-      this.ultimaAtualizacao = new Date();
-    } catch (error) {
-      console.error("❌ Erro na atualização AJAX:", error);
-    } finally {
-      this.atualizandoAtualmente = false;
-    }
-  },
+      if (temIndicadorBatida) {
+        console.log("✅ Rótulo confirma meta batida");
+        return true;
+      }
 
-  atualizarElementosExistentes(responseData) {
-    const dados = responseData.dados || {};
-    const mes = responseData.mes || new Date().getMonth() + 1;
-    const ano = responseData.ano || new Date().getFullYear();
-    const diasNoMes =
-      responseData.dias_no_mes || new Date(ano, mes, 0).getDate();
+      // Padrão: se não há indicadores claros, assumir NÃO batida
+      console.log("❓ Rótulo sem indicadores - assumindo meta NÃO batida");
+      return false;
+    },
 
-    // Atualizar apenas elementos existentes para evitar flicker
-    for (let dia = 1; dia <= diasNoMes; dia++) {
-      const diaStr = dia.toString().padStart(2, "0");
-      const mesStr = mes.toString().padStart(2, "0");
-      const data_mysql = `${ano}-${mesStr}-${diaStr}`;
+    aplicarTrofeuDiaAtual() {
+      const hoje = this.obterDataHoje();
+      const elementoHoje = document.querySelector(`[data-date="${hoje}"]`);
 
-      const elemento = document.querySelector(`[data-date="${data_mysql}"]`);
-      if (!elemento) continue;
+      if (!elementoHoje) {
+        console.log(`⚠️ Elemento do dia atual (${hoje}) não encontrado`);
+        return;
+      }
 
-      const dadosDia = dados[data_mysql] || {
-        total_valor_green: 0,
-        total_valor_red: 0,
-        total_green: 0,
-        total_red: 0,
-      };
+      const iconeHoje = elementoHoje.querySelector(".icone i");
+      if (!iconeHoje) {
+        console.log("⚠️ Ícone do dia atual não encontrado");
+        return;
+      }
 
-      const saldo_dia =
-        parseFloat(dadosDia.total_valor_green) -
-        parseFloat(dadosDia.total_valor_red);
-      const metaBatida = this.metaAtual > 0 && saldo_dia >= this.metaAtual;
+      // Verificar se já tem troféu
+      if (iconeHoje.classList.contains("fa-trophy")) {
+        console.log("✅ Troféu já aplicado no dia atual");
+        return;
+      }
 
-      // Atualizar placar
-      const placarGreen = elemento.querySelector(".placar.verde-bold");
-      const placarRed = elemento.querySelector(".placar.vermelho-bold");
-      if (placarGreen) placarGreen.textContent = parseInt(dadosDia.total_green);
-      if (placarRed) placarRed.textContent = parseInt(dadosDia.total_red);
+      // Aplicar troféu com força
+      iconeHoje.className = "fa-solid fa-trophy trofeu-icone";
+      iconeHoje.style.cssText =
+        'color: #FFD700 !important; font-family: "Font Awesome 6 Free" !important; font-weight: 900 !important;';
+      elementoHoje.setAttribute("data-meta-batida", "true");
 
-      // Atualizar valor
-      const valor = elemento.querySelector(".valor");
-      if (valor) {
-        const saldo_formatado = saldo_dia.toLocaleString("pt-BR", {
-          minimumFractionDigits: 2,
-          maximumFractionDigits: 2,
+      console.log(`🏆 Troféu aplicado no dia atual (${hoje})`);
+    },
+
+    garantirSemTrofeus() {
+      let removidos = 0;
+
+      document.querySelectorAll(".gd-linha-dia .icone i").forEach((icone) => {
+        if (icone.classList.contains("fa-trophy")) {
+          icone.className = "fa-solid fa-check";
+          icone.style.cssText =
+            'color: #64748b !important; font-family: "Font Awesome 6 Free" !important; font-weight: 900 !important;';
+
+          const linha = icone.closest(".gd-linha-dia");
+          if (linha) {
+            linha.setAttribute("data-meta-batida", "false");
+          }
+
+          removidos++;
+        }
+      });
+
+      if (removidos > 0) {
+        console.log(`🧹 ${removidos} troféus removidos (meta não batida)`);
+      }
+    },
+
+    configurarMonitoramento() {
+      // Observer focado no rótulo
+      const rotuloElement =
+        document.getElementById("rotulo-meta") ||
+        document.querySelector(".widget-meta-rotulo");
+
+      if (rotuloElement) {
+        this.observer = new MutationObserver(() => {
+          setTimeout(() => {
+            if (this.ativo) {
+              this.verificarEAplicar();
+            }
+          }, 300);
         });
-        valor.textContent = `R$ ${saldo_formatado}`;
 
-        // Atualizar classes de cor
-        valor.classList.remove("verde-bold", "vermelho-bold", "texto-cinza");
-        const corClasse =
-          saldo_dia === 0
-            ? "texto-cinza"
-            : saldo_dia > 0
-            ? "verde-bold"
-            : "vermelho-bold";
-        valor.classList.add(corClasse);
+        this.observer.observe(rotuloElement, {
+          childList: true,
+          characterData: true,
+          subtree: true,
+        });
+
+        console.log("👁️ Monitoramento do rótulo ativado");
       }
 
-      // Atualizar ícone
-      const icone = elemento.querySelector(".icone i");
-      if (icone) {
-        if (metaBatida) {
-          icone.classList.remove("fa-check");
-          icone.classList.add("fa-trophy", "trofeu-icone", "fa-solid");
-        } else {
-          icone.classList.remove("fa-trophy", "trofeu-icone");
-          icone.classList.add("fa-check", "fa-solid");
+      // Verificação periódica (backup)
+      this.intervaloPrincipal = setInterval(() => {
+        if (this.ativo) {
+          this.verificarEAplicar();
         }
+      }, 3000);
+    },
+
+    obterDataHoje() {
+      const d = new Date();
+      const ano = d.getFullYear();
+      const mes = String(d.getMonth() + 1).padStart(2, "0");
+      const dia = String(d.getDate()).padStart(2, "0");
+      return `${ano}-${mes}-${dia}`;
+    },
+
+    parar() {
+      this.ativo = false;
+
+      if (this.observer) {
+        this.observer.disconnect();
+        this.observer = null;
       }
 
-      elemento.setAttribute("data-meta-batida", metaBatida ? "true" : "false");
+      if (this.intervaloPrincipal) {
+        clearInterval(this.intervaloPrincipal);
+        this.intervaloPrincipal = null;
+      }
+
+      console.log("🛑 Sistema parado");
+    },
+
+    status() {
+      const rotuloElement =
+        document.getElementById("rotulo-meta") ||
+        document.querySelector(".widget-meta-rotulo");
+      const rotuloTexto = rotuloElement
+        ? rotuloElement.textContent
+        : "Não encontrado";
+
+      return {
+        ativo: this.ativo,
+        rotuloAtual: rotuloTexto,
+        metaBatida: this.interpretarRotulo(rotuloTexto.toLowerCase()),
+        dataHoje: this.obterDataHoje(),
+        trofeusAtivos: document.querySelectorAll(".fa-trophy").length,
+      };
+    },
+
+    verificarAgora() {
+      this.ultimaVerificacao = "";
+      this.verificarEAplicar();
+    },
+  };
+
+  // ========================================
+  // EXECUÇÃO SEQUENCIAL
+  // ========================================
+
+  function executarSistemaCompleto() {
+    console.log("🔄 Iniciando execução sequencial...");
+
+    // Aguardar DOM carregado
+    if (document.readyState !== "complete") {
+      setTimeout(executarSistemaCompleto, 500);
+      return;
     }
 
-    console.log("✅ Elementos atualizados via AJAX");
-  },
-
-  // ===== SISTEMA DE MONITORAMENTO =====
-  iniciarMonitoramento() {
-    // Observer para mudanças no DOM
-    this.configurarObserver();
-
-    // Aplicar troféus a cada intervalo como backup
-    setInterval(() => {
-      this.aplicarTrofeus();
-    }, 3000);
-  },
-
-  configurarObserver() {
-    const container = document.querySelector(".lista-dias");
-    if (!container) return;
-
-    const observer = new MutationObserver((mutations) => {
-      let precisaAtualizar = false;
-
-      mutations.forEach((mutation) => {
-        if (
-          mutation.type === "childList" ||
-          mutation.type === "characterData"
-        ) {
-          const elemento = mutation.target.closest(".gd-linha-dia");
-          if (elemento) {
-            precisaAtualizar = true;
-          }
-        }
-      });
-
-      if (precisaAtualizar) {
-        setTimeout(() => this.aplicarTrofeus(), 100);
-      }
-    });
-
-    observer.observe(container, {
-      childList: true,
-      subtree: true,
-      characterData: true,
-    });
-  },
-
-  // ===== INTERCEPTADORES =====
-  configurarInterceptadores() {
-    // Interceptar submissão de formulários
-    document.addEventListener("submit", (e) => {
-      const form = e.target;
-      if (
-        form.id === "form-mentor" ||
-        form.classList.contains("formulario-mentor")
-      ) {
-        setTimeout(() => {
-          this.detectarMeta();
-          this.aplicarTrofeus();
-          this.atualizandoAtualmente = false;
-        }, 300);
-      }
-    });
-
-    // Interceptar mudanças de período
-    document.querySelectorAll('input[name="periodo"]').forEach((radio) => {
-      radio.addEventListener("change", (e) => {
-        if (e.target.checked) {
-          this.periodoAtual = e.target.value;
-          this.detectarMeta();
-          this.aplicarTrofeus();
-          this.atualizandoAtualmente = false;
-        }
-      });
-    });
-
-    // Hook no fetch
-    this.configurarHookFetch();
-
-    // Eventos customizados
-    window.addEventListener("listaDiasAtualizada", () => {
-      setTimeout(() => this.aplicarTrofeus(), 100);
-    });
-
-    window.addEventListener("metaAtualizada", () => {
-      this.detectarMeta();
-      this.aplicarTrofeus();
-    });
-  },
-
-  configurarHookFetch() {
-    const originalFetch = window.fetch;
-
-    window.fetch = async function (...args) {
-      const response = await originalFetch.apply(this, args);
-
-      const url = args[0]?.toString() || "";
-
-      if (
-        url.includes("cadastrar-valor") ||
-        url.includes("obter_dados_mes") ||
-        url.includes("dados_banca") ||
-        url.includes("excluir-entrada")
-      ) {
-        setTimeout(() => {
-          if (typeof SistemaTrofeuCompleto !== "undefined") {
-            SistemaTrofeuCompleto.detectarMeta();
-            SistemaTrofeuCompleto.aplicarTrofeus();
-            SistemaTrofeuCompleto.atualizandoAtualmente = false;
-          }
-        }, 200);
-      }
-
-      return response;
-    };
-  },
-
-  // ===== UTILITÁRIOS =====
-  extrairValorNumerico(texto) {
-    if (!texto) return 0;
-
-    const numeroLimpo = texto
-      .replace(/[R$\s]/g, "")
-      .replace(",", ".")
-      .replace(/[^\d.-]/g, "");
-
-    return parseFloat(numeroLimpo) || 0;
-  },
-
-  obterDataHoje() {
-    const d = new Date();
-    const yy = d.getFullYear();
-    const mm = String(d.getMonth() + 1).padStart(2, "0");
-    const dd = String(d.getDate()).padStart(2, "0");
-    return `${yy}-${mm}-${dd}`;
-  },
-
-  // ===== CONTROLES =====
-  parar() {
-    if (this.intervaloAtualizacao) {
-      clearInterval(this.intervaloAtualizacao);
-      this.intervaloAtualizacao = null;
+    // Verificar elementos
+    const listaDias = document.querySelector(".lista-dias");
+    if (!listaDias) {
+      console.log("⏳ Aguardando elementos carregarem...");
+      setTimeout(executarSistemaCompleto, 1000);
+      return;
     }
-  },
 
-  forcarAtualizacao() {
-    this.detectarMeta();
-    this.aplicarTrofeus();
-    this.atualizandoAtualmente = false;
-    return this.atualizarViaAjax();
-  },
+    // Fase 1: Limpeza
+    const limpezaOk = limpezaCompleta();
 
-  status() {
-    return {
-      ativo: !!this.intervaloAtualizacao,
-      atualizando: this.atualizandoAtualmente,
-      metaAtual: this.metaAtual,
-      periodoAtual: this.periodoAtual,
-      ultimaAtualizacao: this.ultimaAtualizacao,
-      hashDados: this.hashUltimosDados ? "dados carregados" : "sem dados",
-    };
-  },
-};
-
-// ========================================================================================================================
-//                                    INTEGRAÇÃO E SUBSTITUIÇÃO
-// ========================================================================================================================
-
-// Parar sistemas anteriores se existirem
-if (
-  typeof ListaDiasRealtimeManager !== "undefined" &&
-  ListaDiasRealtimeManager.intervaloAtualizacao
-) {
-  clearInterval(ListaDiasRealtimeManager.intervaloAtualizacao);
-  console.log("🛑 ListaDiasRealtimeManager parado");
-}
-
-if (
-  typeof ListaDiasComTrofeu !== "undefined" &&
-  ListaDiasComTrofeu.intervaloAtualizacao
-) {
-  clearInterval(ListaDiasComTrofeu.intervaloAtualizacao);
-  console.log("🛑 ListaDiasComTrofeu parado");
-}
-
-// Inicializar sistema único
-if (document.readyState === "loading") {
-  document.addEventListener("DOMContentLoaded", () => {
-    setTimeout(() => SistemaTrofeuCompleto.inicializar(), 1000);
-  });
-} else {
-  setTimeout(() => SistemaTrofeuCompleto.inicializar(), 500);
-}
-
-// ========================================================================================================================
-//                                    COMANDOS GLOBAIS
-// ========================================================================================================================
-
-// Comandos simplificados para console
-window.Trofeu = {
-  aplicar: () => SistemaTrofeuCompleto.aplicarTrofeus(),
-  forcar: () => SistemaTrofeuCompleto.forcarAtualizacao(),
-  status: () => SistemaTrofeuCompleto.status(),
-  meta: () => SistemaTrofeuCompleto.metaAtual,
-  parar: () => SistemaTrofeuCompleto.parar(),
-  iniciar: () => SistemaTrofeuCompleto.inicializar(),
-
-  // Forçar troféu em data específica
-  forcaData: (data) => {
-    const elemento = document.querySelector(`[data-date="${data}"]`);
-    if (elemento) {
-      const icone = elemento.querySelector(".icone i");
-      if (icone) {
-        icone.classList.remove("fa-check");
-        icone.classList.add("fa-trophy", "fa-solid", "trofeu-icone");
-        elemento.setAttribute("data-meta-batida", "true");
-        console.log(`🏆 Troféu forçado em ${data}`);
-      }
+    if (limpezaOk) {
+      // Fase 2: Sistema final (com delay)
+      setTimeout(() => {
+        SistemaTrofeuFinal.inicializar();
+      }, 2000);
     }
-  },
+  }
 
-  // Debug rápido
-  debug: () => {
-    const dadosInfo = document.getElementById("dados-mes-info");
-    console.log("🔍 DEBUG RÁPIDO:");
-    console.log("  Meta atual:", SistemaTrofeuCompleto.metaAtual);
-    console.log("  Período:", SistemaTrofeuCompleto.periodoAtual);
-    console.log("  Elemento dados-mes-info:", !!dadosInfo);
-    if (dadosInfo) {
-      console.log("  Meta diária:", dadosInfo.dataset.metaDiaria);
-      console.log("  Meta mensal:", dadosInfo.dataset.metaMensal);
-    }
-    console.log(
-      "  Sistema ativo:",
-      !!SistemaTrofeuCompleto.intervaloAtualizacao
-    );
-    return SistemaTrofeuCompleto.status();
-  },
-};
+  // ========================================
+  // COMANDOS GLOBAIS
+  // ========================================
 
-// Manter compatibilidade com comandos antigos
-window.ListaDias = {
-  parar: () => SistemaTrofeuCompleto.parar(),
-  iniciar: () => SistemaTrofeuCompleto.inicializar(),
-  atualizar: () => SistemaTrofeuCompleto.forcarAtualizacao(),
-  status: () => SistemaTrofeuCompleto.status(),
-};
+  window.TrofeuCompleto = {
+    status: () => {
+      const s = SistemaTrofeuFinal.status();
+      console.log("📊 STATUS COMPLETO:");
+      console.log(`   Sistema ativo: ${s.ativo}`);
+      console.log(`   Rótulo: "${s.rotuloAtual}"`);
+      console.log(`   Meta batida: ${s.metaBatida}`);
+      console.log(`   Data hoje: ${s.dataHoje}`);
+      console.log(`   Troféus ativos: ${s.trofeusAtivos}`);
+      return s;
+    },
 
-// Export para uso externo
-window.SistemaTrofeuCompleto = SistemaTrofeuCompleto;
+    verificar: () => {
+      console.log("🔍 Forçando verificação...");
+      SistemaTrofeuFinal.verificarAgora();
+    },
 
-console.log("🏆 SISTEMA COMPLETO DE TROFÉU CARREGADO!");
-console.log("✅ Funcionalidades integradas:");
-console.log("   - Detecção automática de meta (dia/mês/ano)");
-console.log("   - Atualização em tempo real via AJAX");
-console.log("   - Monitoramento de mudanças no DOM");
-console.log("   - Interceptação de eventos e formulários");
-console.log("   - Aplicação automática de troféus");
-console.log("");
-console.log("🔧 Comandos:");
-console.log("   Trofeu.aplicar() - Aplicar troféus manualmente");
-console.log("   Trofeu.status() - Ver status do sistema");
-console.log("   Trofeu.debug() - Debug rápido");
-console.log("   Trofeu.forcaData('2025-09-01') - Forçar troféu em data");
-console.log("");
-console.log("⚡ Sistema iniciado automaticamente!");
+    parar: () => {
+      SistemaTrofeuFinal.parar();
+    },
 
-// Garantir CSS estático global (sem transições / animações / transformações)
-(function () {
-  try {
-    const css = `
-      /* Troféu estático */
-  .trofeu-icone{ color: #FFD700 !important; /* dourado estático */ transition: none !important; animation: none !important; transform: none !important; }
-      .trofeu-icone *{ transition: none !important; animation: none !important; transform: none !important; }
+    reiniciar: () => {
+      SistemaTrofeuFinal.parar();
+      setTimeout(() => {
+        executarSistemaCompleto();
+      }, 1000);
+    },
+  };
 
-      /* Check estático */
-      .fa-solid.fa-check{ color: inherit !important; transition: none !important; animation: none !important; transform: none !important; }
+  // ========================================
+  // AUTO-INICIALIZAÇÃO
+  // ========================================
 
-  /* Ícones dentro da lista não devem animar */
-  .lista-dias .gd-linha-dia .icone i { transition: none !important; animation: none !important; transform: none !important; }
+  executarSistemaCompleto();
 
-      /* Placar e spans não devem animar ou transformar */
-      .placar, .placar * { transition: none !important; animation: none !important; transform: none !important; }
-
-      /* Remover efeitos aplicados por classes antigas */
-      .placar-atualizado, .placar-erro { transition: none !important; animation: none !important; }
-  /* Forçar tamanho fixo dos ícones para evitar shift quando troca de glyph */
-  .lista-dias .icone { width: 28px !important; display: inline-flex !important; align-items: center; justify-content: center; }
-  .lista-dias .icone i { width: 18px !important; height: 18px !important; font-size: 12px !important; line-height: 1 !important; display: inline-block !important; }
-  .lista-dias .icone i::before { display: inline-block; width: 18px; }
-  .lista-dias .gd-linha-dia { will-change: auto !important; }
-    `;
-
-    const style = document.createElement("style");
-    style.setAttribute("data-injected", "trofeu-static");
-    style.textContent = css;
-    document.head && document.head.appendChild(style);
-  } catch (e) {}
+  console.log("🏆 SISTEMA COMPLETO DE TROFÉU CARREGADO!");
+  console.log("📋 Funcionalidades:");
+  console.log("   1. Limpa todos os sistemas anteriores");
+  console.log("   2. Remove todos os troféus existentes");
+  console.log("   3. Monitora APENAS o rótulo da meta");
+  console.log("   4. Aplica troféu quando rótulo confirma meta batida");
+  console.log('   5. Remove troféus quando rótulo mostra "restando"');
+  console.log("");
+  console.log("🔧 Comandos disponíveis:");
+  console.log("   TrofeuCompleto.status() - Ver status");
+  console.log("   TrofeuCompleto.verificar() - Forçar verificação");
+  console.log("   TrofeuCompleto.reiniciar() - Reiniciar sistema");
+  console.log("");
+  console.log("🎯 REGRA FINAL:");
+  console.log('   - Rótulo com "restando/faltam" = SEM troféu');
+  console.log('   - Rótulo com "batida/atingida" = Troféu no dia atual');
 })();
 // ========================================================================================================================
 //                                 FIM  TROFÉU - PARA APARECER  QUANDO A META É BATIDA
