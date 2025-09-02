@@ -4,9 +4,6 @@
    =======================================================================================================================================================*/
 @import url("https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700&display=swap");
 
-/* CODIGO DO CAMPO : lista-dias - VERSÃO REORGANIZADA E OTIMIZADA
-  - Regras específicas do elemento .lista-dias dentro de .resumo-mes (scroll, altura, padding)
-*/
 .container .bloco.bloco-2 .resumo-mes .lista-dias {
   /* Layout: aumentar levemente a largura total do campo de lista para mais respiração */
   width: calc(100% + 24px) !important; /* expande 24px no total */
@@ -52,38 +49,10 @@
     max-width: 100% !important;
   }
 }
-/* REMOVED: All layout/alignment/margin/structure CSS for the day list items
-  (selectors: .linha-dia, .data, .placar-dia, .placar, .valor, .icone, .texto-cinza,
-  .verde-bold, .vermelho-bold, .trophy-emoji, and related rules)
-  as requested. This preserves other widget/meta styles in this file.
-  If you need to restore parts later, check version control or remove this comment
-  and re-add specific rules. */
 
 /* =======================================================================================================================================================
   UTILITÁRIOS E OCULTAR SCROLLBAR - INTEGRADO
   =======================================================================================================================================================*/
-
-/* Ocultar scrollbar */
-.lista-dias::-webkit-scrollbar,
-.container .bloco.bloco-2 .resumo-mes .lista-dias::-webkit-scrollbar {
-  width: 0px !important;
-  background: transparent !important;
-  display: none !important;
-}
-
-.container .bloco.bloco-2 .resumo-mes .lista-dias::-webkit-scrollbar-thumb {
-  background: transparent !important;
-}
-
-/* Garantir que a área de mentores/coluna esquerda acompanhe a altura fixa do container de dias */
-.container .bloco.bloco-2 .resumo-mes .campo_mentores,
-.container .bloco.bloco-2 .resumo-mes #listaMentores,
-.container .bloco.bloco-2 .resumo-mes .mentor-wrapper {
-  height: 800px !important;
-  max-height: 800px !important;
-  min-height: 800px !important;
-  overflow-y: auto !important;
-}
 
 /* =======================================================================================================================================================
   MANUTENÇÃO DO CSS ORIGINAL PARA OUTROS COMPONENTES - WIDGETS E META
@@ -867,11 +836,6 @@
   ANIMAÇÕES E EFEITOS ESPECIAIS ADICIONAIS
   =======================================================================================================================================================*/
 
-/* Efeito ao atualizar valores */
-.linha-dia[data-updated="true"] .valor {
-  animation: valueUpdate 0.6s ease-out;
-}
-
 @keyframes valueUpdate {
   0% {
     transform: scale(1);
@@ -887,17 +851,12 @@
   }
 }
 
-/* Badge adicional para dias com meta batida */
-.linha-dia[data-meta-batida="true"] .data::after {
-  content: none !important;
-}
-
 /* Indicador de carregamento */
-.lista-dias.atualizando {
+.atualizando {
   position: relative;
 }
 
-.lista-dias.atualizando::before {
+.atualizando::before {
   content: "";
   position: absolute;
   top: 0;
@@ -926,7 +885,7 @@
 
 /* Override final: garantir alinhamento consistente dos valores (R$) em todas as linhas (alinhado à esquerda) */
 .container .bloco.bloco-2 .resumo-mes .linha-dia .valor,
-.container .bloco.bloco-2 .resumo-mes .linha-dia.dia-hoje .valor {
+.container .bloco.bloco-2 .resumo-mes .valor {
   padding-top: 0 !important;
   display: inline-flex !important;
   align-items: center !important;
@@ -970,22 +929,36 @@
   margin-top: -8px !important;
 }
 
-/* Alinhar a coluna de data à esquerda (encostada ao canto) */
+/* Alinhar a coluna de data à direita (solicitação) */
 .linha-dia .data,
-.container .bloco.bloco-2 .resumo-mes .linha-dia .data {
-  /* fixed column width so all date values align left and right */
-  width: 100px !important; /* increased to fit DD/MM/YYYY comfortably */
-  flex: 0 0 100px !important; /* do not grow or shrink */
+.container .bloco.bloco-2 .resumo-mes .linha-dia .data,
+.container .bloco.bloco-2 .resumo-mes .lista-dias .data {
+  /* FIX: force identical space for every date cell */
+  width: 90px !important; /* fixed width for visual consistency */
+  min-width: 90px !important;
+  max-width: 90px !important;
+  flex: 0 0 90px !important; /* do not grow or shrink */
   box-sizing: border-box !important;
-  text-align: left !important; /* left edge aligned */
-  display: inline-flex !important;
-  justify-content: flex-start !important; /* keep content at left */
-  align-items: center !important;
+  display: block !important;
+  box-sizing: border-box !important;
+  align-items: normal !important;
+  justify-content: normal !important;
+  text-align: right !important; /* explicit text align */
+  padding: 0 8px 0 0 !important; /* consistent right padding */
+  margin: 0 !important;
   white-space: nowrap !important;
   overflow: hidden !important;
-  text-overflow: ellipsis !important; /* clip if somehow larger */
-  padding: 0 !important; /* remove inner spacing so edges align exactly */
-  margin: 0 !important;
+  text-overflow: ellipsis !important;
+  font-variant-numeric: tabular-nums !important; /* ensure numbers use fixed-width numerals */
+  line-height: 1 !important;
+  /* Use a monospace fallback so every digit has same width across browsers/fonts */
+  font-family: "Courier New", Courier, monospace !important;
+  letter-spacing: 0 !important;
+}
+
+/* Ensure no extra left-padding for the data column coming from other rules */
+.container .bloco.bloco-2 .resumo-mes .lista-dias .linha-dia > .data {
+  padding-left: 0 !important;
 }
 
 /* Forçar template de grid nas linhas de data: primeira coluna fixa (data) para alinhar
@@ -999,7 +972,7 @@
 }
 
 /* Remover gap gerado pelo .data original e garantir que não haja padding residual */
-.container .bloco.bloco-2 .resumo-mes .linha-dia .data {
+.container .bloco.bloco-2 .resumo-mes {
   gap: 0 !important;
   padding: 0 !important;
   box-sizing: border-box !important;
@@ -1014,7 +987,8 @@
     gap: 6px !important;
   }
   .linha-dia .data,
-  .container .bloco.bloco-2 .resumo-mes .linha-dia .data {
+  .container .bloco.bloco-2 .resumo-mes .linha-dia,
+  .container .bloco.bloco-2 .resumo-mes .lista-dias .data {
     width: auto !important;
     text-align: left !important;
   }
@@ -1031,34 +1005,798 @@
   font-family: inherit !important;
 }
 
-/* Forçar ícone de calendário à esquerda dentro da coluna .data */
-.container .bloco.bloco-2 .resumo-mes .linha-dia .data i,
-.lista-dias .linha-dia .data i {
-  display: inline-block !important;
-  margin-right: 6px !important;
-  margin-left: 0 !important;
+/* ==================================================================================================
+   SCOPED SHIELD: forçar uso apenas do CSS externo dentro do widget de resumo-mes
+   - Adicione a classe `resumo-mes-externo` ao elemento <div class="resumo-mes"> no HTML:
+       <div class="resumo-mes resumo-mes-externo"> ... </div>
+   - Regras abaixo usam seletores específicos e !important para sobrescrever estilos inline
+     (observação: inline styles que também usam !important continuarão tendo prioridade).
+================================================================================================== */
+
+.container .bloco.bloco-2 .resumo-mes.resumo-mes-externo,
+.container .bloco.bloco-2 .resumo-mes.resumo-mes-externo * {
+  box-sizing: border-box !important;
+  -webkit-box-sizing: border-box !important;
+}
+
+/* Lista de dias (escopo forte) */
+.container .bloco.bloco-2 .resumo-mes.resumo-mes-externo .lista-dias {
+  width: calc(100% + 24px) !important;
+  max-width: calc(100% + 24px) !important;
+  margin-left: -12px !important;
+  overflow-x: hidden !important;
+  overflow-y: auto !important;
+  height: 508px !important;
+  max-height: 550px !important;
+  padding: 12px 16px !important;
+  margin-top: 77px !important;
+  background: rgba(238, 238, 238, 0.95) !important;
+  border-radius: 15px !important;
+}
+
+/* Forçar grid das linhas de dia e largura da coluna de data */
+.container
+  .bloco.bloco-2
+  .resumo-mes.resumo-mes-externo
+  .lista-dias
+  .linha-dia {
+  display: grid !important;
+  grid-template-columns: 100px auto 1fr auto !important;
+  align-items: center !important;
+  gap: 8px !important;
+}
+
+.container .bloco.bloco-2 .resumo-mes.resumo-mes-externo .linha-dia .data {
+  width: 90px !important;
+  min-width: 90px !important;
+  max-width: 90px !important;
+  flex: 0 0 90px !important;
+  text-align: right !important;
+  padding: 0 8px 0 0 !important;
+  white-space: nowrap !important;
+  overflow: hidden !important;
+  text-overflow: ellipsis !important;
+  font-variant-numeric: tabular-nums !important;
+  font-family: "Courier New", Courier, monospace !important;
+  line-height: 1 !important;
+}
+
+/* Forçar comportamento dos widgets/meta dentro do escopo */
+.container .bloco.bloco-2 .resumo-mes.resumo-mes-externo .widget-meta-valor-2,
+.container .bloco.bloco-2 .resumo-mes.resumo-mes-externo #meta-valor-2 {
+  display: flex !important;
+  align-items: center !important;
+  justify-content: flex-start !important;
+  gap: 8px !important;
+  font-size: 18px !important;
+}
+
+.container
+  .bloco.bloco-2
+  .resumo-mes.resumo-mes-externo
+  .widget-barra-container-2 {
+  width: 330px !important;
+  max-width: 100% !important;
+  height: 22px !important;
+  overflow: hidden !important;
+}
+
+/* Porcentagem e indicadores: garantir posicionamento */
+.container .bloco.bloco-2 .resumo-mes.resumo-mes-externo .porcentagem-barra-2 {
+  position: absolute !important;
+  right: 0 !important;
+  top: 0 !important;
+  height: 100% !important;
+  z-index: 10 !important;
+  display: flex !important;
+  align-items: center !important;
+}
+
+/* Garantir alinhamento do valor (R$) */
+.container .bloco.bloco-2 .resumo-mes.resumo-mes-externo .linha-dia .valor,
+.container .bloco.bloco-2 .resumo-mes.resumo-mes-externo .valor {
+  padding-top: 0 !important;
+  display: inline-flex !important;
+  align-items: center !important;
+  justify-content: flex-start !important;
+  align-self: center !important;
+  line-height: 1.4 !important;
+  text-align: left !important;
+}
+
+/* Bloquear alterações frequentes aplicadas por JS (atributos style) em elementos chave */
+.container .bloco.bloco-2 .resumo-mes.resumo-mes-externo [style] {
+  /* Propriedades comuns que scripts costumam escrever — sobrepor com externals */
+  width: auto !important;
+  height: auto !important;
+  max-width: none !important;
+  max-height: none !important;
+  margin: inherit !important;
+  padding: inherit !important;
+  background: inherit !important;
+}
+
+/* Pequena nota para o mantenedor */
+/* IMPORTANTE: para ativar esse escopo, atualize o HTML do bloco: <div class="resumo-mes resumo-mes-externo"> */
+
+/* ====== Forçar mesma fonte para DATA | PLACAR | VALOR | ICONE dentro de .lista-dias .linha-dia ====== */
+/* Isso sobrescreve regras conflitantes e garante consistência visual */
+.container .bloco.bloco-2 .resumo-mes .lista-dias .linha-dia .data,
+.container .bloco.bloco-2 .resumo-mes .lista-dias .linha-dia .placar-dia,
+.container .bloco.bloco-2 .resumo-mes .lista-dias .linha-dia .placar,
+.container .bloco.bloco-2 .resumo-mes .lista-dias .linha-dia .valor,
+.container .bloco.bloco-2 .resumo-mes .lista-dias .linha-dia .icone,
+.container .bloco.bloco-2 .resumo-mes .lista-dias .linha-dia .separador {
+  font-family: "Poppins", "Rajdhani", Arial, sans-serif !important;
+  font-weight: 400 !important;
+  font-size: 13px !important; /* ajuste leve para consistência; altere se desejar outro tamanho */
+  line-height: 1 !important;
+}
+
+/* Aplicar o mesmo a elementos filhos pontuais para cobrir estruturas internas */
+.container .bloco.bloco-2 .resumo-mes .lista-dias .linha-dia .placar > *,
+.container .bloco.bloco-2 .resumo-mes .lista-dias .linha-dia .data *,
+.container .bloco.bloco-2 .resumo-mes .lista-dias .linha-dia .valor * {
+  font-family: inherit !important;
+  font-weight: inherit !important;
+  font-size: inherit !important;
+}
+
+/* ===================================================================
+   IMPORT: estilos do arquivo estilo-gestao-diaria-novo.css
+   Copiado para dentro de estilo-campo-mes.css para centralizar o
+   estilo do widget de resumo do mês (lista-dias)
+=================================================================== */
+/* =======================================================================================================================================================
+                                              CODIGO RESPONSAVEL PELO  CAMPO ( DIA - PLACAR - VALOR - ICONE )
+  =======================================================================================================================================================*/
+
+@import url("https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap");
+@import url("https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css");
+
+/* Container principal da lista */
+.container .bloco.bloco-2 .resumo-mes .lista-dias {
+  width: 100% !important;
+  max-width: 100% !important;
+  overflow-x: hidden !important;
+  overflow-y: auto !important;
+  padding: 8px !important;
+  margin: 0 !important;
+  background: rgba(247, 246, 246, 0.95) !important;
+  border-radius: 12px !important;
+  scrollbar-width: thin !important;
+  scrollbar-color: rgba(148, 163, 184, 0.3) transparent !important;
+}
+
+/* Scrollbar customizada */
+.container .bloco.bloco-2 .resumo-mes .lista-dias::-webkit-scrollbar {
+  width: 6px;
+}
+
+.container .bloco.bloco-2 .resumo-mes .lista-dias::-webkit-scrollbar-track {
+  background: transparent;
+}
+
+.container .bloco.bloco-2 .resumo-mes .lista-dias::-webkit-scrollbar-thumb {
+  background-color: rgba(148, 163, 184, 0.3);
+  border-radius: 3px;
+}
+
+.lista-dias {
+  height: 400px !important;
+  margin-top: 80px !important;
+}
+
+/* ========================================
+   LINHA DO DIA - FORÇAR LAYOUT HORIZONTAL
+======================================== */
+
+/* Resetar qualquer estilo que cause empilhamento */
+.gd-linha-dia,
+.container .bloco.bloco-2 .resumo-mes .lista-dias .gd-linha-dia {
+  display: flex !important;
+  flex-direction: row !important;
+  align-items: center !important;
+  justify-content: space-between !important;
+  flex-wrap: nowrap !important;
+
+  width: 100% !important;
+  height: 32px !important;
+  min-height: 32px !important;
+  max-height: 32px !important;
+
+  padding: 0 16px !important;
+  margin: 0 0 4px 0 !important;
+
+  background: rgba(255, 255, 255, 0.7) !important;
+  border: 1px solid rgba(226, 232, 240, 0.5) !important;
+  border-radius: 8px !important;
+
+  font-family: "Inter", -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto,
+    sans-serif !important;
+  font-weight: 500 !important;
+  font-size: 14px !important;
+  line-height: 1.2 !important;
+
+  transition: all 0.15s ease !important;
+  box-sizing: border-box !important;
+
+  /* Forçar que nenhum elemento filho quebre a linha */
+  overflow: hidden !important;
+}
+
+/* Hover sutil */
+.gd-linha-dia:hover {
+  background: rgba(255, 255, 255, 0.9) !important;
+  border-color: rgba(148, 163, 184, 0.3) !important;
+  transform: translateY(-1px) !important;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05) !important;
+}
+
+/* ========================================
+   ELEMENTOS FILHOS - FORÇAR LADO A LADO
+======================================== */
+
+/* Todos os elementos filhos devem ter display inline-flex */
+.gd-linha-dia > *,
+.gd-linha-dia .data,
+.gd-linha-dia .placar-dia,
+.gd-linha-dia .valor,
+.gd-linha-dia .icone {
+  display: inline-flex !important;
+  align-items: center !important;
+  flex-shrink: 0 !important;
+  white-space: nowrap !important;
+  overflow: hidden !important;
+  text-overflow: ellipsis !important;
   vertical-align: middle !important;
 }
 
-/* Garantir que nenhum ícone ocupe espaço na coluna de data (remove espaços remanescentes) */
-.container .bloco.bloco-2 .resumo-mes .linha-dia .data i,
-.lista-dias .linha-dia .data i,
-.linha-dia .data i {
-  display: none !important;
-  width: 0 !important;
-  margin: 0 !important;
-  padding: 0 !important;
+/* ========================================
+   COLUNA 1: DATA (SEM ÍCONE DE CALENDÁRIO)
+======================================== */
+
+.gd-linha-dia .data {
+  display: inline-flex !important;
+  align-items: center !important;
+
+  font-family: "Inter", monospace !important;
+  font-weight: 600 !important;
+  font-size: 14px !important;
+  color: #475569 !important;
+
+  text-align: left !important;
+  justify-content: flex-start !important;
+
+  width: 95px !important;
+  min-width: 95px !important;
+  max-width: 95px !important;
+
+  letter-spacing: -0.01em !important;
+  font-variant-numeric: tabular-nums !important;
+
+  /* Força posicionamento */
+  order: 1 !important;
+  margin-right: 24px !important;
 }
 
-/* Ocultar ícone de calendário ao lado da data (FA: fa-calendar-day / fa-calendar / fa-calendar-alt) */
-.container .bloco.bloco-2 .resumo-mes .linha-dia .data i.fa-calendar-day,
-.container .bloco.bloco-2 .resumo-mes .linha-dia .data i.fa-calendar,
-.container .bloco.bloco-2 .resumo-mes .linha-dia .data i.fa-calendar-alt,
-.lista-dias .linha-dia .data i.fa-calendar-day,
-.lista-dias .linha-dia .data i.fa-calendar,
-.lista-dias .linha-dia .data i.fa-calendar-alt {
-  display: none !important;
-  width: 0 !important;
-  margin: 0 !important;
-  padding: 0 !important;
+/* ========================================
+   COLUNA 2: PLACAR
+======================================== */
+
+.gd-linha-dia .placar-dia {
+  display: inline-flex !important;
+  align-items: center !important;
+  justify-content: center !important;
+  gap: 6px !important;
+
+  font-family: "Inter", sans-serif !important;
+  font-weight: 500 !important;
+  font-size: 14px !important;
+  line-height: 1 !important;
+
+  width: 84px !important;
+  min-width: 84px !important;
+  max-width: 84px !important;
+
+  justify-content: center !important;
+  gap: 4px !important;
+  padding: 0 4px !important;
+
+  /* Força posicionamento */
+  order: 2 !important;
+  margin-right: 0px !important;
 }
+
+.gd-linha-dia .placar-dia .placar,
+.gd-linha-dia .placar-dia .separador {
+  display: inline !important;
+  font-family: inherit !important;
+  font-weight: inherit !important;
+  font-size: inherit !important;
+  line-height: inherit !important;
+}
+
+.gd-linha-dia .placar {
+  padding: 0 6px !important;
+}
+
+.gd-linha-dia .placar.separador {
+  padding: 0 4px !important;
+  margin: 0 2px !important;
+}
+
+.gd-linha-dia .placar-dia .verde-bold {
+  color: #059669 !important;
+  font-weight: 600 !important;
+}
+
+.gd-linha-dia .placar-dia .vermelho-bold {
+  color: #dc2626 !important;
+  font-weight: 600 !important;
+}
+
+.gd-linha-dia .placar-dia .separador {
+  color: #94a3b8 !important;
+  font-weight: 400 !important;
+  margin: 0 4px !important;
+}
+
+.gd-linha-dia .placar-dia .texto-cinza {
+  color: #94a3b8 !important;
+}
+
+/* ========================================
+   COLUNA 3: VALOR (SALDO)
+======================================== */
+
+.gd-linha-dia .valor {
+  font-family: "Inter", monospace !important;
+  font-weight: 600 !important;
+  font-size: 14px !important;
+  line-height: 1 !important;
+
+  text-align: left !important;
+  justify-content: flex-start !important;
+
+  font-variant-numeric: tabular-nums !important;
+  letter-spacing: -0.01em !important;
+
+  width: 90px !important;
+  min-width: 90px !important;
+  max-width: 90px !important;
+
+  /* Força posicionamento */
+  order: 3 !important;
+  margin-right: 36px !important;
+}
+
+/* Cores dos valores */
+.gd-linha-dia .valor.verde-bold {
+  color: #059669 !important;
+  font-weight: 600 !important;
+}
+
+.gd-linha-dia .valor.vermelho-bold {
+  color: #dc2626 !important;
+  font-weight: 600 !important;
+}
+
+.gd-linha-dia .valor.texto-cinza {
+  color: #94a3b8 !important;
+  font-weight: 500 !important;
+}
+
+/* ========================================
+   COLUNA 4: ÍCONE
+======================================== */
+
+.gd-linha-dia .icone {
+  display: inline-flex !important;
+  align-items: center !important;
+  justify-content: center !important;
+
+  width: 24px !important;
+  height: 24px !important;
+  min-width: 24px !important;
+  max-width: 24px !important;
+
+  margin-left: 6px !important;
+  z-index: 2 !important;
+
+  /* Força posicionamento */
+  order: 4 !important;
+}
+
+.gd-linha-dia .icone i {
+  font-size: 15px !important;
+  line-height: 1 !important;
+  width: 16px !important;
+  height: 16px !important;
+  display: inline-flex !important;
+  align-items: center !important;
+  justify-content: center !important;
+  font-family: "Font Awesome 6 Free" !important;
+  font-weight: 900 !important;
+}
+
+/* Garantir que os ícones apareçam corretamente */
+.gd-linha-dia .icone i::before {
+  font-family: "Font Awesome 6 Free" !important;
+  font-weight: 900 !important;
+}
+
+/* Ícone check padrão */
+.gd-linha-dia .icone i.fa-check {
+  color: #64748b !important;
+}
+
+.gd-linha-dia .icone i.fa-check::before {
+  content: "\f00c" !important;
+}
+
+/* Ícone troféu dourado */
+.gd-linha-dia .icone i.fa-trophy.trofeu-icone {
+  color: #f59e0b !important;
+}
+
+.gd-linha-dia .icone i.fa-trophy::before {
+  content: "\f091" !important;
+}
+
+.gd-linha-dia .icone .texto-cinza {
+  color: #94a3b8 !important;
+}
+
+/* ========================================
+   FORÇA ANTI-EMPILHAMENTO
+======================================== */
+
+/* Reset completo para evitar qualquer empilhamento */
+.gd-linha-dia {
+  display: flex !important;
+  flex-direction: row !important;
+  flex-wrap: nowrap !important;
+}
+
+.gd-linha-dia > * {
+  display: inline-flex !important;
+  flex-direction: row !important;
+  float: none !important;
+  clear: none !important;
+  position: static !important;
+}
+
+/* Remover qualquer propriedade que cause quebra de linha */
+.gd-linha-dia,
+.gd-linha-dia *:not(i) {
+  display: inline-flex !important;
+  vertical-align: middle !important;
+  white-space: nowrap !important;
+}
+
+.gd-linha-dia i {
+  display: inline-block !important;
+}
+
+/* ========================================
+   RESPONSIVIDADE
+======================================== */
+
+@media (max-width: 768px) {
+  .gd-linha-dia {
+    padding: 0 12px !important;
+    font-size: 13px !important;
+  }
+
+  .gd-linha-dia .data {
+    width: 75px !important;
+    min-width: 75px !important;
+    max-width: 75px !important;
+    margin-right: 18px !important;
+    font-size: 13px !important;
+  }
+
+  .gd-linha-dia .placar-dia {
+    width: 90px !important;
+    min-width: 90px !important;
+    max-width: 90px !important;
+  }
+
+  .gd-linha-dia .placar {
+    padding: 0 8px !important;
+  }
+
+  .gd-linha-dia .valor {
+    width: 80px !important;
+    min-width: 80px !important;
+    max-width: 80px !important;
+    margin-right: 18px !important;
+    font-size: 13px !important;
+    margin-left: 12px !important;
+  }
+
+  .gd-linha-dia .icone {
+    width: 20px !important;
+    min-width: 20px !important;
+    margin-left: 4px !important;
+  }
+
+  .gd-linha-dia .icone i {
+    font-size: 13px !important;
+  }
+}
+
+@media (max-width: 480px) {
+  .gd-linha-dia {
+    height: 30px !important;
+    min-height: 30px !important;
+    max-height: 30px !important;
+    padding: 0 8px !important;
+    font-size: 12px !important;
+  }
+
+  .gd-linha-dia .data {
+    width: 70px !important;
+    min-width: 70px !important;
+    margin-right: 12px !important;
+    font-size: 12px !important;
+  }
+
+  .gd-linha-dia .placar-day,
+  .gd-linha-dia .placar-dia {
+    width: 75px !important;
+    min-width: 75px !important;
+    max-width: 75px !important;
+  }
+
+  .gd-linha-dia .placar {
+    padding: 0 6px !important;
+  }
+
+  .gd-linha-dia .valor {
+    width: 70px !important;
+    min-width: 70px !important;
+    margin-right: 12px !important;
+    font-size: 12px !important;
+    margin-left: 8px !important;
+  }
+
+  .gd-linha-dia .icone {
+    margin-left: 4px !important;
+  }
+
+  .gd-linha-dia .icone i {
+    font-size: 12px !important;
+  }
+}
+
+/* ========================================
+   UTILITÁRIOS AUXILIARES
+======================================== */
+
+/* Garantir que inline styles não sobrescrevam o layout horizontal */
+.gd-linha-dia[style] {
+  display: flex !important;
+  flex-direction: row !important;
+}
+
+.gd-linha-dia .data[style],
+.gd-linha-dia .valor[style] {
+  display: inline-flex !important;
+  width: inherit !important;
+}
+
+/* Remover animações que possam interferir */
+.gd-linha-dia *,
+.gd-linha-dia {
+  transition: background-color 0.15s ease, border-color 0.15s ease,
+    transform 0.15s ease !important;
+}
+
+.container .bloco.bloco-2 {
+  /* Ocupa a altura visível do usuário, subtraindo espaço para header/topo (ajuste se necessário) */
+  height: calc(100vh - 120px) !important;
+  max-height: calc(100vh - 80px) !important;
+  overflow: hidden !important;
+  display: flex !important;
+  flex-direction: column !important;
+}
+
+.container .bloco.bloco-2 .resumo-mes {
+  /* Permitir que o conteúdo interno (incluindo lista-dias) preencha o bloco */
+  flex: 1 1 auto !important;
+  display: flex !important;
+  flex-direction: column !important;
+  overflow: hidden !important;
+}
+
+.container .bloco.bloco-2 .resumo-mes .lista-dias {
+  /* Altura fixa conforme solicitado dentro do bloco 2 */
+  height: 500px !important;
+  max-height: 800px !important;
+  overflow-y: auto !important;
+  overflow-x: hidden !important;
+  /* margem superior solicitada pelo usuário */
+  margin-top: 65px !important;
+}
+
+/* Ajustes para telas muito curtas (altura limitada) */
+@media (max-height: 700px) {
+  .container .bloco.bloco-2 {
+    height: calc(100vh - 100px) !important;
+    max-height: calc(100vh - 60px) !important;
+  }
+  .container .bloco.bloco-2 .resumo-mes .lista-dias {
+    /* usar porcentagem da viewport quando espaço vertical for pequeno */
+    height: 32vh !important;
+    max-height: 45vh !important;
+  }
+}
+
+/* Mobile: largura total e lista menor para caber melhor */
+@media (max-width: 480px) {
+  .container .bloco.bloco-2 {
+    width: 100% !important;
+    max-width: 100% !important;
+    height: auto !important;
+    max-height: none !important;
+  }
+  .container .bloco.bloco-2 .resumo-mes .lista-dias {
+    height: 300px !important;
+    max-height: 50vh !important;
+    margin-top: 12px !important;
+  }
+}
+/* VALOR POSITIVO - Verde com borda esquerda */
+/* ========================================
+   CSS FORÇADO COM MÁXIMA ESPECIFICIDADE
+   Para garantir que as cores apareçam
+======================================== */
+
+/* VALOR POSITIVO - Verde com borda esquerda */
+.container .bloco.bloco-2 .resumo-mes .lista-dias .gd-linha-dia.valor-positivo,
+.gd-linha-dia.valor-positivo {
+  background: rgba(141, 219, 170, 0.12) !important;
+  border-left: 4px solid #063d1a !important;
+  border-color: rgba(34, 197, 94, 0.3) !important;
+  padding-left: 13px !important;
+}
+
+.container
+  .bloco.bloco-2
+  .resumo-mes
+  .lista-dias
+  .gd-linha-dia.valor-positivo:hover,
+.gd-linha-dia.valor-positivo:hover {
+  background: rgba(34, 197, 94, 0.18) !important;
+  border-left: 4px solid #063d1a !important;
+  border-color: rgba(34, 197, 94, 0.4) !important;
+}
+
+/* VALOR NEGATIVO - Vermelho com borda esquerda */
+.container .bloco.bloco-2 .resumo-mes .lista-dias .gd-linha-dia.valor-negativo,
+.gd-linha-dia.valor-negativo {
+  background: rgba(239, 68, 68, 0.12) !important;
+  border-left: 4px solid #ef4444 !important;
+  border-color: rgba(239, 68, 68, 0.3) !important;
+  padding-left: 13px !important;
+}
+
+.container
+  .bloco.bloco-2
+  .resumo-mes
+  .lista-dias
+  .gd-linha-dia.valor-negativo:hover,
+.gd-linha-dia.valor-negativo:hover {
+  background: rgba(239, 68, 68, 0.18) !important;
+  border-left: 4px solid #dc2626 !important;
+  border-color: rgba(239, 68, 68, 0.4) !important;
+}
+
+/* VALOR ZERO - Branco com borda cinza */
+.container .bloco.bloco-2 .resumo-mes .lista-dias .gd-linha-dia.valor-zero,
+.gd-linha-dia.valor-zero {
+  background: rgba(255, 255, 255, 0.95) !important;
+  border-left: 4px solid #9ca3af !important;
+  border-color: rgba(156, 163, 175, 0.3) !important;
+  padding-left: 13px !important;
+}
+
+.container
+  .bloco.bloco-2
+  .resumo-mes
+  .lista-dias
+  .gd-linha-dia.valor-zero:hover,
+.gd-linha-dia.valor-zero:hover {
+  background: rgba(255, 255, 255, 1) !important;
+  border-left: 4px solid #6b7280 !important;
+  border-color: rgba(156, 163, 175, 0.4) !important;
+}
+
+.gd-linha-dia {
+  display: flex !important;
+  flex-direction: row !important;
+  align-items: center !important;
+  justify-content: flex-start !important;
+  gap: 16px !important;
+
+  width: 100% !important;
+  height: 32px !important;
+  padding: 0 16px !important;
+  margin: 0 0 4px 0 !important;
+
+  font-family: "Inter", sans-serif !important;
+  font-size: 14px !important;
+  font-weight: 500 !important;
+
+  border-radius: 8px !important;
+  transition: all 0.15s ease !important;
+  box-sizing: border-box !important;
+}
+
+.gd-linha-dia .data {
+  width: 90px !important;
+  min-width: 90px !important;
+  font-weight: 600 !important;
+  font-size: 14px !important;
+  color: #475569 !important;
+  text-align: left !important;
+}
+
+.gd-linha-dia .placar-dia {
+  width: 80px !important;
+  min-width: 80px !important;
+  display: flex !important;
+  align-items: center !important;
+  justify-content: center !important;
+  gap: 6px !important;
+  font-size: 14px !important;
+}
+
+.gd-linha-dia .valor {
+  width: 90px !important;
+  min-width: 90px !important;
+  font-weight: 600 !important;
+  font-size: 14px !important;
+  text-align: left !important;
+}
+
+.gd-linha-dia .icone {
+  width: 24px !important;
+  min-width: 24px !important;
+  display: flex !important;
+  align-items: center !important;
+  justify-content: center !important;
+}
+
+.gd-linha-dia .icone i {
+  font-size: 15px !important;
+  font-family: "Font Awesome 6 Free" !important;
+  font-weight: 900 !important;
+}
+
+/* ========================================
+   RESET COMPLETO DE CONFLITOS
+======================================== */
+
+/* Remover qualquer regra que possa interferir */
+.container .bloco.bloco-2 .resumo-mes .lista-dias .linha-dia {
+  display: none !important; /* Desabilitar CSS antigo */
+}
+
+/* Garantir que apenas .gd-linha-dia seja usado */
+.gd-linha-dia {
+  display: flex !important; /* Reforçar */
+}
+
+/* Forçar reset de estilos inline que possam existir */
+.gd-linha-dia[style] {
+  background: inherit !important;
+  border: inherit !important;
+  padding: inherit !important;
+}
+
+/* =======================================================================================================================================================
+                                           FIM  CODIGO RESPONSAVEL PELO  CAMPO ( DIA - PLACAR - VALOR - ICONE )
+  =======================================================================================================================================================*/

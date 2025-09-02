@@ -1657,6 +1657,25 @@ const ListaDiasManagerCorrigido = {
     // Configurar interceptadores de eventos
     this.configurarInterceptadores();
 
+    // Configurar observador sanitizador para evitar reaplicação de estilos/ícones
+    try {
+      this.configurarObservadorSanitizacao();
+    } catch (e) {}
+
+    // One-time hard cleanup: remove any inline styles left on existing .gd-linha-dia
+    // e garantir que a flag CSS que força largura fixa seja aplicada.
+    try {
+      document
+        .querySelectorAll(
+          ".lista-dias .gd-linha-dia, .lista-dias .gd-linha-dia .data"
+        )
+        .forEach((el) => {
+          if (el.hasAttribute("style")) el.removeAttribute("style");
+        });
+      // Aplicar classe global para regras CSS de alta prioridade
+      document.documentElement.classList.add("force-data-fixed");
+    } catch (e) {}
+
     console.log("✅ Sistema corrigido ativo!");
   },
 
@@ -1749,7 +1768,7 @@ const ListaDiasManagerCorrigido = {
 
     // Mapear estado atual de troféus para evitar flicker ao re-renderizar
     const metaExistenteMap = {};
-    container.querySelectorAll(".linha-dia").forEach((el) => {
+    container.querySelectorAll(".gd-linha-dia").forEach((el) => {
       const date = el.getAttribute("data-date");
       if (date) {
         metaExistenteMap[date] = el.getAttribute("data-meta-batida") === "true";
@@ -1815,12 +1834,20 @@ const ListaDiasManagerCorrigido = {
           ? "texto-cinza"
           : "";
 
-      // Classes do dia
-      const classes = ["linha-dia"];
+      // Classes do dia (prefixadas com gd- para evitar conflito)
+      const classes = ["gd-linha-dia"];
+      // Adicionar classe de valor persistente para evitar flicker entre re-renders
+      if (saldo_dia > 0) {
+        classes.push("valor-positivo");
+      } else if (saldo_dia < 0) {
+        classes.push("valor-negativo");
+      } else {
+        classes.push("valor-zero");
+      }
 
       if (data_mysql === hoje) {
-        classes.push("dia-hoje");
-        classes.push(saldo_dia >= 0 ? "borda-verde" : "borda-vermelha");
+        classes.push("gd-dia-hoje");
+        classes.push(saldo_dia >= 0 ? "gd-borda-verde" : "gd-borda-vermelha");
       } else {
         classes.push("dia-normal");
       }
@@ -1828,16 +1855,16 @@ const ListaDiasManagerCorrigido = {
       // Destaque para dias passados
       if (data_mysql < hoje) {
         if (saldo_dia > 0) {
-          classes.push("dia-destaque");
+          classes.push("gd-dia-destaque");
         } else if (saldo_dia < 0) {
-          classes.push("dia-destaque-negativo");
+          classes.push("gd-dia-destaque-negativo");
         }
 
         if (
           parseInt(dadosDia.total_green) === 0 &&
           parseInt(dadosDia.total_red) === 0
         ) {
-          classes.push("dia-sem-valor");
+          classes.push("gd-dia-sem-valor");
         }
       }
 
@@ -1865,7 +1892,7 @@ const ListaDiasManagerCorrigido = {
 
       divDia.innerHTML = `
         <span class="data ${classe_texto}">
-          <i class="fas fa-calendar-day"></i> ${data_exibicao}
+          ${data_exibicao}
         </span>
         <div class="placar-dia">
           <span class="placar verde-bold ${placar_cinza}">${parseInt(
@@ -1888,6 +1915,17 @@ const ListaDiasManagerCorrigido = {
     // Adicionar ao container
     container.appendChild(fragment);
 
+    // Defensive cleanup: garantir que a coluna .data não receba estilos inline
+    // ou ícones indesejados reaplicados por outros scripts. Remove atributos
+    // style e qualquer <i> dentro de .data, e garante min/max-width corretos.
+    try {
+      if (typeof this.sanitizeDataCells === "function") {
+        this.sanitizeDataCells();
+      }
+    } catch (e) {
+      // silencioso
+    }
+
     // Restaurar scroll e restaurar min-height preservado
     container.scrollTop = scrollTop;
     container.style.minHeight = prevMinHeight || "";
@@ -1903,6 +1941,71 @@ const ListaDiasManagerCorrigido = {
         detail: { dados: responseData, timestamp: new Date() },
       })
     );
+  },
+
+  // Remove inline styles and unwanted icons inside .data cells to prevent
+  // other scripts from shifting layout after render. This is defensive and
+  // idempotent.
+  sanitizeDataCells() {
+    try {
+      document
+        .querySelectorAll(".lista-dias .gd-linha-dia .data")
+        .forEach((el) => {
+          // Remover estilos inline que possam alterar largura/alinhamento
+          if (el.hasAttribute("style")) el.removeAttribute("style");
+
+          // Forçar classes/atributos que garantem largura fixa
+          el.style.minWidth = "";
+          el.style.maxWidth = "";
+
+          // Remover qualquer <i> que represente calendário (defensivo)
+          el.querySelectorAll("i").forEach((icon) => {
+            const cls = (icon.className || "").toLowerCase();
+            if (
+              cls.includes("calendar") ||
+              cls.includes("fa-calendar") ||
+              cls.includes("fa-calendar-day") ||
+              cls.includes("fa-calendar-alt")
+            ) {
+              icon.remove();
+            }
+          });
+        });
+    } catch (e) {
+      // silencioso
+    }
+  },
+
+  // Observador defensivo: observa inserções dentro de .lista-dias e
+  // remove rapidamente quaisquer inline styles ou ícones que reapareçam.
+  configurarObservadorSanitizacao() {
+    try {
+      const container = document.querySelector(".lista-dias");
+      if (!container) return;
+
+      const mo = new MutationObserver((mutations) => {
+        let precisa = false;
+        for (const m of mutations) {
+          if (m.type === "childList" || m.type === "attributes") {
+            precisa = true;
+            break;
+          }
+        }
+        if (precisa) {
+          // Debounce curto
+          clearTimeout(this._sanitizeTimer);
+          this._sanitizeTimer = setTimeout(() => this.sanitizeDataCells(), 40);
+        }
+      });
+
+      mo.observe(container, {
+        childList: true,
+        subtree: true,
+        attributes: true,
+      });
+      // armazenar referência caso precise parar
+      this._sanitizerObserver = mo;
+    } catch (e) {}
   },
 
   // Obter data de hoje
@@ -2207,7 +2310,7 @@ const SistemaTrofeuCompleto = {
   aplicarTrofeus() {
     let trofeus = 0;
 
-    document.querySelectorAll(".linha-dia").forEach((elemento) => {
+    document.querySelectorAll(".gd-linha-dia").forEach((elemento) => {
       try {
         const valorEl = elemento.querySelector(".valor");
         const iconeEl = elemento.querySelector(".icone i");
@@ -2393,7 +2496,7 @@ const SistemaTrofeuCompleto = {
           mutation.type === "childList" ||
           mutation.type === "characterData"
         ) {
-          const elemento = mutation.target.closest(".linha-dia");
+          const elemento = mutation.target.closest(".gd-linha-dia");
           if (elemento) {
             precisaAtualizar = true;
           }
@@ -2637,14 +2740,14 @@ console.log("⚡ Sistema iniciado automaticamente!");
   try {
     const css = `
       /* Troféu estático */
-      .trofeu-icone{ color: #FFD700 !important; /* dourado estático */ transition: none !important; animation: none !important; transform: none !important; }
+  .trofeu-icone{ color: #FFD700 !important; /* dourado estático */ transition: none !important; animation: none !important; transform: none !important; }
       .trofeu-icone *{ transition: none !important; animation: none !important; transform: none !important; }
 
       /* Check estático */
       .fa-solid.fa-check{ color: inherit !important; transition: none !important; animation: none !important; transform: none !important; }
 
-      /* Ícones dentro da lista não devem animar */
-      .lista-dias .linha-dia .icone i { transition: none !important; animation: none !important; transform: none !important; }
+  /* Ícones dentro da lista não devem animar */
+  .lista-dias .gd-linha-dia .icone i { transition: none !important; animation: none !important; transform: none !important; }
 
       /* Placar e spans não devem animar ou transformar */
       .placar, .placar * { transition: none !important; animation: none !important; transform: none !important; }
@@ -2655,7 +2758,7 @@ console.log("⚡ Sistema iniciado automaticamente!");
   .lista-dias .icone { width: 28px !important; display: inline-flex !important; align-items: center; justify-content: center; }
   .lista-dias .icone i { width: 18px !important; height: 18px !important; font-size: 12px !important; line-height: 1 !important; display: inline-block !important; }
   .lista-dias .icone i::before { display: inline-block; width: 18px; }
-  .lista-dias .linha-dia { will-change: auto !important; }
+  .lista-dias .gd-linha-dia { will-change: auto !important; }
     `;
 
     const style = document.createElement("style");
@@ -2665,9 +2768,289 @@ console.log("⚡ Sistema iniciado automaticamente!");
   } catch (e) {}
 })();
 // ========================================================================================================================
-//                                  TROFÉU - PARA APARECER  QUANDO A META É BATIDA
+//                                 FIM  TROFÉU - PARA APARECER  QUANDO A META É BATIDA
 // ========================================================================================================================
 //
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+// ========================================================================================================================
+//                                 AS CORES DO CSS PARA FICAR FIXA FUNCIONANDO
+// ========================================================================================================================
+if (
+  typeof ListaDiasManagerCorrigido !== "undefined" &&
+  ListaDiasManagerCorrigido.intervaloAtualizacao
+) {
+  clearInterval(ListaDiasManagerCorrigido.intervaloAtualizacao);
+  console.log("🛑 ListaDiasManagerCorrigido parado");
+}
+
+if (
+  typeof SistemaTrofeuCompleto !== "undefined" &&
+  SistemaTrofeuCompleto.intervaloAtualizacao
+) {
+  clearInterval(SistemaTrofeuCompleto.intervaloAtualizacao);
+  console.log("🛑 SistemaTrofeuCompleto parado");
+}
+
+if (typeof SistemaMonitorCores !== "undefined") {
+  SistemaMonitorCores.parar();
+  console.log("🛑 SistemaMonitorCores parado");
+}
+
+// Limpar todos os intervalos existentes
+// Limpar apenas intervalos conhecidos de sistemas conflitantes.
+// Evita usar um loop global que pode parar timers de terceiros (ex.: MetaMensalManager).
+try {
+  if (
+    typeof ListaDiasManagerCorrigido !== "undefined" &&
+    ListaDiasManagerCorrigido.intervaloAtualizacao
+  ) {
+    clearInterval(ListaDiasManagerCorrigido.intervaloAtualizacao);
+  }
+  if (
+    typeof SistemaTrofeuCompleto !== "undefined" &&
+    SistemaTrofeuCompleto.intervaloAtualizacao
+  ) {
+    clearInterval(SistemaTrofeuCompleto.intervaloAtualizacao);
+  }
+} catch (e) {
+  // silencioso
+}
+
+// ========================================
+// SISTEMA ÚNICO E EFICIENTE
+// ========================================
+
+const SistemaUnicoSemConflito = {
+  intervalo: null,
+  ultimaAtualizacao: "",
+  metaAtual: 50,
+  _ultimaExecucaoProcessar: 0,
+
+  // Função principal que faz TUDO de uma vez
+  processarCompleto() {
+    const agoraTs = Date.now();
+    // Evitar reexecuções muito rápidas que competem com re-renders
+    if (agoraTs - this._ultimaExecucaoProcessar < 400) return;
+    this._ultimaExecucaoProcessar = agoraTs;
+
+    const linhas = document.querySelectorAll(".gd-linha-dia");
+    if (linhas.length === 0) return;
+
+    let alteracoes = 0;
+
+    linhas.forEach((linha) => {
+      const valorElemento = linha.querySelector(".valor");
+      if (!valorElemento) return;
+
+      const valorTexto = valorElemento.textContent.trim();
+      const numeroLimpo = valorTexto
+        .replace(/[R$\s]/g, "")
+        .replace(",", ".")
+        .replace(/[^\d.-]/g, "");
+
+      const valor = parseFloat(numeroLimpo) || 0;
+
+      // Determinar classe de cor
+      let classeCorreta = "valor-zero";
+      if (valor > 0) classeCorreta = "valor-positivo";
+      else if (valor < 0) classeCorreta = "valor-negativo";
+
+      // Aplicar classe APENAS se não tiver
+      if (!linha.classList.contains(classeCorreta)) {
+        linha.classList.remove(
+          "valor-positivo",
+          "valor-negativo",
+          "valor-zero"
+        );
+        linha.classList.add(classeCorreta);
+        alteracoes++;
+      }
+
+      // Aplicar ícone de troféu se meta batida
+      const iconeEl = linha.querySelector(".icone i");
+      if (iconeEl && valor >= this.metaAtual) {
+        if (!iconeEl.classList.contains("fa-trophy")) {
+          iconeEl.classList.remove("fa-check");
+          iconeEl.classList.add("fa-trophy", "trofeu-icone", "fa-solid");
+          linha.setAttribute("data-meta-batida", "true");
+        }
+      } else if (iconeEl) {
+        if (!iconeEl.classList.contains("fa-check")) {
+          iconeEl.classList.remove("fa-trophy", "trofeu-icone");
+          iconeEl.classList.add("fa-check", "fa-solid");
+          linha.setAttribute("data-meta-batida", "false");
+        }
+      }
+    });
+
+    if (alteracoes > 0) {
+      console.log(`✅ Sistema único: ${alteracoes} alterações aplicadas`);
+    }
+  },
+
+  // Detectar meta atual
+  detectarMeta() {
+    try {
+      const dadosInfo = document.getElementById("dados-mes-info");
+      if (dadosInfo) {
+        const periodo = dadosInfo.dataset.periodoAtual || "dia";
+        switch (periodo) {
+          case "mes":
+            this.metaAtual = parseFloat(dadosInfo.dataset.metaMensal) || 50;
+            break;
+          case "ano":
+            this.metaAtual = parseFloat(dadosInfo.dataset.metaAnual) || 50;
+            break;
+          default:
+            this.metaAtual = parseFloat(dadosInfo.dataset.metaDiaria) || 50;
+        }
+      }
+    } catch (error) {
+      this.metaAtual = 50;
+    }
+  },
+
+  // Inicializar sistema único
+  iniciar() {
+    console.log("🚀 Iniciando sistema único sem conflitos...");
+
+    // Detectar meta
+    this.detectarMeta();
+
+    // Processar imediatamente
+    this.processarCompleto();
+
+    // Intervalo ÚNICO de 5 segundos (mais espaçado para evitar conflitos)
+    this.intervalo = setInterval(() => {
+      this.processarCompleto();
+    }, 5000);
+
+    // Hook simples no fetch
+    const originalFetch = window.fetch;
+    window.fetch = async function (...args) {
+      const response = await originalFetch.apply(this, args);
+
+      // Aguardar resposta e processar após delay
+      setTimeout(() => {
+        if (SistemaUnicoSemConflito) {
+          SistemaUnicoSemConflito.processarCompleto();
+        }
+      }, 1000);
+
+      return response;
+    };
+
+    console.log("✅ Sistema único ativo - intervalo de 5 segundos");
+  },
+
+  // Parar sistema
+  parar() {
+    if (this.intervalo) {
+      clearInterval(this.intervalo);
+      this.intervalo = null;
+      console.log("🛑 Sistema único parado");
+    }
+  },
+
+  // Status
+  status() {
+    const linhas = document.querySelectorAll(".gd-linha-dia");
+    const comCores = document.querySelectorAll(
+      ".gd-linha-dia.valor-positivo, .gd-linha-dia.valor-negativo, .gd-linha-dia.valor-zero"
+    );
+
+    return {
+      ativo: !!this.intervalo,
+      totalLinhas: linhas.length,
+      linhasComCores: comCores.length,
+      metaAtual: this.metaAtual,
+      eficiencia:
+        linhas.length > 0
+          ? Math.round((comCores.length / linhas.length) * 100) + "%"
+          : "0%",
+    };
+  },
+};
+
+// ========================================
+// DESABILITAR SISTEMAS ANTIGOS GLOBALMENTE
+// ========================================
+
+// Sobrescrever variáveis globais para evitar reativação
+window.ListaDiasManagerCorrigido = null;
+window.SistemaTrofeuCompleto = null;
+window.SistemaMonitorCores = null;
+window.BackupCores = null;
+// Não sobrescrever MetaMensalManager - isso interrompe o carregamento/atualização da meta.
+// Preservamos o gerenciador de meta para que o sistema mensal continue funcionando.
+// Se necessário descomente a linha abaixo para forçar limpeza (não recomendado):
+// window.MetaMensalManager = null;
+
+// Comandos globais simplificados
+window.SistemaUnico = {
+  iniciar: () => SistemaUnicoSemConflito.iniciar(),
+  parar: () => SistemaUnicoSemConflito.parar(),
+  processar: () => SistemaUnicoSemConflito.processarCompleto(),
+  status: () => SistemaUnicoSemConflito.status(),
+  info: () => {
+    const status = SistemaUnicoSemConflito.status();
+    console.log("📊 Status Sistema Único:", status);
+    return status;
+  },
+};
+
+// Comandos de compatibilidade
+window.Cores = window.SistemaUnico;
+window.ListaDias = window.SistemaUnico;
+window.Trofeu = window.SistemaUnico;
+
+// ========================================
+// INICIALIZAÇÃO AUTOMÁTICA
+// ========================================
+
+function inicializarSistemaUnico() {
+  // Aguardar elementos estarem prontos
+  setTimeout(() => {
+    SistemaUnicoSemConflito.iniciar();
+  }, 2000);
+}
+
+// Inicializar baseado no estado do DOM
+if (document.readyState === "loading") {
+  document.addEventListener("DOMContentLoaded", inicializarSistemaUnico);
+} else {
+  inicializarSistemaUnico();
+}
+
+console.log("🎯 Sistema Único Sem Conflitos carregado!");
+console.log("📋 Características:");
+console.log("   ✅ Um único intervalo de 5 segundos");
+console.log("   ✅ Não reconstrói HTML desnecessariamente");
+console.log("   ✅ Aplica cores e troféus juntos");
+console.log("   ✅ Remove todos os sistemas conflitantes");
+console.log("");
+console.log("🔧 Comandos únicos:");
+console.log("   SistemaUnico.status() - Ver status");
+console.log("   SistemaUnico.processar() - Processar agora");
+console.log("   SistemaUnico.parar() - Parar sistema");
+
+// Export para uso
+window.SistemaUnicoSemConflito = SistemaUnicoSemConflito;
+// ========================================================================================================================
+//                                FIM AS CORES DO CSS PARA FICAR FIXA FUNCIONANDO
+// ========================================================================================================================
 //
 //
 //

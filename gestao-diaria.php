@@ -972,6 +972,7 @@ ob_end_flush();
         <!-- Lista de dias do mês com resultados -->
 <div class="lista-dias">
 <?php
+
 // Obter configurações de meta
 $meta_diaria = isset($_SESSION['meta_diaria']) ? floatval($_SESSION['meta_diaria']) : 0;
 $meta_mensal = isset($_SESSION['meta_mensal']) ? floatval($_SESSION['meta_mensal']) : 0;
@@ -1008,13 +1009,23 @@ for ($dia = 1; $dia <= $total_dias_mes; $dia++) {
     $saldo_dia = floatval($dados_dia['total_valor_green']) - floatval($dados_dia['total_valor_red']);
     $saldo_formatado = number_format($saldo_dia, 2, ',', '.');
     
-    // Verificar se meta foi batida (CORRIGIDO)
+    // Verificar se meta foi batida
     $meta_batida = false;
     if ($meta_atual > 0 && $saldo_dia >= $meta_atual) {
         $meta_batida = true;
     }
     
-    // Determinar cores e classes
+    // Determinar classe de cor baseada no saldo
+    $classe_valor_cor = '';
+    if ($saldo_dia > 0) {
+        $classe_valor_cor = 'valor-positivo';
+    } elseif ($saldo_dia < 0) {
+        $classe_valor_cor = 'valor-negativo';
+    } else {
+        $classe_valor_cor = 'valor-zero';
+    }
+    
+    // Determinar cores e classes dos elementos internos
     $cor_valor = ($saldo_dia == 0) ? 'texto-cinza' : ($saldo_dia > 0 ? 'verde-bold' : 'vermelho-bold');
     $classe_texto = ($saldo_dia == 0) ? 'texto-cinza' : '';
     $placar_cinza = ((int)$dados_dia['total_green'] === 0 && (int)$dados_dia['total_red'] === 0) ? 'texto-cinza' : '';
@@ -1023,8 +1034,8 @@ for ($dia = 1; $dia <= $total_dias_mes; $dia++) {
     $classes_dia = [];
     
     if ($data_mysql === $hoje) {
-        $classes_dia[] = 'dia-hoje';
-        $classes_dia[] = ($saldo_dia >= 0) ? 'borda-verde' : 'borda-vermelha';
+        $classes_dia[] = 'gd-dia-hoje';
+        $classes_dia[] = ($saldo_dia >= 0) ? 'gd-borda-verde' : 'gd-borda-vermelha';
     } else {
         $classes_dia[] = 'dia-normal';
     }
@@ -1032,14 +1043,14 @@ for ($dia = 1; $dia <= $total_dias_mes; $dia++) {
     // Destaque para dias passados
     if ($data_mysql < $hoje) {
         if ($saldo_dia > 0) {
-            $classes_dia[] = 'dia-destaque';
+            $classes_dia[] = 'gd-dia-destaque';
         } elseif ($saldo_dia < 0) {
-            $classes_dia[] = 'dia-destaque-negativo';
+            $classes_dia[] = 'gd-dia-destaque-negativo';
         }
         
         // Classe para dias sem valor
         if ((int)$dados_dia['total_green'] === 0 && (int)$dados_dia['total_red'] === 0) {
-            $classes_dia[] = 'dia-sem-valor';
+            $classes_dia[] = 'gd-dia-sem-valor';
         }
     }
     
@@ -1049,25 +1060,27 @@ for ($dia = 1; $dia <= $total_dias_mes; $dia++) {
     }
     
     // Definir ícone baseado na meta
-    $icone_classe = $meta_batida ? 'fa-trophy' : 'fa-check';
-    $icone_estilo = $meta_batida ? 'style="color: #FFD700;"' : '';
+    $icone_classe = $meta_batida ? 'fa-trophy trofeu-icone' : 'fa-check';
     
-    $classe_dia_string = 'linha-dia ' . implode(' ', $classes_dia);
+    // Montar string de classes (incluindo a classe de cor)
+    $classe_dia_string = 'gd-linha-dia ' . $classe_valor_cor . ' ' . implode(' ', $classes_dia);
     $data_meta_attr = $meta_batida ? 'true' : 'false';
     
+    // HTML com classes CSS aplicadas
     echo '
     <div class="'.$classe_dia_string.'" data-date="'.$data_mysql.'" data-meta-batida="'.$data_meta_attr.'">
-        <span class="data '.$classe_texto.'">
-            <i class="fas fa-calendar-day"></i> '.$data_exibicao.'
-        </span>
+        <span class="data '.$classe_texto.'">'.$data_exibicao.'</span>
+
         <div class="placar-dia">
             <span class="placar verde-bold '.$placar_cinza.'">'.(int)$dados_dia['total_green'].'</span>
-            <span class="placar separador '.$placar_cinza.'">x</span>
+            <span class="placar separador '.$placar_cinza.'">×</span>
             <span class="placar vermelho-bold '.$placar_cinza.'">'.(int)$dados_dia['total_red'].'</span>
         </div>
+
         <span class="valor '.$cor_valor.'">R$ '.$saldo_formatado.'</span>
+
         <span class="icone '.$classe_texto.'">
-            <i class="fa-solid '.$icone_classe.'" '.$icone_estilo.'></i>
+            <i class="fa-solid '.$icone_classe.'"></i>
         </span>
     </div>';
 }
@@ -1083,7 +1096,7 @@ for ($dia = 1; $dia <= $total_dias_mes; $dia++) {
      data-periodo-atual="<?php echo $periodo_atual; ?>">
 </div>
 </div>
-</div>
+
 <!-- ==================================================================================================================================== --> 
 <!--                                                  💼  FIM DO FILTRO BLOCO MÊS                          
  ====================================================================================================================================== -->

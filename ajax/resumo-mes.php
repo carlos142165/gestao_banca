@@ -35,7 +35,7 @@ try {
   }
 } catch (Exception $e) {
   // Em caso de erro, devolve mensagem simples
-  echo '<div class="linha-dia dia-hoje"><span class="data">Erro ao carregar dados</span></div>';
+  echo '<div class="gd-linha-dia gd-dia-hoje"><span class="data">Erro ao carregar dados</span></div>';
   exit();
 }
 
@@ -70,22 +70,22 @@ foreach ($dias_com_valores as $data_mysql => $dados) {
   $placar_cinza = ((int)$dados['total_green'] === 0 && (int)$dados['total_red'] === 0) ? 'texto-cinza' : '';
 
   $classe_dia = ($data_mysql === $hoje)
-    ? 'dia-hoje ' . ($saldo_dia >= 0 ? 'borda-verde' : 'borda-vermelha')
+    ? 'gd-dia-hoje ' . ($saldo_dia >= 0 ? 'gd-borda-verde' : 'gd-borda-vermelha')
     : 'dia-normal';
 
   if ($data_mysql < $hoje && $saldo_dia > 0) {
-    $classe_destaque = 'dia-destaque';
+    $classe_destaque = 'gd-dia-destaque';
   } elseif ($data_mysql < $hoje && $saldo_dia < 0) {
-    $classe_destaque = 'dia-destaque-negativo';
+    $classe_destaque = 'gd-dia-destaque-negativo';
   } else {
     $classe_destaque = '';
   }
 
   $classe_nao_usada = ($data_mysql > $hoje) ? 'dia-nao-usada' : '';
-  $classe_sem_valor = ($data_mysql < $hoje && (int)$dados['total_green'] === 0 && (int)$dados['total_red'] === 0) ? 'dia-sem-valor' : '';
+  $classe_sem_valor = ($data_mysql < $hoje && (int)$dados['total_green'] === 0 && (int)$dados['total_red'] === 0) ? 'gd-dia-sem-valor' : '';
 
-  echo "<div class=\"linha-dia {$classe_dia} {$classe_destaque} {$classe_nao_usada} {$classe_sem_valor}\" data-date=\"{$data_mysql}\">";
-  echo "<span class=\"data {$classe_texto}\"><i class=\"fas fa-calendar-day\"></i> {$data_exibicao}</span>";
+  echo "<div class=\"gd-linha-dia {$classe_dia} {$classe_destaque} {$classe_nao_usada} {$classe_sem_valor}\" data-date=\"{$data_mysql}\">";
+  echo "<span class=\"data {$classe_texto}\"> {$data_exibicao}</span>";
   echo "<div class=\"placar-dia\">";
   echo "<span class=\"placar verde-bold {$placar_cinza}\">" . (int)$dados['total_green'] . "</span>";
   echo "<span class=\"placar separador {$placar_cinza}\">x</span>";
@@ -96,8 +96,8 @@ foreach ($dias_com_valores as $data_mysql => $dados) {
   echo "</div>";
 }
 
-if (empty($dias_com_valores)) {
-  echo '<div class="linha-dia dia-hoje"><span class="data">Nenhuma operação registrada este mês</span></div>';
+  if (empty($dias_com_valores)) {
+  echo '<div class="gd-linha-dia gd-dia-hoje"><span class="data">Nenhuma operação registrada este mês</span></div>';
 }
 
 exit();
