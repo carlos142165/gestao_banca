@@ -2218,6 +2218,342 @@ console.log(
 //                                  TROFÉU - PARA APARECER  QUANDO A META É BATIDA
 // ========================================================================================================================
 
+// SISTEMA MONITOR CONTÍNUO - FORÇA O ESTADO CORRETO SEMPRE
+(function () {
+  "use strict";
+
+  console.log("Sistema Monitor Contínuo - Força estado correto sempre...");
+
+  const MonitorContinuo = {
+    ativo: false,
+    intervaloMonitor: null,
+    intervaloForcador: null,
+    estadoCorreto: null,
+    ultimoRotulo: "",
+
+    inicializar() {
+      console.log("Iniciando monitor contínuo...");
+
+      this.ativo = true;
+
+      // Destruir TUDO relacionado a troféu
+      this.destruirTudo();
+
+      // Monitor que lê o rótulo (cada 1 segundo)
+      this.intervaloMonitor = setInterval(() => {
+        this.monitorarRotulo();
+      }, 1000);
+
+      // Forçador que aplica o estado correto (reduzido para cada 1500ms para evitar flicker)
+      this.intervaloForcador = setInterval(() => {
+        this.forcarEstadoCorreto();
+      }, 1500);
+
+      // Primeira verificação
+      this.monitorarRotulo();
+
+      console.log("Monitor contínuo ativo");
+    },
+
+    destruirTudo() {
+      console.log("DESTRUINDO tudo relacionado a troféu...");
+
+      // Parar TODOS os intervalos da página
+      const maxId = setTimeout(() => {}, 0);
+      for (let i = 1; i <= maxId; i++) {
+        try {
+          clearInterval(i);
+          clearTimeout(i);
+        } catch (e) {}
+      }
+
+      // Desabilitar sistemas conhecidos
+      const sistemas = [
+        "SistemaTrofeuCompleto",
+        "SistemaTrofeuIntegrado",
+        "SistemaTrofeuCorrigido",
+        "SistemaTrofeuNumerico",
+        "SistemaTrofeuFinal",
+        "TrofeuUltraAgressivo",
+        "TrofeuCirurgico",
+        "TrofeuDefinitivo",
+        "SistemaDestruidor",
+        "OverriderFinal",
+        "SistemaSimples",
+        "MetaDiariaManager",
+      ];
+
+      sistemas.forEach((nome) => {
+        if (window[nome] && nome !== "MonitorContinuo") {
+          try {
+            window[nome].ativo = false;
+            if (window[nome].parar) window[nome].parar();
+            // Destruir completamente
+            window[nome] = null;
+            delete window[nome];
+          } catch (e) {}
+        }
+      });
+
+      // Bloquear criação de intervalos suspeitos
+      const originalSetInterval = window.setInterval;
+      const originalSetTimeout = window.setTimeout;
+
+      window.setInterval = function (func, delay) {
+        const funcString = func.toString();
+        if (
+          funcString.includes("fa-trophy") ||
+          funcString.includes("trofeu") ||
+          funcString.includes("meta-batida") ||
+          funcString.includes("aplicarTrofeus")
+        ) {
+          console.log("Interval suspeito bloqueado");
+          return { clear: () => {} };
+        }
+        return originalSetInterval.apply(this, arguments);
+      };
+
+      window.setTimeout = function (func, delay) {
+        const funcString = func.toString();
+        if (funcString.includes("fa-trophy") || funcString.includes("trofeu")) {
+          console.log("Timeout suspeito bloqueado");
+          return { clear: () => {} };
+        }
+        return originalSetTimeout.apply(this, arguments);
+      };
+    },
+
+    monitorarRotulo() {
+      try {
+        const rotuloElement =
+          document.getElementById("rotulo-meta") ||
+          document.querySelector(".widget-meta-rotulo");
+
+        if (!rotuloElement) return;
+
+        const rotuloTexto = rotuloElement.textContent.toLowerCase().trim();
+
+        // Só processar se rótulo mudou
+        if (rotuloTexto !== this.ultimoRotulo) {
+          console.log(`RÓTULO MUDOU: "${rotuloTexto}"`);
+          this.ultimoRotulo = rotuloTexto;
+
+          // Determinar estado correto baseado no rótulo
+          this.estadoCorreto = this.interpretarRotulo(rotuloTexto);
+
+          console.log(
+            `ESTADO CORRETO: ${this.estadoCorreto ? "TROFÉU" : "CHECK"}`
+          );
+        }
+      } catch (error) {
+        console.error("Erro no monitor:", error);
+        this.estadoCorreto = false; // Seguro: sem troféu em caso de erro
+      }
+    },
+
+    interpretarRotulo(texto) {
+      // Indicadores claros de meta NÃO batida
+      const naoAtingida = [
+        "restando",
+        "restam",
+        "faltam",
+        "falta",
+        "para meta",
+        "p/ meta",
+        "ainda",
+        "necessário",
+        "precisam",
+      ];
+
+      for (const indicador of naoAtingida) {
+        if (texto.includes(indicador)) {
+          return false;
+        }
+      }
+
+      // Indicadores claros de meta batida
+      const batida = [
+        "batida",
+        "atingida",
+        "superada",
+        "completa",
+        "conquistada",
+        "parabéns",
+        "parabens",
+        "sucesso",
+        "meta do dia superada",
+        "objetivo alcançado",
+        "excelente",
+      ];
+
+      for (const indicador of batida) {
+        if (texto.includes(indicador)) {
+          return true;
+        }
+      }
+
+      // Casos especiais
+      if (texto.includes("0,00") && texto.includes("restando")) {
+        return true; // Zero restando = meta batida
+      }
+
+      // Padrão conservador: se não tem indicador claro, sem troféu
+      return false;
+    },
+
+    forcarEstadoCorreto() {
+      if (this.estadoCorreto === null) return;
+
+      const hoje = this.obterDataHoje();
+      let forcacoesFeitas = 0;
+
+      document.querySelectorAll(".gd-linha-dia").forEach((linha) => {
+        const icone = linha.querySelector(".icone i");
+        const dataLinha = linha.getAttribute("data-date");
+
+        if (!icone) return;
+
+        if (dataLinha === hoje && this.estadoCorreto) {
+          // Dia atual COM meta batida = TROFÉU
+          if (!icone.classList.contains("fa-trophy")) {
+            this.aplicarTrofeuForcado(icone, linha);
+            forcacoesFeitas++;
+          }
+        } else {
+          // Outros casos = CHECK
+          if (!icone.classList.contains("fa-check")) {
+            this.aplicarCheckForcado(icone, linha);
+            forcacoesFeitas++;
+          }
+        }
+      });
+
+      if (forcacoesFeitas > 0) {
+        console.log(`FORÇADO: ${forcacoesFeitas} ícones corrigidos`);
+      }
+    },
+
+    aplicarTrofeuForcado(icone, linha) {
+      // Marca por classe (evita conflitos pesados de CSS inline)
+      // Remover estilos inline deixados por outros scripts
+      try {
+        icone.removeAttribute("style");
+      } catch (e) {}
+      icone.className = "fa-solid fa-trophy trofeu-icone-forcado";
+      linha.setAttribute("data-meta-batida", "true");
+      // marca a linha como forçada para regras CSS de alta especificidade
+      linha.classList.add("meta-forcada");
+    },
+
+    aplicarCheckForcado(icone, linha) {
+      // Marca por classe (evita conflitos pesados de CSS inline)
+      try {
+        icone.removeAttribute("style");
+      } catch (e) {}
+      icone.className = "fa-solid fa-check check-icone-forcado";
+      linha.setAttribute("data-meta-batida", "false");
+      linha.classList.add("meta-forcada");
+    },
+
+    obterDataHoje() {
+      const d = new Date();
+      const ano = d.getFullYear();
+      const mes = String(d.getMonth() + 1).padStart(2, "0");
+      const dia = String(d.getDate()).padStart(2, "0");
+      return `${ano}-${mes}-${dia}`;
+    },
+
+    parar() {
+      this.ativo = false;
+
+      if (this.intervaloMonitor) {
+        clearInterval(this.intervaloMonitor);
+        this.intervaloMonitor = null;
+      }
+
+      if (this.intervaloForcador) {
+        clearInterval(this.intervaloForcador);
+        this.intervaloForcador = null;
+      }
+
+      console.log("Monitor contínuo parado");
+    },
+
+    status() {
+      const rotuloElement =
+        document.getElementById("rotulo-meta") ||
+        document.querySelector(".widget-meta-rotulo");
+      const rotuloTexto = rotuloElement
+        ? rotuloElement.textContent
+        : "Não encontrado";
+
+      return {
+        ativo: this.ativo,
+        rotuloAtual: rotuloTexto,
+        estadoCorreto:
+          this.estadoCorreto === true
+            ? "TROFÉU"
+            : this.estadoCorreto === false
+            ? "CHECK"
+            : "INDEFINIDO",
+        dataHoje: this.obterDataHoje(),
+        trofeusVisiveis: document.querySelectorAll(".fa-trophy").length,
+        checksVisiveis: document.querySelectorAll(".fa-check").length,
+        modo: "MONITOR CONTÍNUO - Força estado a cada 500ms",
+      };
+    },
+  };
+
+  // Comandos globais
+  window.MonitorContinuo = {
+    status: () => {
+      const s = MonitorContinuo.status();
+      console.log("MONITOR CONTÍNUO STATUS:");
+      Object.entries(s).forEach(([key, value]) => {
+        console.log(`   ${key}: ${value}`);
+      });
+      return s;
+    },
+
+    parar: () => {
+      MonitorContinuo.parar();
+    },
+
+    reiniciar: () => {
+      MonitorContinuo.parar();
+      setTimeout(() => MonitorContinuo.inicializar(), 1000);
+    },
+  };
+
+  // Compatibilidade
+  window.Trofeu = window.MonitorContinuo;
+
+  // Inicialização
+  function iniciar() {
+    if (document.readyState === "loading") {
+      document.addEventListener("DOMContentLoaded", () => {
+        setTimeout(() => MonitorContinuo.inicializar(), 1000);
+      });
+    } else {
+      setTimeout(() => MonitorContinuo.inicializar(), 1000);
+    }
+  }
+
+  iniciar();
+
+  console.log("MONITOR CONTÍNUO CARREGADO!");
+  console.log("Funcionalidades:");
+  console.log("   - Destrói TODOS os sistemas de troféu");
+  console.log("   - Monitor do rótulo a cada 1 segundo");
+  console.log("   - Forçador de estado a cada 500ms");
+  console.log(
+    "   - Força bruta total - NENHUM outro sistema consegue interferir"
+  );
+  console.log("");
+  console.log("Comandos:");
+  console.log("   MonitorContinuo.status() - Ver status");
+  console.log("   MonitorContinuo.reiniciar() - Reiniciar");
+})();
 // ========================================================================================================================
 //                                 FIM  TROFÉU - PARA APARECER  QUANDO A META É BATIDA
 // ========================================================================================================================

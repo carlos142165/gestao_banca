@@ -2163,3 +2163,164 @@
 .gd-linha-dia .data {
   margin-right: 8px !important; /* espaço reduzido entre data e placar */
 }
+
+/* ==================================================
+   MonitorContinuo: regras para estados forçados (troféu / check)
+   - Usa classes adicionadas por js/script-mes.js: .trofeu-icone-forcado,
+     .check-icone-forcado e .meta-forcada
+   - Alta especificidade evita necessidade de estilos inline
+   - Mantém compatibilidade com seletores existentes (.fa-trophy, .fa-check)
+================================================== */
+
+.lista-dias .gd-linha-dia.meta-forcada .icone i.trofeu-icone-forcado,
+.lista-dias .gd-linha-dia.meta-forcada .icone i.fa-trophy.trofeu-icone-forcado {
+  color: rgb(255, 215, 0) !important; /* ouro */
+  font-family: "Font Awesome 6 Free" !important;
+  font-weight: 900 !important;
+  font-size: 11px !important;
+  line-height: 1 !important;
+}
+
+.lista-dias .gd-linha-dia.meta-forcada .icone i.check-icone-forcado,
+.lista-dias .gd-linha-dia.meta-forcada .icone i.fa-check.check-icone-forcado {
+  color: rgb(100, 116, 139) !important; /* cinza */
+  font-family: "Font Awesome 6 Free" !important;
+  font-weight: 900 !important;
+  font-size: 11px !important;
+  line-height: 1 !important;
+}
+
+/* Garantir que a especificidade cubra variações por classe de linha */
+.lista-dias
+  .gd-linha-dia.meta-forcada.valor-positivo
+  .icone
+  i.trofeu-icone-forcado,
+.lista-dias
+  .gd-linha-dia.meta-forcada.valor-negativo
+  .icone
+  i.trofeu-icone-forcado,
+.lista-dias
+  .gd-linha-dia.meta-forcada.valor-zero
+  .icone
+  i.trofeu-icone-forcado {
+  color: rgb(255, 215, 0) !important;
+}
+
+/* Forçar ausência de transições para evitar interferência visual */
+.lista-dias .gd-linha-dia.meta-forcada .icone i {
+  transition: none !important;
+}
+
+/* Aparência leve da linha quando meta forçada */
+.lista-dias .gd-linha-dia.meta-forcada[data-meta-batida="true"] {
+  box-shadow: inset 0 0 0 1px rgba(3, 161, 88, 0.06) !important;
+}
+
+.lista-dias .gd-linha-dia.meta-forcada[data-meta-batida="false"] {
+  box-shadow: none !important;
+}
+
+/* Fallback de maior especificidade usando o root container (se existir) */
+#app .lista-dias .gd-linha-dia.meta-forcada .icone i {
+  font-size: 11px !important;
+}
+
+/* Pequeno utilitário: limpar estilos inline eventualmente reaplicados */
+.lista-dias .gd-linha-dia.meta-forcada[style] {
+  /* não removemos inline, apenas garantimos visual consistente */
+  background: inherit !important;
+  border: inherit !important;
+}
+
+/* FIM: MonitorContinuo rules */
+
+/* ===================== Stop blinking for forced states =====================
+   When the JS marks a row with `.meta-forcada`, remove transitions,
+   animations and other visual effects that could create blinking.
+============================================================================= */
+.lista-dias .gd-linha-dia.meta-forcada,
+.lista-dias .gd-linha-dia.meta-forcada * {
+  transition: none !important;
+  animation: none !important;
+  -webkit-animation: none !important;
+  -moz-animation: none !important;
+  -o-animation: none !important;
+  will-change: auto !important;
+}
+
+/* Ensure icon color won't be repainted frequently */
+.lista-dias .gd-linha-dia.meta-forcada .icone i {
+  -webkit-font-smoothing: antialiased !important;
+  -moz-osx-font-smoothing: grayscale !important;
+}
+
+/* Reduce forced reflow: avoid changing DOM properties frequently */
+.lista-dias .gd-linha-dia.meta-forcada[data-meta-batida="true"] {
+  contain: paint !important;
+}
+
+/* Additional safety: when meta-forcada exists, do not allow other scripts
+   to add inline style color to the icon (we can't prevent it entirely but
+   this makes the stylesheet more authoritative). */
+.lista-dias .gd-linha-dia.meta-forcada .icone i[style] {
+  color: inherit !important;
+}
+
+/* End stop-blink rules */
+
+/* ===================== Force icons to 11px =====================
+   Ensure all day-list icons use 11px consistently across breakpoints.
+   This has high specificity and uses !important to override prior rules.
+================================================================== */
+.lista-dias .gd-linha-dia .icone i,
+.container .bloco.bloco-2 .resumo-mes .lista-dias .gd-linha-dia .icone i,
+.gd-linha-dia .icone i {
+  font-size: 11px !important;
+  width: 16px !important;
+  height: 16px !important;
+  line-height: 16px !important;
+}
+
+/* also ensure pseudo-element used by fontawesome matches size */
+.lista-dias .gd-linha-dia .icone i::before,
+.gd-linha-dia .icone i::before {
+  font-size: 11px !important;
+}
+
+/* Keep enforced size even in media queries */
+@media (max-width: 768px) {
+  .lista-dias .gd-linha-dia .icone i,
+  .gd-linha-dia .icone i {
+    font-size: 11px !important;
+  }
+}
+
+@media (max-width: 480px) {
+  .lista-dias .gd-linha-dia .icone i,
+  .gd-linha-dia .icone i {
+    font-size: 11px !important;
+  }
+}
+
+/* End force icons size */
+
+/* Ajuste vertical dos ícones: levantar 2px para melhor centralização */
+.lista-dias .gd-linha-dia .icone,
+.container .bloco.bloco-2 .resumo-mes .lista-dias .gd-linha-dia .icone,
+.gd-linha-dia .icone {
+  margin-top: 2px !important; /* ajusta altura do ícone para ficar centralizado */
+}
+
+@media (max-width: 768px) {
+  .lista-dias .gd-linha-dia .icone,
+  .gd-linha-dia .icone {
+    margin-top: 2px !important;
+  }
+}
+
+@media (max-width: 480px) {
+  .lista-dias .gd-linha-dia .icone,
+  .gd-linha-dia .icone {
+    margin-top: 2px !important;
+  }
+}
