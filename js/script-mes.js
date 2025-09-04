@@ -1368,15 +1368,15 @@ const cssPlaccar2 = `
 /* ===== PLACAR-2 - CLONE DO PLACAR ORIGINAL ===== */
 .area-central-2 {
   position: absolute;
-  left: 46.5%;
-  top: 249px;
+  left: 50%;
+  top: 30px;
   transform: translate(-50%, -50%);
   display: flex;
   align-items: center;
   justify-content: center;
   font-size: clamp(12px, 3.5vw, 16px);
   font-weight: 400;
-  color: #576574;
+  color: #acafb3ff;
   text-transform: uppercase;
   letter-spacing: 1px;
 }
@@ -1386,12 +1386,41 @@ const cssPlaccar2 = `
   align-items: center;
   justify-content: center;
   gap: clamp(5px, 1.2vw, 20px); /* pequeno gap para proximidade */
-  color: white;
+  color: #2b2b2b; /* texto escuro para contraste com fundo cinza */
   font-size: clamp(15px, 3.5vw, 22px); /* um pouco menor */
-  font-weight: 700 !important; /* manter grosso e forçar override */
+  font-weight: 600 !important; /* manter grosso e forçar override */
+  /* Tornar o campo horizontal 100% para preencher de ponta a ponta */
   position: absolute;
-  left: 50%;
-  transform: translateX(-50%);
+  left: 0;
+  right: 0;
+  width: 100%;
+  transform: none;
+  box-sizing: border-box; /* garantir que padding não estoure a largura */
+  /* Background container to allow mirrored/reflection effect */
+  position: relative;
+  z-index: 2;
+  background: #eef0eeff; /* cor cinza solicitada */
+  padding: 8px 16px; /* espaço interno para bordas */
+  border-radius: 6px;
+}
+
+/* Fundo espelhado (reflexão) abaixo do placar */
+.pontuacao-2::after {
+  content: "";
+  position: absolute;
+  left: 0;
+  right: 0;
+  top: 100%; /* começa logo abaixo do placar */
+  height: 60%; /* altura da reflexão relativa ao placar */
+  background: inherit; /* replica o background do placar */
+  transform: scaleY(-1); /* espelha verticalmente */
+  transform-origin: top;
+  opacity: 0.08; /* opacidade leve para sutileza com fundo cinza */
+  filter: blur(6px) saturate(0.9);
+  -webkit-mask-image: linear-gradient(to bottom, rgba(0,0,0,0.6), rgba(0,0,0,0));
+  mask-image: linear-gradient(to bottom, rgba(0,0,0,0.6), rgba(0,0,0,0));
+  pointer-events: none;
+  border-radius: 0 0 8px 8px;
 }
 
 .placar-green-2 {
@@ -1454,6 +1483,8 @@ const cssPlaccar2 = `
   .pontuacao-2 {
     gap: clamp(6px, 1.5vw, 12px);
     font-size: clamp(14px, 3.5vw, 20px);
+    padding: 6px 10px;
+    border-radius: 6px;
   }
 
   .separador-2 {
@@ -1470,6 +1501,7 @@ const cssPlaccar2 = `
   .pontuacao-2 {
     gap: clamp(4px, 1vw, 8px);
     font-size: clamp(12px, 3vw, 16px);
+    padding: 5px 8px;
   }
 
   .separador-2 {

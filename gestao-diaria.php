@@ -904,13 +904,13 @@ ob_end_flush();
     <div class="resumo-mes">
         <!-- Cabeçalho fixo com metas mensais -->
         <div class="bloco-meta-simples fixo-topo">
-
-          <!-- Título do mês atual -->
-          <h2 class="titulo-bloco">
+          <div class="campo-armazena-data-placar">
+           <!-- Título do mês atual -->
+           <h2 class="titulo-bloco">
             <i class="fas fa-calendar-alt"></i> <span id="tituloMes"></span>
-          </h2>
+           </h2>
 
-          <script>
+           <script>
             const meses = [
               "JANEIRO", "FEVEREIRO", "MARÇO", "ABRIL", "MAIO", "JUNHO",
               "JULHO", "AGOSTO", "SETEMBRO", "OUTUBRO", "NOVEMBRO", "DEZEMBRO"
@@ -919,8 +919,16 @@ ob_end_flush();
             const mesAtual = meses[hoje.getMonth()];
             const anoAtual = hoje.getFullYear();
             document.getElementById("tituloMes").textContent = `${mesAtual} ${anoAtual}`;
-          </script>
+           </script>
 
+            <div class="area-central-2">
+                <div class="pontuacao-2" id="pontuacao-2">
+                    <span class="placar-green-2">0</span>
+                    <span class="separador-2">×</span>
+                    <span class="placar-red-2">0</span>
+                </div>
+            </div>          
+           </div>
 <!-- Conteúdo principal do widget -->
 <div class="widget-conteudo-principal-2">
   <div class="conteudo-left-2">
@@ -959,13 +967,7 @@ ob_end_flush();
     </div>
     </div>
 
-            <div class="area-central-2">
-                <div class="pontuacao-2" id="pontuacao-2">
-                    <span class="placar-green-2">0</span>
-                    <span class="separador-2">×</span>
-                    <span class="placar-red-2">0</span>
-                </div>
-            </div>
+
 
 
 
