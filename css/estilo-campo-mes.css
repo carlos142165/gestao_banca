@@ -1,8 +1,56 @@
 /* =======================================================================================================================================================
-   CODIGO DO CAMPO : bloco-meta-simples fixo-topo
-   - Contém regras gerais de posicionamento e container do Bloco 2
+  (DATA-PLACAR-SALDO) - CONTROLE DE ALTURA
    =======================================================================================================================================================*/
 @import url("https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700&display=swap");
+
+:root {
+  /* AQUI VOCEÊ ALTERA A ALTURA TOTAL DO CAMPO ONDE ARMAZENA : (DATA-PLACAR-SALDO) */
+  --lista-dias-base: 432px;
+
+  /* Tamanhos derivados (mantidos em sincronia com os valores anteriores).
+    Edite individualmente apenas se precisar de um ajuste pontual. */
+  --lista-dias-height-default: var(--lista-dias-base);
+  --lista-dias-height-desktop: calc(
+    var(--lista-dias-base) + 168px
+  ); /* => 583px */
+  --lista-dias-maxheight-desktop: var(--lista-dias-height-desktop);
+  --lista-dias-height-externo: calc(
+    var(--lista-dias-base) + 108px
+  ); /* => 523px */
+  --lista-dias-maxheight-externo: calc(
+    var(--lista-dias-height-externo) + 27px
+  ); /* => 550px */
+  --lista-dias-height-block: calc(
+    var(--lista-dias-base) + 100px
+  ); /* => 515px */
+  --lista-dias-maxheight-block: calc(
+    var(--lista-dias-height-block) + 300px
+  ); /* => 815px */
+  --lista-dias-height-mobile: calc(
+    var(--lista-dias-base) - 100px
+  ); /* => 315px */
+
+  /* Todo esse codigo faz parte do controle de altura do campo onde fica os: (DATA-PLACAR-SALDO) */
+
+  /* ----------------------------
+     CONTROLE DE LARGURA
+     Variáveis para controlar a largura do bloco 2 a partir do mesmo lugar
+     que controla a altura. Edite --lista-dias-width-base para alterar
+     a largura padrão do bloco. */
+  --lista-dias-width-base: 420px; /* largura padrão do bloco (era 420px) */
+  --lista-dias-maxwidth-desktop: 1200px; /* limite máximo em telas grandes */
+  --lista-dias-maxwidth-block: 420px; /* limite dentro do layout do bloco */
+  --lista-dias-minwidth-mobile: 280px; /* largura mínima em telas pequenas */
+
+  /* Largura responsiva derivada */
+  --lista-dias-width-responsive: clamp(var(--lista-dias-minwidth-mobile), 92vw, var(--lista-dias-maxwidth-block));
+  --lista-dias-container-width: min(var(--lista-dias-width-base), var(--lista-dias-maxwidth-desktop));
+
+}
+/* Evita flash do placar antes do JS posicionar/injetar estilos */
+#pontuacao-2 {
+  visibility: hidden !important;
+}
 
 .container .bloco.bloco-2 .resumo-mes .lista-dias {
   /* Layout: aumentar levemente a largura total do campo de lista para mais respiração */
@@ -14,8 +62,8 @@
   z-index: auto !important;
   overflow-x: hidden !important;
   overflow-y: auto !important;
-  height: 568px !important;
-  max-height: 550px !important;
+  height: var(--lista-dias-height-desktop) !important;
+  max-height: var(--lista-dias-maxheight-desktop) !important;
   border-radius: 15px !important;
   padding: 12px 16px !important; /* Padding mais generoso para respirar */
   margin: 0 !important;
@@ -36,10 +84,10 @@
   background: rgba(247, 246, 246, 0.95) !important;
   border: 2px solid #9e9e9e !important;
 }
-/* Forçar largura fixa do Bloco 2 (solicitação) */
+/* Forçar largura do Bloco 2 via variáveis: controle centralizado em :root */
 .container .bloco.bloco-2 {
-  width: 420px !important;
-  max-width: 420px !important;
+  width: var(--lista-dias-width-responsive) !important;
+  max-width: var(--lista-dias-container-width) !important;
   box-sizing: border-box !important;
 }
 
@@ -84,7 +132,7 @@
 .widget-barra-container-2 {
   background: #ecf0f1 !important;
   border-radius: 20px !important;
-  height: 22px !important;
+  height: 24px !important;
   position: relative !important;
   overflow: hidden !important;
   box-shadow: inset 0 2px 4px rgba(0, 0, 0, 0.1) !important;
@@ -1037,7 +1085,7 @@
   margin-left: -12px !important;
   overflow-x: hidden !important;
   overflow-y: auto !important;
-  height: 508px !important;
+  height: var(--lista-dias-height-externo) !important;
   max-height: 550px !important;
   padding: 12px 16px !important;
   margin-top: 77px !important;
@@ -1194,7 +1242,7 @@
 }
 
 .lista-dias {
-  height: 400px !important;
+  height: var(--lista-dias-height-default) !important;
   margin-top: 38px !important;
 }
 
@@ -1301,7 +1349,7 @@
   justify-content: center !important;
   gap: 6px !important;
 
-  font-family: "Inter", sans-serif !important;
+  font-family: "Rajdhani", sans-serif !important;
   font-weight: 500 !important;
   font-size: 14px !important;
   line-height: 1 !important;
@@ -1663,8 +1711,8 @@
 
 .container .bloco.bloco-2 .resumo-mes .lista-dias {
   /* Altura fixa conforme solicitado dentro do bloco 2 */
-  height: 500px !important;
-  max-height: 800px !important;
+  height: var(--lista-dias-height-block) !important;
+  max-height: var(--lista-dias-maxheight-block) !important;
   overflow-y: auto !important;
   overflow-x: hidden !important;
   /* margem superior reduzida */
@@ -1719,7 +1767,7 @@
     max-height: none !important;
   }
   .container .bloco.bloco-2 .resumo-mes .lista-dias {
-    height: 300px !important;
+    height: var(--lista-dias-height-mobile) !important;
     max-height: 50vh !important;
     margin-top: 12px !important;
   }
@@ -1844,7 +1892,7 @@
   padding: 0 16px !important;
   margin: 0 0 4px 0 !important;
 
-  font-family: "Inter", sans-serif !important;
+  font-family: "Rajdhani", sans-serif !important;
   font-size: 14px !important;
   font-weight: 500 !important;
 
@@ -2360,8 +2408,6 @@
   border-top-right-radius: 12px !important;
   border-bottom-left-radius: 0 !important;
   border-bottom-right-radius: 0 !important;
-  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.06) inset,
-    0 4px 12px rgba(0, 0, 0, 0.06);
   overflow: visible !important; /* allow absolute-positioned title to be visible */
 }
 
@@ -2416,9 +2462,140 @@
   visibility: visible !important;
 }
 
-@media (max-width: 480px) {
-  .campo-armazena-data-placar {
-    height: 60px !important;
-    min-height: 60px !important;
-  }
+.container .bloco.bloco-2 .bloco-meta-simples .titulo-bloco #tituloMes {
+  /* Garantir que, mesmo que o texto venha em MAIÚSCULAS via JS, o exibido seja
+     com apenas a inicial maiúscula: 'Setembro 2025' */
+  text-transform: lowercase !important;
+  display: inline-block !important; /* para aplicar ::first-letter com segurança */
+  font-size: 13px !important;
 }
+
+.container
+  .bloco.bloco-2
+  .bloco-meta-simples
+  .titulo-bloco
+  #tituloMes::first-letter {
+  text-transform: uppercase !important;
+}
+
+/* =======================================================================================================================================================
+  FONTE RAJDHANI -  FONTE RAJDHANI - FONTE RAJDHANI -  FONTE RAJDHANI - FONTE RAJDHANI -  FONTE RAJDHANI
+  =======================================================================================================================================================*/
+
+/* FORÇA BRUTA - MÁXIMA ESPECIFICIDADE PARA RAJDHANI */
+html body .container .bloco.bloco-2 .resumo-mes .lista-dias .gd-linha-dia .data,
+html
+  body
+  .container
+  .bloco.bloco-2
+  .resumo-mes
+  .lista-dias
+  .gd-linha-dia
+  .placar-dia,
+html
+  body
+  .container
+  .bloco.bloco-2
+  .resumo-mes
+  .lista-dias
+  .gd-linha-dia
+  .placar,
+html
+  body
+  .container
+  .bloco.bloco-2
+  .resumo-mes
+  .lista-dias
+  .gd-linha-dia
+  .valor,
+html
+  body
+  .container
+  .bloco.bloco-2
+  .resumo-mes
+  .lista-dias
+  .gd-linha-dia
+  .icone,
+html
+  body
+  .container
+  .bloco.bloco-2
+  .resumo-mes
+  .lista-dias
+  .gd-linha-dia
+  .separador,
+html body .container .bloco.bloco-2 .resumo-mes .lista-dias .linha-dia .data,
+html
+  body
+  .container
+  .bloco.bloco-2
+  .resumo-mes
+  .lista-dias
+  .linha-dia
+  .placar-dia,
+html body .container .bloco.bloco-2 .resumo-mes .lista-dias .linha-dia .placar,
+html body .container .bloco.bloco-2 .resumo-mes .lista-dias .linha-dia .valor,
+html body .container .bloco.bloco-2 .resumo-mes .lista-dias .linha-dia .icone,
+html
+  body
+  .container
+  .bloco.bloco-2
+  .resumo-mes
+  .lista-dias
+  .linha-dia
+  .separador {
+  font-family: "Rajdhani", sans-serif !important;
+}
+
+/* FORÇA BRUTA ADICIONAL - USANDO IDS E CLASSES ESPECÍFICAS */
+#bloco-2 .lista-dias .gd-linha-dia .data,
+#bloco-2 .lista-dias .gd-linha-dia .placar-dia,
+#bloco-2 .lista-dias .gd-linha-dia .placar,
+#bloco-2 .lista-dias .gd-linha-dia .valor,
+#bloco-2 .lista-dias .gd-linha-dia .icone {
+  font-family: "Rajdhani", sans-serif !important;
+}
+
+/* FORÇA BRUTA PARA ELEMENTOS FILHOS */
+.lista-dias * {
+  font-family: "Rajdhani", sans-serif !important;
+}
+
+/* FORÇA BRUTA PARA CLASSES ESPECÍFICAS */
+.gd-linha-dia,
+.gd-linha-dia *,
+.linha-dia,
+.linha-dia * {
+  font-family: "Rajdhani", sans-serif !important;
+}
+
+/* FORÇA BRUTA USANDO ATRIBUTO DATA */
+[data-date] .data,
+[data-date] .placar-dia,
+[data-date] .placar,
+[data-date] .valor,
+[data-date] .icone {
+  font-family: "Rajdhani", sans-serif !important;
+}
+
+/* ========================================
+   TESTE DE DIAGNÓSTICO VISUAL
+   Remove este bloco após confirmar que funciona
+======================================== */
+
+/* ========================================
+   IMPORTAÇÃO DA FONTE (caso não esteja importada)
+======================================== */
+@import url("https://fonts.googleapis.com/css2?family=Rajdhani:wght@300;400;500;600;700&display=swap");
+
+/* ========================================
+   RESET COMPLETO DE FONTES
+======================================== */
+.lista-dias,
+.lista-dias *:not(i):not(.fa):not([class*="fa-"]) {
+  font-family: "Rajdhani", sans-serif !important;
+}
+
+/* =======================================================================================================================================================
+  FONTE RAJDHANI -  FONTE RAJDHANI - FONTE RAJDHANI -  FONTE RAJDHANI - FONTE RAJDHANI -  FONTE RAJDHANI
+  =======================================================================================================================================================*/

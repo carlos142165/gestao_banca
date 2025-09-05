@@ -1602,7 +1602,23 @@ function inicializarPlacarMensal() {
     const verificarElemento = () => {
       const placar = document.getElementById("pontuacao-2");
       if (placar) {
+        // Evitar flash: ocultar até o CSS injetado e o posicionamento final serem aplicados
+        try {
+          // Aplicar com !important para sobrescrever a regra CSS que esconde o elemento
+          placar.style.setProperty("visibility", "hidden", "important");
+        } catch (e) {}
+
         PlacarMensalManager.inicializar();
+
+        // Mostrar após curto delay (tempo suficiente para injeção de CSS e layout)
+        setTimeout(() => {
+          try {
+            // Usar setProperty com 'important' para garantir que o inline style
+            // sobrescreva a regra do stylesheet que contém !important
+            placar.style.setProperty("visibility", "visible", "important");
+          } catch (e) {}
+        }, 120);
+
         console.log("✅ Sistema de Placar Mensal inicializado com sucesso!");
       } else {
         console.log("⏳ Aguardando elemento #pontuacao-2...");
