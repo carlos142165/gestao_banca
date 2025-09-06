@@ -2,13 +2,34 @@
   (DATA-PLACAR-SALDO) - CONTROLE DE ALTURA
    =======================================================================================================================================================*/
 @import url("https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700&display=swap");
-
+/**/
+/**/
+/**/
+/**/
+/**/
+/**/
+/**/
+/**/
+/**/
+/**/
+/**/
+/* =======================================================================================================================================================
+     - ROOT- ROOT - ROOT  - ROOT- ROOT - ROOT  - ROOT- ROOT - ROOT  - ROOT- ROOT - ROOT  - ROOT- ROOT - ROOT - ROOT- ROOT - ROOT
+  =======================================================================================================================================================*/
 :root {
-  /* AQUI VOCEÊ ALTERA A ALTURA TOTAL DO CAMPO ONDE ARMAZENA : (DATA-PLACAR-SALDO) */
-  --lista-dias-base: 432px;
+  /**/
+  /**/
+  /**/
 
-  /* Tamanhos derivados (mantidos em sincronia com os valores anteriores).
-    Edite individualmente apenas se precisar de um ajuste pontual. */
+  /* --------------------------------------------------
+    Altura - Largura - Bloco + Campo
+  -------------------------------------------------- */
+  --lista-dias-base: 432px; /* Altura do bloco 2 */
+  --lista-dias-width-base: 420px; /* largura padrão do bloco (era 420px) */
+  --lista-dias-maxwidth-block: 420px; /* limite dentro do layout do bloco */
+  --lista-dias-maxwidth-desktop: 1200px; /* limite máximo em telas grandes */
+  --lista-dias-minwidth-mobile: 280px; /* largura mínima em telas pequenas */
+
   --lista-dias-height-default: var(--lista-dias-base);
   --lista-dias-height-desktop: calc(
     var(--lista-dias-base) + 168px
@@ -30,23 +51,96 @@
     var(--lista-dias-base) - 100px
   ); /* => 315px */
 
-  /* Todo esse codigo faz parte do controle de altura do campo onde fica os: (DATA-PLACAR-SALDO) */
-
-  /* ----------------------------
-     CONTROLE DE LARGURA
-     Variáveis para controlar a largura do bloco 2 a partir do mesmo lugar
-     que controla a altura. Edite --lista-dias-width-base para alterar
-     a largura padrão do bloco. */
-  --lista-dias-width-base: 420px; /* largura padrão do bloco (era 420px) */
-  --lista-dias-maxwidth-desktop: 1200px; /* limite máximo em telas grandes */
-  --lista-dias-maxwidth-block: 420px; /* limite dentro do layout do bloco */
-  --lista-dias-minwidth-mobile: 280px; /* largura mínima em telas pequenas */
-
   /* Largura responsiva derivada */
-  --lista-dias-width-responsive: clamp(var(--lista-dias-minwidth-mobile), 92vw, var(--lista-dias-maxwidth-block));
-  --lista-dias-container-width: min(var(--lista-dias-width-base), var(--lista-dias-maxwidth-desktop));
+  --lista-dias-width-responsive: clamp(
+    var(--lista-dias-minwidth-mobile),
+    92vw,
+    var(--lista-dias-maxwidth-block)
+  );
+  --lista-dias-container-width: min(
+    var(--lista-dias-width-base),
+    var(--lista-dias-maxwidth-desktop)
+  );
+  /* --------------------------------------------------
+   FIM Altura - Largura responsiva derivada
+  -------------------------------------------------- */
+  /**/
+  /**/
+  /**/
+  /**/
+  /**/
+  /* --------------------------------------------------
+   - FONTE - FONTE  - FONTE - FONTE
+  -------------------------------------------------- */
+  /* Fontes */
+  --font-family-base: "Inter", -apple-system, BlinkMacSystemFont, "Segoe UI",
+    Roboto, sans-serif;
+  --font-family-heading: "Rajdhani", sans-serif;
+  --font-family-mono: "Courier New", Courier, monospace;
 
+  /* Pesos */
+  --fw-regular: 500;
+  --fw-medium: 500;
+  --fw-semibold: 500;
+  --date-font-weight: 500; /* Peso datas  */
+  --date-font-weight-positive: 500; /* Peso datas positivos */
+
+  /* Tamanhos */
+  --fs-xs: 12px; /* Fontes para tela Celular */
+  --fs-sm: 12px; /* Fontes para Lista itens */
+  --fs-base: 12px; /* Fontes para data */
+  --fs-lg: 12px; /*  */
+  --fs-placar: 12px; /* Tamanho do placar (lista ao lado das datas) */
+  --fs-placar-top: 30px; /* Tamanho do placar no topo do bloco (mês / cabeçalho) */
+  --fs-valor: 12px; /* Tamanho do valor (R$)*/
+
+  /* Cores principais */
+  --color-positive: #00a651; /* texto valor positivo */
+  --color-positive-strong: #059669; /* variação para placar */
+  --color-negative: #dc2626; /* vermelho padrão */
+  --color-negative-border: #cf0101; /* borda vermelha forte */
+  --color-neutral: #94a3b8; /* cinza claro */
+  --color-muted: #6c757d; /* neutro escuro */
+  --color-trophy: #f59e0b; /* troféu/dourado */
+  --color-meta: #f3b200; /* ícone moeda/meta */
+
+  /* Icon sizes */
+  --icon-size-sm: 12px;
+  --icon-size-md: 15px;
+  --icon-size-lg: 20px;
+  /* Variáveis específicas para a coluna de datas */
+  --date-font-family: var(--font-family-mono);
+  --date-font-size: var(--fs-base);
+  --date-color: var(--color-muted);
+  --date-letter-spacing: 0;
+  /* --------------------------------------------------
+   - FONTE - FONTE  - FONTE - FONTE
+-------------------------------------------------- */
 }
+/**/
+/**/
+/**/
+/**/
+/**/
+/**/
+/**/
+/**/
+/**/
+/**/
+/**/
+/* =======================================================================================================================================================
+     - ROOT- ROOT - ROOT  - ROOT- ROOT - ROOT  - ROOT- ROOT - ROOT  - ROOT- ROOT - ROOT  - ROOT- ROOT - ROOT - ROOT- ROOT - ROOT
+  =======================================================================================================================================================*/
+/**/
+/**/
+/**/
+/**/
+/**/
+/**/
+/**/
+/**/
+/**/
+/**/
 /* Evita flash do placar antes do JS posicionar/injetar estilos */
 #pontuacao-2 {
   visibility: hidden !important;
@@ -242,7 +336,7 @@
 
 .widget-meta-valor-2 .fa-solid-2.fa-coins-2 {
   font-size: clamp(16px, 4vw, 26px);
-  color: #f39c12;
+  color: var(--color-meta);
 }
 
 /* ÍCONE DA MOEDA - FORÇADO PARA HTML 2 (aplica-se a: .widget-meta-valor-2 e #meta-valor-2) */
@@ -256,7 +350,7 @@
 .fa-coins-2 {
   margin-right: 0px !important;
   font-size: 20px !important;
-  color: #f3b200 !important;
+  color: var(--color-meta) !important;
   margin-left: 0px;
   flex-shrink: 0 !important;
 }
@@ -532,7 +626,7 @@
 
 /* Estados do saldo com ícones dinâmicos baseados no resultado */
 .saldo-positivo-2 i {
-  color: #4caf50;
+  color: #00a651;
 }
 
 .saldo-negativo-2 i {
@@ -545,7 +639,7 @@
 
 /* ÍCONES ESPECÍFICOS DINÂMICOS para cada tipo de saldo */
 .saldo-positivo-2 .fa-chart-line-2 {
-  color: #4caf50 !important;
+  color: #00a651 !important;
 }
 
 .saldo-negativo-2 .fa-arrow-trend-down-2 {
@@ -579,7 +673,7 @@
 */
 
 .valor-positivo-2 {
-  color: #27ae60 !important;
+  color: #00a651 !important;
   text-shadow: 0 1px 2px rgba(39, 174, 96, 0.4) !important;
 }
 
@@ -598,7 +692,7 @@
 }
 
 .modal-lucro-positivo-2 {
-  color: #4caf50 !important;
+  color: #00a651 !important;
 }
 
 .modal-lucro-negativo-2 {
@@ -655,9 +749,9 @@
 
 /* Valor extra - APENAS dentro de meta-valor-2 */
 #meta-valor-2 .valor-extra-2 {
-  color: #ffd700;
+  color: #f08000;
   font-weight: bold;
-  text-shadow: 0 0 5px rgba(255, 215, 0, 0.3);
+
   animation: brilhoDouradoMensal 2s ease-in-out infinite alternate;
 }
 
@@ -673,8 +767,8 @@
 
 /* Classes de estado APENAS para meta-valor-2 */
 #meta-valor-2.valor-meta-2.meta-batida {
-  border-color: #28a745;
-  color: #28a745;
+  border-color: #00a651;
+  color: #00a651;
 }
 
 #meta-valor-2.valor-meta-2.meta-superada {
@@ -689,8 +783,8 @@
 }
 
 #meta-valor-2.valor-meta-2.lucro {
-  border-color: #17a2b8;
-  color: #17a2b8;
+  border-color: #00a651;
+  color: #00a651;
 }
 
 #meta-valor-2.valor-meta-2.neutro {
@@ -812,11 +906,11 @@
 
 /* Classes de estado do saldo - APENAS para saldo-info-2 */
 #saldo-info-2.saldo-positivo-2 {
-  color: #28a745;
+  color: #00a651;
 }
 
 #saldo-info-2.saldo-positivo-2 i {
-  color: #28a745;
+  color: #00a651;
 }
 
 #saldo-info-2.saldo-negativo-2 {
@@ -1011,8 +1105,11 @@
   text-overflow: clip !important;
   font-variant-numeric: tabular-nums !important; /* ensure numbers use fixed-width numerals */
   line-height: 1 !important;
-  font-family: "Courier New", Courier, monospace !important;
-  letter-spacing: 0 !important;
+  font-family: var(--date-font-family) !important;
+  font-weight: var(--date-font-weight) !important;
+  font-size: var(--date-font-size) !important;
+  letter-spacing: var(--date-letter-spacing) !important;
+  color: var(--date-color) !important;
 }
 
 /* Ensure no extra left-padding for the data column coming from other rules */
@@ -1117,7 +1214,9 @@
   overflow: visible !important;
   text-overflow: clip !important;
   font-variant-numeric: tabular-nums !important;
-  font-family: "Courier New", Courier, monospace !important;
+  font-family: var(--date-font-family) !important;
+  font-weight: var(--date-font-weight) !important;
+  font-size: var(--date-font-size) !important;
   line-height: 1 !important;
 }
 
@@ -1319,10 +1418,10 @@
   display: inline-flex !important;
   align-items: center !important;
 
-  font-family: "Inter", monospace !important;
-  font-weight: 600 !important;
-  font-size: 14px !important;
-  color: #475569 !important;
+  font-family: var(--date-font-family) !important;
+  font-weight: var(--date-font-weight) !important;
+  font-size: var(--date-font-size) !important;
+  color: var(--date-color) !important;
 
   text-align: left !important;
   justify-content: flex-start !important;
@@ -1331,7 +1430,7 @@
   min-width: 95px !important;
   max-width: 95px !important;
 
-  letter-spacing: -0.01em !important;
+  letter-spacing: var(--date-letter-spacing) !important;
   font-variant-numeric: tabular-nums !important;
 
   /* Força posicionamento */
@@ -1351,7 +1450,7 @@
 
   font-family: "Rajdhani", sans-serif !important;
   font-weight: 500 !important;
-  font-size: 14px !important;
+  font-size: var(--fs-placar) !important;
   line-height: 1 !important;
 
   width: 84px !important;
@@ -1387,13 +1486,13 @@
 }
 
 .gd-linha-dia .placar-dia .verde-bold {
-  color: #059669 !important;
-  font-weight: 600 !important;
+  color: var(--color-positive-strong) !important;
+  font-weight: var(--fw-semibold) !important;
 }
 
 .gd-linha-dia .placar-dia .vermelho-bold {
-  color: #dc2626 !important;
-  font-weight: 600 !important;
+  color: var(--color-negative) !important;
+  font-weight: var(--fw-semibold) !important;
 }
 
 .gd-linha-dia .placar-dia .separador {
@@ -1411,9 +1510,9 @@
 ======================================== */
 
 .gd-linha-dia .valor {
-  font-family: "Inter", monospace !important;
-  font-weight: 600 !important;
-  font-size: 14px !important;
+  font-family: var(--font-family-base) !important;
+  font-weight: var(--fw-semibold) !important;
+  font-size: var(--fs-base) !important;
   line-height: 1 !important;
 
   text-align: left !important;
@@ -1433,18 +1532,18 @@
 
 /* Cores dos valores */
 .gd-linha-dia .valor.verde-bold {
-  color: #059669 !important;
-  font-weight: 600 !important;
+  color: var(--color-positive) !important;
+  font-weight: var(--fw-semibold) !important;
 }
 
 .gd-linha-dia .valor.vermelho-bold {
-  color: #dc2626 !important;
-  font-weight: 600 !important;
+  color: var(--color-negative) !important;
+  font-weight: var(--fw-semibold) !important;
 }
 
 .gd-linha-dia .valor.texto-cinza {
-  color: #94a3b8 !important;
-  font-weight: 500 !important;
+  color: var(--color-neutral) !important;
+  font-weight: var(--fw-regular) !important;
 }
 
 /* ========================================
@@ -1469,7 +1568,7 @@
 }
 
 .gd-linha-dia .icone i {
-  font-size: 15px !important;
+  font-size: var(--icon-size-md) !important;
   line-height: 1 !important;
   width: 16px !important;
   height: 16px !important;
@@ -1488,7 +1587,7 @@
 
 /* Ícone check padrão */
 .gd-linha-dia .icone i.fa-check {
-  color: #64748b !important;
+  color: var(--color-neutral) !important;
 }
 
 .gd-linha-dia .icone i.fa-check::before {
@@ -1497,7 +1596,7 @@
 
 /* Ícone troféu dourado */
 .gd-linha-dia .icone i.fa-trophy.trofeu-icone {
-  color: #f59e0b !important;
+  color: var(--color-trophy) !important;
 }
 
 .gd-linha-dia .icone i.fa-trophy::before {
@@ -1541,7 +1640,7 @@
 .gd-linha-dia.valor-negativo .icone i.fa-trophy,
 .gd-linha-dia.valor-zero .icone i.fa-trophy,
 .gd-linha-dia .icone i.fa-trophy.trofeu-icone {
-  color: #f59e0b !important; /* dourado forte */
+  color: var(--color-trophy) !important; /* dourado forte */
   text-shadow: 0 1px 0 rgba(0, 0, 0, 0.12) !important;
 }
 
@@ -1582,7 +1681,7 @@
 @media (max-width: 768px) {
   .gd-linha-dia {
     padding: 0 12px !important;
-    font-size: 13px !important;
+    font-size: var(--fs-placar) !important;
   }
 
   .gd-linha-dia .data {
@@ -1590,7 +1689,7 @@
     min-width: 75px !important;
     max-width: 75px !important;
     margin-right: 14px !important; /* reduzir gap para manter proximidade */
-    font-size: 13px !important;
+    font-size: var(--fs-placar) !important;
   }
 
   .gd-linha-dia .placar-dia {
@@ -1609,7 +1708,7 @@
     min-width: 80px !important;
     max-width: 80px !important;
     margin-right: 18px !important;
-    font-size: 13px !important;
+    font-size: var(--fs-placar) !important;
     margin-left: 12px !important;
   }
 
@@ -1630,14 +1729,14 @@
     min-height: 30px !important;
     max-height: 30px !important;
     padding: 0 8px !important;
-    font-size: 12px !important;
+    font-size: var(--fs-placar) !important;
   }
 
   .gd-linha-dia .data {
     width: 70px !important;
     min-width: 70px !important;
     margin-right: 10px !important;
-    font-size: 12px !important;
+    font-size: var(--fs-placar) !important;
   }
 
   .gd-linha-dia .placar-day,
@@ -1656,7 +1755,7 @@
     width: 70px !important;
     min-width: 70px !important;
     margin-right: 12px !important;
-    font-size: 12px !important;
+    font-size: var(--fs-placar) !important;
     margin-left: 8px !important;
   }
 
@@ -1665,7 +1764,7 @@
   }
 
   .gd-linha-dia .icone i {
-    font-size: 12px !important;
+    font-size: var(--fs-placar) !important;
   }
 }
 
@@ -1782,7 +1881,7 @@
 .container .bloco.bloco-2 .resumo-mes .lista-dias .gd-linha-dia.valor-positivo,
 .gd-linha-dia.valor-positivo {
   background: rgba(141, 219, 170, 0.12) !important;
-  border-left: 4px solid #03884a !important;
+  border-left: 4px solid var(--color-positive) !important;
   padding-left: 13px !important;
 }
 
@@ -1790,7 +1889,7 @@
 .container .bloco.bloco-2 .resumo-mes .lista-dias .gd-linha-dia.valor-negativo,
 .gd-linha-dia.valor-negativo {
   background: rgb(247, 224, 224) !important;
-  border-left: 4px solid #cf0101 !important;
+  border-left: 4px solid var(--color-negative-border) !important;
   padding-left: 13px !important;
 }
 
@@ -1798,7 +1897,7 @@
 .container .bloco.bloco-2 .resumo-mes .lista-dias .gd-linha-dia.valor-zero,
 .gd-linha-dia.valor-zero {
   background: rgba(255, 255, 255, 0.95) !important;
-  border-left: 4px solid #9ca3af !important;
+  border-left: 4px solid var(--color-neutral) !important;
   border-color: rgba(156, 163, 175, 0.3) !important;
   padding-left: 13px !important;
 }
@@ -1904,9 +2003,9 @@
 .gd-linha-dia .data {
   width: 90px !important;
   min-width: 90px !important;
-  font-weight: 600 !important;
-  font-size: 14px !important;
-  color: #475569 !important;
+  font-weight: var(--date-font-weight) !important;
+  font-size: var(--date-font-size) !important;
+  color: var(--date-color) !important;
   text-align: left !important;
   margin-left: 0px !important;
 }
@@ -1962,19 +2061,19 @@
 .gd-linha-dia .valor.verde-bold + .icone i,
 .gd-linha-dia .valor.verde-bold ~ .icone i,
 .gd-linha-dia.valor-positivo .icone i {
-  color: #059669 !important; /* verde */
+  color: var(--color-positive) !important; /* verde */
 }
 
 .gd-linha-dia .valor.vermelho-bold + .icone i,
 .gd-linha-dia .valor.vermelho-bold ~ .icone i,
 .gd-linha-dia.valor-negativo .icone i {
-  color: #dc2626 !important; /* vermelho */
+  color: var(--color-negative) !important; /* vermelho */
 }
 
 .gd-linha-dia .valor.texto-cinza + .icone i,
 .gd-linha-dia .valor.texto-cinza ~ .icone i,
 .gd-linha-dia.valor-zero .icone i {
-  color: #94a3b8 !important; /* cinza neutro */
+  color: var(--color-neutral) !important; /* cinza neutro */
 }
 
 /* Garantir que troféu apareça sempre dourado (sobrescreve regras de estado) */
@@ -1994,7 +2093,7 @@
   .gd-linha-dia
   .icone
   i.fa-trophy {
-  color: #f59e0b !important; /* forçar dourado */
+  color: var(--color-trophy) !important; /* forçar dourado */
   text-shadow: 0 1px 0 rgba(0, 0, 0, 0.08) !important;
 }
 
@@ -2019,8 +2118,8 @@
   .gd-linha-dia.valor-positivo
   .data,
 .gd-linha-dia.valor-positivo .data {
-  color: #059669 !important; /* verde para positivo */
-  font-weight: 600 !important;
+  color: var(--color-positive) !important; /* verde para positivo */
+  font-weight: var(--date-font-weight-positive) !important;
 }
 
 .container
@@ -2030,8 +2129,8 @@
   .gd-linha-dia.valor-negativo
   .data,
 .gd-linha-dia.valor-negativo .data {
-  color: #dc2626 !important; /* vermelho para negativo */
-  font-weight: 600 !important;
+  color: var(--color-negative) !important; /* vermelho para negativo */
+  font-weight: var(--date-font-weight) !important;
 }
 
 .container
@@ -2041,8 +2140,8 @@
   .gd-linha-dia.valor-zero
   .data,
 .gd-linha-dia.valor-zero .data {
-  color: #94a3b8 !important; /* cinza para neutro */
-  font-weight: 600 !important;
+  color: var(--color-neutral) !important; /* cinza para neutro */
+  font-weight: var(--date-font-weight) !important;
 }
 
 /* Tornar a fonte da DATA idêntica à fonte do VALOR */
@@ -2050,11 +2149,11 @@
 .container .bloco.bloco-2 .resumo-mes .lista-dias .gd-linha-dia .data,
 .gd-linha-dia > .data,
 .gd-linha-dia .data {
-  font-family: "Inter", monospace !important;
-  font-weight: 600 !important;
-  font-size: 14px !important;
+  font-family: var(--date-font-family) !important;
+  font-weight: var(--date-font-weight) !important;
+  font-size: var(--date-font-size) !important;
   font-variant-numeric: tabular-nums !important;
-  letter-spacing: -0.01em !important;
+  letter-spacing: var(--date-letter-spacing) !important;
 }
 
 /* FORCE DATA TO LEFT EDGE: remover margem/padding esquerdo para ficar no canto */
@@ -2435,6 +2534,40 @@
   box-sizing: border-box !important;
 }
 
+/* Forçar placar topo variante-2 a usar o tamanho do root */
+#pontuacao-2,
+.pontuacao-2,
+.campo-armazena-data-placar .pontuacao-2 {
+  font-size: var(--fs-placar-top) !important;
+  line-height: 1 !important;
+}
+
+/* FORÇAR: garantir que o VALOR (R$) ao lado da DATA use a variável central --fs-valor
+   Este bloco tem especificidade alta e vem depois das outras regras para garantir
+   que alterar --fs-valor em :root atualize o tamanho do valor na lista de dias. */
+html body .lista-dias .gd-linha-dia .valor,
+html
+  body
+  .container
+  .bloco.bloco-2
+  .resumo-mes
+  .lista-dias
+  .gd-linha-dia
+  .valor,
+html body .lista-dias .gd-linha-dia .valor *,
+html
+  body
+  .container
+  .bloco.bloco-2
+  .resumo-mes
+  .lista-dias
+  .gd-linha-dia
+  .valor
+  * {
+  font-size: var(--fs-valor) !important;
+  line-height: 1 !important;
+}
+
 /* Position the month title absolutely at the left corner of the gradient header
    to guarantee visibility and precise offsets regardless of parent padding. */
 .campo-armazena-data-placar .titulo-bloco {
@@ -2481,6 +2614,55 @@
 /* =======================================================================================================================================================
   FONTE RAJDHANI -  FONTE RAJDHANI - FONTE RAJDHANI -  FONTE RAJDHANI - FONTE RAJDHANI -  FONTE RAJDHANI
   =======================================================================================================================================================*/
+
+/* OVERRIDE GLOBAL: garantir que placar use a variável de root mesmo se outros arquivos definirem tamanhos */
+html body #bloco-2 .lista-dias .gd-linha-dia .placar-dia,
+html body #bloco-2 .lista-dias .gd-linha-dia .placar,
+html body .lista-dias .gd-linha-dia .placar-dia,
+html body .lista-dias .gd-linha-dia .placar {
+  font-size: var(--fs-placar) !important;
+  line-height: 1 !important;
+}
+
+/* Garantir que elementos internos herdem o tamanho do placar */
+html body .lista-dias .gd-linha-dia .placar *,
+html body .lista-dias .gd-linha-dia .placar-dia * {
+  font-size: inherit !important;
+}
+
+/* BROAD OVERRIDE: cobrir variações de nomes de classe e seletores externos que ainda definam tamanhos */
+/* limitar selects que correspondem a nomes contendo 'placar' apenas ao escopo da lista
+   para evitar sobrescrever o placar do topo */
+html body .lista-dias .gd-linha-dia [class*="placar"],
+html body .lista-dias .gd-linha-dia [class*="placar"] * {
+  font-size: var(--fs-placar) !important;
+  line-height: 1 !important;
+}
+
+/* Incluir seletores comuns que aparecem em outros arquivos */
+/* placar do TOPO (mês/cabeçalho) */
+.pontuacao,
+.placar-green,
+.placar-red {
+  font-size: var(--fs-placar-top) !important;
+}
+
+/* Extra-strong override specifically for the top placar (covers common header/container structures) */
+html body .container .pontuacao,
+html body header .pontuacao,
+html body #app .pontuacao,
+html body .topo .pontuacao,
+html body .pontuacao {
+  font-size: var(--fs-placar-top) !important;
+  line-height: 1 !important;
+}
+html body .container .pontuacao *,
+html body header .pontuacao *,
+html body #app .pontuacao *,
+html body .topo .pontuacao *,
+html body .pontuacao * {
+  font-size: inherit !important;
+}
 
 /* FORÇA BRUTA - MÁXIMA ESPECIFICIDADE PARA RAJDHANI */
 html body .container .bloco.bloco-2 .resumo-mes .lista-dias .gd-linha-dia .data,
@@ -2599,3 +2781,24 @@ html
 /* =======================================================================================================================================================
   FONTE RAJDHANI -  FONTE RAJDHANI - FONTE RAJDHANI -  FONTE RAJDHANI - FONTE RAJDHANI -  FONTE RAJDHANI
   =======================================================================================================================================================*/
+
+/* ======= OVERRIDE FINAL (MÁXIMA PRIORIDADE) =======
+   Garantir que o VALOR ao lado da DATA (.gd-linha-dia .valor) sempre respeite
+   a variável central --fs-valor definida em :root. Esta regra é propositalmente
+   ampla e específica para cobrir variações de carga de CSS/arquivos externos e
+   inline styles aplicados por scripts. Modifique --fs-valor no :root para alterar.
+*/
+html body #bloco-2 .lista-dias .gd-linha-dia .valor[style],
+html body #bloco-2 .lista-dias .gd-linha-dia .valor,
+html body .lista-dias .gd-linha-dia .valor[style],
+html body .lista-dias .gd-linha-dia .valor,
+#bloco-2 .lista-dias .gd-linha-dia .valor[style],
+#bloco-2 .lista-dias .gd-linha-dia .valor,
+.lista-dias .gd-linha-dia .valor[style],
+.lista-dias .gd-linha-dia .valor,
+.gd-linha-dia .valor[style],
+.gd-linha-dia .valor,
+.gd-linha-dia .valor * {
+  font-size: var(--fs-valor) !important;
+  line-height: 1 !important;
+}
