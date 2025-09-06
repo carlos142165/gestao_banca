@@ -91,7 +91,7 @@
   --fs-base: 12px; /* Fontes para data */
   --fs-lg: 12px; /*  */
   --fs-placar: 12px; /* Tamanho do placar (lista ao lado das datas) */
-  --fs-placar-top: 30px; /* Tamanho do placar no topo do bloco (mês / cabeçalho) */
+  --fs-placar-top: 20px; /* Tamanho do placar no topo do bloco (mês / cabeçalho) */
   --fs-valor: 12px; /* Tamanho do valor (R$)*/
 
   /* Cores principais */
