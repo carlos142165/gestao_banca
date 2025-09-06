@@ -2427,9 +2427,8 @@ p {
 
 /* Valor extra (dourado) */
 .valor-extra {
-  color: #ffd700;
+  color: #f08000;
   font-weight: bold;
-  text-shadow: 0 0 5px rgba(255, 215, 0, 0.3);
   animation: brilhoDourado 2s ease-in-out infinite alternate;
 }
 
