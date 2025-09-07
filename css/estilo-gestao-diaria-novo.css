@@ -1,3 +1,390 @@
+/* ===== RANK COM COR DINÂMICA BASEADA NO SALDO ===== */
+.mentor-rank-externo {
+  /* Dimensões fixas para manter formato circular */
+  width: 36px !important;
+  height: 36px !important;
+  min-width: 36px !important;
+  min-height: 36px !important;
+
+  /* Remover padding e usar apenas dimensões fixas */
+  padding: 0 !important;
+
+  /* Centralização perfeita */
+  display: flex !important;
+  align-items: center !important;
+  justify-content: center !important;
+
+  /* Garantir formato circular */
+  border-radius: 50% !important;
+
+  /* Visual - removendo cor padrão */
+  font-size: 13px !important;
+  font-weight: 700;
+  color: white !important; /* texto branco para contraste */
+
+  /* Borda será definida por classe */
+  border: 2px solid transparent;
+
+  /* Outros */
+  flex-shrink: 0;
+  box-sizing: border-box;
+  text-align: center;
+  line-height: 1;
+  white-space: nowrap;
+  overflow: hidden;
+  margin-right: 8px;
+
+  /* Transição suave */
+  transition: all 0.3s ease;
+}
+
+/* ===== CORES DO RANK BASEADAS NO CARD ===== */
+
+/* Rank Verde - Saldo Positivo */
+.mentor-item:has(.card-positivo) .mentor-rank-externo {
+  background: linear-gradient(135deg, #00a651 0%, #2ecc71 100%) !important;
+  border-color: #00a651 !important;
+  box-shadow: 0 2px 8px rgba(0, 166, 81, 0.3) !important;
+  color: white !important;
+}
+
+/* Rank Vermelho - Saldo Negativo */
+.mentor-item:has(.card-negativo) .mentor-rank-externo {
+  background: linear-gradient(135deg, #e74c3c 0%, #c0392b 100%) !important;
+  border-color: #e74c3c !important;
+  box-shadow: 0 2px 8px rgba(231, 76, 60, 0.3) !important;
+  color: white !important;
+}
+
+/* Rank Cinza - Saldo Neutro */
+.mentor-item:has(.card-neutro) .mentor-rank-externo {
+  background: linear-gradient(135deg, #95a5a6 0%, #7f8c8d 100%) !important;
+  border-color: #95a5a6 !important;
+  box-shadow: 0 2px 8px rgba(149, 165, 166, 0.3) !important;
+  color: white !important;
+}
+
+/* ===== HOVER EFFECTS NO RANK ===== */
+.mentor-item:has(.card-positivo) .mentor-rank-externo:hover {
+  transform: scale(1.1);
+  box-shadow: 0 4px 12px rgba(0, 166, 81, 0.5) !important;
+}
+
+.mentor-item:has(.card-negativo) .mentor-rank-externo:hover {
+  transform: scale(1.1);
+  box-shadow: 0 4px 12px rgba(231, 76, 60, 0.5) !important;
+}
+
+.mentor-item:has(.card-neutro) .mentor-rank-externo:hover {
+  transform: scale(1.1);
+  box-shadow: 0 4px 12px rgba(149, 165, 166, 0.5) !important;
+}
+
+/* ===== AJUSTE DE FONTE PARA NÚMEROS GRANDES ===== */
+.mentor-rank-externo {
+  font-size: 13px !important;
+}
+
+/* Para ranks com 2 dígitos, fonte menor */
+.mentor-item:has(.mentor-rank-externo:contains("10")) .mentor-rank-externo,
+.mentor-item:has(.mentor-rank-externo:contains("11")) .mentor-rank-externo,
+.mentor-item:has(.mentor-rank-externo:contains("12")) .mentor-rank-externo,
+.mentor-item:has(.mentor-rank-externo:contains("13")) .mentor-rank-externo,
+.mentor-item:has(.mentor-rank-externo:contains("14")) .mentor-rank-externo,
+.mentor-item:has(.mentor-rank-externo:contains("15")) .mentor-rank-externo,
+.mentor-item:has(.mentor-rank-externo:contains("16")) .mentor-rank-externo,
+.mentor-item:has(.mentor-rank-externo:contains("17")) .mentor-rank-externo,
+.mentor-item:has(.mentor-rank-externo:contains("18")) .mentor-rank-externo,
+.mentor-item:has(.mentor-rank-externo:contains("19")) .mentor-rank-externo,
+.mentor-item:has(.mentor-rank-externo:contains("20")) .mentor-rank-externo {
+  font-size: 11px !important;
+}
+
+/* ===== FALLBACK PARA NAVEGADORES SEM :has() ===== */
+/* Para navegadores que não suportam :has(), usar JavaScript ou classes diretas */
+.mentor-item .mentor-rank-externo.rank-positivo {
+  background: linear-gradient(135deg, #00a651 0%, #2ecc71 100%) !important;
+  border-color: #00a651 !important;
+  box-shadow: 0 2px 8px rgba(0, 166, 81, 0.3) !important;
+  color: white !important;
+}
+
+.mentor-item .mentor-rank-externo.rank-negativo {
+  background: linear-gradient(135deg, #e74c3c 0%, #c0392b 100%) !important;
+  border-color: #e74c3c !important;
+  box-shadow: 0 2px 8px rgba(231, 76, 60, 0.3) !important;
+  color: white !important;
+}
+
+.mentor-item .mentor-rank-externo.rank-neutro {
+  background: linear-gradient(135deg, #95a5a6 0%, #7f8c8d 100%) !important;
+  border-color: #95a5a6 !important;
+  box-shadow: 0 2px 8px rgba(149, 165, 166, 0.3) !important;
+  color: white !important;
+}
+
+/* ===== ANIMAÇÃO PULSE PARA RANK #1 ===== */
+.mentor-item:first-child .mentor-rank-externo {
+  animation: pulseBadge 2s ease-in-out infinite;
+}
+
+@keyframes pulseBadge {
+  0%,
+  100% {
+    transform: scale(1);
+  }
+  50% {
+    transform: scale(1.05);
+  }
+}
+
+/* ===== RESPONSIVIDADE COM CORES ===== */
+@media (max-width: 768px) {
+  .mentor-rank-externo {
+    width: 32px !important;
+    height: 32px !important;
+    min-width: 32px !important;
+    min-height: 32px !important;
+    font-size: 11px !important;
+  }
+}
+
+@media (max-width: 480px) {
+  .mentor-rank-externo {
+    width: 28px !important;
+    height: 28px !important;
+    min-width: 28px !important;
+    min-height: 28px !important;
+    font-size: 10px !important;
+  }
+}
+
+/* ===== CORREÇÃO 2: VALOR DO SALDO VISÍVEL ===== */
+.value-box-saldo {
+  flex: 1 1 auto;
+  min-width: 90px !important; /* largura mínima aumentada */
+  max-width: 140px !important; /* largura máxima definida */
+  display: flex !important;
+  flex-direction: column !important;
+  align-items: center !important;
+  justify-content: center !important;
+  padding: 0 5px !important;
+  margin-left: 10px !important; /* espaço do separador "x" */
+  height: 100%;
+  overflow: visible !important; /* permitir que o conteúdo seja visível */
+}
+
+/* Garantir que o valor do saldo seja visível */
+.value-box-saldo p:nth-child(2) {
+  display: block !important;
+  visibility: visible !important;
+  font-size: 13px !important;
+  font-weight: 700 !important;
+  white-space: nowrap !important;
+  overflow: visible !important;
+  text-overflow: clip !important;
+  line-height: 1.2 !important;
+  margin: 0 !important;
+  padding: 0 !important;
+}
+
+/* ===== CORREÇÃO 3: REORGANIZAÇÃO DO CARD ===== */
+.mentor-card {
+  display: flex;
+  align-items: center;
+  flex: 1 1 auto;
+
+  /* Dimensões ajustadas */
+  height: 76px !important; /* altura reduzida para comportar melhor */
+  min-height: 76px !important;
+
+  /* Espaçamento interno otimizado */
+  padding: 8px 12px !important;
+  padding-right: 45px !important; /* espaço reduzido para menu */
+
+  /* Visual */
+  background-color: #f7f6f6;
+  border: 1px solid #dcdcdc;
+  border-radius: 12px;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+
+  /* Layout */
+  gap: 8px !important; /* gap reduzido */
+  box-sizing: border-box;
+  position: relative;
+  overflow: hidden;
+  transition: transform 0.2s ease, box-shadow 0.2s ease;
+}
+
+/* Ajuste do header (foto + nome) */
+.mentor-header {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  width: 65px !important; /* largura reduzida */
+  flex-shrink: 0;
+  gap: 2px;
+}
+
+/* Foto menor */
+.mentor-img {
+  width: 40px !important; /* tamanho reduzido */
+  height: 40px !important;
+  border-radius: 50%;
+  object-fit: cover;
+  border: 2px solid #00a651;
+  margin: 0 !important; /* remover margens */
+}
+
+/* Nome com fonte menor */
+.mentor-nome {
+  font-size: 10px !important; /* fonte reduzida */
+  margin: 0 !important;
+  color: #333;
+  text-align: center;
+  font-weight: 600;
+  line-height: 1.1;
+  max-width: 60px;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+/* Área direita expandida */
+.mentor-right {
+  display: flex;
+  justify-content: flex-start !important; /* alinhar à esquerda */
+  flex: 1 1 auto;
+  height: 100%;
+  align-items: center;
+  padding-left: 5px;
+}
+
+/* Container dos valores inline */
+.mentor-values-inline {
+  display: flex;
+  justify-content: flex-start !important;
+  align-items: center;
+  height: 100%;
+  gap: 4px !important; /* gap menor */
+  flex-wrap: nowrap;
+  width: 100%;
+}
+
+/* Caixas de valores otimizadas */
+.value-box-green,
+.value-box-red {
+  flex: 0 0 35px !important; /* largura fixa menor */
+  height: 40px !important;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 0 !important;
+}
+
+/* Números do placar */
+.value-box-green p:nth-child(2),
+.value-box-red p:nth-child(2) {
+  font-size: 14px !important;
+  font-weight: 700 !important;
+  margin: 0 !important;
+  line-height: 1 !important;
+}
+
+/* Separador "x" entre green e red - posicionamento ajustado */
+.mentor-values-inline > .value-box-red::before {
+  content: "x";
+  position: absolute;
+  left: -10px !important; /* ajuste fino da posição */
+  top: 50%;
+  transform: translateY(-50%);
+  color: #7f8c8d;
+  font-weight: 500;
+  font-size: 13px !important;
+  padding: 0 4px !important;
+  pointer-events: none;
+}
+
+/* Menu externo ajustado */
+.mentor-menu-externo {
+  position: absolute !important;
+  right: 8px !important;
+  top: 50% !important;
+  transform: translateY(-50%) !important;
+  margin: 0 !important;
+  z-index: 10;
+}
+
+/* Toggle do menu menor */
+.menu-toggle {
+  color: #8f8e8eff;
+  background-color: transparent;
+  border: none;
+  cursor: pointer;
+  font-size: 18px !important; /* tamanho reduzido */
+  padding: 4px !important;
+  line-height: 1;
+}
+
+/* ===== CORES DO SALDO BASEADAS NO ESTADO ===== */
+.mentor-card.card-positivo .value-box-saldo p:nth-child(2) {
+  color: #00a651 !important;
+}
+
+.mentor-card.card-negativo .value-box-saldo p:nth-child(2) {
+  color: #e74c3c !important;
+}
+
+.mentor-card.card-neutro .value-box-saldo p:nth-child(2) {
+  color: #7f8c8d !important;
+}
+
+/* ===== RESPONSIVIDADE AJUSTADA ===== */
+@media (max-width: 768px) {
+  .mentor-rank-externo {
+    width: 32px !important;
+    height: 32px !important;
+    min-width: 32px !important;
+    min-height: 32px !important;
+    font-size: 11px !important;
+  }
+
+  .value-box-saldo {
+    min-width: 75px !important;
+    max-width: 120px !important;
+  }
+
+  .value-box-saldo p:nth-child(2) {
+    font-size: 12px !important;
+  }
+}
+
+@media (max-width: 480px) {
+  .mentor-rank-externo {
+    width: 28px !important;
+    height: 28px !important;
+    min-width: 28px !important;
+    min-height: 28px !important;
+    font-size: 10px !important;
+  }
+
+  .mentor-card {
+    height: 70px !important;
+    min-height: 70px !important;
+    padding-right: 40px !important;
+  }
+
+  .mentor-img {
+    width: 35px !important;
+    height: 35px !important;
+  }
+
+  .value-box-saldo p:nth-child(2) {
+    font-size: 11px !important;
+  }
+}
+
 /* ===== CSS LAYOUT COMPLETO COM FLEXIBILIDADE TOTAL ===== */
 html,
 body {
@@ -492,17 +879,20 @@ body {
 
 /* ===== ÁREA DOS MENTORES RESPONSIVA ===== */
 .mentor-wrapper {
-  padding: clamp(10px, 3vw, 30px); /* Padding responsivo */
+  /* Make the mentor list a vertical flex container so each .mentor-item stretches
+     to the same width and avoids centering the last item. Keep scroll behaviour. */
+  display: flex;
+  flex-direction: column;
+  align-items: stretch; /* ensure children take full available width */
+  padding: clamp(10px, 3vw, 30px);
   width: 100%;
-  /* Garantir que a área de mentores tenha altura limitada e permita scroll interno */
   max-height: calc(100% - 60px);
   height: auto;
-  overflow-y: scroll; /* forçar exibição da barra (visível mesmo sem overflow em alguns navegadores) */
+  overflow-y: auto;
   overflow-x: hidden;
   margin-top: 0;
-  align-items: center;
-  margin-left: 10px;
-  box-sizing: border-box; /* evitar cálculo errado por padding */
+  margin-left: 0; /* remove left offset that could cause layout shift */
+  box-sizing: border-box;
   position: relative;
 }
 
@@ -549,32 +939,96 @@ body {
   display: flex;
   align-items: center;
   position: relative;
-  margin-bottom: 6px; /* reduzido para diminuir espaçamento entre cards */
-  gap: 0px;
-  margin-left: 0px;
+  margin-bottom: 8px;
+  gap: 8px; /* Espaçamento reduzido entre rank e card (ajustado) */
+  padding: 0;
 }
 
+/* Normalizar alinhamento do último item da lista de mentores */
+.mentor-wrapper .mentor-item:last-child {
+  margin-bottom: 8px;
+  align-items: center;
+}
+/* Regra de .mentor-rank-externo unificada está definida no topo do arquivo.
+   Mantida somente a declaração única para evitar conflitos entre regras.
+*/
+
+/* ===== MENTORES SEM VALORES - OPACIDADE E EXCLUSÃO DO RANK ===== */
+.mentor-item.sem-valores {
+  opacity: 0.4;
+  transition: opacity 0.3s ease;
+}
+
+.mentor-item.sem-valores:hover {
+  opacity: 0.6;
+}
+
+.mentor-item.sem-valores .mentor-rank-externo {
+  display: none !important;
+}
+
+/* Ajustar gap quando não há rank */
+.mentor-item.sem-valores .mentor-card {
+  margin-left: 0;
+}
+
+/* Visual diferenciado para card sem valores */
+.mentor-item.sem-valores .mentor-card {
+  background: #f5f5f5;
+  border-style: dashed;
+}
+
+/* Desabilitar efeitos hover em cards sem valores */
+.mentor-item.sem-valores .mentor-card:hover {
+  transform: none;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+  cursor: default;
+}
+
+/* Manter o botão de menu (3 pontinhos) visível e clicável mesmo quando o mentor
+   estiver com a classe .sem-valores. O card fica desabilitado, mas o toggle deve
+   permanecer em cima para ações administrativas. */
+.mentor-item.sem-valores .menu-toggle,
+.mentor-item.sem-valores .mentor-menu-externo {
+  pointer-events: auto !important;
+  opacity: 1 !important;
+  visibility: visible !important;
+  display: inline-flex !important;
+  z-index: 99999 !important;
+}
+
+.mentor-item.sem-valores .menu-toggle {
+  position: relative !important;
+}
+
+/* ===== CARD PRINCIPAL - ESTRUTURA CORRIGIDA ===== */
 .mentor-card {
   display: flex;
   align-items: center;
-  border: 1px solid #dcdcdc;
-  border-radius: 10px;
-  padding: clamp(4px, 1.5vw, 8px); /* Padding responsivo */
+  flex: 1 1 auto; /* Ocupa o espaço restante */
+
+  /* Dimensões */
+  height: 82px; /* Altura aumentada para acomodar valores maiores */
+  min-height: 82px;
+
+  /* Espaçamento interno */
+  padding: 8px 12px;
+  padding-right: 60px; /* Espaço para o menu de 3 pontos (restaurado) */
+
+  /* Visual */
   background-color: #f7f6f6;
-  flex: 1 1 auto;
-  width: 330px;
-  height: clamp(55px, 10vw, 80px); /* Altura responsiva (ajustada levemente) */
-  font-family: "Rajdhani", sans-serif !important;
-  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
-  cursor: pointer;
-  transition: transform 0.3s ease, box-shadow 0.3s ease;
-  margin-left: 8px; /* pequeno espaçamento a partir do rank */
-  position: relative;
-  margin-right: 0;
-  margin-bottom: 6px; /* reduzido para diminuir espaçamento entre cards */
-  padding-right: 56px; /* espaço para o menu de opções à direita */
+  border: 1px solid #dcdcdc;
+  border-radius: 12px;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+
+  /* Layout */
+  gap: 12px; /* Espaçamento entre foto e valores */
   box-sizing: border-box;
-  margin-left: -10px;
+  position: relative;
+  overflow: hidden;
+
+  /* Transições */
+  transition: transform 0.2s ease, box-shadow 0.2s ease;
 }
 
 .card-neutro {
@@ -590,8 +1044,8 @@ body {
 }
 
 .mentor-card:hover {
-  transform: scale(1.03);
-  box-shadow: 0 8px 12px rgba(0, 0, 0, 0.15);
+  transform: translateY(-2px);
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.15);
 }
 
 .mentor-header {
@@ -599,7 +1053,11 @@ body {
   flex-direction: column;
   align-items: center;
   justify-content: center;
-  width: clamp(60px, 15vw, 100px); /* Largura responsiva */
+  width: clamp(
+    48px,
+    12vw,
+    80px
+  ); /* reduzido para liberar mais espaço horizontal */
   flex-shrink: 0;
 }
 
@@ -609,8 +1067,8 @@ body {
   border-radius: 50%;
   object-fit: cover;
   border: 2px solid #00a651;
-  margin-top: 15px;
-  margin-left: 0px;
+  margin-top: 5px; /* alinhar verticalmente: 5px pedido pelo usuário */
+  margin-left: 0; /* remover deslocamento horizontal que causava desalinhamento */
 }
 
 .mentor-nome {
@@ -619,24 +1077,26 @@ body {
   color: #333;
   text-align: center;
   font-weight: normal;
+  margin-left: 0; /* remover deslocamento horizontal */
 }
 
 .mentor-right {
   display: flex;
-  justify-content: flex-end;
-  flex: 1;
+  justify-content: center; /* centralizar valores horizontalmente dentro do card */
+  flex: 1 1 auto; /* permitir que a área direita cresça para acomodar valores maiores */
   height: 100%;
   align-items: center;
 }
 
 .mentor-values-inline {
   display: flex;
-  justify-content: flex-end;
+  justify-content: center; /* centralizar o conjunto de valores */
   align-items: center;
   height: 100%;
-  gap: 2px;
+  gap: 6px; /* pequeno gap */
   flex-wrap: nowrap;
-  width: 100%;
+  width: 100%; /* ocupar espaço disponível à direita */
+  margin-right: 6px; /* espaço para o menu de opções */
 }
 
 /* Separador visual entre Green e Red: mostra "×" entre os dois números */
@@ -663,15 +1123,13 @@ body {
 .mentor-card .value-box-green p:nth-child(2),
 .mentor-card .value-box-red p:nth-child(2),
 .mentor-card .value-box-saldo p:nth-child(2) {
-  font-size: 15px !important;
+  font-size: 14px !important;
   line-height: 1 !important;
 }
 
 .value-box-green,
 .value-box-red,
 .value-box-saldo {
-  width: clamp(40px, 8vw, 60px); /* Largura responsiva */
-  min-width: clamp(40px, 8vw, 60px);
   height: clamp(45px, 9vw, 60px); /* Altura responsiva */
   display: flex;
   flex-direction: column;
@@ -681,9 +1139,48 @@ body {
   text-align: center;
 }
 
+.value-box-green {
+  flex: 0 0 clamp(40px, 8vw, 60px); /* largura fixa para coluna Green */
+}
+
+.value-box-red {
+  flex: 0 0 clamp(40px, 8vw, 60px); /* largura fixa para coluna Red */
+}
+
 .value-box-saldo {
-  flex-grow: 1;
-  min-width: clamp(60px, 12vw, 80px); /* Largura mínima responsiva */
+  flex: 1 1 auto; /* ocupa o restante */
+  min-width: clamp(
+    80px,
+    16vw,
+    120px
+  ); /* Largura mínima aumentada para mostrar o valor sem cortar */
+  display: flex;
+  align-items: center;
+  justify-content: center; /* centralizar o valor dentro da coluna de saldo */
+  padding-left: 0; /* remover padding para evitar indentação */
+  white-space: nowrap; /* evitar quebra */
+  overflow: hidden; /* evitar que estoure o card */
+}
+
+.value-box-saldo p:nth-child(2) {
+  text-align: left !important;
+  display: inline-block !important;
+  white-space: nowrap !important;
+}
+
+/* Garantir que o valor do saldo fique em uma única linha e com 12px */
+.value-box-saldo {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  white-space: nowrap; /* evita quebra em múltiplas linhas */
+  overflow: hidden;
+}
+
+.mentor-card .value-box-saldo p:nth-child(2) {
+  font-size: 14px !important;
+  line-height: 1 !important;
+  white-space: nowrap !important;
 }
 
 .value-box-green p,
@@ -728,6 +1225,14 @@ body {
   font-weight: 700;
 }
 
+/* Forçar fonte 14px para placar (green/red) e saldo dentro do mentor card */
+.mentor-card .value-box-green p:nth-child(2),
+.mentor-card .value-box-red p:nth-child(2),
+.mentor-card .value-box-saldo p:nth-child(2) {
+  font-size: 14px !important;
+  line-height: 1 !important;
+}
+
 .value-box-green p:first-child,
 .value-box-red p:first-child,
 .value-box-saldo p:first-child {
@@ -750,24 +1255,19 @@ body {
   color: rgb(95, 93, 93);
 }
 
-.mentor-rank-externo {
-  font-size: clamp(11px, 2.2vw, 15px); /* Fonte responsiva */
-
-  color: rgb(43, 42, 42);
-  width: clamp(30px, 6vw, 50px); /* Largura responsiva */
-  text-align: right;
-  /* Aumentar espaço entre o rank e o card */
-  margin-left: -10px;
-  margin-right: 16px;
-}
+/* Regra de .mentor-rank-externo unificada definida mais acima.
+  A definição duplicada foi removida para evitar conflitos
+  (permite que ranks com 2 caracteres, ex: "10º", expandam sem
+  deslocar o card). */
 
 .mentor-menu-externo {
   /* Participa do fluxo flex: fica à direita do card */
   position: static;
-  margin-left: 12px;
-  flex: 0 0 auto;
+  margin-left: 4px; /* espaço reduzido entre card e menu */
+  flex: 0 0 auto; /* não encolhe */
   align-self: center;
   z-index: 10;
+  width: auto;
 }
 
 .menu-toggle {
@@ -775,11 +1275,10 @@ body {
   background-color: transparent;
   border: none;
   cursor: pointer;
-  padding: 5px 10px;
   transition: color 0.3s ease;
   font-size: clamp(16px, 3vw, 22px); /* Fonte responsiva */
   user-select: none;
-  padding: 0px;
+  padding: 4px; /* menor área clicável, mais próximo visualmente */
 }
 
 .menu-toggle:hover {
@@ -797,6 +1296,7 @@ body {
   box-shadow: 0 2px 8px rgba(0, 0, 0, 0.2);
   min-width: 160px;
   padding: 6px;
+  z-index: 99999 !important; /* garantir que fique acima dos cards */
 }
 
 .menu-opcoes button {

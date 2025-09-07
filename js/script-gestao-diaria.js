@@ -1623,6 +1623,20 @@ const TelaEdicaoManager = {
 // ✅ GERENCIADOR DE MENU DE TRÊS PONTOS
 const MenuManager = {
   inicializar() {
+    // Garanta estado inicial: esconda todos os painéis e deixe apenas o toggle visível
+    document.querySelectorAll(".menu-opcoes").forEach((menu) => {
+      menu.style.display = "none";
+      // força posicionamento alto para evitar sobreposição por outros elementos via JS
+      menu.style.zIndex = "99999";
+    });
+
+    // Garante que o botão de 3 pontinhos esteja visível (caso o servidor oculte)
+    document.querySelectorAll(".menu-toggle").forEach((t) => {
+      t.style.display = "inline-block";
+      t.style.zIndex = "100000";
+    });
+
+    // Gerencia abertura/fechamento via clique (mantendo lógica existente)
     document.addEventListener("click", (e) => {
       const isToggle = e.target.classList.contains("menu-toggle");
 
@@ -5403,7 +5417,406 @@ console.log("- Debug com debugMentorOculto()");
 // ========================================================================================================================
 //                                  ✅  FIM VERIFICAÇÃO DE MENTORES CADASTRADO PARA NÃO DA ERRO
 // ========================================================================================================================
+// ========================================================================================================================
+//                                  ✅  SISTEMA DE CORES DINÂMICAS DO RANK
+// ========================================================================================================================
 
+// Adicionar classe ao rank baseada no estado do card
+function atualizarCoresRank() {
+  document.querySelectorAll(".mentor-item").forEach((item) => {
+    const card = item.querySelector(".mentor-card");
+    const rank = item.querySelector(".mentor-rank-externo");
+
+    if (card && rank) {
+      // Remove classes antigas
+      rank.classList.remove("rank-positivo", "rank-negativo", "rank-neutro");
+
+      // Adiciona classe baseada no estado do card
+      if (card.classList.contains("card-positivo")) {
+        rank.classList.add("rank-positivo");
+      } else if (card.classList.contains("card-negativo")) {
+        rank.classList.add("rank-negativo");
+      } else if (card.classList.contains("card-neutro")) {
+        rank.classList.add("rank-neutro");
+      }
+    }
+  });
+}
+
+// Integrar com o MentorManager existente
+if (typeof MentorManager !== "undefined") {
+  const originalAplicarEstilos = MentorManager.aplicarEstilosCorretos;
+
+  MentorManager.aplicarEstilosCorretos = function () {
+    // Executa função original
+    if (originalAplicarEstilos) {
+      originalAplicarEstilos.call(this);
+    }
+
+    // Aplica cores aos ranks
+    setTimeout(atualizarCoresRank, 100);
+  };
+}
+
+// Executar quando a página carregar
+document.addEventListener("DOMContentLoaded", () => {
+  setTimeout(atualizarCoresRank, 500);
+});
+
+// ========================================================================================================================
+//                                  ✅  FIM SISTEMA DE CORES DINÂMICAS DO RANK
+// ========================================================================================================================
+// ========================================================================================================================
+//                     ✅ SISTEMA DE RANKING DINÂMICO ROBUSTO - SEMPRE ATUALIZADO
+// ========================================================================================================================
+
+// Função principal de atualização do ranking
+function atualizarRankingMentores() {
+  console.log("🔄 Iniciando atualização de ranking...");
+
+  // Aguardar um momento para garantir que o DOM está pronto
+  setTimeout(() => {
+    executarAtualizacaoRanking();
+  }, 100);
+}
+
+function executarAtualizacaoRanking() {
+  // Coletar todos os mentores
+  const mentores = [];
+  const items = document.querySelectorAll(".mentor-item");
+
+  if (items.length === 0) {
+    console.log("⚠️ Nenhum mentor encontrado");
+    return;
+  }
+
+  items.forEach((item) => {
+    // Pular item se for o container "sem mentores"
+    if (item.classList.contains("sem-mentores")) return;
+
+    const card = item.querySelector(".mentor-card");
+    if (!card) return;
+
+    // Pegar valores de green e red diretamente dos elementos
+    const greenElement = item.querySelector(".value-box-green p:nth-child(2)");
+    const redElement = item.querySelector(".value-box-red p:nth-child(2)");
+    const saldoElement = item.querySelector(".value-box-saldo p:nth-child(2)");
+
+    const green = parseInt(greenElement?.textContent || "0") || 0;
+    const red = parseInt(redElement?.textContent || "0") || 0;
+    const saldoTexto = saldoElement?.textContent || "R$ 0,00";
+
+    // Extrair valor numérico do saldo
+    const saldo =
+      parseFloat(
+        saldoTexto.replace("R$", "").replace(/\./g, "").replace(",", ".").trim()
+      ) || 0;
+
+    mentores.push({
+      element: item,
+      green: green,
+      red: red,
+      saldo: saldo,
+      temValor: green > 0 || red > 0,
+    });
+  });
+
+  // Separar mentores
+  const mentoresComValor = mentores.filter((m) => m.temValor);
+  const mentoresSemValor = mentores.filter((m) => !m.temValor);
+
+  // Ordenar mentores com valor por saldo
+  mentoresComValor.sort((a, b) => b.saldo - a.saldo);
+
+  // Container pai
+  const container =
+    document.getElementById("listaMentores") ||
+    document.querySelector(".mentor-wrapper");
+  if (!container) {
+    console.log("⚠️ Container não encontrado");
+    return;
+  }
+
+  // Preservar elementos auxiliares
+  const elementosAuxiliares = container.querySelectorAll(
+    "#total-green-dia, #total-red-dia, #saldo-dia, #meta-meia-unidade, #estado-mentores, .sem-mentores"
+  );
+
+  // Criar fragmento para reordenação
+  const fragment = document.createDocumentFragment();
+
+  // Adicionar mentores COM valor
+  mentoresComValor.forEach((mentor, index) => {
+    const rank = index + 1;
+    const rankElement = mentor.element.querySelector(".mentor-rank-externo");
+
+    // Configurar elemento
+    mentor.element.classList.remove("sem-valores");
+
+    // Garantir que o menu dos 3 pontinhos esteja visível e habilitado
+    const menuToggleEnable =
+      mentor.element.querySelector(".menu-toggle") ||
+      mentor.element.querySelector(".mentor-menu-externo");
+    if (menuToggleEnable) {
+      try {
+        menuToggleEnable.style.display = "";
+        menuToggleEnable.style.visibility = "visible";
+        menuToggleEnable.style.pointerEvents = "auto";
+        menuToggleEnable.style.opacity = "1";
+        menuToggleEnable.style.zIndex = "99999";
+      } catch (e) {
+        // silencioso
+      }
+    }
+
+    if (rankElement) {
+      rankElement.textContent = rank + "º";
+      rankElement.style.display = "flex";
+      rankElement.style.visibility = "visible";
+
+      // Cores do rank
+      rankElement.classList.remove(
+        "rank-positivo",
+        "rank-negativo",
+        "rank-neutro"
+      );
+      if (mentor.saldo > 0) {
+        rankElement.classList.add("rank-positivo");
+      } else if (mentor.saldo < 0) {
+        rankElement.classList.add("rank-negativo");
+      } else {
+        rankElement.classList.add("rank-neutro");
+      }
+    }
+
+    fragment.appendChild(mentor.element);
+  });
+
+  // Adicionar mentores SEM valor
+  mentoresSemValor.forEach((mentor) => {
+    mentor.element.classList.add("sem-valores");
+
+    const rankElement = mentor.element.querySelector(".mentor-rank-externo");
+    if (rankElement) {
+      rankElement.style.display = "none";
+      rankElement.style.visibility = "hidden";
+    }
+
+    // Assegurar que o toggle dos 3 pontinhos continue visível e clicável mesmo com sem-valores
+    const menuToggle =
+      mentor.element.querySelector(".menu-toggle") ||
+      mentor.element.querySelector(".mentor-menu-externo");
+    if (menuToggle) {
+      try {
+        // Exibir apenas o toggle; o painel interno pode permanecer oculto
+        menuToggle.style.display = "";
+        menuToggle.style.visibility = "visible";
+        menuToggle.style.pointerEvents = "auto";
+        menuToggle.style.opacity = "1";
+        menuToggle.style.zIndex = "99999";
+      } catch (e) {
+        // ignorar erros de estilo
+      }
+    }
+
+    fragment.appendChild(mentor.element);
+  });
+
+  // Remover apenas mentor-items do container
+  const mentorItems = container.querySelectorAll(
+    ".mentor-item:not(.sem-mentores)"
+  );
+  mentorItems.forEach((item) => item.remove());
+
+  // Inserir na nova ordem
+  if (
+    elementosAuxiliares.length > 0 &&
+    elementosAuxiliares[0].parentNode === container
+  ) {
+    container.insertBefore(fragment, elementosAuxiliares[0]);
+  } else {
+    container.appendChild(fragment);
+  }
+
+  console.log(
+    `✅ Ranking atualizado: ${mentoresComValor.length} ativos, ${mentoresSemValor.length} inativos`
+  );
+}
+
+// ===== INTEGRAÇÃO COMPLETA COM TODOS OS SISTEMAS =====
+
+// 1. Integrar com MentorManager
+if (typeof MentorManager !== "undefined") {
+  const originalRecarregar = MentorManager.recarregarMentores;
+
+  MentorManager.recarregarMentores = async function () {
+    const resultado = await originalRecarregar.call(this);
+
+    // Sempre atualizar ranking após recarregar
+    setTimeout(() => {
+      console.log("📊 Atualizando ranking após recarregar mentores");
+      atualizarRankingMentores();
+    }, 500);
+
+    return resultado;
+  };
+}
+
+// 2. Integrar com Sistema de Filtro (Dia/Mês/Ano)
+if (typeof SistemaFiltroPeriodo !== "undefined") {
+  const originalAlterarPeriodo = SistemaFiltroPeriodo.alterarPeriodo;
+
+  SistemaFiltroPeriodo.alterarPeriodo = async function (periodo) {
+    await originalAlterarPeriodo.call(this, periodo);
+
+    // Atualizar ranking após mudar período
+    setTimeout(() => {
+      console.log(`📊 Atualizando ranking após mudar para: ${periodo}`);
+      atualizarRankingMentores();
+    }, 800);
+  };
+
+  // Também interceptar reaplicarEventos
+  const originalReaplicar = SistemaFiltroPeriodo.reaplicarEventos;
+
+  SistemaFiltroPeriodo.reaplicarEventos = function () {
+    if (originalReaplicar) {
+      originalReaplicar.call(this);
+    }
+
+    setTimeout(() => {
+      console.log("📊 Atualizando ranking após reaplicar eventos");
+      atualizarRankingMentores();
+    }, 300);
+  };
+}
+
+// 3. Integrar com cadastro de valores
+if (typeof App !== "undefined") {
+  const originalProcessar = App.processarSubmissaoFormulario;
+
+  App.processarSubmissaoFormulario = async function (form) {
+    const resultado = await originalProcessar.call(this, form);
+
+    setTimeout(() => {
+      console.log("📊 Atualizando ranking após cadastrar valor");
+      atualizarRankingMentores();
+    }, 1500);
+
+    return resultado;
+  };
+}
+
+// 4. Executar ao carregar a página
+document.addEventListener("DOMContentLoaded", () => {
+  console.log("📊 Inicializando sistema de ranking");
+
+  // Múltiplas tentativas para garantir execução
+  setTimeout(atualizarRankingMentores, 500);
+  setTimeout(atualizarRankingMentores, 1500);
+  setTimeout(atualizarRankingMentores, 3000);
+});
+
+// 5. Observer para mudanças no DOM
+const observerConfig = { childList: true, subtree: true };
+let observerTimeout;
+
+const mentorObserver = new MutationObserver((mutations) => {
+  // Verificar se houve mudança relevante
+  const mudancaRelevante = mutations.some((mutation) => {
+    return Array.from(mutation.addedNodes).some(
+      (node) =>
+        node.classList &&
+        (node.classList.contains("mentor-item") ||
+          node.classList.contains("mentor-card"))
+    );
+  });
+
+  if (mudancaRelevante) {
+    clearTimeout(observerTimeout);
+    observerTimeout = setTimeout(() => {
+      console.log("📊 Mudança detectada no DOM, atualizando ranking");
+      atualizarRankingMentores();
+    }, 500);
+  }
+});
+
+// Iniciar observer quando o container existir
+const iniciarObserver = setInterval(() => {
+  const container = document.getElementById("listaMentores");
+  if (container) {
+    mentorObserver.observe(container, observerConfig);
+    clearInterval(iniciarObserver);
+    console.log("👁️ Observer de mentores iniciado");
+  }
+}, 1000);
+
+// 6. Função global para forçar atualização
+window.forcarAtualizacaoRanking = function () {
+  console.log("🔨 Forçando atualização de ranking");
+  executarAtualizacaoRanking();
+};
+
+// 7. Debug melhorado
+window.debugRanking = function () {
+  const mentores = [];
+
+  document.querySelectorAll(".mentor-item").forEach((item, index) => {
+    if (item.classList.contains("sem-mentores")) return;
+
+    const nome = item.querySelector(".mentor-nome")?.textContent || "Sem nome";
+    const green =
+      item.querySelector(".value-box-green p:nth-child(2)")?.textContent || "0";
+    const red =
+      item.querySelector(".value-box-red p:nth-child(2)")?.textContent || "0";
+    const saldo =
+      item.querySelector(".value-box-saldo p:nth-child(2)")?.textContent ||
+      "R$ 0,00";
+    const rankVisivel =
+      item.querySelector(".mentor-rank-externo")?.style.display !== "none";
+    const temClasse = item.classList.contains("sem-valores");
+
+    mentores.push({
+      posicao: index + 1,
+      nome,
+      green,
+      red,
+      saldo,
+      rankVisivel,
+      semValores: temClasse,
+    });
+  });
+
+  console.table(mentores);
+
+  const comValor = mentores.filter((m) => !m.semValores);
+  const semValor = mentores.filter((m) => m.semValores);
+
+  console.log(
+    `✅ Com valor: ${comValor.length} | ❌ Sem valor: ${semValor.length}`
+  );
+
+  return {
+    mentores,
+    estatisticas: {
+      total: mentores.length,
+      comValor: comValor.length,
+      semValor: semValor.length,
+      ordemCorreta:
+        semValor.length === 0 ||
+        comValor.length === 0 ||
+        comValor[comValor.length - 1].posicao < semValor[0].posicao,
+    },
+  };
+};
+
+console.log("✅ Sistema de Ranking Robusto carregado!");
+console.log("🔧 Use forcarAtualizacaoRanking() para atualizar manualmente");
+console.log("🔍 Use debugRanking() para diagnóstico completo");
+
+// ========================================================================================================================
+//                        ✅ FIM SISTEMA DE RANKING DINÂMICO ROBUSTO
+// ========================================================================================================================
 // ===== WORKAROUND: mover contêineres de modal para o <body> para evitar problemas
 // com stacking context (transform, z-index em ancestrais). Isso garante que o
 // overlay do modal cubra toda a página sempre.
