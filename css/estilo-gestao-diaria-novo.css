@@ -954,35 +954,28 @@ body {
 */
 
 /* ===== MENTORES SEM VALORES - OPACIDADE E EXCLUSÃO DO RANK ===== */
-.mentor-item.sem-valores {
-  opacity: 0.4;
-  transition: opacity 0.3s ease;
+
+.mentor-item.sem-valores .mentor-card {
+  opacity: 0.42; /* leve dim apenas no card */
+  transition: opacity 0.3s ease, transform 0.2s ease;
+  background: #f5f5f5;
+  border-style: dashed;
+  margin-left: 0; /* ajustar gap quando não há rank */
+  cursor: pointer; /* permitir mão de clique mesmo quando sem valores */
 }
 
-.mentor-item.sem-valores:hover {
-  opacity: 0.6;
+.mentor-item.sem-valores .mentor-card:hover {
+  transform: none;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+  cursor: pointer;
+}
+
+.mentor-item.sem-valores:hover .mentor-card {
+  opacity: 0.6; /* leve clareamento no hover mantendo menu legível */
 }
 
 .mentor-item.sem-valores .mentor-rank-externo {
   display: none !important;
-}
-
-/* Ajustar gap quando não há rank */
-.mentor-item.sem-valores .mentor-card {
-  margin-left: 0;
-}
-
-/* Visual diferenciado para card sem valores */
-.mentor-item.sem-valores .mentor-card {
-  background: #f5f5f5;
-  border-style: dashed;
-}
-
-/* Desabilitar efeitos hover em cards sem valores */
-.mentor-item.sem-valores .mentor-card:hover {
-  transform: none;
-  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
-  cursor: default;
 }
 
 /* Manter o botão de menu (3 pontinhos) visível e clicável mesmo quando o mentor
@@ -1046,6 +1039,7 @@ body {
 .mentor-card:hover {
   transform: translateY(-2px);
   box-shadow: 0 4px 8px rgba(0, 0, 0, 0.15);
+  cursor: pointer; /* mostra mão de clique ao passar o mouse sobre o card */
 }
 
 .mentor-header {
@@ -1261,12 +1255,14 @@ body {
   deslocar o card). */
 
 .mentor-menu-externo {
-  /* Participa do fluxo flex: fica à direita do card */
-  position: static;
-  margin-left: 4px; /* espaço reduzido entre card e menu */
-  flex: 0 0 auto; /* não encolhe */
+  /* Manter o menu posicionado sobre o card e fora de qualquer overflow
+     do card; usar position: relative aqui e z-index alto para que
+     .menu-opcoes (absoluto) possa flutuar acima do card. */
+  position: relative;
+  margin-left: 6px; /* pequeno espaçamento entre card e menu */
+  flex: 0 0 auto;
   align-self: center;
-  z-index: 10;
+  z-index: 100000; /* garantir precedência sobre o card */
   width: auto;
 }
 
@@ -1293,10 +1289,10 @@ body {
   background-color: #fff;
   border: 1px solid #ccc;
   border-radius: 6px;
-  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.2);
+  box-shadow: 0 2px 12px rgba(0, 0, 0, 0.25);
   min-width: 160px;
   padding: 6px;
-  z-index: 99999 !important; /* garantir que fique acima dos cards */
+  z-index: 100001 !important; /* garantir que fique acima dos cards */
 }
 
 .menu-opcoes button {
