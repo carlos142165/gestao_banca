@@ -746,7 +746,7 @@ ob_end_flush();
             <div class="area-central">
                 <div class="pontuacao" id="pontuacao">
                     <span class="placar-green">0</span>
-                    <span class="separador">×</span>
+                    <span class="separador">x</span>
                     <span class="placar-red">0</span>
                 </div>
             </div>

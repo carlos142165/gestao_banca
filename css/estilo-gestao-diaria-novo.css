@@ -3,7 +3,7 @@ html,
 body {
   margin: 0;
   padding: 0;
-  height: 100vh;
+
   overflow: hidden;
   font-family: "Poppins", sans-serif;
   background: rgba(206, 214, 209, 0.95) !important;
@@ -12,8 +12,7 @@ body {
   display: flex;
   justify-content: center; /* Centraliza horizontalmente */
   align-items: stretch;
-  height: 100vh;
-  max-height: 100vh;
+
   overflow: hidden;
   gap: 18px;
   padding: 12px;
@@ -374,7 +373,7 @@ body {
 .campo_mentores {
   position: relative;
   width: 100%; /* Sempre 100% da largura do bloco pai */
-  height: 580px;
+  height: 567px;
   background: rgba(247, 246, 246, 0.95);
   backdrop-filter: blur(5px);
   display: flex;
@@ -495,26 +494,54 @@ body {
 .mentor-wrapper {
   padding: clamp(10px, 3vw, 30px); /* Padding responsivo */
   width: 100%;
-  height: calc(100% - 60px);
-  overflow-y: auto;
+  /* Garantir que a área de mentores tenha altura limitada e permita scroll interno */
+  max-height: calc(100% - 60px);
+  height: auto;
+  overflow-y: scroll; /* forçar exibição da barra (visível mesmo sem overflow em alguns navegadores) */
   overflow-x: hidden;
   margin-top: 0;
   align-items: center;
   margin-left: 10px;
+  box-sizing: border-box; /* evitar cálculo errado por padding */
+  position: relative;
+}
+
+/* Barra de rolagem fina que combina com o fundo de .campo_mentores
+   Padrão: cor suave parecida com o fundo; ao passar o mouse sobre o container
+   a cor do thumb fica mais forte. Compatível WebKit (Chrome/Safari/Edge) e Firefox */
+.mentor-wrapper {
+  /* Força um scrollbar fino em navegadores Firefox */
+  scrollbar-width: thin;
+  /* thumb default color + track transparent for firefox */
+  scrollbar-color: rgba(247, 246, 246, 0.6) transparent;
 }
 
 .mentor-wrapper::-webkit-scrollbar {
-  width: 0px;
+  width: 8px; /* um pouco mais larga para ficar visível */
 }
 
 .mentor-wrapper::-webkit-scrollbar-track {
-  background: rgba(0, 0, 0, 0.1);
+  background: rgba(0, 0, 0, 0.03); /* leve contraste com o conteúdo */
   border-radius: 10px;
 }
 
 .mentor-wrapper::-webkit-scrollbar-thumb {
-  background: linear-gradient(135deg, #9e9e9e, #a8a8a8);
+  background: rgba(0, 0, 0, 0.14); /* visível por padrão */
   border-radius: 10px;
+  transition: background-color 0.12s ease, box-shadow 0.12s ease;
+  border: 1px solid rgba(255, 255, 255, 0.06);
+}
+
+/* Quando o usuário move o mouse sobre o container, o thumb fica mais visível */
+.mentor-wrapper:hover {
+  /* firefox on-hover color */
+  scrollbar-color: rgba(60, 60, 60, 0.95) rgba(0, 0, 0, 0.04);
+}
+
+.mentor-wrapper:hover::-webkit-scrollbar-thumb,
+.mentor-wrapper::-webkit-scrollbar-thumb:hover {
+  background: rgba(60, 60, 60, 0.95); /* cor mais forte ao hover */
+  box-shadow: inset 0 0 0 1px rgba(0, 0, 0, 0.08);
 }
 
 /* ===== ESTILOS DOS MENTORES RESPONSIVOS ===== */
@@ -522,7 +549,7 @@ body {
   display: flex;
   align-items: center;
   position: relative;
-  margin-bottom: 12px;
+  margin-bottom: 6px; /* reduzido para diminuir espaçamento entre cards */
   gap: 0px;
   margin-left: 0px;
 }
@@ -534,18 +561,20 @@ body {
   border-radius: 10px;
   padding: clamp(4px, 1.5vw, 8px); /* Padding responsivo */
   background-color: #f7f6f6;
-  width: calc(100% - 50px); /* Largura sempre proporcional ao container */
-  height: clamp(55px, 10vw, 80px); /* Altura responsiva */
-  font-family: Arial, sans-serif;
+  flex: 1 1 auto;
+  width: 330px;
+  height: clamp(55px, 10vw, 80px); /* Altura responsiva (ajustada levemente) */
+  font-family: "Rajdhani", sans-serif !important;
   box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
   cursor: pointer;
   transition: transform 0.3s ease, box-shadow 0.3s ease;
-  margin-left: 12px;
-  flex: 1;
+  margin-left: 8px; /* pequeno espaçamento a partir do rank */
   position: relative;
-  margin-right: 38px;
-  margin-bottom: 10px;
+  margin-right: 0;
+  margin-bottom: 6px; /* reduzido para diminuir espaçamento entre cards */
+  padding-right: 56px; /* espaço para o menu de opções à direita */
   box-sizing: border-box;
+  margin-left: -10px;
 }
 
 .card-neutro {
@@ -586,7 +615,7 @@ body {
 
 .mentor-nome {
   font-size: clamp(9px, 1.8vw, 12px); /* Fonte responsiva */
-  margin-top: 1px;
+  margin-top: 2px;
   color: #333;
   text-align: center;
   font-weight: normal;
@@ -608,6 +637,34 @@ body {
   gap: 2px;
   flex-wrap: nowrap;
   width: 100%;
+}
+
+/* Separador visual entre Green e Red: mostra "×" entre os dois números */
+.mentor-values-inline > .value-box-red {
+  position: relative; /* para posicionar o pseudo-elemento fora da caixa */
+}
+
+.mentor-values-inline > .value-box-red::before {
+  content: "x";
+  position: absolute;
+  left: -12px; /* posiciona entre as caixas */
+  top: 50%;
+  transform: translateY(-50%);
+  color: #7f8c8d;
+  font-weight: 500;
+  font-size: 14px !important;
+  font-family: "Rajdhani", sans-serif !important;
+  padding: 0 8px; /* espaço lateral para ficar como '0  x  0' */
+  pointer-events: none;
+}
+
+/* Forçar tamanho de fonte 12px para nomes, rank e contadores dentro do mentor-card */
+
+.mentor-card .value-box-green p:nth-child(2),
+.mentor-card .value-box-red p:nth-child(2),
+.mentor-card .value-box-saldo p:nth-child(2) {
+  font-size: 15px !important;
+  line-height: 1 !important;
 }
 
 .value-box-green,
@@ -643,6 +700,34 @@ body {
   color: #333;
 }
 
+/* Esconder os rótulos textuais "Green" e "Red" mantendo os contadores visíveis */
+.mentor-card .value-box-green p:first-child,
+.mentor-card .value-box-red p:first-child {
+  display: none;
+}
+
+/* Esconder também o rótulo 'Saldo' mantendo o valor visível */
+.mentor-card .value-box-saldo p:first-child {
+  display: none;
+}
+
+/* Colorir os números: primeiro número (contador Green) em verde, segundo (contador Red) em vermelho */
+.mentor-card .value-box-green p:nth-child(2) {
+  color: #00a651; /* verde */
+  font-weight: 700;
+}
+
+.mentor-card .value-box-red p:nth-child(2) {
+  color: #e74c3c; /* vermelho */
+  font-weight: 700;
+}
+
+/* Opcional: tonificar o saldo para cor neutra escura */
+.mentor-card .value-box-saldo p:nth-child(2) {
+  color: #3d3d3d;
+  font-weight: 700;
+}
+
 .value-box-green p:first-child,
 .value-box-red p:first-child,
 .value-box-saldo p:first-child {
@@ -667,18 +752,21 @@ body {
 
 .mentor-rank-externo {
   font-size: clamp(11px, 2.2vw, 15px); /* Fonte responsiva */
-  font-weight: bold;
-  color: rgb(90, 90, 90);
+
+  color: rgb(43, 42, 42);
   width: clamp(30px, 6vw, 50px); /* Largura responsiva */
   text-align: right;
-  margin-left: -12px;
+  /* Aumentar espaço entre o rank e o card */
+  margin-left: -10px;
+  margin-right: 16px;
 }
 
 .mentor-menu-externo {
-  position: absolute;
-  right: 23px;
-  top: 50%;
-  transform: translateY(-50%);
+  /* Participa do fluxo flex: fica à direita do card */
+  position: static;
+  margin-left: 12px;
+  flex: 0 0 auto;
+  align-self: center;
   z-index: 10;
 }
 
@@ -733,6 +821,40 @@ body {
   display: flex;
   flex-direction: column;
   box-sizing: border-box;
+}
+
+/* Garantir que todos os valores/textos dentro do card usem Rajdhani */
+.mentor-card,
+.mentor-card * {
+  font-family: "Rajdhani", sans-serif !important;
+}
+
+/* Ajuste específico para rank e valores numéricos para manter legibilidade */
+.mentor-rank-externo,
+.mentor-card .value-box-green p:nth-child(2),
+.mentor-card .value-box-red p:nth-child(2),
+.mentor-card .value-box-saldo p:nth-child(2),
+.mentor-card .mentor-nome {
+  font-family: "Rajdhani", sans-serif !important;
+}
+
+/* --- Personalizações solicitadas pelo usuário --- */
+/* Nome do mentor menor (11px) */
+.mentor-card .mentor-nome {
+  font-size: 12px !important;
+}
+
+/* Colorir o valor do saldo dependendo do estado do card
+   (as classes card-positivo / card-negativo / card-neutro são geradas server-side)
+*/
+.mentor-card.card-positivo .value-box-saldo p:nth-child(2) {
+  color: #00a651 !important; /* verde */
+}
+.mentor-card.card-negativo .value-box-saldo p:nth-child(2) {
+  color: #e74c3c !important; /* vermelho */
+}
+.mentor-card.card-neutro .value-box-saldo p:nth-child(2) {
+  color: #7f8c8d !important; /* cinza neutro */
 }
 
 .bloco-meta-simples {
