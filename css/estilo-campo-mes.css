@@ -24,7 +24,7 @@
   /* --------------------------------------------------
     Altura - Largura - Bloco + Campo
   -------------------------------------------------- */
-  --lista-dias-base: 432px; /* Altura do bloco 2 */
+  --lista-dias-base: 423px; /* Altura do bloco 2 (reduzido de 432px) */
   --lista-dias-width-base: 420px; /* largura padrão do bloco (era 420px) */
   --lista-dias-maxwidth-block: 420px; /* limite dentro do layout do bloco */
   --lista-dias-maxwidth-desktop: 1200px; /* limite máximo em telas grandes */
@@ -158,7 +158,7 @@
   overflow-y: auto !important;
   height: var(--lista-dias-height-desktop) !important;
   max-height: var(--lista-dias-maxheight-desktop) !important;
-  border-radius: 15px !important;
+  border-radius: 20px !important;
   padding: 12px 16px !important; /* Padding mais generoso para respirar */
   margin: 0 !important;
   border-left: none !important;

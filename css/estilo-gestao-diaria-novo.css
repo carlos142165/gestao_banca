@@ -434,6 +434,132 @@ body {
   box-sizing: border-box;
 }
 
+/* Garantir que o bloco esquerdo não cresça além da viewport e que seus filhos
+   possam rolar internamente sem empurrar os blocos subsequentes. */
+.bloco-1 {
+  display: flex !important;
+  flex-direction: column !important;
+  max-height: calc(
+    100vh - 80px
+  ) !important; /* reserva espaço para topo e margens */
+  overflow: hidden !important; /* controlar overflow nos filhos */
+}
+
+.container-resumos {
+  display: flex !important;
+  flex-direction: column !important;
+  flex: 1 1 auto !important;
+  min-height: 0 !important; /* permite que filhos com overflow rolem corretamente */
+  overflow: hidden !important;
+}
+
+.widget-meta-container,
+.widget-meta-row {
+  flex: 0 0 auto !important;
+}
+
+/* Já que o widget pode aumentar de conteúdo, forçamos seu item a rolar
+   internamente e não expandir o pai. */
+.widget-meta-item {
+  flex: 0 0 auto !important;
+  min-height: 0 !important;
+  max-height: calc(48vh) !important;
+  overflow-y: auto !important;
+  -webkit-overflow-scrolling: touch !important;
+}
+
+/* Forçar layout flex interno para que o cabeçalho não exponha o conteúdo
+   e o corpo role dentro do próprio widget. */
+.widget-meta-item {
+  display: flex !important;
+  flex-direction: column !important;
+}
+
+/* Conteúdo interno principal deve crescer até o espaço disponível e rolar */
+.widget-meta-item > .widget-conteudo-principal {
+  flex: 1 1 auto !important;
+  min-height: 0 !important; /* permite o overflow funcionar dentro do flex */
+  overflow-y: auto !important;
+  -webkit-overflow-scrolling: touch !important;
+}
+
+/* Evitar qualquer overflow horizontal que gere barra embaixo */
+.widget-meta-item,
+.widget-meta-item > .widget-conteudo-principal {
+  overflow-x: hidden !important;
+}
+
+/* Forçar filhos a não ultrapassarem a largura do widget */
+.widget-meta-item .widget-barra-container,
+.widget-meta-item .meta-valor-container,
+.widget-meta-item .valor-ultrapassou,
+.widget-meta-item .widget-info-progresso,
+.widget-meta-item .valor-texto,
+.widget-meta-item .porcentagem-barra {
+  max-width: 100% !important;
+  box-sizing: border-box !important;
+  white-space: normal !important;
+  overflow-wrap: break-word !important;
+  word-break: break-word !important;
+}
+
+/* garantir que o ícone não force largura extra */
+.widget-meta-item .fa-solid {
+  max-width: 1.4em !important;
+}
+
+/* Esconder barras de rolagem mantendo rolagem funcional */
+.widget-meta-item::-webkit-scrollbar,
+.widget-meta-item > .widget-conteudo-principal::-webkit-scrollbar {
+  width: 0 !important;
+  height: 0 !important;
+}
+.widget-meta-item {
+  scrollbar-width: none !important; /* Firefox */
+  -ms-overflow-style: none !important; /* IE 10+ */
+}
+
+/* ---- Override: mostrar scrollbar visível (substitui regras que a escondiam) ---- */
+.widget-meta-item::-webkit-scrollbar,
+.widget-meta-item > .widget-conteudo-principal::-webkit-scrollbar {
+  width: 8px !important;
+  height: 8px !important;
+}
+
+.widget-meta-item::-webkit-scrollbar-track,
+.widget-meta-item > .widget-conteudo-principal::-webkit-scrollbar-track {
+  background: transparent;
+  border-radius: 8px;
+}
+
+.widget-meta-item::-webkit-scrollbar-thumb,
+.widget-meta-item > .widget-conteudo-principal::-webkit-scrollbar-thumb {
+  background: rgba(0, 0, 0, 0.18);
+  border-radius: 8px;
+  border: 2px solid rgba(255, 255, 255, 0.06);
+}
+
+/* Firefox */
+.widget-meta-item,
+.widget-meta-item > .widget-conteudo-principal {
+  scrollbar-width: thin !important;
+  scrollbar-color: rgba(0, 0, 0, 0.18) transparent !important;
+  -ms-overflow-style: auto !important; /* IE */
+}
+
+/* Hover deixa a thumb mais escura para acessibilidade */
+.widget-meta-item:hover::-webkit-scrollbar-thumb,
+.widget-meta-item > .widget-conteudo-principal:hover::-webkit-scrollbar-thumb {
+  background: rgba(0, 0, 0, 0.34);
+}
+
+/* Manter o conteúdo do widget com barras ocultas mas roláveis */
+.widget-meta-item::-webkit-scrollbar,
+.widget-conteudo-principal::-webkit-scrollbar {
+  width: 0;
+  height: 0;
+}
+
 /* Scrollbar customizada para blocos */
 .bloco-1::-webkit-scrollbar {
   width: 6px;
@@ -515,6 +641,15 @@ body {
   box-shadow: 0 8px 20px rgba(0, 0, 0, 0.1);
   position: relative;
   overflow: hidden;
+}
+
+/* Evitar que o widget cresça e empurre containers externos.
+   Definimos um limite máximo e usamos overflow interno. */
+.widget-meta-item {
+  max-height: min(520px, 62vh) !important;
+  overflow: hidden !important;
+  display: flex !important;
+  flex-direction: column !important;
 }
 
 /* ===== TOPO FIXO COM DATA E PLACAR - RESPONSIVO ===== */
@@ -756,6 +891,13 @@ body {
   max-height: min(420px, 55vh) !important;
   overflow-y: auto !important;
   -webkit-overflow-scrolling: touch !important; /* suaviza o scroll em mobile */
+}
+
+/* Permitir que o elemento flex interno role corretamente dentro do pai
+   (solução para o 'overflow' não funcionar em alguns navegadores). */
+.widget-conteudo-principal {
+  flex: 1 1 auto !important;
+  min-height: 0 !important;
 }
 
 /* Esconder a barra de rolagem mas manter a capacidade de rolar (mouse/touch/trackpad) */

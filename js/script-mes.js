@@ -2266,47 +2266,74 @@ console.log(
 //                                  TROFÉU - PARA APARECER  QUANDO A META É BATIDA
 // ========================================================================================================================
 
-// SISTEMA MONITOR CONTÍNUO - FORÇA O ESTADO CORRETO SEMPRE
+// SISTEMA MONITOR CONTÍNUO - VERIFICAÇÃO RIGOROSA DE META
 (function () {
   "use strict";
 
-  console.log("Sistema Monitor Contínuo - Força estado correto sempre...");
+  console.log("Sistema Monitor Contínuo - VERIFICAÇÃO RIGOROSA...");
 
   const MonitorContinuo = {
     ativo: false,
     intervaloMonitor: null,
     intervaloForcador: null,
-    estadoCorreto: null,
+    intervaloForçaBruta: null,
+    estadoCorretoHoje: null,
     ultimoRotulo: "",
+    metasBatidasCache: new Map(),
+    metaHistoricaCache: new Map(),
+    verificandoHistorico: false,
+    forcarTrofeuHoje: false,
+    ultimoSaldoHoje: 0,
+    ultimaMetaHoje: 0,
+    // NOVA: Configuração rigorosa
+    metaDiariaConfigurada: 0,
+    modoRigoroso: true,
 
     inicializar() {
-      console.log("Iniciando monitor contínuo...");
+      console.log("Iniciando monitor RIGOROSO...");
 
       this.ativo = true;
-
-      // Destruir TUDO relacionado a troféu
       this.destruirTudo();
 
-      // Monitor que lê o rótulo (cada 1 segundo)
-      this.intervaloMonitor = setInterval(() => {
-        this.monitorarRotulo();
+      // Primeiro buscar meta real
+      this.buscarMetaRealDoSistema();
+
+      // Verificação inicial limpa
+      this.limparTodosOsTrofeus();
+
+      // Verificar hoje primeiro
+      setTimeout(() => {
+        this.verificarMetaDiariaHojeAgora();
+      }, 500);
+
+      // Verificação histórica rigorosa
+      setTimeout(() => {
+        this.verificarMetasHistoricasRigoroso();
       }, 1000);
 
-      // Forçador que aplica o estado correto (reduzido para cada 1500ms para evitar flicker)
+      // Monitor principal (cada 1 segundo)
+      this.intervaloMonitor = setInterval(() => {
+        this.monitorarRotulo();
+        this.verificarMetaDiariaHojeAgora();
+      }, 1000);
+
+      // Forçador normal (cada 2 segundos)
       this.intervaloForcador = setInterval(() => {
         this.forcarEstadoCorreto();
-      }, 1500);
+      }, 2000);
 
-      // Primeira verificação
-      this.monitorarRotulo();
+      // Forçador BRUTO especificamente para hoje (cada 500ms)
+      this.intervaloForçaBruta = setInterval(() => {
+        this.forcarTrofeuHojeBruto();
+      }, 500);
 
-      console.log("Monitor contínuo ativo");
+      console.log("Monitor RIGOROSO ativo");
     },
 
     destruirTudo() {
-      console.log("DESTRUINDO tudo relacionado a troféu...");
+      console.log("DESTRUINDO sistemas de troféu...");
 
-      // Parar TODOS os intervalos da página
+      // Parar intervalos
       const maxId = setTimeout(() => {}, 0);
       for (let i = 1; i <= maxId; i++) {
         try {
@@ -2336,39 +2363,271 @@ console.log(
           try {
             window[nome].ativo = false;
             if (window[nome].parar) window[nome].parar();
-            // Destruir completamente
             window[nome] = null;
             delete window[nome];
           } catch (e) {}
         }
       });
+    },
 
-      // Bloquear criação de intervalos suspeitos
-      const originalSetInterval = window.setInterval;
-      const originalSetTimeout = window.setTimeout;
+    // NOVA FUNÇÃO: Buscar meta real do sistema
+    async buscarMetaRealDoSistema() {
+      try {
+        console.log("Buscando meta real do sistema...");
 
-      window.setInterval = function (func, delay) {
-        const funcString = func.toString();
-        if (
-          funcString.includes("fa-trophy") ||
-          funcString.includes("trofeu") ||
-          funcString.includes("meta-batida") ||
-          funcString.includes("aplicarTrofeus")
-        ) {
-          console.log("Interval suspeito bloqueado");
-          return { clear: () => {} };
+        // Tentar múltiplas fontes
+        let metaEncontrada = 0;
+
+        // Fonte 1: dados-mes-info
+        const dadosMesInfo = document.getElementById("dados-mes-info");
+        if (dadosMesInfo) {
+          const metaInfo = dadosMesInfo.getAttribute("data-meta-diaria");
+          if (metaInfo) {
+            metaEncontrada = parseFloat(metaInfo) || 0;
+            console.log(
+              `Meta do dados-mes-info: R$ ${metaEncontrada.toFixed(2)}`
+            );
+          }
         }
-        return originalSetInterval.apply(this, arguments);
-      };
 
-      window.setTimeout = function (func, delay) {
-        const funcString = func.toString();
-        if (funcString.includes("fa-trophy") || funcString.includes("trofeu")) {
-          console.log("Timeout suspeito bloqueado");
-          return { clear: () => {} };
+        // Fonte 2: PHP
+        if (metaEncontrada === 0) {
+          try {
+            const response = await fetch("dados_banca.php", {
+              method: "GET",
+              headers: {
+                "Cache-Control": "no-cache",
+                "X-Requested-With": "XMLHttpRequest",
+              },
+            });
+
+            if (response.ok) {
+              const data = await response.json();
+              if (data.success && data.meta_diaria) {
+                metaEncontrada = parseFloat(data.meta_diaria) || 0;
+                console.log(`Meta do PHP: R$ ${metaEncontrada.toFixed(2)}`);
+              }
+            }
+          } catch (e) {
+            console.log("Erro ao buscar meta do PHP:", e);
+          }
         }
-        return originalSetTimeout.apply(this, arguments);
-      };
+
+        // Salvar meta configurada
+        this.metaDiariaConfigurada = metaEncontrada;
+        this.ultimaMetaHoje = metaEncontrada;
+
+        console.log(
+          `META CONFIGURADA: R$ ${this.metaDiariaConfigurada.toFixed(2)}`
+        );
+
+        return metaEncontrada;
+      } catch (error) {
+        console.error("Erro ao buscar meta real:", error);
+        this.metaDiariaConfigurada = 0;
+        return 0;
+      }
+    },
+
+    // NOVA FUNÇÃO: Limpar todos os troféus inicialmente
+    limparTodosOsTrofeus() {
+      try {
+        console.log("Limpando TODOS os troféus para verificação rigorosa...");
+
+        // Limpar caches
+        this.metasBatidasCache.clear();
+        this.metaHistoricaCache.clear();
+
+        // Aplicar checks em todas as linhas
+        document.querySelectorAll(".gd-linha-dia").forEach((linha) => {
+          const icone = linha.querySelector(".icone i");
+          if (icone) {
+            this.aplicarCheckForcado(icone, linha);
+          }
+        });
+
+        console.log(
+          "Todos os troféus limpos - só serão adicionados se meta realmente batida"
+        );
+      } catch (error) {
+        console.error("Erro ao limpar troféus:", error);
+      }
+    },
+
+    // FUNÇÃO CORRIGIDA: Verificação rigorosa da meta de hoje
+    async verificarMetaDiariaHojeAgora() {
+      try {
+        const hoje = this.obterDataHoje();
+        const linha = document.querySelector(`[data-date="${hoje}"]`);
+
+        if (!linha) {
+          console.log("Linha de hoje não encontrada");
+          return false;
+        }
+
+        // Extrair saldo atual
+        const valorElement = linha.querySelector(".valor");
+        if (!valorElement) {
+          console.log("Elemento valor não encontrado");
+          return false;
+        }
+
+        const valorTexto = valorElement.textContent
+          .replace(/[^\d,-]/g, "")
+          .replace(",", ".");
+        const saldoAtual = parseFloat(valorTexto) || 0;
+
+        // Usar meta configurada do sistema
+        let metaDiaria = this.metaDiariaConfigurada;
+
+        // Se não tem meta configurada, buscar novamente
+        if (metaDiaria === 0) {
+          metaDiaria = await this.buscarMetaRealDoSistema();
+        }
+
+        // Salvar para comparação
+        this.ultimoSaldoHoje = saldoAtual;
+        this.ultimaMetaHoje = metaDiaria;
+
+        // VERIFICAÇÃO RIGOROSA: Só considera meta batida se:
+        // 1. Tem meta configurada E saldo >= meta
+        // 2. OU se não tem meta, saldo deve ser >= R$ 200 (muito restritivo)
+        let metaBatida = false;
+
+        if (metaDiaria > 0) {
+          metaBatida = saldoAtual >= metaDiaria;
+          console.log(
+            `HOJE: Saldo R$ ${saldoAtual.toFixed(2)} ${
+              metaBatida ? ">=" : "<"
+            } Meta R$ ${metaDiaria.toFixed(2)} = ${
+              metaBatida ? "BATIDA" : "NÃO BATIDA"
+            }`
+          );
+        } else {
+          // Sem meta configurada: critério MUITO restritivo
+          metaBatida = saldoAtual >= 200;
+          console.log(
+            `HOJE (sem meta): Saldo R$ ${saldoAtual.toFixed(2)} ${
+              metaBatida ? ">=" : "<"
+            } R$ 200,00 = ${metaBatida ? "BATIDA" : "NÃO BATIDA"}`
+          );
+        }
+
+        // Atualizar flags
+        this.forcarTrofeuHoje = metaBatida;
+        this.estadoCorretoHoje = metaBatida;
+
+        // Atualizar cache
+        if (metaBatida) {
+          this.metasBatidasCache.set(hoje, true);
+        } else {
+          this.metasBatidasCache.delete(hoje);
+        }
+
+        return metaBatida;
+      } catch (error) {
+        console.error("Erro ao verificar meta de hoje:", error);
+        return false;
+      }
+    },
+
+    // NOVA FUNÇÃO: Verificação histórica RIGOROSA
+    async verificarMetasHistoricasRigoroso() {
+      if (this.verificandoHistorico) return;
+
+      this.verificandoHistorico = true;
+      console.log("Verificando metas históricas RIGOROSAMENTE...");
+
+      try {
+        const linhas = document.querySelectorAll(".gd-linha-dia");
+        const datasParaVerificar = [];
+
+        linhas.forEach((linha) => {
+          const dataLinha = linha.getAttribute("data-date");
+          const hoje = this.obterDataHoje();
+
+          if (dataLinha && dataLinha < hoje) {
+            datasParaVerificar.push(dataLinha);
+          }
+        });
+
+        console.log(
+          `Verificando RIGOROSAMENTE ${datasParaVerificar.length} datas anteriores`
+        );
+
+        // Garantir que temos a meta configurada
+        if (this.metaDiariaConfigurada === 0) {
+          await this.buscarMetaRealDoSistema();
+        }
+
+        for (const data of datasParaVerificar) {
+          await this.verificarMetaEspecificaRigoroso(data);
+          await new Promise((resolve) => setTimeout(resolve, 100));
+        }
+
+        console.log("Verificação histórica RIGOROSA concluída");
+      } catch (error) {
+        console.error("Erro ao verificar metas históricas rigorosas:", error);
+      } finally {
+        this.verificandoHistorico = false;
+      }
+    },
+
+    // NOVA FUNÇÃO: Verificação rigorosa de meta específica
+    async verificarMetaEspecificaRigoroso(data) {
+      try {
+        const linha = document.querySelector(`[data-date="${data}"]`);
+        if (!linha) return;
+
+        const valorElement = linha.querySelector(".valor");
+        if (!valorElement) return;
+
+        const valorTexto = valorElement.textContent
+          .replace(/[^\d,-]/g, "")
+          .replace(",", ".");
+        const saldoDia = parseFloat(valorTexto) || 0;
+
+        // Usar a meta configurada do sistema
+        const metaDiaria = this.metaDiariaConfigurada;
+
+        // VERIFICAÇÃO RIGOROSA
+        let metaBatida = false;
+        let criterioUsado = "";
+
+        if (metaDiaria > 0) {
+          // Com meta configurada: deve bater EXATAMENTE a meta
+          metaBatida = saldoDia >= metaDiaria;
+          criterioUsado = `Meta configurada R$ ${metaDiaria.toFixed(2)}`;
+        } else {
+          // Sem meta configurada: critério MUITO restritivo
+          metaBatida = saldoDia >= 200;
+          criterioUsado = "Critério restritivo R$ 200,00";
+        }
+
+        console.log(
+          `${data}: R$ ${saldoDia.toFixed(2)} vs ${criterioUsado} = ${
+            metaBatida ? "BATIDA" : "NÃO BATIDA"
+          }`
+        );
+
+        // Salvar no cache
+        this.metaHistoricaCache.set(data, {
+          saldoDia: saldoDia,
+          metaDiaria: metaDiaria,
+          metaBatida: metaBatida,
+          criterioUsado: criterioUsado,
+          dataVerificacao: new Date().toISOString(),
+        });
+
+        // Atualizar cache de metas batidas
+        if (metaBatida) {
+          this.metasBatidasCache.set(data, true);
+        } else {
+          this.metasBatidasCache.delete(data);
+        }
+      } catch (error) {
+        console.error(`Erro ao verificar rigorosamente ${data}:`, error);
+      }
     },
 
     monitorarRotulo() {
@@ -2381,77 +2640,41 @@ console.log(
 
         const rotuloTexto = rotuloElement.textContent.toLowerCase().trim();
 
-        // Só processar se rótulo mudou
         if (rotuloTexto !== this.ultimoRotulo) {
           console.log(`RÓTULO MUDOU: "${rotuloTexto}"`);
           this.ultimoRotulo = rotuloTexto;
 
-          // Determinar estado correto baseado no rótulo
-          this.estadoCorreto = this.interpretarRotulo(rotuloTexto);
-
-          console.log(
-            `ESTADO CORRETO: ${this.estadoCorreto ? "TROFÉU" : "CHECK"}`
-          );
+          // Sempre verificar meta diária real, não interpretar rótulo
+          this.verificarMetaDiariaHojeAgora();
         }
       } catch (error) {
-        console.error("Erro no monitor:", error);
-        this.estadoCorreto = false; // Seguro: sem troféu em caso de erro
+        console.error("Erro no monitor de rótulo:", error);
       }
     },
 
-    interpretarRotulo(texto) {
-      // Indicadores claros de meta NÃO batida
-      const naoAtingida = [
-        "restando",
-        "restam",
-        "faltam",
-        "falta",
-        "para meta",
-        "p/ meta",
-        "ainda",
-        "necessário",
-        "precisam",
-      ];
+    forcarTrofeuHojeBruto() {
+      if (!this.forcarTrofeuHoje) return;
 
-      for (const indicador of naoAtingida) {
-        if (texto.includes(indicador)) {
-          return false;
+      try {
+        const hoje = this.obterDataHoje();
+        const linha = document.querySelector(`[data-date="${hoje}"]`);
+
+        if (!linha) return;
+
+        const icone = linha.querySelector(".icone i");
+        if (!icone) return;
+
+        // FORÇA BRUTA: Se deve ter troféu mas não tem, aplicar IMEDIATAMENTE
+        if (!icone.classList.contains("fa-trophy")) {
+          console.log("FORÇA BRUTA: Aplicando troféu de hoje");
+          this.aplicarTrofeuForcado(icone, linha);
         }
+      } catch (error) {
+        console.error("Erro na força bruta:", error);
       }
-
-      // Indicadores claros de meta batida
-      const batida = [
-        "batida",
-        "atingida",
-        "superada",
-        "completa",
-        "conquistada",
-        "parabéns",
-        "parabens",
-        "sucesso",
-        "meta do dia superada",
-        "objetivo alcançado",
-        "excelente",
-      ];
-
-      for (const indicador of batida) {
-        if (texto.includes(indicador)) {
-          return true;
-        }
-      }
-
-      // Casos especiais
-      if (texto.includes("0,00") && texto.includes("restando")) {
-        return true; // Zero restando = meta batida
-      }
-
-      // Padrão conservador: se não tem indicador claro, sem troféu
-      return false;
     },
 
     forcarEstadoCorreto() {
-      if (this.estadoCorreto === null) return;
-
       const hoje = this.obterDataHoje();
       let forcacoesFeitas = 0;
 
@@ -2459,16 +2682,16 @@ console.log(
         const icone = linha.querySelector(".icone i");
         const dataLinha = linha.getAttribute("data-date");
 
-        if (!icone) return;
+        if (!icone || !dataLinha) return;
 
-        if (dataLinha === hoje && this.estadoCorreto) {
-          // Dia atual COM meta batida = TROFÉU
+        const deveSerTrofeu = this.deveExibirTrofeu(dataLinha, hoje);
+
+        if (deveSerTrofeu) {
           if (!icone.classList.contains("fa-trophy")) {
             this.aplicarTrofeuForcado(icone, linha);
             forcacoesFeitas++;
           }
         } else {
-          // Outros casos = CHECK
           if (!icone.classList.contains("fa-check")) {
             this.aplicarCheckForcado(icone, linha);
             forcacoesFeitas++;
@@ -2477,30 +2700,45 @@ console.log(
       });
 
       if (forcacoesFeitas > 0) {
-        console.log(`FORÇADO: ${forcacoesFeitas} ícones corrigidos`);
+        console.log(`FORÇADOS: ${forcacoesFeitas} ícones`);
       }
     },
 
+    deveExibirTrofeu(dataLinha, hoje) {
+      // Hoje: usar verificação direta
+      if (dataLinha === hoje) {
+        return this.forcarTrofeuHoje;
+      }
+
+      // Anteriores: APENAS se estiver no cache (verificado rigorosamente)
+      return this.metasBatidasCache.has(dataLinha);
+    },
+
     aplicarTrofeuForcado(icone, linha) {
-      // Marca por classe (evita conflitos pesados de CSS inline)
-      // Remover estilos inline deixados por outros scripts
       try {
         icone.removeAttribute("style");
-      } catch (e) {}
-      icone.className = "fa-solid fa-trophy trofeu-icone-forcado";
-      linha.setAttribute("data-meta-batida", "true");
-      // marca a linha como forçada para regras CSS de alta especificidade
-      linha.classList.add("meta-forcada");
+        icone.className = "fa-solid fa-trophy trofeu-icone-forcado";
+        linha.setAttribute("data-meta-batida", "true");
+        linha.classList.add("meta-forcada");
+
+        const dataLinha = linha.getAttribute("data-date");
+        if (dataLinha) {
+          this.metasBatidasCache.set(dataLinha, true);
+        }
+      } catch (e) {
+        console.error("Erro ao aplicar troféu:", e);
+      }
     },
 
     aplicarCheckForcado(icone, linha) {
-      // Marca por classe (evita conflitos pesados de CSS inline)
       try {
         icone.removeAttribute("style");
-      } catch (e) {}
-      icone.className = "fa-solid fa-check check-icone-forcado";
-      linha.setAttribute("data-meta-batida", "false");
-      linha.classList.add("meta-forcada");
+        icone.className = "fa-solid fa-check check-icone-forcado";
+        linha.setAttribute("data-meta-batida", "false");
+        linha.classList.remove("meta-forcada");
+      } catch (e) {
+        console.error("Erro ao aplicar check:", e);
+      }
     },
 
     obterDataHoje() {
@@ -2524,30 +2762,28 @@ console.log(
         this.intervaloForcador = null;
       }
 
-      console.log("Monitor contínuo parado");
+      if (this.intervaloForçaBruta) {
+        clearInterval(this.intervaloForçaBruta);
+        this.intervaloForçaBruta = null;
+      }
+
+      console.log("Monitor rigoroso parado");
     },
 
     status() {
-      const rotuloElement =
-        document.getElementById("rotulo-meta") ||
-        document.querySelector(".widget-meta-rotulo");
-      const rotuloTexto = rotuloElement
-        ? rotuloElement.textContent
-        : "Não encontrado";
-
       return {
         ativo: this.ativo,
-        rotuloAtual: rotuloTexto,
-        estadoCorreto:
-          this.estadoCorreto === true
-            ? "TROFÉU"
-            : this.estadoCorreto === false
-            ? "CHECK"
-            : "INDEFINIDO",
-        dataHoje: this.obterDataHoje(),
+        modoRigoroso: this.modoRigoroso,
+        metaDiariaConfigurada: this.metaDiariaConfigurada,
+        forcarTrofeuHoje: this.forcarTrofeuHoje,
+        ultimoSaldoHoje: this.ultimoSaldoHoje,
+        metasBatidasCache: Array.from(this.metasBatidasCache.keys()).sort(),
+        totalMetasBatidas: this.metasBatidasCache.size,
+        metasHistoricasVerificadas: this.metaHistoricaCache.size,
         trofeusVisiveis: document.querySelectorAll(".fa-trophy").length,
         checksVisiveis: document.querySelectorAll(".fa-check").length,
-        modo: "MONITOR CONTÍNUO - Força estado a cada 500ms",
+        verificandoHistorico: this.verificandoHistorico,
+        modo: "RIGOROSO - Só troféu se meta realmente batida",
       };
     },
   };
@@ -2556,7 +2792,7 @@ console.log(
   window.MonitorContinuo = {
     status: () => {
       const s = MonitorContinuo.status();
-      console.log("MONITOR CONTÍNUO STATUS:");
+      console.log("MONITOR RIGOROSO STATUS:");
       Object.entries(s).forEach(([key, value]) => {
         console.log(`   ${key}: ${value}`);
       });
@@ -2571,36 +2807,299 @@ console.log(
       MonitorContinuo.parar();
       setTimeout(() => MonitorContinuo.inicializar(), 1000);
     },
+
+    // Comando para reverificar TUDO rigorosamente
+    reverificarRigoroso: async () => {
+      console.log("Reverificação RIGOROSA iniciada...");
+
+      // Buscar meta real primeiro
+      await MonitorContinuo.buscarMetaRealDoSistema();
+
+      // Limpar tudo
+      MonitorContinuo.limparTodosOsTrofeus();
+
+      // Verificar hoje
+      await MonitorContinuo.verificarMetaDiariaHojeAgora();
+
+      // Verificar histórico
+      await MonitorContinuo.verificarMetasHistoricasRigoroso();
+
+      // Aplicar resultados
+      MonitorContinuo.forcarEstadoCorreto();
+
+      const metasBatidas = Array.from(
+        MonitorContinuo.metasBatidasCache.keys()
+      ).sort();
+      console.log(
+        `RESULTADO RIGOROSO: ${metasBatidas.length} datas com meta REALMENTE batida:`,
+        metasBatidas
+      );
+
+      return metasBatidas;
+    },
+
+    // Ver cache detalhado com informações de Meta Fixa vs Turbo
+    verCache: () => {
+      const historico = Array.from(
+        MonitorContinuo.metaHistoricaCache.entries()
+      );
+      console.log("CACHE RIGOROSO COM DETALHES DE META:");
+      historico.forEach(([data, info]) => {
+        console.log(
+          `  ${data}: R$ ${info.saldoDia.toFixed(2)} vs ${
+            info.criterioUsado
+          } = ${info.metaBatida ? "BATIDA" : "NÃO BATIDA"}`
+        );
+        if (info.detalhesCalculo) {
+          console.log(`    ${info.detalhesCalculo.observacao}`);
+          console.log(`    Fórmula: ${info.detalhesCalculo.formula}`);
+        }
+      });
+      return historico;
+    },
+
+    // Debug detalhado com informações de Meta Turbo
+    debug: () => {
+      console.log("DEBUG RIGOROSO COM META TURBO:");
+      console.log(
+        `  Meta configurada base: R$ ${MonitorContinuo.metaDiariaConfigurada.toFixed(
+          2
+        )}`
+      );
+      console.log(`  Modo rigoroso: ${MonitorContinuo.modoRigoroso}`);
+      console.log(
+        `  Total troféus válidos: ${MonitorContinuo.metasBatidasCache.size}`
+      );
+
+      const hoje = MonitorContinuo.obterDataHoje();
+      const linha = document.querySelector(`[data-date="${hoje}"]`);
+
+      if (linha) {
+        const icone = linha.querySelector(".icone i");
+        const valor = linha.querySelector(".valor");
+
+        console.log("  HOJE:");
+        console.log(`    Data: ${hoje}`);
+        console.log(`    Saldo: ${valor ? valor.textContent : "N/A"}`);
+        console.log(`    Ícone: ${icone ? icone.className : "N/A"}`);
+        console.log(`    Deve ter troféu: ${MonitorContinuo.forcarTrofeuHoje}`);
+
+        // Mostrar detalhes do cache se existir
+        const cacheHoje = MonitorContinuo.metaHistoricaCache.get(hoje);
+        if (cacheHoje && cacheHoje.detalhesCalculo) {
+          console.log(`    Tipo de meta: ${cacheHoje.detalhesCalculo.tipo}`);
+          console.log(`    ${cacheHoje.detalhesCalculo.observacao}`);
+          console.log(`    Fórmula: ${cacheHoje.detalhesCalculo.formula}`);
+        }
+      }
+    },
+
+    // NOVO: Debug específico para uma data
+    debugData: async (data) => {
+      const linha = document.querySelector(`[data-date="${data}"]`);
+
+      if (linha) {
+        const icone = linha.querySelector(".icone i");
+        const valor = linha.querySelector(".valor");
+        const cacheInfo = MonitorContinuo.metaHistoricaCache.get(data);
+
+        console.log(`DEBUG DETALHADO ${data}:`);
+        console.log("  Saldo na tela:", valor ? valor.textContent : "N/A");
+        console.log("  Ícone atual:", icone ? icone.className : "N/A");
+        console.log(
+          "  Cache tem troféu:",
+          MonitorContinuo.metasBatidasCache.has(data)
+        );
+
+        if (cacheInfo) {
+          console.log("  Cache detalhado:", cacheInfo);
+          if (cacheInfo.detalhesCalculo) {
+            console.log(`  Tipo: ${cacheInfo.detalhesCalculo.tipo}`);
+            console.log(`  ${cacheInfo.detalhesCalculo.observacao}`);
+            console.log(`  Fórmula: ${cacheInfo.detalhesCalculo.formula}`);
+          }
+        } else {
+          console.log("  Não há dados no cache - recalculando...");
+
+          // Recalcular para esta data
+          const valorTexto = valor
+            ? valor.textContent.replace(/[^\d,-]/g, "").replace(",", ".")
+            : "0";
+          const saldoDia = parseFloat(valorTexto) || 0;
+
+          const dadosMetaEspecifica =
+            await MonitorContinuo.calcularMetaParaDataEspecifica(
+              data,
+              saldoDia
+            );
+          console.log("  Cálculo específico:", dadosMetaEspecifica);
+        }
+      } else {
+        console.log(`Linha não encontrada para data ${data}`);
+      }
+    },
+
+    // NOVO: Comparar Meta Fixa vs Meta Turbo para uma data específica
+    compararMetas: async (data) => {
+      console.log(`COMPARANDO META FIXA vs TURBO para ${data}:`);
+
+      const linha = document.querySelector(`[data-date="${data}"]`);
+      if (!linha) {
+        console.log("Data não encontrada");
+        return;
+      }
+
+      const valorElement = linha.querySelector(".valor");
+      const saldoDia = valorElement
+        ? parseFloat(
+            valorElement.textContent.replace(/[^\d,-]/g, "").replace(",", ".")
+          ) || 0
+        : 0;
+
+      // Buscar configuração atual
+      const config = await MonitorContinuo.buscarConfiguracaoCompleta();
+      if (!config) {
+        console.log("Erro ao buscar configuração");
+        return;
+      }
+
+      // Calcular Meta Fixa
+      const metaFixa =
+        config.bancaInicial * (config.diaria / 100) * config.unidade;
+      const resultadoFixa = saldoDia >= metaFixa;
+
+      // Calcular Meta Turbo
+      const lucroAcumulado =
+        await MonitorContinuo.calcularLucroAcumuladoAteData(data);
+      const bancaTurbo =
+        lucroAcumulado > 0
+          ? config.bancaInicial + lucroAcumulado
+          : config.bancaInicial;
+      const metaTurbo = bancaTurbo * (config.diaria / 100) * config.unidade;
+      const resultadoTurbo = saldoDia >= metaTurbo;
+
+      console.log(`  Saldo do dia: R$ ${saldoDia.toFixed(2)}`);
+      console.log(`  Banca inicial: R$ ${config.bancaInicial.toFixed(2)}`);
+      console.log(
+        `  Lucro acumulado até ${data}: R$ ${lucroAcumulado.toFixed(2)}`
+      );
+      console.log(`  Configuração: ${config.diaria}% × ${config.unidade}`);
+      console.log("");
+      console.log(`  META FIXA:`);
+      console.log(
+        `    Base: R$ ${config.bancaInicial.toFixed(2)} (sempre banca inicial)`
+      );
+      console.log(`    Meta: R$ ${metaFixa.toFixed(2)}`);
+      console.log(`    Resultado: ${resultadoFixa ? "BATIDA" : "NÃO BATIDA"}`);
+      console.log("");
+      console.log(`  META TURBO:`);
+      console.log(
+        `    Base: R$ ${bancaTurbo.toFixed(2)} (banca inicial ${
+          lucroAcumulado > 0 ? "+ lucro" : "sem lucro"
+        })`
+      );
+      console.log(`    Meta: R$ ${metaTurbo.toFixed(2)}`);
+      console.log(`    Resultado: ${resultadoTurbo ? "BATIDA" : "NÃO BATIDA"}`);
+      console.log("");
+      console.log(`  TIPO ATUAL CONFIGURADO: ${config.tipoMeta.toUpperCase()}`);
+      console.log(
+        `  RESULTADO APLICADO: ${
+          config.tipoMeta === "fixa"
+            ? resultadoFixa
+              ? "BATIDA"
+              : "NÃO BATIDA"
+            : resultadoTurbo
+            ? "BATIDA"
+            : "NÃO BATIDA"
+        }`
+      );
+
+      return {
+        saldoDia,
+        metaFixa: { valor: metaFixa, batida: resultadoFixa },
+        metaTurbo: { valor: metaTurbo, batida: resultadoTurbo },
+        tipoAtual: config.tipoMeta,
+        resultadoAplicado:
+          config.tipoMeta === "fixa" ? resultadoFixa : resultadoTurbo,
+      };
+    },
+
+    // Configurar meta manualmente
+    configurarMeta: (valor) => {
+      MonitorContinuo.metaDiariaConfigurada = parseFloat(valor) || 0;
+      console.log(
+        `Meta configurada manualmente: R$ ${MonitorContinuo.metaDiariaConfigurada.toFixed(
+          2
+        )}`
+      );
+
+      // Reverificar tudo com nova meta
+      setTimeout(() => {
+        MonitorContinuo.reverificarRigoroso();
+      }, 100);
+    },
   };
 
   // Compatibilidade
   window.Trofeu = window.MonitorContinuo;
 
+  // Interceptar mudanças de período
+  function interceptarMudancasPeriodo() {
+    const radios = document.querySelectorAll('input[name="periodo"]');
+
+    radios.forEach((radio) => {
+      radio.addEventListener("change", function (e) {
+        console.log(`INTERCEPTADO: Mudança para ${e.target.value}`);
+
+        setTimeout(() => {
+          MonitorContinuo.verificarMetaDiariaHojeAgora();
+          MonitorContinuo.forcarTrofeuHojeBruto();
+        }, 200);
+
+        setTimeout(() => {
+          MonitorContinuo.forcarEstadoCorreto();
+        }, 500);
+      });
+    });
+  }
+
   // Inicialização
   function iniciar() {
     if (document.readyState === "loading") {
       document.addEventListener("DOMContentLoaded", () => {
-        setTimeout(() => MonitorContinuo.inicializar(), 1000);
+        setTimeout(() => {
+          MonitorContinuo.inicializar();
+          interceptarMudancasPeriodo();
+        }, 1000);
       });
     } else {
-      setTimeout(() => MonitorContinuo.inicializar(), 1000);
+      setTimeout(() => {
+        MonitorContinuo.inicializar();
+        interceptarMudancasPeriodo();
+      }, 1000);
     }
   }
 
   iniciar();
 
-  console.log("MONITOR CONTÍNUO CARREGADO!");
+  console.log("MONITOR RIGOROSO CARREGADO!");
   console.log("Funcionalidades:");
-  console.log("   - Destrói TODOS os sistemas de troféu");
-  console.log("   - Monitor do rótulo a cada 1 segundo");
-  console.log("   - Forçador de estado a cada 500ms");
+  console.log("   - Verificação RIGOROSA de metas");
   console.log(
-    "   - Força bruta total - NENHUM outro sistema consegue interferir"
+    "   - Limpa todos os troféus e só adiciona se meta realmente batida"
   );
+  console.log("   - Busca meta real do sistema");
+  console.log("   - Critério restritivo se não há meta configurada");
   console.log("");
   console.log("Comandos:");
-  console.log("   MonitorContinuo.status() - Ver status");
-  console.log("   MonitorContinuo.reiniciar() - Reiniciar");
+  console.log(
+    "   MonitorContinuo.reverificarRigoroso() - Reverificar com rigor"
+  );
+  console.log(
+    "   MonitorContinuo.configurarMeta(100) - Configurar meta manualmente"
+  );
+  console.log("   MonitorContinuo.verCache() - Ver verificações detalhadas");
+  console.log("   MonitorContinuo.debug() - Debug rigoroso");
 })();
 // ========================================================================================================================
 //                                 FIM  TROFÉU - PARA APARECER  QUANDO A META É BATIDA

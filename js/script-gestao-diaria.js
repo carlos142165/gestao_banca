@@ -80,6 +80,172 @@ const Utils = {
   },
 };
 
+// =====================
+// Ajuste dinâmico de altura do campo de mentores
+// =====================
+const CampoMentoresHeightManager = {
+  selectorTopo: ".widget-meta-item",
+  selectorMentores: ".campo_mentores",
+  initialTopoHeight: null,
+  initialMentoresHeight: null,
+  minMentoresHeight: 120, // px mínimo para manter usabilidade
+  debounceDelay: 80,
+  observer: null,
+  _pollInterval: null,
+
+  init() {
+    try {
+      const topo = document.querySelector(this.selectorTopo);
+      const mentores = document.querySelector(this.selectorMentores);
+      if (!topo || !mentores) return;
+
+      // Salva alturas iniciais (apenas uma vez)
+      if (!this.initialTopoHeight)
+        this.initialTopoHeight = topo.getBoundingClientRect().height;
+      if (!this.initialMentoresHeight)
+        this.initialMentoresHeight = mentores.getBoundingClientRect().height;
+
+      // Aplica transição suave
+      mentores.style.transition = "height 220ms ease";
+
+      // Debounced adjust
+      this._debouncedAdjust = Utils.debounce(
+        () => this.adjustHeights(),
+        this.debounceDelay
+      );
+
+      // Prefer ResizeObserver
+      if (window.ResizeObserver) {
+        this.observer = new ResizeObserver(() => this._debouncedAdjust());
+        this.observer.observe(topo);
+      } else {
+        // Fallback: MutationObserver + interval
+        const mo = new MutationObserver(() => this._debouncedAdjust());
+        mo.observe(topo, { childList: true, subtree: true, attributes: true });
+        this.observer = mo;
+        // Also poll size as a safety net
+        this._pollInterval = setInterval(() => this._debouncedAdjust(), 500);
+      }
+
+      // Also adjust on window resize
+      window.addEventListener("resize", this._debouncedAdjust);
+
+      // Initial run to normalize
+      this.adjustHeights();
+    } catch (e) {
+      console.warn("CampoMentoresHeightManager init error", e);
+    }
+  },
+
+  adjustHeights() {
+    const topo = document.querySelector(this.selectorTopo);
+    const mentores = document.querySelector(this.selectorMentores);
+    if (!topo || !mentores) return;
+
+    const topoRect = topo.getBoundingClientRect();
+    const currentTopoHeight = topoRect.height;
+
+    // If initial heights missing, set them
+    if (!this.initialTopoHeight) this.initialTopoHeight = currentTopoHeight;
+    if (!this.initialMentoresHeight)
+      this.initialMentoresHeight = mentores.getBoundingClientRect().height;
+
+    // Delta: quanto o topo cresceu em relação ao inicial
+    const delta = currentTopoHeight - this.initialTopoHeight;
+
+    // New mentors height: initial - delta (mas não menor que min)
+    let novo = Math.max(
+      this.minMentoresHeight,
+      Math.round(this.initialMentoresHeight - delta)
+    );
+
+    // Também evita ultrapassar o inicial quando topo diminui
+    novo = Math.min(novo, this.initialMentoresHeight);
+
+    // Aplica altura via style (px)
+    mentores.style.height = novo + "px";
+  },
+
+  destroy() {
+    if (this.observer && this.observer.disconnect) this.observer.disconnect();
+    if (this._pollInterval) clearInterval(this._pollInterval);
+    window.removeEventListener("resize", this._debouncedAdjust);
+  },
+};
+
+// =====================
+// Ajuste dinâmico para o BLOCO 2 (lista-dias)
+// =====================
+const CampoBloco2HeightManager = {
+  selectorTopo: ".bloco-2 .widget-conteudo-principal-2",
+  selectorTarget: ".bloco-2 .lista-dias",
+  initialTopoHeight: null,
+  initialTargetHeight: null,
+  minTargetHeight: 160,
+  debounceDelay: 80,
+  observer: null,
+  _pollInterval: null,
+
+  init() {
+    try {
+      const topo = document.querySelector(this.selectorTopo);
+      const target = document.querySelector(this.selectorTarget);
+      if (!topo || !target) return;
+
+      if (!this.initialTopoHeight)
+        this.initialTopoHeight = topo.getBoundingClientRect().height;
+      if (!this.initialTargetHeight)
+        this.initialTargetHeight = target.getBoundingClientRect().height;
+
+      target.style.transition = "height 220ms ease";
+      this._debouncedAdjust = Utils.debounce(
+        () => this.adjustHeights(),
+        this.debounceDelay
+      );
+
+      if (window.ResizeObserver) {
+        this.observer = new ResizeObserver(() => this._debouncedAdjust());
+        this.observer.observe(topo);
+      } else {
+        const mo = new MutationObserver(() => this._debouncedAdjust());
+        mo.observe(topo, { childList: true, subtree: true, attributes: true });
+        this.observer = mo;
+        this._pollInterval = setInterval(() => this._debouncedAdjust(), 500);
+      }
+
+      window.addEventListener("resize", this._debouncedAdjust);
+      this.adjustHeights();
+    } catch (e) {
+      console.warn("CampoBloco2HeightManager init error", e);
+    }
+  },
+
+  adjustHeights() {
+    const topo = document.querySelector(this.selectorTopo);
+    const target = document.querySelector(this.selectorTarget);
+    if (!topo || !target) return;
+
+    const currentTopoHeight = topo.getBoundingClientRect().height;
+    if (!this.initialTopoHeight) this.initialTopoHeight = currentTopoHeight;
+    if (!this.initialTargetHeight)
+      this.initialTargetHeight = target.getBoundingClientRect().height;
+
+    const delta = currentTopoHeight - this.initialTopoHeight;
+    let novo = Math.max(
+      this.minTargetHeight,
+      Math.round(this.initialTargetHeight - delta)
+    );
+    novo = Math.min(novo, this.initialTargetHeight);
+    target.style.height = novo + "px";
+  },
+
+  destroy() {
+    if (this.observer && this.observer.disconnect) this.observer.disconnect();
+    if (this._pollInterval) clearInterval(this._pollInterval);
+    window.removeEventListener("resize", this._debouncedAdjust);
+  },
+};
+
 // ✅ SISTEMA DE TOAST/NOTIFICAÇÕES
 const ToastManager = {
   mostrar(mensagem, tipo = "aviso") {
@@ -1925,6 +2091,23 @@ window.atualizarLucroEBancaViaAjax = () =>
 // ✅ INICIALIZAÇÃO QUANDO DOM ESTIVER PRONTO
 document.addEventListener("DOMContentLoaded", () => {
   App.inicializar();
+  // Inicia ajuste dinâmico da altura de .campo_mentores para não ser empurrado
+  try {
+    if (
+      typeof CampoMentoresHeightManager !== "undefined" &&
+      CampoMentoresHeightManager.init
+    ) {
+      CampoMentoresHeightManager.init();
+    }
+    if (
+      typeof CampoBloco2HeightManager !== "undefined" &&
+      CampoBloco2HeightManager.init
+    ) {
+      CampoBloco2HeightManager.init();
+    }
+  } catch (e) {
+    console.warn("CampoMentoresHeightManager failed to initialize", e);
+  }
 });
 
 // ✅ CLEANUP NA SAÍDA DA PÁGINA
@@ -1967,12 +2150,14 @@ console.log("✅ Sistema pronto para usar filtros de período!");
 // ========================================================================================================================
 
 const MetaDiariaManager = {
-  // ✅ CONTROLE SIMPLES
+  // CONTROLE SIMPLES
   atualizandoAtualmente: false,
   periodoAtual: "dia",
   tipoMetaAtual: "turbo",
+  // NOVO: Flag para evitar interferir com troféus de outros dias
+  preservarTrofeusAnteriores: true,
 
-  // ✅ ATUALIZAR META DIÁRIA - VERSÃO SIMPLIFICADA
+  // ATUALIZAR META DIÁRIA - VERSÃO CORRIGIDA
   async atualizarMetaDiaria(aguardarDados = false) {
     if (this.atualizandoAtualmente) return null;
 
@@ -2017,7 +2202,7 @@ const MetaDiariaManager = {
     }
   },
 
-  // ✅ APLICAR AJUSTE DE PERÍODO - SIMPLIFICADO
+  // APLICAR AJUSTE DE PERÍODO - SIMPLIFICADO
   aplicarAjustePeriodo(data) {
     try {
       const radioSelecionado = document.querySelector(
@@ -2065,7 +2250,7 @@ const MetaDiariaManager = {
     }
   },
 
-  // ✅ NOVA FUNÇÃO: CALCULAR META FINAL COM VALOR TACHADO E EXTRA
+  // CALCULAR META FINAL COM VALOR TACHADO E EXTRA
   calcularMetaFinalComExtra(saldoDia, metaCalculada, bancaTotal, data) {
     try {
       let metaFinal,
@@ -2085,7 +2270,7 @@ const MetaDiariaManager = {
         statusClass = "sem-banca";
         console.log(`📊 RESULTADO: Sem banca`);
       }
-      // ✅ META BATIDA OU SUPERADA - COM VALOR EXTRA
+      // META BATIDA OU SUPERADA - COM VALOR EXTRA
       else if (saldoDia > 0 && metaCalculada > 0 && saldoDia >= metaCalculada) {
         valorExtra = saldoDia - metaCalculada;
         mostrarTachado = true;
@@ -2105,7 +2290,7 @@ const MetaDiariaManager = {
           console.log(`🎯 META EXATA`);
         }
       }
-      // ✅ CASO ESPECIAL: Meta é zero (já foi batida)
+      // CASO ESPECIAL: Meta é zero (já foi batida)
       else if (metaCalculada === 0 && saldoDia > 0) {
         metaFinal = 0;
         valorExtra = saldoDia;
@@ -2179,7 +2364,7 @@ const MetaDiariaManager = {
     }
   },
 
-  // ✅ ATUALIZAR TODOS OS ELEMENTOS - COM VALOR EXTRA
+  // ATUALIZAR TODOS OS ELEMENTOS - CORRIGIDO PARA PRESERVAR TROFÉUS
   atualizarTodosElementos(data) {
     try {
       const saldoDia = parseFloat(data.lucro) || 0;
@@ -2191,7 +2376,6 @@ const MetaDiariaManager = {
         meta_original: data.meta_original || metaCalculada,
       };
 
-      // ✅ USAR NOVA FUNÇÃO COM VALOR EXTRA
       const resultado = this.calcularMetaFinalComExtra(
         saldoDia,
         metaCalculada,
@@ -2199,15 +2383,19 @@ const MetaDiariaManager = {
         dadosComplementados
       );
 
-      // Atualizar em sequência
+      // Atualizar elementos do widget SEM interferir nos troféus das datas
       this.atualizarAreaDireita(data);
       this.atualizarModal(data);
-      this.atualizarMetaElementoComExtra(resultado); // ✅ NOVA FUNÇÃO
+      this.atualizarMetaElementoComExtra(resultado);
       this.atualizarRotulo(resultado.rotulo);
       this.atualizarBarraProgresso(resultado, data);
       this.atualizarTipoMetaDisplay(data);
 
-      // ✅ LOG SIMPLIFICADO
+      // NOVO: Preservar troféus após mudança de período
+      if (this.preservarTrofeusAnteriores) {
+        this.preservarTrofeusExistentes();
+      }
+
       console.log(
         `🎯 Meta atualizada - Período: ${
           data.periodo_ativo || this.periodoAtual
@@ -2233,7 +2421,50 @@ const MetaDiariaManager = {
     }
   },
 
-  // ✅ NOVA FUNÇÃO: ATUALIZAR META ELEMENTO COM VALOR TACHADO E EXTRA
+  // NOVA FUNÇÃO: Preservar troféus existentes após mudanças
+  preservarTrofeusExistentes() {
+    try {
+      console.log("🛡️ Preservando troféus existentes...");
+
+      // Notificar MonitorContinuo para recarregar cache se existir
+      if (window.MonitorContinuo && window.MonitorContinuo.recarregarCache) {
+        setTimeout(() => {
+          window.MonitorContinuo.recarregarCache();
+        }, 100);
+      }
+
+      // Verificar e preservar troféus com base nos atributos data-meta-batida
+      const linhasComTrofeu = document.querySelectorAll(
+        '[data-meta-batida="true"]'
+      );
+
+      linhasComTrofeu.forEach((linha) => {
+        const icone = linha.querySelector(".icone i");
+        const dataLinha = linha.getAttribute("data-date");
+
+        if (icone && !icone.classList.contains("fa-trophy")) {
+          console.log(`🔧 Restaurando troféu para ${dataLinha}`);
+          icone.className = "fa-solid fa-trophy trofeu-icone-forcado";
+
+          // Marcar no MonitorContinuo se disponível
+          if (
+            window.MonitorContinuo &&
+            window.MonitorContinuo.marcarMetaBatida
+          ) {
+            window.MonitorContinuo.marcarMetaBatida(dataLinha);
+          }
+        }
+      });
+
+      console.log(
+        `🛡️ Preservação concluída - ${linhasComTrofeu.length} troféus verificados`
+      );
+    } catch (error) {
+      console.error("❌ Erro ao preservar troféus:", error);
+    }
+  },
+
+  // ATUALIZAR META ELEMENTO COM VALOR TACHADO E EXTRA
   atualizarMetaElementoComExtra(resultado) {
     try {
       const metaValor =
@@ -2242,7 +2473,7 @@ const MetaDiariaManager = {
 
       if (!metaValor) return;
 
-      // ✅ LIMPAR CLASSES ANTIGAS
+      // Limpar classes antigas
       metaValor.className = metaValor.className.replace(
         /\bvalor-meta\s+\w+/g,
         ""
@@ -2251,7 +2482,7 @@ const MetaDiariaManager = {
       let htmlConteudo = "";
 
       if (resultado.mostrarTachado && resultado.valorExtra >= 0) {
-        // ✅ META BATIDA/SUPERADA - MOSTRAR VALOR TACHADO + EXTRA
+        // META BATIDA/SUPERADA - MOSTRAR VALOR TACHADO + EXTRA
         htmlConteudo = `
           <i class="fa-solid fa-coins"></i>
           <div class="meta-valor-container">
@@ -2277,7 +2508,7 @@ const MetaDiariaManager = {
           );
         }
       } else {
-        // ✅ EXIBIÇÃO NORMAL
+        // EXIBIÇÃO NORMAL
         htmlConteudo = `
           <i class="fa-solid fa-coins"></i>
           <div class="meta-valor-container">
@@ -2294,7 +2525,7 @@ const MetaDiariaManager = {
     }
   },
 
-  // ✅ FUNÇÃO MODIFICADA: ATUALIZAR DISPLAY DO TIPO DE META + BADGE
+  // ATUALIZAR DISPLAY DO TIPO DE META + BADGE
   atualizarTipoMetaDisplay(data) {
     try {
       const metaTextElement = document.getElementById("meta-text-unico");
@@ -2327,7 +2558,6 @@ const MetaDiariaManager = {
     }
   },
 
-  // ✅ FUNÇÃO: atualizarBadgeTipoMeta (SEM ANIMAÇÕES)
   atualizarBadgeTipoMeta(textoTipo, tipo = null) {
     try {
       const badge = document.getElementById("meta-tipo-badge");
@@ -2353,7 +2583,6 @@ const MetaDiariaManager = {
     }
   },
 
-  // ✅ CRIAR BADGE SE NÃO EXISTIR
   criarBadgeSeNaoExistir() {
     try {
       const container = document.querySelector(".widget-barra-container");
@@ -2381,7 +2610,6 @@ const MetaDiariaManager = {
     }
   },
 
-  // ✅ ATUALIZAR ÁREA DIREITA
   atualizarAreaDireita(data) {
     try {
       const porcentagemElement = document.getElementById("porcentagem-diaria");
@@ -2398,7 +2626,6 @@ const MetaDiariaManager = {
     }
   },
 
-  // ✅ ATUALIZAR MODAL
   atualizarModal(data) {
     try {
       const valorBancaLabel = document.getElementById("valorBancaLabel");
@@ -2491,7 +2718,6 @@ const MetaDiariaManager = {
     }
   },
 
-  // ✅ ATUALIZAR RÓTULO
   atualizarRotulo(rotulo) {
     try {
       const rotuloElement =
@@ -2506,7 +2732,6 @@ const MetaDiariaManager = {
     }
   },
 
-  // ✅ ATUALIZAR BARRA PROGRESSO - COM SUPORTE A EXTRA
   atualizarBarraProgresso(resultado, data) {
     try {
       const barraProgresso = document.getElementById("barra-progresso");
@@ -2630,7 +2855,6 @@ const MetaDiariaManager = {
     }
   },
 
-  // ✅ CONFIGURAR LISTENERS DE PERÍODO
   configurarListenersPeriodo() {
     try {
       const radiosPeriodo = document.querySelectorAll('input[name="periodo"]');
@@ -2675,7 +2899,6 @@ const MetaDiariaManager = {
     }
   },
 
-  // ✅ BLOQUEAR CÁLCULOS TEMPORÁRIOS
   bloquearCalculosTemporarios() {
     try {
       const elementosBloquear = [
@@ -2711,7 +2934,6 @@ const MetaDiariaManager = {
     }
   },
 
-  // ✅ MOSTRAR LOADING TEMPORÁRIO
   mostrarLoadingTemporario() {
     try {
       const metaElement = document.getElementById("meta-valor");
@@ -2739,7 +2961,6 @@ const MetaDiariaManager = {
     }
   },
 
-  // ✅ MOSTRAR ERRO
   mostrarErroMeta() {
     try {
       const metaElement = document.getElementById("meta-valor");
@@ -2752,7 +2973,6 @@ const MetaDiariaManager = {
     }
   },
 
-  // ✅ SINCRONIZAR COM SISTEMA DE FILTRO EXTERNO
   sincronizarComFiltroExterno(periodo) {
     try {
       if (periodo && periodo !== this.periodoAtual) {
@@ -2772,7 +2992,6 @@ const MetaDiariaManager = {
     }
   },
 
-  // ✅ APLICAR ANIMAÇÃO
   aplicarAnimacao(elemento) {
     try {
       elemento.classList.add("atualizado");
@@ -2784,7 +3003,7 @@ const MetaDiariaManager = {
     }
   },
 
-  // ✅ INICIALIZAR
+  // INICIALIZAR - CORRIGIDO PARA PRESERVAR TROFÉUS
   inicializar() {
     try {
       const metaElement = document.getElementById("meta-valor");
@@ -2793,7 +3012,7 @@ const MetaDiariaManager = {
           '<i class="fa-solid fa-coins"></i><div class="meta-valor-container"><span class="valor-texto loading-text">Calculando...</span></div>';
       }
 
-      // ✅ DETECTAR PERÍODO INICIAL
+      // Detectar período inicial
       const radioMarcado = document.querySelector(
         'input[name="periodo"]:checked'
       );
@@ -2802,11 +3021,15 @@ const MetaDiariaManager = {
       }
 
       console.log(
-        `🚀 Sistema inicializado com VALOR TACHADO E EXTRA - Período: ${this.periodoAtual}`
+        `🚀 Sistema inicializado CORRIGIDO - Período: ${this.periodoAtual}`
       );
-      console.log(`📊 Tipo de meta será detectado pelo banco de dados`);
+      console.log(
+        `📊 Preservação de troféus: ${
+          this.preservarTrofeusAnteriores ? "ATIVADA" : "DESATIVADA"
+        }`
+      );
 
-      // ✅ TENTAR CRIAR BADGE
+      // Tentar criar badge
       const tentarCriarBadge = () => {
         const sucesso = this.criarBadgeSeNaoExistir();
         if (!sucesso) {
@@ -2828,17 +3051,18 @@ const MetaDiariaManager = {
       setTimeout(tentarCriarBadge, 500);
 
       this.configurarListenersPeriodo();
-      this.atualizarMetaDiaria();
+
+      // NOVO: Aguardar um pouco antes da primeira atualização para preservar troféus
+      setTimeout(() => {
+        this.atualizarMetaDiaria();
+      }, 800);
     } catch (error) {
       console.error("❌ Erro na inicialização:", error);
     }
   },
 };
 
-// ========================================
-// ✅ INTEGRAÇÃO COM SISTEMA DE FILTRO EXISTENTE
-// ========================================
-
+// INTEGRAÇÃO COM SISTEMA DE FILTRO EXISTENTE - CORRIGIDO
 const SistemaFiltroPeriodoIntegrado = {
   ...(window.SistemaFiltroPeriodo || {}),
 
@@ -2896,6 +3120,13 @@ const SistemaFiltroPeriodoIntegrado = {
       if (typeof MetaDiariaManager !== "undefined") {
         await MetaDiariaManager.atualizarMetaDiaria(true);
       }
+
+      // NOVO: Preservar troféus após mudança de período
+      setTimeout(() => {
+        if (typeof MetaDiariaManager !== "undefined") {
+          MetaDiariaManager.preservarTrofeusExistentes();
+        }
+      }, 500);
     } catch (error) {
       this.mostrarErro("Erro ao carregar dados do período");
       console.error("❌ Erro ao alterar período:", error);
@@ -2936,16 +3167,13 @@ const SistemaFiltroPeriodoIntegrado = {
     function () {},
 };
 
-// ========================================
-// INTERCEPTAÇÃO AJAX
-// ========================================
-
+// INTERCEPTAÇÃO AJAX - CORRIGIDO PARA PRESERVAR TROFÉUS
 function configurarInterceptadores() {
   try {
     const originalFetch = window.fetch;
 
     window.fetch = async function (...args) {
-      const response = await originalFetch.apply(this, args);
+      const response = await originalFetch.apply(this, arguments);
 
       if (
         args[0] &&
@@ -2961,6 +3189,11 @@ function configurarInterceptadores() {
               !SistemaFiltroPeriodoIntegrado.executandoAlteracao)
           ) {
             MetaDiariaManager.atualizarMetaDiaria();
+
+            // NOVO: Preservar troféus após fetch
+            setTimeout(() => {
+              MetaDiariaManager.preservarTrofeusExistentes();
+            }, 200);
           }
         }, 100);
       }
@@ -2988,12 +3221,17 @@ function configurarInterceptadores() {
                   !SistemaFiltroPeriodoIntegrado.executandoAlteracao)
               ) {
                 MetaDiariaManager.atualizarMetaDiaria();
+
+                // NOVO: Preservar troféus após XHR
+                setTimeout(() => {
+                  MetaDiariaManager.preservarTrofeusExistentes();
+                }, 200);
               }
             }, 100);
           }
         });
 
-        return originalSend.apply(this, args);
+        return originalSend.apply(this, arguments);
       };
 
       return xhr;
@@ -3005,10 +3243,7 @@ function configurarInterceptadores() {
   }
 }
 
-// ========================================
-// FUNÇÕES GLOBAIS
-// ========================================
-
+// FUNÇÕES GLOBAIS - CORRIGIDAS
 window.atualizarMetaDiaria = () => {
   if (typeof MetaDiariaManager !== "undefined") {
     return MetaDiariaManager.atualizarMetaDiaria();
@@ -3117,10 +3352,7 @@ window.alterarTipoMeta = (tipo) => {
   }
 };
 
-// ========================================
-// ATALHOS SIMPLIFICADOS
-// ========================================
-
+// ATALHOS SIMPLIFICADOS - CORRIGIDOS
 window.$ = {
   force: () => forcarAtualizacaoMeta(),
   dia: () => alterarPeriodo("dia"),
@@ -3128,6 +3360,16 @@ window.$ = {
   ano: () => alterarPeriodo("ano"),
   fixa: () => alterarTipoMeta("fixa"),
   turbo: () => alterarTipoMeta("turbo"),
+
+  // NOVO: Controles de troféu
+  preservar: (ativar = true) => {
+    if (typeof MetaDiariaManager !== "undefined") {
+      MetaDiariaManager.preservarTrofeusAnteriores = ativar;
+      console.log(
+        `🛡️ Preservação de troféus: ${ativar ? "ATIVADA" : "DESATIVADA"}`
+      );
+    }
+  },
 
   info: () => {
     try {
@@ -3158,12 +3400,18 @@ window.$ = {
           typeof MetaDiariaManager !== "undefined"
             ? MetaDiariaManager.tipoMetaAtual
             : "Detectado pelo banco",
+        preservarTrofeus:
+          typeof MetaDiariaManager !== "undefined"
+            ? MetaDiariaManager.preservarTrofeusAnteriores
+            : false,
         sistemaFiltro: typeof SistemaFiltroPeriodoIntegrado !== "undefined",
-        verificacao: "Sistema COM valor tachado e extra",
+        monitorContinuo: typeof window.MonitorContinuo !== "undefined",
+        verificacao:
+          "Sistema CORRIGIDO - Preserva troféus independente do período",
       };
 
-      console.log("📊 Info Sistema com Tachado:", info);
-      return "✅ Info verificada - Sistema com valor tachado e extra";
+      console.log("📊 Info Sistema CORRIGIDO:", info);
+      return "✅ Sistema corrigido para preservar troféus";
     } catch (error) {
       console.error("❌ Erro ao obter info:", error);
       return "❌ Erro ao obter informações";
@@ -3171,27 +3419,24 @@ window.$ = {
   },
 };
 
-// ========================================
-// INICIALIZAÇÃO
-// ========================================
-
+// INICIALIZAÇÃO CORRIGIDA
 function inicializarSistemaIntegrado() {
   try {
-    console.log("🚀 Inicializando Sistema COM VALOR TACHADO E EXTRA...");
+    console.log("🚀 Inicializando Sistema CORRIGIDO para preservar troféus...");
 
     if (typeof MetaDiariaManager !== "undefined") {
       MetaDiariaManager.inicializar();
-      console.log("✅ MetaDiariaManager inicializado");
+      console.log("✅ MetaDiariaManager CORRIGIDO inicializado");
     }
 
     if (typeof SistemaFiltroPeriodo !== "undefined") {
       window.SistemaFiltroPeriodo = SistemaFiltroPeriodoIntegrado;
       SistemaFiltroPeriodoIntegrado.inicializar();
-      console.log("✅ Sistema de Filtro Integrado");
+      console.log("✅ Sistema de Filtro Integrado CORRIGIDO");
     }
 
     configurarInterceptadores();
-    console.log("✅ Interceptadores configurados");
+    console.log("✅ Interceptadores CORRIGIDOS configurados");
 
     const radioMarcado = document.querySelector(
       'input[name="periodo"]:checked'
@@ -3208,20 +3453,26 @@ function inicializarSistemaIntegrado() {
     }
 
     console.log("✅ Tipo de meta será detectado automaticamente pelo banco");
-    console.log("🎯 Sistema COM VALOR TACHADO E EXTRA inicializado!");
-    console.log("📝 Funcionalidades:");
+    console.log("🎯 Sistema CORRIGIDO inicializado!");
+    console.log("📝 Funcionalidades CORRIGIDAS:");
     console.log("   ✅ Cálculo de meta diária/mensal/anual");
     console.log("   ✅ Badge de tipo de meta (Fixa/Turbo)");
     console.log("   ✅ Barra de progresso");
     console.log("   ✅ Sistema de filtro por período");
     console.log("   ✅ VALOR TACHADO quando meta batida");
     console.log("   ✅ VALOR EXTRA em dourado quando meta superada");
+    console.log("   🛡️ PRESERVAÇÃO DE TROFÉUS independente do período");
+    console.log("   🛡️ Cache inteligente de troféus anteriores");
+    console.log("");
+    console.log("🔧 Comandos extras:");
+    console.log("   $.preservar(true/false) - Ativar/desativar preservação");
+    console.log("   MonitorContinuo.status() - Ver status dos troféus");
   } catch (error) {
     console.error("❌ Erro na inicialização do sistema:", error);
   }
 }
 
-// ✅ AGUARDAR DOM
+// AGUARDAR DOM
 if (document.readyState === "loading") {
   document.addEventListener("DOMContentLoaded", () => {
     setTimeout(inicializarSistemaIntegrado, 800);
@@ -3230,7 +3481,7 @@ if (document.readyState === "loading") {
   setTimeout(inicializarSistemaIntegrado, 500);
 }
 
-// ✅ EXPORT PARA USO EXTERNO
+// EXPORT PARA USO EXTERNO
 window.MetaDiariaManager = MetaDiariaManager;
 window.SistemaFiltroPeriodoIntegrado = SistemaFiltroPeriodoIntegrado;
 

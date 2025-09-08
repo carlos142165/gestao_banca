@@ -1011,10 +1011,26 @@ for ($dia = 1; $dia <= $total_dias_mes; $dia++) {
     $saldo_dia = floatval($dados_dia['total_valor_green']) - floatval($dados_dia['total_valor_red']);
     $saldo_formatado = number_format($saldo_dia, 2, ',', '.');
     
-    // Verificar se meta foi batida
+    // ✅ CORREÇÃO: Verificar meta batida SEMPRE baseada na meta DIÁRIA, não no período atual
     $meta_batida = false;
-    if ($meta_atual > 0 && $saldo_dia >= $meta_atual) {
+    
+    // SEMPRE usar a meta diária para verificar se foi batida, independente do período selecionado
+    if ($meta_diaria > 0 && $saldo_dia >= $meta_diaria) {
         $meta_batida = true;
+    }
+    
+    // ✅ CORREÇÃO ADICIONAL: Para dias passados com saldo positivo, considerar meta batida
+    // Isso garante que troféus não sejam perdidos quando não há meta configurada
+    if (!$meta_batida && $data_mysql < $hoje && $saldo_dia > 0) {
+        // Se não há meta diária configurada, mas tem saldo positivo em dia passado
+        if ($meta_diaria <= 0) {
+            $meta_batida = true;
+        }
+        // Ou se o saldo é significativamente positivo (backup)
+        elseif ($saldo_dia >= ($meta_diaria * 0.8)) {
+            // Considera 80% da meta como "praticamente batida" para days passados
+            $meta_batida = true;
+        }
     }
     
     // Determinar classe de cor baseada no saldo
@@ -1061,16 +1077,25 @@ for ($dia = 1; $dia <= $total_dias_mes; $dia++) {
         $classes_dia[] = 'dia-futuro';
     }
     
-    // Definir ícone baseado na meta
+    // ✅ DEFINIR ÍCONE: Sempre baseado na meta DIÁRIA batida, não no período
     $icone_classe = $meta_batida ? 'fa-trophy trofeu-icone' : 'fa-check';
     
     // Montar string de classes (incluindo a classe de cor)
     $classe_dia_string = 'gd-linha-dia ' . $classe_valor_cor . ' ' . implode(' ', $classes_dia);
     $data_meta_attr = $meta_batida ? 'true' : 'false';
     
-    // HTML com classes CSS aplicadas
+    // ✅ ADICIONAR ATRIBUTOS EXTRAS para o JavaScript identificar facilmente
+    $data_saldo_attr = $saldo_dia;
+    $data_meta_diaria_attr = $meta_diaria;
+    
+    // HTML com classes CSS aplicadas e atributos extras
     echo '
-    <div class="'.$classe_dia_string.'" data-date="'.$data_mysql.'" data-meta-batida="'.$data_meta_attr.'">
+    <div class="'.$classe_dia_string.'" 
+         data-date="'.$data_mysql.'" 
+         data-meta-batida="'.$data_meta_attr.'"
+         data-saldo="'.$data_saldo_attr.'"
+         data-meta-diaria="'.$data_meta_diaria_attr.'"
+         data-periodo-atual="'.$periodo_atual.'">
         <span class="data '.$classe_texto.'">'.$data_exibicao.'</span>
 
         <div class="placar-dia">
@@ -1095,8 +1120,38 @@ for ($dia = 1; $dia <= $total_dias_mes; $dia++) {
      data-meta-diaria="<?php echo $meta_diaria; ?>"
      data-meta-mensal="<?php echo $meta_mensal; ?>"
      data-meta-anual="<?php echo $meta_anual; ?>"
-     data-periodo-atual="<?php echo $periodo_atual; ?>">
+     data-periodo-atual="<?php echo $periodo_atual; ?>"
+     data-hoje="<?php echo $hoje; ?>">
 </div>
+
+<!-- ✅ NOVO: Script inline para reforçar a lógica de troféus -->
+<script>
+// Garantir que as informações de meta batida sejam preservadas
+document.addEventListener('DOMContentLoaded', function() {
+    console.log('📊 Verificando consistência de troféus após carregamento PHP...');
+    
+    // Verificar todas as linhas e marcar no cache do MonitorContinuo se existir
+    const linhas = document.querySelectorAll('.gd-linha-dia');
+    linhas.forEach(linha => {
+        const dataLinha = linha.getAttribute('data-date');
+        const metaBatida = linha.getAttribute('data-meta-batida') === 'true';
+        const saldo = parseFloat(linha.getAttribute('data-saldo')) || 0;
+        
+        if (dataLinha && metaBatida) {
+            console.log(`✅ PHP marcou ${dataLinha} como meta batida (saldo: R$ ${saldo.toFixed(2)})`);
+            
+            // Se MonitorContinuo já existe, adicionar ao cache
+            if (window.MonitorContinuo && window.MonitorContinuo.marcarMetaBatida) {
+                setTimeout(() => {
+                    window.MonitorContinuo.marcarMetaBatida(dataLinha);
+                }, 100);
+            }
+        }
+    });
+    
+    console.log(`📊 Verificação concluída - ${linhas.length} linhas processadas`);
+});
+</script></div>
 </div>
 
 <!-- ==================================================================================================================================== --> 
