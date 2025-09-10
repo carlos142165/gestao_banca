@@ -5668,6 +5668,18 @@ console.log("- Debug com debugMentorOculto()");
 // ========================================================================================================================
 //                                  ✅  FIM VERIFICAÇÃO DE MENTORES CADASTRADO PARA NÃO DA ERRO
 // ========================================================================================================================
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
 // ========================================================================================================================
 //                                  ✅  SISTEMA DE CORES DINÂMICAS DO RANK
 // ========================================================================================================================
@@ -5717,353 +5729,433 @@ document.addEventListener("DOMContentLoaded", () => {
 // ========================================================================================================================
 //                                  ✅  FIM SISTEMA DE CORES DINÂMICAS DO RANK
 // ========================================================================================================================
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
 // ========================================================================================================================
 //                     ✅ SISTEMA DE RANKING DINÂMICO ROBUSTO - SEMPRE ATUALIZADO
 // ========================================================================================================================
 
-// Função principal de atualização do ranking
-function atualizarRankingMentores() {
-  console.log("🔄 Iniciando atualização de ranking...");
+// ========================================================================================================================
+//                     SISTEMA DE RANKING COMPLETO - CORRIGIDO PARA F5
+// ========================================================================================================================
 
-  // Aguardar um momento para garantir que o DOM está pronto
-  setTimeout(() => {
-    executarAtualizacaoRanking();
-  }, 100);
-}
+(function () {
+  "use strict";
 
-function executarAtualizacaoRanking() {
-  // Coletar todos os mentores
-  const mentores = [];
-  const items = document.querySelectorAll(".mentor-item");
+  console.log("Sistema de ranking iniciado - modo carregamento inicial");
 
-  if (items.length === 0) {
-    console.log("⚠️ Nenhum mentor encontrado");
-    return;
-  }
+  // Observer para detectar quando elementos aparecem
+  const detectarElementos = new MutationObserver(function (mutations) {
+    mutations.forEach(function (mutation) {
+      if (mutation.addedNodes.length > 0) {
+        for (let node of mutation.addedNodes) {
+          if (node.nodeType === 1) {
+            if (node.classList && node.classList.contains("mentor-item")) {
+              processarMentorItem(node);
+            } else if (
+              node.querySelector &&
+              node.querySelector(".mentor-item")
+            ) {
+              node
+                .querySelectorAll(".mentor-item")
+                .forEach(processarMentorItem);
+            }
+          }
+        }
+      }
+    });
+  });
 
-  items.forEach((item) => {
-    // Pular item se for o container "sem mentores"
-    if (item.classList.contains("sem-mentores")) return;
+  // Função para processar um mentor individual
+  function processarMentorItem(item) {
+    if (
+      item.classList.contains("sem-mentores") ||
+      item.dataset.processado === "true"
+    ) {
+      return;
+    }
 
-    const card = item.querySelector(".mentor-card");
-    if (!card) return;
+    item.dataset.processado = "true";
 
-    // Pegar valores de green e red diretamente dos elementos
     const greenElement = item.querySelector(".value-box-green p:nth-child(2)");
     const redElement = item.querySelector(".value-box-red p:nth-child(2)");
     const saldoElement = item.querySelector(".value-box-saldo p:nth-child(2)");
+    const rankElement = item.querySelector(".mentor-rank-externo");
+    const nomeElement = item.querySelector(".mentor-nome");
 
-    const green = parseInt(greenElement?.textContent || "0") || 0;
-    const red = parseInt(redElement?.textContent || "0") || 0;
-    const saldoTexto = saldoElement?.textContent || "R$ 0,00";
+    if (!greenElement || !redElement || !saldoElement || !rankElement) {
+      return;
+    }
 
-    // Extrair valor numérico do saldo
+    const green = parseInt(greenElement.textContent || "0") || 0;
+    const red = parseInt(redElement.textContent || "0") || 0;
+    const saldoTexto = saldoElement.textContent || "R$ 0,00";
     const saldo =
       parseFloat(
         saldoTexto.replace("R$", "").replace(/\./g, "").replace(",", ".").trim()
       ) || 0;
 
-    mentores.push({
-      element: item,
-      green: green,
-      red: red,
-      saldo: saldo,
-      temValor: green > 0 || red > 0,
-    });
-  });
+    const temValor = green > 0 || red > 0 || saldo !== 0;
+    const nome = nomeElement ? nomeElement.textContent : "Mentor";
 
-  // Separar mentores
-  const mentoresComValor = mentores.filter((m) => m.temValor);
-  const mentoresSemValor = mentores.filter((m) => !m.temValor);
+    console.log(
+      `Processando: ${nome} - Green: ${green}, Red: ${red}, Saldo: ${saldo}, TemValor: ${temValor}`
+    );
 
-  // Ordenar mentores com valor por saldo
-  mentoresComValor.sort((a, b) => b.saldo - a.saldo);
-
-  // Container pai
-  const container =
-    document.getElementById("listaMentores") ||
-    document.querySelector(".mentor-wrapper");
-  if (!container) {
-    console.log("⚠️ Container não encontrado");
-    return;
-  }
-
-  // Preservar elementos auxiliares
-  const elementosAuxiliares = container.querySelectorAll(
-    "#total-green-dia, #total-red-dia, #saldo-dia, #meta-meia-unidade, #estado-mentores, .sem-mentores"
-  );
-
-  // Criar fragmento para reordenação
-  const fragment = document.createDocumentFragment();
-
-  // Adicionar mentores COM valor
-  mentoresComValor.forEach((mentor, index) => {
-    const rank = index + 1;
-    const rankElement = mentor.element.querySelector(".mentor-rank-externo");
-
-    // Configurar elemento
-    mentor.element.classList.remove("sem-valores");
-
-    // Garantir que o menu dos 3 pontinhos esteja visível e habilitado
-    const menuToggleEnable =
-      mentor.element.querySelector(".menu-toggle") ||
-      mentor.element.querySelector(".mentor-menu-externo");
-    if (menuToggleEnable) {
-      try {
-        menuToggleEnable.style.display = "";
-        menuToggleEnable.style.visibility = "visible";
-        menuToggleEnable.style.pointerEvents = "auto";
-        menuToggleEnable.style.opacity = "1";
-        menuToggleEnable.style.zIndex = "99999";
-      } catch (e) {
-        // silencioso
-      }
-    }
-
-    if (rankElement) {
-      rankElement.textContent = rank + "º";
-      rankElement.style.display = "flex";
-      rankElement.style.visibility = "visible";
-
-      // Cores do rank
-      rankElement.classList.remove(
-        "rank-positivo",
-        "rank-negativo",
-        "rank-neutro"
-      );
-      if (mentor.saldo > 0) {
-        rankElement.classList.add("rank-positivo");
-      } else if (mentor.saldo < 0) {
-        rankElement.classList.add("rank-negativo");
-      } else {
-        rankElement.classList.add("rank-neutro");
-      }
-    }
-
-    fragment.appendChild(mentor.element);
-  });
-
-  // Adicionar mentores SEM valor
-  mentoresSemValor.forEach((mentor) => {
-    mentor.element.classList.add("sem-valores");
-
-    const rankElement = mentor.element.querySelector(".mentor-rank-externo");
-    if (rankElement) {
+    if (!temValor) {
+      item.classList.add("sem-valores");
       rankElement.style.display = "none";
       rankElement.style.visibility = "hidden";
+      rankElement.style.opacity = "0";
+
+      const card = item.querySelector(".mentor-card");
+      if (card) {
+        card.style.opacity = "0.42";
+        card.style.background = "#f5f5f5";
+        card.style.borderStyle = "dashed";
+      }
+
+      console.log(`Rank oculto: ${nome}`);
+    } else {
+      item.classList.remove("sem-valores");
+      rankElement.style.display = "flex";
+      rankElement.style.visibility = "visible";
+      rankElement.style.opacity = "1";
+
+      const card = item.querySelector(".mentor-card");
+      if (card) {
+        card.style.opacity = "1";
+        card.style.background = "";
+        card.style.borderStyle = "";
+      }
+
+      console.log(`Rank visível: ${nome}`);
+    }
+  }
+
+  // Função para processar todos os mentores existentes
+  function processarTodosMentores() {
+    const items = document.querySelectorAll(".mentor-item");
+    console.log(`Processando ${items.length} mentores encontrados`);
+
+    items.forEach(processarMentorItem);
+    setTimeout(executarRanking, 200);
+  }
+
+  // Função principal de ranking com reordenação
+  function executarRanking() {
+    const container =
+      document.getElementById("listaMentores") ||
+      document.querySelector(".mentor-wrapper");
+    if (!container) return;
+
+    const items = document.querySelectorAll(".mentor-item:not(.sem-mentores)");
+    if (items.length === 0) return;
+
+    const mentores = [];
+
+    items.forEach((item) => {
+      const greenElement = item.querySelector(
+        ".value-box-green p:nth-child(2)"
+      );
+      const redElement = item.querySelector(".value-box-red p:nth-child(2)");
+      const saldoElement = item.querySelector(
+        ".value-box-saldo p:nth-child(2)"
+      );
+
+      if (!greenElement || !redElement || !saldoElement) return;
+
+      const green = parseInt(greenElement.textContent || "0") || 0;
+      const red = parseInt(redElement.textContent || "0") || 0;
+      const saldoTexto = saldoElement.textContent || "R$ 0,00";
+      const saldo =
+        parseFloat(
+          saldoTexto
+            .replace("R$", "")
+            .replace(/\./g, "")
+            .replace(",", ".")
+            .trim()
+        ) || 0;
+
+      const temValor = green > 0 || red > 0 || saldo !== 0;
+
+      mentores.push({
+        element: item,
+        saldo: saldo,
+        temValor: temValor,
+      });
+    });
+
+    const mentoresComValor = mentores.filter((m) => m.temValor);
+    const mentoresSemValor = mentores.filter((m) => !m.temValor);
+
+    mentoresComValor.sort((a, b) => b.saldo - a.saldo);
+
+    const elementosAuxiliares = container.querySelectorAll(
+      "#total-green-dia, #total-red-dia, #saldo-dia, #meta-meia-unidade, #estado-mentores, .sem-mentores"
+    );
+    const fragment = document.createDocumentFragment();
+
+    mentoresComValor.forEach((mentor, index) => {
+      const rank = index + 1;
+      const rankElement = mentor.element.querySelector(".mentor-rank-externo");
+
+      mentor.element.classList.remove("sem-valores");
+
+      if (rankElement) {
+        rankElement.textContent = rank + "º";
+        rankElement.style.display = "flex";
+        rankElement.style.visibility = "visible";
+        rankElement.style.opacity = "1";
+
+        rankElement.classList.remove(
+          "rank-positivo",
+          "rank-negativo",
+          "rank-neutro"
+        );
+        if (mentor.saldo > 0) {
+          rankElement.classList.add("rank-positivo");
+        } else if (mentor.saldo < 0) {
+          rankElement.classList.add("rank-negativo");
+        } else {
+          rankElement.classList.add("rank-neutro");
+        }
+      }
+
+      configurarMenuVisivel(mentor.element);
+      fragment.appendChild(mentor.element);
+    });
+
+    mentoresSemValor.forEach((mentor) => {
+      mentor.element.classList.add("sem-valores");
+
+      const rankElement = mentor.element.querySelector(".mentor-rank-externo");
+      if (rankElement) {
+        rankElement.style.display = "none";
+        rankElement.style.visibility = "hidden";
+        rankElement.style.opacity = "0";
+      }
+
+      configurarMenuVisivel(mentor.element);
+      fragment.appendChild(mentor.element);
+    });
+
+    const mentorItems = container.querySelectorAll(
+      ".mentor-item:not(.sem-mentores)"
+    );
+    mentorItems.forEach((item) => item.remove());
+
+    if (
+      elementosAuxiliares.length > 0 &&
+      elementosAuxiliares[0].parentNode === container
+    ) {
+      container.insertBefore(fragment, elementosAuxiliares[0]);
+    } else {
+      container.appendChild(fragment);
     }
 
-    // Assegurar que o toggle dos 3 pontinhos continue visível e clicável mesmo com sem-valores
+    console.log(
+      `Ranking aplicado e reordenado: ${mentoresComValor.length} com rank (primeiro), ${mentoresSemValor.length} sem rank (último)`
+    );
+  }
+
+  // Função para configurar menu visível
+  function configurarMenuVisivel(element) {
     const menuToggle =
-      mentor.element.querySelector(".menu-toggle") ||
-      mentor.element.querySelector(".mentor-menu-externo");
+      element.querySelector(".menu-toggle") ||
+      element.querySelector(".mentor-menu-externo");
+
     if (menuToggle) {
       try {
-        // Exibir apenas o toggle; o painel interno pode permanecer oculto
         menuToggle.style.display = "";
         menuToggle.style.visibility = "visible";
         menuToggle.style.pointerEvents = "auto";
         menuToggle.style.opacity = "1";
         menuToggle.style.zIndex = "99999";
       } catch (e) {
-        // ignorar erros de estilo
+        // Silencioso
+      }
+    }
+  }
+
+  // Inicializar sistema
+  function inicializar() {
+    processarTodosMentores();
+
+    detectarElementos.observe(document.body, {
+      childList: true,
+      subtree: true,
+    });
+
+    console.log("Sistema de ranking inicializado");
+  }
+
+  // Executar baseado no estado do DOM
+  if (document.readyState === "loading") {
+    document.addEventListener("DOMContentLoaded", inicializar);
+  } else {
+    inicializar();
+  }
+
+  setTimeout(() => {
+    if (document.querySelector(".mentor-item")) {
+      processarTodosMentores();
+    }
+  }, 500);
+
+  // Funções globais
+  window.forcarRankingCorreto = function () {
+    console.log("Forçando correção do ranking...");
+
+    document.querySelectorAll(".mentor-item").forEach((item) => {
+      item.dataset.processado = "false";
+    });
+
+    processarTodosMentores();
+  };
+
+  window.debugRanking = function () {
+    const items = document.querySelectorAll(".mentor-item:not(.sem-mentores)");
+    const debug = [];
+
+    items.forEach((item, index) => {
+      const nome =
+        item.querySelector(".mentor-nome")?.textContent ||
+        `Mentor ${index + 1}`;
+      const green =
+        parseInt(
+          item.querySelector(".value-box-green p:nth-child(2)")?.textContent ||
+            "0"
+        ) || 0;
+      const red =
+        parseInt(
+          item.querySelector(".value-box-red p:nth-child(2)")?.textContent ||
+            "0"
+        ) || 0;
+      const saldoTexto =
+        item.querySelector(".value-box-saldo p:nth-child(2)")?.textContent ||
+        "R$ 0,00";
+      const saldo =
+        parseFloat(
+          saldoTexto
+            .replace("R$", "")
+            .replace(/\./g, "")
+            .replace(",", ".")
+            .trim()
+        ) || 0;
+
+      const temValor = green > 0 || red > 0 || saldo !== 0;
+      const rankElement = item.querySelector(".mentor-rank-externo");
+      const rankVisivel = rankElement && rankElement.style.display !== "none";
+      const rankTexto = rankElement?.textContent || "N/A";
+
+      debug.push({
+        posicaoDOM: index + 1,
+        nome,
+        green,
+        red,
+        saldo,
+        temValor,
+        rankVisivel,
+        rankTexto,
+        semValores: item.classList.contains("sem-valores"),
+        correto: (temValor && rankVisivel) || (!temValor && !rankVisivel),
+        ordemCorreta: temValor ? "DEVE ESTAR NO INÍCIO" : "DEVE ESTAR NO FINAL",
+      });
+    });
+
+    console.table(debug);
+
+    const mentoresComValor = debug.filter((d) => d.temValor);
+    const mentoresSemValor = debug.filter((d) => !d.temValor);
+
+    console.log(`Análise de ordem:`);
+    console.log(
+      `Mentores com valor (${mentoresComValor.length}): devem estar no início`
+    );
+    console.log(
+      `Mentores sem valor (${mentoresSemValor.length}): devem estar no final`
+    );
+
+    let ordemCorreta = true;
+    if (mentoresComValor.length > 0 && mentoresSemValor.length > 0) {
+      const ultimaPosicaoComValor = Math.max(
+        ...mentoresComValor.map((m) => m.posicaoDOM)
+      );
+      const primeiraPosicaoSemValor = Math.min(
+        ...mentoresSemValor.map((m) => m.posicaoDOM)
+      );
+
+      if (ultimaPosicaoComValor > primeiraPosicaoSemValor) {
+        ordemCorreta = false;
+        console.log(
+          `ORDEM INCORRETA: Mentor sem valor na posição ${primeiraPosicaoSemValor} está antes de mentor com valor na posição ${ultimaPosicaoComValor}`
+        );
       }
     }
 
-    fragment.appendChild(mentor.element);
-  });
-
-  // Remover apenas mentor-items do container
-  const mentorItems = container.querySelectorAll(
-    ".mentor-item:not(.sem-mentores)"
-  );
-  mentorItems.forEach((item) => item.remove());
-
-  // Inserir na nova ordem
-  if (
-    elementosAuxiliares.length > 0 &&
-    elementosAuxiliares[0].parentNode === container
-  ) {
-    container.insertBefore(fragment, elementosAuxiliares[0]);
-  } else {
-    container.appendChild(fragment);
-  }
-
-  console.log(
-    `✅ Ranking atualizado: ${mentoresComValor.length} ativos, ${mentoresSemValor.length} inativos`
-  );
-}
-
-// ===== INTEGRAÇÃO COMPLETA COM TODOS OS SISTEMAS =====
-
-// 1. Integrar com MentorManager
-if (typeof MentorManager !== "undefined") {
-  const originalRecarregar = MentorManager.recarregarMentores;
-
-  MentorManager.recarregarMentores = async function () {
-    const resultado = await originalRecarregar.call(this);
-
-    // Sempre atualizar ranking após recarregar
-    setTimeout(() => {
-      console.log("📊 Atualizando ranking após recarregar mentores");
-      atualizarRankingMentores();
-    }, 500);
-
-    return resultado;
-  };
-}
-
-// 2. Integrar com Sistema de Filtro (Dia/Mês/Ano)
-if (typeof SistemaFiltroPeriodo !== "undefined") {
-  const originalAlterarPeriodo = SistemaFiltroPeriodo.alterarPeriodo;
-
-  SistemaFiltroPeriodo.alterarPeriodo = async function (periodo) {
-    await originalAlterarPeriodo.call(this, periodo);
-
-    // Atualizar ranking após mudar período
-    setTimeout(() => {
-      console.log(`📊 Atualizando ranking após mudar para: ${periodo}`);
-      atualizarRankingMentores();
-    }, 800);
-  };
-
-  // Também interceptar reaplicarEventos
-  const originalReaplicar = SistemaFiltroPeriodo.reaplicarEventos;
-
-  SistemaFiltroPeriodo.reaplicarEventos = function () {
-    if (originalReaplicar) {
-      originalReaplicar.call(this);
+    if (ordemCorreta) {
+      console.log(
+        `ORDEM CORRETA: Todos os mentores com valor estão antes dos sem valor`
+      );
     }
 
-    setTimeout(() => {
-      console.log("📊 Atualizando ranking após reaplicar eventos");
-      atualizarRankingMentores();
-    }, 300);
+    const problemas = debug.filter((d) => !d.correto);
+    if (problemas.length > 0) {
+      console.log("PROBLEMAS DE RANK DETECTADOS:");
+      console.table(problemas);
+    }
+
+    return {
+      mentores: debug,
+      ordemCorreta,
+      mentoresComValor: mentoresComValor.length,
+      mentoresSemValor: mentoresSemValor.length,
+      problemas: problemas.length,
+    };
   };
-}
 
-// 3. Integrar com cadastro de valores
-if (typeof App !== "undefined") {
-  const originalProcessar = App.processarSubmissaoFormulario;
+  // Integração com sistemas existentes
+  if (typeof MentorManager !== "undefined") {
+    const originalRecarregar = MentorManager.recarregarMentores;
 
-  App.processarSubmissaoFormulario = async function (form) {
-    const resultado = await originalProcessar.call(this, form);
+    MentorManager.recarregarMentores = async function () {
+      const resultado = await originalRecarregar.call(this);
 
-    setTimeout(() => {
-      console.log("📊 Atualizando ranking após cadastrar valor");
-      atualizarRankingMentores();
-    }, 1500);
+      setTimeout(() => {
+        window.forcarRankingCorreto();
+      }, 300);
 
-    return resultado;
-  };
-}
-
-// 4. Executar ao carregar a página
-document.addEventListener("DOMContentLoaded", () => {
-  console.log("📊 Inicializando sistema de ranking");
-
-  // Múltiplas tentativas para garantir execução
-  setTimeout(atualizarRankingMentores, 500);
-  setTimeout(atualizarRankingMentores, 1500);
-  setTimeout(atualizarRankingMentores, 3000);
-});
-
-// 5. Observer para mudanças no DOM
-const observerConfig = { childList: true, subtree: true };
-let observerTimeout;
-
-const mentorObserver = new MutationObserver((mutations) => {
-  // Verificar se houve mudança relevante
-  const mudancaRelevante = mutations.some((mutation) => {
-    return Array.from(mutation.addedNodes).some(
-      (node) =>
-        node.classList &&
-        (node.classList.contains("mentor-item") ||
-          node.classList.contains("mentor-card"))
-    );
-  });
-
-  if (mudancaRelevante) {
-    clearTimeout(observerTimeout);
-    observerTimeout = setTimeout(() => {
-      console.log("📊 Mudança detectada no DOM, atualizando ranking");
-      atualizarRankingMentores();
-    }, 500);
+      return resultado;
+    };
   }
-});
 
-// Iniciar observer quando o container existir
-const iniciarObserver = setInterval(() => {
-  const container = document.getElementById("listaMentores");
-  if (container) {
-    mentorObserver.observe(container, observerConfig);
-    clearInterval(iniciarObserver);
-    console.log("👁️ Observer de mentores iniciado");
+  if (typeof SistemaFiltroPeriodo !== "undefined") {
+    const originalAlterar = SistemaFiltroPeriodo.alterarPeriodo;
+
+    SistemaFiltroPeriodo.alterarPeriodo = async function (periodo) {
+      await originalAlterar.call(this, periodo);
+
+      setTimeout(() => {
+        window.forcarRankingCorreto();
+      }, 500);
+    };
   }
-}, 1000);
-
-// 6. Função global para forçar atualização
-window.forcarAtualizacaoRanking = function () {
-  console.log("🔨 Forçando atualização de ranking");
-  executarAtualizacaoRanking();
-};
-
-// 7. Debug melhorado
-window.debugRanking = function () {
-  const mentores = [];
-
-  document.querySelectorAll(".mentor-item").forEach((item, index) => {
-    if (item.classList.contains("sem-mentores")) return;
-
-    const nome = item.querySelector(".mentor-nome")?.textContent || "Sem nome";
-    const green =
-      item.querySelector(".value-box-green p:nth-child(2)")?.textContent || "0";
-    const red =
-      item.querySelector(".value-box-red p:nth-child(2)")?.textContent || "0";
-    const saldo =
-      item.querySelector(".value-box-saldo p:nth-child(2)")?.textContent ||
-      "R$ 0,00";
-    const rankVisivel =
-      item.querySelector(".mentor-rank-externo")?.style.display !== "none";
-    const temClasse = item.classList.contains("sem-valores");
-
-    mentores.push({
-      posicao: index + 1,
-      nome,
-      green,
-      red,
-      saldo,
-      rankVisivel,
-      semValores: temClasse,
-    });
-  });
-
-  console.table(mentores);
-
-  const comValor = mentores.filter((m) => !m.semValores);
-  const semValor = mentores.filter((m) => m.semValores);
 
   console.log(
-    `✅ Com valor: ${comValor.length} | ❌ Sem valor: ${semValor.length}`
+    "Sistema de ranking carregado - use debugRanking() para verificar"
   );
-
-  return {
-    mentores,
-    estatisticas: {
-      total: mentores.length,
-      comValor: comValor.length,
-      semValor: semValor.length,
-      ordemCorreta:
-        semValor.length === 0 ||
-        comValor.length === 0 ||
-        comValor[comValor.length - 1].posicao < semValor[0].posicao,
-    },
-  };
-};
-
-console.log("✅ Sistema de Ranking Robusto carregado!");
-console.log("🔧 Use forcarAtualizacaoRanking() para atualizar manualmente");
-console.log("🔍 Use debugRanking() para diagnóstico completo");
+})();
 
 // ========================================================================================================================
 //                        ✅ FIM SISTEMA DE RANKING DINÂMICO ROBUSTO

@@ -1,3 +1,281 @@
+/* ===== CSS COMPLETO PARA SISTEMA DE RANKING ===== */
+
+/* RANK COM COR DINÂMICA BASEADA NO SALDO */
+.mentor-rank-externo {
+  /* Dimensões fixas para manter formato circular */
+  width: 30px !important;
+  height: 30px !important;
+  min-width: 30px !important;
+  min-height: 30px !important;
+
+  /* Remover padding e usar apenas dimensões fixas */
+  padding: 0 !important;
+
+  /* Centralização perfeita */
+  display: flex !important;
+  align-items: center !important;
+  justify-content: center !important;
+
+  /* Garantir formato circular */
+  border-radius: 50% !important;
+
+  /* Visual - removendo cor padrão */
+  font-size: 12px !important;
+  font-weight: 700;
+  color: white !important; /* texto branco para contraste */
+
+  /* Borda será definida por classe */
+  border: 2px solid transparent;
+
+  /* Outros */
+  flex-shrink: 0;
+  box-sizing: border-box;
+  text-align: center;
+  line-height: 1;
+  white-space: nowrap;
+  overflow: hidden;
+  margin-right: 8px;
+
+  /* Transição suave */
+  transition: all 0.3s ease;
+}
+
+/* CORES DO RANK BASEADAS NO CARD */
+
+/* Rank Verde - Saldo Positivo */
+.mentor-item:has(.card-positivo) .mentor-rank-externo,
+.mentor-item .mentor-rank-externo.rank-positivo {
+  background: linear-gradient(135deg, #00a651 0%, #2ecc71 100%) !important;
+  border-color: #00a651 !important;
+  box-shadow: 0 2px 8px rgba(0, 166, 81, 0.3) !important;
+  color: white !important;
+}
+
+/* Rank Vermelho - Saldo Negativo */
+.mentor-item:has(.card-negativo) .mentor-rank-externo,
+.mentor-item .mentor-rank-externo.rank-negativo {
+  background: linear-gradient(135deg, #e74c3c 0%, #c0392b 100%) !important;
+  border-color: #e74c3c !important;
+  box-shadow: 0 2px 8px rgba(231, 76, 60, 0.3) !important;
+  color: white !important;
+}
+
+/* Rank Cinza - Saldo Neutro */
+.mentor-item:has(.card-neutro) .mentor-rank-externo,
+.mentor-item .mentor-rank-externo.rank-neutro {
+  background: linear-gradient(135deg, #95a5a6 0%, #7f8c8d 100%) !important;
+  border-color: #95a5a6 !important;
+  box-shadow: 0 2px 8px rgba(149, 165, 166, 0.3) !important;
+  color: white !important;
+}
+
+/* HOVER EFFECTS NO RANK */
+.mentor-item:has(.card-positivo) .mentor-rank-externo:hover,
+.mentor-item .mentor-rank-externo.rank-positivo:hover {
+  transform: scale(1.1);
+  box-shadow: 0 4px 12px rgba(0, 166, 81, 0.5) !important;
+}
+
+.mentor-item:has(.card-negativo) .mentor-rank-externo:hover,
+.mentor-item .mentor-rank-externo.rank-negativo:hover {
+  transform: scale(1.1);
+  box-shadow: 0 4px 12px rgba(231, 76, 60, 0.5) !important;
+}
+
+.mentor-item:has(.card-neutro) .mentor-rank-externo:hover,
+.mentor-item .mentor-rank-externo.rank-neutro:hover {
+  transform: scale(1.1);
+  box-shadow: 0 4px 12px rgba(149, 165, 166, 0.5) !important;
+}
+
+/* MENTORES SEM VALORES - REGRAS CRÍTICAS */
+.mentor-item.sem-valores {
+  opacity: 1 !important; /* Container mantém opacidade normal */
+}
+
+.mentor-item.sem-valores .mentor-rank-externo {
+  display: none !important;
+  visibility: hidden !important;
+  opacity: 0 !important;
+  pointer-events: none !important;
+}
+
+.mentor-item.sem-valores .mentor-card {
+  opacity: 0.42 !important;
+  transition: opacity 0.3s ease !important;
+  background: #f5f5f5 !important;
+  border-style: dashed !important;
+  cursor: pointer !important;
+}
+
+.mentor-item.sem-valores .mentor-card:hover {
+  opacity: 0.6 !important;
+  transform: none !important;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1) !important;
+}
+
+/* Manter o botão de menu visível mesmo sem valores */
+.mentor-item.sem-valores .menu-toggle,
+.mentor-item.sem-valores .mentor-menu-externo {
+  pointer-events: auto !important;
+  opacity: 1 !important;
+  visibility: visible !important;
+  display: inline-flex !important;
+  z-index: 99999 !important;
+}
+
+/* GARANTIR VISIBILIDADE PARA MENTORES COM VALORES */
+.mentor-item:not(.sem-valores) .mentor-rank-externo {
+  display: flex !important;
+  visibility: visible !important;
+  opacity: 1 !important;
+}
+
+.mentor-item:not(.sem-valores) .mentor-card {
+  opacity: 1 !important;
+}
+
+/* ANIMAÇÃO PULSE PARA RANK #1 */
+.mentor-item:first-child .mentor-rank-externo {
+  animation: pulseBadge 2s ease-in-out infinite;
+}
+
+.mentor-item:first-child .mentor-rank-externo {
+  position: relative !important;
+  z-index: 100002 !important;
+  -webkit-font-smoothing: antialiased !important;
+  -moz-osx-font-smoothing: grayscale !important;
+  text-rendering: geometricPrecision !important;
+  font-weight: 800 !important;
+  filter: none !important;
+  transform: translateZ(0) !important;
+  will-change: transform, opacity !important;
+  text-shadow: 0 1px 0 rgba(0, 0, 0, 0.08) !important;
+}
+
+@keyframes pulseBadge {
+  0%,
+  100% {
+    transform: scale(1);
+  }
+  50% {
+    transform: scale(1.05);
+  }
+}
+
+/* AJUSTE DE FONTE PARA NÚMEROS GRANDES */
+.mentor-rank-externo {
+  font-size: 13px !important;
+}
+
+/* Para ranks com 2 dígitos, fonte menor */
+.mentor-rank-externo:has-text("10"),
+.mentor-rank-externo:has-text("11"),
+.mentor-rank-externo:has-text("12"),
+.mentor-rank-externo:has-text("13"),
+.mentor-rank-externo:has-text("14"),
+.mentor-rank-externo:has-text("15"),
+.mentor-rank-externo:has-text("16"),
+.mentor-rank-externo:has-text("17"),
+.mentor-rank-externo:has-text("18"),
+.mentor-rank-externo:has-text("19"),
+.mentor-rank-externo:has-text("20") {
+  font-size: 11px !important;
+}
+
+/* RESPONSIVIDADE */
+@media (max-width: 768px) {
+  .mentor-rank-externo {
+    width: 28px !important;
+    height: 28px !important;
+    min-width: 28px !important;
+    min-height: 28px !important;
+    font-size: 11px !important;
+  }
+}
+
+@media (max-width: 480px) {
+  .mentor-rank-externo {
+    width: 24px !important;
+    height: 24px !important;
+    min-width: 24px !important;
+    min-height: 24px !important;
+    font-size: 10px !important;
+  }
+}
+
+/* CORREÇÃO: VALOR DO SALDO VISÍVEL */
+.value-box-saldo {
+  flex: 1 1 auto;
+  min-width: 90px !important;
+  max-width: 140px !important;
+  display: flex !important;
+  flex-direction: column !important;
+  align-items: center !important;
+  justify-content: center !important;
+  padding: 0 5px !important;
+  margin-left: 10px !important;
+  height: 100%;
+  overflow: visible !important;
+}
+
+.value-box-saldo p:nth-child(2) {
+  display: block !important;
+  visibility: visible !important;
+  font-size: 13px !important;
+  font-weight: 700 !important;
+  white-space: nowrap !important;
+  overflow: visible !important;
+  text-overflow: clip !important;
+  line-height: 1.2 !important;
+  margin: 0 !important;
+  padding: 0 !important;
+}
+
+/* CORES DO SALDO BASEADAS NO ESTADO */
+.mentor-card.card-positivo .value-box-saldo p:nth-child(2) {
+  color: #00a651 !important;
+}
+
+.mentor-card.card-negativo .value-box-saldo p:nth-child(2) {
+  color: #e74c3c !important;
+}
+
+.mentor-card.card-neutro .value-box-saldo p:nth-child(2) {
+  color: #7f8c8d !important;
+}
+
+/* TRANSIÇÕES SUAVES PARA EVITAR FLICKER */
+.mentor-rank-externo {
+  transition: opacity 0.2s ease, visibility 0.2s ease, display 0.2s ease !important;
+}
+
+.mentor-card {
+  transition: opacity 0.3s ease, background 0.3s ease, border 0.3s ease !important;
+}
+
+/* FORÇA APLICAÇÃO IMEDIATA - MAIOR ESPECIFICIDADE */
+body .mentor-item.sem-valores .mentor-rank-externo {
+  display: none !important;
+  visibility: hidden !important;
+  opacity: 0 !important;
+}
+
+body .mentor-item:not(.sem-valores) .mentor-rank-externo {
+  display: flex !important;
+  visibility: visible !important;
+  opacity: 1 !important;
+}
+
+/* PREVENT FLASH OF UNSTYLED CONTENT */
+.mentor-rank-externo[style*="display: none"] {
+  display: none !important;
+}
+
+.mentor-rank-externo[style*="display: flex"] {
+  display: flex !important;
+}
+
 /* =======================================================================================================================================================
   (DATA-PLACAR-SALDO) - CONTROLE DE ALTURA
    =======================================================================================================================================================*/

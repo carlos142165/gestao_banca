@@ -513,10 +513,10 @@ ob_end_flush();
     <!-- ==================================================================================================================================== --> 
 <!--                                                 💼  LINK DOS CSS                    
  ====================================================================================================================================== -->
-<link rel="stylesheet" href="css/menu-topo.css">
-<link rel="stylesheet" href="css/modais.css">
 <link rel="stylesheet" href="css/estilo-gestao-diaria-novo.css">
 <link rel="stylesheet" href="css/estilo-campo-mes.css">
+<link rel="stylesheet" href="css/menu-topo.css">
+<link rel="stylesheet" href="css/modais.css">
 <link rel="stylesheet" href="css/estilo-painel-controle.css">
 <link rel="stylesheet" href="css/toast.css">
 <link rel="stylesheet" href="css/toast-modal-gerencia.css">
