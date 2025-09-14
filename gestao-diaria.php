@@ -1,3 +1,7 @@
+    
+    
+    
+    
     <!-- ==================================================================================================================================== --> 
 <!--                                                 💼   PHP DE CALCULOS                    
  ====================================================================================================================================== -->
@@ -520,7 +524,21 @@ ob_end_flush();
 <link rel="stylesheet" href="css/estilo-painel-controle.css">
 <link rel="stylesheet" href="css/toast.css">
 <link rel="stylesheet" href="css/toast-modal-gerencia.css">
-<!--          <link rel="stylesheet" href="css/estilos-organizados.css">       -->
+
+  <style>
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+    body { font-family: Arial, sans-serif; height: 100vh; overflow: hidden; }
+    .header { background-color: #113647; height: 80px; width: 100%; position: fixed; top: 0; z-index: 1000; }
+    .footer { background-color: #113647; height: 80px; width: 100%; position: fixed; bottom: 0; z-index: 1000; }
+    .main-content { position: fixed; top: 80px; bottom: 80px; left: 0; right: 0; padding: 20px; display: flex; justify-content: center; align-items: stretch; }
+    .container { width: 100%; max-width: 1320px; display: flex; justify-content: center; align-items: stretch; gap: 30px; height: 100%; }
+  .bloco { width: 420px; height: 100%; background-color: #f5f5f5ff; border: 2px solid #ddd; border-radius: 15px; padding: 20px; box-shadow: 0 2px 4px rgba(0,0,0,0.1); overflow-y: auto; flex-shrink: 0; }
+    @media screen and (max-width: 1320px) { .bloco { width: calc(33.333% - 20px); min-width: 280px; height: 100%; } }
+    @media screen and (max-width: 1024px) { .main-content { flex-direction: column; overflow-y: auto; align-items: center; } .container { flex-direction: column; align-items: center; height: auto; min-height: 100%; } .bloco { width: 100%; max-width: 420px; height: calc(33.33vh - 40px); min-height: 200px; margin-bottom: 20px; } .bloco:last-child { margin-bottom: 0; } }
+    @media screen and (max-width: 768px) { .main-content { padding: 15px; } .bloco { padding: 15px; height: calc(33.33vh - 35px); min-height: 180px; } }
+    @media screen and (max-width: 480px) { .header, .footer { height: 70px; } .main-content { top: 70px; bottom: 70px; padding: 10px; } .bloco { padding: 12px; height: calc(33.33vh - 30px); min-height: 150px; } }
+  </style>
+
 <!-- -->
 <!-- -->
 <!-- -->
@@ -623,7 +641,9 @@ ob_end_flush();
     <!-- ==================================================================================================================================== --> 
 <!--                                      💼   FILTRO DIA - MES - ANO BLOCO CAMPO VALOR META E SALDO                      
  ====================================================================================================================================== -->
-<div class="container">
+<header class="header"></header>
+<main class="main-content">
+  <div class="container">
     
   <!-- BLOCO 1 -->
   <div class="bloco bloco-1">
@@ -1149,10 +1169,25 @@ document.addEventListener('DOMContentLoaded', function() {
         }
     });
     
-    console.log(`📊 Verificação concluída - ${linhas.length} linhas processadas`);
+  console.log(`📊 Verificação concluída - ${linhas.length} linhas processadas`);
 });
 </script></div>
 </div>
+</div>
+</div>
+</div>
+
+      <!-- BLOCO 3 -->
+      <div class="bloco bloco-3">
+        <h3>Bloco 3</h3>
+        <p>Este terceiro e último bloco completa a estrutura horizontal. Todos os blocos trabalham em conjunto para formar um layout coeso e funcional.</p>
+        <p>O design responsivo garante que a estrutura funcione perfeitamente em zoom de 90%, 100%, 125% e outras configurações, sempre mantendo todos os elementos visíveis na tela.</p>
+        <p>A altura fixa garante que mesmo com pouco conteúdo, o bloco ocupe todo o espaço vertical disponível.</p>
+        <p>Conteúdo adicional pode ser adicionado e será scrollável dentro do bloco, mantendo a estrutura geral intacta.</p>
+      </div>
+    </div>
+  </main>
+  <footer class="footer"></footer>
 
 <!-- ==================================================================================================================================== --> 
 <!--                                                  💼  FIM DO FILTRO BLOCO MÊS                          

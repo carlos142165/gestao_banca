@@ -452,15 +452,70 @@ body .mentor-item:not(.sem-valores) .mentor-rank-externo {
 /* CODIGO DO CAMPO : bloco-meta-simples
    - Regras do cabeçalho interno (.bloco-meta-simples) dentro de .resumo-mes
 */
+
+/* Override: remover visual do bloco interno com traço cinza mantendo o conteúdo
+   Mantém o DOM (seguro para JS) mas elimina borda/fundo/padding para ficar como um único bloco externo */
 .container .bloco.bloco-2 .resumo-mes .bloco-meta-simples {
-  background: rgba(247, 246, 246, 0.95) !important;
-  border: 2px solid #9e9e9e !important;
+  border: none !important;
+  background: transparent !important;
+  box-shadow: none !important;
+  padding: 0 !important;
+  margin: 0 0 8px 0 !important;
+}
+
+.container
+  .bloco.bloco-2
+  .resumo-mes
+  .bloco-meta-simples
+  .campo-armazena-data-placar {
+  padding: 0 !important;
+}
+/* Fixo-topo variant: make the small header flush to bloco-2 lateral edges with rounded border */
+.container .bloco.bloco-2 .resumo-mes .bloco-meta-simples.fixo-topo {
+  position: relative !important;
+  width: 100% !important;
+  margin: 0 !important;
+  padding: 0 !important;
+  background: transparent !important;
+  border: none !important;
+  box-shadow: none !important;
+}
+
+/* Ensure inner content doesn't inherit removed padding */
+.container
+  .bloco.bloco-2
+  .resumo-mes
+  .bloco-meta-simples.fixo-topo
+  .campo-armazena-data-placar {
+  padding: 0 !important;
+}
+/* Make the data+score area flush to the bloco-2 inner edges */
+.container .bloco.bloco-2 .resumo-mes .campo-armazena-data-placar {
+  /* extend to the bloco edges (bloco has 8px padding) */
+  width: calc(100% + 16px) !important;
+  margin: 0 -8px !important; /* pull the element to the bloco inner edges */
+  box-sizing: border-box !important;
+  padding: 0 !important; /* no internal horizontal spacing */
+  display: flex !important;
+  align-items: center !important;
+  justify-content: space-between !important;
+}
+
+.container
+  .bloco.bloco-2
+  .resumo-mes
+  .campo-armazena-data-placar
+  .area-central-2 {
+  flex: 1 1 auto !important;
+  display: flex !important;
+  justify-content: center !important;
 }
 /* Forçar largura do Bloco 2 via variáveis: controle centralizado em :root */
 .container .bloco.bloco-2 {
   width: var(--lista-dias-width-responsive) !important;
   max-width: var(--lista-dias-container-width) !important;
   box-sizing: border-box !important;
+  padding: 8px !important;
 }
 
 @media (max-width: 480px) {
@@ -609,7 +664,7 @@ body .mentor-item:not(.sem-valores) .mentor-rank-externo {
   margin-left: 0px !important;
   padding-left: 0 !important;
   width: auto !important;
-  margin-top: 20px !important; /* reduzido para aproximar do cabeçalho */
+  margin-top: -40px !important; /* reduzido para aproximar do cabeçalho */
 }
 
 .widget-meta-valor-2 .fa-solid-2.fa-coins-2 {
@@ -1929,6 +1984,114 @@ body .mentor-item:not(.sem-valores) .mentor-rank-externo {
   flex-wrap: nowrap !important;
 }
 
+/* FINAL: uniform border-radius for main blocks */
+.main-content .container > .bloco,
+.main-content .container > .bloco-1,
+.main-content .container > .bloco-2,
+.main-content .container > .bloco-3,
+.container .bloco.bloco-2 .resumo-mes .bloco-meta-simples.fixo-topo {
+  border-radius: 15px !important;
+}
+
+/* Final safety override: ensure the gradient header (.campo-armazena-data-placar)
+   shows the rounded top corners and is not visually clipped by parent overflow
+   or by the negative margins/expanded width used to pull it to the edges.
+*/
+#main-override
+  .container
+  .bloco.bloco-2
+  .resumo-mes
+  .bloco-meta-simples.fixo-topo,
+.container .bloco.bloco-2 .resumo-mes .bloco-meta-simples.fixo-topo {
+  position: relative !important;
+  overflow: visible !important; /* allow children to show rounded corners */
+  -webkit-mask-image: none !important;
+  mask-image: none !important;
+}
+
+.container
+  .bloco.bloco-2
+  .resumo-mes
+  .bloco-meta-simples.fixo-topo
+  .campo-armazena-data-placar {
+  /* enforce top rounded corners and clip gradient to rounded shape */
+  border-top-left-radius: 15px !important;
+  border-top-right-radius: 15px !important;
+  border-bottom-left-radius: 0 !important;
+  border-bottom-right-radius: 0 !important;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.06) inset, 0 1px 2px rgba(0, 0, 0, 0.03) !important;
+  overflow: hidden !important; /* ensure gradient respects border-radius */
+  background-clip: padding-box !important;
+}
+
+/* In case parent `.bloco` uses overflow hidden, allow the header edges to be visible
+   by slightly reducing the horizontal expansion and aligning with bloco padding. */
+.container .bloco.bloco-2 .resumo-mes .bloco-meta-simples.fixo-topo {
+  width: calc(100% + 16px) !important; /* match bloco padding: 8px each side */
+  margin-left: -8px !important;
+  margin-right: -8px !important;
+}
+
+/* Additional safety: reduce extreme expansion and ensure header floats above siblings */
+.container
+  .bloco.bloco-2
+  .resumo-mes
+  .bloco-meta-simples.fixo-topo
+  .campo-armazena-data-placar {
+  width: calc(100% + 16px) !important; /* keep aligned with bloco padding */
+  margin-left: -8px !important;
+  margin-right: -8px !important;
+  z-index: 50 !important; /* ensure header is above lista-dias */
+  border-top-left-radius: 15px !important;
+  border-top-right-radius: 15px !important;
+  overflow: hidden !important; /* clip gradient to rounded corners */
+}
+
+/* If an ancestor uses overflow:hidden, try to create a visual inset to preserve the rounded edges */
+.container .bloco.bloco-2 {
+  overflow: visible !important;
+}
+
+/* Make the header (.bloco-meta-simples.fixo-topo) sit flush to the bloco edges */
+.container .bloco.bloco-2 {
+  position: relative !important; /* establish containing block for absolute header */
+}
+
+.container .bloco.bloco-2 .resumo-mes .bloco-meta-simples.fixo-topo {
+  position: absolute !important;
+  left: 0px !important; /* align with bloco inner padding */
+  right: 0px !important; /* align with bloco inner padding */
+  top: 0px !important; /* align with bloco inner padding (top) */
+  width: auto !important;
+  margin: 0 !important;
+  z-index: 60 !important;
+  box-sizing: border-box !important;
+  background: transparent !important; /* keep visual driven by inner campo */
+}
+
+.container
+  .bloco.bloco-2
+  .resumo-mes
+  .bloco-meta-simples.fixo-topo
+  .campo-armazena-data-placar {
+  position: relative !important;
+  width: 100% !important;
+  margin: 0 !important;
+  height: 60px !important; /* keep the intended header height */
+  min-height: 60px !important;
+  border-top-left-radius: 15px !important;
+  border-top-right-radius: 15px !important;
+  border-bottom-left-radius: 0 !important;
+  border-bottom-right-radius: 0 !important;
+  overflow: hidden !important; /* ensure gradient is clipped to rounded corners */
+  z-index: 61 !important; /* above bloco-meta */
+}
+
+/* Push the list down so it doesn't overlap the absolute header */
+.container .bloco.bloco-2 .resumo-mes .lista-dias {
+  margin-top: calc(60px + 12px) !important; /* header height + small gap */
+}
+
 .gd-linha-dia > * {
   display: inline-flex !important;
   flex-direction: row !important;
@@ -2070,20 +2233,20 @@ body .mentor-item:not(.sem-valores) .mentor-rank-externo {
 }
 
 .container .bloco.bloco-2 {
-  /* Ocupa a altura visível do usuário, subtraindo espaço para header/topo (ajuste se necessário) */
-  height: calc(100vh - 120px) !important;
-  max-height: calc(100vh - 80px) !important;
-  overflow: hidden !important;
-  display: flex !important;
-  flex-direction: column !important;
+  min-height: 400px !important;
+  height: auto !important;
+}
+.container .bloco.bloco-2 .resumo-mes .widget-conteudo-principal-2 {
+  margin-top: 70px !important; /* Mesmo espaço que a lista */
+  padding: 0 12px !important; /* Padding interno */
 }
 
 .container .bloco.bloco-2 .resumo-mes {
-  /* Permitir que o conteúdo interno (incluindo lista-dias) preencha o bloco */
-  flex: 1 1 auto !important;
+  height: 100% !important;
   display: flex !important;
   flex-direction: column !important;
-  overflow: hidden !important;
+  position: relative !important;
+  padding: 0 !important; /* Remove padding para permitir header flush */
 }
 
 .container .bloco.bloco-2 .resumo-mes .lista-dias {
@@ -2096,13 +2259,12 @@ body .mentor-item:not(.sem-valores) .mentor-rank-externo {
   margin-top: 38px !important;
 }
 
-/* HIDE SCROLLBAR: remover barra de rolagem lateral visual mantendo a rolagem por toque/scroll
-   - Aplicado com especificidade alta e !important para sobrescrever regras conflitantes */
+/* Restaurar scrollbar visível para .lista-dias (substitui as regras que a escondiam) */
 .container .bloco.bloco-2 .resumo-mes .lista-dias,
 .container .bloco.bloco-2 .resumo-mes.resumo-mes-externo .lista-dias,
 .lista-dias {
-  scrollbar-width: none !important; /* Firefox */
-  -ms-overflow-style: none !important; /* IE 10+ */
+  scrollbar-width: auto !important; /* Firefox */
+  -ms-overflow-style: auto !important; /* IE 10+ */
 }
 
 .container .bloco.bloco-2 .resumo-mes .lista-dias::-webkit-scrollbar,
@@ -2111,9 +2273,27 @@ body .mentor-item:not(.sem-valores) .mentor-rank-externo {
   .resumo-mes.resumo-mes-externo
   .lista-dias::-webkit-scrollbar,
 .lista-dias::-webkit-scrollbar {
-  width: 0px !important;
-  height: 0px !important;
-  display: none !important;
+  width: 10px !important;
+  height: 10px !important;
+}
+
+.container .bloco.bloco-2 .resumo-mes .lista-dias::-webkit-scrollbar-track,
+.lista-dias::-webkit-scrollbar-track {
+  background: transparent !important;
+}
+
+.container .bloco.bloco-2 .resumo-mes .lista-dias::-webkit-scrollbar-thumb,
+.lista-dias::-webkit-scrollbar-thumb {
+  background: rgba(120, 120, 120, 0.45) !important;
+  border-radius: 8px !important;
+}
+
+.container
+  .bloco.bloco-2
+  .resumo-mes
+  .lista-dias::-webkit-scrollbar-thumb:hover,
+.lista-dias::-webkit-scrollbar-thumb:hover {
+  background: rgba(100, 100, 100, 0.65) !important;
 }
 
 /* Fallback: esconder qualquer outline/space gerado por barras de rolagem customizadas */
@@ -2223,6 +2403,73 @@ body .mentor-item:not(.sem-valores) .mentor-rank-externo {
 .gd-linha-dia.valor-zero.atual .placar-dia,
 .gd-linha-dia.valor-zero.today .placar-dia,
 .gd-linha-dia.valor-zero.current .placar-dia,
+
+/* ==========================================================
+   Overrides to neutralize conflicting fixed max-heights from
+   `rodape.css` and enforce flex-based full height behavior.
+   This block uses higher specificity and !important where
+   necessary so the middle column matches bloco-1 height.
+   ========================================================== */
+
+/* Ensure main layout fills available viewport between header/footer */
+.main-content {
+  position: fixed !important;
+  top: 80px !important; /* match header height used elsewhere */
+  bottom: 80px !important; /* match footer height used elsewhere */
+  left: 0 !important;
+  right: 0 !important;
+  overflow: hidden !important;
+}
+
+/* Make sure the container and blocks are full height flex parents */
+.main-content .container {
+  display: flex !important;
+  align-items: stretch !important;
+  height: 100% !important;
+  min-height: 0 !important;
+}
+
+.main-content .container > .bloco {
+  display: flex !important;
+  flex-direction: column !important;
+  height: 100% !important;
+  min-height: 0 !important; /* critical to allow child overflow */
+}
+
+/* Specifically override rodape.css rules that set fixed max-heights */
+.main-content .container > .bloco-2,
+.main-content .container > .bloco-2 > * {
+  max-height: none !important;
+  height: 100% !important;
+}
+
+.main-content .container > .bloco-1,
+.main-content .container > .bloco-1 > * {
+  height: 100% !important;
+}
+
+/* Let resumo-mes expand and make lista-dias scroll within it */
+.main-content .container .bloco-2 .resumo-mes {
+  flex: 1 1 auto !important;
+  min-height: 0 !important;
+  display: flex !important;
+  flex-direction: column !important;
+}
+
+.main-content .container .bloco-2 .resumo-mes .lista-dias {
+  flex: 1 1 auto !important;
+  height: auto !important;
+  max-height: none !important;
+  overflow-y: auto !important;
+  min-height: 0 !important;
+}
+
+/* Final safety: ensure no ancestor max-height prevents stretching */
+.main-content,
+.main-content * {
+  max-height: none !important;
+}
+
 .gd-linha-dia.valor-zero.active .placar-dia,
 .gd-linha-dia.valor-zero.hoje .icone i,
 .gd-linha-dia.valor-zero.atual .icone i,
@@ -2276,6 +2523,37 @@ body .mentor-item:not(.sem-valores) .mentor-rank-externo {
   border-radius: 8px !important;
   transition: all 0.15s ease !important;
   box-sizing: border-box !important;
+}
+
+/* Extra strong overrides to ensure .lista-dias is scrollable and fills available space */
+/* Placed at end to outweight earlier rules and user edits. */
+.main-content .container .bloco-2 {
+  overflow: visible !important; /* allow inner scrollbars to be visible */
+}
+
+.main-content .container .bloco-2 .resumo-mes {
+  display: flex !important;
+  flex-direction: column !important;
+  flex: 1 1 auto !important;
+  height: 100% !important;
+  min-height: 0 !important;
+  overflow: hidden !important;
+}
+
+.main-content .container .bloco-2 .resumo-mes > .lista-dias,
+.main-content .container .bloco-2 .resumo-mes .lista-dias {
+  flex: 1 1 auto !important;
+  height: 100% !important;
+  max-height: 100% !important;
+  min-height: 0 !important;
+  overflow-y: auto !important;
+  -webkit-overflow-scrolling: touch !important; /* momentum scrolling on iOS */
+  position: relative !important;
+}
+
+/* Ensure mouse wheel scrolls the inner list even when an ancestor has overflow hidden */
+.main-content .container .bloco-2 .resumo-mes .lista-dias::-webkit-scrollbar {
+  width: 10px !important;
 }
 
 .gd-linha-dia .data {
@@ -2762,33 +3040,49 @@ body .mentor-item:not(.sem-valores) .mentor-rank-externo {
    borda arredondada somente no topo
    =================================================================== */
 .campo-armazena-data-placar {
+  position: absolute !important;
+  top: 0 !important;
+  left: 0 !important;
+  right: 0 !important;
+  width: 100% !important;
   height: 60px !important;
   min-height: 60px !important;
-  display: flex !important;
-  align-items: center !important;
-  justify-content: center !important;
-  box-sizing: border-box !important;
-  margin-top: -25px !important; /* overlap lista-dias */
+
+  /* Remover qualquer margem/padding que cause gap */
+  margin: 0 !important;
   padding: 0 !important;
-  width: calc(
-    100% + 50px
-  ) !important; /* compensate up to 25px padding each side */
-  margin-left: -25px !important; /* center the expanded width inside the parent */
-  position: relative !important;
+
+  /* Visual */
   background: linear-gradient(
     90deg,
     #cfcfcf 0%,
     #e4eee7 50%,
     #cfcfcf 100%
   ) !important;
-  border-top-left-radius: 12px !important;
-  border-top-right-radius: 12px !important;
+  border-top-left-radius: 15px !important;
+  border-top-right-radius: 15px !important;
   border-bottom-left-radius: 0 !important;
   border-bottom-right-radius: 0 !important;
-  overflow: visible !important; /* allow absolute-positioned title to be visible */
+
+  /* Layout */
+  display: flex !important;
+  align-items: center !important;
+  justify-content: center !important;
+  box-sizing: border-box !important;
+
+  /* Z-index para ficar acima do conteúdo */
+  z-index: 100 !important;
+
+  /* Garantir que o gradiente respeite as bordas arredondadas */
+  overflow: hidden !important;
 }
 
-/* Garantir que a área central usada pelo placar ocupe 100% da altura do campo */
+/* Ensure the bloco-2 is the containing block for the absolutely positioned header */
+.container .bloco.bloco-2 {
+  position: relative !important;
+}
+
+/* keep placar content padded away from the edges while the header itself is flush */
 .campo-armazena-data-placar .area-central-2 {
   width: 100% !important;
   height: 100% !important;
@@ -2796,7 +3090,9 @@ body .mentor-item:not(.sem-valores) .mentor-rank-externo {
   align-items: center !important;
   justify-content: center !important;
   position: relative !important;
-  z-index: 3 !important; /* keep placar above background but below title */
+  z-index: 3 !important;
+  padding: 0 12px !important; /* Apenas padding interno para o conteúdo */
+  box-sizing: border-box !important;
 }
 
 /* Ajustes do placar quando dentro do campo: fundo transparente para mostrar o degradê */
@@ -2806,8 +3102,8 @@ body .mentor-item:not(.sem-valores) .mentor-rank-externo {
   border-radius: 0 !important;
   box-shadow: none !important;
   color: #2b2b2b !important;
-  left: 0 !important;
-  right: 0 !important;
+  font-size: var(--fs-placar-top) !important;
+  line-height: 1 !important;
   width: 100% !important;
   box-sizing: border-box !important;
 }
@@ -2850,14 +3146,14 @@ html
    to guarantee visibility and precise offsets regardless of parent padding. */
 .campo-armazena-data-placar .titulo-bloco {
   position: absolute !important;
-  left: 6px !important;
-  top: 2px !important;
+  left: 12px !important;
+  top: 8px !important;
   margin: 0 !important;
   font-size: 12px !important;
   color: #6a0dad !important;
   font-weight: 600 !important;
   line-height: 1 !important;
-  z-index: 6 !important; /* ensure it stays above the placar */
+  z-index: 6 !important;
   display: flex !important;
   align-items: center !important;
 }
@@ -3079,4 +3375,245 @@ html body .lista-dias .gd-linha-dia .valor,
 .gd-linha-dia .valor * {
   font-size: var(--fs-valor) !important;
   line-height: 1 !important;
+}
+
+/* =======================================================================================================================================================
+        TESTE
+  =======================================================================================================================================================*/
+/* ===== BARRA DE ROLAGEM PARA .lista-dias ===== */
+
+/* Container principal da lista - forçar altura fixa e scroll */
+.container .bloco.bloco-2 .resumo-mes .lista-dias {
+  margin-top: 70px !important; /* 60px do header + 10px de gap */
+  padding: 12px !important; /* Padding interno da lista */
+}
+
+/* ===== BARRA DE ROLAGEM OCULTA QUE APARECE NO HOVER ===== */
+
+/* Webkit (Chrome, Safari, Edge) */
+.container .bloco.bloco-2 .resumo-mes .lista-dias::-webkit-scrollbar {
+  width: 8px !important;
+}
+
+/* Track sempre invisível */
+.container .bloco.bloco-2 .resumo-mes .lista-dias::-webkit-scrollbar-track {
+  background: transparent !important;
+}
+
+/* Thumb invisível por padrão */
+.container .bloco.bloco-2 .resumo-mes .lista-dias::-webkit-scrollbar-thumb {
+  background: transparent !important;
+  border-radius: 4px !important;
+  transition: background-color 0.3s ease !important;
+}
+
+/* Thumb aparece apenas no hover do container */
+.container
+  .bloco.bloco-2
+  .resumo-mes
+  .lista-dias:hover::-webkit-scrollbar-thumb {
+  background: rgba(0, 0, 0, 0.3) !important;
+}
+
+/* Thumb mais escuro quando hover direto na barra */
+.container
+  .bloco.bloco-2
+  .resumo-mes
+  .lista-dias:hover::-webkit-scrollbar-thumb:hover {
+  background: rgba(0, 0, 0, 0.5) !important;
+}
+
+/* Thumb ativo (sendo arrastado) */
+.container
+  .bloco.bloco-2
+  .resumo-mes
+  .lista-dias::-webkit-scrollbar-thumb:active {
+  background: rgba(0, 0, 0, 0.7) !important;
+}
+
+/* Firefox - oculta por padrão, aparece no hover */
+.container .bloco.bloco-2 .resumo-mes .lista-dias {
+  scrollbar-width: none !important; /* Completamente oculta */
+}
+
+.container .bloco.bloco-2 .resumo-mes .lista-dias:hover {
+  scrollbar-width: thin !important; /* Aparece no hover */
+  scrollbar-color: rgba(0, 0, 0, 0.3) transparent !important;
+}
+
+/* ===== AJUSTES RESPONSIVOS DA ALTURA ===== */
+
+/* Desktop grande */
+@media (min-width: 1200px) {
+  .container .bloco.bloco-2 .resumo-mes .lista-dias {
+    height: 450px !important;
+    max-height: 450px !important;
+  }
+}
+
+/* Tablet */
+@media (max-width: 1024px) {
+  .container .bloco.bloco-2 .resumo-mes .lista-dias {
+    height: 350px !important;
+    max-height: 350px !important;
+  }
+}
+
+/* Mobile */
+@media (max-width: 768px) {
+  .container .bloco.bloco-2 .resumo-mes .lista-dias {
+    height: 300px !important;
+    max-height: 300px !important;
+    padding: 8px 12px !important;
+  }
+
+  /* Barra de rolagem mais fina no mobile */
+  .container .bloco.bloco-2 .resumo-mes .lista-dias::-webkit-scrollbar {
+    width: 6px !important;
+  }
+}
+
+/* Mobile pequeno */
+@media (max-width: 480px) {
+  .container .bloco.bloco-2 .resumo-mes .lista-dias {
+    height: 250px !important;
+    max-height: 250px !important;
+    padding: 6px 10px !important;
+  }
+
+  /* Barra ainda mais fina */
+  .container .bloco.bloco-2 .resumo-mes .lista-dias::-webkit-scrollbar {
+    width: 4px !important;
+  }
+}
+
+/* ===== GARANTIR QUE AS LINHAS NÃO QUEBREM O LAYOUT ===== */
+
+.container .bloco.bloco-2 .resumo-mes .lista-dias .gd-linha-dia {
+  flex-shrink: 0 !important;
+  min-height: 32px !important;
+  margin-bottom: 4px !important;
+}
+
+/* ===== EFEITO VISUAL NO SCROLL ===== */
+
+/* Sombra interna no topo quando há conteúdo para rolar */
+.container .bloco.bloco-2 .resumo-mes .lista-dias::before {
+  content: "";
+  position: sticky;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: 8px;
+  background: linear-gradient(
+    to bottom,
+    rgba(0, 0, 0, 0.1) 0%,
+    transparent 100%
+  );
+  pointer-events: none;
+  z-index: 1;
+  margin-bottom: -8px;
+}
+
+/* Sombra interna na parte inferior */
+.container .bloco.bloco-2 {
+  position: relative !important;
+  padding: 0 !important; /* Remove padding para permitir header flush */
+  overflow: visible !important;
+}
+
+/* ===== ALTERNATIVA: BARRA DE ROLAGEM SEMPRE VISÍVEL ===== */
+
+/* Se preferir que a barra seja sempre visível, descomente: */
+/*
+.container .bloco.bloco-2 .resumo-mes .lista-dias::-webkit-scrollbar-thumb {
+  background: rgba(0, 0, 0, 0.3) !important;
+}
+*/
+
+/* ===== SCROLL INDICATOR (OPCIONAL) ===== */
+
+/* Indicador de posição do scroll */
+.lista-dias-scroll-indicator {
+  position: absolute;
+  top: 0;
+  right: 0;
+  width: 2px;
+  background: rgba(102, 126, 234, 0.3);
+  transition: height 0.2s ease;
+  border-radius: 1px;
+}
+
+/* ===== GARANTIR COMPATIBILIDADE COM ALTURAS DINÂMICAS ===== */
+
+/* Para casos onde o container pai muda de altura */
+.bloco-2 {
+  min-height: 0 !important;
+  display: flex !important;
+  flex-direction: column !important;
+}
+
+.bloco-2 .resumo-mes {
+  flex: 1 1 auto !important;
+  min-height: 0 !important;
+  display: flex !important;
+  flex-direction: column !important;
+  overflow: hidden !important;
+}
+
+/* Garantir que o cabeçalho não interfira no scroll */
+.bloco-2 .resumo-mes .bloco-meta-simples {
+  flex-shrink: 0 !important;
+}
+
+/* ===== AJUSTE FINO PARA DIFERENTES DENSIDADES DE TELA ===== */
+
+/* Telas de alta densidade */
+@media (-webkit-min-device-pixel-ratio: 2), (min-resolution: 192dpi) {
+  .container .bloco.bloco-2 .resumo-mes .lista-dias::-webkit-scrollbar {
+    width: 10px !important;
+  }
+
+  .container .bloco.bloco-2 .resumo-mes .lista-dias::-webkit-scrollbar-thumb {
+    border: 1px solid rgba(255, 255, 255, 0.2) !important;
+  }
+}
+@media (max-width: 768px) {
+  .campo-armazena-data-placar {
+    height: 50px !important;
+    min-height: 50px !important;
+  }
+
+  .campo-armazena-data-placar .titulo-bloco {
+    left: 8px !important;
+    top: 6px !important;
+    font-size: 11px !important;
+  }
+
+  .container .bloco.bloco-2 .resumo-mes .lista-dias {
+    margin-top: 60px !important; /* 50px do header + 10px de gap */
+  }
+
+  .container .bloco.bloco-2 .resumo-mes .widget-conteudo-principal-2 {
+    margin-top: 60px !important;
+  }
+}
+
+/* Garantir visibilidade do placar no topo */
+#pontuacao-2 {
+  visibility: visible !important;
+}
+
+/* Corrigir possíveis conflitos com outros elementos */
+.container
+  .bloco.bloco-2
+  .resumo-mes
+  .bloco-meta-simples.fixo-topo
+  .campo-armazena-data-placar {
+  /* Override de regras anteriores que poderiam causar gaps */
+  width: 100% !important;
+  margin-left: 0 !important;
+  margin-right: 0 !important;
+  left: 0 !important;
+  right: 0 !important;
 }
