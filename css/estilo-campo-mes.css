@@ -444,6 +444,10 @@ body .mentor-item:not(.sem-valores) .mentor-rank-externo {
   --lista-dias-icone-margin-left: 0px; /* ICONE .lista-dias */
   --lista-dias-icone-margin-right-edge: -18px; /* ICONE .lista-dias */
 
+  /* Left border colors for lista-dias lines */
+  --lista-dias-border-left: rgba(156, 163, 175, 0.3); /* neutral light gray */
+  --lista-dias-border-left-today: #373a41; /* darker gray for today */
+
   /* --------------------------------------------------
    - MARGIN LEFT - MARGIN LEFT - MARGIN LEFT -
   -------------------------------------------------- */
@@ -455,7 +459,7 @@ body .mentor-item:not(.sem-valores) .mentor-rank-externo {
   /* --------------------------------------------------
    PADDING - PADDING - PADDING - PADDING - PADDING
   -------------------------------------------------- */
-  --lista-dias-lateral-padding: -10px; /* BLOCO .lista-dias */
+  --lista-dias-lateral-padding: -10px; /* BLOCO .lista-dias (positive by default) */
 
   /* --------------------------------------------------
  PADDING - PADDING - PADDING - PADDING - PADDING
@@ -2561,7 +2565,7 @@ html body .container .bloco.bloco-2 .resumo-mes > .lista-dias,
 .container .bloco.bloco-2 .resumo-mes .lista-dias .gd-linha-dia.valor-zero,
 .gd-linha-dia.valor-zero {
   background: rgba(255, 255, 255, 0.95) !important;
-  border-left: 4px solid var(--color-neutral) !important;
+  border-left: 4px solid var(--lista-dias-border-left, var(--color-neutral)) !important;
   border-color: rgba(156, 163, 175, 0.3) !important;
   padding-left: 13px !important;
 }
@@ -2591,7 +2595,22 @@ html body .container .bloco.bloco-2 .resumo-mes > .lista-dias,
     235,
     0.98
   ) !important; /* cinza levemente mais escuro */
-  border-left-color: #6b7280 !important; /* borda esquerda mais visível */
+  border-left: 4px solid var(--lista-dias-border-left-today, #6b7280) !important; /* borda esquerda mais visível */
+}
+
+/* Ensure all lines show a subtle left border by default (neutral) */
+.container .bloco.bloco-2 .resumo-mes .lista-dias .gd-linha-dia,
+.gd-linha-dia {
+  border-left: 4px solid var(--lista-dias-border-left, rgba(156, 163, 175, 0.3)) !important;
+}
+
+/* Today's row variants: use darker left border */
+.gd-linha-dia.hoje,
+.gd-linha-dia.atual,
+.gd-linha-dia.today,
+.gd-linha-dia.current,
+.gd-linha-dia.active {
+  border-left: 4px solid var(--lista-dias-border-left-today, #6b7280) !important;
 }
 
 /* Garantir texto/ícone/valor escuros para o dia atual sem valor */
@@ -2964,7 +2983,7 @@ html
   .gd-linha-dia
   .icone
   i {
-  margin-right: -8px !important;
+  margin-right: var(--lista-dias-icone-margin-right-edge, -18px) !important;
   position: relative !important;
   z-index: 1200 !important;
 }
@@ -3902,4 +3921,18 @@ html body .container .bloco.bloco-2 .resumo-mes > .lista-dias,
   margin-right: 0 !important;
   left: 0 !important;
   right: 0 !important;
+}
+
+/* Final override: garantir borda esquerda escura para o dia de HOJE
+   Usamos seletor altamente específico e !important para vencer quaisquer regras anteriores. */
+html body .container .bloco.bloco-2 .resumo-mes .lista-dias .gd-linha-dia.hoje,
+html body .container .bloco.bloco-2 .resumo-mes .lista-dias .gd-linha-dia.atual,
+html body .container .bloco.bloco-2 .resumo-mes .lista-dias .gd-linha-dia.today,
+html body .container .bloco.bloco-2 .resumo-mes .lista-dias .gd-linha-dia.current,
+html body .container .bloco.bloco-2 .resumo-mes .lista-dias .gd-linha-dia.active,
+/* also cover combinations with valor-* classes */
+html body .container .bloco.bloco-2 .resumo-mes .lista-dias .gd-linha-dia.valor-zero.hoje,
+html body .container .bloco.bloco-2 .resumo-mes .lista-dias .gd-linha-dia.valor-positivo.hoje,
+html body .container .bloco.bloco-2 .resumo-mes .lista-dias .gd-linha-dia.valor-negativo.hoje {
+  border-left: 4px solid var(--lista-dias-border-left-today, #43464d) !important;
 }

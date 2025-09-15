@@ -9,6 +9,22 @@ body {
   overflow-x: hidden; /* evita scroll horizontal */
   overflow-y: auto; /* permite scroll vertical e evita corte de sombras/bordas */
 }
+
+/* Page background: subtle 3-color gray-green gradient */
+body {
+  /* fallback solid */
+  background-color: #f4f7f5;
+  /* three-stop linear gradient -- light gray -> very light gray-green -> pale gray-green */
+  background-image: linear-gradient(
+    180deg,
+    #dee0df 0%,
+    #eef3ef 50%,
+    #e2e2e2 100%
+  );
+  background-attachment: fixed;
+  background-repeat: no-repeat;
+  background-size: cover;
+}
 .header {
   background-color: #113647;
   height: 80px;
