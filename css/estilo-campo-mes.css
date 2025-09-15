@@ -295,19 +295,6 @@ body .mentor-item:not(.sem-valores) .mentor-rank-externo {
      - ROOT- ROOT - ROOT  - ROOT- ROOT - ROOT  - ROOT- ROOT - ROOT  - ROOT- ROOT - ROOT  - ROOT- ROOT - ROOT - ROOT- ROOT - ROOT
   =======================================================================================================================================================*/
 :root {
-  /**/
-  /**/
-  /**/
-
-  /* --------------------------------------------------
-    Altura - Largura - Bloco + Campo
-  -------------------------------------------------- */
-  --lista-dias-base: 423px; /* Altura do bloco 2 (reduzido de 432px) */
-  --lista-dias-width-base: 420px; /* largura padrão do bloco (era 420px) */
-  --lista-dias-maxwidth-block: 420px; /* limite dentro do layout do bloco */
-  --lista-dias-maxwidth-desktop: 1200px; /* limite máximo em telas grandes */
-  --lista-dias-minwidth-mobile: 280px; /* largura mínima em telas pequenas */
-
   --lista-dias-height-default: var(--lista-dias-base);
   --lista-dias-height-desktop: calc(
     var(--lista-dias-base) + 168px
@@ -339,14 +326,37 @@ body .mentor-item:not(.sem-valores) .mentor-rank-externo {
     var(--lista-dias-width-base),
     var(--lista-dias-maxwidth-desktop)
   );
+
+  /* Variáveis de largura para o campo `.lista-dias` (controle centralizado) */
+  --lista-dias-width: var(--lista-dias-width-responsive);
+  --lista-dias-maxwidth: var(--lista-dias-container-width);
+
+  /**/
+  /**/
+  /**/
+  /**/
+  /**/
+  /**/
   /* --------------------------------------------------
-   FIM Altura - Largura responsiva derivada
+    ALTURA - LARGURA - ALTURA - LARGURA - 
+  -------------------------------------------------- */
+  --lista-dias-height: 532px; /* ALTURA BLOCO LISTA DIAS */
+  --lista-dias-maxheight: 532px; /* ALTURA BLOCO LISTA DIAS */
+  --lista-dias-width-base: 420px; /* largura padrão do bloco (era 420px) */
+  --lista-dias-maxwidth-block: 420px; /* limite dentro do layout do bloco */
+  --lista-dias-maxwidth-desktop: 1200px; /* limite máximo em telas grandes */
+  --lista-dias-minwidth-mobile: 280px; /* largura mínima em telas pequenas */
+  /* --------------------------------------------------
+    ALTURA - LARGURA - ALTURA - LARGURA - 
   -------------------------------------------------- */
   /**/
   /**/
   /**/
   /**/
   /**/
+  /**/
+  /**/
+
   /* --------------------------------------------------
    - FONTE - FONTE  - FONTE - FONTE
   -------------------------------------------------- */
@@ -394,7 +404,70 @@ body .mentor-item:not(.sem-valores) .mentor-rank-externo {
   /* --------------------------------------------------
    - FONTE - FONTE  - FONTE - FONTE
 -------------------------------------------------- */
+  /**/
+  /**/
+  /**/
+  /**/
+  /**/
+  /* --------------------------------------------------
+   - MARGIN TOP - MARGIN TOP - MARGIN TOP -
+  -------------------------------------------------- */
+  --lista-dias-margin-top: 20px; /*  lista de dias ( DATA - PLACAR - VALOR ) */
+  --widget-meta-valor-2-margin-top: 5px; /* valor  da meta */
+  --rotulo-restando-meta-mes-margin-top: -10px; /* 'Restando p/ Meta do Mês' */
+  --widget-barra-container-2-margin-top: 5px; /*barra de progresso */
+  --rotulo-saldo-bloco2-margin-top: 0px; /* rótulo + saldo  */
+  --titulo-mes-margin-top: 0px; /*  DATA (ex: 'SETEMBRO 2025') */
+  --placar-2-top: 30px; /* PLACAR */
+  /* --------------------------------------------------
+   - MARGIN TOP - MARGIN TOP - MARGIN TOP -
+  -------------------------------------------------- */
+  /**/
+  /**/
+  /**/
+  /**/
+  /**/
+
+  /* --------------------------------------------------
+   - MARGIN LEFT - MARGIN RIGHT - MARGIN LEFT -
+  -------------------------------------------------- */
+  --lista-dias-margin-left: 10px; /* BLOCO.. lista de dias */
+  --widget-meta-valor-2-margin-left: 0px; /*valor da meta */
+  --rotulo-restando-meta-mes-margin-left: 0px; /* 'Restando p/ Meta do Mês' */
+  --widget-barra-container-2-margin-left: 0px; /* margem-left para a barra de progresso */
+  --rotulo-saldo-bloco2-margin-left: 0px; /* rótulo + saldo do Bloco 2 */
+  --titulo-mes-margin-left: -7px; /*  DATA (ex: 'SETEMBRO 2025') */
+  --placar-2-left: 50%; /* PLACAR TOPO */
+  --lista-dias-data-margin-left: 6px; /* DATA .lista-dias */
+  --placar-2-translate: -20px; /* PLACAR DA LISTA */
+  --lista-dias-valor-margin-left: 20px; /* VALOR .lista-dias */
+  --lista-dias-icone-margin-left: 0px; /* ICONE .lista-dias */
+  --lista-dias-icone-margin-right-edge: -18px; /* ICONE .lista-dias */
+
+  /* --------------------------------------------------
+   - MARGIN LEFT - MARGIN LEFT - MARGIN LEFT -
+  -------------------------------------------------- */
+  /**/
+  /**/
+  /**/
+  /**/
+  /**/
+  /* --------------------------------------------------
+   PADDING - PADDING - PADDING - PADDING - PADDING
+  -------------------------------------------------- */
+  --lista-dias-lateral-padding: -10px; /* BLOCO .lista-dias */
+
+  /* --------------------------------------------------
+ PADDING - PADDING - PADDING - PADDING - PADDING
+  -------------------------------------------------- */
+  /**/
+  /**/
+  /**/
+  /**/
+  /**/
+  /**/
 }
+
 /**/
 /**/
 /**/
@@ -425,27 +498,32 @@ body .mentor-item:not(.sem-valores) .mentor-rank-externo {
 }
 
 .container .bloco.bloco-2 .resumo-mes .lista-dias {
-  /* Layout: aumentar levemente a largura total do campo de lista para mais respiração */
-  width: calc(100% + 24px) !important; /* expande 24px no total */
-  max-width: calc(100% + 24px) !important;
-  margin-left: -12px !important; /* centraliza a expansão */
+  /* Layout: largura controlada por variáveis no :root */
+  width: var(--lista-dias-width, calc(100% + 24px)) !important;
+  max-width: var(--lista-dias-maxwidth, calc(100% + 24px)) !important;
+  margin-left: var(
+    --lista-dias-margin-left,
+    10px
+  ) !important; /* controlado por :root */
   box-sizing: border-box !important;
   position: relative !important;
   z-index: auto !important;
   overflow-x: hidden !important;
   overflow-y: auto !important;
-  height: var(--lista-dias-height-desktop) !important;
-  max-height: var(--lista-dias-maxheight-desktop) !important;
+  height: var(--lista-dias-height, var(--lista-dias-height-desktop)) !important;
+  max-height: var(
+    --lista-dias-maxheight,
+    var(--lista-dias-maxheight-desktop)
+  ) !important;
   border-radius: 20px !important;
-  padding: 12px 16px !important; /* Padding mais generoso para respirar */
-  margin: 0 !important;
+  padding: 12px var(--lista-dias-lateral-padding, 10px) !important; /* Padding controlado por var */
   border-left: none !important;
   border-right: none !important;
   box-shadow: none !important;
   flex: 1 !important;
-  scrollbar-width: none !important;
-  -ms-overflow-style: none !important;
-  margin-top: 38px !important;
+  scrollbar-width: thin !important;
+  -ms-overflow-style: auto !important;
+  scrollbar-gutter: stable both-edges !important;
   background: rgba(238, 238, 238, 0.95) !important;
 }
 
@@ -515,7 +593,7 @@ body .mentor-item:not(.sem-valores) .mentor-rank-externo {
   width: var(--lista-dias-width-responsive) !important;
   max-width: var(--lista-dias-container-width) !important;
   box-sizing: border-box !important;
-  padding: 8px !important;
+  padding: var(--bloco-2-padding, 10px) !important;
 }
 
 @media (max-width: 480px) {
@@ -543,7 +621,7 @@ body .mentor-item:not(.sem-valores) .mentor-rank-externo {
   font-family: "Rajdhani", sans-serif !important;
   transition: all 0.3s ease !important;
   margin-bottom: 8px !important;
-  margin-left: 0px !important;
+  margin-left: var(--widget-meta-valor-2-margin-left) !important;
   padding-left: 0 !important;
   width: auto !important;
 }
@@ -620,8 +698,12 @@ body .mentor-item:not(.sem-valores) .mentor-rank-externo {
   =======================================================================================================================================================*/
 .container .bloco.bloco-2 .bloco-meta-simples .titulo-bloco {
   /* Ajuste específico para o título do mês: alinhamento e tipografia solicitado */
-  margin-left: 6px !important; /* margem esquerda: 6px */
-  margin-top: 2px !important; /* margem superior: 2px */
+  margin-left: var(
+    --titulo-mes-margin-left
+  ) !important; /* margem esquerda controlada por :root */
+  margin-top: var(
+    --titulo-mes-margin-top
+  ) !important; /* margem superior controlada por :root */
   font-size: 12px !important; /* tamanho da fonte: 12px */
   font-weight: 600 !important;
   color: #6a0dad !important; /* cor roxa (padrão profundo) */
@@ -641,7 +723,7 @@ body .mentor-item:not(.sem-valores) .mentor-rank-externo {
 */
 .container .bloco.bloco-2 .bloco-meta-simples .widget-meta-valor-2 {
   /* Reduzido: diminuir a distância entre o título do mês e o container do valor da meta */
-  margin-top: 30px !important;
+  margin-top: var(--widget-meta-valor-2-margin-top) !important;
 }
 
 /* =======================================================================================================================================================
@@ -661,10 +743,12 @@ body .mentor-item:not(.sem-valores) .mentor-rank-externo {
   font-family: "Rajdhani", sans-serif !important;
   transition: all 0.3s ease !important;
   margin-bottom: 8px !important;
-  margin-left: 0px !important;
+  margin-left: var(--widget-meta-valor-2-margin-left) !important;
   padding-left: 0 !important;
   width: auto !important;
-  margin-top: -40px !important; /* reduzido para aproximar do cabeçalho */
+  margin-top: var(
+    --widget-meta-valor-2-margin-top
+  ) !important; /* controlado por :root */
 }
 
 .widget-meta-valor-2 .fa-solid-2.fa-coins-2 {
@@ -719,7 +803,7 @@ body .mentor-item:not(.sem-valores) .mentor-rank-externo {
   font-size: 14px !important;
   color: #7f8c8d !important;
   margin-bottom: 8px !important;
-  margin-top: -9px !important;
+  margin-top: var(--rotulo-saldo-bloco2-margin-top) !important;
   margin-left: 0px !important;
   padding-left: 0 !important;
   font-weight: 500 !important;
@@ -733,6 +817,12 @@ body .mentor-item:not(.sem-valores) .mentor-rank-externo {
 #rotulo-meta-2 {
   text-transform: none !important;
   margin-left: 0px;
+}
+
+/* Quando o rótulo indica 'Restando', aplicar margin-top controlada por :root */
+#rotulo-meta-2.rotulo-restando,
+.widget-meta-rotulo-2.rotulo-restando {
+  margin-top: var(--rotulo-restando-meta-mes-margin-top, -10px) !important;
 }
 
 /* CODIGO DO CAMPO : widget-barra-container-2 / #barra-progresso-2
@@ -749,7 +839,7 @@ body .mentor-item:not(.sem-valores) .mentor-rank-externo {
   position: relative !important;
   overflow: hidden !important;
   box-shadow: inset 0 2px 4px rgba(0, 0, 0, 0.1) !important;
-  margin-top: -2px !important;
+  margin-top: var(--widget-barra-container-2-margin-top) !important;
   width: 330px !important;
   max-width: 100% !important;
 }
@@ -934,7 +1024,7 @@ body .mentor-item:not(.sem-valores) .mentor-rank-externo {
 }
 
 #saldo-info-2 {
-  margin-top: 0px !important;
+  margin-top: var(--rotulo-saldo-bloco2-margin-top) !important;
   display: inline-flex;
   align-items: center;
   gap: 5px;
@@ -1389,11 +1479,17 @@ body .mentor-item:not(.sem-valores) .mentor-rank-externo {
 /* Ajuste: margem entre a data e o placar (solicitação) */
 .linha-dia .placar-dia,
 .container .bloco.bloco-2 .resumo-mes .linha-dia .placar-dia {
-  margin-left: -16px !important; /* reduzido para aproximar do canto esquerdo */
+  margin-left: var(
+    --placar-2-margin-left,
+    -16px
+  ) !important; /* reduzido para aproximar do canto esquerdo */
 }
 .linha-dia .placar-dia,
 .container .bloco.bloco-2 .resumo-mes .linha-dia .placar-dia {
-  margin-left: -9px !important; /* aproximar do canto esquerdo conforme pedido */
+  margin-left: var(
+    --placar-2-margin-left,
+    -9px
+  ) !important; /* aproximar do canto esquerdo conforme pedido */
 }
 /* Ajuste: margem entre o placar e o valor (R$) */
 .linha-dia .valor,
@@ -1510,14 +1606,14 @@ body .mentor-item:not(.sem-valores) .mentor-rank-externo {
 
 /* Lista de dias (escopo forte) */
 .container .bloco.bloco-2 .resumo-mes.resumo-mes-externo .lista-dias {
-  width: calc(100% + 24px) !important;
-  max-width: calc(100% + 24px) !important;
-  margin-left: -12px !important;
+  width: var(--lista-dias-width, calc(100% + 24px)) !important;
+  max-width: var(--lista-dias-maxwidth, calc(100% + 24px)) !important;
+  margin-left: var(--lista-dias-margin-left, 10px) !important;
   overflow-x: hidden !important;
   overflow-y: auto !important;
-  height: var(--lista-dias-height-externo) !important;
-  max-height: 550px !important;
-  padding: 12px 16px !important;
+  height: var(--lista-dias-height, var(--lista-dias-height-externo)) !important;
+  max-height: var(--lista-dias-maxheight, 550px) !important;
+  padding: 12px var(--lista-dias-lateral-padding, 10px) !important;
   margin-top: 77px !important;
   background: rgba(238, 238, 238, 0.95) !important;
   border-radius: 15px !important;
@@ -1571,6 +1667,20 @@ body .mentor-item:not(.sem-valores) .mentor-rank-externo {
   max-width: 100% !important;
   height: 22px !important;
   overflow: hidden !important;
+}
+/* Ensure parent containers don't clip the scrollbar area on the right */
+html body .main-content .container .bloco.bloco-2,
+html body .container .bloco.bloco-2,
+.main-content .container .bloco.bloco-2,
+.container .bloco.bloco-2 {
+  overflow: visible !important; /* allow children scrollbars to be visible */
+}
+
+html body .main-content .container .bloco.bloco-2 .resumo-mes,
+html body .container .bloco.bloco-2 .resumo-mes,
+.main-content .container .bloco.bloco-2 .resumo-mes,
+.container .bloco.bloco-2 .resumo-mes {
+  overflow: visible !important; /* ensure no clipping around the lista-dias container */
 }
 
 /* Porcentagem e indicadores: garantir posicionamento */
@@ -1675,7 +1785,11 @@ body .mentor-item:not(.sem-valores) .mentor-rank-externo {
 
 .lista-dias {
   height: var(--lista-dias-height-default) !important;
-  margin-top: 38px !important;
+}
+
+/* Espaçamento extra entre o cabeçalho interno e o primeiro item da lista */
+.container .bloco.bloco-2 .resumo-mes .lista-dias > .gd-linha-dia:first-child {
+  margin-top: calc(var(--lista-dias-margin-top) / 3) !important;
 }
 
 /* ========================================
@@ -1894,7 +2008,8 @@ body .mentor-item:not(.sem-valores) .mentor-rank-externo {
   max-width: 24px !important;
 
   margin-left: 6px !important;
-  z-index: 2 !important;
+  position: relative !important; /* allow z-index to take effect */
+  z-index: 6 !important; /* raise above list background */
 
   /* Força posicionamento */
   order: 4 !important;
@@ -1903,6 +2018,10 @@ body .mentor-item:not(.sem-valores) .mentor-rank-externo {
 .gd-linha-dia .icone i {
   font-size: var(--icon-size-md) !important;
   line-height: 1 !important;
+  margin-right: var(
+    --lista-dias-icone-margin-right-edge,
+    0px
+  ) !important; /* control distance to field right edge */
   width: 16px !important;
   height: 16px !important;
   display: inline-flex !important;
@@ -1943,9 +2062,12 @@ body .mentor-item:not(.sem-valores) .mentor-rank-externo {
 /* TIGHTEN ICON SPACING: deixar o ícone mais próximo do valor (R$) */
 .gd-linha-dia .valor {
   /* reduzir a margem direita para trazer o ícone para mais perto
-     e aplicar margem esquerda solicitada pelo usuário */
-  margin-right: 6px !important;
-  margin-left: 15px !important; /* margem esquerda de 15px conforme pedido */
+    e aplicar margem esquerda solicitada pelo usuário */
+  margin-right: var(--lista-dias-icone-margin-right, 6px) !important;
+  margin-left: var(
+    --lista-dias-valor-margin-left,
+    15px
+  ) !important; /* margem esquerda de 15px conforme pedido */
 }
 
 .gd-linha-dia .valor-com-icone {
@@ -1956,11 +2078,58 @@ body .mentor-item:not(.sem-valores) .mentor-rank-externo {
 
 .gd-linha-dia .icone {
   /* reduzir espaço à esquerda do ícone */
-  margin-left: -14px !important;
+  margin-left: var(
+    --lista-dias-icone-margin-left-stuck,
+    var(--lista-dias-icone-margin-left, -14px)
+  ) !important;
   width: auto !important;
   min-width: 18px !important;
   margin-top: 5px !important;
-  margin-left: 9px !important;
+  margin-left: var(
+    --lista-dias-icone-margin-left-stuck,
+    var(--lista-dias-icone-margin-left, 9px)
+  ) !important;
+}
+
+/* Se o ícone estiver colado no canto direito e corre por trás do contêiner,
+   permitir que o pai mostre a parte sobresalente (apenas horizontalmente) */
+.container .bloco.bloco-2 .resumo-mes .lista-dias {
+  overflow-x: visible !important;
+  /* keep vertical scrolling while allowing icons to overflow horizontally */
+  overflow-y: auto !important;
+  box-sizing: border-box !important;
+  padding-right: calc(
+    var(--lista-dias-lateral-padding, 10px) + 14px
+  ) !important; /* reserve space for scrollbar + icon */
+}
+
+/* High-specificity override: ensure icon is on top of everything in this widget */
+html
+  body
+  .container
+  .bloco.bloco-2
+  .resumo-mes
+  .lista-dias
+  .gd-linha-dia
+  .icone {
+  position: relative !important;
+  z-index: 1000 !important;
+  pointer-events: auto !important;
+}
+
+/* If the icon still overlaps content, slightly pull it inside visually while keeping it on top */
+html
+  body
+  .container
+  .bloco.bloco-2
+  .resumo-mes
+  .lista-dias
+  .gd-linha-dia
+  .icone
+  i {
+  margin-right: var(--lista-dias-icone-margin-right-edge, -12px) !important;
+  position: relative !important;
+  z-index: 1200 !important;
 }
 
 .gd-linha-dia .icone i {
@@ -2085,6 +2254,36 @@ body .mentor-item:not(.sem-valores) .mentor-rank-externo {
   border-bottom-right-radius: 0 !important;
   overflow: hidden !important; /* ensure gradient is clipped to rounded corners */
   z-index: 61 !important; /* above bloco-meta */
+}
+/* Final authoritative override: ensure the lista-dias height is controlled by :root variables
+     This comes last to beat earlier rules, media queries and most inline-style conflicts
+     (it will still be overridden by inline styles that use !important). */
+html body .main-content .container .bloco.bloco-2 .resumo-mes > .lista-dias,
+html body .container .bloco.bloco-2 .resumo-mes > .lista-dias,
+.main-content .container .bloco.bloco-2 .resumo-mes .lista-dias,
+.container .bloco.bloco-2 .resumo-mes .lista-dias {
+  width: var(--lista-dias-width) !important;
+  max-width: var(--lista-dias-maxwidth) !important;
+  height: var(--lista-dias-height) !important;
+  max-height: var(--lista-dias-maxheight) !important;
+  overflow-y: auto !important;
+  padding: 12px var(--lista-dias-lateral-padding, 10px) !important;
+}
+
+/* Reserve scrollbar gutter so scrollbar appears without shifting content */
+.container .bloco.bloco-2 .resumo-mes .lista-dias {
+  box-sizing: border-box !important;
+  scrollbar-gutter: stable both-edges !important;
+  -webkit-overflow-scrolling: touch !important;
+}
+
+/* For browsers that don't support scrollbar-gutter, ensure right padding equals scrollbar width fallback */
+@supports not (scrollbar-gutter: stable) {
+  .container .bloco.bloco-2 .resumo-mes .lista-dias {
+    padding-right: calc(
+      var(--lista-dias-lateral-padding, 10px) + 16px
+    ) !important; /* 16px fallback scrollbar width */
+  }
 }
 
 /* Push the list down so it doesn't overlap the absolute header */
@@ -2254,9 +2453,16 @@ body .mentor-item:not(.sem-valores) .mentor-rank-externo {
   height: var(--lista-dias-height-block) !important;
   max-height: var(--lista-dias-maxheight-block) !important;
   overflow-y: auto !important;
-  overflow-x: hidden !important;
+  /* permitir overflow horizontal para que ícones possam "sair" do fluxo sem serem cortados */
+  overflow-x: visible !important;
   /* margem superior reduzida */
-  margin-top: 38px !important;
+  margin-top: var(--lista-dias-margin-top) !important;
+  /* reservar espaço no lado direito para barra de rolagem + ícone colado na borda */
+  padding-right: calc(
+    var(--lista-dias-lateral-padding, 10px) + 22px
+  ) !important;
+  /* manter padding lateral esquerdo controlável via variável */
+  padding-left: var(--lista-dias-lateral-padding, 10px) !important;
 }
 
 /* Restaurar scrollbar visível para .lista-dias (substitui as regras que a escondiam) */
@@ -2326,7 +2532,7 @@ body .mentor-item:not(.sem-valores) .mentor-rank-externo {
   .container .bloco.bloco-2 .resumo-mes .lista-dias {
     height: var(--lista-dias-height-mobile) !important;
     max-height: 50vh !important;
-    margin-top: 12px !important;
+    margin-top: var(--lista-dias-margin-top) !important;
   }
 }
 /* VALOR POSITIVO - Verde com borda esquerda */
@@ -2556,6 +2762,22 @@ body .mentor-item:not(.sem-valores) .mentor-rank-externo {
   width: 10px !important;
 }
 
+/* ===== OVERRIDE CENTRALIZADO: garantir que a margem superior use a variável raíz ===== */
+/* Esta regra vem no final do arquivo com alta especificidade para substituir
+   ocorrências anteriores e em media queries. */
+html body .main-content .container .bloco.bloco-2 .resumo-mes > .lista-dias,
+html body .container .bloco.bloco-2 .resumo-mes > .lista-dias,
+.main-content .container .bloco.bloco-2 .resumo-mes .lista-dias,
+.container .bloco.bloco-2 .resumo-mes .lista-dias {
+  margin-top: var(--lista-dias-margin-top) !important;
+}
+
+/* Forçar também dentro de elementos com atributo [style] (scripts que aplicam inline) quando possível
+   — isso só ajuda se o inline não usar !important. */
+.container .bloco.bloco-2 .resumo-mes .lista-dias[style] {
+  margin-top: var(--lista-dias-margin-top) !important;
+}
+
 .gd-linha-dia .data {
   width: 90px !important;
   min-width: 90px !important;
@@ -2581,14 +2803,14 @@ body .mentor-item:not(.sem-valores) .mentor-rank-externo {
   letter-spacing: -0.01em !important;
 }
 
-/* FINAL OVERRIDE: Forçar margin-left do placar para -9px */
+/* FINAL OVERRIDE: Forçar margin-left do placar (controlado por :root) */
 .container .bloco.bloco-2 .resumo-mes .lista-dias .gd-linha-dia .placar-day,
 .container .bloco.bloco-2 .resumo-mes .lista-dias .gd-linha-dia .placar-dia,
 .gd-linha-dia .placar-day,
 .gd-linha-dia .placar-dia,
 .linha-dia .placar-day,
 .linha-dia .placar-dia {
-  margin-left: -9px !important;
+  margin-left: var(--placar-2-margin-left, -9px) !important;
 }
 
 /* STRONG OVERRIDE: posicionamento forçado caso margin-left seja sobrescrita
@@ -2601,7 +2823,9 @@ body .mentor-item:not(.sem-valores) .mentor-rank-externo {
 .linha-dia > .placar-dia {
   position: relative !important;
   left: 0px !important; /* desloca visualmente para a esquerda */
-  transform: translateX(-9px) !important; /* fallback/consistência */
+  transform: translateX(
+    var(--placar-2-translate, -9px)
+  ) !important; /* fallback/consistência */
   padding-left: 0 !important;
 }
 
@@ -2727,6 +2951,36 @@ body .mentor-item:not(.sem-valores) .mentor-rank-externo {
   padding-left: 0 !important;
 }
 
+/* High-specificity: fazer o ícone "encostar" no canto direito sem ser cortado.
+   Reserva-se espaço com padding-right em .lista-dias e aplicamos margin-right negativa
+   ao <i> do ícone para puxá-lo visualmente até a borda. Elevamos z-index para evitar
+   sobreposição por elementos adjacentes. */
+html
+  body
+  .container
+  .bloco.bloco-2
+  .resumo-mes
+  .lista-dias
+  .gd-linha-dia
+  .icone
+  i {
+  margin-right: -8px !important;
+  position: relative !important;
+  z-index: 1200 !important;
+}
+
+/* Garantir que o wrapper .icone permita overflow visível (para segurança) */
+html
+  body
+  .container
+  .bloco.bloco-2
+  .resumo-mes
+  .lista-dias
+  .gd-linha-dia
+  .icone {
+  overflow: visible !important;
+}
+
 .container .bloco.bloco-2 .resumo-mes .lista-dias .gd-linha-dia,
 .gd-linha-dia {
   padding-left: 0 !important; /* remove o padding que empurra os filhos */
@@ -2835,13 +3089,19 @@ body .mentor-item:not(.sem-valores) .mentor-rank-externo {
 .container .bloco.bloco-2 .resumo-mes .lista-dias .gd-linha-dia .data,
 .gd-linha-dia > .data,
 .gd-linha-dia .data {
-  margin-left: 6px !important; /* user-requested: move data 2px to the left */
+  margin-left: var(
+    --lista-dias-data-margin-left,
+    6px
+  ) !important; /* user-requested: move data 2px to the left */
 }
 
 .container .bloco.bloco-2 .resumo-mes .lista-dias .gd-linha-dia .valor,
 .gd-linha-dia > .valor,
 .gd-linha-dia .valor {
-  margin-left: 15px !important; /* pull the value slightly left as requested */
+  margin-left: var(
+    --lista-dias-valor-margin-left,
+    15px
+  ) !important; /* pull the value slightly left as requested */
 }
 
 /* ==================================================
@@ -3377,6 +3637,30 @@ html body .lista-dias .gd-linha-dia .valor,
   line-height: 1 !important;
 }
 
+/* ===== Authoritative: force fixed width and reserve scrollbar gutter =====
+   Prevents the vertical scrollbar from changing the visible width of the
+   .lista-dias container when it appears on hover or scroll. This selector
+   intentionally uses high specificity and !important to beat inline styles. */
+html body .main-content .container .bloco.bloco-2 .resumo-mes > .lista-dias,
+html body .container .bloco.bloco-2 .resumo-mes > .lista-dias,
+.main-content .container .bloco.bloco-2 .resumo-mes .lista-dias,
+.container .bloco.bloco-2 .resumo-mes .lista-dias,
+.container .bloco.bloco-2 .resumo-mes .lista-dias[style] {
+  width: var(--lista-dias-width) !important;
+  min-width: var(--lista-dias-width) !important;
+  max-width: var(--lista-dias-width) !important;
+  box-sizing: border-box !important;
+  padding-left: var(--lista-dias-lateral-padding, 10px) !important;
+  /* ensure the scrollbar is not visually clipped: add extra right padding as safety */
+  padding-right: calc(
+    var(--lista-dias-lateral-padding, 10px) + 18px
+  ) !important;
+  position: relative !important;
+  z-index: 100 !important; /* place lista-dias above header overlays so scrollbar remains visible */
+  scrollbar-gutter: stable both-edges !important;
+  overflow-y: auto !important;
+}
+
 /* =======================================================================================================================================================
         TESTE
   =======================================================================================================================================================*/
@@ -3392,7 +3676,7 @@ html body .lista-dias .gd-linha-dia .valor,
 
 /* Webkit (Chrome, Safari, Edge) */
 .container .bloco.bloco-2 .resumo-mes .lista-dias::-webkit-scrollbar {
-  width: 8px !important;
+  width: 8px !important; /* fixed width so layout doesn't change */
 }
 
 /* Track sempre invisível */
@@ -3402,9 +3686,9 @@ html body .lista-dias .gd-linha-dia .valor,
 
 /* Thumb invisível por padrão */
 .container .bloco.bloco-2 .resumo-mes .lista-dias::-webkit-scrollbar-thumb {
-  background: transparent !important;
+  background: transparent !important; /* invisible by default */
   border-radius: 4px !important;
-  transition: background-color 0.3s ease !important;
+  transition: background-color 0.2s ease !important;
 }
 
 /* Thumb aparece apenas no hover do container */
@@ -3412,7 +3696,7 @@ html body .lista-dias .gd-linha-dia .valor,
   .bloco.bloco-2
   .resumo-mes
   .lista-dias:hover::-webkit-scrollbar-thumb {
-  background: rgba(0, 0, 0, 0.3) !important;
+  background: rgba(0, 0, 0, 0.3) !important; /* only color changes on hover */
 }
 
 /* Thumb mais escuro quando hover direto na barra */
@@ -3433,11 +3717,13 @@ html body .lista-dias .gd-linha-dia .valor,
 
 /* Firefox - oculta por padrão, aparece no hover */
 .container .bloco.bloco-2 .resumo-mes .lista-dias {
-  scrollbar-width: none !important; /* Completamente oculta */
+  scrollbar-width: thin !important; /* keep a reserved gutter for Firefox */
+  scrollbar-color: transparent transparent !important; /* transparent thumb by default */
+  scrollbar-gutter: stable both-edges !important; /* reserve space so appearance won't push content */
 }
 
 .container .bloco.bloco-2 .resumo-mes .lista-dias:hover {
-  scrollbar-width: thin !important; /* Aparece no hover */
+  /* On hover we only change the thumb color, not the gutter */
   scrollbar-color: rgba(0, 0, 0, 0.3) transparent !important;
 }
 

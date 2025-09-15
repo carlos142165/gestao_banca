@@ -366,6 +366,18 @@ const MetaMensalManager = {
       const rotuloElement = document.getElementById("rotulo-meta-2");
       if (rotuloElement) {
         rotuloElement.innerHTML = rotulo;
+        // Se o rótulo indicar "Restando" aplicamos uma classe para permitir
+        // ajustes CSS específicos (margem top controlada por variável :root)
+        try {
+          const texto = (rotuloElement.textContent || "").toLowerCase();
+          if (texto.includes("restando")) {
+            rotuloElement.classList.add("rotulo-restando");
+          } else {
+            rotuloElement.classList.remove("rotulo-restando");
+          }
+        } catch (e) {
+          // silencioso
+        }
       } else {
         console.warn("Elemento rotulo-meta-2 não encontrado");
       }
@@ -1368,8 +1380,8 @@ const cssPlaccar2 = `
 /* ===== PLACAR-2 - CLONE DO PLACAR ORIGINAL ===== */
 .area-central-2 {
   position: absolute;
-  left: 50%;
-  top: 30px;
+  left: var(--placar-2-left, 50%);
+  top: var(--placar-2-top, 30px);
   transform: translate(-50%, -50%);
   display: flex;
   align-items: center;
@@ -1835,8 +1847,28 @@ const ListaDiasManagerCorrigido = {
 
     // Limpar container preservando altura para evitar flicker
     const prevMinHeight = container.style.minHeight;
-    // Fixar a altura atual do container para evitar colapso visual durante o rebuild
-    container.style.minHeight = container.clientHeight + "px";
+    // If a CSS variable defines the desired height, respect it instead of forcing current clientHeight
+    try {
+      const rootStyles = getComputedStyle(document.documentElement);
+      const cssDesired = rootStyles
+        .getPropertyValue("--lista-dias-height")
+        .trim();
+      const cssMax = rootStyles
+        .getPropertyValue("--lista-dias-maxheight")
+        .trim();
+
+      if (cssDesired) {
+        // apply desired height as minHeight to avoid flicker but follow the root variable
+        container.style.minHeight = cssDesired;
+      } else if (cssMax) {
+        container.style.minHeight = cssMax;
+      } else {
+        // fallback: preserve current pixel height
+        container.style.minHeight = container.clientHeight + "px";
+      }
+    } catch (e) {
+      container.style.minHeight = container.clientHeight + "px";
+    }
     container.innerHTML = "";
 
     // Gerar todos os dias do mês
@@ -1974,9 +2006,18 @@ const ListaDiasManagerCorrigido = {
       // silencioso
     }
 
-    // Restaurar scroll e restaurar min-height preservado
+    // Restaurar scroll and restore previous min-height if it existed. If previous was empty, leave minHeight defined by CSS var.
     container.scrollTop = scrollTop;
-    container.style.minHeight = prevMinHeight || "";
+    try {
+      if (prevMinHeight && prevMinHeight.length > 0) {
+        container.style.minHeight = prevMinHeight;
+      } else {
+        // remove explicit minHeight so CSS variables / stylesheet can control final height
+        container.style.removeProperty("min-height");
+      }
+    } catch (e) {
+      container.style.minHeight = prevMinHeight || "";
+    }
 
     // Focar no dia atual se primeira vez
     if (!this.ultimaAtualizacao) {
