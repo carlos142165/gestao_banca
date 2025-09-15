@@ -1,3 +1,227 @@
+/* ===================================================================
+   CORREÇÃO: Bloco 2 responsivo ao zoom - expansão proporcional
+   Remove altura fixa e permite expansão natural junto com outros blocos
+   =================================================================== */
+
+/* 1. REMOVER ALTURAS FIXAS E PERMITIR EXPANSÃO NATURAL */
+
+/* 2. CONTAINER PRINCIPAL - USAR FLEXBOX RESPONSIVO */
+.main-content .container {
+  display: flex !important;
+  align-items: stretch !important;
+  gap: 20px !important;
+  min-height: calc(100vh - 160px) !important; /* viewport menos header/footer */
+  height: auto !important;
+  max-height: none !important;
+}
+
+/* 3. TODOS OS BLOCOS - EXPANSÃO UNIFORME */
+.main-content .container > .bloco,
+.main-content .container > .bloco-1,
+.main-content .container > .bloco-2,
+.main-content .container > .bloco-3 {
+  flex: 1 1 auto !important;
+  display: flex !important;
+  flex-direction: column !important;
+  height: auto !important;
+  min-height: calc(100vh - 200px) !important; /* altura mínima responsiva */
+  max-height: none !important;
+  overflow: visible !important;
+}
+
+/* 4. BLOCO 2 ESPECÍFICO - ESTRUTURA FLEXÍVEL */
+.container .bloco.bloco-2 {
+  width: var(--lista-dias-width-responsive) !important;
+  max-width: var(--lista-dias-container-width) !important;
+  height: auto !important;
+  min-height: 0 !important;
+  max-height: none !important;
+  display: flex !important;
+  flex-direction: column !important;
+  overflow: visible !important;
+}
+
+/* 5. RESUMO-MES - CONTAINER FLEXÍVEL */
+.container .bloco.bloco-2 .resumo-mes {
+  flex: 1 1 auto !important;
+  display: flex !important;
+  flex-direction: column !important;
+  height: 100% !important;
+  min-height: 0 !important;
+  max-height: none !important;
+  overflow: visible !important;
+  position: relative !important;
+}
+
+/* 6. LISTA-DIAS - EXPANSÃO FLEXÍVEL COM SCROLL INTERNO */
+.container .bloco.bloco-2 .resumo-mes .lista-dias,
+html body .main-content .container .bloco.bloco-2 .resumo-mes > .lista-dias,
+html body .container .bloco.bloco-2 .resumo-mes > .lista-dias {
+  /* REMOVER ALTURAS FIXAS */
+  height: auto !important;
+  min-height: 300px !important; /* altura mínima para funcionalidade */
+  max-height: none !important;
+
+  /* FLEXBOX RESPONSIVO */
+  flex: 1 1 auto !important;
+
+  /* SCROLL APENAS QUANDO NECESSÁRIO */
+  overflow-y: auto !important;
+  overflow-x: hidden !important;
+
+  /* MANTER OUTRAS PROPRIEDADES IMPORTANTES */
+  width: var(--lista-dias-width, calc(100% + 24px)) !important;
+  max-width: var(--lista-dias-maxwidth, calc(100% + 24px)) !important;
+  margin-left: var(--lista-dias-margin-left, 10px) !important;
+  margin-top: var(--lista-dias-margin-top) !important;
+  padding: 12px var(--lista-dias-lateral-padding, 10px) !important;
+
+  border-radius: 20px !important;
+  box-sizing: border-box !important;
+
+  /* SCROLLBAR CONFIGURAÇÕES */
+  scrollbar-gutter: stable both-edges !important;
+  -webkit-overflow-scrolling: touch !important;
+}
+
+/* 7. CABEÇALHO FIXO - AJUSTAR PARA NÃO INTERFERIR */
+.container .bloco.bloco-2 .resumo-mes .bloco-meta-simples.fixo-topo {
+  position: absolute !important;
+  top: 0 !important;
+  left: 0 !important;
+  right: 0 !important;
+  z-index: 100 !important;
+  flex-shrink: 0 !important;
+  height: 60px !important;
+}
+
+/* 8. AJUSTAR MARGEM DA LISTA PARA COMPENSAR HEADER ABSOLUTO */
+.container .bloco.bloco-2 .resumo-mes .lista-dias {
+  margin-top: 70px !important; /* 60px header + 10px gap */
+}
+
+/* 9. RESPONSIVIDADE - MANTER PROPORÇÕES EM DIFERENTES ZOOMS */
+
+/* Desktop padrão */
+@media (min-width: 1024px) {
+  .main-content .container > .bloco {
+    min-height: calc(100vh - 180px) !important;
+  }
+
+  .container .bloco.bloco-2 .resumo-mes .lista-dias {
+    min-height: 350px !important;
+  }
+}
+
+/* Tablet */
+@media (max-width: 1024px) and (min-width: 768px) {
+  .main-content .container > .bloco {
+    min-height: calc(100vh - 160px) !important;
+  }
+
+  .container .bloco.bloco-2 .resumo-mes .lista-dias {
+    min-height: 300px !important;
+  }
+}
+
+/* Mobile */
+@media (max-width: 768px) {
+  .main-content .container {
+    flex-direction: column !important;
+    gap: 15px !important;
+  }
+
+  .main-content .container > .bloco {
+    min-height: auto !important;
+    height: auto !important;
+  }
+
+  .container .bloco.bloco-2 .resumo-mes .lista-dias {
+    min-height: 250px !important;
+    margin-top: 60px !important; /* header menor no mobile */
+  }
+
+  .container .bloco.bloco-2 .resumo-mes .bloco-meta-simples.fixo-topo {
+    height: 50px !important;
+  }
+}
+
+/* 10. ZOOM ESPECÍFICO - GARANTIR EXPANSÃO PROPORCIONAL */
+
+/* Para zoom 125% */
+@media screen and (min-resolution: 120dpi) {
+  .main-content .container > .bloco {
+    min-height: calc(100vh - 200px) !important;
+  }
+}
+
+/* Para zoom 150% */
+@media screen and (min-resolution: 144dpi) {
+  .main-content .container > .bloco {
+    min-height: calc(100vh - 220px) !important;
+  }
+}
+
+/* 11. FORÇA OVERRIDE PARA ESTILOS INLINE EXISTENTES */
+.container .bloco.bloco-2[style],
+.container .bloco.bloco-2 .resumo-mes[style],
+.container .bloco.bloco-2 .resumo-mes .lista-dias[style] {
+  height: auto !important;
+  max-height: none !important;
+}
+
+/* 12. GARANTIR QUE SCROLLBAR APAREÇA APENAS QUANDO NECESSÁRIO */
+.container .bloco.bloco-2 .resumo-mes .lista-dias::-webkit-scrollbar {
+  width: 8px !important;
+}
+
+.container .bloco.bloco-2 .resumo-mes .lista-dias::-webkit-scrollbar-track {
+  background: transparent !important;
+}
+
+.container .bloco.bloco-2 .resumo-mes .lista-dias::-webkit-scrollbar-thumb {
+  background: rgba(0, 0, 0, 0.2) !important;
+  border-radius: 4px !important;
+}
+
+.container
+  .bloco.bloco-2
+  .resumo-mes
+  .lista-dias::-webkit-scrollbar-thumb:hover {
+  background: rgba(0, 0, 0, 0.4) !important;
+}
+
+/* 13. GARANTIR ALINHAMENTO VERTICAL DOS BLOCOS */
+.main-content .container {
+  align-items: stretch !important; /* todos os blocos mesma altura */
+}
+
+/* 14. FALLBACK PARA NAVEGADORES SEM SUPORTE A VIEWPORT UNITS */
+@supports not (height: 100vh) {
+  .main-content .container > .bloco {
+    min-height: 600px !important;
+  }
+
+  .container .bloco.bloco-2 .resumo-mes .lista-dias {
+    min-height: 400px !important;
+  }
+}
+
+/* 15. DEBUG - REMOVER APÓS CONFIRMAÇÃO (OPCIONAL) */
+/*
+.main-content .container > .bloco {
+  border: 2px solid red !important;
+  box-sizing: border-box !important;
+}
+
+.container .bloco.bloco-2 {
+  border: 2px solid blue !important;
+}
+
+.container .bloco.bloco-2 .resumo-mes .lista-dias {
+  border: 2px solid green !important;
+}
+*/
 /* ===== CSS COMPLETO PARA SISTEMA DE RANKING ===== */
 
 /* RANK COM COR DINÂMICA BASEADA NO SALDO */
@@ -340,12 +564,15 @@ body .mentor-item:not(.sem-valores) .mentor-rank-externo {
   /* --------------------------------------------------
     ALTURA - LARGURA - ALTURA - LARGURA - 
   -------------------------------------------------- */
-  --lista-dias-height: 532px; /* ALTURA BLOCO LISTA DIAS */
-  --lista-dias-maxheight: 532px; /* ALTURA BLOCO LISTA DIAS */
-  --lista-dias-width-base: 420px; /* largura padrão do bloco (era 420px) */
-  --lista-dias-maxwidth-block: 420px; /* limite dentro do layout do bloco */
-  --lista-dias-maxwidth-desktop: 1200px; /* limite máximo em telas grandes */
-  --lista-dias-minwidth-mobile: 280px; /* largura mínima em telas pequenas */
+  --lista-dias-height: auto !important;
+  --lista-dias-maxheight: none !important;
+  --lista-dias-height-desktop: auto !important;
+  --lista-dias-maxheight-desktop: none !important;
+  --lista-dias-height-externo: auto !important;
+  --lista-dias-maxheight-externo: none !important;
+  --lista-dias-height-block: auto !important;
+  --lista-dias-maxheight-block: none !important;
+  --lista-dias-height-mobile: auto !important;
   /* --------------------------------------------------
     ALTURA - LARGURA - ALTURA - LARGURA - 
   -------------------------------------------------- */
@@ -431,7 +658,7 @@ body .mentor-item:not(.sem-valores) .mentor-rank-externo {
   /* --------------------------------------------------
    - MARGIN LEFT - MARGIN RIGHT - MARGIN LEFT -
   -------------------------------------------------- */
-  --lista-dias-margin-left: 10px; /* BLOCO.. lista de dias */
+  --lista-dias-margin-left: 4px; /* BLOCO.. lista de dias */
   --widget-meta-valor-2-margin-left: 0px; /*valor da meta */
   --rotulo-restando-meta-mes-margin-left: 0px; /* 'Restando p/ Meta do Mês' */
   --widget-barra-container-2-margin-left: 0px; /* margem-left para a barra de progresso */
