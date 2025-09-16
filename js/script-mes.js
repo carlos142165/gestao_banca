@@ -407,7 +407,7 @@ const MetaMensalManager = {
         iconeClass = "fa-solid fa-chart-line"; // GRÁFICO SUBINDO
         classeEstado = "saldo-positivo-2";
       } else if (saldoMes < 0) {
-        textoSaldo = "Negativo Mês";
+        textoSaldo = "Negativo";
         iconeClass = "fa-solid fa-arrow-trend-down"; // GRÁFICO DESCENDO
         classeEstado = "saldo-negativo-2";
       } else {
