@@ -1154,17 +1154,43 @@ const PlacarMensalManager = {
 
       const greenSpan = placarElement.querySelector(".placar-green-2");
       const redSpan = placarElement.querySelector(".placar-red-2");
+      const separadorEl = placarElement.querySelector(".separador-2");
 
       if (greenSpan && redSpan) {
-        // Aplicar valores com animação suave
-        this.animarMudancaValor(greenSpan, placarData.wins);
-        this.animarMudancaValor(redSpan, placarData.losses);
+        // If both values are zero, keep the placar visually empty until real data arrives
+        const wins = Number(placarData.wins) || 0;
+        const losses = Number(placarData.losses) || 0;
 
-        // Aplicar classe de atualização
-        placarElement.classList.add("placar-atualizado");
-        setTimeout(() => {
+        if (wins === 0 && losses === 0) {
+          // Show empty placeholders instead of "0 × 0"
+          greenSpan.textContent = "";
+          redSpan.textContent = "";
+          if (separadorEl) {
+            // Make separator transparent while waiting for real data
+            separadorEl.style.setProperty("color", "transparent", "important");
+          }
+          // remove update class if present and remove has-values marker
           placarElement.classList.remove("placar-atualizado");
-        }, 1000);
+          placarElement.classList.remove("placar-has-values");
+        } else {
+          // Ensure separator is visible and colored for non-empty scores
+          if (separadorEl) {
+            separadorEl.style.removeProperty("color");
+          }
+
+          // Marca que o placar tem valores para controles CSS
+          placarElement.classList.add("placar-has-values");
+
+          // Aplicar valores com animação suave
+          this.animarMudancaValor(greenSpan, wins);
+          this.animarMudancaValor(redSpan, losses);
+
+          // Aplicar classe de atualização
+          placarElement.classList.add("placar-atualizado");
+          setTimeout(() => {
+            placarElement.classList.remove("placar-atualizado");
+          }, 1000);
+        }
       }
     } catch (error) {
       console.error("❌ Erro ao aplicar placar:", error);
@@ -3402,12 +3428,108 @@ function inicializarSistemaUnico() {
   }, 2000);
 }
 
+// Rolagem para a linha do dia atual (gd-dia-hoje) dentro de .lista-dias
+// Rolagem para a linha do dia atual (gd-dia-hoje) com fallback robusto
+function scrollToHoje() {
+  try {
+    const hojeEl = document.querySelector(".gd-dia-hoje");
+    if (!hojeEl) return false;
+
+    // Encontra o ancestral rolável mais próximo
+    function findScrollableAncestor(el) {
+      let parent = el.parentElement;
+      while (parent && parent !== document.body) {
+        const style = window.getComputedStyle(parent);
+        const overflowY = style.overflowY;
+        if (
+          (overflowY === "auto" || overflowY === "scroll") &&
+          parent.scrollHeight > parent.clientHeight
+        ) {
+          return parent;
+        }
+        parent = parent.parentElement;
+      }
+      // fallback: página inteira
+      return document.scrollingElement || document.documentElement;
+    }
+
+    const container = findScrollableAncestor(hojeEl);
+
+    // Se o container for o documento, usar scrollIntoView no elemento
+    if (
+      container === document.scrollingElement ||
+      container === document.documentElement
+    ) {
+      if (typeof hojeEl.scrollIntoView === "function") {
+        hojeEl.scrollIntoView({
+          behavior: "smooth",
+          block: "center",
+          inline: "nearest",
+        });
+      } else {
+        const rect = hojeEl.getBoundingClientRect();
+        const absoluteY = window.scrollY + rect.top;
+        window.scrollTo({
+          top: absoluteY - window.innerHeight / 2 + rect.height / 2,
+          behavior: "smooth",
+        });
+      }
+    } else {
+      // Calcular posição relativa ao container e rolar esse container
+      const elRect = hojeEl.getBoundingClientRect();
+      const containerRect = container.getBoundingClientRect();
+      const offsetTop = elRect.top - containerRect.top + container.scrollTop;
+      const targetScrollTop = Math.max(
+        0,
+        offsetTop - container.clientHeight / 2 + hojeEl.clientHeight / 2
+      );
+      if (typeof container.scrollTo === "function") {
+        container.scrollTo({ top: targetScrollTop, behavior: "smooth" });
+      } else {
+        container.scrollTop = targetScrollTop;
+      }
+    }
+
+    return true;
+  } catch (e) {
+    console.error("Erro ao rolar para hoje:", e);
+    return false;
+  }
+}
+
 // Inicializar baseado no estado do DOM
 if (document.readyState === "loading") {
   document.addEventListener("DOMContentLoaded", inicializarSistemaUnico);
 } else {
   inicializarSistemaUnico();
 }
+
+// Tentar rolar para hoje agora; se o elemento ainda não existir ou for criado depois,
+// usar MutationObserver para disparar quando a linha for adicionada.
+(function ensureScrollToHoje() {
+  const tried = scrollToHoje();
+  if (tried) return;
+
+  // Observar a lista de dias se existir, senão observar o body
+  const lista = document.querySelector(".lista-dias") || document.body;
+  if (!lista) return;
+
+  const mo = new MutationObserver((mutations, observer) => {
+    if (document.querySelector(".gd-dia-hoje")) {
+      scrollToHoje();
+      observer.disconnect();
+    }
+  });
+
+  mo.observe(lista, { childList: true, subtree: true });
+
+  // Timeout de segurança para desconectar o observer após 6s
+  setTimeout(() => {
+    try {
+      mo.disconnect();
+    } catch (e) {}
+  }, 6000);
+})();
 
 console.log("🎯 Sistema Único Sem Conflitos carregado!");
 console.log("📋 Características:");

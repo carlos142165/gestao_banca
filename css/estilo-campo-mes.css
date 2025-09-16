@@ -53,6 +53,43 @@
   position: relative !important;
 }
 
+/* FORCE: make resumo-mes flush to bloco-2 with no gap/line and keep bloco-2 on top */
+.container .bloco.bloco-2 {
+  margin: 0 !important;
+  padding: 0 !important;
+  position: relative !important;
+  z-index: 10000 !important; /* ensure bloco-2 stays above other content */
+
+  border: none !important;
+  box-shadow: none !important;
+}
+
+.container .bloco.bloco-2 .resumo-mes {
+  margin: 0 !important;
+  padding: 0 !important;
+  width: 100% !important;
+  height: 100% !important;
+  box-sizing: border-box !important;
+  border: none !important;
+  box-shadow: none !important;
+}
+
+/* Remove any seam created by children (header/list) */
+.container .bloco.bloco-2 .resumo-mes .bloco-meta-simples,
+.container .bloco.bloco-2 .resumo-mes .bloco-meta-simples.fixo-topo {
+  margin: 0 !important;
+  padding: 0 !important;
+  border: none !important;
+  box-shadow: none !important;
+}
+
+.container .bloco.bloco-2 .resumo-mes .lista-dias {
+  margin: 0 !important;
+  padding: 0 12px !important; /* keep internal padding for content but no external gap */
+  border: none !important;
+  box-shadow: none !important;
+}
+
 /* 6. LISTA-DIAS - EXPANSÃO FLEXÍVEL COM SCROLL INTERNO */
 .container .bloco.bloco-2 .resumo-mes .lista-dias,
 html body .main-content .container .bloco.bloco-2 .resumo-mes > .lista-dias,
@@ -87,62 +124,64 @@ html body .container .bloco.bloco-2 .resumo-mes > .lista-dias {
 /* 7. CABEÇALHO FIXO - AJUSTAR PARA NÃO INTERFERIR */
 .container .bloco.bloco-2 .resumo-mes .bloco-meta-simples.fixo-topo {
   position: absolute !important;
-  top: 0 !important;
+  /* Keep header contained inside the bloco while removing the hairline seam
+     that appeared on some displays. We avoid negative offsets and instead
+     ensure the header uses full available width and remove right border
+     artifacts. */
+  /* Make header full-width inside bloco-2 and remove right-edge hairline */
+}
+
+/* Ensure the fixed header uses the bloco's full inner width and does not create a seam */
+html body .container .bloco.bloco-2 .resumo-mes .bloco-meta-simples.fixo-topo {
   left: 0 !important;
   right: 0 !important;
-  z-index: 100 !important;
-  flex-shrink: 0 !important;
-  height: 60px !important;
+  width: 100% !important;
+  box-sizing: border-box !important;
+  padding-right: 0 !important;
+  position: absolute !important;
+  height: 50px !important;
 }
 
-/* 8. AJUSTAR MARGEM DA LISTA PARA COMPENSAR HEADER ABSOLUTO */
-.container .bloco.bloco-2 .resumo-mes .lista-dias {
-  margin-top: 70px !important; /* 60px header + 10px gap */
+html
+  body
+  .container
+  .bloco.bloco-2
+  .resumo-mes
+  .bloco-meta-simples.fixo-topo
+  .campo-armazena-data-placar {
+  width: 100% !important;
+  margin: 0 !important;
+  padding-right: 0 !important;
+  border-right: none !important;
+  /* remove hard inset shadows that can create a visible hairline */
+  box-shadow: 0 1px 2px rgba(0, 0, 0, 0.02) inset !important;
+  background-clip: padding-box !important;
 }
 
-/* 9. RESPONSIVIDADE - MANTER PROPORÇÕES EM DIFERENTES ZOOMS */
-
-/* Desktop padrão */
-@media (min-width: 1024px) {
-  .main-content .container > .bloco {
-    min-height: calc(100vh - 180px) !important;
-  }
-
-  .container .bloco.bloco-2 .resumo-mes .lista-dias {
-    min-height: 350px !important;
-  }
+/* Defensive: ensure resumo-mes has no right border that could create a seam */
+html body .container .bloco.bloco-2 .resumo-mes {
+  border-right: none !important;
 }
 
-/* Tablet */
-@media (max-width: 1024px) and (min-width: 768px) {
-  .main-content .container > .bloco {
-    min-height: calc(100vh - 160px) !important;
-  }
-
-  .container .bloco.bloco-2 .resumo-mes .lista-dias {
-    min-height: 300px !important;
-  }
-}
-
-/* Mobile */
-@media (max-width: 768px) {
-  .main-content .container {
-    flex-direction: column !important;
-    gap: 15px !important;
-  }
-
-  .main-content .container > .bloco {
-    min-height: auto !important;
-    height: auto !important;
+@media (max-width: 480px) {
+  html body .container .bloco.bloco-2 .resumo-mes .bloco-meta-simples.fixo-topo,
+  html
+    body
+    .container
+    .bloco.bloco-2
+    .resumo-mes
+    .bloco-meta-simples.fixo-topo
+    .campo-armazena-data-placar {
+    left: 0 !important;
+    right: 0 !important;
+    width: 100% !important;
+    margin: 0 !important;
+    padding-right: 8px !important;
   }
 
   .container .bloco.bloco-2 .resumo-mes .lista-dias {
     min-height: 250px !important;
     margin-top: 60px !important; /* header menor no mobile */
-  }
-
-  .container .bloco.bloco-2 .resumo-mes .bloco-meta-simples.fixo-topo {
-    height: 50px !important;
   }
 }
 
@@ -801,8 +840,8 @@ body .mentor-item:not(.sem-valores) .mentor-rank-externo {
 /* Make the data+score area flush to the bloco-2 inner edges */
 .container .bloco.bloco-2 .resumo-mes .campo-armazena-data-placar {
   /* extend to the bloco edges (bloco has 8px padding) */
-  width: calc(100% + 16px) !important;
-  margin: 0 -8px !important; /* pull the element to the bloco inner edges */
+  width: 100% !important;
+  margin: 0 0px !important; /* pull the element to the bloco inner edges */
   box-sizing: border-box !important;
   padding: 0 !important; /* no internal horizontal spacing */
   display: flex !important;
@@ -2717,6 +2756,41 @@ html body .container .bloco.bloco-2 .resumo-mes > .lista-dias,
 .container .bloco.bloco-2 .resumo-mes .lista-dias::-webkit-scrollbar-track,
 .lista-dias::-webkit-scrollbar-track {
   background: transparent !important;
+  /* Expand the header area slightly so it reaches the bloco inner corners
+   while remaining contained. Uses a small clamp to avoid overflow in
+   very narrow screens. Parent containers use box-sizing and overflow
+   rules to prevent visual overflow. */
+  html
+    body
+    .container
+    .bloco.bloco-2
+    .resumo-mes
+    .bloco-meta-simples.fixo-topo
+    .campo-armazena-data-placar {
+    width: clamp(100%, calc(100% + 12px), calc(100% + 24px)) !important;
+    margin-left: -8px !important; /* pull to left inner corner */
+    margin-right: -8px !important; /* pull to right inner corner */
+    box-sizing: border-box !important;
+    padding-left: 8px !important; /* keep content aligned visually */
+    padding-right: 8px !important;
+    overflow: hidden !important;
+    border-radius: inherit !important;
+  }
+  @media (max-width: 480px) {
+    html
+      body
+      .container
+      .bloco.bloco-2
+      .resumo-mes
+      .bloco-meta-simples.fixo-topo
+      .campo-armazena-data-placar {
+      width: 100% !important;
+      margin-left: 0 !important;
+      margin-right: 0 !important;
+      padding-left: 6px !important;
+      padding-right: 6px !important;
+    }
+  }
 }
 
 .container .bloco.bloco-2 .resumo-mes .lista-dias::-webkit-scrollbar-thumb,
@@ -3561,12 +3635,12 @@ html
   /* Visual */
   background: linear-gradient(
     90deg,
-    #cfcfcf 0%,
-    #e4eee7 50%,
-    #cfcfcf 100%
+    #9ea39d 0%,
+    #dff1dd 50%,
+    #abb3ab 100%
   ) !important;
-  border-top-left-radius: 15px !important;
-  border-top-right-radius: 15px !important;
+  border-top-left-radius: 20px !important;
+  border-top-right-radius: 20px !important;
   border-bottom-left-radius: 0 !important;
   border-bottom-right-radius: 0 !important;
 
@@ -3662,6 +3736,51 @@ html
   z-index: 6 !important;
   display: flex !important;
   align-items: center !important;
+}
+
+/* Hide any duplicate placar instances placed in the header/corners
+   and keep only the centered #pontuacao-2 visible. */
+.campo-armazena-data-placar .pontuacao-2:not(#pontuacao-2) {
+  display: none !important;
+  visibility: hidden !important;
+  height: 0 !important;
+  overflow: hidden !important;
+  padding: 0 !important;
+  margin: 0 !important;
+  line-height: 0 !important;
+}
+
+/* Ensure the centered score is visible and properly centered */
+.area-central-2 #pontuacao-2,
+#pontuacao-2 {
+  display: flex !important;
+  justify-content: center !important;
+  align-items: center !important;
+  gap: 0.6rem !important;
+  width: auto !important;
+  height: auto !important;
+  padding: 0 !important;
+  font-size: var(--fs-placar-top) !important;
+}
+
+/* Fallback: se ambos os spans do placar estiverem vazios, esconder o separador */
+#pontuacao-2 .placar-green-2:empty + .separador-2:empty,
+#pontuacao-2 .placar-green-2:empty ~ .separador-2:empty,
+#pontuacao-2 .placar-green-2:empty + .separador-2:empty + .placar-red-2:empty {
+  display: none !important;
+}
+
+/* Separator visual state: transparent by default while waiting for values,
+   then gray when `.placar-has-values` is added by JS after real data arrives. */
+#pontuacao-2 .separador-2 {
+  color: transparent !important;
+  opacity: 0 !important;
+  transition: color 180ms ease, opacity 180ms ease;
+}
+
+#pontuacao-2.placar-has-values .separador-2 {
+  color: rgba(109, 107, 107, 0.95) !important; /* normal gray separator */
+  opacity: 1 !important;
 }
 
 /* Stronger specificity to guarantee the month text is visible and not clipped */
@@ -4163,3 +4282,343 @@ html body .container .bloco.bloco-2 .resumo-mes .lista-dias .gd-linha-dia.valor-
 html body .container .bloco.bloco-2 .resumo-mes .lista-dias .gd-linha-dia.valor-negativo.hoje {
   border-left: 4px solid var(--lista-dias-border-left-today, #43464d) !important;
 }
+
+/* =======================================================================================================================================================
+                                                        DESTAQUE NA DATA DO DIA DE HOJE
+  =======================================================================================================================================================*/
+/* ===== BARRA DE ROLAGEM PARA .lista-dias ===== */
+html body .container .bloco.bloco-2 .resumo-mes .lista-dias .gd-linha-dia.hoje,
+html body .container .bloco.bloco-2 .resumo-mes .lista-dias .gd-linha-dia.atual,
+html body .container .bloco.bloco-2 .resumo-mes .lista-dias .gd-linha-dia.today,
+html
+  body
+  .container
+  .bloco.bloco-2
+  .resumo-mes
+  .lista-dias
+  .gd-linha-dia.current,
+html
+  body
+  .container
+  .bloco.bloco-2
+  .resumo-mes
+  .lista-dias
+  .gd-linha-dia.active,
+html
+  body
+  .container
+  .bloco.bloco-2
+  .resumo-mes
+  .lista-dias
+  .gd-linha-dia.gd-dia-hoje,
+html
+  body
+  .container
+  .bloco.bloco-2
+  .resumo-mes
+  .lista-dias
+  .gd-linha-dia[data-hoje],
+html
+  body
+  .container
+  .bloco.bloco-2
+  .resumo-mes
+  .lista-dias
+  .gd-linha-dia[data-hoje="true"] {
+  background: linear-gradient(
+    90deg,
+    rgba(255, 255, 255, 0.98),
+    rgba(248, 249, 250, 0.98)
+  ) !important;
+  border-left: 4px solid var(--lista-dias-border-left-today, #43464d) !important;
+  box-shadow: 0 2px 8px rgba(67, 70, 77, 0.08) inset !important;
+  transform: translateZ(0) !important;
+  transition: background 160ms ease, box-shadow 160ms ease,
+    border-left-color 160ms ease !important;
+}
+
+/* Fortalecer contraste do texto e ícone dentro do dia de hoje */
+html
+  body
+  .container
+  .bloco.bloco-2
+  .resumo-mes
+  .lista-dias
+  .gd-linha-dia.hoje
+  .data,
+html
+  body
+  .container
+  .bloco.bloco-2
+  .resumo-mes
+  .lista-dias
+  .gd-linha-dia.hoje
+  .valor,
+html
+  body
+  .container
+  .bloco.bloco-2
+  .resumo-mes
+  .lista-dias
+  .gd-linha-dia.hoje
+  .placar-dia,
+html
+  body
+  .container
+  .bloco.bloco-2
+  .resumo-mes
+  .lista-dias
+  .gd-linha-dia.hoje
+  .icone
+  i {
+  color: #111827 !important; /* quase preto para máxima legibilidade */
+  font-weight: 700 !important;
+  opacity: 1 !important;
+}
+
+/* Also apply inner contrast to gd-dia-hoje and [data-hoje] variants */
+html
+  body
+  .container
+  .bloco.bloco-2
+  .resumo-mes
+  .lista-dias
+  .gd-linha-dia.gd-dia-hoje
+  .data,
+html
+  body
+  .container
+  .bloco.bloco-2
+  .resumo-mes
+  .lista-dias
+  .gd-linha-dia.gd-dia-hoje
+  .valor,
+html
+  body
+  .container
+  .bloco.bloco-2
+  .resumo-mes
+  .lista-dias
+  .gd-linha-dia.gd-dia-hoje
+  .placar-dia,
+html
+  body
+  .container
+  .bloco.bloco-2
+  .resumo-mes
+  .lista-dias
+  .gd-linha-dia.gd-dia-hoje
+  .icone
+  i,
+html
+  body
+  .container
+  .bloco.bloco-2
+  .resumo-mes
+  .lista-dias
+  .gd-linha-dia[data-hoje]
+  .data,
+html
+  body
+  .container
+  .bloco.bloco-2
+  .resumo-mes
+  .lista-dias
+  .gd-linha-dia[data-hoje]
+  .valor,
+html
+  body
+  .container
+  .bloco.bloco-2
+  .resumo-mes
+  .lista-dias
+  .gd-linha-dia[data-hoje]
+  .placar-dia,
+html
+  body
+  .container
+  .bloco.bloco-2
+  .resumo-mes
+  .lista-dias
+  .gd-linha-dia[data-hoje]
+  .icone
+  i {
+  color: #111827 !important; /* high contrast */
+  font-weight: 700 !important;
+  opacity: 1 !important;
+}
+
+/* Pequena animação de pulso sutil para chamar atenção sem distrair */
+@keyframes hojePulse {
+  0% {
+    box-shadow: 0 0 0 0 rgba(67, 70, 77, 0.04) inset;
+  }
+  50% {
+    box-shadow: 0 6px 18px -10px rgba(67, 70, 77, 0.06) inset;
+  }
+  100% {
+    box-shadow: 0 0 0 0 rgba(67, 70, 77, 0.04) inset;
+  }
+}
+
+html body .container .bloco.bloco-2 .resumo-mes .lista-dias .gd-linha-dia.hoje {
+  animation: hojePulse 2.8s ease-in-out infinite !important;
+}
+
+/* Quando o dia atual tem valor positivo -> manter verde visual */
+html
+  body
+  .container
+  .bloco.bloco-2
+  .resumo-mes
+  .lista-dias
+  .gd-linha-dia.hoje.valor-positivo,
+html
+  body
+  .container
+  .bloco.bloco-2
+  .resumo-mes
+  .lista-dias
+  .gd-linha-dia.valor-positivo.gd-dia-hoje,
+html
+  body
+  .container
+  .bloco.bloco-2
+  .resumo-mes
+  .lista-dias
+  .gd-linha-dia.valor-positivo[data-hoje] {
+  background: linear-gradient(
+    90deg,
+    #edfcf0fa,
+    rgba(230, 253, 242, 0.98)
+  ) !important;
+  border-left: 4px solid #058b32 !important; /* verde forte */
+  box-shadow: none !important;
+}
+
+html
+  body
+  .container
+  .bloco.bloco-2
+  .resumo-mes
+  .lista-dias
+  .gd-linha-dia.hoje.valor-negativo,
+html
+  body
+  .container
+  .bloco.bloco-2
+  .resumo-mes
+  .lista-dias
+  .gd-linha-dia.valor-negativo.gd-dia-hoje,
+html
+  body
+  .container
+  .bloco.bloco-2
+  .resumo-mes
+  .lista-dias
+  .gd-linha-dia.valor-negativo[data-hoje] {
+  background: linear-gradient(
+    90deg,
+    rgba(255, 242, 242, 0.98),
+    rgba(255, 238, 238, 0.98)
+  ) !important;
+  border-left: 4px solid #ec0606 !important; /* vermelho forte */
+  box-shadow: none !important;
+}
+
+/* Garantir contraste do texto/valor quando houver cor de estado */
+html
+  body
+  .container
+  .bloco.bloco-2
+  .resumo-mes
+  .lista-dias
+  .gd-linha-dia.valor-positivo
+  .data,
+html
+  body
+  .container
+  .bloco.bloco-2
+  .resumo-mes
+  .lista-dias
+  .gd-linha-dia.valor-positivo
+  .valor,
+html
+  body
+  .container
+  .bloco.bloco-2
+  .resumo-mes
+  .lista-dias
+  .gd-linha-dia.valor-positivo
+  .placar-dia,
+html
+  body
+  .container
+  .bloco.bloco-2
+  .resumo-mes
+  .lista-dias
+  .gd-linha-dia.valor-positivo
+  .icone
+  i {
+  color: #058b32 !important; /* verde escuro para contraste */
+  font-weight: 500 !important;
+}
+
+html
+  body
+  .container
+  .bloco.bloco-2
+  .resumo-mes
+  .lista-dias
+  .gd-linha-dia.valor-negativo
+  .data,
+html
+  body
+  .container
+  .bloco.bloco-2
+  .resumo-mes
+  .lista-dias
+  .gd-linha-dia.valor-negativo
+  .valor,
+html
+  body
+  .container
+  .bloco.bloco-2
+  .resumo-mes
+  .lista-dias
+  .gd-linha-dia.valor-negativo
+  .placar-dia,
+html
+  body
+  .container
+  .bloco.bloco-2
+  .resumo-mes
+  .lista-dias
+  .gd-linha-dia.valor-negativo
+  .icone
+  i {
+  color: #ec0606 !important; /* vermelho escuro para contraste */
+  font-weight: 500 !important;
+}
+
+/* Versão menos intrusiva em telas pequenas */
+@media (max-width: 480px) {
+  html
+    body
+    .container
+    .bloco.bloco-2
+    .resumo-mes
+    .lista-dias
+    .gd-linha-dia.hoje {
+    border-left-width: 4px !important;
+    animation: none !important;
+    background: rgba(255, 255, 255, 0.99) !important;
+  }
+}
+/* =======================================================================================================================================================
+                                                    FIM DESTAQUE NA DATA DO DIA DE HOJE
+  =======================================================================================================================================================*/
+
+/* (Removed earlier header-expansion override — header must remain inside the bloco)
+   Kept a single contained override later in the file to remove hairline seams
+   while ensuring the header stays inside the bloco. */

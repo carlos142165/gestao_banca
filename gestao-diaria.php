@@ -630,742 +630,503 @@ ob_end_flush();
     <!-- ==================================================================================================================================== --> 
 <!--                                      💼   FILTRO DIA - MES - ANO BLOCO CAMPO VALOR META E SALDO                      
  ====================================================================================================================================== -->
-<header class="header"></header>
-<main class="main-content">
-  <div class="container">
+ <header class="header"></header>
     
-  <!-- BLOCO 1 -->
-  <div class="bloco bloco-1">
-    <div class="container-resumos">
-        <!-- Widget Meta com seu código PHP integrado -->
-        <div class="widget-meta-container">
-            <div class="widget-meta-row">
-                <div class="widget-meta-item" id="widget-meta">
+    <main class="main-content">
+        <div class="container">
+            
+            <!-- BLOCO 1: Dashboard Diário - Meta e Mentores -->
+            <div class="bloco bloco-1">
+                <div class="container-resumos">
                     
-                    <!-- Header com data e placar integrados -->
-                  <div class="data-header-integrada" id="data-header">
-                     <div class="data-texto-compacto">
-                     <i class="fa-solid fa-calendar-days"></i>
-                     <span class="data-principal-integrada" id="data-atual"></span>
+                    <!-- Widget Meta Diária -->
+                    <div class="widget-meta-container">
+                        <div class="widget-meta-row">
+                            <div class="widget-meta-item" id="widget-meta">
+                                
+                                <!-- Header com data e seleção de período -->
+                                <div class="data-header-integrada" id="data-header">
+                                    <div class="data-texto-compacto">
+                                        <i class="fa-solid fa-calendar-days"></i>
+                                        <span class="data-principal-integrada" id="data-atual"></span>
+                                    </div>
+                                        
+                                    <!-- Seleção de período -->
+                                    <div class="periodo-selecao-container">
+                                        <div class="periodo-opcao">
+                                            <label class="periodo-label">
+                                                <input type="radio" name="periodo" value="dia" class="periodo-radio" checked>
+                                                <span class="periodo-texto">DIA</span>
+                                            </label>
+                                        </div>
+                                        <div class="periodo-opcao">
+                                            <label class="periodo-label">
+                                                <input type="radio" name="periodo" value="mes" class="periodo-radio">
+                                                <span class="periodo-texto">MÊS</span>
+                                            </label>
+                                        </div>
+                                        <div class="periodo-opcao">
+                                            <label class="periodo-label">
+                                                <input type="radio" name="periodo" value="ano" class="periodo-radio">
+                                                <span class="periodo-texto">ANO</span>
+                                            </label>
+                                        </div>
+                                    </div>
+                                    
+                                    <div class="espaco-equilibrio"></div>
+                                    <div class="data-separador-mini"></div>
+                                    
+                                    <div class="status-periodo-mini" id="status-periodo">
+                                        <!-- Status período será preenchido via JS -->
+                                    </div>
+                                </div>
 
-                   <!-- Badge do período será adicionado aqui automaticamente -->
-    
-                  </div>
-                        
-                        <!-- Caixas de seleção de período -->
-                        <div class="periodo-selecao-container">
-                            <div class="periodo-opcao">
-                                <label class="periodo-label">
-                                    <input type="radio" name="periodo" value="dia" class="periodo-radio" checked>
-                                    <span class="periodo-texto">DIA</span>
-                                </label>
+                                <!-- Conteúdo principal do widget meta -->
+                                <div class="widget-conteudo-principal">
+                                    <div class="conteudo-left">
+                                        
+                                        <!-- Valor da Meta -->
+                                        <div class="widget-meta-valor" id="meta-valor">
+                                            <i class="fa-solid fa-coins"></i>
+                                            <div class="meta-valor-container">
+                                                <span class="valor-texto" id="valor-texto-meta">carregando..</span>
+                                            </div>
+                                        </div>
+                                        
+                                        <!-- Valor que ultrapassou a meta -->
+                                        <div class="valor-ultrapassou" id="valor-ultrapassou" style="display: none;">
+                                            <i class="fa-solid fa-trophy"></i>
+                                            <span class="texto-ultrapassou">Lucro Extra: <span id="valor-extra">R$ 0,00</span></span>
+                                        </div>
+                                        
+                                        <div class="widget-meta-rotulo" id="rotulo-meta">Meta do Dia</div>
+                                        
+                                        <!-- Barra de Progresso -->
+                                        <div class="widget-barra-container">
+                                            <div class="widget-barra-progresso" id="barra-progresso"></div>
+                                            <div class="porcentagem-barra" id="porcentagem-barra">0%</div>
+                                        </div>
+                                        
+                                        <!-- Info de progresso com saldo -->
+                                        <div class="widget-info-progresso">
+                                            <span id="saldo-info" class="saldo-positivo">
+                                                <i class="fa-solid fa-chart-line"></i>
+                                                <span class="saldo-info-rotulo">Lucro:</span>
+                                                <span class="saldo-info-valor">R$ 75,00</span>
+                                            </span>
+                                        </div>
+                                    </div>
+                                </div>
                             </div>
-                            <div class="periodo-opcao">
-                                <label class="periodo-label">
-                                    <input type="radio" name="periodo" value="mes" class="periodo-radio">
-                                    <span class="periodo-texto">MÊS</span>
-                                </label>
-                            </div>
-                            <div class="periodo-opcao">
-                                <label class="periodo-label">
-                                    <input type="radio" name="periodo" value="ano" class="periodo-radio">
-                                    <span class="periodo-texto">ANO</span>
-                                </label>
-                            </div>
-                        </div>
-                        
-                        <!-- Espaço para equilíbrio -->
-                        <div class="espaco-equilibrio"></div>
-                        
-                        <div class="data-separador-mini"></div>
-                        
-                        <div class="status-periodo-mini" id="status-periodo">
-                            <!-- Status período será preenchido via JS -->
                         </div>
                     </div>
-
-<!-- Conteúdo principal do widget -->
-<div class="widget-conteudo-principal">
-  <div class="conteudo-left">
-     <!-- Container da Barra de Progresso -->
-     <!-- Valor da Meta -->
-<div class="widget-meta-valor" id="meta-valor">
-    <i class="fa-solid fa-coins"></i>
-    <div class="meta-valor-container">
-        <span class="valor-texto" id="valor-texto-meta">carregando..</span>
-        
-    </div>
-</div>
-    
-     <!-- Exibição do valor que ultrapassou a meta -->
-     <div class="valor-ultrapassou" id="valor-ultrapassou" style="display: none;">
-        <i class="fa-solid fa-trophy"></i>
-        <span class="texto-ultrapassou">Lucro Extra: <span id="valor-extra">R$ 0,00</span></span>
-     </div>
-    
-     <!-- RÓTULO QUE ESTAVA FALTANDO -->
-     <div class="widget-meta-rotulo" id="rotulo-meta">Meta do Dia</div>
-    
-     <!-- Container da Barra de Progresso -->
-     <div class="widget-barra-container">
-        <div class="widget-barra-progresso" id="barra-progresso"></div>
-        <div class="porcentagem-barra" id="porcentagem-barra">0%</div>
-     </div>
-    
-     <!-- Info de progresso com saldo -->
-      <div class="widget-info-progresso">
-      <span id="saldo-info" class="saldo-positivo">
-     <i class="fa-solid fa-chart-line"></i>
-     <span class="saldo-info-rotulo">Lucro:</span>
-     <span class="saldo-info-valor">R$ 75,00</span>
-     </span>
-    </div>
-    </div>
-    
-
-                    </div>
-                </div>
-            </div>
-        </div>
-    </div>
-    <!-- ==================================================================================================================================== --> 
-<!--                                      💼  FIM FILTRO DIA - MES - ANO BLOCO CAMPO VALOR META E SALDO                      
- ====================================================================================================================================== -->
-<!-- -->
-<!-- -->
-<!-- -->
-<!-- -->
-<!-- -->
-<!-- -->
-<!-- -->
-<!-- -->
-<!-- -->
-<!-- -->
-<!-- ==================================================================================================================================== --> 
-<!--                                                  💼  FILTRO BLOCO CAMPO MENTORES                        
- ====================================================================================================================================== -->
-    <!-- Campo Mentores com seu código PHP integrado -->
-    <div class="campo_mentores">
-        <!-- Barra superior com botão à esquerda e placar centralizado -->
-        <div class="barra-superior">
-            <button class="btn-add-usuario" onclick="prepararFormularioNovoMentor()">
-                <i class="fas fa-user-plus"></i>
-            </button>
-            
-            <div class="area-central">
-                <div class="pontuacao" id="pontuacao">
-                    <span class="placar-green">0</span>
-                    <span class="separador">x</span>
-                    <span class="placar-red">0</span>
-                </div>
-            </div>
-
-            <!-- ✅ NOVA ÁREA DIREITA -->
-            <div class="area-direita">
-                <div class="valor-dinamico valor-diaria">
-                    <i class="fas fa-university"></i>
-                    <span id="porcentagem-diaria">Carregando...</span>
-                </div>
-                <div class="valor-dinamico valor-unidade">
-                    <span class="rotulo-und">UND:</span>
-                    <span id="valor-unidade">Carregando...</span>
-                </div>
-            </div>
-        </div>
-
-        <!-- Área dos mentores - SEU CÓDIGO PHP ORIGINAL -->
-        <div id="listaMentores" class="mentor-wrapper">
-            <?php
-            try {
-              // Consulta para buscar mentores e seus valores
-              $sql = "
-                SELECT m.id, m.nome, m.foto,
-                       COALESCE(SUM(v.green), 0) AS total_green,
-                       COALESCE(SUM(v.red), 0) AS total_red,
-                       COALESCE(SUM(v.valor_green), 0) AS total_valor_green,
-                       COALESCE(SUM(v.valor_red), 0) AS total_valor_red
-                FROM mentores m
-                LEFT JOIN valor_mentores v ON m.id = v.id_mentores
-                WHERE m.id_usuario = ?
-                GROUP BY m.id, m.nome, m.foto
-                ORDER BY (COALESCE(SUM(v.valor_green), 0) - COALESCE(SUM(v.valor_red), 0)) DESC
-              ";
-
-              $stmt = $conexao->prepare($sql);
-              $stmt->bind_param("i", $id_usuario_logado);
-              $stmt->execute();
-              $result = $stmt->get_result();
-
-              $lista_mentores = [];
-              $total_geral_saldo = 0;
-
-              while ($mentor = $result->fetch_assoc()) {
-                $total_subtraido = floatval($mentor['total_valor_green']) - floatval($mentor['total_valor_red']);
-                $mentor['saldo'] = $total_subtraido;
-                $lista_mentores[] = $mentor;
-                $total_geral_saldo += $total_subtraido;
-              }
-
-              foreach ($lista_mentores as $posicao => $mentor) {
-                $rank = $posicao + 1;
-                $saldo_formatado = number_format($mentor['saldo'], 2, ',', '.');
-                $nome_seguro = htmlspecialchars($mentor['nome']);
-                
-                // Verificação da foto do mentor
-                $foto_original = $mentor['foto'];
-                if (empty($foto_original) || $foto_original === 'avatar-padrao.png') {
-                  $foto_path = 'https://cdn-icons-png.flaticon.com/512/847/847969.png';
-                } else {
-                  $foto_path = 'uploads/' . htmlspecialchars($foto_original);
-                  if (!file_exists($foto_path)) {
-                    $foto_path = 'https://cdn-icons-png.flaticon.com/512/847/847969.png';
-                  }
-                }
-
-                // Determina a cor da borda baseada no saldo
-                if ($mentor['saldo'] == 0) {
-                  $classe_borda = 'card-neutro';
-                } elseif ($mentor['saldo'] > 0) {
-                  $classe_borda = 'card-positivo';
-                } else {
-                  $classe_borda = 'card-negativo';
-                }
-
-                echo "
-                <div class='mentor-item'>
-                  <div class='mentor-rank-externo'>{$rank}º</div>
-
-                  <div class='mentor-card {$classe_borda}' 
-                       data-nome='{$nome_seguro}'
-                       data-foto='{$foto_path}'
-                       data-id='{$mentor['id']}'>
-                    <div class='mentor-header'>
-                      <img src='{$foto_path}' alt='Foto de {$nome_seguro}' class='mentor-img' 
-                           onerror=\"this.src='https://cdn-icons-png.flaticon.com/512/847/847969.png'\" />
-                      <h3 class='mentor-nome'>{$nome_seguro}</h3>
-                    </div>
-                    <div class='mentor-right'>
-                      <div class='mentor-values-inline'>
-                        <div class='value-box-green green'>
-                          <p>Green</p>
-                          <p>{$mentor['total_green']}</p>
-                        </div>
-                        <div class='value-box-red red'>
-                          <p>Red</p>
-                          <p>{$mentor['total_red']}</p>
-                        </div>
-                        <div class='value-box-saldo saldo'>
-                          <p>Saldo</p>
-                          <p>R$ {$saldo_formatado}</p>
-                        </div>
-                      </div>
-                    </div>
-                  </div>
-
-                  <div class='mentor-menu-externo'>
-                    <span class='menu-toggle' title='Mais opções'>⋮</span>
-                    <div class='menu-opcoes'>
-                      <button onclick='editarAposta({$mentor["id"]})'>
-                        <i class='fas fa-trash'></i> Excluir Entrada
-                      </button>
-                      <button onclick='editarMentor({$mentor["id"]})'>
-                        <i class='fas fa-user-edit'></i> Editar Mentor
-                      </button>
-                    </div>
-                  </div>
-                </div>
-                ";
-              }
-
-              // Elementos auxiliares para cálculos JavaScript
-              echo "
-              <div id='total-green-dia' data-green='" . array_sum(array_column($lista_mentores, 'total_green')) . "' style='display:none;'></div>
-              <div id='total-red-dia' data-red='" . array_sum(array_column($lista_mentores, 'total_red')) . "' style='display:none;'></div>
-              <div id='saldo-dia' data-total='" . number_format($total_geral_saldo, 2, ',', '.') . "' style='display:none;'></div>
-              ";
-              
-            } catch (Exception $e) {
-              echo "<div class='erro-mentores'>Erro ao carregar mentores!</div>";
-              error_log("Erro ao carregar mentores: " . $e->getMessage());
-            }
-            ?>
-        </div>
-    </div>
-</div>
-<!-- ==================================================================================================================================== --> 
-<!--                                                  💼  FIM FILTRO BLOCO CAMPO MENTORES                        
- ====================================================================================================================================== -->
-<!-- -->
-<!-- -->
-<!-- -->
-<!-- -->
-<!-- -->
-<!-- -->
-<!-- -->
-<!-- -->
-<!-- -->
-<!-- -->
-<!-- ==================================================================================================================================== --> 
-<!--                                                  💼  FILTRO BLOCO MÊS                          
- ====================================================================================================================================== -->
-<!-- ==================================================================================================================================== -->
-<!--                                           📅 BLOCO PRINCIPAL DO DASHBOARD MENSAL                                                   -->
-<!-- ==================================================================================================================================== -->
-<div class="bloco bloco-2">
-    
-    <!-- ================================================================================================================================ -->
-    <!--                                           📊 SEÇÃO DE RESUMO DO MÊS                                                            -->
-    <!-- ================================================================================================================================ -->
-    <div class="resumo-mes">
-        
-        <!-- ============================================================================================================================ -->
-        <!--                                    🏷️ CABEÇALHO FIXO - TÍTULO DO MÊS E PLACAR CENTRAL                                      -->
-        <!-- ============================================================================================================================ -->
-        <div class="bloco-meta-simples fixo-topo">
-            
-            <!-- ======================================================================================================================== -->
-            <!--                                          📆 CONTAINER DA DATA E PLACAR                                                 -->
-            <!-- ======================================================================================================================== -->
-            <div class="campo-armazena-data-placar">
-                
-                <!-- ==================================================================================================================== -->
-                <!--                                               📅 TÍTULO DO MÊS ATUAL                                              -->
-                <!-- ==================================================================================================================== -->
-                <h2 class="titulo-bloco">
-                    <i class="fas fa-calendar-alt"></i> 
-                    <span id="tituloMes"></span>
-                </h2>
-
-                <!-- JavaScript para gerar título do mês dinamicamente -->
-                <script>
-                    const meses = [
-                        "JANEIRO", "FEVEREIRO", "MARÇO", "ABRIL", "MAIO", "JUNHO",
-                        "JULHO", "AGOSTO", "SETEMBRO", "OUTUBRO", "NOVEMBRO", "DEZEMBRO"
-                    ];
-                    const hoje = new Date();
-                    const mesAtual = meses[hoje.getMonth()];
-                    const anoAtual = hoje.getFullYear();
-                    document.getElementById("tituloMes").textContent = `${mesAtual} ${anoAtual}`;
-                </script>
-                <!-- ============================================================================================================ -->
-                <!--                                      📅 FIM DO TÍTULO DO MÊS ATUAL                                       -->
-                <!-- ============================================================================================================ -->
-
-                <!-- ==================================================================================================================== -->
-                <!--                                            🎯 ÁREA CENTRAL DO PLACAR MENSAL                                      -->
-                <!-- ==================================================================================================================== -->
-                <div class="area-central-2">
                     
-                    <!-- ================================================================================================================ -->
-                    <!--                                         📊 PONTUAÇÃO MENSAL (GREEN × RED)                                    -->
-                    <!-- ================================================================================================================ -->
-                    <div class="pontuacao-2" id="pontuacao-2">
-                        <span class="placar-green-2">0</span>
-                        <span class="separador-2">×</span>
-                        <span class="placar-red-2">0</span>
-                    </div>
-                    <!-- ======================================================================================================== -->
-                    <!--                                   📊 FIM DA PONTUAÇÃO MENSAL (GREEN × RED)                           -->
-                    <!-- ======================================================================================================== -->
-                    
-                </div>
-                <!-- ============================================================================================================ -->
-                <!--                                      🎯 FIM DA ÁREA CENTRAL DO PLACAR MENSAL                            -->
-                <!-- ============================================================================================================ -->
-                
-            </div>
-            <!-- ================================================================================================================ -->
-            <!--                                    📆 FIM DO CONTAINER DA DATA E PLACAR                                       -->
-            <!-- ================================================================================================================ -->
-            
-        </div>
-        <!-- ======================================================================================================================== -->
-        <!--                              🏷️ FIM DO CABEÇALHO FIXO - TÍTULO DO MÊS E PLACAR CENTRAL                                -->
-        <!-- ======================================================================================================================== -->
-
-        <!-- ============================================================================================================================ -->
-        <!--                                        💼 WIDGET DE CONTEÚDO PRINCIPAL DO BLOCO 2                                        -->
-        <!-- ============================================================================================================================ -->
-        <div class="widget-conteudo-principal-2">
-            
-            <!-- ======================================================================================================================== -->
-            <!--                                              📈 CONTEÚDO DO LADO ESQUERDO                                            -->
-            <!-- ======================================================================================================================== -->
-            <div class="conteudo-left-2">
-                
-                <!-- ==================================================================================================================== -->
-                <!--                                              💰 VALOR DA META DIÁRIA                                              -->
-                <!-- ==================================================================================================================== -->
-                <div class="widget-meta-valor-2" id="meta-valor-2">
-                    <i class="fa-solid-2 fa-coins-2"></i>
-                    <div class="meta-valor-container-2">
-                        <span class="valor-texto-2" id="valor-texto-meta-2">carregando..</span>
-                    </div>
-                </div>
-                <!-- ============================================================================================================ -->
-                <!--                                        💰 FIM DO VALOR DA META DIÁRIA                                     -->
-                <!-- ============================================================================================================ -->
-                
-                <!-- ==================================================================================================================== -->
-                <!--                                            🏆 VALOR QUE ULTRAPASSOU A META                                       -->
-                <!-- ==================================================================================================================== -->
-                <div class="valor-ultrapassou-2" id="valor-ultrapassou-2" style="display: none;">
-                    <i class="fa-solid-2 fa-trophy-2"></i>
-                    <span class="texto-ultrapassou-2">
-                        Lucro Extra: <span id="valor-extra-2">R$ 0,00</span>
-                    </span>
-                </div>
-                <!-- ============================================================================================================ -->
-                <!--                                      🏆 FIM DO VALOR QUE ULTRAPASSOU A META                                -->
-                <!-- ============================================================================================================ -->
-                
-                <!-- ==================================================================================================================== -->
-                <!--                                                🏷️ RÓTULO DA META                                                 -->
-                <!-- ==================================================================================================================== -->
-                <div class="widget-meta-rotulo-2" id="rotulo-meta-2">Meta do Dia</div>
-                <!-- ============================================================================================================ -->
-                <!--                                          🏷️ FIM DO RÓTULO DA META                                         -->
-                <!-- ============================================================================================================ -->
-                
-                <!-- ==================================================================================================================== -->
-                <!--                                         📊 CONTAINER DA BARRA DE PROGRESSO                                       -->
-                <!-- ==================================================================================================================== -->
-                <div class="widget-barra-container-2">
-                    <div class="widget-barra-progresso-2" id="barra-progresso-2"></div>
-                    <div class="porcentagem-barra-2" id="porcentagem-barra-2">0%</div>
-                </div>
-                <!-- ============================================================================================================ -->
-                <!--                                   📊 FIM DO CONTAINER DA BARRA DE PROGRESSO                               -->
-                <!-- ============================================================================================================ -->
-                
-                <!-- ==================================================================================================================== -->
-                <!--                                         💹 INFORMAÇÕES DE PROGRESSO COM SALDO                                    -->
-                <!-- ==================================================================================================================== -->
-                <div class="widget-info-progresso-2">
-                    <span id="saldo-info-2" class="saldo-positivo-2">
-                        <i class="fa-solid-2 fa-chart-line-2"></i>
-                        <span class="saldo-info-rotulo-2">Lucro:</span>
-                        <span class="saldo-info-valor-2">carregando..</span>
-                    </span>
-                </div>
-                <!-- ============================================================================================================ -->
-                <!--                                   💹 FIM DAS INFORMAÇÕES DE PROGRESSO COM SALDO                          -->
-                <!-- ============================================================================================================ -->
-                
-            </div>
-            <!-- ================================================================================================================ -->
-            <!--                                        📈 FIM DO CONTEÚDO DO LADO ESQUERDO                                   -->
-            <!-- ================================================================================================================ -->
-            
-        </div>
-        <!-- ======================================================================================================================== -->
-        <!--                                  💼 FIM DO WIDGET DE CONTEÚDO PRINCIPAL DO BLOCO 2                                    -->
-        <!-- ======================================================================================================================== -->
-
-        <!-- ============================================================================================================================ -->
-        <!--                                           📅 LISTA DE DIAS DO MÊS (ÁREA ROLÁVEL)                                        -->
-        <!-- ============================================================================================================================ -->
-        <div class="lista-dias">
-            
-            <?php
-            // ================================================================================================================
-            //                                          ⚙️ CONFIGURAÇÕES DE META E VARIÁVEIS
-            // ================================================================================================================
-            
-            // Obter configurações de meta
-            $meta_diaria = isset($_SESSION['meta_diaria']) ? floatval($_SESSION['meta_diaria']) : 0;
-            $meta_mensal = isset($_SESSION['meta_mensal']) ? floatval($_SESSION['meta_mensal']) : 0;
-            $meta_anual = isset($_SESSION['meta_anual']) ? floatval($_SESSION['meta_anual']) : 0;
-
-            // Determinar qual meta usar baseado no período atual (se disponível)
-            $periodo_atual = $_SESSION['periodo_filtro'] ?? 'dia';
-            $meta_atual = ($periodo_atual === 'mes') ? $meta_mensal : 
-                          (($periodo_atual === 'ano') ? $meta_anual : $meta_diaria);
-
-            // Obter data atual
-            $hoje = date('Y-m-d');
-
-            // Obter primeiro e último dia do mês atual
-            $mes_atual = date('m');
-            $ano_atual = date('Y');
-            $total_dias_mes = date('t');
-            
-            // ================================================================================================================
-            //                                      🔄 LOOP ATRAVÉS DE TODOS OS DIAS DO MÊS
-            // ================================================================================================================
-            
-            for ($dia = 1; $dia <= $total_dias_mes; $dia++) {
-                $dia_formatado = str_pad($dia, 2, '0', STR_PAD_LEFT);
-                $data_mysql = $ano_atual . '-' . $mes_atual . '-' . $dia_formatado;
-                $data_exibicao = $dia_formatado . '/' . $mes_atual . '/' . $ano_atual;
-                
-                // ========================================================================================================
-                //                                     📊 BUSCAR DADOS DO DIA (SE EXISTIREM)
-                // ========================================================================================================
-                $dados_dia = isset($dados_por_dia[$data_mysql]) ? $dados_por_dia[$data_mysql] : [
-                    'total_valor_green' => 0,
-                    'total_valor_red' => 0,
-                    'total_green' => 0,
-                    'total_red' => 0
-                ];
-                
-                // ========================================================================================================
-                //                                           💰 CALCULAR SALDO DO DIA
-                // ========================================================================================================
-                $saldo_dia = floatval($dados_dia['total_valor_green']) - floatval($dados_dia['total_valor_red']);
-                $saldo_formatado = number_format($saldo_dia, 2, ',', '.');
-                
-                // ========================================================================================================
-                //                                         🎯 VERIFICAR SE META FOI BATIDA
-                // ========================================================================================================
-                $meta_batida = false;
-                
-                // SEMPRE usar a meta diária para verificar se foi batida, independente do período selecionado
-                if ($meta_diaria > 0 && $saldo_dia >= $meta_diaria) {
-                    $meta_batida = true;
-                }
-                
-                // CORREÇÃO ADICIONAL: Para dias passados com saldo positivo, considerar meta batida
-                if (!$meta_batida && $data_mysql < $hoje && $saldo_dia > 0) {
-                    // Se não há meta diária configurada, mas tem saldo positivo em dia passado
-                    if ($meta_diaria <= 0) {
-                        $meta_batida = true;
-                    }
-                    // Ou se o saldo é significativamente positivo (backup)
-                    elseif ($saldo_dia >= ($meta_diaria * 0.8)) {
-                        // Considera 80% da meta como "praticamente batida" para dias passados
-                        $meta_batida = true;
-                    }
-                }
-                
-                // ========================================================================================================
-                //                                    🎨 DETERMINAR CLASSES E ESTILOS VISUAIS
-                // ========================================================================================================
-                
-                // Determinar classe de cor baseada no saldo
-                $classe_valor_cor = '';
-                if ($saldo_dia > 0) {
-                    $classe_valor_cor = 'valor-positivo';
-                } elseif ($saldo_dia < 0) {
-                    $classe_valor_cor = 'valor-negativo';
-                } else {
-                    $classe_valor_cor = 'valor-zero';
-                }
-                
-                // Determinar cores e classes dos elementos internos
-                $cor_valor = ($saldo_dia == 0) ? 'texto-cinza' : ($saldo_dia > 0 ? 'verde-bold' : 'vermelho-bold');
-                $classe_texto = ($saldo_dia == 0) ? 'texto-cinza' : '';
-                $placar_cinza = ((int)$dados_dia['total_green'] === 0 && (int)$dados_dia['total_red'] === 0) ? 'texto-cinza' : '';
-                
-                // Classes do dia
-                $classes_dia = [];
-                
-                if ($data_mysql === $hoje) {
-                    $classes_dia[] = 'gd-dia-hoje';
-                    $classes_dia[] = ($saldo_dia >= 0) ? 'gd-borda-verde' : 'gd-borda-vermelha';
-                } else {
-                    $classes_dia[] = 'dia-normal';
-                }
-                
-                // Destaque para dias passados
-                if ($data_mysql < $hoje) {
-                    if ($saldo_dia > 0) {
-                        $classes_dia[] = 'gd-dia-destaque';
-                    } elseif ($saldo_dia < 0) {
-                        $classes_dia[] = 'gd-dia-destaque-negativo';
-                    }
-                    
-                    // Classe para dias sem valor
-                    if ((int)$dados_dia['total_green'] === 0 && (int)$dados_dia['total_red'] === 0) {
-                        $classes_dia[] = 'gd-dia-sem-valor';
-                    }
-                }
-                
-                // Dias futuros
-                if ($data_mysql > $hoje) {
-                    $classes_dia[] = 'dia-futuro';
-                }
-                
-                // ========================================================================================================
-                //                                          🏆 DEFINIR ÍCONE DO TROFÉU/CHECK
-                // ========================================================================================================
-                $icone_classe = $meta_batida ? 'fa-trophy trofeu-icone' : 'fa-check';
-                
-                // Montar string de classes (incluindo a classe de cor)
-                $classe_dia_string = 'gd-linha-dia ' . $classe_valor_cor . ' ' . implode(' ', $classes_dia);
-                $data_meta_attr = $meta_batida ? 'true' : 'false';
-                
-                // Atributos extras para o JavaScript identificar facilmente
-                $data_saldo_attr = $saldo_dia;
-                $data_meta_diaria_attr = $meta_diaria;
-                
-                // ========================================================================================================
-                //                                            📅 RENDERIZAR LINHA DO DIA
-                // ========================================================================================================
-                echo '
-                <!-- ================================================================================================ -->
-                <!--                                    📅 LINHA DO DIA: '.$data_exibicao.'                                   -->
-                <!-- ================================================================================================ -->
-                <div class="'.$classe_dia_string.'" 
-                     data-date="'.$data_mysql.'" 
-                     data-meta-batida="'.$data_meta_attr.'"
-                     data-saldo="'.$data_saldo_attr.'"
-                     data-meta-diaria="'.$data_meta_diaria_attr.'"
-                     data-periodo-atual="'.$periodo_atual.'">
-                    
-                    <!-- ======================================================================================== -->
-                    <!--                                  📆 DATA DO DIA                                        -->
-                    <!-- ======================================================================================== -->
-                    <span class="data '.$classe_texto.'">'.$data_exibicao.'</span>
-                    <!-- ==================================================================================== -->
-                    <!--                                📆 FIM DA DATA DO DIA                                 -->
-                    <!-- ==================================================================================== -->
-
-                    <!-- ======================================================================================== -->
-                    <!--                               🎯 PLACAR DO DIA (GREEN × RED)                         -->
-                    <!-- ======================================================================================== -->
-                    <div class="placar-dia">
-                        <span class="placar verde-bold '.$placar_cinza.'">'.(int)$dados_dia['total_green'].'</span>
-                        <span class="placar separador '.$placar_cinza.'">×</span>
-                        <span class="placar vermelho-bold '.$placar_cinza.'">'.(int)$dados_dia['total_red'].'</span>
-                    </div>
-                    <!-- ==================================================================================== -->
-                    <!--                         🎯 FIM DO PLACAR DO DIA (GREEN × RED)                       -->
-                    <!-- ==================================================================================== -->
-
-                    <!-- ======================================================================================== -->
-                    <!--                                    💰 VALOR/SALDO DO DIA                             -->
-                    <!-- ======================================================================================== -->
-                    <span class="valor '.$cor_valor.'">R$ '.$saldo_formatado.'</span>
-                    <!-- ==================================================================================== -->
-                    <!--                              💰 FIM DO VALOR/SALDO DO DIA                           -->
-                    <!-- ==================================================================================== -->
-
-                    <!-- ======================================================================================== -->
-                    <!--                                  🏆 ÍCONE DE STATUS (TROFÉU/CHECK)                   -->
-                    <!-- ======================================================================================== -->
-                    <span class="icone '.$classe_texto.'">
-                        <i class="fa-solid '.$icone_classe.'"></i>
-                    </span>
-                    <!-- ==================================================================================== -->
-                    <!--                            🏆 FIM DO ÍCONE DE STATUS (TROFÉU/CHECK)                 -->
-                    <!-- ==================================================================================== -->
-                    
-                </div>
-                <!-- ======================================================================================== -->
-                <!--                              📅 FIM DA LINHA DO DIA: '.$data_exibicao.'                         -->
-                <!-- ======================================================================================== -->
-                ';
-            }
-            ?>
-            
-            <!-- ================================================================================================================ -->
-            <!--                                         📊 ELEMENTO OCULTO COM DADOS DO MÊS                                   -->
-            <!-- ================================================================================================================ -->
-            <div id="dados-mes-info" style="display: none;" 
-                 data-mes="<?php echo $mes_atual; ?>" 
-                 data-ano="<?php echo $ano_atual; ?>" 
-                 data-meta-diaria="<?php echo $meta_diaria; ?>"
-                 data-meta-mensal="<?php echo $meta_mensal; ?>"
-                 data-meta-anual="<?php echo $meta_anual; ?>"
-                 data-periodo-atual="<?php echo $periodo_atual; ?>"
-                 data-hoje="<?php echo $hoje; ?>">
-            </div>
-            <!-- ============================================================================================================ -->
-            <!--                                   📊 FIM DO ELEMENTO OCULTO COM DADOS DO MÊS                              -->
-            <!-- ============================================================================================================ -->
-
-            <!-- ================================================================================================================ -->
-            <!--                                    🔧 SCRIPT DE VERIFICAÇÃO DE CONSISTÊNCIA                                   -->
-            <!-- ================================================================================================================ -->
-            <script>
-                // Garantir que as informações de meta batida sejam preservadas
-                document.addEventListener('DOMContentLoaded', function() {
-                    console.log('📊 Verificando consistência de troféus após carregamento PHP...');
-                    
-                    // Verificar todas as linhas e marcar no cache do MonitorContinuo se existir
-                    const linhas = document.querySelectorAll('.gd-linha-dia');
-                    linhas.forEach(linha => {
-                        const dataLinha = linha.getAttribute('data-date');
-                        const metaBatida = linha.getAttribute('data-meta-batida') === 'true';
-                        const saldo = parseFloat(linha.getAttribute('data-saldo')) || 0;
-                        
-                        if (dataLinha && metaBatida) {
-                            console.log(`✅ PHP marcou ${dataLinha} como meta batida (saldo: R$ ${saldo.toFixed(2)})`);
+                    <!-- Campo Mentores -->
+                    <div class="campo_mentores">
+                        <!-- Barra superior com controles -->
+                        <div class="barra-superior">
+                            <button class="btn-add-usuario" onclick="prepararFormularioNovoMentor()">
+                                <i class="fas fa-user-plus"></i>
+                            </button>
                             
-                            // Se MonitorContinuo já existe, adicionar ao cache
-                            if (window.MonitorContinuo && window.MonitorContinuo.marcarMetaBatida) {
-                                setTimeout(() => {
-                                    window.MonitorContinuo.marcarMetaBatida(dataLinha);
-                                }, 100);
+                            <div class="area-central">
+                                <div class="pontuacao" id="pontuacao">
+                                    <span class="placar-green">0</span>
+                                    <span class="separador">x</span>
+                                    <span class="placar-red">0</span>
+                                </div>
+                            </div>
+
+                            <div class="area-direita">
+                                <div class="valor-dinamico valor-diaria">
+                                    <i class="fas fa-university"></i>
+                                    <span id="porcentagem-diaria">Carregando...</span>
+                                </div>
+                                <div class="valor-dinamico valor-unidade">
+                                    <span class="rotulo-und">UND:</span>
+                                    <span id="valor-unidade">Carregando...</span>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Lista de mentores -->
+                        <div id="listaMentores" class="mentor-wrapper">
+                            <?php
+                            try {
+                              // Consulta para buscar mentores e seus valores
+                              $sql = "
+                                SELECT m.id, m.nome, m.foto,
+                                       COALESCE(SUM(v.green), 0) AS total_green,
+                                       COALESCE(SUM(v.red), 0) AS total_red,
+                                       COALESCE(SUM(v.valor_green), 0) AS total_valor_green,
+                                       COALESCE(SUM(v.valor_red), 0) AS total_valor_red
+                                FROM mentores m
+                                LEFT JOIN valor_mentores v ON m.id = v.id_mentores
+                                WHERE m.id_usuario = ?
+                                GROUP BY m.id, m.nome, m.foto
+                                ORDER BY (COALESCE(SUM(v.valor_green), 0) - COALESCE(SUM(v.valor_red), 0)) DESC
+                              ";
+
+                              $stmt = $conexao->prepare($sql);
+                              $stmt->bind_param("i", $id_usuario_logado);
+                              $stmt->execute();
+                              $result = $stmt->get_result();
+
+                              $lista_mentores = [];
+                              $total_geral_saldo = 0;
+
+                              while ($mentor = $result->fetch_assoc()) {
+                                $total_subtraido = floatval($mentor['total_valor_green']) - floatval($mentor['total_valor_red']);
+                                $mentor['saldo'] = $total_subtraido;
+                                $lista_mentores[] = $mentor;
+                                $total_geral_saldo += $total_subtraido;
+                              }
+
+                              foreach ($lista_mentores as $posicao => $mentor) {
+                                $rank = $posicao + 1;
+                                $saldo_formatado = number_format($mentor['saldo'], 2, ',', '.');
+                                $nome_seguro = htmlspecialchars($mentor['nome']);
+                                
+                                // Verificação da foto do mentor
+                                $foto_original = $mentor['foto'];
+                                if (empty($foto_original) || $foto_original === 'avatar-padrao.png') {
+                                  $foto_path = 'https://cdn-icons-png.flaticon.com/512/847/847969.png';
+                                } else {
+                                  $foto_path = 'uploads/' . htmlspecialchars($foto_original);
+                                  if (!file_exists($foto_path)) {
+                                    $foto_path = 'https://cdn-icons-png.flaticon.com/512/847/847969.png';
+                                  }
+                                }
+
+                                // Determina a cor da borda baseada no saldo
+                                if ($mentor['saldo'] == 0) {
+                                  $classe_borda = 'card-neutro';
+                                } elseif ($mentor['saldo'] > 0) {
+                                  $classe_borda = 'card-positivo';
+                                } else {
+                                  $classe_borda = 'card-negativo';
+                                }
+
+                                echo "
+                                <div class='mentor-item'>
+                                  <div class='mentor-rank-externo'>{$rank}º</div>
+
+                                  <div class='mentor-card {$classe_borda}' 
+                                       data-nome='{$nome_seguro}'
+                                       data-foto='{$foto_path}'
+                                       data-id='{$mentor['id']}'>
+                                    <div class='mentor-header'>
+                                      <img src='{$foto_path}' alt='Foto de {$nome_seguro}' class='mentor-img' 
+                                           onerror=\"this.src='https://cdn-icons-png.flaticon.com/512/847/847969.png'\" />
+                                      <h3 class='mentor-nome'>{$nome_seguro}</h3>
+                                    </div>
+                                    <div class='mentor-right'>
+                                      <div class='mentor-values-inline'>
+                                        <div class='value-box-green green'>
+                                          <p>Green</p>
+                                          <p>{$mentor['total_green']}</p>
+                                        </div>
+                                        <div class='value-box-red red'>
+                                          <p>Red</p>
+                                          <p>{$mentor['total_red']}</p>
+                                        </div>
+                                        <div class='value-box-saldo saldo'>
+                                          <p>Saldo</p>
+                                          <p>R$ {$saldo_formatado}</p>
+                                        </div>
+                                      </div>
+                                    </div>
+                                  </div>
+
+                                  <div class='mentor-menu-externo'>
+                                    <span class='menu-toggle' title='Mais opções'>⋮</span>
+                                    <div class='menu-opcoes'>
+                                      <button onclick='editarAposta({$mentor["id"]})'>
+                                        <i class='fas fa-trash'></i> Excluir Entrada
+                                      </button>
+                                      <button onclick='editarMentor({$mentor["id"]})'>
+                                        <i class='fas fa-user-edit'></i> Editar Mentor
+                                      </button>
+                                    </div>
+                                  </div>
+                                </div>
+                                ";
+                              }
+
+                              // Elementos auxiliares para cálculos JavaScript
+                              echo "
+                              <div id='total-green-dia' data-green='" . array_sum(array_column($lista_mentores, 'total_green')) . "' style='display:none;'></div>
+                              <div id='total-red-dia' data-red='" . array_sum(array_column($lista_mentores, 'total_red')) . "' style='display:none;'></div>
+                              <div id='saldo-dia' data-total='" . number_format($total_geral_saldo, 2, ',', '.') . "' style='display:none;'></div>
+                              ";
+                              
+                            } catch (Exception $e) {
+                              echo "<div class='erro-mentores'>Erro ao carregar mentores!</div>";
+                              error_log("Erro ao carregar mentores: " . $e->getMessage());
                             }
-                        }
-                    });
+                            ?>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- BLOCO 2: Dashboard Mensal -->
+            <div class="bloco bloco-2">
+                
+                <!-- Resumo do mês -->
+                <div class="resumo-mes">
                     
-                    console.log(`📊 Verificação concluída - ${linhas.length} linhas processadas`);
-                });
-            </script>
-            <!-- ============================================================================================================ -->
-            <!--                              🔧 FIM DO SCRIPT DE VERIFICAÇÃO DE CONSISTÊNCIA                             -->
-            <!-- ============================================================================================================ -->
-            
+                    <!-- Cabeçalho do mês -->
+                    <div class="bloco-meta-simples fixo-topo">
+                        <div class="campo-armazena-data-placar">
+                            
+                            <!-- Título do mês atual -->
+                            <h2 class="titulo-bloco">
+                                <i class="fas fa-calendar-alt"></i> 
+                                <span id="tituloMes"></span>
+                            </h2>
+
+                            <script>
+                                const meses = [
+                                    "JANEIRO", "FEVEREIRO", "MARÇO", "ABRIL", "MAIO", "JUNHO",
+                                    "JULHO", "AGOSTO", "SETEMBRO", "OUTUBRO", "NOVEMBRO", "DEZEMBRO"
+                                ];
+                                const hoje = new Date();
+                                const mesAtual = meses[hoje.getMonth()];
+                                const anoAtual = hoje.getFullYear();
+                                document.getElementById("tituloMes").textContent = `${mesAtual} ${anoAtual}`;
+                            </script>
+
+                            <!-- Placar mensal -->
+                            <div class="area-central-2">
+                                <div class="pontuacao-2" id="pontuacao-2">
+                                    <span class="placar-green-2"></span>
+                                    <span class="separador-2">×</span>
+                                    <span class="placar-red-2"></span>
+                                </div>
+                            </div>
+                            
+                        </div>
+                    </div>
+
+                    <!-- Widget de conteúdo principal -->
+                    <div class="widget-conteudo-principal-2">
+                        <div class="conteudo-left-2">
+                            
+                            <!-- Valor da meta mensal -->
+                            <div class="widget-meta-valor-2" id="meta-valor-2">
+                                <i class="fa-solid-2 fa-coins-2"></i>
+                                <div class="meta-valor-container-2">
+                                    <span class="valor-texto-2" id="valor-texto-meta-2">carregando..</span>
+                                </div>
+                            </div>
+                            
+                            <!-- Valor que ultrapassou a meta -->
+                            <div class="valor-ultrapassou-2" id="valor-ultrapassou-2" style="display: none;">
+                                <i class="fa-solid-2 fa-trophy-2"></i>
+                                <span class="texto-ultrapassou-2">
+                                    Lucro Extra: <span id="valor-extra-2">R$ 0,00</span>
+                                </span>
+                            </div>
+                            
+                            <div class="widget-meta-rotulo-2" id="rotulo-meta-2">Meta do Dia</div>
+                            
+                            <!-- Barra de progresso mensal -->
+                            <div class="widget-barra-container-2">
+                                <div class="widget-barra-progresso-2" id="barra-progresso-2"></div>
+                                <div class="porcentagem-barra-2" id="porcentagem-barra-2">0%</div>
+                            </div>
+                            
+                            <!-- Informações de progresso com saldo -->
+                            <div class="widget-info-progresso-2">
+                                <span id="saldo-info-2" class="saldo-positivo-2">
+                                    <i class="fa-solid-2 fa-chart-line-2"></i>
+                                    <span class="saldo-info-rotulo-2">Lucro:</span>
+                                    <span class="saldo-info-valor-2">carregando..</span>
+                                </span>
+                            </div>
+                            
+                        </div>
+                    </div>
+
+                    <!-- Lista de dias do mês -->
+                    <div class="lista-dias">
+                        
+                        <?php
+                        // Configurações de meta e variáveis
+                        $meta_diaria = isset($_SESSION['meta_diaria']) ? floatval($_SESSION['meta_diaria']) : 0;
+                        $meta_mensal = isset($_SESSION['meta_mensal']) ? floatval($_SESSION['meta_mensal']) : 0;
+                        $meta_anual = isset($_SESSION['meta_anual']) ? floatval($_SESSION['meta_anual']) : 0;
+
+                        $periodo_atual = $_SESSION['periodo_filtro'] ?? 'dia';
+                        $meta_atual = ($periodo_atual === 'mes') ? $meta_mensal : 
+                                      (($periodo_atual === 'ano') ? $meta_anual : $meta_diaria);
+
+                        $hoje = date('Y-m-d');
+                        $mes_atual = date('m');
+                        $ano_atual = date('Y');
+                        $total_dias_mes = date('t');
+                        
+                        // Loop através de todos os dias do mês
+                        for ($dia = 1; $dia <= $total_dias_mes; $dia++) {
+                            $dia_formatado = str_pad($dia, 2, '0', STR_PAD_LEFT);
+                            $data_mysql = $ano_atual . '-' . $mes_atual . '-' . $dia_formatado;
+                            $data_exibicao = $dia_formatado . '/' . $mes_atual . '/' . $ano_atual;
+                            
+                            // Buscar dados do dia
+                            $dados_dia = isset($dados_por_dia[$data_mysql]) ? $dados_por_dia[$data_mysql] : [
+                                'total_valor_green' => 0,
+                                'total_valor_red' => 0,
+                                'total_green' => 0,
+                                'total_red' => 0
+                            ];
+                            
+                            // Calcular saldo do dia
+                            $saldo_dia = floatval($dados_dia['total_valor_green']) - floatval($dados_dia['total_valor_red']);
+                            $saldo_formatado = number_format($saldo_dia, 2, ',', '.');
+                            
+                            // Verificar se meta foi batida
+                            $meta_batida = false;
+                            
+                            if ($meta_diaria > 0 && $saldo_dia >= $meta_diaria) {
+                                $meta_batida = true;
+                            }
+                            
+                            if (!$meta_batida && $data_mysql < $hoje && $saldo_dia > 0) {
+                                if ($meta_diaria <= 0) {
+                                    $meta_batida = true;
+                                } elseif ($saldo_dia >= ($meta_diaria * 0.8)) {
+                                    $meta_batida = true;
+                                }
+                            }
+                            
+                            // Determinar classes e estilos visuais
+                            $classe_valor_cor = '';
+                            if ($saldo_dia > 0) {
+                                $classe_valor_cor = 'valor-positivo';
+                            } elseif ($saldo_dia < 0) {
+                                $classe_valor_cor = 'valor-negativo';
+                            } else {
+                                $classe_valor_cor = 'valor-zero';
+                            }
+                            
+                            $cor_valor = ($saldo_dia == 0) ? 'texto-cinza' : ($saldo_dia > 0 ? 'verde-bold' : 'vermelho-bold');
+                            $classe_texto = ($saldo_dia == 0) ? 'texto-cinza' : '';
+                            $placar_cinza = ((int)$dados_dia['total_green'] === 0 && (int)$dados_dia['total_red'] === 0) ? 'texto-cinza' : '';
+                            
+                            $classes_dia = [];
+                            
+                            if ($data_mysql === $hoje) {
+                                $classes_dia[] = 'gd-dia-hoje';
+                                $classes_dia[] = ($saldo_dia >= 0) ? 'gd-borda-verde' : 'gd-borda-vermelha';
+                            } else {
+                                $classes_dia[] = 'dia-normal';
+                            }
+                            
+                            if ($data_mysql < $hoje) {
+                                if ($saldo_dia > 0) {
+                                    $classes_dia[] = 'gd-dia-destaque';
+                                } elseif ($saldo_dia < 0) {
+                                    $classes_dia[] = 'gd-dia-destaque-negativo';
+                                }
+                                
+                                if ((int)$dados_dia['total_green'] === 0 && (int)$dados_dia['total_red'] === 0) {
+                                    $classes_dia[] = 'gd-dia-sem-valor';
+                                }
+                            }
+                            
+                            if ($data_mysql > $hoje) {
+                                $classes_dia[] = 'dia-futuro';
+                            }
+                            
+                            $icone_classe = $meta_batida ? 'fa-trophy trofeu-icone' : 'fa-check';
+                            
+                            $classe_dia_string = 'gd-linha-dia ' . $classe_valor_cor . ' ' . implode(' ', $classes_dia);
+                            $data_meta_attr = $meta_batida ? 'true' : 'false';
+                            $data_saldo_attr = $saldo_dia;
+                            $data_meta_diaria_attr = $meta_diaria;
+                            
+                            // Renderizar linha do dia
+                            echo '
+                            <div class="'.$classe_dia_string.'" 
+                                 data-date="'.$data_mysql.'" 
+                                 data-meta-batida="'.$data_meta_attr.'"
+                                 data-saldo="'.$data_saldo_attr.'"
+                                 data-meta-diaria="'.$data_meta_diaria_attr.'"
+                                 data-periodo-atual="'.$periodo_atual.'">
+                                
+                                <span class="data '.$classe_texto.'">'.$data_exibicao.'</span>
+
+                                <div class="placar-dia">
+                                    <span class="placar verde-bold '.$placar_cinza.'">'.(int)$dados_dia['total_green'].'</span>
+                                    <span class="placar separador '.$placar_cinza.'">×</span>
+                                    <span class="placar vermelho-bold '.$placar_cinza.'">'.(int)$dados_dia['total_red'].'</span>
+                                </div>
+
+                                <span class="valor '.$cor_valor.'">R$ '.$saldo_formatado.'</span>
+
+                                <span class="icone '.$classe_texto.'">
+                                    <i class="fa-solid '.$icone_classe.'"></i>
+                                </span>
+                                
+                            </div>';
+                        }
+                        ?>
+                        
+                        <!-- Elemento oculto com dados do mês -->
+                        <div id="dados-mes-info" style="display: none;" 
+                             data-mes="<?php echo $mes_atual; ?>" 
+                             data-ano="<?php echo $ano_atual; ?>" 
+                             data-meta-diaria="<?php echo $meta_diaria; ?>"
+                             data-meta-mensal="<?php echo $meta_mensal; ?>"
+                             data-meta-anual="<?php echo $meta_anual; ?>"
+                             data-periodo-atual="<?php echo $periodo_atual; ?>"
+                             data-hoje="<?php echo $hoje; ?>">
+                        </div>
+
+                        <!-- Script de verificação de consistência -->
+                        <script>
+                            document.addEventListener('DOMContentLoaded', function() {
+                                console.log('Verificando consistência de troféus após carregamento PHP...');
+                                
+                                const linhas = document.querySelectorAll('.gd-linha-dia');
+                                linhas.forEach(linha => {
+                                    const dataLinha = linha.getAttribute('data-date');
+                                    const metaBatida = linha.getAttribute('data-meta-batida') === 'true';
+                                    const saldo = parseFloat(linha.getAttribute('data-saldo')) || 0;
+                                    
+                                    if (dataLinha && metaBatida) {
+                                        console.log(`PHP marcou ${dataLinha} como meta batida (saldo: R$ ${saldo.toFixed(2)})`);
+                                        
+                                        if (window.MonitorContinuo && window.MonitorContinuo.marcarMetaBatida) {
+                                            setTimeout(() => {
+                                                window.MonitorContinuo.marcarMetaBatida(dataLinha);
+                                            }, 100);
+                                        }
+                                    }
+                                });
+                                
+                                console.log(`Verificação concluída - ${linhas.length} linhas processadas`);
+                            });
+                        </script>
+                        
+                    </div>
+                </div>
+            </div>
+
+            <!-- BLOCO 3: Informações Gerais -->
+            <div class="bloco bloco-3">
+                <h3>Informações Adicionais</h3>
+                <p>Este bloco completa a estrutura horizontal do dashboard. Todos os blocos trabalham em conjunto para formar um layout coeso e funcional.</p>
+                <p>O design responsivo garante que a estrutura funcione perfeitamente em diferentes configurações de zoom, mantendo todos os elementos visíveis na tela.</p>
+                <p>A altura fixa garante que mesmo com pouco conteúdo, o bloco ocupe todo o espaço vertical disponível.</p>
+                <p>Conteúdo adicional pode ser adicionado e será scrollável dentro do bloco, mantendo a estrutura geral intacta.</p>
+            </div>
+
         </div>
-        <!-- ======================================================================================================================== -->
-        <!--                                     📅 FIM DA LISTA DE DIAS DO MÊS (ÁREA ROLÁVEL)                                    -->
-        <!-- ======================================================================================================================== -->
-        
-    </div>
-    <!-- ================================================================================================================================ -->
-    <!--                                         📊 FIM DA SEÇÃO DE RESUMO DO MÊS                                                      -->
-    <!-- ================================================================================================================================ -->
+    </main>
     
-</div>
-<!-- ==================================================================================================================================== -->
-<!--                                       📅 FIM DO BLOCO PRINCIPAL DO DASHBOARD MENSAL                                             -->
-<!-- ==================================================================================================================================== -->
-
-<!-- ==================================================================================================================================== -->
-<!--                                                    📋 BLOCO 3 - INFORMAÇÕES GERAIS                                             -->
-<!-- ==================================================================================================================================== -->
-<div class="bloco bloco-3">
-    
-    <!-- ================================================================================================================================ -->
-    <!--                                              🏷️ TÍTULO DO BLOCO 3                                                            -->
-    <!-- ================================================================================================================================ -->
-    <h3>Bloco 3</h3>
-    <!-- ============================================================================================================== -->
-    <!--                                        🏷️ FIM DO TÍTULO DO BLOCO 3                                         -->
-    <!-- ============================================================================================================== -->
-    
-    <!-- ================================================================================================================================ -->
-    <!--                                            📄 CONTEÚDO INFORMATIVO                                                            -->
-    <!-- ================================================================================================================================ -->
-    <p>Este terceiro e último bloco completa a estrutura horizontal. Todos os blocos trabalham em conjunto para formar um layout coeso e funcional.</p>
-    <p>O design responsivo garante que a estrutura funcione perfeitamente em zoom de 90%, 100%, 125% e outras configurações, sempre mantendo todos os elementos visíveis na tela.</p>
-    <p>A altura fixa garante que mesmo com pouco conteúdo, o bloco ocupe todo o espaço vertical disponível.</p>
-    <p>Conteúdo adicional pode ser adicionado e será scrollável dentro do bloco, mantendo a estrutura geral intacta.</p>
-    <!-- ============================================================================================================== -->
-    <!--                                      📄 FIM DO CONTEÚDO INFORMATIVO                                        -->
-    <!-- ============================================================================================================== -->
-    
-</div>
-<!-- ==================================================================================================================================== -->
-<!--                                              📋 FIM DO BLOCO 3 - INFORMAÇÕES GERAIS                                           -->
-<!-- ==================================================================================================================================== -->
-
-<!-- ==================================================================================================================================== -->
-<!--                                                    🦶 RODAPÉ DA PÁGINA                                                         -->
-<!-- ==================================================================================================================================== -->
-</main>
-<footer class="footer"></footer>
-<!-- ==================================================================================================================================== -->
-<!--                                              🦶 FIM DO RODAPÉ DA PÁGINA                                                       -->
-<!-- ==================================================================================================================================== -->
-
-<!-- ==================================================================================================================================== --> 
-<!--                                                  💼  FIM DO FILTRO BLOCO MÊS                          
- ====================================================================================================================================== -->
-<!-- -->
+    <footer class="footer"></footer>
 <!-- -->
 <!-- -->
 <!-- -->
