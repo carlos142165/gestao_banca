@@ -1,5 +1,60 @@
-/* ===== CSS COMPLETO PARA SISTEMA DE RANKING ===== */
+/**/
+/**/
+/**/
+/**/
+/**/
+/**/
+/**/
+/**/
+/**/
+/* =======================================================================================================================================================
+     - ROOT- ROOT - ROOT  - ROOT- ROOT - ROOT  - ROOT- ROOT - ROOT  - ROOT- ROOT - ROOT  - ROOT- ROOT - ROOT - ROOT- ROOT - ROOT
+  =======================================================================================================================================================*/
+:root {
+  --bloco1-max-height: calc(100vh - 80px);
+  --bloco1-padding-left: 0;
+  --widget-meta-max-height: min(520px, 62vh);
+  --widget-meta-alt-max-height: calc(48vh);
+  --widget-conteudo-max-height: min(420px, 55vh);
+  --mentor-card-height: 82px;
+  --mentor-card-min-height: 82px;
+  --mentor-img-size: clamp(35px, 8vw, 50px);
+  --mentor-name-font-size: clamp(9px, 1.8vw, 12px);
+  --value-box-saldo-min-width: clamp(80px, 16vw, 120px);
+  --mentor-wrapper-scrollbar-width: 8px;
+  --bloco1-scrollbar-thumb: rgba(0, 0, 0, 0.2);
 
+  /**/
+  /**/
+  /**/
+  /* --------------------------------------------------
+- MARGIN TOP - MARGIN TOP - MARGIN TOP -
+-------------------------------------------------- */
+  --data-header-margin-top: 0px !important; /* Campo : (DATA - DIA - MÊS - ANO ) */
+  --container-resumos-margin-top: 0px !important; /* container-resumos */
+  /* --------------------------------------------------
+- MARGIN TOP - MARGIN TOP - MARGIN TOP -
+-------------------------------------------------- */
+  /**/
+  /**/
+  /**/
+}
+/**/
+/**/
+/**/
+
+/* =======================================================================================================================================================
+     - ROOT- ROOT - ROOT  - ROOT- ROOT - ROOT  - ROOT- ROOT - ROOT  - ROOT- ROOT - ROOT  - ROOT- ROOT - ROOT - ROOT- ROOT - ROOT
+  =======================================================================================================================================================*/
+/**/
+/**/
+/**/
+/**/
+/**/
+/**/
+/**/
+/**/
+/**/
 /* RANK COM COR DINÂMICA BASEADA NO SALDO */
 .mentor-rank-externo {
   /* Dimensões fixas para manter formato circular */
@@ -721,18 +776,32 @@ body .mentor-item:not(.sem-valores) .mentor-rank-externo {
 .bloco-1 {
   display: flex !important;
   flex-direction: column !important;
-  max-height: calc(
-    100vh - 80px
+  max-height: var(
+    --bloco1-max-height
   ) !important; /* reserva espaço para topo e margens */
   overflow: hidden !important; /* controlar overflow nos filhos */
+  border-radius: 20px !important; /* canto arredondado do bloco-1 */
+  -webkit-border-radius: 20px !important;
+  -moz-border-radius: 20px !important;
+  padding-left: var(
+    --bloco1-padding-left
+  ) !important; /* remover padding lateral interno */
+  padding-right: 0 !important; /* remover padding lateral interno */
+  box-sizing: border-box !important; /* garantir que largura inclua padding/border */
+  margin-left: 0 !important; /* evitar deslocamentos residuais */
+  margin-right: 0 !important;
 }
 
 .container-resumos {
   display: flex !important;
   flex-direction: column !important;
+  margin-top: var(
+    --container-resumos-margin-top
+  ) !important; /* controlado via :root */
   flex: 1 1 auto !important;
   min-height: 0 !important; /* permite que filhos com overflow rolem corretamente */
   overflow: hidden !important;
+  border-radius: inherit !important; /* garantir que container respeite cantos do bloco */
 }
 
 .widget-meta-container,
@@ -745,7 +814,7 @@ body .mentor-item:not(.sem-valores) .mentor-rank-externo {
 .widget-meta-item {
   flex: 0 0 auto !important;
   min-height: 0 !important;
-  max-height: calc(48vh) !important;
+  max-height: var(--widget-meta-alt-max-height) !important;
   overflow-y: auto !important;
   -webkit-overflow-scrolling: touch !important;
 }
@@ -901,8 +970,7 @@ body .mentor-item:not(.sem-valores) .mentor-rank-externo {
   backdrop-filter: blur(5px);
 
   padding: 0;
-  border-bottom-left-radius: 20px;
-  border-bottom-right-radius: 20px;
+
   width: 100%; /* Sempre 100% da largura disponível */
   min-height: 180px;
   box-sizing: border-box;
@@ -914,25 +982,52 @@ body .mentor-item:not(.sem-valores) .mentor-rank-externo {
 /* Evitar que o widget cresça e empurre containers externos.
    Definimos um limite máximo e usamos overflow interno. */
 .widget-meta-item {
-  max-height: min(520px, 62vh) !important;
+  max-height: var(--widget-meta-max-height) !important;
   overflow: hidden !important;
   display: flex !important;
   flex-direction: column !important;
+  position: relative !important; /* permitir que o header posicionado absoluto se ancore aqui */
 }
 
 /* ===== TOPO FIXO COM DATA E PLACAR - RESPONSIVO ===== */
-.data-header-integrada {
-  width: 100%;
+.widget-meta-item .data-header-integrada {
+  width: 100% !important; /* ocupar toda a largura do widget */
+  margin: var(--data-header-margin-top) 0 0 0 !important; /* margem-top controlada por :root */
   height: 60px;
-  background: linear-gradient(135deg, #9e9e9e 0%, #b8c9b8 50%, #a8a8a8 100%);
-  border-radius: 18px 18px 0 0;
+  background: linear-gradient(
+    90deg,
+    #9ea39d 0%,
+    #b5cfb1 50%,
+    #abb3ab 100%
+  ) !important;
+  border-radius: 20px 20px 0 0 !important; /* somente cantos de cima arredondados */
   display: flex;
   align-items: center;
   justify-content: space-between;
-  padding: 0 5%; /* Padding proporcional */
+  padding: 0 12px !important; /* padding interno reduzido */
   box-sizing: border-box;
-  position: relative;
+  position: -webkit-sticky !important; /* support for older Safari */
+  position: sticky !important; /* stick to the top of its scroll container */
+  top: 0 !important;
+  left: 0 !important;
+  right: 0 !important;
+  z-index: 60; /* acima do conteúdo interno */
   border-bottom: 2px solid rgba(255, 255, 255, 0.2);
+}
+
+/* Quando a seleção de período estiver dentro do header, anular a posição fixed global */
+.data-header-integrada .periodo-selecao-container {
+  position: relative !important;
+  top: auto !important;
+  left: auto !important;
+  margin-left: 0 !important;
+  z-index: 51 !important;
+}
+
+/* Reservar espaço no conteúdo principal para o header absoluto */
+.widget-meta-item > .widget-conteudo-principal {
+  padding-top: 0 !important; /* Não precisamos mais reservar espaço quando o header é sticky */
+  box-sizing: border-box !important;
 }
 
 /* Data no canto esquerdo */
@@ -1154,9 +1249,9 @@ body .mentor-item:not(.sem-valores) .mentor-rank-externo {
   width: 100% !important;
   box-sizing: border-box !important;
   /* Limitar altura para que conteúdo extra role internamente
-     sem empurrar os containers abaixo. Valor responsivo para evitar
-     overflow na maioria das telas. */
-  max-height: min(420px, 55vh) !important;
+    sem empurrar os containers abaixo. Valor responsivo para evitar
+    overflow na maioria das telas. */
+  max-height: var(--widget-conteudo-max-height) !important;
   overflow-y: auto !important;
   -webkit-overflow-scrolling: touch !important; /* suaviza o scroll em mobile */
 }
@@ -1218,8 +1313,8 @@ body .mentor-item:not(.sem-valores) .mentor-rank-externo {
   display: flex;
   flex-direction: column;
   align-items: center;
-  border-bottom-left-radius: 20px;
-  border-bottom-right-radius: 20px;
+  border-bottom-left-radius: inherit !important;
+  border-bottom-right-radius: inherit !important;
   padding: 0;
   box-sizing: border-box;
   overflow: hidden;
@@ -1335,7 +1430,7 @@ body .mentor-item:not(.sem-valores) .mentor-rank-externo {
   display: flex;
   flex-direction: column;
   align-items: stretch; /* ensure children take full available width */
-  padding: clamp(10px, 3vw, 30px);
+  padding: 0 !important; /* remover padding interno para colar nas laterais */
   width: 100%;
   max-height: calc(100% - 60px);
   height: auto;
@@ -1358,7 +1453,9 @@ body .mentor-item:not(.sem-valores) .mentor-rank-externo {
 }
 
 .mentor-wrapper::-webkit-scrollbar {
-  width: 8px; /* um pouco mais larga para ficar visível */
+  width: var(
+    --mentor-wrapper-scrollbar-width
+  ); /* um pouco mais larga para ficar visível */
 }
 
 .mentor-wrapper::-webkit-scrollbar-track {
@@ -1367,7 +1464,7 @@ body .mentor-item:not(.sem-valores) .mentor-rank-externo {
 }
 
 .mentor-wrapper::-webkit-scrollbar-thumb {
-  background: rgba(0, 0, 0, 0.14); /* visível por padrão */
+  background: var(--bloco1-scrollbar-thumb); /* visível por padrão */
   border-radius: 10px;
   transition: background-color 0.12s ease, box-shadow 0.12s ease;
   border: 1px solid rgba(255, 255, 255, 0.06);
@@ -1452,8 +1549,10 @@ body .mentor-item:not(.sem-valores) .mentor-rank-externo {
   flex: 1 1 auto; /* Ocupa o espaço restante */
 
   /* Dimensões */
-  height: 82px; /* Altura aumentada para acomodar valores maiores */
-  min-height: 82px;
+  height: var(
+    --mentor-card-height
+  ); /* Altura aumentada para acomodar valores maiores */
+  min-height: var(--mentor-card-min-height);
 
   /* Espaçamento interno */
   padding: 8px 12px;
@@ -1507,8 +1606,8 @@ body .mentor-item:not(.sem-valores) .mentor-rank-externo {
 }
 
 .mentor-img {
-  width: clamp(35px, 8vw, 50px); /* Largura responsiva */
-  height: clamp(35px, 8vw, 50px); /* Altura responsiva */
+  width: var(--mentor-img-size); /* Largura responsiva */
+  height: var(--mentor-img-size); /* Altura responsiva */
   border-radius: 50%;
   object-fit: cover;
   border: 2px solid #00a651;
@@ -1517,7 +1616,7 @@ body .mentor-item:not(.sem-valores) .mentor-rank-externo {
 }
 
 .mentor-nome {
-  font-size: clamp(9px, 1.8vw, 12px); /* Fonte responsiva */
+  font-size: var(--mentor-name-font-size); /* Fonte responsiva */
   margin-top: 2px;
   color: #333;
   text-align: center;
@@ -1594,10 +1693,8 @@ body .mentor-item:not(.sem-valores) .mentor-rank-externo {
 
 .value-box-saldo {
   flex: 1 1 auto; /* ocupa o restante */
-  min-width: clamp(
-    80px,
-    16vw,
-    120px
+  min-width: var(
+    --value-box-saldo-min-width
   ); /* Largura mínima aumentada para mostrar o valor sem cortar */
   display: flex;
   align-items: center;
@@ -3384,13 +3481,6 @@ p {
   display: none !important;
   align-items: center !important;
   justify-content: center !important;
-  opacity: 0 !important;
-  transition: all 0.3s ease !important;
-}
-
-.modais-container #modal-confirmacao-exclusao.show {
-  display: flex !important;
-  opacity: 1 !important;
 }
 
 .modais-container #modal-confirmacao-exclusao .modal-content {
@@ -3400,9 +3490,10 @@ p {
   max-width: 400px !important;
   width: 90% !important;
   text-align: center !important;
-  box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.25) !important;
-  z-index: 10000 !important;
+  box-shadow: 0 25px 50px rgba(0, 0, 0, 0.4) !important;
+  z-index: 1000000 !important;
 }
+
 /* ===== ADICIONAR NO FINAL DO <STYLE> ===== */
 
 /* CSS FORÇADO PARA MODAL DE CONFIRMAÇÃO */
@@ -3589,11 +3680,10 @@ p {
 /* */
 /* */
 /* */
-/* =======================================================================================================================================================
-                                          💼  CSS PARA TELA SEM CADASTRO DE MENTORES COM BOTÃO ADD+
-   ==========================================================================================================================================================*/
-/* ===== CSS PARA TELA SEM MENTORES ===== */
 
+/* =======================================================================================================================================================
+                                          💼  TELA SEM CADASTRO DE MENTORES
+   ==========================================================================================================================================================*/
 /* ===== CSS PARA TELA SEM MENTORES ===== */
 
 .mentor-item.sem-mentores {
@@ -3697,45 +3787,42 @@ p {
   font-size: 20px;
   font-weight: 700;
   color: #2d3748;
-  margin: 0 0 10px 0;
-  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
-  line-height: 1.2;
+  margin: 0;
+  min-height: 28px;
+  text-align: center;
 }
 
-.descricao-sem-mentores {
-  font-size: 14px;
-  color: #718096;
-  margin: 0 0 25px 0;
-  line-height: 1.5;
-  font-weight: 500;
+.modais-container .mentor-nome-preview:empty::before {
+  content: "Nome do Mentor";
+  color: #a0aec0;
+  font-style: italic;
 }
 
-.btn-primeiro-mentor {
-  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-  border: none;
-  color: white;
-  padding: 14px 24px;
-  font-size: 16px;
-  font-weight: 600;
-  border-radius: 14px;
-  cursor: pointer;
-  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
-  box-shadow: 0 6px 15px rgba(102, 126, 234, 0.3);
+/* ===== BOTÃO DE UPLOAD MODERNO ===== */
+.modais-container .input-group {
+  margin-bottom: 20px;
+}
+
+.modais-container .label-arquivo {
   display: flex;
   align-items: center;
   justify-content: center;
   gap: 10px;
-  margin: 0 auto;
-  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  color: white;
+  padding: 16px 24px;
+  border-radius: 16px;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  font-weight: 500;
+  font-size: 16px;
+  border: none;
+  box-shadow: 0 4px 15px rgba(102, 126, 234, 0.3);
   position: relative;
   overflow: hidden;
-  transform: perspective(1px) translateZ(0);
-  width: auto;
-  max-width: 100%;
-  flex-shrink: 0;
 }
 
-.btn-primeiro-mentor::before {
+.modais-container .label-arquivo::before {
   content: "";
   position: absolute;
   top: 50%;
@@ -3748,156 +3835,164 @@ p {
   transform: translate(-50%, -50%);
 }
 
-.btn-primeiro-mentor:hover::before {
+.modais-container .label-arquivo:hover::before {
   width: 300px;
   height: 300px;
 }
 
-.btn-primeiro-mentor:hover {
-  transform: translateY(-3px) scale(1.02);
-  box-shadow: 0 12px 30px rgba(102, 126, 234, 0.4);
-  background: linear-gradient(135deg, #5a67d8 0%, #6b46c1 100%);
+.modais-container .label-arquivo:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 6px 20px rgba(102, 126, 234, 0.4);
 }
 
-.btn-primeiro-mentor:active {
-  transform: translateY(-1px) scale(0.98);
-  box-shadow: 0 6px 15px rgba(102, 126, 234, 0.3);
+.modais-container .nome-arquivo {
+  display: block;
+  text-align: center;
+  font-size: 14px;
+  color: #718096;
+  margin-top: 10px;
+  padding: 8px 16px;
+  background: #f7fafc;
+  border-radius: 8px;
+  font-style: italic;
 }
 
-.btn-primeiro-mentor i {
-  font-size: 20px;
-  filter: drop-shadow(0 1px 2px rgba(0, 0, 0, 0.1));
+/* ===== BOTÃO REMOVER FOTO ===== */
+.modais-container .btn-remover-foto {
+  background: linear-gradient(135deg, #f56565 0%, #e53e3e 100%);
+  color: white;
+  border: none;
+  padding: 8px 16px;
+  border-radius: 20px;
+  font-size: 12px;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  font-weight: 500;
 }
 
-/* ===== RESPONSIVIDADE ===== */
-
-@media (max-width: 768px) {
-  .mentor-item.sem-mentores {
-    min-height: auto;
-    padding: 15px;
-  }
-
-  .container-primeiro-mentor {
-    padding: 25px 20px;
-    margin: 0;
-    border-radius: 20px;
-    min-height: 220px;
-    left: 0;
-    top: 0;
-  }
-
-  .icone-mentor-vazio {
-    width: 50px;
-    height: 50px;
-    font-size: 20px;
-    margin-bottom: 15px;
-  }
-
-  .titulo-sem-mentores {
-    font-size: 18px;
-    margin-bottom: 8px;
-  }
-
-  .descricao-sem-mentores {
-    font-size: 13px;
-    margin-bottom: 20px;
-    padding: 0 5px;
-  }
-
-  .btn-primeiro-mentor {
-    padding: 12px 20px;
-    font-size: 15px;
-    border-radius: 12px;
-    gap: 8px;
-    width: auto;
-    max-width: 100%;
-  }
-
-  .btn-primeiro-mentor i {
-    font-size: 16px;
-  }
+.modais-container .btn-remover-foto:hover {
+  transform: scale(1.05);
+  box-shadow: 0 4px 12px rgba(229, 62, 62, 0.3);
 }
 
-@media (max-width: 480px) {
-  .mentor-item.sem-mentores {
-    min-height: auto;
-    margin: 10px 0;
-    padding: 10px;
-  }
-
-  .container-primeiro-mentor {
-    padding: 20px 15px;
-    margin: 0;
-    border-radius: 18px;
-    min-height: 200px;
-    left: 0;
-    top: 0;
-  }
-
-  .icone-mentor-vazio {
-    width: 45px;
-    height: 45px;
-    font-size: 18px;
-    margin-bottom: 12px;
-  }
-
-  .titulo-sem-mentores {
-    font-size: 16px;
-    margin-bottom: 6px;
-  }
-
-  .descricao-sem-mentores {
-    font-size: 12px;
-    margin-bottom: 15px;
-    padding: 0 5px;
-  }
-
-  .btn-primeiro-mentor {
-    padding: 10px 18px;
-    font-size: 14px;
-    border-radius: 10px;
-    gap: 6px;
-    width: auto;
-    max-width: 100%;
-  }
-
-  .btn-primeiro-mentor i {
-    font-size: 14px;
-  }
+/* ===== CAMPO DE NOME MODERNO ===== */
+.modais-container .input-text {
+  width: 100%;
+  padding: 16px 20px;
+  border: 2px solid #e2e8f0;
+  border-radius: 16px;
+  font-size: 16px;
+  font-weight: 400;
+  color: #2d3748;
+  background: #ffffff;
+  transition: all 0.3s ease;
+  outline: none;
+  box-sizing: border-box;
+  font-family: "Inter", sans-serif;
 }
 
-/* ===== ANIMAÇÕES EXTRAS ===== */
-
-.container-primeiro-mentor {
-  animation: slideUp 0.6s ease-out;
+.modais-container .input-text:focus {
+  border-color: #667eea;
+  box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.1);
+  transform: translateY(-1px);
 }
 
-@keyframes slideUp {
-  from {
-    opacity: 0;
-    transform: translateY(30px);
-  }
-  to {
-    opacity: 1;
-    transform: translateY(0);
-  }
+.modais-container .input-text::placeholder {
+  color: #a0aec0;
+  font-style: italic;
 }
 
-/* ===== HOVER ESPECIAL NO CONTAINER ===== */
-.container-primeiro-mentor:hover .icone-mentor-vazio {
-  transform: scale(1.1) rotate(360deg);
-  transition: all 0.8s cubic-bezier(0.4, 0, 0.2, 1);
+/* ===== BOTÕES MODERNOS ===== */
+.modais-container .botoes-formulario {
+  display: flex;
+  gap: 12px;
+  margin-top: 20px;
 }
 
-.container-primeiro-mentor:hover .titulo-sem-mentores {
-  color: #667eea;
-  transition: color 0.3s ease;
+.modais-container .btn-enviar,
+.modais-container .btn-excluir {
+  flex: 1;
+  padding: 16px 24px;
+  border: none;
+  border-radius: 16px;
+  font-size: 16px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  position: relative;
+  overflow: hidden;
+  font-family: "Inter", sans-serif;
 }
 
-/* ===== EFEITO LOADING NO BOTÃO ===== */
-.btn-primeiro-mentor.carregando {
-  pointer-events: none;
-  opacity: 0.7;
+.modais-container .btn-enviar::before,
+.modais-container .btn-excluir::before {
+  content: "";
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  width: 0;
+  height: 0;
+  background: rgba(255, 255, 255, 0.2);
+  border-radius: 50%;
+  transition: all 0.6s ease;
+  transform: translate(-50%, -50%);
+}
+
+.modais-container .btn-enviar:active::before,
+.modais-container .btn-excluir:active::before {
+  width: 300px;
+  height: 300px;
+}
+
+/* Botão principal */
+.modais-container .btn-enviar {
+  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  color: white;
+  box-shadow: 0 4px 15px rgba(102, 126, 234, 0.3);
+}
+
+.modais-container .btn-enviar:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 6px 20px rgba(102, 126, 234, 0.4);
+}
+
+/* Botão excluir */
+.modais-container .btn-excluir {
+  background: linear-gradient(135deg, #e53e3e 0%, #c53030 100%);
+  color: white;
+  box-shadow: 0 4px 15px rgba(229, 62, 62, 0.3);
+}
+
+.modais-container .btn-excluir:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 6px 20px rgba(229, 62, 62, 0.4);
+}
+
+/* ===== MODAL DE CONFIRMAÇÃO MODERNIZADO ===== */
+.modais-container .modal-confirmacao {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: rgba(0, 0, 0, 0.8);
+  backdrop-filter: blur(10px);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 2000;
+  opacity: 0;
+  visibility: hidden;
+  transition: all 0.3s ease;
+}
+
+.modais-container .modal-confirmacao.show {
+  opacity: 1;
+  visibility: visible;
 }
 
 .btn-primeiro-mentor.carregando::after {
@@ -4069,4 +4164,38 @@ p {
   opacity: 1 !important;
   visibility: visible !important;
   display: inline-flex !important;
+}
+
+/* ===== FORCE: remover qualquer margem/padding superior que impeça itens de colar ao topo do bloco-1 ===== */
+/* Alta especificidade + !important para sobrepor regras anteriores sem alterar estrutura */
+html body .main-content .container > .bloco.bloco-1,
+html body .main-content .container > .bloco.bloco-1 *,
+.bloco-1,
+.bloco-1 *,
+.bloco-1 > .container-resumos,
+.bloco-1 > .container-resumos * {
+  margin-top: 0 !important;
+  padding-top: 0 !important;
+}
+
+/* Garantir que headers sticky coller ao topo do seu scroll container */
+.bloco-1 .widget-meta-item .data-header-integrada,
+.bloco-1 .widget-meta-item .data-header-integrada * {
+  margin-top: 0 !important;
+  top: 0 !important;
+  padding-top: 0 !important;
+}
+
+/* Manter overflow nos filhos para rolar sem adicionar gap acima */
+.bloco-1 .widget-meta-item,
+.bloco-1 .widget-conteudo-principal,
+.bloco-1 .mentor-wrapper {
+  box-sizing: border-box !important;
+  min-height: 0 !important;
+}
+
+/* Pequeno utilitário: se precisar reverter visualmente sem editar o código, comente a regra abaixo */
+.bloco-1.force-top-reset {
+  margin-top: 0 !important;
+  padding-top: 0 !important;
 }
