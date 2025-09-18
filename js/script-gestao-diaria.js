@@ -3531,7 +3531,7 @@ function formatarDiaCurto() {
 
 function atualizarIndicadorPeriodoHeader(periodo) {
   const dataAtual = document.getElementById("data-atual");
-  const icone = document.querySelector(".data-texto-compacto i");
+  const icone = document.querySelector("#data-header .data-texto-compacto i");
 
   if (!dataAtual) return;
 
@@ -3556,11 +3556,21 @@ function atualizarIndicadorPeriodoHeader(periodo) {
   setTimeout(() => {
     dataAtual.textContent = config.texto;
     dataAtual.style.opacity = "1";
-    dataAtual.style.animation = "fadeInScale 0.5s ease";
+    // Removed animation assignment to avoid overriding transform (translateY)
+    // Rely on CSS transition for smooth fade/shift instead.
   }, 200);
 
   if (icone) {
-    icone.className = `fa-solid ${config.icone}`;
+    // Preserve existing base classes (like sizing or forced classes) and only
+    // swap the calendar icon variant. This avoids removing helper classes used
+    // by other parts of the UI that might change positioning.
+    icone.classList.remove(
+      "fa-calendar-day",
+      "fa-calendar-days",
+      "fa-calendar"
+    );
+    icone.classList.add(config.icone);
+    icone.classList.add("fa-solid");
     icone.style.color = "#00aaff";
   }
 }
@@ -3766,7 +3776,7 @@ const SistemaFiltroPeriodo = {
       "Dezembro",
     ];
     const data = new Date();
-    return `${meses[data.getMonth()]} de ${data.getFullYear()}`;
+    return `${meses[data.getMonth()]} ${data.getFullYear()}`;
   },
 
   atualizarPeriodoAtual() {

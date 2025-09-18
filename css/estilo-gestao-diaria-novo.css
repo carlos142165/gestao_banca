@@ -1,20 +1,12 @@
-/**/
-/**/
-/**/
-/**/
-/**/
-/**/
-/**/
-/**/
-/**/
 /* =======================================================================================================================================================
-     - ROOT- ROOT - ROOT  - ROOT- ROOT - ROOT  - ROOT- ROOT - ROOT  - ROOT- ROOT - ROOT  - ROOT- ROOT - ROOT - ROOT- ROOT - ROOT
+     - ROOT VARIABLES (CONSOLIDADO) - CONTROLE INDIVIDUAL DE CADA ELEMENTO
   =======================================================================================================================================================*/
 :root {
+  /* DIMENSÕES GERAIS */
   --bloco1-max-height: calc(100vh - 80px);
   --bloco1-padding-left: 0;
   --widget-meta-max-height: min(520px, 62vh);
-  --widget-meta-alt-max-height: calc(48vh);
+  --widget-meta-alt-max-height: 48vh;
   --widget-conteudo-max-height: min(420px, 55vh);
   --mentor-card-height: 82px;
   --mentor-card-min-height: 82px;
@@ -24,37 +16,526 @@
   --mentor-wrapper-scrollbar-width: 8px;
   --bloco1-scrollbar-thumb: rgba(0, 0, 0, 0.2);
 
-  /**/
-  /**/
-  /**/
-  /* --------------------------------------------------
-- MARGIN TOP - MARGIN TOP - MARGIN TOP -
--------------------------------------------------- */
-  --data-header-margin-top: 0px !important; /* Campo : (DATA - DIA - MÊS - ANO ) */
-  --container-resumos-margin-top: 0px !important; /* container-resumos */
-  /* --------------------------------------------------
-- MARGIN TOP - MARGIN TOP - MARGIN TOP -
--------------------------------------------------- */
-  /**/
-  /**/
-  /**/
-}
-/**/
-/**/
-/**/
+  /* MARGIN TOP - CONTROLES VERTICAIS */
+  --data-header-margin-top: -15px !important; /* Data do dia */
+  --data-header-icon-margin-top: -15px !important; /* icone calendario */
+  --periodo-selecao-top: 22px !important; /* Periodo (DIA - MÊS - ANO ) */
+  --periodo-selecao-margin-top: 0px !important; /* Periodo (DIA - MÊS - ANO ) */
 
-/* =======================================================================================================================================================
-     - ROOT- ROOT - ROOT  - ROOT- ROOT - ROOT  - ROOT- ROOT - ROOT  - ROOT- ROOT - ROOT  - ROOT- ROOT - ROOT - ROOT- ROOT - ROOT
-  =======================================================================================================================================================*/
-/**/
-/**/
-/**/
-/**/
-/**/
-/**/
-/**/
-/**/
-/**/
+  --container-resumos-margin-top: 15px;
+  --mentor-img-margin-top: 5px;
+  --mentor-nome-margin-top: 2px;
+  --widget-meta-valor-margin-bottom: 8px;
+  --widget-meta-rotulo-margin-bottom: 15px;
+  --widget-barra-container-margin-top: 5px;
+  --widget-info-progresso-margin-top: 0;
+  --campo-mentores-margin-top: 0px;
+  --mentor-wrapper-margin-top: 10px;
+  --mentor-item-margin-bottom: 8px;
+  --mentor-card-margin-top: 0;
+  --valor-ultrapassou-margin-top: -9px;
+  --valor-ultrapassou-margin-bottom: 10px;
+  --saldo-info-margin-top: 10px;
+  --nome-arquivo-margin-top: 10px;
+  --botoes-formulario-margin-top: 20px;
+  --modal-texto-margin-bottom: 30px;
+  --grupo-barra-margin-bottom-clamp: clamp(15px, 3vw, 20px);
+  --titulo-bloco-margin-bottom-clamp: clamp(15px, 3vw, 20px);
+  --bloco-meta-simples-margin-bottom-clamp: clamp(15px, 3vw, 20px);
+  --widget-conteudo-principal-margin: 20px 0;
+
+  /* MARGIN LEFT - CONTROLES HORIZONTAIS */
+  --data-header-margin-left: 0px !important; /* Data do dia */
+  --periodo-selecao-margin-left: 250px !important; /* Periodo (DIA - MÊS - ANO ) */
+  --widget-meta-valor-margin-left: 0;
+  --widget-meta-rotulo-margin-left: 30px;
+  --rotulo-meta-margin-left: 0;
+  --widget-info-progresso-margin-left: 0;
+  --mentor-img-margin-left: 0;
+  --mentor-nome-margin-left: 0;
+  --valor-ultrapassou-margin-left: 0;
+  --mentor-card-sem-valores-margin-left: 0;
+  --btn-add-usuario-margin-left: 10px;
+  --area-direita-margin-left: 240px;
+  --mentor-menu-externo-margin-left: 6px;
+  --mentor-wrapper-margin-left: 0;
+  --mentor-right-margin-right: 6px;
+  --value-box-saldo-margin-left: 10px;
+  --separador-red-left: -12px;
+  --separador-red-left-ajuste: -10px;
+  --conteudo-left-margin-left: 15%;
+
+  /* PADDING */
+  --bloco1-padding-right: 0;
+  --mentor-values-inline-padding: 0 8px;
+  --porcentagem-fundo-padding: 0 10px;
+  --porcentagem-fundo-padding-pequeno: 0 8px;
+
+  /* RESPONSIVIDADE */
+  --periodo-selecao-margin-left-mobile: 15px;
+  --widget-meta-rotulo-margin-left-mobile: 0;
+  --area-direita-padding-mobile: clamp(2px, 0.5vw, 4px);
+  --periodo-selecao-margin-left-small: 10px;
+  --area-direita-padding-small: 2px;
+
+  /* Margin-top control for the period selection container */
+
+  /* BORDER RADIUS */
+  --bloco1-border-radius: 20px;
+  --mentor-rank-border-radius: 50%;
+  --mentor-img-border-radius: 50%;
+  --mentor-card-border-radius: 12px;
+  --widget-meta-border-radius: 12px;
+  --widget-conteudo-border-radius: 12px;
+  --data-header-border-radius-top: 20px;
+  --data-header-border-radius-bottom: 0;
+  --campo-mentores-border-radius-bottom: 20px;
+  --widget-barra-container-border-radius: 20px;
+  --widget-barra-progresso-border-radius: 25px;
+  --porcentagem-fundo-border-radius-left: 0;
+  --porcentagem-fundo-border-radius-right: 25px;
+  --btn-add-usuario-border-radius: 50%;
+  --menu-opcoes-border-radius: 6px;
+  --bloco-meta-simples-border-radius: 15px;
+  --container-barra-horizontal-border-radius: 15px;
+  --progresso-dourado-border-radius: 15px;
+  --progresso-verde-border-radius: 15px;
+  --modal-conteudo-border-radius: 24px;
+  --modal-content-border-radius: 20px;
+  --preview-img-border-radius: 50%;
+  --label-arquivo-border-radius: 16px;
+  --nome-arquivo-border-radius: 8px;
+  --btn-remover-foto-border-radius: 20px;
+  --input-text-border-radius: 16px;
+  --btn-enviar-border-radius: 16px;
+  --btn-excluir-border-radius: 16px;
+  --botao-confirmar-border-radius: 12px;
+  --botao-cancelar-border-radius: 12px;
+  --container-primeiro-mentor-border-radius: 24px;
+  --icone-mentor-vazio-border-radius: 50%;
+  --valor-ultrapassou-container-border-radius: 12px;
+  --scrollbar-track-border-radius: 10px;
+  --scrollbar-thumb-border-radius: 10px;
+  --widget-scrollbar-track-border-radius: 8px;
+  --widget-scrollbar-thumb-border-radius: 8px;
+}
+
+/* Preserva o deslocamento vertical durante a animação de entrada
+   evita que a animação sobrescreva o translateY definido por variáveis. */
+@keyframes fadeInScale {
+  from {
+    opacity: 0;
+    transform: translateY(var(--data-header-margin-top)) scale(0.98);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(var(--data-header-margin-top)) scale(1);
+  }
+}
+
+/* APLICAÇÃO DAS VARIÁVEIS */
+.data-header-integrada {
+  margin-top: 0 !important;
+  position: relative !important;
+}
+/* Aplicar deslocamento apenas ao elemento de texto principal da data */
+.data-header-integrada .data-principal-integrada {
+  display: inline-block;
+  transform: translateY(var(--data-header-margin-top)) !important;
+  will-change: transform;
+}
+.container-resumos {
+  margin-top: var(--container-resumos-margin-top) !important;
+}
+.mentor-img {
+  margin-top: var(--mentor-img-margin-top) !important;
+  margin-left: var(--mentor-img-margin-left) !important;
+}
+.mentor-nome {
+  margin-top: var(--mentor-nome-margin-top) !important;
+  margin-left: var(--mentor-nome-margin-left) !important;
+}
+.widget-meta-valor,
+#meta-valor {
+  margin-bottom: var(--widget-meta-valor-margin-bottom) !important;
+  margin-left: var(--widget-meta-valor-margin-left) !important;
+}
+.widget-meta-rotulo {
+  margin-bottom: var(--widget-meta-rotulo-margin-bottom) !important;
+  margin-left: var(--widget-meta-rotulo-margin-left) !important;
+}
+#rotulo-meta {
+  margin-left: var(--rotulo-meta-margin-left) !important;
+}
+.widget-barra-container {
+  margin-top: var(--widget-barra-container-margin-top) !important;
+}
+.widget-info-progresso {
+  margin-top: var(--widget-info-progresso-margin-top) !important;
+  margin-left: var(--widget-info-progresso-margin-left) !important;
+}
+.campo_mentores {
+  margin-top: var(--campo-mentores-margin-top) !important;
+}
+.mentor-wrapper {
+  margin-top: var(--mentor-wrapper-margin-top) !important;
+  margin-left: var(--mentor-wrapper-margin-left) !important;
+}
+.mentor-item {
+  margin-bottom: var(--mentor-item-margin-bottom) !important;
+}
+.mentor-card {
+  margin-top: var(--mentor-card-margin-top) !important;
+}
+.mentor-item.sem-valores .mentor-card {
+  margin-left: var(--mentor-card-sem-valores-margin-left) !important;
+}
+.valor-ultrapassou {
+  margin-top: var(--valor-ultrapassou-margin-top) !important;
+  margin-bottom: var(--valor-ultrapassou-margin-bottom) !important;
+  margin-left: var(--valor-ultrapassou-margin-left) !important;
+}
+#saldo-info {
+  margin-top: var(--saldo-info-margin-top) !important;
+}
+.widget-conteudo-principal {
+  margin-top: var(--widget-conteudo-principal-margin-top) !important;
+  margin-bottom: var(--widget-conteudo-principal-margin-bottom) !important;
+}
+.periodo-selecao-container {
+  margin-left: var(--periodo-selecao-margin-left, 0px) !important;
+}
+.btn-add-usuario {
+  margin-left: var(--btn-add-usuario-margin-left) !important;
+}
+.barra-superior .area-direita {
+  margin-left: var(--area-direita-margin-left) !important;
+}
+.mentor-menu-externo {
+  margin-left: var(--mentor-menu-externo-margin-left) !important;
+}
+.mentor-right {
+  margin-right: var(--mentor-right-margin-right) !important;
+}
+.value-box-saldo {
+  margin-left: var(--value-box-saldo-margin-left) !important;
+}
+.mentor-values-inline > .value-box-red::before {
+  left: var(--separador-red-left-ajuste) !important;
+}
+.conteudo-left {
+  margin-left: var(--conteudo-left-margin-left) !important;
+}
+.bloco-1 {
+  padding-right: var(--bloco1-padding-right) !important;
+}
+.mentor-values-inline {
+  padding: var(--mentor-values-inline-padding) !important;
+}
+.porcentagem-fundo {
+  padding: var(--porcentagem-fundo-padding) !important;
+}
+.porcentagem-barra.pequeno .porcentagem-fundo {
+  padding: var(--porcentagem-fundo-padding-pequeno) !important;
+}
+
+/* RESPONSIVIDADE */
+@media (max-width: 768px) {
+  .periodo-selecao-container {
+    margin-left: var(
+      --periodo-selecao-margin-left-mobile,
+      var(--periodo-selecao-margin-left, 15px)
+    ) !important;
+  }
+  .widget-meta-rotulo {
+    margin-left: var(--widget-meta-rotulo-margin-left-mobile) !important;
+  }
+  .barra-superior .area-direita {
+    padding: var(--area-direita-padding-mobile) !important;
+  }
+}
+
+@media (max-width: 480px) {
+  .periodo-selecao-container {
+    margin-left: var(
+      --periodo-selecao-margin-left-small,
+      var(--periodo-selecao-margin-left, 10px)
+    ) !important;
+  }
+  .barra-superior .area-direita {
+    padding: var(--area-direita-padding-small) !important;
+  }
+}
+
+/* UTILITÁRIOS PARA RESET SELETIVO */
+.bloco-1-reset-top {
+  margin-top: 0 !important;
+  padding-top: 0 !important;
+}
+.container-resumos-reset-top {
+  margin-top: 0 !important;
+  padding-top: 0 !important;
+}
+.data-header-reset-top {
+  margin-top: 0 !important;
+  padding-top: 0 !important;
+}
+
+/* EXEMPLOS DE USO: (removidos entradas duplicadas para evitar conflitos de :root) */
+/* --------------------------------------------------
+APLICAÇÃO DAS VARIÁVEIS - MARGIN TOP
+-------------------------------------------------- */
+
+/* Header com data e seleção de período */
+.data-header-integrada {
+  margin-top: 0 !important;
+  position: relative !important;
+  top: 0 !important;
+}
+
+/* Container principal dos resumos */
+.container-resumos {
+  margin-top: var(--container-resumos-margin-top) !important;
+}
+
+/* Foto do mentor - alinhamento vertical */
+.mentor-img {
+  margin-top: var(--mentor-img-margin-top);
+  margin-left: var(--mentor-img-margin-left);
+}
+
+/* Nome do mentor */
+.mentor-nome {
+  margin-top: var(--mentor-nome-margin-top);
+  margin-left: var(--mentor-nome-margin-left);
+}
+
+/* Meta valor - espaçamento */
+.widget-meta-valor,
+#meta-valor {
+  margin-bottom: var(--widget-meta-valor-margin-bottom) !important;
+  margin-left: var(--widget-meta-valor-margin-left) !important;
+}
+
+/* Rótulo da meta */
+.widget-meta-rotulo {
+  margin-bottom: var(--widget-meta-rotulo-margin-bottom) !important;
+  margin-left: var(--widget-meta-rotulo-margin-left) !important;
+}
+
+#rotulo-meta {
+  margin-left: var(--rotulo-meta-margin-left) !important;
+}
+
+/* Container da barra de progresso */
+.widget-barra-container {
+  margin-top: var(--widget-barra-container-margin-top) !important;
+}
+
+/* Info de progresso com saldo */
+.widget-info-progresso {
+  margin-top: var(--widget-info-progresso-margin-top) !important;
+  margin-left: var(--widget-info-progresso-margin-left);
+}
+
+/* Campo principal dos mentores */
+.campo_mentores {
+  margin-top: var(--campo-mentores-margin-top);
+}
+
+/* Wrapper da lista de mentores */
+.mentor-wrapper {
+  margin-top: var(--mentor-wrapper-margin-top);
+  margin-left: var(--mentor-wrapper-margin-left);
+}
+
+/* Espaçamento entre itens de mentores */
+.mentor-item {
+  margin-bottom: var(--mentor-item-margin-bottom);
+}
+
+/* Card individual do mentor */
+.mentor-card {
+  margin-top: var(--mentor-card-margin-top);
+}
+
+/* Card sem valores - ajuste gap quando não há rank */
+.mentor-item.sem-valores .mentor-card {
+  margin-left: var(--mentor-card-margin-left);
+}
+
+/* Valor que ultrapassou a meta */
+.valor-ultrapassou {
+  margin-top: var(--valor-ultrapassou-margin-top) !important;
+  margin-bottom: var(--valor-ultrapassou-margin-bottom) !important;
+  margin-left: var(--valor-ultrapassou-margin-left) !important;
+}
+
+/* Container do saldo */
+#saldo-info {
+  margin-top: var(--saldo-info-margin-top) !important;
+}
+
+/* --------------------------------------------------
+APLICAÇÃO DAS VARIÁVEIS - MARGIN LEFT
+-------------------------------------------------- */
+
+/* Seleção de período */
+.periodo-selecao-container {
+  margin-left: var(--periodo-selecao-margin-left);
+}
+
+/* Botão adicionar usuário */
+.btn-add-usuario {
+  margin-left: var(--btn-add-usuario-margin-left);
+}
+
+/* Área direita do header */
+.barra-superior .area-direita {
+  margin-left: var(--area-direita-margin-left);
+}
+
+/* Menu externo do mentor */
+.mentor-menu-externo {
+  margin-left: var(--mentor-menu-externo-margin-left);
+}
+
+/* Espaço para menu de opções */
+.mentor-right {
+  margin-right: var(--mentor-right-margin-right);
+}
+
+/* Espaço do separador "x" */
+.value-box-saldo {
+  margin-left: var(--value-box-saldo-margin-left) !important;
+}
+
+/* Posição do separador entre Green e Red */
+.mentor-values-inline > .value-box-red::before {
+  left: var(--separador-red-left) !important;
+}
+
+/* Ajuste fino da posição do separador */
+.mentor-values-inline > .value-box-red::before {
+  left: var(--separador-red-left-ajuste) !important;
+}
+
+/* Conteúdo alinhado à esquerda */
+.conteudo-left {
+  margin-left: var(--conteudo-left-margin-left);
+}
+
+/* --------------------------------------------------
+FORMULÁRIOS E MODAIS
+-------------------------------------------------- */
+
+/* Nome do arquivo no upload */
+.modais-container .nome-arquivo {
+  margin-top: var(--nome-arquivo-margin-top);
+}
+
+/* Botões do formulário */
+.modais-container .botoes-formulario {
+  margin-top: var(--botoes-formulario-margin-top);
+}
+
+/* Texto do modal de confirmação */
+.modais-container .modal-texto {
+  margin-bottom: var(--modal-texto-margin-bottom);
+}
+
+/* --------------------------------------------------
+BLOCOS E WIDGETS
+-------------------------------------------------- */
+
+/* Grupo de barras */
+.grupo-barra {
+  margin-bottom: var(--grupo-barra-margin-bottom-clamp);
+}
+
+/* Título dos blocos */
+.titulo-bloco {
+  margin: 0 0 var(--titulo-bloco-margin-bottom-clamp) 0;
+}
+
+/* Bloco meta simples */
+.bloco-meta-simples {
+  margin-bottom: var(--bloco-meta-simples-margin-bottom-clamp);
+}
+
+/* Conteúdo principal do widget */
+.widget-conteudo-principal {
+  margin: var(--widget-conteudo-principal-margin) !important;
+}
+
+/* --------------------------------------------------
+RESPONSIVIDADE - APLICAÇÃO DAS VARIÁVEIS
+-------------------------------------------------- */
+
+@media (max-width: 768px) {
+  .periodo-selecao-container {
+    margin-left: var(--periodo-selecao-margin-left-mobile);
+  }
+
+  .widget-meta-rotulo {
+    margin-left: var(--widget-meta-rotulo-margin-left-mobile) !important;
+  }
+
+  .barra-superior .area-direita {
+    padding: var(--area-direita-padding-mobile);
+  }
+}
+
+@media (max-width: 480px) {
+  .periodo-selecao-container {
+    margin-left: var(--periodo-selecao-margin-left-small);
+  }
+
+  .barra-superior .area-direita {
+    padding: var(--area-direita-padding-small);
+  }
+}
+
+/* --------------------------------------------------
+FORÇA RESET PARA BLOCO-1 (SE NECESSÁRIO)
+-------------------------------------------------- */
+
+/* Remove margins/paddings que impedem itens de colar ao topo */
+/* Limita o reset apenas aos containers principais do bloco-1
+   para não forçar margens/paddings em todos os descendentes.
+   Lista explícita de filhos mais comuns mantém independência. */
+html body .main-content .container > .bloco.bloco-1,
+.bloco-1,
+.bloco-1 > .container-resumos,
+.bloco-1 > .widget-meta-item,
+.bloco-1 > .widget-conteudo-principal,
+.bloco-1 > .mentor-wrapper {
+  margin-top: 0 !important;
+  padding-top: 0 !important;
+}
+
+/* Headers sticky colam ao topo */
+.bloco-1 .widget-meta-item .data-header-integrada {
+  transform: none !important; /* container must not translate; child text will */
+  padding-top: 0 !important;
+}
+
+/* Utilitário para reverter se necessário */
+.bloco-1.force-top-reset {
+  margin-top: 0 !important;
+  padding-top: 0 !important;
+}
+
+/* Override: quando um container contém o header integrado, garantir que
+   nenhum margin-top/padding-top seja aplicado ao container pai que
+   deslocaria visualmente todo o bloco. Usa :has() para ser específico. */
+.widget-meta-item:has(.data-header-integrada),
+.widget-meta-container:has(.data-header-integrada),
+.bloco-1:has(.data-header-integrada) {
+  margin-top: 0 !important;
+  padding-top: 0 !important;
+}
+
 /* RANK COM COR DINÂMICA BASEADA NO SALDO */
 .mentor-rank-externo {
   /* Dimensões fixas para manter formato circular */
@@ -783,6 +1264,17 @@ body .mentor-item:not(.sem-valores) .mentor-rank-externo {
   border-radius: 20px !important; /* canto arredondado do bloco-1 */
   -webkit-border-radius: 20px !important;
   -moz-border-radius: 20px !important;
+  /* Igualar acabamento ao Bloco-2: remover sombras/bordas no topo que
+     podem criar uma linha ou dentilhado quando lado a lado com o Bloco-2. */
+  border-top: none !important;
+  box-shadow: none !important;
+  background-clip: padding-box !important;
+  -webkit-backface-visibility: hidden;
+  backface-visibility: hidden;
+  -webkit-transform: translateZ(0);
+  transform: translateZ(0);
+  /* Neutral inset to normalize compositing and hide 1px hairlines */
+  box-shadow: 0 0 0 1px rgba(255, 255, 255, 0) inset;
   padding-left: var(
     --bloco1-padding-left
   ) !important; /* remover padding lateral interno */
@@ -992,7 +1484,7 @@ body .mentor-item:not(.sem-valores) .mentor-rank-externo {
 /* ===== TOPO FIXO COM DATA E PLACAR - RESPONSIVO ===== */
 .widget-meta-item .data-header-integrada {
   width: 100% !important; /* ocupar toda a largura do widget */
-  margin: var(--data-header-margin-top) 0 0 0 !important; /* margem-top controlada por :root */
+  margin: 0 !important; /* margin-left moved to the date/icon only */
   height: 60px;
   background: linear-gradient(
     90deg,
@@ -1008,20 +1500,78 @@ body .mentor-item:not(.sem-valores) .mentor-rank-externo {
   box-sizing: border-box;
   position: -webkit-sticky !important; /* support for older Safari */
   position: sticky !important; /* stick to the top of its scroll container */
-  top: 0 !important;
   left: 0 !important;
   right: 0 !important;
   z-index: 60; /* acima do conteúdo interno */
-  border-bottom: 2px solid rgba(255, 255, 255, 0.2);
+  /* Removido para evitar linha que pode causar dentilhado/aliasing
+     se necessário reintroduzir use rgba com alpha muito baixo */
+  border-bottom: none !important;
+
+  /* Forçar renderização em camada própria para suavizar cantos arredondados */
+  -webkit-transform: translateZ(0);
+  transform: translateZ(0);
+  -webkit-backface-visibility: hidden;
+  backface-visibility: hidden;
+  will-change: transform, box-shadow;
+  outline: none !important; /* remove outline que pode gerar linha branca */
+  box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.025), 0 0 0 rgba(0, 0, 0, 0) !important; /* leve acabamento interno que disfarça hairlines */
+}
+
+/* High-specificity fallback: use widget ID to ensure margins from :root are applied
+   This covers cases where other stylesheets loaded later override the class rules. */
+#widget-meta > .data-header-integrada,
+#widget-meta .data-header-integrada {
+  margin-left: 0 !important; /* ensure no container-level left margin from fallback */
+}
+
+/* Correção visual: garantir que o header fique perfeitamente colado
+   aos cantos arredondados do bloco pai (remove pequenos gaps causados
+   por backgrounds semi-transparente, bordas ou anti-aliasing). */
+.widget-meta-item {
+  overflow: hidden !important; /* garante que os cantos arredondados clipem filhos */
+  -webkit-background-clip: padding-box !important;
+  background-clip: padding-box !important;
+}
+
+.widget-meta-item .data-header-integrada {
+  margin-top: 0 !important; /* remover qualquer margem residual */
+  border-top-left-radius: inherit !important; /* herdar o raio do pai */
+  border-top-right-radius: inherit !important; /* herdar o raio do pai */
+  -webkit-background-clip: padding-box !important; /* evita linha fina entre bordas */
+  background-clip: padding-box !important;
+  /* força uma composição de camada que reduz artefatos visuais em alguns navegadores */
+  transform: translateZ(0);
+}
+
+/* Garantir que containers que contenham o header não recebam margin/padding
+   que empurre todo o bloco. Usa :has() quando suportado; fallback com seletores
+   mais específicos para navegadores sem :has(). */
+.widget-meta-item:has(.data-header-integrada),
+.widget-meta-container:has(.data-header-integrada),
+.bloco-1:has(.data-header-integrada) {
+  margin-top: 0 !important;
+  padding-top: 0 !important;
+}
+
+/* Fallback amplo para navegadores sem suporte a :has():
+   Anula regras comuns que possam aplicar margin-top ao container. */
+.widget-meta-item .data-header-integrada ~ *,
+.widget-meta-item > .widget-conteudo-principal,
+.bloco-1 > .widget-conteudo-principal,
+.bloco-1 > .container-resumos {
+  margin-top: 0 !important;
+  padding-top: 0 !important;
 }
 
 /* Quando a seleção de período estiver dentro do header, anular a posição fixed global */
 .data-header-integrada .periodo-selecao-container {
-  position: relative !important;
-  top: auto !important;
-  left: auto !important;
-  margin-left: 0 !important;
-  z-index: 51 !important;
+  /* Ensure the period selector remains fixed in the viewport and does not
+     shift when the date text width changes. Uses root variables for position. */
+  position: fixed !important;
+  top: var(--periodo-selecao-top, 22px) !important;
+  left: var(--periodo-selecao-margin-left, 0px) !important;
+  margin-left: 0 !important; /* left handled by `left` above */
+  z-index: 999 !important;
 }
 
 /* Reservar espaço no conteúdo principal para o header absoluto */
@@ -1034,24 +1584,88 @@ body .mentor-item:not(.sem-valores) .mentor-rank-externo {
 .data-texto-compacto {
   display: flex;
   align-items: center;
-  gap: 8px;
+  gap: 4px; /* reduzido para aproximar o texto do ícone */
   flex: 0 0 auto;
 }
 
+/* Make icon and date align on the text baseline so icon can be nudged up
+   without moving the whole block. Use baseline and allow per-element transform. */
+.data-header-integrada .data-texto-compacto {
+  /* Use center alignment to keep icon visually beside the date (matches bloco 2) */
+  align-items: center !important;
+  /* Apply left offset only to the date+icon group */
+  margin-left: var(--data-header-margin-left) !important;
+}
+
+/* Apply root-controlled margin-top so the selection can be nudged without editing markup */
+.periodo-selecao-container {
+  margin-top: var(--periodo-selecao-margin-top) !important;
+}
+
 .data-header-integrada .fa-solid.fa-calendar-days {
-  font-size: clamp(12px, 2.5vw, 16px); /* Fonte responsiva */
-  color: white;
-  margin-right: 5px;
-  filter: drop-shadow(0 2px 4px rgba(0, 0, 0, 0.3));
+  display: inline-block !important; /* permitir deslocamento vertical */
+  font-size: 13px !important; /* seguir bloco 2 (ícone maior) */
+  vertical-align: middle !important;
+  color: #6a0dad !important;
+  margin-right: 2px !important; /* aproximar do texto (reduzido) */
+  -webkit-transform: translateY(var(--data-header-icon-margin-top)) !important;
+  transform: translateY(var(--data-header-icon-margin-top)) !important;
+  will-change: transform;
+  transition: transform 220ms ease, color 260ms ease, opacity 220ms ease;
+}
+
+/* Generic header icon rules: apply to all calendar icon variants so JS swapping
+   classes doesn't change positioning/flow. Keeps icon inline and uses transform
+   for vertical offset. */
+.data-header-integrada .fa-solid.fa-calendar-days,
+.data-header-integrada .fa-solid.fa-calendar-day,
+.data-header-integrada .fa-solid.fa-calendar {
+  display: inline-block !important;
+  position: static !important;
+  float: none !important;
+  vertical-align: middle !important;
+  margin: 0 2px 0 0 !important; /* margin-right reduzida para consistência */
+  /* Force consistent icon size across periods */
+  font-size: 13px !important;
+  -webkit-transform: translateY(var(--data-header-icon-margin-top)) !important;
+  transform: translateY(var(--data-header-icon-margin-top)) !important;
+  transition: transform 220ms ease, color 260ms ease, opacity 220ms ease;
 }
 
 .data-principal-integrada {
-  font-size: clamp(10px, 2.2vw, 14px); /* Fonte responsiva */
-  font-weight: 700;
-  color: white;
-  text-shadow: 0 2px 4px rgba(0, 0, 0, 0.3);
+  display: inline-block !important; /* manter no fluxo, mas permitir transform sem mover o pai */
+  font-size: 13px !important; /* seguir bloco 2 (texto do título) */
+  font-weight: 600 !important;
+  line-height: 1 !important; /* igual ao .titulo-bloco do bloco 2 */
+  color: #6a0dad !important;
   letter-spacing: 0.5px;
   white-space: nowrap;
+  transform: translateY(
+    var(--data-header-margin-top)
+  ) !important; /* aplicar deslocamento visual apenas ao texto */
+  -webkit-transform: translateY(var(--data-header-margin-top)) !important;
+  will-change: transform;
+  transition: opacity 260ms ease, transform 220ms ease;
+}
+
+/* Remove text-shadow for date and calendar icon in header to ensure no shadow appears */
+#data-header .data-texto-compacto > .data-principal-integrada,
+#data-header .data-texto-compacto > i {
+  text-shadow: none !important;
+}
+
+/* Strong override: ensure icon and date stay inline beside each other
+   Prevent any rules (inline styles or other sheets) from absolutely positioning
+   or floating the icon out of the flow. */
+.data-header-integrada .data-texto-compacto > i,
+.data-header-integrada .data-texto-compacto > .data-principal-integrada {
+  position: static !important;
+  top: auto !important;
+  left: auto !important;
+  float: none !important;
+  display: inline-block !important;
+  vertical-align: middle !important;
+  margin: 0 !important;
 }
 
 /* Placar centralizado */
@@ -1279,7 +1893,7 @@ body .mentor-item:not(.sem-valores) .mentor-rank-externo {
 }
 
 /* Mantém espaçamento interno legível quando o conteúdo está rolando */
-.widget-conteudo-principal > * {
+.widget-conteudo-principal {
   box-sizing: border-box;
 }
 
@@ -1922,6 +2536,31 @@ body .mentor-item:not(.sem-valores) .mentor-rank-externo {
   backdrop-filter: blur(10px);
 }
 
+/* FORCE: make bloco-1 header visually match bloco-2 top to remove hairline/seam */
+.bloco-1 .widget-meta-item .data-header-integrada {
+  /* restore original gradient look but keep composition hints for sharp edges */
+  background: linear-gradient(
+    90deg,
+    #9ea39d 0%,
+    #b5cfb1 50%,
+    #abb3ab 100%
+  ) !important;
+  color: #ffffff !important; /* header uses white text for contrast */
+  box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.02) !important; /* subtle inner finish to keep contour crisp */
+  -webkit-backface-visibility: hidden !important;
+  backface-visibility: hidden !important;
+  -webkit-transform: translateZ(0) !important;
+  transform: translateZ(0) !important;
+  background-clip: padding-box !important;
+}
+
+.bloco-1 .widget-meta-item .data-header-integrada .fa-solid,
+.bloco-1 .widget-meta-item .data-header-integrada .data-principal-integrada {
+  color: #6a0dad !important;
+  text-shadow: 0 2px 4px rgba(0, 0, 0, 0.3) !important;
+  font-weight: 600 !important;
+}
+
 .titulo-bloco {
   font-size: clamp(16px, 4vw, 22px);
   font-weight: 700;
@@ -2040,8 +2679,14 @@ p {
    ==========================================================================================================================================================*/
 .periodo-selecao-container {
   position: fixed;
-  top: 22px; /* Distância do topo da tela */
-  margin-left: 200px; /* Distância da esquerda */
+  top: var(
+    --periodo-selecao-top,
+    22px
+  ) !important; /* Distância do topo da tela (controlada por :root) */
+  margin-left: var(
+    --periodo-selecao-margin-left,
+    200px
+  ) !important; /* controlled from :root */
   display: flex;
   align-items: center;
   gap: 15px;
@@ -4168,21 +4813,22 @@ p {
 
 /* ===== FORCE: remover qualquer margem/padding superior que impeça itens de colar ao topo do bloco-1 ===== */
 /* Alta especificidade + !important para sobrepor regras anteriores sem alterar estrutura */
+/* Limita o reset apenas aos containers principais do bloco-1
+   para não forçar margens/paddings em todos os descendentes. */
 html body .main-content .container > .bloco.bloco-1,
-html body .main-content .container > .bloco.bloco-1 *,
 .bloco-1,
-.bloco-1 *,
 .bloco-1 > .container-resumos,
-.bloco-1 > .container-resumos * {
+.bloco-1 > .widget-meta-item,
+.bloco-1 > .widget-conteudo-principal,
+.bloco-1 > .mentor-wrapper {
   margin-top: 0 !important;
   padding-top: 0 !important;
 }
 
-/* Garantir que headers sticky coller ao topo do seu scroll container */
-.bloco-1 .widget-meta-item .data-header-integrada,
-.bloco-1 .widget-meta-item .data-header-integrada * {
+/* Garantir que headers sticky coler ao topo do seu scroll container */
+.bloco-1 .widget-meta-item .data-header-integrada {
   margin-top: 0 !important;
-  top: 0 !important;
+  transform: none !important; /* container must not translate; child text will */
   padding-top: 0 !important;
 }
 
@@ -4196,6 +4842,18 @@ html body .main-content .container > .bloco.bloco-1 *,
 
 /* Pequeno utilitário: se precisar reverter visualmente sem editar o código, comente a regra abaixo */
 .bloco-1.force-top-reset {
+  margin-top: 0 !important;
+  padding-top: 0 !important;
+}
+
+/* Final override: ensure no header container uses the header var to shift the whole block.
+   Only the child `.data-principal-integrada` should be translated. */
+.widget-meta-item .data-header-integrada,
+.bloco-1 .widget-meta-item .data-header-integrada,
+.widget-meta-container .data-header-integrada,
+#widget-meta > .data-header-integrada,
+#widget-meta .data-header-integrada {
+  transform: none !important;
   margin-top: 0 !important;
   padding-top: 0 !important;
 }
