@@ -25,6 +25,56 @@ const CONFIG = {
   AVATAR_PADRAO: "https://cdn-icons-png.flaticon.com/512/847/847969.png",
 };
 
+// Toggle separator visibility for the daily placar (#pontuacao)
+document.addEventListener("DOMContentLoaded", function () {
+  try {
+    const placar = document.getElementById("pontuacao");
+    if (!placar) return;
+
+    function atualizarEstadoPlacar() {
+      const green = placar.querySelector(".placar-green");
+      const red = placar.querySelector(".placar-red");
+      const temValores =
+        (green && green.textContent.trim() !== "") ||
+        (red && red.textContent.trim() !== "");
+      if (temValores) {
+        placar.classList.add("placar-has-values");
+      } else {
+        placar.classList.remove("placar-has-values");
+      }
+
+      // Ensure the separador font-size follows the root variable (--fs-placar-top)
+      // and override any stylesheet rules (including those using !important).
+      try {
+        const separador = placar.querySelector(".separador");
+        if (separador) {
+          const rootStyle = getComputedStyle(document.documentElement);
+          // Prefer bloco-1 specific variable, fallback to general one
+          const fsB1 = rootStyle.getPropertyValue("--fs-placar-top-b1") || "";
+          const fs = fsB1.trim() || (rootStyle.getPropertyValue("--fs-placar-top") || "").trim();
+          if (fs) {
+            separador.style.setProperty("font-size", fs, "important");
+          }
+          // Apply font-weight from root variable and force with important (default to 300)
+          const fwRaw = rootStyle.getPropertyValue("--fs-placar-weight") || "";
+          const fw = fwRaw.trim() || '300';
+          separador.style.setProperty('font-weight', fw, 'important');
+        }
+      } catch (e) {
+        // silently ignore if environment doesn't support setProperty priority
+      }
+    }
+
+    // Run once and then observe mutations to update when values change
+    atualizarEstadoPlacar();
+
+    const mo = new MutationObserver(atualizarEstadoPlacar);
+    mo.observe(placar, { childList: true, subtree: true, characterData: true });
+  } catch (e) {
+    console.warn("Erro ao inicializar placar auto-toggle", e);
+  }
+});
+
 // ✅ UTILITÁRIOS GERAIS
 const Utils = {
   // Converte valor BRL para número
@@ -1050,6 +1100,15 @@ const MentorManager = {
         card.classList.add("card-neutro");
       }
 
+          // Apply font-weight from root variable and force with important
+          try {
+            const fw = rootStyle.getPropertyValue('--fs-placar-weight') || '';
+            if (fw && fw.trim() !== '') {
+              separador.style.setProperty('font-weight', fw.trim(), 'important');
+            }
+          } catch (e) {
+            // ignore
+          }
       // Garante que as imagens têm fallback
       const img = card.querySelector(".mentor-img");
       if (img && !img.hasAttribute("onerror")) {
@@ -3892,8 +3951,8 @@ function criarBadgeMeta() {
     return false;
   }
 
-  // Garantir position relative no container
-  container.style.position = "relative";
+  // Garantir que o container seja reconhecido para posicionamento via CSS
+  container.classList.add("meta-badge-container");
 
   // Criar badge
   const badge = document.createElement("div");
@@ -3901,11 +3960,8 @@ function criarBadgeMeta() {
   badge.className = "meta-tipo-badge meta-turbo";
   badge.textContent = "META TURBO";
 
-  // Estilos base
+  // Estilos base (visuais) - posicionamento deixado para CSS
   badge.style.cssText = `
-        position: absolute !important;
-        right: 53px !important;
-        top: 0px !important;
         color: white !important;
         font-size: 8px !important;
         font-weight: 700 !important;

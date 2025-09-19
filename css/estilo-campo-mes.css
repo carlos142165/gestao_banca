@@ -680,7 +680,7 @@ body .mentor-item:not(.sem-valores) .mentor-rank-externo {
   -------------------------------------------------- */
   --lista-dias-margin-top: 20px; /*  lista de dias ( DATA - PLACAR - VALOR ) */
   --widget-meta-valor-2-margin-top: 5px; /* valor  da meta */
-  --rotulo-restando-meta-mes-margin-top: -10px; /* 'Restando p/ Meta do Mês' */
+  --rotulo-restando-meta-mes-margin-top: -11px; /* 'Restando p/ Meta do Mês' */
   --widget-barra-container-2-margin-top: 5px; /*barra de progresso */
   --rotulo-saldo-bloco2-margin-top: 0px; /* rótulo + saldo  */
   --titulo-mes-margin-top: 0px; /*  DATA (ex: 'SETEMBRO 2025') */

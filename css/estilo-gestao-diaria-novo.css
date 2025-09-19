@@ -2,7 +2,17 @@
      - ROOT VARIABLES (CONSOLIDADO) - CONTROLE INDIVIDUAL DE CADA ELEMENTO
   =======================================================================================================================================================*/
 :root {
-  /* DIMENSÕES GERAIS */
+  /**/
+  /**/
+  /**/
+  /**/
+  /**/
+  /**/
+  /* --------------------------------------------------
+    ALTURA - LARGURA - ALTURA - LARGURA - 
+  -------------------------------------------------- */
+  --btn-add-usuario-size: clamp(30px, 6vw, 30px); /* Botão adicionar Mentor*/
+
   --bloco1-max-height: calc(100vh - 80px);
   --bloco1-padding-left: 0;
   --widget-meta-max-height: min(520px, 62vh);
@@ -15,19 +25,84 @@
   --value-box-saldo-min-width: clamp(80px, 16vw, 120px);
   --mentor-wrapper-scrollbar-width: 8px;
   --bloco1-scrollbar-thumb: rgba(0, 0, 0, 0.2);
-
-  /* MARGIN TOP - CONTROLES VERTICAIS */
+  /* --------------------------------------------------
+    ALTURA - LARGURA - ALTURA - LARGURA - 
+  -------------------------------------------------- */
+  /**/
+  /**/
+  /**/
+  /**/
+  /**/
+  /* --------------------------------------------------
+   - MARGIN TOP - MARGIN TOP - MARGIN TOP -
+  -------------------------------------------------- */
   --data-header-margin-top: -15px !important; /* Data do dia */
   --data-header-icon-margin-top: -15px !important; /* icone calendario */
   --periodo-selecao-top: 22px !important; /* Periodo (DIA - MÊS - ANO ) */
   --periodo-selecao-margin-top: 0px !important; /* Periodo (DIA - MÊS - ANO ) */
+  --widget-conteudo-principal-margin-top: 14px; /* Campo: ( valor meta - meta fixa - rotulo - barra de progresso +++  ) */
+  --widget-meta-valor-margin-top: 12px; /* valor meta */
+  --widget-meta-rotulo-margin-top: -3px !important; /* rótulo da meta (ex: 'Resta p/ Meta do Dia') */
+  --widget-barra-container-margin-top: 8px !important; /* Barra de progresso */
+  --saldo-info-margin-top: 10px !important; /* Saldo ( POSITIVO / NEGATIVO ) */
+  --meta-badge-top: 12px !important; /* Meta Fixa / Meta Turbo */
+  --btn-add-usuario-margin-top: 0px !important; /* Botão adicionar Mentor*/
+  --area-central-margin-top: 0px; /* Campo : ( PLACAR ) */
+  --area-direita-margin-top: 0px; /* Campo: ( PORCENTAGEM / UNIDADE) */
+  /* --------------------------------------------------
+   - MARGIN TOP - MARGIN TOP - MARGIN TOP -
+  -------------------------------------------------- */
+  /**/
+  /**/
+  /**/
+  /**/
+  /**/
+  /* --------------------------------------------------
+   - MARGIN LEFT - MARGIN RIGHT - MARGIN LEFT -
+  -------------------------------------------------- */
+  --data-header-margin-left: 0px !important; /* Data do dia */
+  --periodo-selecao-margin-left: 250px !important; /* Periodo (DIA - MÊS - ANO ) */
+  --widget-meta-valor-margin-left: 5px; /* valor meta */
+  --widget-meta-rotulo-margin-left: 5px; /* rótulo da meta (ex: 'Meta do Dia') */
+  --widget-barra-container-margin-left: 5px; /* Barra de progresso */
+  --rotulo-meta-margin-left: var(
+    --widget-meta-rotulo-margin-left
+  ); /* rótulo da meta (ex: 'Meta do Dia') */
+  --saldo-info-margin-left: 5px !important; /* Saldo ( POSITIVO / NEGATIVO ) */
+  --meta-badge-right: 56px !important; /* Meta Fixa / Meta Turbo */
+  --meta-badge-left: auto !important; /* Meta Fixa / Meta Turbo */
+  --btn-add-usuario-margin-left: 10px; /* Botão adicionar Mentor*/
+  --area-central-margin-left: -10px; /* Campo: ( PLACAR ) */
+  --pontuacao-gap: clamp(8px, 2vw, 20px); /* Separar ( PLACAR ) */
+  --area-direita-margin-left: 250px; /* Campo: ( PORCENTAGEM / UNIDADE) */
+  --area-direita-porcentagem-margin-left: 0px;
+  --area-direita-valor-unidade-margin-left: -2px;
 
+  /* --------------------------------------------------
+   - MARGIN LEFT - MARGIN LEFT - MARGIN LEFT -
+  -------------------------------------------------- */
+  /**/
+  /**/
+  /**/
+  /**/
+  /**/
+  /* --------------------------------------------------
+   - FONTE - FONTE  - FONTE - FONTE
+  -------------------------------------------------- */
+  --fs-placar-top-b1: 16px; /* ( SEPARADOR PLACAR ) */
+
+  /* --------------------------------------------------
+   - FONTE - FONTE  - FONTE - FONTE
+  -------------------------------------------------- */
+  /**/
+  /**/
+  /**/
+  /**/
+  /**/
   --container-resumos-margin-top: 15px;
   --mentor-img-margin-top: 5px;
   --mentor-nome-margin-top: 2px;
   --widget-meta-valor-margin-bottom: 8px;
-  --widget-meta-rotulo-margin-bottom: 15px;
-  --widget-barra-container-margin-top: 5px;
   --widget-info-progresso-margin-top: 0;
   --campo-mentores-margin-top: 0px;
   --mentor-wrapper-margin-top: 10px;
@@ -35,28 +110,32 @@
   --mentor-card-margin-top: 0;
   --valor-ultrapassou-margin-top: -9px;
   --valor-ultrapassou-margin-bottom: 10px;
-  --saldo-info-margin-top: 10px;
+  --widget-conteudo-principal-margin-bottom: 12px; /* Campo: ( valor meta - meta fixa - rotulo - barra de progresso +++  ) */
   --nome-arquivo-margin-top: 10px;
   --botoes-formulario-margin-top: 20px;
   --modal-texto-margin-bottom: 30px;
   --grupo-barra-margin-bottom-clamp: clamp(15px, 3vw, 20px);
   --titulo-bloco-margin-bottom-clamp: clamp(15px, 3vw, 20px);
   --bloco-meta-simples-margin-bottom-clamp: clamp(15px, 3vw, 20px);
-  --widget-conteudo-principal-margin: 20px 0;
+  --widget-conteudo-principal-margin: 0;
+  --global-margin-top: 8px !important;
+  /* Font size for placar top (match bloco-2) */
 
-  /* MARGIN LEFT - CONTROLES HORIZONTAIS */
-  --data-header-margin-left: 0px !important; /* Data do dia */
-  --periodo-selecao-margin-left: 250px !important; /* Periodo (DIA - MÊS - ANO ) */
-  --widget-meta-valor-margin-left: 0;
-  --widget-meta-rotulo-margin-left: 30px;
-  --rotulo-meta-margin-left: 0;
+  /**/
+  /**/
+  /**/
+  /**/
+  /**/
+
   --widget-info-progresso-margin-left: 0;
   --mentor-img-margin-left: 0;
   --mentor-nome-margin-left: 0;
   --valor-ultrapassou-margin-left: 0;
   --mentor-card-sem-valores-margin-left: 0;
-  --btn-add-usuario-margin-left: 10px;
-  --area-direita-margin-left: 240px;
+  --btn-add-usuario-width: var(--btn-add-usuario-size);
+  --btn-add-usuario-height: var(--btn-add-usuario-size);
+
+  /* control top offset for the right area */
   --mentor-menu-externo-margin-left: 6px;
   --mentor-wrapper-margin-left: 0;
   --mentor-right-margin-right: 6px;
@@ -64,7 +143,8 @@
   --separador-red-left: -12px;
   --separador-red-left-ajuste: -10px;
   --conteudo-left-margin-left: 15%;
-
+  /* Placar (pontuação) spacing controls */
+  --separador-margin: clamp(4px, 1vw, 8px);
   /* PADDING */
   --bloco1-padding-right: 0;
   --mentor-values-inline-padding: 0 8px;
@@ -73,7 +153,7 @@
 
   /* RESPONSIVIDADE */
   --periodo-selecao-margin-left-mobile: 15px;
-  --widget-meta-rotulo-margin-left-mobile: 0;
+  --widget-meta-rotulo-margin-left-mobile: 12px;
   --area-direita-padding-mobile: clamp(2px, 0.5vw, 4px);
   --periodo-selecao-margin-left-small: 10px;
   --area-direita-padding-small: 2px;
@@ -157,8 +237,19 @@
 }
 .widget-meta-valor,
 #meta-valor {
+  display: inline-flex !important;
+  align-items: center !important;
+  gap: 8px !important;
+  margin-top: var(--widget-meta-valor-margin-top) !important;
   margin-bottom: var(--widget-meta-valor-margin-bottom) !important;
   margin-left: var(--widget-meta-valor-margin-left) !important;
+}
+
+/* Fallback high-specificity rule to ensure separador font-size/weight follow root variables
+   This helps when other stylesheets apply strong overrides. */
+#pontuacao .separador {
+  font-size: var(--fs-placar-top-b1, var(--fs-placar-top)) !important;
+  font-weight: var(--fs-placar-weight) !important;
 }
 .widget-meta-rotulo {
   margin-bottom: var(--widget-meta-rotulo-margin-bottom) !important;
@@ -167,8 +258,38 @@
 #rotulo-meta {
   margin-left: var(--rotulo-meta-margin-left) !important;
 }
+.widget-meta-rotulo,
+#rotulo-meta {
+  margin-top: var(--widget-meta-rotulo-margin-top) !important;
+}
 .widget-barra-container {
   margin-top: var(--widget-barra-container-margin-top) !important;
+  margin-left: var(--widget-barra-container-margin-left) !important;
+}
+/* Container class used by JS to allow CSS-driven badge positioning */
+.meta-badge-container {
+  position: relative !important;
+}
+
+/* Meta type badge positioned via root variables */
+.meta-badge-container .meta-tipo-badge,
+#meta-tipo-badge {
+  position: absolute !important;
+  top: var(--meta-badge-top) !important;
+  right: var(--meta-badge-right) !important;
+  left: var(--meta-badge-left) !important;
+  color: white !important;
+  font-size: 8px !important;
+  font-weight: 700 !important;
+  text-transform: uppercase !important;
+  letter-spacing: 0.3px !important;
+  padding: 4px 8px !important;
+  border-radius: 12px !important;
+  z-index: 999 !important;
+  white-space: nowrap !important;
+  display: block !important;
+  visibility: visible !important;
+  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif !important;
 }
 .widget-info-progresso {
   margin-top: var(--widget-info-progresso-margin-top) !important;
@@ -197,6 +318,7 @@
 }
 #saldo-info {
   margin-top: var(--saldo-info-margin-top) !important;
+  margin-left: var(--saldo-info-margin-left) !important;
 }
 .widget-conteudo-principal {
   margin-top: var(--widget-conteudo-principal-margin-top) !important;
@@ -207,6 +329,7 @@
 }
 .btn-add-usuario {
   margin-left: var(--btn-add-usuario-margin-left) !important;
+  margin-top: var(--btn-add-usuario-margin-top) !important;
 }
 .barra-superior .area-direita {
   margin-left: var(--area-direita-margin-left) !important;
@@ -465,7 +588,10 @@ BLOCOS E WIDGETS
 
 /* Conteúdo principal do widget */
 .widget-conteudo-principal {
-  margin: var(--widget-conteudo-principal-margin) !important;
+  margin-top: var(--widget-conteudo-principal-margin-top) !important;
+  margin-bottom: var(--widget-conteudo-principal-margin-bottom) !important;
+  margin-left: 0 !important;
+  margin-right: 0 !important;
 }
 
 /* --------------------------------------------------
@@ -508,7 +634,6 @@ html body .main-content .container > .bloco.bloco-1,
 .bloco-1,
 .bloco-1 > .container-resumos,
 .bloco-1 > .widget-meta-item,
-.bloco-1 > .widget-conteudo-principal,
 .bloco-1 > .mentor-wrapper {
   margin-top: 0 !important;
   padding-top: 0 !important;
@@ -1497,6 +1622,12 @@ body .mentor-item:not(.sem-valores) .mentor-rank-externo {
   align-items: center;
   justify-content: space-between;
   padding: 0 12px !important; /* padding interno reduzido */
+  /* High-specificity fallback: garantir margin-left da barra de progresso */
+  #widget-meta .widget-barra-container,
+  .widget-meta-item .widget-barra-container,
+  .widget-barra-container {
+    margin-left: var(--widget-barra-container-margin-left) !important;
+  }
   box-sizing: border-box;
   position: -webkit-sticky !important; /* support for older Safari */
   position: sticky !important; /* stick to the top of its scroll container */
@@ -1556,8 +1687,6 @@ body .mentor-item:not(.sem-valores) .mentor-rank-externo {
 /* Fallback amplo para navegadores sem suporte a :has():
    Anula regras comuns que possam aplicar margin-top ao container. */
 .widget-meta-item .data-header-integrada ~ *,
-.widget-meta-item > .widget-conteudo-principal,
-.bloco-1 > .widget-conteudo-principal,
 .bloco-1 > .container-resumos {
   margin-top: 0 !important;
   padding-top: 0 !important;
@@ -1673,7 +1802,7 @@ body .mentor-item:not(.sem-valores) .mentor-rank-externo {
   display: flex;
   align-items: center;
   justify-content: center;
-  gap: clamp(8px, 2vw, 15px); /* Gap responsivo */
+  gap: var(--pontuacao-gap); /* Gap responsivo via :root */
   color: white;
   font-size: clamp(16px, 4vw, 24px); /* Fonte responsiva */
   font-weight: 700;
@@ -1696,10 +1825,23 @@ body .mentor-item:not(.sem-valores) .mentor-rank-externo {
 }
 
 .separador {
-  color: rgba(219, 219, 219, 0.9);
-  font-size: clamp(14px, 3vw, 20px); /* Fonte responsiva */
+  /* default hidden state while waiting for values */
+  color: transparent;
+  opacity: 0;
+  font-size: var(--fs-placar-top); /* match bloco-2 */
   font-weight: 300;
-  margin: 0 clamp(4px, 1vw, 8px); /* Margin responsiva */
+  margin: 0 var(--separador-margin); /* Margin responsiva via :root */
+  transition: color 180ms ease, opacity 180ms ease;
+}
+
+#pontuacao.placar-has-values .separador {
+  color: rgba(
+    109,
+    107,
+    107,
+    0.95
+  ) !important; /* normal gray separator like bloco-2 */
+  opacity: 1 !important;
 }
 
 /* AREA DIREITA TOPO FIXO */
@@ -1714,7 +1856,8 @@ body .mentor-item:not(.sem-valores) .mentor-rank-externo {
   justify-self: end;
   flex-shrink: 0;
   padding: clamp(4px, 1vw, 8px);
-  margin-left: 240px;
+  margin-left: var(--area-direita-margin-left) !important;
+  margin-top: var(--area-direita-margin-top) !important;
 }
 
 /* Elementos de valor dinâmico APENAS dentro da .area-direita */
@@ -1746,12 +1889,16 @@ body .mentor-item:not(.sem-valores) .mentor-rank-externo {
 .barra-superior .area-direita .valor-diaria .fas.fa-university {
   color: #3498db;
   font-size: clamp(10px, 2vw, 12px);
+  margin-right: var(--area-direita-icon-margin-left);
+  margin-top: var(--area-direita-icon-margin-top);
 }
 
 .barra-superior .area-direita #porcentagem-diaria {
   color: #3498db;
   font-weight: 700;
   text-shadow: 0 1px 2px rgba(52, 152, 219, 0.3);
+  margin-left: var(--area-direita-porcentagem-margin-left);
+  margin-top: var(--area-direita-porcentagem-margin-top);
 }
 
 /* ===== RÓTULO E VALOR DA UNIDADE - APENAS na .area-direita ===== */
@@ -1765,12 +1912,16 @@ body .mentor-item:not(.sem-valores) .mentor-rank-externo {
   font-size: clamp(9px, 1.8vw, 10px);
   text-transform: uppercase;
   letter-spacing: 0.5px;
+  margin-left: var(--area-direita-rotulo-unidade-margin-left);
+  margin-top: var(--area-direita-rotulo-unidade-margin-top);
 }
 
 .barra-superior .area-direita #valor-unidade {
   color: #28a745;
   font-weight: 700;
   text-shadow: 0 1px 2px rgba(39, 174, 96, 0.3);
+  margin-left: var(--area-direita-valor-unidade-margin-left);
+  margin-top: var(--area-direita-valor-unidade-margin-top);
 }
 
 /* ===== ANIMAÇÕES DE ATUALIZAÇÃO - APENAS na .area-direita ===== */
@@ -1961,8 +2112,8 @@ body .mentor-item:not(.sem-valores) .mentor-rank-externo {
   font-size: clamp(12px, 2.5vw, 16px); /* Fonte responsiva */
   border: 2px solid #27ae60;
   border-radius: 50%;
-  width: clamp(32px, 6vw, 33px); /* Largura responsiva */
-  height: clamp(32px, 6vw, 33px); /* Altura responsiva */
+  width: var(--btn-add-usuario-width); /* Largura responsiva via :root */
+  height: var(--btn-add-usuario-height); /* Altura responsiva via :root */
   cursor: pointer;
   transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
   display: flex;
@@ -1972,7 +2123,7 @@ body .mentor-item:not(.sem-valores) .mentor-rank-externo {
   overflow: hidden;
   box-shadow: 0 2px 6px rgba(39, 174, 96, 0.2);
   flex-shrink: 0; /* Impede que o botão diminua */
-  margin-left: 10px;
+  margin-left: var(--btn-add-usuario-margin-left) !important;
 }
 
 .btn-add-usuario:hover {
@@ -1989,8 +2140,8 @@ body .mentor-item:not(.sem-valores) .mentor-rank-externo {
 
 .area-central {
   position: absolute;
-  left: 50%;
-  top: 50%;
+  left: calc(50% + var(--area-central-margin-left));
+  top: calc(50% + var(--area-central-margin-top));
   transform: translate(-50%, -50%);
   display: flex;
   align-items: center;
@@ -2809,7 +2960,9 @@ p {
   font-family: "Rajdhani", sans-serif !important;
   transition: all 0.3s ease !important;
   margin-bottom: 8px !important;
-  margin-left: 0px !important; /* ✅ Garantir que fique colado à esquerda */
+  margin-left: var(
+    --widget-meta-valor-margin-left
+  ) !important; /* controlled from :root */
   padding-left: 0 !important; /* ✅ Sem padding à esquerda */
   width: auto !important; /* ✅ Largura automática */
 }
@@ -2929,7 +3082,7 @@ p {
 
 /* Container do saldo - centralizado com a barra menor */
 #saldo-info {
-  margin-top: 10px !important;
+  margin-top: var(--saldo-info-margin-top) !important;
 }
 
 .saldo-info-container {
@@ -3142,19 +3295,21 @@ p {
    ADICIONAR ESTES ESTILOS PARA A BARRA
    ======================================== */
 
-/* Container da barra - SOBRESCREVER o estilo antigo */
+/* Container da barra - alinhado ao estilo do Bloco 2 */
 .widget-barra-container {
   background: #ecf0f1 !important;
   border-radius: 20px !important;
-  height: 22px !important;
+  height: 24px !important;
   position: relative !important;
   overflow: hidden !important;
+  /* Igual ao Bloco 2 */
   box-shadow: inset 0 2px 4px rgba(0, 0, 0, 0.1) !important;
-  margin-top: 5px !important;
-  width: 85% !important; /* ✅ Ocupa toda largura disponível */
+  margin-top: var(--widget-barra-container-margin-top) !important;
+  width: 330px !important;
+  max-width: 100% !important;
 }
 
-/* Barra de progresso - CORRIGIDA */
+/* Barra de progresso - mesmo estilo do Bloco 2 */
 .widget-barra-progresso {
   height: 100% !important;
   border-radius: 25px !important;
@@ -3162,9 +3317,8 @@ p {
   position: relative !important;
   display: flex !important;
   align-items: center !important;
-  /* REMOVER width: 65% que estava no CSS antigo */
-  background: none !important; /* Limpar background antigo */
-  box-shadow: none !important; /* Limpar shadow antigo */
+  background: none !important;
+  box-shadow: none !important;
   margin-top: 0px;
 }
 
@@ -3400,8 +3554,11 @@ p {
 .widget-meta-rotulo {
   font-size: 14px !important;
   color: #7f8c8d !important;
+  margin-top: var(--widget-meta-rotulo-margin-top) !important;
   margin-bottom: 15px !important;
-  margin-left: 30px !important; /* ✅ Alinhado à esquerda */
+  margin-left: var(
+    --widget-meta-rotulo-margin-left
+  ) !important; /* controlled from :root */
   padding-left: 0 !important; /* ✅ Sem padding */
   font-weight: 500 !important;
   text-transform: none !important;
@@ -3414,7 +3571,8 @@ p {
 #rotulo-meta {
   text-transform: none !important;
   /* NOVO: garantir que o rótulo fique colado no canto esquerdo do widget (alinhado ao ícone de moeda) */
-  margin-left: 0 !important;
+  margin-left: var(--rotulo-meta-margin-left) !important;
+  margin-top: var(--widget-meta-rotulo-margin-top) !important;
   padding-left: 0 !important;
   text-align: left !important;
   display: block !important;
@@ -3513,7 +3671,8 @@ p {
 /* Barra de progresso com destaque */
 .widget-conteudo-principal .widget-barra-container {
   /* Já tem seu próprio fundo #ecf0f1 */
-  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.08) !important;
+  /* Remover sombra externa; aplicar apenas sombra interna no topo (igual Bloco 2) */
+  box-shadow: inset 0 2px 4px rgba(0, 0, 0, 0.1) !important;
 }
 
 @media (max-width: 768px) {
@@ -3566,44 +3725,17 @@ p {
 @import url("https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap");
 
 /* Container principal dos modais */
-.modais-container {
-  font-family: "Inter", sans-serif;
-}
-
-/* ===== MODAL PRINCIPAL MODERNIZADO ===== */
-.modais-container .modal {
-  position: fixed;
-  top: 0;
-  left: 0;
-  width: 100%;
-  height: 100%;
-  background: rgba(0, 0, 0, 0.8);
-  backdrop-filter: blur(10px);
-  display: none;
-  align-items: center;
-  justify-content: center;
-  z-index: 1000;
-  opacity: 0;
-  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
-}
-
-.modais-container .modal.show {
-  opacity: 1;
-  display: flex;
-}
-
-/* Container do modal com design moderno */
-.modais-container .modal-conteudo {
-  background: #ffffff;
-  border-radius: 24px;
-  box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.25);
-  max-width: 500px;
-  width: 95%;
-  max-height: 90vh;
-  overflow: hidden;
-  position: relative;
-  transform: scale(0.9) translateY(20px);
-  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+.widget-barra-container {
+  background: #ecf0f1 !important;
+  border-radius: 20px !important;
+  height: 24px !important;
+  position: relative !important;
+  overflow: hidden !important;
+  /* Sombra interna mais fina para combinar com o Bloco 2 */
+  box-shadow: inset 0 1px 2px rgba(0, 0, 0, 0.06) !important;
+  margin-top: var(--widget-barra-container-margin-top) !important;
+  width: 330px !important;
+  max-width: 100% !important;
 }
 
 .modais-container .modal.show .modal-conteudo {
@@ -3621,6 +3753,13 @@ p {
   background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
   border-radius: 24px 24px 0 0;
   z-index: 1;
+}
+
+/* FORÇA: garantir que .widget-meta-valor respeite a variável do :root para margin-left */
+#meta-valor,
+.widget-meta-valor,
+.widget-meta-item .widget-meta-valor {
+  margin-left: var(--widget-meta-valor-margin-left) !important;
 }
 
 /* Botão fechar modernizado */
@@ -4856,4 +4995,35 @@ html body .main-content .container > .bloco.bloco-1,
   transform: none !important;
   margin-top: 0 !important;
   padding-top: 0 !important;
+}
+
+/* DEBUG / FORÇA: regra de alta especificidade para garantir que a
+   variável :root controle a margem superior do conteúdo do widget.
+   Remova após validação. */
+#widget-meta .widget-conteudo-principal,
+html body #widget-meta .widget-conteudo-principal,
+.bloco-1 #widget-meta .widget-conteudo-principal {
+  margin-top: var(--widget-conteudo-principal-margin-top) !important;
+}
+
+/* FORÇA: alinhar conteúdo do widget à esquerda e remover margin-left global do conteudo-left */
+#widget-meta .widget-conteudo-principal,
+.widget-meta-item #widget-meta .widget-conteudo-principal,
+.bloco-1 .widget-conteudo-principal {
+  text-align: left !important;
+  align-items: flex-start !important;
+}
+
+#widget-meta .widget-conteudo-principal .conteudo-left,
+.bloco-1 .widget-conteudo-principal .conteudo-left {
+  margin-left: 0 !important;
+  width: 100% !important;
+}
+
+/* High-specificity fallback: garantir margin-top/left para widget-info-progresso (remover após validação) */
+#widget-meta .widget-info-progresso,
+.widget-meta-item .widget-info-progresso,
+.widget-info-progresso {
+  margin-top: var(--widget-info-progresso-margin-top) !important;
+  margin-left: var(--widget-info-progresso-margin-left) !important;
 }
