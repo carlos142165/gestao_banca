@@ -12,6 +12,8 @@
     ALTURA - LARGURA - ALTURA - LARGURA - 
   -------------------------------------------------- */
   --btn-add-usuario-size: clamp(30px, 6vw, 30px); /* Botão adicionar Mentor*/
+  --lista-mentores-width: 90%; /* Campo: ( MENTORES ) */
+  --mentor-img-size: clamp(50px, 8vw, 50px); /* ( FOTO MENTOR ) */
 
   --bloco1-max-height: calc(100vh - 80px);
   --bloco1-padding-left: 0;
@@ -20,11 +22,11 @@
   --widget-conteudo-max-height: min(420px, 55vh);
   --mentor-card-height: 82px;
   --mentor-card-min-height: 82px;
-  --mentor-img-size: clamp(35px, 8vw, 50px);
-  --mentor-name-font-size: clamp(9px, 1.8vw, 12px);
+
   --value-box-saldo-min-width: clamp(80px, 16vw, 120px);
   --mentor-wrapper-scrollbar-width: 8px;
-  --bloco1-scrollbar-thumb: rgba(0, 0, 0, 0.2);
+
+  --bloco1-scrollbar-thumb: rgba(124, 117, 117, 0.911);
   /* --------------------------------------------------
     ALTURA - LARGURA - ALTURA - LARGURA - 
   -------------------------------------------------- */
@@ -49,6 +51,13 @@
   --btn-add-usuario-margin-top: 0px !important; /* Botão adicionar Mentor*/
   --area-central-margin-top: 0px; /* Campo : ( PLACAR ) */
   --area-direita-margin-top: 0px; /* Campo: ( PORCENTAGEM / UNIDADE) */
+  --area-direita-valor-unidade-wrapper-margin-top: -3px; /*( UNIDADE) */
+  --lista-mentores-margin-top: 18px; /* Campo: ( TODOS MENTORES ) */
+  --mentor-img-margin-top: 1px !important; /* ( FOTO MENTOR ) */
+  --mentor-nome-margin-top: 3px; /* ( NOME MENTOR ) */
+  --mentor-values-margin-top: 0px; /* PLACAR - MENTOR */
+  --value-box-saldo-margin-top: 0px; /* SALDO - MENTOR */
+
   /* --------------------------------------------------
    - MARGIN TOP - MARGIN TOP - MARGIN TOP -
   -------------------------------------------------- */
@@ -72,12 +81,19 @@
   --meta-badge-right: 56px !important; /* Meta Fixa / Meta Turbo */
   --meta-badge-left: auto !important; /* Meta Fixa / Meta Turbo */
   --btn-add-usuario-margin-left: 10px; /* Botão adicionar Mentor*/
-  --area-central-margin-left: -10px; /* Campo: ( PLACAR ) */
+  --area-central-margin-left: 20px; /* Campo: ( PLACAR ) */
   --pontuacao-gap: clamp(8px, 2vw, 20px); /* Separar ( PLACAR ) */
   --area-direita-margin-left: 250px; /* Campo: ( PORCENTAGEM / UNIDADE) */
-  --area-direita-porcentagem-margin-left: 0px;
-  --area-direita-valor-unidade-margin-left: -2px;
-
+  --area-direita-porcentagem-margin-left: 0px; /*( PORCENTAGEM ) */
+  --area-direita-valor-unidade-margin-left: -2px; /*( UNIDADE) */
+  --lista-mentores-margin-left: 16px; /* Campo: ( MENTORES ) */
+  --mentor-wrapper-scrollbar-offset: 5px; /* barra de rolagem lateral */
+  --mentor-img-margin-left: 0px; /* ( FOTO MENTOR ) */
+  --mentor-card-padding: 15px; /* Campo: ( TODOS MENTORES ) */
+  --mentor-rank-margin-left: 5px; /* rank */
+  --mentor-values-margin-left: 15px; /* PLACAR - MENTOR */
+  --value-box-saldo-margin-left: 0px !important; /* SALDO - MENTOR */
+  --mentor-menu-externo-margin-left: 10px; /* Menu externo (3 pontos) */
   /* --------------------------------------------------
    - MARGIN LEFT - MARGIN LEFT - MARGIN LEFT -
   -------------------------------------------------- */
@@ -90,6 +106,7 @@
    - FONTE - FONTE  - FONTE - FONTE
   -------------------------------------------------- */
   --fs-placar-top-b1: 16px; /* ( SEPARADOR PLACAR ) */
+  --mentor-name-font-size: clamp(9px, 1.8vw, 12px); /* ( NOME MENTOR ) */
 
   /* --------------------------------------------------
    - FONTE - FONTE  - FONTE - FONTE
@@ -100,14 +117,14 @@
   /**/
   /**/
   --container-resumos-margin-top: 15px;
-  --mentor-img-margin-top: 5px;
-  --mentor-nome-margin-top: 2px;
+  /* control top spacing for the mentors list */
+
   --widget-meta-valor-margin-bottom: 8px;
   --widget-info-progresso-margin-top: 0;
   --campo-mentores-margin-top: 0px;
   --mentor-wrapper-margin-top: 10px;
   --mentor-item-margin-bottom: 8px;
-  --mentor-card-margin-top: 0;
+
   --valor-ultrapassou-margin-top: -9px;
   --valor-ultrapassou-margin-bottom: 10px;
   --widget-conteudo-principal-margin-bottom: 12px; /* Campo: ( valor meta - meta fixa - rotulo - barra de progresso +++  ) */
@@ -128,7 +145,7 @@
   /**/
 
   --widget-info-progresso-margin-left: 0;
-  --mentor-img-margin-left: 0;
+
   --mentor-nome-margin-left: 0;
   --valor-ultrapassou-margin-left: 0;
   --mentor-card-sem-valores-margin-left: 0;
@@ -136,7 +153,8 @@
   --btn-add-usuario-height: var(--btn-add-usuario-size);
 
   /* control top offset for the right area */
-  --mentor-menu-externo-margin-left: 6px;
+
+  --mentor-menu-externo-margin-top: 0px;
   --mentor-wrapper-margin-left: 0;
   --mentor-right-margin-right: 6px;
   --value-box-saldo-margin-left: 10px;
@@ -302,6 +320,15 @@
   margin-top: var(--mentor-wrapper-margin-top) !important;
   margin-left: var(--mentor-wrapper-margin-left) !important;
 }
+
+/* Allow adjusting the top offset of the mentors list from :root */
+#listaMentores,
+.mentor-wrapper {
+  margin-top: var(--lista-mentores-margin-top) !important;
+  max-width: var(--lista-mentores-width) !important;
+  width: 100% !important;
+  margin-left: var(--lista-mentores-margin-left) !important;
+}
 .mentor-item {
   margin-bottom: var(--mentor-item-margin-bottom) !important;
 }
@@ -334,48 +361,57 @@
 .barra-superior .area-direita {
   margin-left: var(--area-direita-margin-left) !important;
 }
-.mentor-menu-externo {
-  margin-left: var(--mentor-menu-externo-margin-left) !important;
-}
-.mentor-right {
-  margin-right: var(--mentor-right-margin-right) !important;
-}
-.value-box-saldo {
-  margin-left: var(--value-box-saldo-margin-left) !important;
-}
-.mentor-values-inline > .value-box-red::before {
-  left: var(--separador-red-left-ajuste) !important;
-}
-.conteudo-left {
-  margin-left: var(--conteudo-left-margin-left) !important;
-}
-.bloco-1 {
-  padding-right: var(--bloco1-padding-right) !important;
-}
-.mentor-values-inline {
-  padding: var(--mentor-values-inline-padding) !important;
-}
-.porcentagem-fundo {
-  padding: var(--porcentagem-fundo-padding) !important;
-}
-.porcentagem-barra.pequeno .porcentagem-fundo {
-  padding: var(--porcentagem-fundo-padding-pequeno) !important;
+.mentor-wrapper {
+  /* Força um scrollbar fino em navegadores Firefox */
+  scrollbar-width: thin;
+  /* Default: hidden/invisible thumb (transparent) so scrollbar only appears perceptibly on hover */
+  scrollbar-color: transparent transparent; /* firefox: thumb color, track color */
 }
 
-/* RESPONSIVIDADE */
-@media (max-width: 768px) {
-  .periodo-selecao-container {
-    margin-left: var(
-      --periodo-selecao-margin-left-mobile,
-      var(--periodo-selecao-margin-left, 15px)
-    ) !important;
-  }
-  .widget-meta-rotulo {
-    margin-left: var(--widget-meta-rotulo-margin-left-mobile) !important;
-  }
-  .barra-superior .area-direita {
-    padding: var(--area-direita-padding-mobile) !important;
-  }
+.mentor-wrapper::-webkit-scrollbar {
+  width: calc(
+    var(--mentor-wrapper-scrollbar-width) -
+      var(--mentor-wrapper-scrollbar-offset)
+  ); /* visual width adjusted by offset */
+}
+
+.mentor-wrapper::-webkit-scrollbar-track {
+  background: rgba(0, 0, 0, 0.03); /* light track */
+  border-radius: 10px;
+}
+
+.mentor-wrapper::-webkit-scrollbar-thumb {
+  /* Default: almost transparent so it isn't visible until hover */
+  background: transparent;
+  border-radius: 10px;
+  transition: background-color 0.16s ease, box-shadow 0.12s ease;
+  border: 1px solid rgba(255, 255, 255, 0.06);
+}
+
+/* Hover: show a softer, weak gray (cinza fraco) — less contrast */
+.mentor-wrapper:hover {
+  scrollbar-color: rgba(160, 160, 160, 0.28) rgba(0, 0, 0, 0.04); /* firefox: weak gray thumb */
+}
+
+.mentor-wrapper:hover::-webkit-scrollbar-thumb,
+.mentor-wrapper::-webkit-scrollbar-thumb:hover {
+  background: rgba(160, 160, 160, 0.28); /* weaker gray on hover */
+  box-shadow: inset 0 0 0 1px rgba(0, 0, 0, 0.04);
+}
+
+/* Active (user clicks/drags the thumb): slightly darker gray for feedback */
+.mentor-wrapper::-webkit-scrollbar-thumb:active {
+  background: rgba(
+    120,
+    120,
+    120,
+    0.45
+  ) !important; /* darker but still subtle */
+}
+
+/* Firefox active state — use :focus-within on the container to approximate active drag */
+.mentor-wrapper:focus-within {
+  scrollbar-color: rgba(120, 120, 120, 0.45) rgba(0, 0, 0, 0.04);
 }
 
 @media (max-width: 480px) {
@@ -520,7 +556,8 @@ APLICAÇÃO DAS VARIÁVEIS - MARGIN LEFT
 
 /* Menu externo do mentor */
 .mentor-menu-externo {
-  margin-left: var(--mentor-menu-externo-margin-left);
+  margin-left: var(--mentor-menu-externo-margin-left) !important;
+  margin-top: var(--mentor-menu-externo-margin-top) !important;
 }
 
 /* Espaço para menu de opções */
@@ -696,6 +733,7 @@ html body .main-content .container > .bloco.bloco-1,
   white-space: nowrap;
   overflow: hidden;
   margin-right: 8px;
+  margin-left: var(--mentor-rank-margin-left) !important;
 
   /* Transição suave */
   transition: all 0.3s ease;
@@ -827,6 +865,17 @@ html body .main-content .container > .bloco.bloco-1,
 /* AJUSTE DE FONTE PARA NÚMEROS GRANDES */
 .mentor-rank-externo {
   font-size: 13px !important;
+}
+/* Fallback high-specificity rule to ensure the external menu uses root-controlled margins
+   This helps when other stylesheets or later blocks apply strong overrides. */
+body .mentor-item .mentor-menu-externo {
+  position: absolute !important;
+  right: 8px !important;
+  top: 50% !important;
+  transform: translateY(-50%) !important;
+  margin-left: var(--mentor-menu-externo-margin-left) !important;
+  margin-top: var(--mentor-menu-externo-margin-top) !important;
+  z-index: 100010 !important; /* keep above most elements */
 }
 
 /* Para ranks com 2 dígitos, fonte menor */
@@ -1190,9 +1239,11 @@ body .mentor-item:not(.sem-valores) .mentor-rank-externo {
   height: 76px !important; /* altura reduzida para comportar melhor */
   min-height: 76px !important;
 
-  /* Espaçamento interno otimizado */
-  padding: 8px 12px !important;
-  padding-right: 45px !important; /* espaço reduzido para menu */
+  /* Espaçamento interno otimizado (controlado por :root) */
+  padding: var(--mentor-card-padding) !important;
+  padding-right: calc(
+    var(--mentor-card-padding) + 40px
+  ) !important; /* mantém espaço para o menu */
 
   /* Visual */
   background-color: #f7f6f6;
@@ -1221,18 +1272,21 @@ body .mentor-item:not(.sem-valores) .mentor-rank-externo {
 
 /* Foto menor */
 .mentor-img {
-  width: 40px !important; /* tamanho reduzido */
-  height: 40px !important;
+  width: var(--mentor-img-size) !important; /* tamanho controlado por :root */
+  height: var(--mentor-img-size) !important;
   border-radius: 50%;
   object-fit: cover;
   border: 2px solid #00a651;
-  margin: 0 !important; /* remover margens */
+  /* Use :root variables for top/left margins so they can be customized */
+  margin-top: var(--mentor-img-margin-top) !important;
+  margin-left: var(--mentor-img-margin-left) !important;
 }
 
 /* Nome com fonte menor */
 .mentor-nome {
   font-size: 10px !important; /* fonte reduzida */
-  margin: 0 !important;
+  margin-top: var(--mentor-nome-margin-top) !important;
+  margin-left: var(--mentor-nome-margin-left) !important;
   color: #333;
   text-align: center;
   font-weight: 600;
@@ -1251,6 +1305,8 @@ body .mentor-item:not(.sem-valores) .mentor-rank-externo {
   height: 100%;
   align-items: center;
   padding-left: 5px;
+  margin-top: var(--mentor-values-margin-top) !important;
+  margin-left: var(--mentor-values-margin-left) !important;
 }
 
 /* Container dos valores inline */
@@ -1304,7 +1360,8 @@ body .mentor-item:not(.sem-valores) .mentor-rank-externo {
   right: 8px !important;
   top: 50% !important;
   transform: translateY(-50%) !important;
-  margin: 0 !important;
+  margin-left: var(--mentor-menu-externo-margin-left) !important;
+  margin-top: var(--mentor-menu-externo-margin-top) !important;
   z-index: 10;
 }
 
@@ -1808,8 +1865,9 @@ body .mentor-item:not(.sem-valores) .mentor-rank-externo {
   font-weight: 700;
 
   position: absolute;
-  left: 50%;
+  left: calc(50% + var(--pontuacao-margin-left));
   transform: translateX(-50%);
+  margin-top: var(--pontuacao-margin-top) !important;
 }
 
 .placar-green {
@@ -1904,6 +1962,10 @@ body .mentor-item:not(.sem-valores) .mentor-rank-externo {
 /* ===== RÓTULO E VALOR DA UNIDADE - APENAS na .area-direita ===== */
 .barra-superior .area-direita .valor-unidade {
   order: 2; /* Fica embaixo */
+}
+
+.barra-superior .area-direita .valor-unidade {
+  margin-top: var(--area-direita-valor-unidade-wrapper-margin-top);
 }
 
 .barra-superior .area-direita .rotulo-und {
@@ -2196,6 +2258,9 @@ body .mentor-item:not(.sem-valores) .mentor-rank-externo {
   flex-direction: column;
   align-items: stretch; /* ensure children take full available width */
   padding: 0 !important; /* remover padding interno para colar nas laterais */
+  padding-right: calc(
+    var(--mentor-wrapper-scrollbar-offset) + 4px
+  ) !important; /* make room so scrollbar is inset */
   width: 100%;
   max-height: calc(100% - 60px);
   height: auto;
@@ -2218,9 +2283,10 @@ body .mentor-item:not(.sem-valores) .mentor-rank-externo {
 }
 
 .mentor-wrapper::-webkit-scrollbar {
-  width: var(
-    --mentor-wrapper-scrollbar-width
-  ); /* um pouco mais larga para ficar visível */
+  width: calc(
+    var(--mentor-wrapper-scrollbar-width) -
+      var(--mentor-wrapper-scrollbar-offset)
+  ); /* adjust visual width by offset */
 }
 
 .mentor-wrapper::-webkit-scrollbar-track {
@@ -2319,9 +2385,11 @@ body .mentor-item:not(.sem-valores) .mentor-rank-externo {
   ); /* Altura aumentada para acomodar valores maiores */
   min-height: var(--mentor-card-min-height);
 
-  /* Espaçamento interno */
-  padding: 8px 12px;
-  padding-right: 60px; /* Espaço para o menu de 3 pontos (restaurado) */
+  /* Espaçamento interno (controlado por :root) */
+  padding: var(--mentor-card-padding) !important;
+  padding-right: calc(
+    var(--mentor-card-padding) + 40px
+  ) !important; /* Espaço para o menu de 3 pontos */
 
   /* Visual */
   background-color: #f7f6f6;
@@ -2382,11 +2450,13 @@ body .mentor-item:not(.sem-valores) .mentor-rank-externo {
 
 .mentor-nome {
   font-size: var(--mentor-name-font-size); /* Fonte responsiva */
-  margin-top: 2px;
+  margin-top: var(--mentor-nome-margin-top) !important;
   color: #333;
   text-align: center;
   font-weight: normal;
-  margin-left: 0; /* remover deslocamento horizontal */
+  margin-left: var(
+    --mentor-nome-margin-left
+  ) !important; /* remover deslocamento horizontal */
 }
 
 .mentor-right {
@@ -2488,6 +2558,12 @@ body .mentor-item:not(.sem-valores) .mentor-rank-externo {
   font-size: 14px !important;
   line-height: 1 !important;
   white-space: nowrap !important;
+}
+
+/* Aplicar margens controladas por :root especificamente para o box de saldo dentro do mentor */
+.mentor-card .value-box-saldo.saldo {
+  margin-top: var(--value-box-saldo-margin-top) !important;
+  margin-left: var(--value-box-saldo-margin-left) !important;
 }
 
 .value-box-green p,
@@ -2655,6 +2731,8 @@ body .mentor-item:not(.sem-valores) .mentor-rank-externo {
   overflow: hidden !important;
   text-overflow: ellipsis !important;
   white-space: nowrap !important;
+  margin-top: var(--mentor-nome-margin-top) !important;
+  margin-left: var(--mentor-nome-margin-left) !important;
 }
 
 /* Colorir o valor do saldo dependendo do estado do card

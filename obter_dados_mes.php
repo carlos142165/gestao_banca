@@ -1,5 +1,6 @@
 <?php
-// obter_dados_mes.php - Retorna dados do mês para atualização em tempo real
+// obter_dados_mes.php - Retorna dados do mês/ano para atualização em tempo real
+// VERSÃO ADAPTADA: Adiciona informações de meta sem alterar funcionalidade principal
 
 require_once 'config.php';
 require_once 'carregar_sessao.php';
@@ -19,22 +20,49 @@ if (!$id_usuario) {
 }
 
 try {
-    // Obter mês e ano (permite parâmetros opcionais)
-    $mes = $_GET['mes'] ?? date('m');
+    // Obter parâmetros (padrão: ano atual para exibir todos os meses)
     $ano = $_GET['ano'] ?? date('Y');
+    $modo = $_GET['modo'] ?? 'ano'; // 'mes' ou 'ano'
     
-    // Validar mês e ano
-    $mes = str_pad(intval($mes), 2, '0', STR_PAD_LEFT);
+    // Validar ano
     $ano = intval($ano);
-    
-    if ($mes < 1 || $mes > 12 || $ano < 2020 || $ano > 2030) {
-        throw new Exception('Mês ou ano inválido');
+    if ($ano < 2020 || $ano > 2030) {
+        throw new Exception('Ano inválido');
     }
     
-    // Query para buscar dados agrupados por dia
+    // =====================================================
+    // ADIÇÃO: Buscar informações de meta da sessão
+    // =====================================================
+    $meta_diaria = isset($_SESSION['meta_diaria']) ? floatval($_SESSION['meta_diaria']) : 0;
+    $meta_mensal = isset($_SESSION['meta_mensal']) ? floatval($_SESSION['meta_mensal']) : 0;
+    $meta_anual = isset($_SESSION['meta_anual']) ? floatval($_SESSION['meta_anual']) : 0;
+    $periodo_filtro = $_SESSION['periodo_filtro'] ?? 'ano';
+    $tipo_meta = $_SESSION['tipo_meta'] ?? 'turbo';
+    
+    // Calcular meta mensal correta para troféus
+    $meta_mensal_para_trofeu = 0;
+    $tipo_meta_calculada = "";
+    
+    if ($meta_mensal > 0) {
+        $meta_mensal_para_trofeu = $meta_mensal;
+        $tipo_meta_calculada = "mensal_especifica";
+    } elseif ($meta_anual > 0) {
+        $meta_mensal_para_trofeu = $meta_anual / 12;
+        $tipo_meta_calculada = "anual_dividida";
+    } elseif ($meta_diaria > 0) {
+        $meta_mensal_para_trofeu = $meta_diaria * 30;
+        $tipo_meta_calculada = "diaria_multiplicada";
+    } else {
+        $meta_mensal_para_trofeu = 0;
+        $tipo_meta_calculada = "nenhuma";
+    }
+    
+    // Query principal: buscar todos os dados do ano agrupados por data
     $sql = "
         SELECT 
             DATE(vm.data_criacao) as data,
+            YEAR(vm.data_criacao) as ano,
+            MONTH(vm.data_criacao) as mes,
             COALESCE(SUM(CASE WHEN vm.green = 1 THEN vm.valor_green ELSE 0 END), 0) as total_valor_green,
             COALESCE(SUM(CASE WHEN vm.red = 1 THEN vm.valor_red ELSE 0 END), 0) as total_valor_red,
             COALESCE(SUM(CASE WHEN vm.green = 1 THEN 1 ELSE 0 END), 0) as total_green,
@@ -42,19 +70,17 @@ try {
         FROM valor_mentores vm
         INNER JOIN mentores m ON vm.id_mentores = m.id
         WHERE m.id_usuario = ?
-        AND MONTH(vm.data_criacao) = ?
         AND YEAR(vm.data_criacao) = ?
-        GROUP BY DATE(vm.data_criacao)
+        GROUP BY DATE(vm.data_criacao), YEAR(vm.data_criacao), MONTH(vm.data_criacao)
         ORDER BY data ASC
     ";
     
-    // Preparar e executar query
     $stmt = $conexao->prepare($sql);
     if (!$stmt) {
         throw new Exception('Erro ao preparar consulta: ' . $conexao->error);
     }
     
-    $stmt->bind_param("iii", $id_usuario, $mes, $ano);
+    $stmt->bind_param("ii", $id_usuario, $ano);
     
     if (!$stmt->execute()) {
         throw new Exception('Erro ao executar consulta: ' . $stmt->error);
@@ -62,60 +88,133 @@ try {
     
     $result = $stmt->get_result();
     
-    // Organizar dados por dia
+    // Organizar dados - por dia E agregado por mês
     $dados_por_dia = [];
+    $dados_por_mes = [];
     
     while ($row = $result->fetch_assoc()) {
-        // Garantir que a data está no formato correto (YYYY-MM-DD)
-        $data_formatada = $row['data'];
+        $data_dia = $row['data']; // YYYY-MM-DD
+        $mes_key = $row['ano'] . '-' . str_pad($row['mes'], 2, '0', STR_PAD_LEFT); // YYYY-MM
         
-        $dados_por_dia[$data_formatada] = [
+        // Dados por dia
+        $dados_por_dia[$data_dia] = [
             'total_valor_green' => floatval($row['total_valor_green']),
             'total_valor_red' => floatval($row['total_valor_red']),
             'total_green' => intval($row['total_green']),
             'total_red' => intval($row['total_red']),
             'saldo' => floatval($row['total_valor_green']) - floatval($row['total_valor_red'])
         ];
+        
+        // Agregar por mês
+        if (!isset($dados_por_mes[$mes_key])) {
+            $dados_por_mes[$mes_key] = [
+                'total_valor_green' => 0,
+                'total_valor_red' => 0,
+                'total_green' => 0,
+                'total_red' => 0
+            ];
+        }
+        
+        $dados_por_mes[$mes_key]['total_valor_green'] += floatval($row['total_valor_green']);
+        $dados_por_mes[$mes_key]['total_valor_red'] += floatval($row['total_valor_red']);
+        $dados_por_mes[$mes_key]['total_green'] += intval($row['total_green']);
+        $dados_por_mes[$mes_key]['total_red'] += intval($row['total_red']);
     }
     
     $stmt->close();
     
-    // Adicionar informações extras úteis
-    $response = [
-        'success' => true,
-        'mes' => $mes,
-        'ano' => $ano,
-        'data_atual' => date('Y-m-d'),
-        'dias_no_mes' => cal_days_in_month(CAL_GREGORIAN, intval($mes), $ano),
-        'dados' => $dados_por_dia,
-        'timestamp' => time()
-    ];
+    // =====================================================
+    // ADIÇÃO: Calcular quais meses bateram a meta
+    // =====================================================
+    $meses_com_meta_batida = [];
     
-    // Calcular totais do mês
-    $total_green_mes = 0;
-    $total_red_mes = 0;
-    $saldo_total_mes = 0;
-    
-    foreach ($dados_por_dia as $dados) {
-        $total_green_mes += $dados['total_green'];
-        $total_red_mes += $dados['total_red'];
-        $saldo_total_mes += $dados['saldo'];
+    foreach ($dados_por_mes as $mes_key => $dados_mes) {
+        $saldo_mes = $dados_mes['total_valor_green'] - $dados_mes['total_valor_red'];
+        
+        $meta_batida = false;
+        if ($meta_mensal_para_trofeu > 0) {
+            $meta_batida = $saldo_mes >= $meta_mensal_para_trofeu;
+        } else {
+            // Critério restritivo se não há meta configurada
+            $meta_batida = $saldo_mes >= 500;
+        }
+        
+        if ($meta_batida) {
+            $meses_com_meta_batida[] = $mes_key;
+        }
+        
+        // Adicionar informações de meta aos dados do mês
+        $dados_por_mes[$mes_key]['saldo'] = $saldo_mes;
+        $dados_por_mes[$mes_key]['meta_batida'] = $meta_batida;
+        $dados_por_mes[$mes_key]['meta_mensal'] = $meta_mensal_para_trofeu;
     }
     
-    $response['totais_mes'] = [
-        'total_green' => $total_green_mes,
-        'total_red' => $total_red_mes,
-        'saldo_total' => $saldo_total_mes
+    // Combinar dados por dia e por mês em um array unificado
+    $dados_unificados = array_merge($dados_por_dia, $dados_por_mes);
+    
+    // Calcular totais do ano
+    $total_green_ano = 0;
+    $total_red_ano = 0;
+    $saldo_total_ano = 0;
+    
+    foreach ($dados_por_mes as $dados) {
+        $total_green_ano += $dados['total_green'];
+        $total_red_ano += $dados['total_red'];
+        $saldo_total_ano += ($dados['total_valor_green'] - $dados['total_valor_red']);
+    }
+    
+    // =====================================================
+    // RESPOSTA EXPANDIDA: Incluir informações de meta
+    // =====================================================
+    $response = [
+        'success' => true,
+        'ano' => $ano,
+        'modo' => $modo,
+        'data_atual' => date('Y-m-d'),
+        'dados' => $dados_unificados, // Contém tanto dias quanto meses
+        'dados_por_mes' => $dados_por_mes, // Apenas agregados mensais
+        'totais_ano' => [
+            'total_green' => $total_green_ano,
+            'total_red' => $total_red_ano,
+            'saldo_total' => $saldo_total_ano
+        ],
+        // NOVOS CAMPOS: Informações de meta
+        'configuracao_meta' => [
+            'meta_diaria' => $meta_diaria,
+            'meta_mensal' => $meta_mensal,
+            'meta_anual' => $meta_anual,
+            'meta_mensal_para_trofeu' => $meta_mensal_para_trofeu,
+            'tipo_meta' => $tipo_meta,
+            'tipo_meta_calculada' => $tipo_meta_calculada,
+            'periodo_filtro' => $periodo_filtro
+        ],
+        'analise_meta' => [
+            'total_meses_com_meta_batida' => count($meses_com_meta_batida),
+            'meses_com_meta_batida' => $meses_com_meta_batida,
+            'percentual_sucesso' => count($dados_por_mes) > 0 ? 
+                round((count($meses_com_meta_batida) / count($dados_por_mes)) * 100, 2) : 0
+        ],
+        'timestamp' => time(),
+        'debug_info' => [
+            'total_dias_com_dados' => count($dados_por_dia),
+            'total_meses_com_dados' => count($dados_por_mes),
+            'chaves_exemplo' => array_slice(array_keys($dados_unificados), 0, 5),
+            'meta_mensal_calculada' => $meta_mensal_para_trofeu,
+            'criterio_meta' => $tipo_meta_calculada
+        ]
     ];
     
-    // Retornar JSON
+    // Log para debug
+    error_log("obter_dados_mes.php - Dados encontrados: " . count($dados_unificados) . 
+              " registros para ano " . $ano . 
+              " | Meta mensal: R$ " . number_format($meta_mensal_para_trofeu, 2) . 
+              " | Meses com meta batida: " . count($meses_com_meta_batida));
+    
     echo json_encode($response, JSON_PRETTY_PRINT | JSON_UNESCAPED_UNICODE);
     
 } catch (Exception $e) {
-    // Log do erro
     error_log('Erro em obter_dados_mes.php: ' . $e->getMessage());
     
-    // Retornar erro em JSON
     http_response_code(500);
     echo json_encode([
         'success' => false,
@@ -125,7 +224,6 @@ try {
     ]);
 }
 
-// Fechar conexão se ainda estiver aberta
 if (isset($conexao) && $conexao) {
     $conexao->close();
 }

@@ -17,6 +17,7 @@
   height: 60px;
   width: 100%;
   position: relative;
+  z-index: 1000020; /* ensure top-bar sits above other elements */
 }
 
 .menu-topo-container .menu-container {
@@ -51,7 +52,7 @@
   left: 20px;
   background-color: #eff1f1;
   box-shadow: 0 8px 16px rgba(0, 0, 0, 0.2);
-  z-index: 1000;
+  z-index: 1000021; /* high z-index so dropdown is above other layered elements */
   padding-left: -3px;
   width: 180px;
   border-radius: 8px;

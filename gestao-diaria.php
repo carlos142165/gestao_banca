@@ -405,6 +405,35 @@ try {
   setToast('Erro ao carregar dados do mês!', 'erro');
 }
 
+// 🚀 Agregar dados por mês para o ano atual (usado no bloco anual)
+try {
+  $sql_ano = "
+    SELECT 
+      MONTH(data_criacao) AS mes,
+      SUM(CASE WHEN green = 1 THEN valor_green ELSE 0 END) AS total_valor_green,
+      SUM(CASE WHEN red = 1 THEN valor_red ELSE 0 END) AS total_valor_red,
+      SUM(CASE WHEN green = 1 THEN 1 ELSE 0 END) AS total_green,
+      SUM(CASE WHEN red = 1 THEN 1 ELSE 0 END) AS total_red
+    FROM valor_mentores
+    WHERE id_usuario = ? AND YEAR(data_criacao) = ?
+    GROUP BY MONTH(data_criacao)
+  ";
+
+  $stmt_ano = $conexao->prepare($sql_ano);
+  $stmt_ano->bind_param('ii', $id_usuario_logado, $ano);
+  $stmt_ano->execute();
+  $result_ano = $stmt_ano->get_result();
+
+  $dados_por_mes = [];
+  while ($row = $result_ano->fetch_assoc()) {
+    $mes_chave = str_pad($row['mes'], 2, '0', STR_PAD_LEFT);
+    $dados_por_mes[$mes_chave] = $row;
+  }
+} catch (Exception $e) {
+  $dados_por_mes = [];
+  setToast('Erro ao carregar dados do ano!', 'erro');
+}
+
 // 🔹 Cálculo da meta mensal
 $meta_mensal = ($soma_depositos * ($ultima_diaria / 100)) * ($diasNoMes / 2);
 $saldo_mentores_atual = $valor_green - $valor_red;
@@ -525,6 +554,7 @@ ob_end_flush();
 <link rel="stylesheet" href="css/toast.css">
 <link rel="stylesheet" href="css/toast-modal-gerencia.css">
 <link rel="stylesheet" href="css/blocos.css">
+<link rel="stylesheet" href="css/ano.css">
 
 
 
@@ -546,6 +576,7 @@ ob_end_flush();
 <script src="js/script-painel-controle.js" defer></script>
 <script src="js/script-mes.js" defer></script>
 <script src="js/exclusao-manager-fix.js" defer></script>
+<script src="js/ano.js" defer></script>
 <!-- -->
 <!-- -->
 <!-- -->
@@ -557,66 +588,13 @@ ob_end_flush();
 <body>
 
 
-    <!-- ==================================================================================================================================== --> 
-<!--                                      💼    TOPO MENU SELEÇÃO + BANCA E SALDO                    
- ====================================================================================================================================== -->
-<div class="menu-topo-container">
-  <div id="top-bar"> 
-    <div class="menu-container">
-      <!-- Botão hambúrguer para menu mobile -->
-      <button class="menu-button" onclick="toggleMenu()">☰</button>
-
-      <!-- Menu dropdown de navegação -->
-      <div id="menu" class="menu-content">
-        <a href="home.php">
-          <i class="fas fa-home menu-icon"></i><span>Home</span>
-        </a>
-        <a href="gestao-diaria.php">
-          <i class="fas fa-university menu-icon"></i><span>Gestão de Banca</span>
-        </a>
-        <a href="#" id="abrirGerenciaBanca">
-           <i class="fas fa-wallet menu-icon"></i><span>Gerenciar Banca</span>
-        </a>
-        <a href="estatisticas.php">
-          <i class="fas fa-chart-bar menu-icon"></i><span>Estatísticas</span>
-        </a>
-        <a href="painel-controle.php">
-          <i class="fas fa-cogs menu-icon"></i><span>Painel de Controle</span>
-        </a>
-        <?php if (isset($_SESSION['usuario_id'])): ?>
-          <a href="logout.php">
-            <i class="fas fa-sign-out-alt menu-icon"></i><span>Sair</span>
-          </a>
-        <?php endif; ?>
-      </div>
-
-      <!-- Área do saldo da banca (canto direito) -->
-      <div id="lista-mentores">
-        <div class="valor-item-menu saldo-topo-ajustado">
-          <div class="valor-info-wrapper">
-            <!-- Valor total da banca -->
-            <div class="valor-label-linha">
-              <i class="fa-solid fa-building-columns valor-icone-tema"></i>
-              <span class="valor-label">Banca:</span>
-              <span class="valor-bold-menu" id="valorTotalBancaLabel">R$ 0,00</span>
-            </div>
-            <!-- Lucro dos mentores -->
-            <div class="valor-label-linha">
-              <i class="fa-solid fa-money-bill-trend-up valor-icone-tema"></i>
-              <span class="valor-label" id="lucro_entradas_rotulo">Lucro:</span>
-              <span class="valor-bold-menu" id="lucro_valor_entrada">R$ 0,00</span>
-            </div>
-          </div>
-        </div>
-      </div>
-
-    </div>
-  </div>
-</div>
-
-    <!-- ==================================================================================================================================== --> 
-<!--                                      💼   FIM TOPO MENU SELEÇÃO + BANCA E SALDO                    
- ====================================================================================================================================== -->
+<!-- ==================================================================================================================================== --> 
+<!--                                                            💼                   
+====================================================================================================================================== -->
+<!-- -->
+<!-- -->
+<!-- -->
+<!-- -->
 <!-- -->
 <!-- -->
 <!-- -->
@@ -630,7 +608,59 @@ ob_end_flush();
     <!-- ==================================================================================================================================== --> 
 <!--                                      💼   FILTRO DIA - MES - ANO BLOCO CAMPO VALOR META E SALDO                      
  ====================================================================================================================================== -->
- <header class="header"></header>
+ <header class="header">
+  <div class="menu-topo-container">
+    <div id="top-bar"> 
+      <div class="menu-container">
+        <!-- Botão hambúrguer para menu mobile -->
+        <button class="menu-button" onclick="toggleMenu()">☰</button>
+
+        <!-- Menu dropdown de navegação -->
+        <div id="menu" class="menu-content">
+          <a href="home.php">
+            <i class="fas fa-home menu-icon"></i><span>Home</span>
+          </a>
+          <a href="gestao-diaria.php">
+            <i class="fas fa-university menu-icon"></i><span>Gestão de Banca</span>
+          </a>
+          <a href="#" id="abrirGerenciaBanca">
+             <i class="fas fa-wallet menu-icon"></i><span>Gerenciar Banca</span>
+          </a>
+          <a href="estatisticas.php">
+            <i class="fas fa-chart-bar menu-icon"></i><span>Estatísticas</span>
+          </a>
+
+          <?php if (isset($_SESSION['usuario_id'])): ?>
+            <a href="logout.php">
+              <i class="fas fa-sign-out-alt menu-icon"></i><span>Sair</span>
+            </a>
+          <?php endif; ?>
+        </div>
+
+        <!-- Área do saldo da banca (canto direito) -->
+        <div id="lista-mentores">
+          <div class="valor-item-menu saldo-topo-ajustado">
+            <div class="valor-info-wrapper">
+              <!-- Valor total da banca -->
+              <div class="valor-label-linha">
+                <i class="fa-solid fa-building-columns valor-icone-tema"></i>
+                <span class="valor-label">Banca:</span>
+                <span class="valor-bold-menu" id="valorTotalBancaLabel">R$ 0,00</span>
+              </div>
+              <!-- Lucro dos mentores -->
+              <div class="valor-label-linha">
+                <i class="fa-solid fa-money-bill-trend-up valor-icone-tema"></i>
+                <span class="valor-label" id="lucro_entradas_rotulo">Lucro:</span>
+                <span class="valor-bold-menu" id="lucro_valor_entrada">R$ 0,00</span>
+              </div>
+            </div>
+          </div>
+        </div>
+
+      </div>
+    </div>
+  </div>
+ </header>
     
     <main class="main-content">
         <div class="container">
@@ -886,16 +916,31 @@ ob_end_flush();
                                 <span id="tituloMes"></span>
                             </h2>
 
-                            <script>
-                                const meses = [
-                                    "JANEIRO", "FEVEREIRO", "MARÇO", "ABRIL", "MAIO", "JUNHO",
-                                    "JULHO", "AGOSTO", "SETEMBRO", "OUTUBRO", "NOVEMBRO", "DEZEMBRO"
-                                ];
-                                const hoje = new Date();
-                                const mesAtual = meses[hoje.getMonth()];
-                                const anoAtual = hoje.getFullYear();
-                                document.getElementById("tituloMes").textContent = `${mesAtual} ${anoAtual}`;
-                            </script>
+              <script>
+                (function() {
+                  const meses = [
+                    "JANEIRO", "FEVEREIRO", "MARÇO", "ABRIL", "MAIO", "JUNHO",
+                    "JULHO", "AGOSTO", "SETEMBRO", "OUTUBRO", "NOVEMBRO", "DEZEMBRO"
+                  ];
+                  const hoje = new Date();
+                  const mesAtual = meses[hoje.getMonth()];
+                  const anoAtual = hoje.getFullYear();
+                  const tituloEl = document.getElementById("tituloMes");
+                  tituloEl.textContent = `${mesAtual} ${anoAtual}`;
+
+                  // Apply the same color to the calendar icon before the title
+                  // Find the closest icon element (the <i class="fas fa-calendar-alt"></i>)
+                  const tituloParent = tituloEl.closest('.titulo-bloco');
+                  if (tituloParent) {
+                    const iconEl = tituloParent.querySelector('i.fa-calendar-alt');
+                    if (iconEl) {
+                      // Compute the effective color of the title (in case CSS sets it)
+                      const computed = window.getComputedStyle(tituloEl).color;
+                      iconEl.style.color = computed;
+                    }
+                  }
+                })();
+              </script>
 
                             <!-- Placar mensal -->
                             <div class="area-central-2">
@@ -1115,13 +1160,241 @@ ob_end_flush();
             </div>
 
             <!-- BLOCO 3: Informações Gerais -->
-            <div class="bloco bloco-3">
-                <h3>Informações Adicionais</h3>
-                <p>Este bloco completa a estrutura horizontal do dashboard. Todos os blocos trabalham em conjunto para formar um layout coeso e funcional.</p>
-                <p>O design responsivo garante que a estrutura funcione perfeitamente em diferentes configurações de zoom, mantendo todos os elementos visíveis na tela.</p>
-                <p>A altura fixa garante que mesmo com pouco conteúdo, o bloco ocupe todo o espaço vertical disponível.</p>
-                <p>Conteúdo adicional pode ser adicionado e será scrollável dentro do bloco, mantendo a estrutura geral intacta.</p>
+<!-- BLOCO 3: Dashboard Anual -->
+<div class="bloco bloco-3">
+    
+    <!-- Resumo do ano -->
+    <div class="resumo-ano resumo-ano-externo">
+        
+        <!-- Cabeçalho do ano -->
+    <div class="bloco-meta-simples fixo-topo">
+      <div class="campo-armazena-data-placar">
+                
+        <!-- Título do ano atual -->
+        <h2 class="titulo-bloco">
+                    <i class="fas fa-calendar"></i> 
+                    <span id="tituloAno"></span>
+                </h2>
+
+                <script>
+                    (function() {
+                        const hoje = new Date();
+                        const anoAtual = hoje.getFullYear();
+                        const tituloEl = document.getElementById("tituloAno");
+                        tituloEl.textContent = `Ano ${anoAtual}`;
+
+                        // Apply the same color to the calendar icon
+                        const tituloParent = tituloEl.closest('.titulo-bloco-3');
+                        if (tituloParent) {
+                            const iconEl = tituloParent.querySelector('i.fa-calendar');
+                            if (iconEl) {
+                                const computed = window.getComputedStyle(tituloEl).color;
+                                iconEl.style.color = computed;
+                            }
+                        }
+                    })();
+                </script>
+
+                <!-- Placar anual -->
+                <div class="area-central-3">
+                    <div class="pontuacao-3" id="pontuacao-3">
+                        <span class="placar-green-3"></span>
+                        <span class="separador-3">×</span>
+                        <span class="placar-red-3"></span>
+                    </div>
+                </div>
+                
             </div>
+        </div>
+
+        <!-- Widget de conteúdo principal -->
+    <div class="widget-conteudo-principal">
+      <div class="conteudo-left">
+                
+                <!-- Valor da meta anual -->
+                <div class="widget-meta-valor-3" id="meta-valor-3">
+                    <i class="fa-solid fa-coins"></i>
+                    <div class="meta-valor-container-3">
+                        <span class="valor-texto-3" id="valor-texto-meta-3">carregando..</span>
+                    </div>
+                </div>
+                
+                <!-- Valor que ultrapassou a meta -->
+                <div class="valor-ultrapassou-3" id="valor-ultrapassou-3" style="display: none;">
+                    <i class="fa-solid fa-trophy"></i>
+                    <span class="texto-ultrapassou-3">
+                        Lucro Extra: <span id="valor-extra-3">R$ 0,00</span>
+                    </span>
+                </div>
+                
+                <div class="widget-meta-rotulo-3" id="rotulo-meta-3">Meta do Ano</div>
+                
+                <!-- Barra de progresso anual -->
+                <div class="widget-barra-container-3">
+                    <div class="widget-barra-progresso-3" id="barra-progresso-3"></div>
+                    <div class="porcentagem-barra-3" id="porcentagem-barra-3">0%</div>
+                </div>
+                
+                <!-- Informações de progresso com saldo -->
+                <div class="widget-info-progresso-3">
+                    <span id="saldo-info-3" class="saldo-positivo-3">
+                        <i class="fa-solid fa-chart-line"></i>
+                        <span class="saldo-info-rotulo-3">Lucro:</span>
+                        <span class="saldo-info-valor-3">carregando..</span>
+                    </span>
+                </div>
+                
+            </div>
+        </div>
+
+        <!-- Lista de meses do ano -->
+        <div class="lista-meses">
+            
+            <?php
+            // Configurações de meta e variáveis para ano
+            $meta_diaria = isset($_SESSION['meta_diaria']) ? floatval($_SESSION['meta_diaria']) : 0;
+            $meta_mensal = isset($_SESSION['meta_mensal']) ? floatval($_SESSION['meta_mensal']) : 0;
+            $meta_anual = isset($_SESSION['meta_anual']) ? floatval($_SESSION['meta_anual']) : 0;
+
+            $periodo_atual = $_SESSION['periodo_filtro'] ?? 'ano';
+            $meta_atual = $meta_anual;
+
+            $ano_atual = date('Y');
+            $mes_atual = date('m');
+            
+            $meses_nomes = [
+                1 => 'Janeiro', 2 => 'Fevereiro', 3 => 'Março', 4 => 'Abril',
+                5 => 'Maio', 6 => 'Junho', 7 => 'Julho', 8 => 'Agosto',
+                9 => 'Setembro', 10 => 'Outubro', 11 => 'Novembro', 12 => 'Dezembro'
+            ];
+            
+            // Loop através de todos os meses do ano
+      for ($mes = 1; $mes <= 12; $mes++) {
+        $mes_formatado = str_pad($mes, 2, '0', STR_PAD_LEFT);
+        $data_mysql = $ano_atual . '-' . $mes_formatado;
+        $data_exibicao = $meses_nomes[$mes] . '/' . $ano_atual;
+
+        // Buscar dados do mês a partir do agregado por mês
+        $dados_mes = isset($dados_por_mes[$mes_formatado]) ? $dados_por_mes[$mes_formatado] : [
+          'total_valor_green' => 0,
+          'total_valor_red' => 0,
+          'total_green' => 0,
+          'total_red' => 0
+        ];
+
+        // Calcular saldo do mês
+        $saldo_mes = floatval($dados_mes['total_valor_green']) - floatval($dados_mes['total_valor_red']);
+        $saldo_formatado = number_format($saldo_mes, 2, ',', '.');
+
+        // Calcular meta mensal exata para o mês
+        // O cálculo deve ser igual ao do mês atual, mas para cada mês
+
+    $diasNoMesLoop = cal_days_in_month(CAL_GREGORIAN, $mes, $ano_atual);
+    $meta_mensal_mes = ($soma_depositos * ($ultima_diaria / 100)) * ($diasNoMesLoop / 2);
+    // Adiciona a meta mensal ao array de dados do mês para uso no JS
+    if (!isset($dados_por_mes[$mes_formatado])) {
+      $dados_por_mes[$mes_formatado] = [
+        'total_valor_green' => 0,
+        'total_valor_red' => 0,
+        'total_green' => 0,
+        'total_red' => 0
+      ];
+    }
+    $dados_por_mes[$mes_formatado]['meta_mensal'] = $meta_mensal_mes;
+
+        // Verificar se meta foi batida
+        $meta_batida = false;
+        if ($meta_mensal_mes > 0 && $saldo_mes >= $meta_mensal_mes) {
+          $meta_batida = true;
+        }
+                
+                // Determinar classes e estilos visuais
+                $classe_valor_cor = '';
+                if ($saldo_mes > 0) {
+                    $classe_valor_cor = 'valor-positivo';
+                } elseif ($saldo_mes < 0) {
+                    $classe_valor_cor = 'valor-negativo';
+                } else {
+                    $classe_valor_cor = 'valor-zero';
+                }
+                
+                $cor_valor = ($saldo_mes == 0) ? 'texto-cinza' : ($saldo_mes > 0 ? 'verde-bold' : 'vermelho-bold');
+                $classe_texto = ($saldo_mes == 0) ? 'texto-cinza' : '';
+                $placar_cinza = ((int)$dados_mes['total_green'] === 0 && (int)$dados_mes['total_red'] === 0) ? 'texto-cinza' : '';
+                
+                $classes_mes = [];
+                
+                if ($mes == $mes_atual) {
+                    $classes_mes[] = 'gd-mes-atual';
+                    $classes_mes[] = ($saldo_mes >= 0) ? 'gd-borda-verde' : 'gd-borda-vermelha';
+                } else {
+                    $classes_mes[] = 'mes-normal';
+                }
+                
+                if ($mes < $mes_atual) {
+                    if ($saldo_mes > 0) {
+                        $classes_mes[] = 'gd-mes-destaque';
+                    } elseif ($saldo_mes < 0) {
+                        $classes_mes[] = 'gd-mes-destaque-negativo';
+                    }
+                    
+                    if ((int)$dados_mes['total_green'] === 0 && (int)$dados_mes['total_red'] === 0) {
+                        $classes_mes[] = 'gd-mes-sem-valor';
+                    }
+                }
+                
+                if ($mes > $mes_atual) {
+                    $classes_mes[] = 'mes-futuro';
+                }
+                
+                $icone_classe = $meta_batida ? 'fa-trophy trofeu-icone' : 'fa-check';
+                
+                $classe_mes_string = 'gd-linha-mes ' . $classe_valor_cor . ' ' . implode(' ', $classes_mes);
+                $data_meta_attr = $meta_batida ? 'true' : 'false';
+                $data_saldo_attr = $saldo_mes;
+                $data_meta_anual_attr = $meta_anual / 12;
+                
+                // Renderizar linha do mês
+        echo '
+        <div class="'.$classe_mes_string.'" 
+           data-date="'.$data_mysql.'" 
+           data-meta-batida="'.$data_meta_attr.'"
+           data-saldo="'.$data_saldo_attr.'"
+           data-meta-mensal="'.$meta_mensal_mes.'"
+           data-meta-anual="'.$data_meta_anual_attr.'"
+           data-periodo-atual="ano">
+                    
+          <span class="data-mes '.$classe_texto.'">'.$data_exibicao.'</span>
+
+          <div class="placar-mes">
+            <span class="placar verde-bold '.$placar_cinza.'">'.(int)$dados_mes['total_green'].'</span>
+            <span class="placar separador '.$placar_cinza.'">×</span>
+            <span class="placar vermelho-bold '.$placar_cinza.'">'.(int)$dados_mes['total_red'].'</span>
+          </div>
+
+          <span class="valor-mes '.$cor_valor.'">R$ '.$saldo_formatado.'</span>
+
+          <span class="icone-mes '.$classe_texto.'">
+            <i class="fa-solid '.$icone_classe.'"></i>
+          </span>
+                    
+        </div>';
+            }
+            ?>
+            
+            <!-- Elemento oculto com dados do ano -->
+            <div id="dados-ano-info" style="display: none;" 
+                 data-ano="<?php echo $ano_atual; ?>" 
+                 data-meta-diaria="<?php echo $meta_diaria; ?>"
+                 data-meta-mensal="<?php echo $meta_mensal; ?>"
+                 data-meta-anual="<?php echo $meta_anual; ?>"
+                 data-periodo-atual="ano"
+                 data-mes-atual="<?php echo $mes_atual; ?>">
+            </div>
+          
+        </div>
+    </div>
+</div>
 
         </div>
     </main>
@@ -4504,7 +4777,10 @@ if (timezoneInput) {
 function toggleMenu() {
   var menu = document.getElementById("menu");
   if (menu) {
+    // toggle inline display for existing logic
     menu.style.display = menu.style.display === "block" ? "none" : "block";
+    // also toggle the "show" class so CSS rules that rely on class-based show work
+    menu.classList.toggle('show');
   }
 }
 
