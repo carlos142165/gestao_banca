@@ -1229,7 +1229,7 @@ ob_end_flush();
             </div>
         </div>
 
-<!-- ===== GRÁFICO DE TOTAIS MENSAIS - CORRIGIDO ===== -->
+<!-- ===== GRÁFICO DE TOTAIS MENSAIS - MELHORADO ===== -->
 <div class="grafico-mensal-container-3">
     <div class="grafico-mensal-3" id="grafico-mensal-3">
         <div class="grafico-canvas-3">
@@ -1246,7 +1246,7 @@ ob_end_flush();
 </div>
 
 <style>
-/* ===== CSS GRÁFICO ANUAL - VERSÃO SEM CONFLITOS ===== */
+/* ===== CSS GRÁFICO ANUAL - VERSÃO MELHORADA ===== */
 
 /* OVERRIDE FORÇADO PARA EVITAR CONFLITOS */
 .grafico-mensal-container-3,
@@ -1260,14 +1260,14 @@ ob_end_flush();
     all: unset !important;
 }
 
-/* CONTAINER PRINCIPAL - FORÇADO */
+/* CONTAINER PRINCIPAL - MAIS COMPACTO */
 .grafico-mensal-container-3 {
     position: relative !important;
     display: block !important;
     width: calc(100% - 32px) !important;
-    height: 200px !important;
-    margin: 16px auto !important;
-    padding: 16px !important;
+    height: 140px !important; /* Reduzido de 200px para 140px */
+    margin: 12px auto !important; /* Reduzido de 16px para 12px */
+    padding: 12px !important; /* Reduzido de 16px para 12px */
     background: rgba(255, 255, 255, 0.95) !important;
     border-radius: 12px !important;
     box-shadow: 0 2px 8px rgba(0, 0, 0, 0.06) !important;
@@ -1288,7 +1288,7 @@ ob_end_flush();
     position: relative !important;
     display: block !important;
     width: 100% !important;
-    height: calc(100% - 30px) !important;
+    height: calc(100% - 20px) !important; /* Reduzido de 30px para 20px para labels */
     background: linear-gradient(to top, rgba(248, 250, 252, 0.8) 0%, rgba(241, 245, 249, 0.4) 100%) !important;
     border-radius: 8px !important;
     overflow: hidden !important;
@@ -1309,7 +1309,7 @@ ob_end_flush();
     display: block !important;
 }
 
-/* CONTAINER DAS BARRAS - FORÇADO */
+/* CONTAINER DAS BARRAS - SEM BORDAS DE DEBUG */
 .grafico-barras-3 {
     position: relative !important;
     display: flex !important;
@@ -1317,13 +1317,13 @@ ob_end_flush();
     justify-content: space-between !important;
     width: 100% !important;
     height: 100% !important;
-    padding: 8px !important;
+    padding: 6px !important; /* Reduzido de 8px para 6px */
     box-sizing: border-box !important;
     gap: 2px !important;
     flex-wrap: nowrap !important;
 }
 
-/* CONTAINER INDIVIDUAL DE CADA MÊS - FORÇADO */
+/* CONTAINER INDIVIDUAL DE CADA MÊS - SEM BORDAS VERMELHAS */
 .barra-mes-3 {
     position: relative !important;
     display: flex !important;
@@ -1337,9 +1337,10 @@ ob_end_flush();
     gap: 2px !important;
     flex-shrink: 0 !important;
     flex-grow: 1 !important;
+    /* REMOVIDAS AS BORDAS VERMELHAS DE DEBUG */
 }
 
-/* BARRAS INDIVIDUAIS - FORÇADO */
+/* BARRAS INDIVIDUAIS */
 .barra-verde-3,
 .barra-vermelha-3 {
     position: relative !important;
@@ -1367,27 +1368,27 @@ ob_end_flush();
     box-shadow: 0 4px 8px rgba(0, 0, 0, 0.25) !important;
 }
 
-/* CONTAINER DOS LABELS - FORÇADO */
+/* CONTAINER DOS LABELS - MAIS PRÓXIMO DO GRÁFICO */
 .grafico-labels-3 {
     position: relative !important;
     display: flex !important;
     align-items: center !important;
     justify-content: space-between !important;
     width: 100% !important;
-    height: 30px !important;
-    padding: 8px 8px 0 8px !important;
-    margin-top: 4px !important;
+    height: 20px !important; /* Reduzido de 30px para 20px */
+    padding: 2px 6px 0 6px !important; /* Reduzido margin-top de 8px para 2px */
+    margin-top: 0px !important; /* Removido margin-top */
     box-sizing: border-box !important;
 }
 
-/* LABELS INDIVIDUAIS DOS MESES - FORÇADO */
+/* LABELS INDIVIDUAIS DOS MESES - SEM BORDAS VERDES DE DEBUG */
 .label-mes-3 {
     position: relative !important;
     display: block !important;
     flex: 1 !important;
     text-align: center !important;
     font-family: "Rajdhani", sans-serif !important;
-    font-size: 9px !important;
+    font-size: 8px !important; /* Reduzido de 9px para 8px */
     font-weight: 600 !important;
     color: #64748b !important;
     text-transform: uppercase !important;
@@ -1398,6 +1399,7 @@ ob_end_flush();
     margin: 0 !important;
     border: none !important;
     background: transparent !important;
+    /* REMOVIDAS AS BORDAS VERDES DE DEBUG */
 }
 
 .label-mes-3.atual {
@@ -1405,12 +1407,12 @@ ob_end_flush();
     font-weight: 700 !important;
 }
 
-/* RESPONSIVIDADE */
+/* RESPONSIVIDADE AJUSTADA */
 @media (max-width: 768px) {
     .grafico-mensal-container-3 {
-        height: 180px !important;
-        margin: 12px auto !important;
-        padding: 12px !important;
+        height: 120px !important; /* Reduzido de 180px para 120px */
+        margin: 10px auto !important;
+        padding: 10px !important;
     }
 
     .barra-verde-3, .barra-vermelha-3 {
@@ -1423,15 +1425,20 @@ ob_end_flush();
     }
 
     .label-mes-3 {
-        font-size: 8px !important;
+        font-size: 7px !important;
+    }
+
+    .grafico-labels-3 {
+        height: 18px !important;
+        padding: 2px 4px 0 4px !important;
     }
 }
 
 @media (max-width: 480px) {
     .grafico-mensal-container-3 {
-        height: 160px !important;
-        margin: 10px auto !important;
-        padding: 10px !important;
+        height: 100px !important; /* Reduzido de 160px para 100px */
+        margin: 8px auto !important;
+        padding: 8px !important;
     }
 
     .barra-verde-3, .barra-vermelha-3 {
@@ -1444,7 +1451,12 @@ ob_end_flush();
     }
 
     .label-mes-3 {
-        font-size: 7px !important;
+        font-size: 6px !important;
+    }
+
+    .grafico-labels-3 {
+        height: 16px !important;
+        padding: 1px 2px 0 2px !important;
     }
 }
 
@@ -1456,8 +1468,8 @@ ob_end_flush();
 </style>
 
 <script>
-// ===== SISTEMA DE GRÁFICO ANUAL - VERSÃO COM DEBUG INTENSO =====
-class GraficoAnualDebugIntensivo {
+// ===== SISTEMA DE GRÁFICO ANUAL - VERSÃO MELHORADA =====
+class GraficoAnualMelhorado {
     constructor() {
         this.containerBarras = null;
         this.containerLabels = null;
@@ -1465,12 +1477,12 @@ class GraficoAnualDebugIntensivo {
         this.valorMaximo = 0;
         this.mesAtual = new Date().getMonth() + 1;
         this.inicializando = false;
-        this.debugMode = true;
+        this.debugMode = false; // Debug desabilitado
     }
 
     log(mensagem) {
         if (this.debugMode) {
-            console.log(`[GRAFICO DEBUG] ${mensagem}`);
+            console.log(`[GRAFICO] ${mensagem}`);
         }
     }
 
@@ -1481,21 +1493,17 @@ class GraficoAnualDebugIntensivo {
         }
         this.inicializando = true;
 
-        this.log('=== INICIANDO GRÁFICO ANUAL COM DEBUG INTENSIVO ===');
+        this.log('Iniciando gráfico anual melhorado...');
         
         await this.aguardarElementos();
-        this.verificarElementosDOM();
         this.extrairDadosReaisDasLinhas();
         this.gerarGrafico();
-        this.verificarResultado();
         
-        this.log('=== GRÁFICO ANUAL FINALIZADO ===');
+        this.log('Gráfico anual finalizado');
         this.inicializando = false;
     }
 
     async aguardarElementos() {
-        this.log('Aguardando elementos DOM...');
-        
         return new Promise((resolve) => {
             let tentativas = 0;
             const verificar = () => {
@@ -1503,13 +1511,9 @@ class GraficoAnualDebugIntensivo {
                 this.containerBarras = document.getElementById('grafico-barras-3');
                 this.containerLabels = document.getElementById('grafico-labels-3');
                 
-                this.log(`Tentativa ${tentativas}: Barras=${!!this.containerBarras}, Labels=${!!this.containerLabels}`);
-                
                 if (this.containerBarras && this.containerLabels) {
-                    this.log('✅ Elementos encontrados!');
                     resolve();
                 } else if (tentativas > 50) {
-                    this.log('❌ Timeout aguardando elementos');
                     resolve();
                 } else {
                     setTimeout(verificar, 100);
@@ -1519,30 +1523,8 @@ class GraficoAnualDebugIntensivo {
         });
     }
 
-    verificarElementosDOM() {
-        this.log('=== VERIFICAÇÃO DOM ===');
-        
-        const elementos = {
-            'grafico-mensal-container-3': document.querySelector('.grafico-mensal-container-3'),
-            'grafico-mensal-3': document.getElementById('grafico-mensal-3'),
-            'grafico-canvas-3': document.querySelector('.grafico-canvas-3'),
-            'grafico-barras-3': document.getElementById('grafico-barras-3'),
-            'grafico-labels-3': document.getElementById('grafico-labels-3')
-        };
-
-        Object.entries(elementos).forEach(([nome, elemento]) => {
-            if (elemento) {
-                const computed = window.getComputedStyle(elemento);
-                this.log(`✅ ${nome}: display=${computed.display}, visibility=${computed.visibility}, width=${computed.width}, height=${computed.height}`);
-            } else {
-                this.log(`❌ ${nome}: NÃO ENCONTRADO`);
-            }
-        });
-    }
-
     extrairDadosReaisDasLinhas() {
         const linhasMeses = document.querySelectorAll('.gd-linha-mes');
-        this.log(`=== EXTRAÇÃO DE DADOS: ${linhasMeses.length} linhas encontradas ===`);
         
         const mesesNomes = [
             'janeiro', 'fevereiro', 'março', 'abril', 'maio', 'junho',
@@ -1565,13 +1547,9 @@ class GraficoAnualDebugIntensivo {
         // Processar cada linha dos meses
         linhasMeses.forEach((linha, i) => {
             const dataElement = linha.querySelector('.data-mes');
-            if (!dataElement) {
-                this.log(`Linha ${i}: Sem elemento .data-mes`);
-                return;
-            }
+            if (!dataElement) return;
 
             const textoMes = dataElement.textContent.trim().toLowerCase();
-            this.log(`Linha ${i}: "${textoMes}"`);
             
             // Encontrar mês correspondente
             let mesIndex = -1;
@@ -1582,10 +1560,7 @@ class GraficoAnualDebugIntensivo {
                 }
             });
 
-            if (mesIndex === -1) {
-                this.log(`Linha ${i}: Mês não reconhecido: "${textoMes}"`);
-                return;
-            }
+            if (mesIndex === -1) return;
 
             // Extrair placar (green x red)
             const placarVerde = linha.querySelector('.placar.verde-bold');
@@ -1632,8 +1607,6 @@ class GraficoAnualDebugIntensivo {
                 totalRed: totalRed,
                 temDados: totalGreen > 0 || totalRed > 0 || saldoReal !== 0
             };
-
-            this.log(`✅ ${mesesAbrev[mesIndex]}: Saldo=R$${saldoReal.toFixed(2)}, Verde=${valorVerde.toFixed(0)}, Vermelho=${valorVermelho.toFixed(0)}, Placar=${totalGreen}x${totalRed}`);
         });
 
         // Calcular valor máximo
@@ -1642,35 +1615,20 @@ class GraficoAnualDebugIntensivo {
             this.valorMaximo = Math.max(this.valorMaximo, mes.verde, mes.vermelho);
         });
         this.valorMaximo = Math.max(this.valorMaximo, 100);
-
-        this.log(`Valor máximo calculado: ${this.valorMaximo}`);
-        
-        // Log dos dados finais
-        const mesesComDados = this.dadosMeses.filter(m => m.temDados);
-        this.log(`Total de meses com dados: ${mesesComDados.length}`);
-        mesesComDados.forEach(mes => {
-            this.log(`- ${mes.mes}: V=${mes.verde}, R=${mes.vermelho}`);
-        });
     }
 
     gerarGrafico() {
-        this.log('=== GERANDO GRÁFICO ===');
-
         if (!this.containerBarras || !this.containerLabels) {
-            this.log('❌ Containers não encontrados!');
             return;
         }
 
         // Limpar containers
         this.containerBarras.innerHTML = '';
         this.containerLabels.innerHTML = '';
-        this.log('Containers limpos');
 
         // Gerar para cada mês
         this.dadosMeses.forEach((dadoMes, index) => {
-            this.log(`Processando ${dadoMes.mes} (${index})...`);
-
-            // Container do mês
+            // Container do mês - SEM BORDAS DE DEBUG
             const containerMes = document.createElement('div');
             containerMes.className = 'barra-mes-3';
             containerMes.style.cssText = `
@@ -1683,10 +1641,7 @@ class GraficoAnualDebugIntensivo {
                 height: 100% !important;
                 max-width: calc(100% / 12) !important;
                 gap: 2px !important;
-                border: 1px solid rgba(255,0,0,0.3) !important;
             `;
-
-            let barrasCriadas = 0;
 
             // Se tem dados, criar barras
             if (dadoMes.temDados && (dadoMes.verde > 0 || dadoMes.vermelho > 0)) {
@@ -1709,8 +1664,6 @@ class GraficoAnualDebugIntensivo {
                     `;
                     barraVerde.title = `${dadoMes.mes} - Saldo: R$ ${dadoMes.saldo.toFixed(2)} | Green: ${dadoMes.totalGreen}`;
                     containerMes.appendChild(barraVerde);
-                    barrasCriadas++;
-                    this.log(`  ✅ Barra verde criada: ${alturaVerde}%`);
                 }
 
                 // Barra vermelha
@@ -1729,16 +1682,12 @@ class GraficoAnualDebugIntensivo {
                     `;
                     barraVermelha.title = `${dadoMes.mes} - Saldo: R$ ${dadoMes.saldo.toFixed(2)} | Red: ${dadoMes.totalRed}`;
                     containerMes.appendChild(barraVermelha);
-                    barrasCriadas++;
-                    this.log(`  ✅ Barra vermelha criada: ${alturaVermelha}%`);
                 }
-            } else {
-                this.log(`  ⚪ ${dadoMes.mes}: sem dados`);
             }
 
             this.containerBarras.appendChild(containerMes);
 
-            // Label do mês
+            // Label do mês - SEM BORDAS DE DEBUG
             const label = document.createElement('div');
             label.className = 'label-mes-3';
             label.textContent = dadoMes.mes;
@@ -1748,14 +1697,14 @@ class GraficoAnualDebugIntensivo {
                 flex: 1 !important;
                 text-align: center !important;
                 font-family: "Rajdhani", sans-serif !important;
-                font-size: 9px !important;
+                font-size: 8px !important;
                 font-weight: 600 !important;
                 color: #64748b !important;
                 text-transform: uppercase !important;
                 letter-spacing: 0.5px !important;
                 max-width: calc(100% / 12) !important;
-                background: rgba(0,255,0,0.1) !important;
-                border: 1px solid rgba(0,255,0,0.3) !important;
+                background: transparent !important;
+                border: none !important;
             `;
 
             // Destacar mês atual
@@ -1763,82 +1712,42 @@ class GraficoAnualDebugIntensivo {
                 label.style.color = '#10b981 !important';
                 label.style.fontWeight = '700 !important';
                 label.classList.add('atual');
-                this.log(`  🎯 ${dadoMes.mes}: marcado como mês atual`);
             }
 
             this.containerLabels.appendChild(label);
-            this.log(`  📝 Label criado para ${dadoMes.mes}`);
-        });
-
-        this.log('✅ Gráfico gerado!');
-    }
-
-    verificarResultado() {
-        this.log('=== VERIFICAÇÃO FINAL ===');
-        
-        const barras = this.containerBarras.querySelectorAll('.barra-verde-3, .barra-vermelha-3');
-        const labels = this.containerLabels.querySelectorAll('.label-mes-3');
-        
-        this.log(`Barras criadas: ${barras.length}`);
-        this.log(`Labels criados: ${labels.length}`);
-        
-        barras.forEach((barra, i) => {
-            const rect = barra.getBoundingClientRect();
-            this.log(`Barra ${i}: ${barra.className}, height=${barra.style.height}, visible=${rect.height > 0}`);
-        });
-        
-        labels.forEach((label, i) => {
-            this.log(`Label ${i}: "${label.textContent}", visible=${label.offsetWidth > 0}`);
         });
     }
 
     async recarregar() {
-        this.log('🔄 Recarregando gráfico...');
         await this.inicializar();
     }
 }
 
-// INICIALIZAÇÃO AUTOMÁTICA FORÇADA
-let graficoDebug = null;
+// INICIALIZAÇÃO AUTOMÁTICA
+let graficoMelhorado = null;
 
-function inicializarGraficoDebug() {
-    console.log('🎯 FORÇANDO INICIALIZAÇÃO DO GRÁFICO DEBUG');
-    
-    if (!graficoDebug) {
-        graficoDebug = new GraficoAnualDebugIntensivo();
+function inicializarGraficoMelhorado() {
+    if (!graficoMelhorado) {
+        graficoMelhorado = new GraficoAnualMelhorado();
     }
-    graficoDebug.inicializar();
+    graficoMelhorado.inicializar();
 }
 
 // MÚLTIPLAS TENTATIVAS DE INICIALIZAÇÃO
 document.addEventListener('DOMContentLoaded', function() {
-    console.log('DOM LOADED - Inicializando gráfico');
-    setTimeout(() => inicializarGraficoDebug(), 500);
+    setTimeout(() => inicializarGraficoMelhorado(), 500);
 });
 
 if (document.readyState !== 'loading') {
-    console.log('DOM JÁ CARREGADO - Inicializando gráfico');
-    setTimeout(() => inicializarGraficoDebug(), 200);
+    setTimeout(() => inicializarGraficoMelhorado(), 200);
 }
 
-// Forçar inicialização após 2 segundos
-setTimeout(() => {
-    console.log('TIMEOUT 2s - Forçando inicialização');
-    inicializarGraficoDebug();
-}, 2000);
+setTimeout(() => inicializarGraficoMelhorado(), 2000);
+setTimeout(() => inicializarGraficoMelhorado(), 5000);
 
-// Forçar inicialização após 5 segundos
-setTimeout(() => {
-    console.log('TIMEOUT 5s - Última tentativa de inicialização');
-    inicializarGraficoDebug();
-}, 5000);
-
-// Expor globalmente para debug manual
-window.inicializarGraficoDebug = inicializarGraficoDebug;
-window.graficoDebug = graficoDebug;
-
-console.log('🚀 SISTEMA DE GRÁFICO DEBUG CARREGADO');
-console.log('Para debug manual: window.inicializarGraficoDebug()');
+// Expor globalmente
+window.inicializarGraficoMelhorado = inicializarGraficoMelhorado;
+window.graficoMelhorado = graficoMelhorado;
 </script>
 
         <!-- ===== LISTA DE MESES DO ANO ===== -->
