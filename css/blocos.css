@@ -69,7 +69,7 @@ body {
   z-index: 100500; /* aumentar para ficar acima de badges/elementos posicionados */
   width: 420px;
   height: 100%;
-  background-color: rgb(243, 245, 244);
+  background-color: #f3f5f4;
   background-clip: padding-box; /* evita que o bg / sombra “apague” a borda arredondada */
   border: 0px solid #9e9e9e;
   border-radius: 15px;

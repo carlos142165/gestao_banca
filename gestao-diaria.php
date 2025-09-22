@@ -1229,7 +1229,8 @@ ob_end_flush();
             </div>
         </div>
 
-<!-- ===== GRÁFICO DE TOTAIS MENSAIS - MELHORADO ===== -->
+<!-- ===== GRÁFICO DE TOTAIS MENSAIS - VERSÃO LIMPA ===== -->
+<!-- ===== GRÁFICO DE TOTAIS MENSAIS - VERSÃO LIMPA ===== -->
 <div class="grafico-mensal-container-3">
     <div class="grafico-mensal-3" id="grafico-mensal-3">
         <div class="grafico-canvas-3">
@@ -1246,9 +1247,9 @@ ob_end_flush();
 </div>
 
 <style>
-/* ===== CSS GRÁFICO ANUAL - VERSÃO MELHORADA ===== */
+/* ===== CSS GRÁFICO - VERSÃO LIMPA ===== */
 
-/* OVERRIDE FORÇADO PARA EVITAR CONFLITOS */
+/* RESET COMPLETO */
 .grafico-mensal-container-3,
 .grafico-mensal-3,
 .grafico-canvas-3,
@@ -1260,14 +1261,14 @@ ob_end_flush();
     all: unset !important;
 }
 
-/* CONTAINER PRINCIPAL - MAIS COMPACTO */
+/* CONTAINER PRINCIPAL */
 .grafico-mensal-container-3 {
     position: relative !important;
     display: block !important;
     width: calc(100% - 32px) !important;
-    height: 140px !important; /* Reduzido de 200px para 140px */
-    margin: 12px auto !important; /* Reduzido de 16px para 12px */
-    padding: 12px !important; /* Reduzido de 16px para 12px */
+    height: 130px !important;
+    margin: 12px auto !important;
+    padding: 12px !important;
     background: rgba(255, 255, 255, 0.95) !important;
     border-radius: 12px !important;
     box-shadow: 0 2px 8px rgba(0, 0, 0, 0.06) !important;
@@ -1288,7 +1289,7 @@ ob_end_flush();
     position: relative !important;
     display: block !important;
     width: 100% !important;
-    height: calc(100% - 20px) !important; /* Reduzido de 30px para 20px para labels */
+    height: calc(100% - 18px) !important;
     background: linear-gradient(to top, rgba(248, 250, 252, 0.8) 0%, rgba(241, 245, 249, 0.4) 100%) !important;
     border-radius: 8px !important;
     overflow: hidden !important;
@@ -1309,7 +1310,7 @@ ob_end_flush();
     display: block !important;
 }
 
-/* CONTAINER DAS BARRAS - SEM BORDAS DE DEBUG */
+/* CONTAINER DAS BARRAS */
 .grafico-barras-3 {
     position: relative !important;
     display: flex !important;
@@ -1317,13 +1318,13 @@ ob_end_flush();
     justify-content: space-between !important;
     width: 100% !important;
     height: 100% !important;
-    padding: 6px !important; /* Reduzido de 8px para 6px */
+    padding: 6px !important;
     box-sizing: border-box !important;
     gap: 2px !important;
     flex-wrap: nowrap !important;
 }
 
-/* CONTAINER INDIVIDUAL DE CADA MÊS - SEM BORDAS VERMELHAS */
+/* CONTAINER INDIVIDUAL DE CADA MÊS */
 .barra-mes-3 {
     position: relative !important;
     display: flex !important;
@@ -1337,7 +1338,6 @@ ob_end_flush();
     gap: 2px !important;
     flex-shrink: 0 !important;
     flex-grow: 1 !important;
-    /* REMOVIDAS AS BORDAS VERMELHAS DE DEBUG */
 }
 
 /* BARRAS INDIVIDUAIS */
@@ -1345,7 +1345,7 @@ ob_end_flush();
 .barra-vermelha-3 {
     position: relative !important;
     display: block !important;
-    width: 6px !important;
+    width: 7px !important;
     border-radius: 2px 2px 0 0 !important;
     transition: all 0.3s ease !important;
     min-height: 0 !important;
@@ -1368,27 +1368,27 @@ ob_end_flush();
     box-shadow: 0 4px 8px rgba(0, 0, 0, 0.25) !important;
 }
 
-/* CONTAINER DOS LABELS - MAIS PRÓXIMO DO GRÁFICO */
+/* CONTAINER DOS LABELS */
 .grafico-labels-3 {
     position: relative !important;
     display: flex !important;
     align-items: center !important;
     justify-content: space-between !important;
     width: 100% !important;
-    height: 20px !important; /* Reduzido de 30px para 20px */
-    padding: 2px 6px 0 6px !important; /* Reduzido margin-top de 8px para 2px */
-    margin-top: 0px !important; /* Removido margin-top */
+    height: 18px !important;
+    padding: 1px 6px 0 6px !important;
+    margin-top: 0px !important;
     box-sizing: border-box !important;
 }
 
-/* LABELS INDIVIDUAIS DOS MESES - SEM BORDAS VERDES DE DEBUG */
+/* LABELS INDIVIDUAIS DOS MESES */
 .label-mes-3 {
     position: relative !important;
     display: block !important;
     flex: 1 !important;
     text-align: center !important;
     font-family: "Rajdhani", sans-serif !important;
-    font-size: 8px !important; /* Reduzido de 9px para 8px */
+    font-size: 8px !important;
     font-weight: 600 !important;
     color: #64748b !important;
     text-transform: uppercase !important;
@@ -1399,7 +1399,6 @@ ob_end_flush();
     margin: 0 !important;
     border: none !important;
     background: transparent !important;
-    /* REMOVIDAS AS BORDAS VERDES DE DEBUG */
 }
 
 .label-mes-3.atual {
@@ -1407,60 +1406,52 @@ ob_end_flush();
     font-weight: 700 !important;
 }
 
-/* RESPONSIVIDADE AJUSTADA */
+/* RESPONSIVIDADE */
 @media (max-width: 768px) {
     .grafico-mensal-container-3 {
-        height: 120px !important; /* Reduzido de 180px para 120px */
+        height: 110px !important;
         margin: 10px auto !important;
         padding: 10px !important;
     }
-
     .barra-verde-3, .barra-vermelha-3 {
         width: 5px !important;
     }
-
     .barra-mes-3 {
         min-width: 15px !important;
         gap: 1px !important;
     }
-
     .label-mes-3 {
         font-size: 7px !important;
     }
-
     .grafico-labels-3 {
-        height: 18px !important;
-        padding: 2px 4px 0 4px !important;
+        height: 16px !important;
+        padding: 1px 4px 0 4px !important;
     }
 }
 
 @media (max-width: 480px) {
     .grafico-mensal-container-3 {
-        height: 100px !important; /* Reduzido de 160px para 100px */
+        height: 90px !important;
         margin: 8px auto !important;
         padding: 8px !important;
     }
-
     .barra-verde-3, .barra-vermelha-3 {
         width: 4px !important;
     }
-
     .barra-mes-3 {
         min-width: 12px !important;
         gap: 1px !important;
     }
-
     .label-mes-3 {
         font-size: 6px !important;
     }
-
     .grafico-labels-3 {
-        height: 16px !important;
+        height: 14px !important;
         padding: 1px 2px 0 2px !important;
     }
 }
 
-/* OVERRIDE FINAL PARA GARANTIR VISIBILIDADE */
+/* GARANTIR VISIBILIDADE */
 .grafico-mensal-container-3 * {
     visibility: visible !important;
     opacity: 1 !important;
@@ -1468,286 +1459,289 @@ ob_end_flush();
 </style>
 
 <script>
-// ===== SISTEMA DE GRÁFICO ANUAL - VERSÃO MELHORADA =====
-class GraficoAnualMelhorado {
-    constructor() {
-        this.containerBarras = null;
-        this.containerLabels = null;
-        this.dadosMeses = [];
-        this.valorMaximo = 0;
-        this.mesAtual = new Date().getMonth() + 1;
-        this.inicializando = false;
-        this.debugMode = false; // Debug desabilitado
-    }
-
-    log(mensagem) {
-        if (this.debugMode) {
-            console.log(`[GRAFICO] ${mensagem}`);
-        }
-    }
-
-    async inicializar() {
-        if (this.inicializando) {
-            this.log('Já está inicializando, ignorando...');
-            return;
-        }
-        this.inicializando = true;
-
-        this.log('Iniciando gráfico anual melhorado...');
-        
-        await this.aguardarElementos();
-        this.extrairDadosReaisDasLinhas();
-        this.gerarGrafico();
-        
-        this.log('Gráfico anual finalizado');
-        this.inicializando = false;
-    }
-
-    async aguardarElementos() {
+// ===== GRÁFICO LIMPO E FUNCIONAL =====
+(function() {
+    'use strict';
+    
+    let containerBarras = null;
+    let containerLabels = null;
+    let mesAtual = new Date().getMonth() + 1;
+    
+    // Aguardar elementos DOM
+    function aguardarElementos() {
         return new Promise((resolve) => {
             let tentativas = 0;
             const verificar = () => {
-                tentativas++;
-                this.containerBarras = document.getElementById('grafico-barras-3');
-                this.containerLabels = document.getElementById('grafico-labels-3');
+                containerBarras = document.getElementById('grafico-barras-3');
+                containerLabels = document.getElementById('grafico-labels-3');
                 
-                if (this.containerBarras && this.containerLabels) {
+                if (containerBarras && containerLabels) {
                     resolve();
-                } else if (tentativas > 50) {
-                    resolve();
-                } else {
+                } else if (tentativas++ < 20) {
                     setTimeout(verificar, 100);
+                } else {
+                    resolve();
                 }
             };
             verificar();
         });
     }
-
-    extrairDadosReaisDasLinhas() {
-        const linhasMeses = document.querySelectorAll('.gd-linha-mes');
+    
+    // Extrair dados do DOM
+    function extrairDados() {
+        const linhas = document.querySelectorAll('.gd-linha-mes');
+        const meses = ['janeiro', 'fevereiro', 'março', 'abril', 'maio', 'junho', 'julho', 'agosto', 'setembro', 'outubro', 'novembro', 'dezembro'];
+        const abrev = ['Jan', 'Fev', 'Mar', 'Abr', 'Mai', 'Jun', 'Jul', 'Ago', 'Set', 'Out', 'Nov', 'Dez'];
         
-        const mesesNomes = [
-            'janeiro', 'fevereiro', 'março', 'abril', 'maio', 'junho',
-            'julho', 'agosto', 'setembro', 'outubro', 'novembro', 'dezembro'
-        ];
-        const mesesAbrev = ['Jan', 'Fev', 'Mar', 'Abr', 'Mai', 'Jun', 'Jul', 'Ago', 'Set', 'Out', 'Nov', 'Dez'];
-        
-        // Inicializar array com 12 meses
-        this.dadosMeses = mesesAbrev.map((mes, index) => ({
+        let dados = abrev.map((mes, i) => ({
             mes: mes,
-            mesIndex: index,
-            verde: 0,
-            vermelho: 0,
+            indice: i,
+            valor: 0,
+            green: 0,
+            red: 0,
             saldo: 0,
-            totalGreen: 0,
-            totalRed: 0,
-            temDados: false
+            temDados: false,
+            cor: 'neutro'
         }));
-
-        // Processar cada linha dos meses
-        linhasMeses.forEach((linha, i) => {
-            const dataElement = linha.querySelector('.data-mes');
-            if (!dataElement) return;
-
-            const textoMes = dataElement.textContent.trim().toLowerCase();
+        
+        linhas.forEach(linha => {
+            const dataEl = linha.querySelector('.data-mes');
+            if (!dataEl) return;
             
-            // Encontrar mês correspondente
-            let mesIndex = -1;
-            mesesNomes.forEach((nomeCompleto, idx) => {
-                if (textoMes.includes(nomeCompleto) || 
-                    textoMes.includes(mesesAbrev[idx].toLowerCase())) {
-                    mesIndex = idx;
-                }
-            });
-
-            if (mesIndex === -1) return;
-
-            // Extrair placar (green x red)
-            const placarVerde = linha.querySelector('.placar.verde-bold');
-            const placarVermelho = linha.querySelector('.placar.vermelho-bold');
-            const totalGreen = placarVerde ? parseInt(placarVerde.textContent) || 0 : 0;
-            const totalRed = placarVermelho ? parseInt(placarVermelho.textContent) || 0 : 0;
-
-            // Extrair saldo real do mês
-            const valorElement = linha.querySelector('.valor');
-            let saldoReal = 0;
-            if (valorElement) {
-                const textoValor = valorElement.textContent
-                    .replace('R$', '')
-                    .replace(/\./g, '')
-                    .replace(',', '.')
-                    .trim();
-                saldoReal = parseFloat(textoValor) || 0;
-            }
-
-            // Calcular valores para o gráfico
-            let valorVerde = 0;
-            let valorVermelho = 0;
-
-            if (totalGreen > 0 || totalRed > 0 || saldoReal !== 0) {
-                if (saldoReal > 0) {
-                    valorVerde = Math.abs(saldoReal);
-                    valorVermelho = totalRed > 0 ? Math.abs(saldoReal) * 0.3 : 0;
-                } else if (saldoReal < 0) {
-                    valorVerde = totalGreen > 0 ? Math.abs(saldoReal) * 0.3 : 0;
-                    valorVermelho = Math.abs(saldoReal);
-                } else {
-                    valorVerde = totalGreen * 50;
-                    valorVermelho = totalRed * 50;
+            const texto = dataEl.textContent.toLowerCase();
+            let indice = -1;
+            
+            for (let i = 0; i < meses.length; i++) {
+                if (texto.includes(meses[i]) || texto.includes(abrev[i].toLowerCase())) {
+                    indice = i;
+                    break;
                 }
             }
-
-            this.dadosMeses[mesIndex] = {
-                mes: mesesAbrev[mesIndex],
-                mesIndex: mesIndex,
-                verde: valorVerde,
-                vermelho: valorVermelho,
-                saldo: saldoReal,
-                totalGreen: totalGreen,
-                totalRed: totalRed,
-                temDados: totalGreen > 0 || totalRed > 0 || saldoReal !== 0
+            
+            if (indice === -1) return;
+            
+            const green = parseInt(linha.querySelector('.placar.verde-bold')?.textContent || '0') || 0;
+            const red = parseInt(linha.querySelector('.placar.vermelho-bold')?.textContent || '0') || 0;
+            
+            const valorEl = linha.querySelector('.valor');
+            let saldo = 0;
+            if (valorEl) {
+                saldo = parseFloat(valorEl.textContent.replace('R$', '').replace(/\./g, '').replace(',', '.')) || 0;
+            }
+            
+            let valor = 0;
+            let cor = 'neutro';
+            
+            if (saldo > 0) {
+                valor = Math.abs(saldo);
+                cor = 'verde';
+            } else if (saldo < 0) {
+                valor = Math.abs(saldo);
+                cor = 'vermelho';
+            } else if (green > red) {
+                valor = green * 100;
+                cor = 'verde';
+            } else if (red > green) {
+                valor = red * 100;
+                cor = 'vermelho';
+            }
+            
+            dados[indice] = {
+                mes: abrev[indice],
+                indice: indice,
+                valor: valor,
+                green: green,
+                red: red,
+                saldo: saldo,
+                temDados: green > 0 || red > 0 || saldo !== 0,
+                cor: cor
             };
         });
-
-        // Calcular valor máximo
-        this.valorMaximo = 0;
-        this.dadosMeses.forEach(mes => {
-            this.valorMaximo = Math.max(this.valorMaximo, mes.verde, mes.vermelho);
-        });
-        this.valorMaximo = Math.max(this.valorMaximo, 100);
+        
+        return dados;
     }
-
-    gerarGrafico() {
-        if (!this.containerBarras || !this.containerLabels) {
-            return;
-        }
-
-        // Limpar containers
-        this.containerBarras.innerHTML = '';
-        this.containerLabels.innerHTML = '';
-
-        // Gerar para cada mês
-        this.dadosMeses.forEach((dadoMes, index) => {
-            // Container do mês - SEM BORDAS DE DEBUG
-            const containerMes = document.createElement('div');
-            containerMes.className = 'barra-mes-3';
-            containerMes.style.cssText = `
-                position: relative !important;
-                display: flex !important;
-                flex-direction: row !important;
-                align-items: flex-end !important;
-                justify-content: center !important;
-                flex: 1 !important;
-                height: 100% !important;
-                max-width: calc(100% / 12) !important;
-                gap: 2px !important;
-            `;
-
-            // Se tem dados, criar barras
-            if (dadoMes.temDados && (dadoMes.verde > 0 || dadoMes.vermelho > 0)) {
-                const alturaVerde = Math.max(10, Math.min(90, (dadoMes.verde / this.valorMaximo) * 100));
-                const alturaVermelha = Math.max(10, Math.min(90, (dadoMes.vermelho / this.valorMaximo) * 100));
-
-                // Barra verde
-                if (dadoMes.verde > 0) {
-                    const barraVerde = document.createElement('div');
-                    barraVerde.className = 'barra-verde-3';
-                    barraVerde.style.cssText = `
-                        position: relative !important;
-                        display: block !important;
-                        width: 6px !important;
-                        height: ${alturaVerde}% !important;
-                        background: linear-gradient(to top, #10b981, #34d399) !important;
-                        border-radius: 2px 2px 0 0 !important;
-                        box-shadow: 0 2px 4px rgba(16, 185, 129, 0.3) !important;
-                        flex-shrink: 0 !important;
-                    `;
-                    barraVerde.title = `${dadoMes.mes} - Saldo: R$ ${dadoMes.saldo.toFixed(2)} | Green: ${dadoMes.totalGreen}`;
-                    containerMes.appendChild(barraVerde);
-                }
-
-                // Barra vermelha
-                if (dadoMes.vermelho > 0) {
-                    const barraVermelha = document.createElement('div');
-                    barraVermelha.className = 'barra-vermelha-3';
-                    barraVermelha.style.cssText = `
-                        position: relative !important;
-                        display: block !important;
-                        width: 6px !important;
-                        height: ${alturaVermelha}% !important;
-                        background: linear-gradient(to top, #ef4444, #f87171) !important;
-                        border-radius: 2px 2px 0 0 !important;
-                        box-shadow: 0 2px 4px rgba(239, 68, 68, 0.3) !important;
-                        flex-shrink: 0 !important;
-                    `;
-                    barraVermelha.title = `${dadoMes.mes} - Saldo: R$ ${dadoMes.saldo.toFixed(2)} | Red: ${dadoMes.totalRed}`;
-                    containerMes.appendChild(barraVermelha);
-                }
+    
+    // Gerar gráfico
+    function gerarGrafico() {
+        if (!containerBarras || !containerLabels) return;
+        
+        const dados = extrairDados();
+        const valorMax = Math.max(100, ...dados.filter(d => d.temDados).map(d => d.valor));
+        
+        // Limpar
+        containerBarras.innerHTML = '';
+        containerLabels.innerHTML = '';
+        
+        dados.forEach((dado, i) => {
+            // Container do mês
+            const container = document.createElement('div');
+            container.className = 'barra-mes-3';
+            
+            // Barra se tem dados
+            if (dado.temDados && dado.valor > 0) {
+                const altura = Math.max(5, Math.min(95, (dado.valor / valorMax) * 100));
+                const barra = document.createElement('div');
+                barra.className = dado.cor === 'verde' ? 'barra-verde-3' : 'barra-vermelha-3';
+                barra.style.height = altura + '%';
+                barra.title = `${dado.mes} - Saldo: R$ ${dado.saldo.toFixed(2)} | ${dado.green}x${dado.red}`;
+                container.appendChild(barra);
             }
-
-            this.containerBarras.appendChild(containerMes);
-
-            // Label do mês - SEM BORDAS DE DEBUG
+            
+            containerBarras.appendChild(container);
+            
+            // Label
             const label = document.createElement('div');
             label.className = 'label-mes-3';
-            label.textContent = dadoMes.mes;
-            label.style.cssText = `
-                position: relative !important;
-                display: block !important;
-                flex: 1 !important;
-                text-align: center !important;
-                font-family: "Rajdhani", sans-serif !important;
-                font-size: 8px !important;
-                font-weight: 600 !important;
-                color: #64748b !important;
-                text-transform: uppercase !important;
-                letter-spacing: 0.5px !important;
-                max-width: calc(100% / 12) !important;
-                background: transparent !important;
-                border: none !important;
-            `;
-
-            // Destacar mês atual
-            if (index + 1 === this.mesAtual) {
-                label.style.color = '#10b981 !important';
-                label.style.fontWeight = '700 !important';
+            label.textContent = dado.mes;
+            if (i + 1 === mesAtual) {
                 label.classList.add('atual');
             }
-
-            this.containerLabels.appendChild(label);
+            containerLabels.appendChild(label);
         });
     }
-
-    async recarregar() {
-        await this.inicializar();
+    
+    // Interceptar AJAX - Versão corrigida
+    function configurarAjax() {
+        let ajaxMonitorado = false;
+        
+        // Interceptar fetch com verificação ampla
+        const fetchOriginal = window.fetch;
+        window.fetch = function(...args) {
+            return fetchOriginal.apply(this, arguments).then(response => {
+                if (args[0]) {
+                    const url = String(args[0]).toLowerCase();
+                    // Capturar mais URLs relacionadas
+                    if (url.includes('cadastrar') || 
+                        url.includes('valor') || 
+                        url.includes('excluir') ||
+                        url.includes('gestao') ||
+                        url.includes('mentor')) {
+                        
+                        console.log('AJAX fetch detectado:', args[0]);
+                        if (!ajaxMonitorado) {
+                            ajaxMonitorado = true;
+                            setTimeout(() => {
+                                console.log('Atualizando gráfico após fetch');
+                                gerarGrafico();
+                                ajaxMonitorado = false;
+                            }, 1500);
+                        }
+                    }
+                }
+                return response;
+            }).catch(error => {
+                // Reset em caso de erro
+                ajaxMonitorado = false;
+                throw error;
+            });
+        };
+        
+        // Interceptar XMLHttpRequest com verificação ampla
+        const XHROriginal = window.XMLHttpRequest;
+        window.XMLHttpRequest = function() {
+            const xhr = new XHROriginal();
+            const sendOriginal = xhr.send;
+            const openOriginal = xhr.open;
+            
+            let requestUrl = '';
+            
+            xhr.open = function(method, url, ...rest) {
+                requestUrl = String(url).toLowerCase();
+                return openOriginal.apply(this, [method, url, ...rest]);
+            };
+            
+            xhr.send = function(...args) {
+                xhr.addEventListener('loadend', function() {
+                    const finalUrl = this.responseURL || requestUrl;
+                    if (finalUrl && 
+                        (finalUrl.includes('cadastrar') || 
+                         finalUrl.includes('valor') || 
+                         finalUrl.includes('excluir') ||
+                         finalUrl.includes('gestao') ||
+                         finalUrl.includes('mentor'))) {
+                        
+                        console.log('AJAX XHR detectado:', finalUrl);
+                        if (!ajaxMonitorado) {
+                            ajaxMonitorado = true;
+                            setTimeout(() => {
+                                console.log('Atualizando gráfico após XHR');
+                                gerarGrafico();
+                                ajaxMonitorado = false;
+                            }, 1500);
+                        }
+                    }
+                });
+                
+                return sendOriginal.apply(this, arguments);
+            };
+            
+            return xhr;
+        };
+        
+        // Interceptar jQuery AJAX se existir
+        if (window.jQuery && window.jQuery.ajaxSetup) {
+            window.jQuery.ajaxSetup({
+                complete: function(xhr, status) {
+                    const url = this.url ? String(this.url).toLowerCase() : '';
+                    if (url && 
+                        (url.includes('cadastrar') || 
+                         url.includes('valor') || 
+                         url.includes('excluir') ||
+                         url.includes('gestao') ||
+                         url.includes('mentor'))) {
+                        
+                        console.log('AJAX jQuery detectado:', this.url);
+                        if (!ajaxMonitorado) {
+                            ajaxMonitorado = true;
+                            setTimeout(() => {
+                                console.log('Atualizando gráfico após jQuery');
+                                gerarGrafico();
+                                ajaxMonitorado = false;
+                            }, 1500);
+                        }
+                    }
+                }
+            });
+        }
+        
+        // Monitoramento adicional por eventos customizados
+        document.addEventListener('valorCadastrado', function() {
+            console.log('Evento valorCadastrado detectado');
+            setTimeout(gerarGrafico, 1000);
+        });
+        
+        document.addEventListener('valorExcluido', function() {
+            console.log('Evento valorExcluido detectado');
+            setTimeout(gerarGrafico, 1000);
+        });
+        
+        console.log('Sistema AJAX configurado - Monitorando fetch, XHR, jQuery e eventos');
     }
-}
-
-// INICIALIZAÇÃO AUTOMÁTICA
-let graficoMelhorado = null;
-
-function inicializarGraficoMelhorado() {
-    if (!graficoMelhorado) {
-        graficoMelhorado = new GraficoAnualMelhorado();
+    
+    // Funções públicas
+    window.atualizarGrafico = gerarGrafico;
+    window.forcarAtualizacaoGrafico = gerarGrafico;
+    window.onValorAlterado = gerarGrafico;
+    
+    // Inicializar
+    async function inicializar() {
+        await aguardarElementos();
+        gerarGrafico();
+        configurarAjax();
     }
-    graficoMelhorado.inicializar();
-}
-
-// MÚLTIPLAS TENTATIVAS DE INICIALIZAÇÃO
-document.addEventListener('DOMContentLoaded', function() {
-    setTimeout(() => inicializarGraficoMelhorado(), 500);
-});
-
-if (document.readyState !== 'loading') {
-    setTimeout(() => inicializarGraficoMelhorado(), 200);
-}
-
-setTimeout(() => inicializarGraficoMelhorado(), 2000);
-setTimeout(() => inicializarGraficoMelhorado(), 5000);
-
-// Expor globalmente
-window.inicializarGraficoMelhorado = inicializarGraficoMelhorado;
-window.graficoMelhorado = graficoMelhorado;
+    
+    // Auto-inicializar
+    if (document.readyState === 'loading') {
+        document.addEventListener('DOMContentLoaded', () => setTimeout(inicializar, 300));
+    } else {
+        setTimeout(inicializar, 200);
+    }
+    
+    // Backup de inicialização
+    setTimeout(inicializar, 1000);
+    
+    console.log('Gráfico carregado - AJAX ativo');
+})();
 </script>
 
         <!-- ===== LISTA DE MESES DO ANO ===== -->
