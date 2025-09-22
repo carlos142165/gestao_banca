@@ -1159,41 +1159,23 @@ ob_end_flush();
                 </div>
             </div>
 
-            <!-- BLOCO 3: Informações Gerais -->
+            
+
 <!-- BLOCO 3: Dashboard Anual -->
 <div class="bloco bloco-3">
     
-    <!-- Resumo do ano -->
-    <div class="resumo-ano resumo-ano-externo">
+    <!-- ===== RESUMO DO ANO ===== -->
+    <div class="resumo-ano">
         
-        <!-- Cabeçalho do ano -->
-    <div class="bloco-meta-simples fixo-topo">
-      <div class="campo-armazena-data-placar">
+        <!-- ===== CABEÇALHO DO ANO ===== -->
+        <div class="bloco-meta-simples-3 fixo-topo-3">
+            <div class="campo-armazena-data-placar-3">
                 
-        <!-- Título do ano atual -->
-        <h2 class="titulo-bloco">
-                    <i class="fas fa-calendar"></i> 
+                <!-- Título do ano atual -->
+                <h2 class="titulo-bloco-3">
+                    <i class="fas fa-calendar-alt"></i> 
                     <span id="tituloAno"></span>
                 </h2>
-
-                <script>
-                    (function() {
-                        const hoje = new Date();
-                        const anoAtual = hoje.getFullYear();
-                        const tituloEl = document.getElementById("tituloAno");
-                        tituloEl.textContent = `Ano ${anoAtual}`;
-
-                        // Apply the same color to the calendar icon
-                        const tituloParent = tituloEl.closest('.titulo-bloco-3');
-                        if (tituloParent) {
-                            const iconEl = tituloParent.querySelector('i.fa-calendar');
-                            if (iconEl) {
-                                const computed = window.getComputedStyle(tituloEl).color;
-                                iconEl.style.color = computed;
-                            }
-                        }
-                    })();
-                </script>
 
                 <!-- Placar anual -->
                 <div class="area-central-3">
@@ -1207,13 +1189,13 @@ ob_end_flush();
             </div>
         </div>
 
-        <!-- Widget de conteúdo principal -->
-    <div class="widget-conteudo-principal">
-      <div class="conteudo-left">
+        <!-- ===== WIDGET DE CONTEÚDO PRINCIPAL ===== -->
+        <div class="widget-conteudo-principal-3">
+            <div class="conteudo-left-3">
                 
                 <!-- Valor da meta anual -->
                 <div class="widget-meta-valor-3" id="meta-valor-3">
-                    <i class="fa-solid fa-coins"></i>
+                    <i class="fa-solid-3 fa-coins-3"></i>
                     <div class="meta-valor-container-3">
                         <span class="valor-texto-3" id="valor-texto-meta-3">carregando..</span>
                     </div>
@@ -1221,7 +1203,7 @@ ob_end_flush();
                 
                 <!-- Valor que ultrapassou a meta -->
                 <div class="valor-ultrapassou-3" id="valor-ultrapassou-3" style="display: none;">
-                    <i class="fa-solid fa-trophy"></i>
+                    <i class="fa-solid-3 fa-trophy-3"></i>
                     <span class="texto-ultrapassou-3">
                         Lucro Extra: <span id="valor-extra-3">R$ 0,00</span>
                     </span>
@@ -1238,7 +1220,7 @@ ob_end_flush();
                 <!-- Informações de progresso com saldo -->
                 <div class="widget-info-progresso-3">
                     <span id="saldo-info-3" class="saldo-positivo-3">
-                        <i class="fa-solid fa-chart-line"></i>
+                        <i class="fa-solid-3 fa-chart-line-3"></i>
                         <span class="saldo-info-rotulo-3">Lucro:</span>
                         <span class="saldo-info-valor-3">carregando..</span>
                     </span>
@@ -1247,156 +1229,873 @@ ob_end_flush();
             </div>
         </div>
 
-        <!-- Lista de meses do ano -->
-        <div class="lista-meses">
-            
-            <?php
-            // Configurações de meta e variáveis para ano
-            $meta_diaria = isset($_SESSION['meta_diaria']) ? floatval($_SESSION['meta_diaria']) : 0;
-            $meta_mensal = isset($_SESSION['meta_mensal']) ? floatval($_SESSION['meta_mensal']) : 0;
-            $meta_anual = isset($_SESSION['meta_anual']) ? floatval($_SESSION['meta_anual']) : 0;
-
-            $periodo_atual = $_SESSION['periodo_filtro'] ?? 'ano';
-            $meta_atual = $meta_anual;
-
-            $ano_atual = date('Y');
-            $mes_atual = date('m');
-            
-            $meses_nomes = [
-                1 => 'Janeiro', 2 => 'Fevereiro', 3 => 'Março', 4 => 'Abril',
-                5 => 'Maio', 6 => 'Junho', 7 => 'Julho', 8 => 'Agosto',
-                9 => 'Setembro', 10 => 'Outubro', 11 => 'Novembro', 12 => 'Dezembro'
-            ];
-            
-            // Loop através de todos os meses do ano
-      for ($mes = 1; $mes <= 12; $mes++) {
-        $mes_formatado = str_pad($mes, 2, '0', STR_PAD_LEFT);
-        $data_mysql = $ano_atual . '-' . $mes_formatado;
-        $data_exibicao = $meses_nomes[$mes] . '/' . $ano_atual;
-
-        // Buscar dados do mês a partir do agregado por mês
-        $dados_mes = isset($dados_por_mes[$mes_formatado]) ? $dados_por_mes[$mes_formatado] : [
-          'total_valor_green' => 0,
-          'total_valor_red' => 0,
-          'total_green' => 0,
-          'total_red' => 0
-        ];
-
-        // Calcular saldo do mês
-        $saldo_mes = floatval($dados_mes['total_valor_green']) - floatval($dados_mes['total_valor_red']);
-        $saldo_formatado = number_format($saldo_mes, 2, ',', '.');
-
-        // Calcular meta mensal exata para o mês
-        // O cálculo deve ser igual ao do mês atual, mas para cada mês
-
-    $diasNoMesLoop = cal_days_in_month(CAL_GREGORIAN, $mes, $ano_atual);
-    $meta_mensal_mes = ($soma_depositos * ($ultima_diaria / 100)) * ($diasNoMesLoop / 2);
-    // Adiciona a meta mensal ao array de dados do mês para uso no JS
-    if (!isset($dados_por_mes[$mes_formatado])) {
-      $dados_por_mes[$mes_formatado] = [
-        'total_valor_green' => 0,
-        'total_valor_red' => 0,
-        'total_green' => 0,
-        'total_red' => 0
-      ];
-    }
-    $dados_por_mes[$mes_formatado]['meta_mensal'] = $meta_mensal_mes;
-
-        // Verificar se meta foi batida
-        $meta_batida = false;
-        if ($meta_mensal_mes > 0 && $saldo_mes >= $meta_mensal_mes) {
-          $meta_batida = true;
-        }
-                
-                // Determinar classes e estilos visuais
-                $classe_valor_cor = '';
-                if ($saldo_mes > 0) {
-                    $classe_valor_cor = 'valor-positivo';
-                } elseif ($saldo_mes < 0) {
-                    $classe_valor_cor = 'valor-negativo';
-                } else {
-                    $classe_valor_cor = 'valor-zero';
-                }
-                
-                $cor_valor = ($saldo_mes == 0) ? 'texto-cinza' : ($saldo_mes > 0 ? 'verde-bold' : 'vermelho-bold');
-                $classe_texto = ($saldo_mes == 0) ? 'texto-cinza' : '';
-                $placar_cinza = ((int)$dados_mes['total_green'] === 0 && (int)$dados_mes['total_red'] === 0) ? 'texto-cinza' : '';
-                
-                $classes_mes = [];
-                
-                if ($mes == $mes_atual) {
-                    $classes_mes[] = 'gd-mes-atual';
-                    $classes_mes[] = ($saldo_mes >= 0) ? 'gd-borda-verde' : 'gd-borda-vermelha';
-                } else {
-                    $classes_mes[] = 'mes-normal';
-                }
-                
-                if ($mes < $mes_atual) {
-                    if ($saldo_mes > 0) {
-                        $classes_mes[] = 'gd-mes-destaque';
-                    } elseif ($saldo_mes < 0) {
-                        $classes_mes[] = 'gd-mes-destaque-negativo';
-                    }
-                    
-                    if ((int)$dados_mes['total_green'] === 0 && (int)$dados_mes['total_red'] === 0) {
-                        $classes_mes[] = 'gd-mes-sem-valor';
-                    }
-                }
-                
-                if ($mes > $mes_atual) {
-                    $classes_mes[] = 'mes-futuro';
-                }
-                
-                $icone_classe = $meta_batida ? 'fa-trophy trofeu-icone' : 'fa-check';
-                
-                $classe_mes_string = 'gd-linha-mes ' . $classe_valor_cor . ' ' . implode(' ', $classes_mes);
-                $data_meta_attr = $meta_batida ? 'true' : 'false';
-                $data_saldo_attr = $saldo_mes;
-                $data_meta_anual_attr = $meta_anual / 12;
-                
-                // Renderizar linha do mês
-        echo '
-        <div class="'.$classe_mes_string.'" 
-           data-date="'.$data_mysql.'" 
-           data-meta-batida="'.$data_meta_attr.'"
-           data-saldo="'.$data_saldo_attr.'"
-           data-meta-mensal="'.$meta_mensal_mes.'"
-           data-meta-anual="'.$data_meta_anual_attr.'"
-           data-periodo-atual="ano">
-                    
-          <span class="data-mes '.$classe_texto.'">'.$data_exibicao.'</span>
-
-          <div class="placar-mes">
-            <span class="placar verde-bold '.$placar_cinza.'">'.(int)$dados_mes['total_green'].'</span>
-            <span class="placar separador '.$placar_cinza.'">×</span>
-            <span class="placar vermelho-bold '.$placar_cinza.'">'.(int)$dados_mes['total_red'].'</span>
-          </div>
-
-          <span class="valor-mes '.$cor_valor.'">R$ '.$saldo_formatado.'</span>
-
-          <span class="icone-mes '.$classe_texto.'">
-            <i class="fa-solid '.$icone_classe.'"></i>
-          </span>
-                    
-        </div>';
-            }
-            ?>
-            
-            <!-- Elemento oculto com dados do ano -->
-            <div id="dados-ano-info" style="display: none;" 
-                 data-ano="<?php echo $ano_atual; ?>" 
-                 data-meta-diaria="<?php echo $meta_diaria; ?>"
-                 data-meta-mensal="<?php echo $meta_mensal; ?>"
-                 data-meta-anual="<?php echo $meta_anual; ?>"
-                 data-periodo-atual="ano"
-                 data-mes-atual="<?php echo $mes_atual; ?>">
+<!-- ===== GRÁFICO DE TOTAIS MENSAIS - CORRIGIDO ===== -->
+<div class="grafico-mensal-container-3">
+    <div class="grafico-mensal-3" id="grafico-mensal-3">
+        <div class="grafico-canvas-3">
+            <div class="grafico-grid-3"></div>
+            <div class="grafico-barras-3" id="grafico-barras-3">
+                <!-- Barras serão geradas via JavaScript -->
             </div>
-          
+        </div>
+        
+        <div class="grafico-labels-3" id="grafico-labels-3">
+            <!-- Labels serão gerados via JavaScript -->
         </div>
     </div>
 </div>
 
+<style>
+/* ===== CSS GRÁFICO ANUAL - VERSÃO SEM CONFLITOS ===== */
+
+/* OVERRIDE FORÇADO PARA EVITAR CONFLITOS */
+.grafico-mensal-container-3,
+.grafico-mensal-3,
+.grafico-canvas-3,
+.grafico-grid-3,
+.grafico-barras-3,
+.grafico-labels-3,
+.barra-mes-3,
+.label-mes-3 {
+    all: unset !important;
+}
+
+/* CONTAINER PRINCIPAL - FORÇADO */
+.grafico-mensal-container-3 {
+    position: relative !important;
+    display: block !important;
+    width: calc(100% - 32px) !important;
+    height: 200px !important;
+    margin: 16px auto !important;
+    padding: 16px !important;
+    background: rgba(255, 255, 255, 0.95) !important;
+    border-radius: 12px !important;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.06) !important;
+    overflow: hidden !important;
+    box-sizing: border-box !important;
+    font-family: "Rajdhani", sans-serif !important;
+}
+
+.grafico-mensal-3 {
+    position: relative !important;
+    display: flex !important;
+    flex-direction: column !important;
+    width: 100% !important;
+    height: 100% !important;
+}
+
+.grafico-canvas-3 {
+    position: relative !important;
+    display: block !important;
+    width: 100% !important;
+    height: calc(100% - 30px) !important;
+    background: linear-gradient(to top, rgba(248, 250, 252, 0.8) 0%, rgba(241, 245, 249, 0.4) 100%) !important;
+    border-radius: 8px !important;
+    overflow: hidden !important;
+}
+
+/* GRID DE FUNDO */
+.grafico-grid-3 {
+    position: absolute !important;
+    top: 0 !important;
+    left: 0 !important;
+    right: 0 !important;
+    bottom: 0 !important;
+    background-image: 
+        linear-gradient(to top, rgba(148, 163, 184, 0.1) 1px, transparent 1px),
+        linear-gradient(to right, rgba(148, 163, 184, 0.1) 1px, transparent 1px) !important;
+    background-size: 100% 20%, 8.33% 100% !important;
+    pointer-events: none !important;
+    display: block !important;
+}
+
+/* CONTAINER DAS BARRAS - FORÇADO */
+.grafico-barras-3 {
+    position: relative !important;
+    display: flex !important;
+    align-items: flex-end !important;
+    justify-content: space-between !important;
+    width: 100% !important;
+    height: 100% !important;
+    padding: 8px !important;
+    box-sizing: border-box !important;
+    gap: 2px !important;
+    flex-wrap: nowrap !important;
+}
+
+/* CONTAINER INDIVIDUAL DE CADA MÊS - FORÇADO */
+.barra-mes-3 {
+    position: relative !important;
+    display: flex !important;
+    flex-direction: row !important;
+    align-items: flex-end !important;
+    justify-content: center !important;
+    flex: 1 !important;
+    height: 100% !important;
+    max-width: calc(100% / 12) !important;
+    min-width: 20px !important;
+    gap: 2px !important;
+    flex-shrink: 0 !important;
+    flex-grow: 1 !important;
+}
+
+/* BARRAS INDIVIDUAIS - FORÇADO */
+.barra-verde-3,
+.barra-vermelha-3 {
+    position: relative !important;
+    display: block !important;
+    width: 6px !important;
+    border-radius: 2px 2px 0 0 !important;
+    transition: all 0.3s ease !important;
+    min-height: 0 !important;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.15) !important;
+    flex-shrink: 0 !important;
+}
+
+.barra-verde-3 {
+    background: linear-gradient(to top, #10b981, #34d399) !important;
+}
+
+.barra-vermelha-3 {
+    background: linear-gradient(to top, #ef4444, #f87171) !important;
+}
+
+/* HOVER NAS BARRAS */
+.barra-verde-3:hover,
+.barra-vermelha-3:hover {
+    transform: scale(1.1) !important;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.25) !important;
+}
+
+/* CONTAINER DOS LABELS - FORÇADO */
+.grafico-labels-3 {
+    position: relative !important;
+    display: flex !important;
+    align-items: center !important;
+    justify-content: space-between !important;
+    width: 100% !important;
+    height: 30px !important;
+    padding: 8px 8px 0 8px !important;
+    margin-top: 4px !important;
+    box-sizing: border-box !important;
+}
+
+/* LABELS INDIVIDUAIS DOS MESES - FORÇADO */
+.label-mes-3 {
+    position: relative !important;
+    display: block !important;
+    flex: 1 !important;
+    text-align: center !important;
+    font-family: "Rajdhani", sans-serif !important;
+    font-size: 9px !important;
+    font-weight: 600 !important;
+    color: #64748b !important;
+    text-transform: uppercase !important;
+    letter-spacing: 0.5px !important;
+    max-width: calc(100% / 12) !important;
+    line-height: 1 !important;
+    padding: 0 !important;
+    margin: 0 !important;
+    border: none !important;
+    background: transparent !important;
+}
+
+.label-mes-3.atual {
+    color: #10b981 !important;
+    font-weight: 700 !important;
+}
+
+/* RESPONSIVIDADE */
+@media (max-width: 768px) {
+    .grafico-mensal-container-3 {
+        height: 180px !important;
+        margin: 12px auto !important;
+        padding: 12px !important;
+    }
+
+    .barra-verde-3, .barra-vermelha-3 {
+        width: 5px !important;
+    }
+
+    .barra-mes-3 {
+        min-width: 15px !important;
+        gap: 1px !important;
+    }
+
+    .label-mes-3 {
+        font-size: 8px !important;
+    }
+}
+
+@media (max-width: 480px) {
+    .grafico-mensal-container-3 {
+        height: 160px !important;
+        margin: 10px auto !important;
+        padding: 10px !important;
+    }
+
+    .barra-verde-3, .barra-vermelha-3 {
+        width: 4px !important;
+    }
+
+    .barra-mes-3 {
+        min-width: 12px !important;
+        gap: 1px !important;
+    }
+
+    .label-mes-3 {
+        font-size: 7px !important;
+    }
+}
+
+/* OVERRIDE FINAL PARA GARANTIR VISIBILIDADE */
+.grafico-mensal-container-3 * {
+    visibility: visible !important;
+    opacity: 1 !important;
+}
+</style>
+
+<script>
+// ===== SISTEMA DE GRÁFICO ANUAL - VERSÃO COM DEBUG INTENSO =====
+class GraficoAnualDebugIntensivo {
+    constructor() {
+        this.containerBarras = null;
+        this.containerLabels = null;
+        this.dadosMeses = [];
+        this.valorMaximo = 0;
+        this.mesAtual = new Date().getMonth() + 1;
+        this.inicializando = false;
+        this.debugMode = true;
+    }
+
+    log(mensagem) {
+        if (this.debugMode) {
+            console.log(`[GRAFICO DEBUG] ${mensagem}`);
+        }
+    }
+
+    async inicializar() {
+        if (this.inicializando) {
+            this.log('Já está inicializando, ignorando...');
+            return;
+        }
+        this.inicializando = true;
+
+        this.log('=== INICIANDO GRÁFICO ANUAL COM DEBUG INTENSIVO ===');
+        
+        await this.aguardarElementos();
+        this.verificarElementosDOM();
+        this.extrairDadosReaisDasLinhas();
+        this.gerarGrafico();
+        this.verificarResultado();
+        
+        this.log('=== GRÁFICO ANUAL FINALIZADO ===');
+        this.inicializando = false;
+    }
+
+    async aguardarElementos() {
+        this.log('Aguardando elementos DOM...');
+        
+        return new Promise((resolve) => {
+            let tentativas = 0;
+            const verificar = () => {
+                tentativas++;
+                this.containerBarras = document.getElementById('grafico-barras-3');
+                this.containerLabels = document.getElementById('grafico-labels-3');
+                
+                this.log(`Tentativa ${tentativas}: Barras=${!!this.containerBarras}, Labels=${!!this.containerLabels}`);
+                
+                if (this.containerBarras && this.containerLabels) {
+                    this.log('✅ Elementos encontrados!');
+                    resolve();
+                } else if (tentativas > 50) {
+                    this.log('❌ Timeout aguardando elementos');
+                    resolve();
+                } else {
+                    setTimeout(verificar, 100);
+                }
+            };
+            verificar();
+        });
+    }
+
+    verificarElementosDOM() {
+        this.log('=== VERIFICAÇÃO DOM ===');
+        
+        const elementos = {
+            'grafico-mensal-container-3': document.querySelector('.grafico-mensal-container-3'),
+            'grafico-mensal-3': document.getElementById('grafico-mensal-3'),
+            'grafico-canvas-3': document.querySelector('.grafico-canvas-3'),
+            'grafico-barras-3': document.getElementById('grafico-barras-3'),
+            'grafico-labels-3': document.getElementById('grafico-labels-3')
+        };
+
+        Object.entries(elementos).forEach(([nome, elemento]) => {
+            if (elemento) {
+                const computed = window.getComputedStyle(elemento);
+                this.log(`✅ ${nome}: display=${computed.display}, visibility=${computed.visibility}, width=${computed.width}, height=${computed.height}`);
+            } else {
+                this.log(`❌ ${nome}: NÃO ENCONTRADO`);
+            }
+        });
+    }
+
+    extrairDadosReaisDasLinhas() {
+        const linhasMeses = document.querySelectorAll('.gd-linha-mes');
+        this.log(`=== EXTRAÇÃO DE DADOS: ${linhasMeses.length} linhas encontradas ===`);
+        
+        const mesesNomes = [
+            'janeiro', 'fevereiro', 'março', 'abril', 'maio', 'junho',
+            'julho', 'agosto', 'setembro', 'outubro', 'novembro', 'dezembro'
+        ];
+        const mesesAbrev = ['Jan', 'Fev', 'Mar', 'Abr', 'Mai', 'Jun', 'Jul', 'Ago', 'Set', 'Out', 'Nov', 'Dez'];
+        
+        // Inicializar array com 12 meses
+        this.dadosMeses = mesesAbrev.map((mes, index) => ({
+            mes: mes,
+            mesIndex: index,
+            verde: 0,
+            vermelho: 0,
+            saldo: 0,
+            totalGreen: 0,
+            totalRed: 0,
+            temDados: false
+        }));
+
+        // Processar cada linha dos meses
+        linhasMeses.forEach((linha, i) => {
+            const dataElement = linha.querySelector('.data-mes');
+            if (!dataElement) {
+                this.log(`Linha ${i}: Sem elemento .data-mes`);
+                return;
+            }
+
+            const textoMes = dataElement.textContent.trim().toLowerCase();
+            this.log(`Linha ${i}: "${textoMes}"`);
+            
+            // Encontrar mês correspondente
+            let mesIndex = -1;
+            mesesNomes.forEach((nomeCompleto, idx) => {
+                if (textoMes.includes(nomeCompleto) || 
+                    textoMes.includes(mesesAbrev[idx].toLowerCase())) {
+                    mesIndex = idx;
+                }
+            });
+
+            if (mesIndex === -1) {
+                this.log(`Linha ${i}: Mês não reconhecido: "${textoMes}"`);
+                return;
+            }
+
+            // Extrair placar (green x red)
+            const placarVerde = linha.querySelector('.placar.verde-bold');
+            const placarVermelho = linha.querySelector('.placar.vermelho-bold');
+            const totalGreen = placarVerde ? parseInt(placarVerde.textContent) || 0 : 0;
+            const totalRed = placarVermelho ? parseInt(placarVermelho.textContent) || 0 : 0;
+
+            // Extrair saldo real do mês
+            const valorElement = linha.querySelector('.valor');
+            let saldoReal = 0;
+            if (valorElement) {
+                const textoValor = valorElement.textContent
+                    .replace('R$', '')
+                    .replace(/\./g, '')
+                    .replace(',', '.')
+                    .trim();
+                saldoReal = parseFloat(textoValor) || 0;
+            }
+
+            // Calcular valores para o gráfico
+            let valorVerde = 0;
+            let valorVermelho = 0;
+
+            if (totalGreen > 0 || totalRed > 0 || saldoReal !== 0) {
+                if (saldoReal > 0) {
+                    valorVerde = Math.abs(saldoReal);
+                    valorVermelho = totalRed > 0 ? Math.abs(saldoReal) * 0.3 : 0;
+                } else if (saldoReal < 0) {
+                    valorVerde = totalGreen > 0 ? Math.abs(saldoReal) * 0.3 : 0;
+                    valorVermelho = Math.abs(saldoReal);
+                } else {
+                    valorVerde = totalGreen * 50;
+                    valorVermelho = totalRed * 50;
+                }
+            }
+
+            this.dadosMeses[mesIndex] = {
+                mes: mesesAbrev[mesIndex],
+                mesIndex: mesIndex,
+                verde: valorVerde,
+                vermelho: valorVermelho,
+                saldo: saldoReal,
+                totalGreen: totalGreen,
+                totalRed: totalRed,
+                temDados: totalGreen > 0 || totalRed > 0 || saldoReal !== 0
+            };
+
+            this.log(`✅ ${mesesAbrev[mesIndex]}: Saldo=R$${saldoReal.toFixed(2)}, Verde=${valorVerde.toFixed(0)}, Vermelho=${valorVermelho.toFixed(0)}, Placar=${totalGreen}x${totalRed}`);
+        });
+
+        // Calcular valor máximo
+        this.valorMaximo = 0;
+        this.dadosMeses.forEach(mes => {
+            this.valorMaximo = Math.max(this.valorMaximo, mes.verde, mes.vermelho);
+        });
+        this.valorMaximo = Math.max(this.valorMaximo, 100);
+
+        this.log(`Valor máximo calculado: ${this.valorMaximo}`);
+        
+        // Log dos dados finais
+        const mesesComDados = this.dadosMeses.filter(m => m.temDados);
+        this.log(`Total de meses com dados: ${mesesComDados.length}`);
+        mesesComDados.forEach(mes => {
+            this.log(`- ${mes.mes}: V=${mes.verde}, R=${mes.vermelho}`);
+        });
+    }
+
+    gerarGrafico() {
+        this.log('=== GERANDO GRÁFICO ===');
+
+        if (!this.containerBarras || !this.containerLabels) {
+            this.log('❌ Containers não encontrados!');
+            return;
+        }
+
+        // Limpar containers
+        this.containerBarras.innerHTML = '';
+        this.containerLabels.innerHTML = '';
+        this.log('Containers limpos');
+
+        // Gerar para cada mês
+        this.dadosMeses.forEach((dadoMes, index) => {
+            this.log(`Processando ${dadoMes.mes} (${index})...`);
+
+            // Container do mês
+            const containerMes = document.createElement('div');
+            containerMes.className = 'barra-mes-3';
+            containerMes.style.cssText = `
+                position: relative !important;
+                display: flex !important;
+                flex-direction: row !important;
+                align-items: flex-end !important;
+                justify-content: center !important;
+                flex: 1 !important;
+                height: 100% !important;
+                max-width: calc(100% / 12) !important;
+                gap: 2px !important;
+                border: 1px solid rgba(255,0,0,0.3) !important;
+            `;
+
+            let barrasCriadas = 0;
+
+            // Se tem dados, criar barras
+            if (dadoMes.temDados && (dadoMes.verde > 0 || dadoMes.vermelho > 0)) {
+                const alturaVerde = Math.max(10, Math.min(90, (dadoMes.verde / this.valorMaximo) * 100));
+                const alturaVermelha = Math.max(10, Math.min(90, (dadoMes.vermelho / this.valorMaximo) * 100));
+
+                // Barra verde
+                if (dadoMes.verde > 0) {
+                    const barraVerde = document.createElement('div');
+                    barraVerde.className = 'barra-verde-3';
+                    barraVerde.style.cssText = `
+                        position: relative !important;
+                        display: block !important;
+                        width: 6px !important;
+                        height: ${alturaVerde}% !important;
+                        background: linear-gradient(to top, #10b981, #34d399) !important;
+                        border-radius: 2px 2px 0 0 !important;
+                        box-shadow: 0 2px 4px rgba(16, 185, 129, 0.3) !important;
+                        flex-shrink: 0 !important;
+                    `;
+                    barraVerde.title = `${dadoMes.mes} - Saldo: R$ ${dadoMes.saldo.toFixed(2)} | Green: ${dadoMes.totalGreen}`;
+                    containerMes.appendChild(barraVerde);
+                    barrasCriadas++;
+                    this.log(`  ✅ Barra verde criada: ${alturaVerde}%`);
+                }
+
+                // Barra vermelha
+                if (dadoMes.vermelho > 0) {
+                    const barraVermelha = document.createElement('div');
+                    barraVermelha.className = 'barra-vermelha-3';
+                    barraVermelha.style.cssText = `
+                        position: relative !important;
+                        display: block !important;
+                        width: 6px !important;
+                        height: ${alturaVermelha}% !important;
+                        background: linear-gradient(to top, #ef4444, #f87171) !important;
+                        border-radius: 2px 2px 0 0 !important;
+                        box-shadow: 0 2px 4px rgba(239, 68, 68, 0.3) !important;
+                        flex-shrink: 0 !important;
+                    `;
+                    barraVermelha.title = `${dadoMes.mes} - Saldo: R$ ${dadoMes.saldo.toFixed(2)} | Red: ${dadoMes.totalRed}`;
+                    containerMes.appendChild(barraVermelha);
+                    barrasCriadas++;
+                    this.log(`  ✅ Barra vermelha criada: ${alturaVermelha}%`);
+                }
+            } else {
+                this.log(`  ⚪ ${dadoMes.mes}: sem dados`);
+            }
+
+            this.containerBarras.appendChild(containerMes);
+
+            // Label do mês
+            const label = document.createElement('div');
+            label.className = 'label-mes-3';
+            label.textContent = dadoMes.mes;
+            label.style.cssText = `
+                position: relative !important;
+                display: block !important;
+                flex: 1 !important;
+                text-align: center !important;
+                font-family: "Rajdhani", sans-serif !important;
+                font-size: 9px !important;
+                font-weight: 600 !important;
+                color: #64748b !important;
+                text-transform: uppercase !important;
+                letter-spacing: 0.5px !important;
+                max-width: calc(100% / 12) !important;
+                background: rgba(0,255,0,0.1) !important;
+                border: 1px solid rgba(0,255,0,0.3) !important;
+            `;
+
+            // Destacar mês atual
+            if (index + 1 === this.mesAtual) {
+                label.style.color = '#10b981 !important';
+                label.style.fontWeight = '700 !important';
+                label.classList.add('atual');
+                this.log(`  🎯 ${dadoMes.mes}: marcado como mês atual`);
+            }
+
+            this.containerLabels.appendChild(label);
+            this.log(`  📝 Label criado para ${dadoMes.mes}`);
+        });
+
+        this.log('✅ Gráfico gerado!');
+    }
+
+    verificarResultado() {
+        this.log('=== VERIFICAÇÃO FINAL ===');
+        
+        const barras = this.containerBarras.querySelectorAll('.barra-verde-3, .barra-vermelha-3');
+        const labels = this.containerLabels.querySelectorAll('.label-mes-3');
+        
+        this.log(`Barras criadas: ${barras.length}`);
+        this.log(`Labels criados: ${labels.length}`);
+        
+        barras.forEach((barra, i) => {
+            const rect = barra.getBoundingClientRect();
+            this.log(`Barra ${i}: ${barra.className}, height=${barra.style.height}, visible=${rect.height > 0}`);
+        });
+        
+        labels.forEach((label, i) => {
+            this.log(`Label ${i}: "${label.textContent}", visible=${label.offsetWidth > 0}`);
+        });
+    }
+
+    async recarregar() {
+        this.log('🔄 Recarregando gráfico...');
+        await this.inicializar();
+    }
+}
+
+// INICIALIZAÇÃO AUTOMÁTICA FORÇADA
+let graficoDebug = null;
+
+function inicializarGraficoDebug() {
+    console.log('🎯 FORÇANDO INICIALIZAÇÃO DO GRÁFICO DEBUG');
+    
+    if (!graficoDebug) {
+        graficoDebug = new GraficoAnualDebugIntensivo();
+    }
+    graficoDebug.inicializar();
+}
+
+// MÚLTIPLAS TENTATIVAS DE INICIALIZAÇÃO
+document.addEventListener('DOMContentLoaded', function() {
+    console.log('DOM LOADED - Inicializando gráfico');
+    setTimeout(() => inicializarGraficoDebug(), 500);
+});
+
+if (document.readyState !== 'loading') {
+    console.log('DOM JÁ CARREGADO - Inicializando gráfico');
+    setTimeout(() => inicializarGraficoDebug(), 200);
+}
+
+// Forçar inicialização após 2 segundos
+setTimeout(() => {
+    console.log('TIMEOUT 2s - Forçando inicialização');
+    inicializarGraficoDebug();
+}, 2000);
+
+// Forçar inicialização após 5 segundos
+setTimeout(() => {
+    console.log('TIMEOUT 5s - Última tentativa de inicialização');
+    inicializarGraficoDebug();
+}, 5000);
+
+// Expor globalmente para debug manual
+window.inicializarGraficoDebug = inicializarGraficoDebug;
+window.graficoDebug = graficoDebug;
+
+console.log('🚀 SISTEMA DE GRÁFICO DEBUG CARREGADO');
+console.log('Para debug manual: window.inicializarGraficoDebug()');
+</script>
+
+        <!-- ===== LISTA DE MESES DO ANO ===== -->
+        <div class="lista-meses">
+            
+<?php
+// ===== CONFIGURAÇÕES E VARIÁVEIS =====
+$meta_diaria_ano = isset($_SESSION['meta_diaria']) ? floatval($_SESSION['meta_diaria']) : 0;
+$meta_mensal_ano = isset($_SESSION['meta_mensal']) ? floatval($_SESSION['meta_mensal']) : 0;
+$meta_anual_ano = isset($_SESSION['meta_anual']) ? floatval($_SESSION['meta_anual']) : 0;
+
+$periodo_atual_ano = $_SESSION['periodo_filtro'] ?? 'ano';
+$meta_atual_ano = ($periodo_atual_ano === 'mes') ? $meta_mensal_ano : 
+                  (($periodo_atual_ano === 'ano') ? $meta_anual_ano : $meta_diaria_ano);
+
+$hoje_ano = date('Y-m-d');
+$mes_atual_ano = date('m');
+$ano_atual_ano = date('Y');
+
+// Nomes dos meses
+$nomes_meses = [
+    1 => 'Janeiro',   2 => 'Fevereiro', 3 => 'Março',     4 => 'Abril',
+    5 => 'Maio',      6 => 'Junho',     7 => 'Julho',     8 => 'Agosto',
+    9 => 'Setembro', 10 => 'Outubro',  11 => 'Novembro', 12 => 'Dezembro'
+];
+
+// ===== BUSCAR DADOS ANUAIS DO BANCO =====
+$dados_por_mes_ano = [];
+
+try {
+    $sql_ano = "
+        SELECT 
+            YEAR(vm.data_criacao) as ano,
+            MONTH(vm.data_criacao) as mes,
+            COALESCE(SUM(CASE WHEN vm.green = 1 THEN vm.valor_green ELSE 0 END), 0) as total_valor_green,
+            COALESCE(SUM(CASE WHEN vm.red = 1 THEN vm.valor_red ELSE 0 END), 0) as total_valor_red,
+            COALESCE(SUM(CASE WHEN vm.green = 1 THEN 1 ELSE 0 END), 0) as total_green,
+            COALESCE(SUM(CASE WHEN vm.red = 1 THEN 1 ELSE 0 END), 0) as total_red
+        FROM valor_mentores vm
+        INNER JOIN mentores m ON vm.id_mentores = m.id
+        WHERE m.id_usuario = ?
+        AND YEAR(vm.data_criacao) = ?
+        GROUP BY YEAR(vm.data_criacao), MONTH(vm.data_criacao)
+        ORDER BY mes ASC
+    ";
+    
+    $stmt_ano = $conexao->prepare($sql_ano);
+    $stmt_ano->bind_param("ii", $id_usuario_logado, $ano_atual_ano);
+    $stmt_ano->execute();
+    $result_ano = $stmt_ano->get_result();
+    
+    while ($row = $result_ano->fetch_assoc()) {
+        $mes_key = $row['ano'] . '-' . str_pad($row['mes'], 2, '0', STR_PAD_LEFT);
+        $dados_por_mes_ano[$mes_key] = $row;
+    }
+    
+    $stmt_ano->close();
+    
+} catch (Exception $e) {
+    error_log("Erro ao buscar dados anuais: " . $e->getMessage());
+}
+
+// ===== LOOP ATRAVÉS DE TODOS OS MESES DO ANO =====
+for ($mes = 1; $mes <= 12; $mes++) {
+    $mes_formatado = str_pad($mes, 2, '0', STR_PAD_LEFT);
+    $chave_mes = $ano_atual_ano . '-' . $mes_formatado;
+    $nome_mes = $nomes_meses[$mes];
+    
+    // Usar apenas o nome do mês (sem ano)
+    $data_exibicao_mes = $nome_mes;
+    
+    // ===== BUSCAR DADOS DO MÊS =====
+    $dados_mes_ano = isset($dados_por_mes_ano[$chave_mes]) ? $dados_por_mes_ano[$chave_mes] : [
+        'total_valor_green' => 0,
+        'total_valor_red' => 0,
+        'total_green' => 0,
+        'total_red' => 0
+    ];
+    
+    // ===== CALCULAR SALDO DO MÊS =====
+    $saldo_mes_ano = floatval($dados_mes_ano['total_valor_green']) - floatval($dados_mes_ano['total_valor_red']);
+    $saldo_formatado_mes = number_format($saldo_mes_ano, 2, ',', '.');
+    
+    // ===== VERIFICAR SE META MENSAL FOI BATIDA =====
+    $meta_batida_mes = false;
+    
+    if ($meta_mensal_ano > 0 && $saldo_mes_ano >= $meta_mensal_ano) {
+        $meta_batida_mes = true;
+    }
+    
+    // Para meses passados, aplicar critério mais flexível
+    if (!$meta_batida_mes && $mes < (int)$mes_atual_ano && $saldo_mes_ano > 0) {
+        if ($meta_mensal_ano <= 0) {
+            // Sem meta configurada: critério restritivo
+            $meta_batida_mes = $saldo_mes_ano >= 500;
+        } elseif ($saldo_mes_ano >= ($meta_mensal_ano * 0.8)) {
+            $meta_batida_mes = true;
+        }
+    }
+    
+    // ===== DETERMINAR CLASSES E ESTILOS VISUAIS =====
+    $classe_valor_cor_mes = '';
+    if ($saldo_mes_ano > 0) {
+        $classe_valor_cor_mes = 'valor-positivo';
+    } elseif ($saldo_mes_ano < 0) {
+        $classe_valor_cor_mes = 'valor-negativo';
+    } else {
+        $classe_valor_cor_mes = 'valor-zero';
+    }
+    
+    $cor_valor_mes = ($saldo_mes_ano == 0) ? 'texto-cinza' : ($saldo_mes_ano > 0 ? 'verde-bold' : 'vermelho-bold');
+    $classe_texto_mes = ($saldo_mes_ano == 0) ? 'texto-cinza' : '';
+    $placar_cinza_mes = ((int)$dados_mes_ano['total_green'] === 0 && (int)$dados_mes_ano['total_red'] === 0) ? 'texto-cinza' : '';
+    
+    $classes_mes_ano = [];
+    
+    // Verificar se é o mês atual
+    if ($mes == (int)$mes_atual_ano) {
+        $classes_mes_ano[] = 'gd-mes-hoje';
+        $classes_mes_ano[] = ($saldo_mes_ano >= 0) ? 'gd-borda-verde' : 'gd-borda-vermelha';
+    } else {
+        $classes_mes_ano[] = 'mes-normal';
+    }
+    
+    // Para meses passados
+    if ($mes < (int)$mes_atual_ano) {
+        if ($saldo_mes_ano > 0) {
+            $classes_mes_ano[] = 'gd-mes-destaque';
+        } elseif ($saldo_mes_ano < 0) {
+            $classes_mes_ano[] = 'gd-mes-destaque-negativo';
+        }
+        
+        if ((int)$dados_mes_ano['total_green'] === 0 && (int)$dados_mes_ano['total_red'] === 0) {
+            $classes_mes_ano[] = 'gd-mes-sem-valor';
+        }
+    }
+    
+    // Para meses futuros
+    if ($mes > (int)$mes_atual_ano) {
+        $classes_mes_ano[] = 'mes-futuro';
+    }
+    
+    $icone_classe_mes = $meta_batida_mes ? 'fa-trophy trofeu-icone' : 'fa-check';
+    
+    // ===== MONTAR CLASSES E ATRIBUTOS FINAIS =====
+    $classe_mes_string = 'gd-linha-mes ' . $classe_valor_cor_mes . ' ' . implode(' ', $classes_mes_ano);
+    $data_meta_attr_mes = $meta_batida_mes ? 'true' : 'false';
+    $data_saldo_attr_mes = $saldo_mes_ano;
+    $data_meta_mensal_attr = $meta_mensal_ano;
+    
+    // ===== RENDERIZAR LINHA DO MÊS =====
+    echo '
+    <div class="'.$classe_mes_string.'" 
+         data-date="'.$chave_mes.'" 
+         data-meta-batida="'.$data_meta_attr_mes.'"
+         data-saldo="'.$data_saldo_attr_mes.'"
+         data-meta-mensal="'.$data_meta_mensal_attr.'"
+         data-periodo-atual="'.$periodo_atual_ano.'">
+        
+        <span class="data-mes '.$classe_texto_mes.'">'.$data_exibicao_mes.'</span>
+
+        <div class="placar-mes">
+            <span class="placar verde-bold '.$placar_cinza_mes.'">'.(int)$dados_mes_ano['total_green'].'</span>
+            <span class="placar separador '.$placar_cinza_mes.'">×</span>
+            <span class="placar vermelho-bold '.$placar_cinza_mes.'">'.(int)$dados_mes_ano['total_red'].'</span>
         </div>
+
+        <span class="valor '.$cor_valor_mes.'">R$ '.$saldo_formatado_mes.'</span>
+
+        <span class="icone '.$classe_texto_mes.'">
+            <i class="fa-solid '.$icone_classe_mes.'"></i>
+        </span>
+        
+    </div>';
+}
+?>
+
+        </div>
+        
+    </div>
+</div>
+
+<!-- ===== ELEMENTO OCULTO COM DADOS DO ANO ===== -->
+<div id="dados-ano-info" style="display: none;" 
+     data-ano="<?php echo $ano_atual_ano; ?>" 
+     data-meta-diaria="<?php echo $meta_diaria_ano; ?>"
+     data-meta-mensal="<?php echo $meta_mensal_ano; ?>"
+     data-meta-anual="<?php echo $meta_anual_ano; ?>"
+     data-periodo-atual="<?php echo $periodo_atual_ano; ?>"
+     data-hoje="<?php echo $hoje_ano; ?>">
+</div>
+
+<!-- ===== SCRIPTS JAVASCRIPT ===== -->
+
+<!-- Script para definir o título do ano -->
+<script>
+(function() {
+    const hoje = new Date();
+    const anoAtual = hoje.getFullYear();
+    const tituloEl = document.getElementById("tituloAno");
+    tituloEl.textContent = `${anoAtual}`;
+
+    // Aplicar a mesma cor ao ícone do calendário antes do título
+    const tituloParent = tituloEl.closest('.titulo-bloco-3');
+    if (tituloParent) {
+        const iconEl = tituloParent.querySelector('i.fa-calendar-alt');
+        if (iconEl) {
+            // Calcular a cor efetiva do título (caso CSS a defina)
+            const computed = window.getComputedStyle(tituloEl).color;
+            iconEl.style.color = computed;
+        }
+    }
+})();
+</script>
+
+<!-- Script de verificação de consistência -->
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    console.log('Verificando consistência de troféus anuais após carregamento PHP...');
+    
+    const linhasMeses = document.querySelectorAll('.gd-linha-mes');
+    linhasMeses.forEach(linha => {
+        const dataLinha = linha.getAttribute('data-date');
+        const metaBatida = linha.getAttribute('data-meta-batida') === 'true';
+        const saldo = parseFloat(linha.getAttribute('data-saldo')) || 0;
+        
+        if (dataLinha && metaBatida) {
+            console.log(`PHP marcou ${dataLinha} como meta batida (saldo: R$ ${saldo.toFixed(2)})`);
+            
+            if (window.SistemaTrofeuMensal && window.SistemaTrofeuMensal.aplicarTrofeu) {
+                setTimeout(() => {
+                    const icone = linha.querySelector('.icone i');
+                    if (icone) {
+                        window.SistemaTrofeuMensal.aplicarTrofeu(icone, linha);
+                    }
+                }, 100);
+            }
+        }
+    });
+    
+    console.log(`Verificação anual concluída - ${linhasMeses.length} meses processados`);
+    
+    // Forçar atualização após 2 segundos para garantir dados atualizados
+    setTimeout(() => {
+        if (window.ListaMesesAnual && window.ListaMesesAnual.atualizar) {
+            window.ListaMesesAnual.atualizar();
+        }
+    }, 2000);
+});
+</script>
+        
+    </div>
+    </div>
+</div>
+ 
+    </div>
+</div>
     </main>
     
     <footer class="footer"></footer>
@@ -4852,6 +5551,8 @@ if (toggle && menu && hiddenInput) {
 <!-- -->
 <!-- -->
     <script src="js/modal-confirmacao.js"></script>
+
+
 
 </body>
 </html>

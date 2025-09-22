@@ -79,6 +79,62 @@ body {
   flex-shrink: 0;
 }
 
+/* Bloco-3: remover padding lateral para colar elementos às laterais do bloco
+   Mantemos padding vertical para espaçamento superior/inferior, mas zera
+   padding-left/padding-right. Forçamos filhos diretos a remover margens/padding
+   que possam impedir o colamento nas laterais. */
+.container .bloco.bloco-3 {
+  padding-left: 0 !important;
+  padding-right: 0 !important;
+  padding-top: 0 !important; /* remover padding-top para colar elementos no topo */
+  padding-bottom: 20px; /* manter espaçamento inferior */
+  position: relative; /* referência para elementos posicionados absolutamente dentro do bloco */
+}
+
+/* Igualar bordas arredondadas ao bloco-2 */
+.container .bloco.bloco-3,
+.container .bloco.bloco-3 .resumo-mes {
+  border-radius: 20px !important;
+  background-clip: padding-box !important;
+}
+
+/* Filhos diretos de bloco-3: garantir que ocupem 100% da largura e sem margin */
+.container .bloco.bloco-3 > * {
+  width: 100% !important;
+  max-width: 100% !important;
+  margin: 0 !important;
+  padding-left: 0 !important;
+  padding-right: 0 !important;
+  box-sizing: border-box !important;
+}
+
+/* Se houver listas/elementos com classes internas que adicionam padding, resetá-las */
+.container .bloco.bloco-3 .lista-dias,
+.container .bloco.bloco-3 .resumo-mes,
+.container .bloco.bloco-3 .algum-conteudo {
+  margin: 0 !important;
+  padding: 0 !important;
+  width: 100% !important;
+}
+
+/* Posicionar o campo de data/placar colado ao topo interno do bloco-3 */
+.container .bloco.bloco-3 .campo-armazena-data-placar-3 {
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  width: calc(100% - 0px);
+  margin: 0 auto;
+  z-index: 101000; /* acima do conteúdo interno */
+}
+
+/* Se o campo fixar no topo ocupa altura, garantir que o conteúdo principal não fique escondido
+   adicionando um espaçamento interno equivalente quando necessário. Caso já queira sem espaçamento,
+   remover a regra abaixo. */
+.container .bloco.bloco-3 .conteudo-principal-apos-campo {
+  padding-top: 40px; /* ajustar conforme altura do campo de data/placar */
+}
+
 /* Override específico para evitar que elementos internos (ex: .lista-dias) "escapem"
    e cubram as bordas arredondadas do bloco-2. Mantemos overflow visível no bloco pai,
    mas garantimos que o conteúdo interno use box-sizing e não use margins negativas

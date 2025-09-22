@@ -1,302 +1,757 @@
-﻿(function () {
-  "use strict";
-  document.addEventListener("DOMContentLoaded", function () {
-    const form = document.getElementById("form-mentor");
+﻿/* ===================================================================
+   JAVASCRIPT DO PLACAR ANUAL - BLOCO 3
+   Sistema de atualização e gerenciamento do placar anual
+   =================================================================== */
 
-    if (form) {
-      const timeZone = Intl.DateTimeFormat().resolvedOptions().timeZone;
-      const dataLocal = new Date().toISOString();
+const PlacarAnualManager = {
+  // CONTROLE DE ESTADO ANUAL
+  atualizandoAtualmente: false,
+  intervaloPlacar: null,
+  ultimaAtualizacao: null,
 
-      const criarInput = (name, value) => {
-        let existing = form.querySelector(`[name="${name}"]`);
-        if (!existing) {
-          const input = document.createElement("input");
-          input.type = "hidden";
-          input.name = name;
-          input.value = value;
-          form.appendChild(input);
-        }
-      };
+  // INICIALIZAR SISTEMA DE PLACAR ANUAL
+  inicializar() {
+    try {
+      console.log("📊 Inicializando Sistema de Placar Anual...");
 
-      criarInput("user_time_zone", timeZone);
-      criarInput("data_local", dataLocal);
-    } else {
-      console.warn("âŒ FormulÃ¡rio #form-mentor nÃ£o encontrado.");
+      // Verificar se existe o elemento
+      const placar = document.getElementById("pontuacao-3");
+      if (!placar) {
+        console.warn("⚠️ Elemento #pontuacao-3 não encontrado");
+        return false;
+      }
+
+      // Primeira atualização
+      this.atualizarPlacarAnual();
+
+      // Configurar intervalo de atualização (a cada 45 segundos para dados anuais)
+      this.intervaloPlacar = setInterval(() => {
+        this.atualizarPlacarAnual();
+      }, 45000);
+
+      // Interceptar mudanças no sistema principal
+      this.configurarInterceptadores();
+
+      console.log("✅ Sistema de Placar Anual inicializado");
+      return true;
+    } catch (error) {
+      console.error("❌ Erro ao inicializar placar anual:", error);
+      return false;
     }
-  });
+  },
 
-  //
-  //
-  //
-  //
-  //
-  //
-  //
-  //
-  //
-  //
-  //
-  //
-  //
-  //
-  //
-  //
-  //
-  // ========================================================================================================================
-  //                                 JS DAOS CAMPOS ONDE FILTRA O MÃŠS BARRA DE PROGRESSO META E SALDO
-  // ========================================================================================================================
-  // =============================================
-  //  CORREÃ‡ÃƒO DOS ÃCONES - USANDO CLASSES CORRETAS DO FONT AWESOME
-  // =============================================
+  // ATUALIZAR PLACAR ANUAL - PERÍODO COMPLETO DO ANO
+  async atualizarPlacarAnual() {
+    if (this.atualizandoAtualmente) {
+      console.log("⏳ Placar anual já sendo atualizado...");
+      return;
+    }
 
-  const MetaMensalManager = {
-    // Controle simples para meta mensal
-    atualizandoAtualmente: false,
-    periodoFixo: "ano",
-    tipoMetaAtual: "turbo",
+    this.atualizandoAtualmente = true;
 
-    // Atualizar meta mensal - versÃ£o especÃ­fica
-    async atualizarMetaMensal(aguardarDados = false) {
-      if (this.atualizandoAtualmente) return null;
-      this.atualizandoAtualmente = true;
+    try {
+      console.log("📊 Buscando dados do placar anual (período: ano)...");
 
-      try {
-        if (aguardarDados) {
-          await new Promise((resolve) => setTimeout(resolve, 100));
-        }
+      // Buscar dados anuais usando o endpoint específico
+      const formData = new FormData();
+      formData.append("periodo", "ano");
 
-        const response = await fetch("dados_banca.php?periodo=ano", {
-          method: "GET",
-          headers: {
-            "Cache-Control": "no-cache",
-            "X-Requested-With": "XMLHttpRequest",
-            "X-Periodo-Filtro": "ano",
-          },
-        });
+      const response = await fetch("carregar-mentores.php", {
+        method: "POST",
+        body: formData,
+        headers: {
+          "Cache-Control": "no-cache",
+          "X-Requested-With": "XMLHttpRequest",
+        },
+      });
 
-        if (!response.ok) throw new Error(`HTTP ${response.status}`);
-
-        const data = await response.json();
-        if (!data.success) throw new Error(data.message);
-
-        if (data.tipo_meta) {
-          this.tipoMetaAtual = data.tipo_meta;
-        }
-
-        const dadosProcessados = this.processarDadosMensais(data);
-        this.atualizarTodosElementosMensais(dadosProcessados);
-
-        return dadosProcessados;
-      } catch (error) {
-        console.error("Erro Meta Mensal:", error);
-        this.mostrarErroMetaMensal();
-        return null;
-      } finally {
-        this.atualizandoAtualmente = false;
+      if (!response.ok) {
+        throw new Error(`HTTP ${response.status}`);
       }
-    },
 
-    // Processar dados especificamente para mensal
-    processarDadosMensais(data) {
-      try {
-        const metaFinal = parseFloat(data.meta_anual || data.meta_mensal) || 0;
-        const rotuloFinal = "Meta do Ano";
-        const lucroMensal = parseFloat(data.lucro) || 0;
+      const html = await response.text();
 
-        return {
-          ...data,
-          meta_display: metaFinal,
-          meta_display_formatada:
-            "R$ " +
-            metaFinal.toLocaleString("pt-BR", {
-              minimumFractionDigits: 2,
-              maximumFractionDigits: 2,
-            }),
-          rotulo_periodo: rotuloFinal,
-          periodo_ativo: "ano",
-          lucro_periodo: lucroMensal,
-        };
-      } catch (error) {
-        console.error("Erro ao processar dados mensais:", error);
-        return data;
+      // Extrair dados do placar usando a mesma lógica do sistema principal
+      const placarData = this.extrairPlacarAnual(html);
+
+      if (placarData) {
+        this.aplicarPlacarAnual(placarData);
+        this.ultimaAtualizacao = new Date();
+        console.log(
+          `✅ Placar anual atualizado: ${placarData.wins} × ${placarData.losses}`
+        );
+      } else {
+        // Fallback: valores zerados
+        this.aplicarPlacarAnual({ wins: 0, losses: 0 });
+        console.log("⚠️ Nenhum dado anual encontrado, usando valores zero");
       }
-    },
+    } catch (error) {
+      console.error("❌ Erro ao atualizar placar anual:", error);
+      this.mostrarErroPlacar();
+      // Em caso de erro, zerar placar
+      this.aplicarPlacarAnual({ wins: 0, losses: 0 });
+    } finally {
+      this.atualizandoAtualmente = false;
+    }
+  },
 
-    // âœ… NOVA FUNÃ‡ÃƒO: CALCULAR META FINAL MENSAL COM VALOR TACHADO E EXTRA
-    calcularMetaFinalMensalComExtra(saldoMes, metaCalculada, bancaTotal, data) {
-      try {
-        let metaFinal,
-          rotulo,
-          statusClass,
-          valorExtra = 0,
-          mostrarTachado = false;
+  // EXTRAIR PLACAR ANUAL DO HTML - DADOS AGREGADOS DO ANO
+  extrairPlacarAnual(html) {
+    try {
+      console.log("🔍 Extraindo placar anual do HTML retornado...");
 
-        console.log(`ðŸ” DEBUG CALCULAR META MENSAL COM EXTRA:`);
-        console.log(`   Saldo MÃªs: R$ ${saldoMes.toFixed(2)}`);
-        console.log(`   Meta MÃªs: R$ ${metaCalculada.toFixed(2)}`);
-        console.log(`   Banca: R$ ${bancaTotal.toFixed(2)}`);
+      // Criar elemento temporário para parsear HTML
+      const temp = document.createElement("div");
+      temp.innerHTML = html;
 
-        if (bancaTotal <= 0) {
-          metaFinal = bancaTotal;
-          rotulo = "Deposite p/ ComeÃ§ar";
-          statusClass = "sem-banca";
-          console.log(`ðŸ“Š RESULTADO MENSAL: Sem banca`);
+      // MÉTODO 1: Buscar elementos de total anual
+      const totalGreenEl = temp.querySelector(
+        "#total-green-ano, #total-green-dia"
+      );
+      const totalRedEl = temp.querySelector("#total-red-ano, #total-red-dia");
+
+      if (totalGreenEl && totalRedEl) {
+        const totalGreen = totalGreenEl.dataset.green || "0";
+        const totalRed = totalRedEl.dataset.red || "0";
+
+        const wins = parseInt(totalGreen, 10) || 0;
+        const losses = parseInt(totalRed, 10) || 0;
+
+        console.log(`✅ Dados anuais extraídos: ${wins} × ${losses}`);
+        return { wins, losses };
+      }
+
+      // MÉTODO 2: Buscar placar principal direto
+      const placarGreen = temp.querySelector(".placar-green");
+      const placarRed = temp.querySelector(".placar-red");
+
+      if (placarGreen && placarRed) {
+        const wins = parseInt(placarGreen.textContent.trim(), 10) || 0;
+        const losses = parseInt(placarRed.textContent.trim(), 10) || 0;
+
+        console.log(`✅ Dados do placar principal: ${wins} × ${losses}`);
+        return { wins, losses };
+      }
+
+      // MÉTODO 3: Agregar dados dos mentores para o ano todo
+      const mentorCards = temp.querySelectorAll(".mentor-card");
+      let wins = 0,
+        losses = 0;
+
+      console.log(
+        `📊 Agregando dados anuais de ${mentorCards.length} mentores`
+      );
+
+      mentorCards.forEach((card) => {
+        // Buscar valores Green e Red nos mentor-cards
+        const greenBox = card.querySelector(".value-box-green p:nth-child(2)");
+        const redBox = card.querySelector(".value-box-red p:nth-child(2)");
+
+        if (greenBox) {
+          const greenCount = parseInt(greenBox.textContent.trim(), 10) || 0;
+          wins += greenCount;
         }
-        // âœ… META BATIDA OU SUPERADA - COM VALOR EXTRA
-        else if (
-          saldoMes > 0 &&
-          metaCalculada > 0 &&
-          saldoMes >= metaCalculada
-        ) {
-          valorExtra = saldoMes - metaCalculada;
-          mostrarTachado = true;
-          metaFinal = metaCalculada; // Mostra o valor da meta original
 
-          if (valorExtra > 0) {
-            rotulo = `Meta do Ano Superada! <i class='fa-solid fa-trophy'></i>`;
-            statusClass = "meta-superada";
+        if (redBox) {
+          const redCount = parseInt(redBox.textContent.trim(), 10) || 0;
+          losses += redCount;
+        }
+      });
+
+      console.log(`✅ Dados anuais agregados: ${wins} × ${losses}`);
+      return { wins, losses };
+    } catch (error) {
+      console.error("❌ Erro ao extrair placar anual:", error);
+      return { wins: 0, losses: 0 };
+    }
+  },
+
+  // APLICAR PLACAR ANUAL NO ELEMENTO
+  aplicarPlacarAnual(placarData) {
+    try {
+      const placarElement = document.getElementById("pontuacao-3");
+      if (!placarElement) return;
+
+      // Garantir que o placar está sempre visível
+      placarElement.style.setProperty("visibility", "visible", "important");
+      placarElement.style.setProperty("display", "flex", "important");
+
+      const greenSpan = placarElement.querySelector(".placar-green-3");
+      const redSpan = placarElement.querySelector(".placar-red-3");
+      const separadorEl = placarElement.querySelector(".separador-3");
+
+      if (greenSpan && redSpan) {
+        const wins = Number(placarData.wins) || 0;
+        const losses = Number(placarData.losses) || 0;
+
+        // Sempre mostrar valores, mesmo que sejam zero
+        greenSpan.textContent = wins;
+        redSpan.textContent = losses;
+
+        // Separador sempre visível
+        if (separadorEl) {
+          separadorEl.style.setProperty(
+            "color",
+            "rgba(109, 107, 107, 0.95)",
+            "important"
+          );
+          separadorEl.style.setProperty("opacity", "1", "important");
+        }
+
+        // Marcar que o placar tem valores
+        placarElement.classList.add("placar-has-values-3");
+
+        console.log(`✅ Placar anual aplicado: ${wins} × ${losses}`);
+      }
+    } catch (error) {
+      console.error("❌ Erro ao aplicar placar anual:", error);
+    }
+  },
+
+  // ANIMAR MUDANÇA DE VALOR ANUAL
+  animarMudancaValor(elemento, novoValor) {
+    try {
+      const valorAtual = parseInt(elemento.textContent) || 0;
+
+      if (valorAtual !== novoValor) {
+        // Atualização direta para valores anuais (sem animação excessiva)
+        setTimeout(() => {
+          elemento.textContent = novoValor;
+        }, 10);
+      }
+    } catch (error) {
+      console.error("❌ Erro na animação anual:", error);
+      elemento.textContent = novoValor;
+    }
+  },
+
+  // MOSTRAR ERRO NO PLACAR ANUAL
+  mostrarErroPlacar() {
+    try {
+      const placarElement = document.getElementById("pontuacao-3");
+      if (!placarElement) return;
+
+      placarElement.classList.add("placar-erro-3");
+      setTimeout(() => {
+        placarElement.classList.remove("placar-erro-3");
+      }, 2000);
+    } catch (error) {
+      console.error("❌ Erro ao mostrar erro anual:", error);
+    }
+  },
+
+  // CONFIGURAR INTERCEPTADORES PARA DADOS ANUAIS
+  configurarInterceptadores() {
+    try {
+      // Interceptar mudanças de período para 'ano'
+      const radiosPeriodo = document.querySelectorAll('input[name="periodo"]');
+      radiosPeriodo.forEach((radio) => {
+        radio.addEventListener("change", (e) => {
+          if (e.target.value === "ano") {
             console.log(
-              `ðŸ† META MENSAL SUPERADA: Extra de R$ ${valorExtra.toFixed(2)}`
+              "🔄 Período alterado para ANO, atualizando placar anual..."
             );
-          } else {
-            rotulo = `Meta do Ano Batida! <i class='fa-solid fa-trophy'></i>`;
-            statusClass = "meta-batida";
-            console.log(`ðŸŽ¯ META MENSAL EXATA`);
+            setTimeout(() => this.atualizarPlacarAnual(), 50);
+          }
+        });
+      });
+
+      // Interceptar recarregamento de mentores
+      if (
+        typeof MentorManager !== "undefined" &&
+        MentorManager.recarregarMentores
+      ) {
+        const originalRecarregar = MentorManager.recarregarMentores;
+
+        MentorManager.recarregarMentores = async function (...args) {
+          const resultado = await originalRecarregar.apply(this, args);
+
+          // Atualizar placar anual após recarregar mentores
+          try {
+            if (typeof PlacarAnualManager !== "undefined") {
+              console.log(
+                "🔄 Mentores recarregados, atualizando placar anual..."
+              );
+              setTimeout(() => PlacarAnualManager.atualizarPlacarAnual(), 50);
+            }
+          } catch (e) {}
+
+          return resultado;
+        };
+      }
+    } catch (error) {
+      console.error("❌ Erro ao configurar interceptadores anuais:", error);
+    }
+  },
+
+  // SINCRONIZAR COM SISTEMA PRINCIPAL QUANDO PERÍODO = ANO
+  sincronizarComSistemaPrincipal() {
+    try {
+      // Verificar se período atual é 'ano'
+      const radioAno = document.querySelector(
+        'input[name="periodo"][value="ano"]'
+      );
+      if (!radioAno || !radioAno.checked) {
+        return false; // Não é período anual
+      }
+
+      // Buscar dados do placar principal
+      const placarGreen = document.querySelector(".placar-green");
+      const placarRed = document.querySelector(".placar-red");
+
+      if (placarGreen && placarRed) {
+        const wins = parseInt(placarGreen.textContent.trim(), 10) || 0;
+        const losses = parseInt(placarRed.textContent.trim(), 10) || 0;
+
+        console.log(
+          `📊 Sincronizando placar anual com principal: ${wins} × ${losses}`
+        );
+        this.aplicarPlacarAnual({ wins, losses });
+
+        return true;
+      }
+
+      return false;
+    } catch (error) {
+      console.error("❌ Erro ao sincronizar com sistema principal:", error);
+      return false;
+    }
+  },
+
+  // PARAR SISTEMA ANUAL
+  parar() {
+    try {
+      if (this.intervaloPlacar) {
+        clearInterval(this.intervaloPlacar);
+        this.intervaloPlacar = null;
+        console.log("🛑 Sistema de placar anual parado");
+      }
+    } catch (error) {
+      console.error("❌ Erro ao parar sistema anual:", error);
+    }
+  },
+
+  // FORÇAR ATUALIZAÇÃO ANUAL
+  forcarAtualizacao() {
+    this.atualizandoAtualmente = false;
+    return this.atualizarPlacarAnual();
+  },
+
+  // STATUS DO SISTEMA ANUAL
+  status() {
+    return {
+      ativo: !!this.intervaloPlacar,
+      atualizando: this.atualizandoAtualmente,
+      ultimaAtualizacao: this.ultimaAtualizacao,
+      elementoExiste: !!document.getElementById("pontuacao-3"),
+      intervaloAtivo: !!this.intervaloPlacar,
+      modo: "ANUAL",
+    };
+  },
+};
+
+// ========================================
+// COMANDOS GLOBAIS PARA O PLACAR ANUAL
+// ========================================
+
+// Função global para teste do placar anual
+window.testarPlacarAnual = () => {
+  console.log("🧪 Testando placar anual...");
+
+  const placar = document.getElementById("pontuacao-3");
+  if (!placar) {
+    console.error("❌ Elemento #pontuacao-3 não encontrado!");
+    return false;
+  }
+
+  console.log("✅ Elemento encontrado:", placar);
+
+  // Teste visual rápido
+  const green = placar.querySelector(".placar-green-3");
+  const red = placar.querySelector(".placar-red-3");
+
+  if (green && red) {
+    green.textContent = Math.floor(Math.random() * 100) + 1;
+    red.textContent = Math.floor(Math.random() * 100) + 1;
+    console.log(
+      `✅ Valores de teste anuais aplicados: ${green.textContent} × ${red.textContent}`
+    );
+
+    // Forçar atualização real após teste
+    setTimeout(() => {
+      if (typeof PlacarAnualManager !== "undefined") {
+        PlacarAnualManager.atualizarPlacarAnual();
+      }
+    }, 3000);
+
+    return true;
+  }
+
+  console.error("❌ Elementos internos anuais não encontrados");
+  return false;
+};
+
+// Controles globais do placar anual
+window.PlacarAnual = {
+  iniciar: () => {
+    console.log("🚀 Iniciando placar anual...");
+    return PlacarAnualManager.inicializar();
+  },
+  parar: () => {
+    console.log("🛑 Parando placar anual...");
+    return PlacarAnualManager.parar();
+  },
+  atualizar: () => {
+    console.log("🔄 Atualizando placar anual...");
+    return PlacarAnualManager.forcarAtualizacao();
+  },
+  status: () => PlacarAnualManager.status(),
+  info: () => {
+    const status = PlacarAnualManager.status();
+    console.log("📊 Status Placar Anual:", status);
+    return status;
+  },
+  teste: () => testarPlacarAnual(),
+  sincronizar: () => PlacarAnualManager.sincronizarComSistemaPrincipal(),
+};
+
+// ========================================
+// INICIALIZAÇÃO AUTOMÁTICA DO PLACAR ANUAL
+// ========================================
+
+function inicializarPlacarAnual() {
+  try {
+    console.log("🚀 Inicializando Sistema de Placar Anual...");
+
+    // Aguardar elemento estar disponível
+    const verificarElemento = () => {
+      const placar = document.getElementById("pontuacao-3");
+      if (placar) {
+        // FORÇAR VISIBILIDADE IMEDIATA
+        placar.style.setProperty("visibility", "visible", "important");
+        placar.style.setProperty("display", "flex", "important");
+
+        // Inicializar com valores padrão
+        const greenSpan = placar.querySelector(".placar-green-3");
+        const redSpan = placar.querySelector(".placar-red-3");
+        const separadorEl = placar.querySelector(".separador-3");
+
+        if (greenSpan && redSpan) {
+          greenSpan.textContent = "0";
+          redSpan.textContent = "0";
+          if (separadorEl) {
+            separadorEl.style.setProperty(
+              "color",
+              "rgba(109, 107, 107, 0.95)",
+              "important"
+            );
+            separadorEl.style.setProperty("opacity", "1", "important");
           }
         }
-        // âœ… CASO ESPECIAL: Meta Ã© zero (jÃ¡ foi batida)
-        else if (metaCalculada === 0 && saldoMes > 0) {
-          metaFinal = 0;
-          valorExtra = saldoMes;
-          mostrarTachado = false;
+
+        PlacarAnualManager.inicializar();
+
+        console.log("✅ Sistema de Placar Anual inicializado e VISÍVEL!");
+      } else {
+        console.log("⏳ Aguardando elemento #pontuacao-3...");
+        setTimeout(verificarElemento, 500);
+      }
+    };
+
+    verificarElemento();
+  } catch (error) {
+    console.error("❌ Erro na inicialização do placar anual:", error);
+  }
+}
+
+// Aguardar DOM
+if (document.readyState === "loading") {
+  document.addEventListener("DOMContentLoaded", () => {
+    setTimeout(inicializarPlacarAnual, 1200);
+  });
+} else {
+  setTimeout(inicializarPlacarAnual, 800);
+}
+
+// Export para uso externo
+window.PlacarAnualManager = PlacarAnualManager;
+
+console.log("📊 Sistema de Placar Anual carregado!");
+console.log("🔧 Comandos disponíveis:");
+console.log("  PlacarAnual.iniciar() - Iniciar sistema");
+console.log("  PlacarAnual.atualizar() - Forçar atualização");
+console.log("  PlacarAnual.status() - Ver status");
+console.log("  PlacarAnual.teste() - Testar com valores aleatórios");
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+/* ===================================================================
+   JAVASCRIPT - WIDGETS META ANUAL BLOCO 3
+   Sistema de gerenciamento da meta anual com valor tachado e extra
+   =================================================================== */
+
+const MetaAnualManager = {
+  // Controle de estado anual
+  atualizandoAtualmente: false,
+  periodoFixo: "ano",
+  tipoMetaAtual: "turbo",
+
+  // Atualizar meta anual - versão específica
+  async atualizarMetaAnual(aguardarDados = false) {
+    if (this.atualizandoAtualmente) return null;
+    this.atualizandoAtualmente = true;
+
+    try {
+      if (aguardarDados) {
+        await new Promise((resolve) => setTimeout(resolve, 100));
+      }
+
+      const response = await fetch("dados_banca.php?periodo=ano", {
+        method: "GET",
+        headers: {
+          "Cache-Control": "no-cache",
+          "X-Requested-With": "XMLHttpRequest",
+          "X-Periodo-Filtro": "ano",
+        },
+      });
+
+      if (!response.ok) throw new Error(`HTTP ${response.status}`);
+
+      const data = await response.json();
+      if (!data.success) throw new Error(data.message);
+
+      if (data.tipo_meta) {
+        this.tipoMetaAtual = data.tipo_meta;
+      }
+
+      const dadosProcessados = this.processarDadosAnuais(data);
+      this.atualizarTodosElementosAnuais(dadosProcessados);
+
+      return dadosProcessados;
+    } catch (error) {
+      console.error("Erro Meta Anual:", error);
+      this.mostrarErroMetaAnual();
+      return null;
+    } finally {
+      this.atualizandoAtualmente = false;
+    }
+  },
+
+  // Processar dados especificamente para anual
+  processarDadosAnuais(data) {
+    try {
+      const metaFinal = parseFloat(data.meta_anual) || 0;
+      const rotuloFinal = "Meta do Ano";
+      const lucroAnual = parseFloat(data.lucro) || 0;
+
+      return {
+        ...data,
+        meta_display: metaFinal,
+        meta_display_formatada:
+          "R$ " +
+          metaFinal.toLocaleString("pt-BR", {
+            minimumFractionDigits: 2,
+            maximumFractionDigits: 2,
+          }),
+        rotulo_periodo: rotuloFinal,
+        periodo_ativo: "ano",
+        lucro_periodo: lucroAnual,
+      };
+    } catch (error) {
+      console.error("Erro ao processar dados anuais:", error);
+      return data;
+    }
+  },
+
+  // Calcular meta final anual com valor tachado e extra
+  calcularMetaFinalAnualComExtra(saldoAno, metaCalculada, bancaTotal, data) {
+    try {
+      let metaFinal,
+        rotulo,
+        statusClass,
+        valorExtra = 0,
+        mostrarTachado = false;
+
+      console.log(`🔍 DEBUG CALCULAR META ANUAL COM EXTRA:`);
+      console.log(`   Saldo Ano: R$ ${saldoAno.toFixed(2)}`);
+      console.log(`   Meta Ano: R$ ${metaCalculada.toFixed(2)}`);
+      console.log(`   Banca: R$ ${bancaTotal.toFixed(2)}`);
+
+      if (bancaTotal <= 0) {
+        metaFinal = bancaTotal;
+        rotulo = "Deposite p/ Começar";
+        statusClass = "sem-banca";
+        console.log(`📊 RESULTADO ANUAL: Sem banca`);
+      }
+      // META BATIDA OU SUPERADA - COM VALOR EXTRA
+      else if (saldoAno > 0 && metaCalculada > 0 && saldoAno >= metaCalculada) {
+        valorExtra = saldoAno - metaCalculada;
+        mostrarTachado = true;
+        metaFinal = metaCalculada; // Mostra o valor da meta original
+
+        if (valorExtra > 0) {
+          rotulo = `Meta do Ano Superada! <i class='fa-solid fa-trophy'></i>`;
+          statusClass = "meta-superada";
+          console.log(
+            `🏆 META ANUAL SUPERADA: Extra de R$ ${valorExtra.toFixed(2)}`
+          );
+        } else {
           rotulo = `Meta do Ano Batida! <i class='fa-solid fa-trophy'></i>`;
           statusClass = "meta-batida";
-          console.log(`ðŸŽ¯ META MENSAL ZERO (jÃ¡ batida)`);
-        } else if (saldoMes < 0) {
-          metaFinal = metaCalculada - saldoMes;
-          rotulo = `Restando p/ Meta do Ano`;
-          statusClass = "negativo";
-          console.log(`ðŸ“Š RESULTADO MENSAL: Negativo`);
-        } else if (saldoMes === 0) {
-          metaFinal = metaCalculada;
-          rotulo = "Meta do Ano";
-          statusClass = "neutro";
-          console.log(`ðŸ“Š RESULTADO MENSAL: Neutro`);
-        } else {
-          // Lucro positivo mas menor que a meta
-          metaFinal = metaCalculada - saldoMes;
-          rotulo = `Restando p/ Meta do Ano`;
-          statusClass = "lucro";
-          console.log(`ðŸ“Š RESULTADO MENSAL: Lucro insuficiente`);
+          console.log(`🎯 META ANUAL EXATA`);
         }
-
-        const resultado = {
-          metaFinal,
-          metaOriginal: metaCalculada,
-          valorExtra,
-          mostrarTachado,
-          metaFinalFormatada: metaFinal.toLocaleString("pt-BR", {
-            style: "currency",
-            currency: "BRL",
-          }),
-          metaOriginalFormatada: metaCalculada.toLocaleString("pt-BR", {
-            style: "currency",
-            currency: "BRL",
-          }),
-          valorExtraFormatado:
-            valorExtra > 0
-              ? valorExtra.toLocaleString("pt-BR", {
-                  style: "currency",
-                  currency: "BRL",
-                })
-              : null,
-          rotulo,
-          statusClass,
-        };
-
-        console.log(`ðŸ RESULTADO FINAL MENSAL COM EXTRA:`);
-        console.log(`   Status: ${statusClass}`);
-        console.log(`   Valor Extra: R$ ${valorExtra.toFixed(2)}`);
-        console.log(`   Mostrar Tachado: ${mostrarTachado}`);
-
-        return resultado;
-      } catch (error) {
-        console.error("Erro ao calcular meta final mensal com extra:", error);
-        return {
-          metaFinal: 0,
-          metaOriginal: 0,
-          valorExtra: 0,
-          mostrarTachado: false,
-          metaFinalFormatada: "R$ 0,00",
-          metaOriginalFormatada: "R$ 0,00",
-          valorExtraFormatado: null,
-          rotulo: "Erro no cÃ¡lculo",
-          statusClass: "erro",
-        };
       }
-    },
-
-    // Atualizar todos os elementos - versÃ£o para bloco 2 COM EXTRA
-    atualizarTodosElementosMensais(data) {
-      try {
-        const saldoMes =
-          parseFloat(data.lucro_periodo) || parseFloat(data.lucro) || 0;
-        const metaCalculada = parseFloat(data.meta_display) || 0;
-        const bancaTotal = parseFloat(data.banca) || 0;
-
-        const dadosComplementados = {
-          ...data,
-          meta_original: data.meta_original || metaCalculada,
-        };
-
-        // âœ… USAR NOVA FUNÃ‡ÃƒO COM VALOR EXTRA
-        const resultado = this.calcularMetaFinalMensalComExtra(
-          saldoMes,
-          metaCalculada,
-          bancaTotal,
-          dadosComplementados
-        );
-
-        // Atualizar elementos do bloco 2
-        this.garantirIconeMoeda();
-        this.atualizarMetaElementoMensalComExtra(resultado); // âœ… NOVA FUNÃ‡ÃƒO
-        this.atualizarRotuloMensal(resultado.rotulo);
-        this.atualizarBarraProgressoMensal(resultado, data);
-
-        console.log(`Meta MENSAL atualizada COM EXTRA`);
-        console.log(`Lucro do MÃŠS: R$ ${saldoMes.toFixed(2)}`);
-        console.log(`Meta MENSAL: R$ ${metaCalculada.toFixed(2)}`);
-
-        if (resultado.valorExtra > 0) {
-          console.log(
-            `ðŸ† Valor Extra MENSAL: R$ ${resultado.valorExtra.toFixed(2)}`
-          );
-        }
-      } catch (error) {
-        console.error("Erro ao atualizar elementos mensais:", error);
+      // CASO ESPECIAL: Meta é zero (já foi batida)
+      else if (metaCalculada === 0 && saldoAno > 0) {
+        metaFinal = 0;
+        valorExtra = saldoAno;
+        mostrarTachado = false;
+        rotulo = `Meta do Ano Batida! <i class='fa-solid fa-trophy'></i>`;
+        statusClass = "meta-batida";
+        console.log(`🎯 META ANUAL ZERO (já batida)`);
+      } else if (saldoAno < 0) {
+        metaFinal = metaCalculada - saldoAno;
+        rotulo = `Restando p/ Meta do Ano`;
+        statusClass = "negativo";
+        console.log(`📊 RESULTADO ANUAL: Negativo`);
+      } else if (saldoAno === 0) {
+        metaFinal = metaCalculada;
+        rotulo = "Meta do Ano";
+        statusClass = "neutro";
+        console.log(`📊 RESULTADO ANUAL: Neutro`);
+      } else {
+        // Lucro positivo mas menor que a meta
+        metaFinal = metaCalculada - saldoAno;
+        rotulo = `Restando p/ Meta do Ano`;
+        statusClass = "lucro";
+        console.log(`📊 RESULTADO ANUAL: Lucro insuficiente`);
       }
-    },
 
-    // âœ… NOVA FUNÃ‡ÃƒO: ATUALIZAR META ELEMENTO MENSAL COM VALOR TACHADO E EXTRA
-    atualizarMetaElementoMensalComExtra(resultado) {
-      try {
-        const metaValor = document.getElementById("meta-valor-3");
-        if (!metaValor) {
-          console.warn("Elemento meta-valor-3 nÃ£o encontrado");
-          return;
-        }
+      const resultado = {
+        metaFinal,
+        metaOriginal: metaCalculada,
+        valorExtra,
+        mostrarTachado,
+        metaFinalFormatada: metaFinal.toLocaleString("pt-BR", {
+          style: "currency",
+          currency: "BRL",
+        }),
+        metaOriginalFormatada: metaCalculada.toLocaleString("pt-BR", {
+          style: "currency",
+          currency: "BRL",
+        }),
+        valorExtraFormatado:
+          valorExtra > 0
+            ? valorExtra.toLocaleString("pt-BR", {
+                style: "currency",
+                currency: "BRL",
+              })
+            : null,
+        rotulo,
+        statusClass,
+      };
 
-        // âœ… LIMPAR CLASSES ANTIGAS
-        metaValor.className = metaValor.className.replace(
-          /\bvalor-meta-3\s+\w+/g,
-          ""
+      console.log(`🏁 RESULTADO FINAL ANUAL COM EXTRA:`);
+      console.log(`   Status: ${statusClass}`);
+      console.log(`   Valor Extra: R$ ${valorExtra.toFixed(2)}`);
+      console.log(`   Mostrar Tachado: ${mostrarTachado}`);
+
+      return resultado;
+    } catch (error) {
+      console.error("Erro ao calcular meta final anual com extra:", error);
+      return {
+        metaFinal: 0,
+        metaOriginal: 0,
+        valorExtra: 0,
+        mostrarTachado: false,
+        metaFinalFormatada: "R$ 0,00",
+        metaOriginalFormatada: "R$ 0,00",
+        valorExtraFormatado: null,
+        rotulo: "Erro no cálculo",
+        statusClass: "erro",
+      };
+    }
+  },
+
+  // Atualizar todos os elementos anuais COM EXTRA
+  atualizarTodosElementosAnuais(data) {
+    try {
+      const saldoAno =
+        parseFloat(data.lucro_periodo) || parseFloat(data.lucro) || 0;
+      const metaCalculada = parseFloat(data.meta_display) || 0;
+      const bancaTotal = parseFloat(data.banca) || 0;
+
+      const dadosComplementados = {
+        ...data,
+        meta_original: data.meta_original || metaCalculada,
+      };
+
+      // USAR FUNÇÃO COM VALOR EXTRA
+      const resultado = this.calcularMetaFinalAnualComExtra(
+        saldoAno,
+        metaCalculada,
+        bancaTotal,
+        dadosComplementados
+      );
+
+      // Atualizar elementos do bloco 3
+      this.garantirIconeMoeda();
+      this.atualizarMetaElementoAnualComExtra(resultado);
+      this.atualizarRotuloAnual(resultado.rotulo);
+      this.atualizarBarraProgressoAnual(resultado, data);
+
+      console.log(`Meta ANUAL atualizada COM EXTRA`);
+      console.log(`Lucro do ANO: R$ ${saldoAno.toFixed(2)}`);
+      console.log(`Meta ANUAL: R$ ${metaCalculada.toFixed(2)}`);
+
+      if (resultado.valorExtra > 0) {
+        console.log(
+          `🏆 Valor Extra ANUAL: R$ ${resultado.valorExtra.toFixed(2)}`
         );
+      }
+    } catch (error) {
+      console.error("Erro ao atualizar elementos anuais:", error);
+    }
+  },
 
-        let htmlConteudo = "";
+  // Atualizar meta elemento anual com valor tachado e extra
+  atualizarMetaElementoAnualComExtra(resultado) {
+    try {
+      const metaValor = document.getElementById("meta-valor-3");
+      if (!metaValor) {
+        console.warn("Elemento meta-valor-3 não encontrado");
+        return;
+      }
 
-        if (resultado.mostrarTachado && resultado.valorExtra >= 0) {
-          // âœ… META BATIDA/SUPERADA - MOSTRAR VALOR TACHADO + EXTRA
-          htmlConteudo = `
+      // Limpar classes antigas
+      metaValor.className = metaValor.className.replace(
+        /\bvalor-meta-3\s+\w+/g,
+        ""
+      );
+
+      let htmlConteudo = "";
+
+      if (resultado.mostrarTachado && resultado.valorExtra >= 0) {
+        // META BATIDA/SUPERADA - MOSTRAR VALOR TACHADO + EXTRA
+        htmlConteudo = `
           <i class="fa-solid fa-coins"></i>
           <div class="meta-valor-container-3">
             <span class="valor-tachado-3">${
@@ -310,223 +765,138 @@
           </div>
         `;
 
-          metaValor.classList.add("valor-meta-3", "meta-com-extra-3");
-          console.log(
-            `âœ… Valor tachado MENSAL aplicado: ${resultado.metaOriginalFormatada}`
-          );
+        metaValor.classList.add("valor-meta-3", "meta-com-extra-3");
+        console.log(
+          `✅ Valor tachado ANUAL aplicado: ${resultado.metaOriginalFormatada}`
+        );
 
-          if (resultado.valorExtra > 0) {
-            console.log(
-              `âœ… Valor extra MENSAL aplicado: + ${resultado.valorExtraFormatado}`
-            );
-          }
-        } else {
-          // âœ… EXIBIÃ‡ÃƒO NORMAL
-          htmlConteudo = `
+        if (resultado.valorExtra > 0) {
+          console.log(
+            `✅ Valor extra ANUAL aplicado: + ${resultado.valorExtraFormatado}`
+          );
+        }
+      } else {
+        // EXIBIÇÃO NORMAL
+        htmlConteudo = `
           <i class="fa-solid fa-coins"></i>
           <div class="meta-valor-container-3">
             <span class="valor-texto-3" id="valor-texto-meta-3">${resultado.metaFinalFormatada}</span>
           </div>
         `;
 
-          metaValor.classList.add("valor-meta-3", resultado.statusClass);
-        }
-
-        metaValor.innerHTML = htmlConteudo;
-      } catch (error) {
-        console.error(
-          "Erro ao atualizar meta elemento mensal com extra:",
-          error
-        );
+        metaValor.classList.add("valor-meta-3", resultado.statusClass);
       }
-    },
 
-    // FUNÃ‡ÃƒO CORRIGIDA: GARANTIR ÃCONE DA MOEDA COM CLASSES CORRETAS
-    garantirIconeMoeda() {
-      try {
-        const metaValor = document.getElementById("meta-valor-3");
-        if (!metaValor) return;
+      metaValor.innerHTML = htmlConteudo;
+    } catch (error) {
+      console.error("Erro ao atualizar meta elemento anual com extra:", error);
+    }
+  },
 
-        // Verificar se jÃ¡ tem o Ã­cone (classes corretas do Font Awesome)
-        const iconeExistente = metaValor.querySelector(".fa-coins");
+  // Garantir ícone da moeda anual
+  garantirIconeMoeda() {
+    try {
+      const metaValor = document.getElementById("meta-valor-3");
+      if (!metaValor) return;
 
-        if (!iconeExistente) {
-          const valorTexto = metaValor.querySelector(".valor-texto-3");
-          if (valorTexto) {
-            const textoAtual = valorTexto.textContent;
-            // USAR CLASSES CORRETAS DO FONT AWESOME
-            metaValor.innerHTML = `
+      const iconeExistente = metaValor.querySelector(".fa-coins");
+
+      if (!iconeExistente) {
+        const valorTexto = metaValor.querySelector(".valor-texto-3");
+        if (valorTexto) {
+          const textoAtual = valorTexto.textContent;
+          metaValor.innerHTML = `
             <i class="fa-solid fa-coins"></i>
             <div class="meta-valor-container-3">
               <span class="valor-texto-3">${textoAtual}</span>
             </div>
           `;
-            console.log("Ãcone da moeda adicionado ao HTML 2");
-          }
+          console.log("Ícone da moeda adicionado ao HTML 3");
         }
-      } catch (error) {
-        console.error("Erro ao garantir Ã­cone da moeda:", error);
       }
-    },
+    } catch (error) {
+      console.error("Erro ao garantir ícone da moeda anual:", error);
+    }
+  },
 
-    // Atualizar rÃ³tulo - bloco 2
-    atualizarRotuloMensal(rotulo) {
-      try {
-        const rotuloElement = document.getElementById("rotulo-meta-3");
-        if (rotuloElement) {
-          rotuloElement.innerHTML = rotulo;
-          // Se o rÃ³tulo indicar "Restando" aplicamos uma classe para permitir
-          // ajustes CSS especÃ­ficos (margem top controlada por variÃ¡vel :root)
-          try {
-            const texto = (rotuloElement.textContent || "").toLowerCase();
-            if (texto.includes("restando")) {
-              rotuloElement.classList.add("rotulo-restando");
-            } else {
-              rotuloElement.classList.remove("rotulo-restando");
-            }
-          } catch (e) {
-            // silencioso
+  // Atualizar rótulo anual
+  atualizarRotuloAnual(rotulo) {
+    try {
+      const rotuloElement = document.getElementById("rotulo-meta-3");
+      if (rotuloElement) {
+        rotuloElement.innerHTML = rotulo;
+        try {
+          const texto = (rotuloElement.textContent || "").toLowerCase();
+          if (texto.includes("restando")) {
+            rotuloElement.classList.add("rotulo-restando");
+          } else {
+            rotuloElement.classList.remove("rotulo-restando");
           }
-        } else {
-          console.warn("Elemento rotulo-meta-3 nÃ£o encontrado");
+        } catch (e) {
+          // silencioso
         }
-      } catch (error) {
-        console.error("Erro ao atualizar rÃ³tulo mensal:", error);
+      } else {
+        console.warn("Elemento rotulo-meta-3 não encontrado");
       }
-    },
+    } catch (error) {
+      console.error("Erro ao atualizar rótulo anual:", error);
+    }
+  },
 
-    // FUNÃ‡ÃƒO CORRIGIDA: ÃCONES DINÃ‚MICOS DO SALDO COM CLASSES CORRETAS
-    atualizarIconesSaldoDinamicos(saldoMes) {
-      try {
-        const saldoInfo = document.getElementById("saldo-info-3");
-        if (!saldoInfo) return;
+  // Atualizar ícones dinâmicos do saldo anual
+  atualizarIconesSaldoDinamicos(saldoAno) {
+    try {
+      const saldoInfo = document.getElementById("saldo-info-3");
+      if (!saldoInfo) return;
 
-        const saldoFormatado = saldoMes.toLocaleString("pt-BR", {
-          style: "currency",
-          currency: "BRL",
-        });
+      const saldoFormatado = saldoAno.toLocaleString("pt-BR", {
+        style: "currency",
+        currency: "BRL",
+      });
 
-        let textoSaldo = "Saldo";
-        let iconeClass = "fa-solid fa-wallet"; // CLASSE CORRETA
-        let classeEstado = "saldo-zero-3";
+      let textoSaldo = "Saldo";
+      let iconeClass = "fa-solid fa-wallet";
+      let classeEstado = "saldo-zero-3";
 
-        // Determinar texto, Ã­cone e classe baseado no valor
-        if (saldoMes > 0) {
-          textoSaldo = "Lucro MÃªs";
-          iconeClass = "fa-solid fa-chart-line"; // GRÃFICO SUBINDO
-          classeEstado = "saldo-positivo-3";
-        } else if (saldoMes < 0) {
-          textoSaldo = "Negativo";
-          iconeClass = "fa-solid fa-arrow-trend-down"; // GRÃFICO DESCENDO
-          classeEstado = "saldo-negativo-3";
-        } else {
-          textoSaldo = "Saldo MÃªs";
-          iconeClass = "fa-solid fa-wallet"; // CARTEIRA
-          classeEstado = "saldo-zero-3";
-        }
+      // Determinar texto, ícone e classe baseado no valor
+      if (saldoAno > 0) {
+        textoSaldo = "Lucro Ano";
+        iconeClass = "fa-solid fa-chart-line";
+        classeEstado = "saldo-positivo-3";
+      } else if (saldoAno < 0) {
+        textoSaldo = "Negativo";
+        iconeClass = "fa-solid fa-arrow-trend-down";
+        classeEstado = "saldo-negativo-3";
+      } else {
+        textoSaldo = "Saldo Ano";
+        iconeClass = "fa-solid fa-wallet";
+        classeEstado = "saldo-zero-3";
+      }
 
-        // Atualizar HTML do saldo COM CLASSES CORRETAS
-        saldoInfo.innerHTML = `
+      // Atualizar HTML do saldo anual
+      saldoInfo.innerHTML = `
         <i class="${iconeClass}"></i>
         <span class="saldo-info-rotulo-3">${textoSaldo}:</span>
         <span class="saldo-info-valor-3">${saldoFormatado}</span>
       `;
 
-        // Aplicar classe de estado
-        saldoInfo.className = classeEstado;
+      // Aplicar classe de estado
+      saldoInfo.className = classeEstado;
 
-        console.log(`Ãcone HTML 2 atualizado: ${textoSaldo} - ${iconeClass}`);
-      } catch (error) {
-        console.error("Erro ao atualizar Ã­cones dinÃ¢micos HTML 2:", error);
-      }
-    },
+      console.log(`Ícone HTML 3 atualizado: ${textoSaldo} - ${iconeClass}`);
+    } catch (error) {
+      console.error("Erro ao atualizar ícones dinâmicos HTML 3:", error);
+    }
+  },
 
-    // âœ… NOVA FUNÃ‡ÃƒO: LIMPAR COMPLETAMENTE O ESTADO DA BARRA
-    limparEstadoBarraMensal() {
-      try {
-        const barraProgresso = document.getElementById("barra-progresso-3");
-        const porcentagemBarra = document.getElementById("porcentagem-barra-3");
+  // Limpar estado da barra anual
+  limparEstadoBarraAnual() {
+    try {
+      const barraProgresso = document.getElementById("barra-progresso-3");
+      const porcentagemBarra = document.getElementById("porcentagem-barra-3");
 
-        if (barraProgresso) {
-          // Remover todas as classes possÃ­veis
-          barraProgresso.classList.remove(
-            "barra-meta-batida-3",
-            "barra-meta-superada-3",
-            "barra-negativo-3",
-            "barra-lucro-3",
-            "barra-neutro-3",
-            "barra-sem-banca-3",
-            "barra-erro-3"
-          );
-
-          // Limpar estilos inline
-          barraProgresso.style.width = "0%";
-          barraProgresso.style.backgroundColor = "";
-          barraProgresso.style.background = "";
-          barraProgresso.style.filter = "";
-          barraProgresso.style.animation = "";
-
-          // Garantir classe base
-          if (!barraProgresso.classList.contains("widget-barra-progresso-3")) {
-            barraProgresso.classList.add("widget-barra-progresso-3");
-          }
-        }
-
-        if (porcentagemBarra) {
-          porcentagemBarra.innerHTML =
-            '<span class="porcentagem-fundo-3">0%</span>';
-          porcentagemBarra.classList.remove("pequeno", "oculta");
-          porcentagemBarra.classList.add("oculta");
-        }
-
-        console.log("Barra mensal limpa completamente");
-      } catch (error) {
-        console.error("Erro ao limpar estado da barra mensal:", error);
-      }
-    },
-    atualizarBarraProgressoMensal(resultado, data) {
-      try {
-        const barraProgresso = document.getElementById("barra-progresso-3");
-        const saldoInfo = document.getElementById("saldo-info-3");
-        const porcentagemBarra = document.getElementById("porcentagem-barra-3");
-
-        if (!barraProgresso) {
-          console.warn("Elemento barra-progresso-3 nÃ£o encontrado");
-          return;
-        }
-
-        const saldoMes =
-          parseFloat(data.lucro_periodo) || parseFloat(data.lucro) || 0;
-        const metaCalculada = parseFloat(data.meta_display) || 0;
-        const bancaTotal = parseFloat(data.banca) || 0;
-
-        // Calcular progresso
-        let progresso = 0;
-        if (bancaTotal > 0 && metaCalculada > 0) {
-          if (
-            resultado.statusClass === "meta-batida" ||
-            resultado.statusClass === "meta-superada"
-          ) {
-            progresso = 100;
-          } else if (saldoMes < 0) {
-            progresso = -Math.min(
-              Math.abs(saldoMes / metaCalculada) * 100,
-              100
-            );
-          } else {
-            progresso = Math.max(
-              0,
-              Math.min(100, (saldoMes / metaCalculada) * 100)
-            );
-          }
-        }
-
-        const larguraBarra = Math.abs(progresso);
-
-        // âœ… LIMPEZA COMPLETA DAS CLASSES ANTIGAS
-        let classeCor = "";
-
-        // Remover TODAS as classes de cor possÃ­veis
+      if (barraProgresso) {
+        // Remover todas as classes possíveis
         barraProgresso.classList.remove(
           "barra-meta-batida-3",
           "barra-meta-superada-3",
@@ -537,3505 +907,1810 @@
           "barra-erro-3"
         );
 
-        // Garantir classe base
-        if (!barraProgresso.classList.contains("widget-barra-progresso-3")) {
-          barraProgresso.classList.add("widget-barra-progresso-3");
-        }
-
-        // Aplicar classe correta com sufixo -3
-        if (
-          resultado.statusClass === "meta-batida" ||
-          resultado.statusClass === "meta-superada"
-        ) {
-          classeCor = "barra-meta-batida-3";
-          console.log(
-            `âœ… BARRA MENSAL META BATIDA/SUPERADA - Saldo: R$ ${saldoMes.toFixed(
-              2
-            )}, Meta: R$ ${metaCalculada.toFixed(2)}`
-          );
-        } else {
-          classeCor = `barra-${resultado.statusClass}-3`;
-          console.log(
-            `âœ… BARRA MENSAL NORMAL - Status: ${
-              resultado.statusClass
-            }, Saldo: R$ ${saldoMes.toFixed(2)}`
-          );
-        }
-
-        // Aplicar classe e estilos com limpeza forÃ§ada
-        barraProgresso.classList.add(classeCor);
-
-        // âœ… FORÃ‡AR RESET DE ESTILOS INLINE ANTIGOS
-        barraProgresso.style.width = `${larguraBarra}%`;
+        // Limpar estilos inline
+        barraProgresso.style.width = "0%";
         barraProgresso.style.backgroundColor = "";
         barraProgresso.style.background = "";
         barraProgresso.style.filter = "";
         barraProgresso.style.animation = "";
 
-        console.log(
-          `âœ… BARRA MENSAL - Classe aplicada: ${classeCor}, Largura: ${larguraBarra}%`
-        );
-
-        // Porcentagem
-        if (porcentagemBarra) {
-          const porcentagemTexto = Math.round(progresso) + "%";
-          porcentagemBarra.innerHTML = `
-          <span class="porcentagem-fundo-3 ${classeCor}">${porcentagemTexto}</span>
-        `;
-
-          if (larguraBarra <= 10) {
-            porcentagemBarra.classList.add("pequeno");
-          } else {
-            porcentagemBarra.classList.remove("pequeno");
-          }
-
-          if (larguraBarra <= 0) {
-            porcentagemBarra.classList.add("oculta");
-          } else {
-            porcentagemBarra.classList.remove("oculta");
-          }
+        // Garantir classe base
+        if (!barraProgresso.classList.contains("widget-barra-progresso-3")) {
+          barraProgresso.classList.add("widget-barra-progresso-3");
         }
-
-        // ATUALIZAR ÃCONES DINÃ‚MICOS DO SALDO
-        this.atualizarIconesSaldoDinamicos(saldoMes);
-      } catch (error) {
-        console.error("Erro ao atualizar barra progresso mensal:", error);
-      }
-    },
-
-    // Mostrar erro especÃ­fico para mensal
-    mostrarErroMetaMensal() {
-      try {
-        const metaElement = document.getElementById("meta-valor-3");
-        if (metaElement) {
-          // USAR CLASSES CORRETAS DO FONT AWESOME
-          metaElement.innerHTML =
-            '<i class="fa-solid fa-coins"></i><div class="meta-valor-container-3"><span class="valor-texto-3 loading-text-3">R$ 0,00</span></div>';
-        }
-      } catch (error) {
-        console.error("Erro ao mostrar erro meta mensal:", error);
-      }
-    },
-
-    // Inicializar sistema mensal (com garantia do Ã­cone)
-    inicializar() {
-      try {
-        const metaElement = document.getElementById("meta-valor-3");
-        if (metaElement) {
-          // USAR CLASSES CORRETAS DO FONT AWESOME
-          metaElement.innerHTML =
-            '<i class="fa-solid fa-coins"></i><div class="meta-valor-container-3"><span class="valor-texto-3 loading-text-3">Calculando...</span></div>';
-        }
-
-        console.log(
-          `Sistema Meta MENSAL COM VALOR TACHADO E EXTRA inicializado`
-        );
-
-        // Garantir Ã­cone da moeda apÃ³s delay
-        setTimeout(() => {
-          this.garantirIconeMoeda();
-        }, 1500);
-
-        // Inicializar com delay
-        setTimeout(() => {
-          this.atualizarMetaMensal();
-        }, 1000);
-      } catch (error) {
-        console.error("Erro na inicializaÃ§Ã£o mensal:", error);
-      }
-    },
-
-    // Sincronizar com mudanÃ§as do bloco 1
-    sincronizarComBloco1() {
-      try {
-        this.atualizarMetaMensal(true);
-      } catch (error) {
-        console.error("Erro ao sincronizar com bloco 1:", error);
-      }
-    },
-  };
-
-  // ========================================
-  // FUNÃ‡Ã•ES GLOBAIS E ATALHOS
-  // ========================================
-
-  // Expose annual-specific helpers to avoid collisions
-  window.atualizarMetaAnual = () => {
-    if (typeof MetaMensalManager !== "undefined") {
-      return MetaMensalManager.atualizarMetaMensal();
-    }
-    return null;
-  };
-
-  window.$3 = {
-    force: () => {
-      if (typeof MetaMensalManager !== "undefined") {
-        MetaMensalManager.atualizandoAtualmente = false;
-        return MetaMensalManager.atualizarMetaMensal();
-      }
-      return null;
-    },
-
-    sync: () => {
-      if (typeof MetaMensalManager !== "undefined") {
-        return MetaMensalManager.sincronizarComBloco1();
-      }
-      return null;
-    },
-
-    // âœ… NOVO: FunÃ§Ã£o para testar valor tachado e extra
-    testExtra: () => {
-      console.log("Testando valor tachado e extra MENSAL...");
-
-      if (typeof MetaMensalManager === "undefined") {
-        return "MetaMensalManager nÃ£o encontrado";
       }
 
-      // Simular diferentes cenÃ¡rios de teste
-      const testData = {
-        meta_display: 1000,
-        meta_display_formatada: "R$ 1.000,00",
-        banca: 5000,
-        rotulo_periodo: "Meta do Ano",
-      };
-
-      // Teste 1: Meta exatamente batida
-      setTimeout(() => {
-        console.log("Teste 1: Meta MENSAL exatamente batida (R$ 1000)");
-        const resultado = MetaMensalManager.calcularMetaFinalMensalComExtra(
-          1000,
-          1000,
-          5000,
-          testData
-        );
-        MetaMensalManager.atualizarMetaElementoMensalComExtra(resultado);
-      }, 1000);
-
-      // Teste 2: Meta superada
-      setTimeout(() => {
-        console.log("Teste 2: Meta MENSAL superada (R$ 1250 - extra R$ 250)");
-        const resultado = MetaMensalManager.calcularMetaFinalMensalComExtra(
-          1250,
-          1000,
-          5000,
-          testData
-        );
-        MetaMensalManager.atualizarMetaElementoMensalComExtra(resultado);
-      }, 2500);
-
-      // Teste 3: Meta nÃ£o batida
-      setTimeout(() => {
-        console.log("Teste 3: Meta MENSAL nÃ£o batida (R$ 750)");
-        const resultado = MetaMensalManager.calcularMetaFinalMensalComExtra(
-          750,
-          1000,
-          5000,
-          testData
-        );
-        MetaMensalManager.atualizarMetaElementoMensalComExtra(resultado);
-      }, 4000);
-
-      return "Teste MENSAL completo em 4 segundos - valor tachado e extra";
-    },
-
-    info: () => {
-      try {
-        const metaElement = document.getElementById("meta-valor-3");
-        const saldoElement = document.getElementById("saldo-info-3");
-
-        const info = {
-          meta: !!metaElement,
-          saldo: !!saldoElement,
-          iconeMoeda: !!metaElement?.querySelector(".fa-coins"),
-          iconeAtual: saldoElement?.querySelector("i")?.className || "N/A",
-          metaContent: metaElement ? metaElement.textContent : "N/A",
-          temTachado: !!metaElement?.querySelector(".valor-tachado-3"),
-          temExtra: !!metaElement?.querySelector(".valor-extra-3"),
-          verificacao: "Sistema Meta Mensal COM valor tachado e extra",
-        };
-
-        console.log("Info Sistema Meta Mensal COM EXTRA:", info);
-        return "Info Meta Mensal COM VALOR TACHADO E EXTRA verificada";
-      } catch (error) {
-        console.error("Erro ao obter info mensal:", error);
-        return "Erro ao obter informaÃ§Ãµes mensais";
-      }
-    },
-  };
-
-  // ========================================
-  // INICIALIZAÃ‡ÃƒO
-  // ========================================
-
-  function inicializarSistemaMetaMensal() {
-    try {
-      console.log(
-        "Inicializando Sistema Meta MENSAL COM VALOR TACHADO E EXTRA..."
-      );
-
-      if (typeof MetaMensalManager !== "undefined") {
-        MetaMensalManager.inicializar();
-        console.log("MetaMensalManager COM EXTRA inicializado");
+      if (porcentagemBarra) {
+        porcentagemBarra.innerHTML =
+          '<span class="porcentagem-fundo-3">0%</span>';
+        porcentagemBarra.classList.remove("pequeno", "oculta");
+        porcentagemBarra.classList.add("oculta");
       }
 
-      console.log(
-        "Sistema Meta MENSAL COM VALOR TACHADO E EXTRA inicializado!"
-      );
-      console.log("CaracterÃ­sticas:");
-      console.log("   âœ… Sempre mostra META DO MÃŠS");
-      console.log("   âœ… Ãcone da moeda garantido");
-      console.log("   âœ… Ãcones dinÃ¢micos do saldo");
-      console.log("   âœ… Barra de progresso reduzida");
-      console.log("   âœ… Classes Font Awesome corretas");
-      console.log("   âœ… VALOR TACHADO quando meta batida");
-      console.log("   âœ… VALOR EXTRA em dourado quando meta superada");
+      console.log("Barra anual limpa completamente");
     } catch (error) {
-      console.error("Erro na inicializaÃ§Ã£o sistema mensal:", error);
+      console.error("Erro ao limpar estado da barra anual:", error);
     }
-  }
+  },
 
-  // ========================================
-  // SISTEMA DE INTERCEPTAÃ‡ÃƒO RÃPIDA
-  // ========================================
-
-  // Sistema de interceptaÃ§Ã£o rÃ¡pida (melhorado)
-  (function () {
-    // Timestamp da Ãºltima atualizaÃ§Ã£o bem-sucedida
-    let ultimaAtualizacao = 0;
-    // Intervalo mÃ­nimo entre atualizaÃ§Ãµes (ms) - reduzido para responder rapidamente
-    const MIN_INTERVAL_MS = 200; // evita loops agressivos, permite resposta quase imediata
-
-    function atualizarRapido() {
-      const agora = Date.now();
-      if (agora - ultimaAtualizacao < MIN_INTERVAL_MS) return; // Evitar spam
-
-      ultimaAtualizacao = agora;
-
-      if (typeof MetaMensalManager !== "undefined") {
-        // ForÃ§ar estado para permitir reexecuÃ§Ã£o imediata
-        MetaMensalManager.atualizandoAtualmente = false;
-        // Sem delay
-        MetaMensalManager.atualizarMetaMensal(false);
-      }
-    }
-
-    // Chamadas diretas em eventos do usuÃ¡rio: executar imediatamente (ou com micro-delay)
-    document.addEventListener(
-      "submit",
-      (e) => {
-        // Empregar micro timeout para permitir que o envio/do DOM atualize antes da requisiÃ§Ã£o
-        setTimeout(atualizarRapido, 50);
-      },
-      true
-    );
-
-    document.addEventListener(
-      "click",
-      (e) => {
-        if (
-          e.target.closest('button, .btn, input[type="submit"], a[data-action]')
-        ) {
-          setTimeout(atualizarRapido, 50);
-        }
-      },
-      true
-    );
-
-    // Hook em fetch para detectar requisiÃ§Ãµes que alteram dados e disparar atualizaÃ§Ã£o apÃ³s retorno
+  // Atualizar barra de progresso anual
+  atualizarBarraProgressoAnual(resultado, data) {
     try {
-      const _fetch = window.fetch;
-      window.fetch = function (...args) {
-        const url = args[0] && args[0].toString ? args[0].toString() : "";
-        return _fetch.apply(this, args).then((resp) => {
-          try {
-            if (
-              /dados_banca|carregar-mentores|controle|valor_mentores/i.test(url)
-            ) {
-              // pequeno atraso para permitir processamento do servidor/DOM
-              setTimeout(atualizarRapido, 50);
-            }
-          } catch (e) {}
-          return resp;
-        });
-      };
-    } catch (e) {
-      console.warn(
-        "NÃ£o foi possÃ­vel hookar fetch para atualizaÃ§Ãµes automÃ¡ticas MENSAL",
-        e
-      );
-    }
+      const barraProgresso = document.getElementById("barra-progresso-3");
+      const saldoInfo = document.getElementById("saldo-info-3");
+      const porcentagemBarra = document.getElementById("porcentagem-barra-3");
 
-    // Interval fallback (mais longo) para garantir eventual consistÃªncia
-    setInterval(atualizarRapido, 5000);
-
-    // Primeira atualizaÃ§Ã£o imediata
-    setTimeout(atualizarRapido, 50);
-
-    // Expor utilitÃ¡rio
-    window.atualizarRapidoMensal = atualizarRapido;
-
-    console.log(
-      "Sistema rÃ¡pido MENSAL (melhorado) ativo - responde imediatamente a mudanÃ§as"
-    );
-  })();
-
-  // Aguardar DOM
-  if (document.readyState === "loading") {
-    document.addEventListener("DOMContentLoaded", () => {
-      setTimeout(inicializarSistemaMetaMensal, 1200);
-    });
-  } else {
-    setTimeout(inicializarSistemaMetaMensal, 800);
-  }
-
-  console.log("Sistema Meta MENSAL COM VALOR TACHADO E EXTRA carregado!");
-  console.log("Comandos MENSAIS:");
-  console.log("  $2.force() - ForÃ§ar atualizaÃ§Ã£o");
-  console.log("  $2.testExtra() - Testar valor tachado e extra");
-  console.log("  $2.sync() - Sincronizar com bloco 1");
-  console.log("  $2.info() - Ver status completo");
-
-  // Export para uso externo
-  // Expose the anual manager under a unique name
-  window.MetaAnualManager = MetaMensalManager;
-  // AQUI FINAL PARTE DO CODIGO QUE QTUALIZA EM TEMPO REAL VIA AJAX OS VALORES
-  // ========================================================================================================================
-  //                               FIM JS DAOS CAMPOS ONDE FILTRA O MÃŠS BARRA DE PROGRESSO META E SALDO
-  // ========================================================================================================================
-  //
-  //
-  //
-  //
-  //
-  //
-  //
-  //
-  //
-  //
-  //
-  //
-  //
-  //
-  //
-  // ========================================================================================================================
-  //                                          JS DO PLACAR DO BLOCO 2 MÃŠS
-  // ========================================================================================================================
-
-  // GERENCIADOR DO PLACAR ANUAL (PERÍODO: ANO)
-  const PlacarAnualManager = {
-    async atualizarPlacarAnual() {
-      try {
-        const placarElement = document.getElementById("pontuacao-3");
-        if (!placarElement) return;
-
-        // Buscar dados do placar anual (todos os meses)
-        const formData = new FormData();
-        formData.append("periodo", "ano");
-
-        const response = await fetch("carregar-mentores.php", {
-          method: "POST",
-          body: formData,
-          headers: {
-            "Cache-Control": "no-cache",
-            "X-Requested-With": "XMLHttpRequest",
-          },
-        });
-
-        if (!response.ok) throw new Error(`HTTP ${response.status}`);
-        const html = await response.text();
-
-        // Extrair dados do placar igual ao método mensal
-        const temp = document.createElement("div");
-        temp.innerHTML = html;
-        const totalGreenEl = temp.querySelector("#total-green-dia");
-        const totalRedEl = temp.querySelector("#total-red-dia");
-        let wins = 0,
-          losses = 0;
-        if (totalGreenEl && totalRedEl) {
-          wins = parseInt(totalGreenEl.dataset.green || "0", 10) || 0;
-          losses = parseInt(totalRedEl.dataset.red || "0", 10) || 0;
-        }
-
-        // Atualizar placar
-        const greenSpan = placarElement.querySelector(".placar-green-3");
-        const redSpan = placarElement.querySelector(".placar-red-3");
-        const separadorEl = placarElement.querySelector(".separador-3");
-        if (greenSpan && redSpan) {
-          console.log("[PLACAR ANUAL] Dados recebidos:", { wins, losses });
-          // Sempre mostrar 0 × 0 se ambos forem zero
-          greenSpan.textContent = wins;
-          redSpan.textContent = losses;
-          if (wins === 0 && losses === 0) {
-            if (separadorEl)
-              separadorEl.style.setProperty("color", "#bbb", "important");
-            placarElement.classList.remove(
-              "placar-atualizado",
-              "placar-has-values"
-            );
-          } else {
-            if (separadorEl) separadorEl.style.removeProperty("color");
-            placarElement.classList.add("placar-has-values");
-            placarElement.classList.add("placar-atualizado");
-            setTimeout(
-              () => placarElement.classList.remove("placar-atualizado"),
-              1000
-            );
-          }
-        } else {
-          console.warn("[PLACAR ANUAL] Elementos internos não encontrados!");
-        }
-      } catch (error) {
-        // Em caso de erro, zera placar
-        const placarElement = document.getElementById("pontuacao-3");
-        if (placarElement) {
-          const greenSpan = placarElement.querySelector(".placar-green-3");
-          const redSpan = placarElement.querySelector(".placar-red-3");
-          if (greenSpan) greenSpan.textContent = "";
-          if (redSpan) redSpan.textContent = "";
-        }
-        console.error("Erro ao atualizar placar anual:", error);
-      }
-    },
-  };
-
-  // Exibir apenas o placar anual ao carregar
-  document.addEventListener("DOMContentLoaded", function () {
-    PlacarAnualManager.atualizarPlacarAnual();
-  });
-
-  // PlacarMensalManager permanece igual (caso usado em outros lugares)
-  const PlacarMensalManager = {
-    // âœ… CONTROLE DE ESTADO
-    atualizandoAtualmente: false,
-    intervaloPlacar: null,
-    ultimaAtualizacao: null,
-
-    // âœ… INICIALIZAR SISTEMA DE PLACAR MENSAL
-    inicializar() {
-      try {
-        console.log("ðŸ“Š Inicializando Sistema de Placar Mensal...");
-
-        // Verificar se existe o elemento
-        const placar = document.getElementById("pontuacao-3");
-        if (!placar) {
-          console.warn("âš ï¸ Elemento #pontuacao-3 nÃ£o encontrado");
-          return false;
-        }
-
-        // Primeira atualizaÃ§Ã£o
-        this.atualizarPlacarMensal();
-
-        // Configurar intervalo de atualizaÃ§Ã£o (a cada 30 segundos)
-        this.intervaloPlacar = setInterval(() => {
-          this.atualizarPlacarMensal();
-        }, 30000);
-
-        // Interceptar mudanÃ§as no sistema principal
-        this.configurarInterceptadores();
-
-        console.log("âœ… Sistema de Placar Mensal inicializado");
-        return true;
-      } catch (error) {
-        console.error("âŒ Erro ao inicializar placar mensal:", error);
-        return false;
-      }
-    },
-
-    // âœ… ATUALIZAR PLACAR MENSAL - USANDO MESMA LÃ“GICA DO PLACAR PRINCIPAL
-    async atualizarPlacarMensal() {
-      if (this.atualizandoAtualmente) {
-        console.log("â³ Placar mensal jÃ¡ sendo atualizado...");
+      if (!barraProgresso) {
+        console.warn("Elemento barra-progresso-3 não encontrado");
         return;
       }
 
-      this.atualizandoAtualmente = true;
+      const saldoAno =
+        parseFloat(data.lucro_periodo) || parseFloat(data.lucro) || 0;
+      const metaCalculada = parseFloat(data.meta_display) || 0;
+      const bancaTotal = parseFloat(data.banca) || 0;
 
-      try {
-        console.log("ðŸ“Š Buscando dados do placar mensal (perÃ­odo: mÃªs)...");
-
-        // Usar mesma lÃ³gica do SistemaFiltroPeriodo - buscar dados do mÃªs
-        const formData = new FormData();
-        formData.append("periodo", "mes");
-
-        const response = await fetch("carregar-mentores.php", {
-          method: "POST",
-          body: formData,
-          headers: {
-            "Cache-Control": "no-cache",
-            "X-Requested-With": "XMLHttpRequest",
-          },
-        });
-
-        if (!response.ok) {
-          throw new Error(`HTTP ${response.status}`);
-        }
-
-        const html = await response.text();
-
-        // Usar mesma funÃ§Ã£o que o placar principal usa
-        const placarData = this.extrairPlacarIgualPrincipal(html);
-
-        if (placarData) {
-          this.aplicarPlacarMensal(placarData);
-          this.ultimaAtualizacao = new Date();
-          console.log(
-            `âœ… Placar mensal atualizado: ${placarData.wins} Ã— ${placarData.losses}`
-          );
+      // Calcular progresso
+      let progresso = 0;
+      if (bancaTotal > 0 && metaCalculada > 0) {
+        if (
+          resultado.statusClass === "meta-batida" ||
+          resultado.statusClass === "meta-superada"
+        ) {
+          progresso = 100;
+        } else if (saldoAno < 0) {
+          progresso = -Math.min(Math.abs(saldoAno / metaCalculada) * 100, 100);
         } else {
-          // Fallback: valores zerados
-          this.aplicarPlacarMensal({ wins: 0, losses: 0 });
-          console.log("âš ï¸ Nenhum dado encontrado, usando valores zero");
-        }
-      } catch (error) {
-        console.error("âŒ Erro ao atualizar placar mensal:", error);
-        this.mostrarErroPlacar();
-        // Em caso de erro, zerar placar
-        this.aplicarPlacarMensal({ wins: 0, losses: 0 });
-      } finally {
-        this.atualizandoAtualmente = false;
-      }
-    },
-
-    // âœ… EXTRAIR PLACAR IGUAL AO SISTEMA PRINCIPAL - CÃ“PIA EXATA
-    extrairPlacarIgualPrincipal(html) {
-      try {
-        console.log(
-          "ðŸ” Extraindo placar usando mesma lÃ³gica do sistema principal..."
-        );
-
-        // Criar elemento temporÃ¡rio para parsear HTML - igual ao sistema principal
-        const temp = document.createElement("div");
-        temp.innerHTML = html;
-
-        // Buscar elementos #total-green-dia e #total-red-dia - igual ao sistema principal
-        const totalGreenEl = temp.querySelector("#total-green-dia");
-        const totalRedEl = temp.querySelector("#total-red-dia");
-
-        if (totalGreenEl && totalRedEl) {
-          const totalGreen = totalGreenEl.dataset.green || "0";
-          const totalRed = totalRedEl.dataset.red || "0";
-
-          const wins = parseInt(totalGreen, 10) || 0;
-          const losses = parseInt(totalRed, 10) || 0;
-
-          console.log(
-            `âœ… Dados extraÃ­dos do HTML (igual sistema principal): ${wins} Ã— ${losses}`
+          progresso = Math.max(
+            0,
+            Math.min(100, (saldoAno / metaCalculada) * 100)
           );
-          return { wins, losses };
         }
-
-        console.log(
-          "âš ï¸ Elementos #total-green-dia ou #total-red-dia nÃ£o encontrados"
-        );
-
-        // Fallback: buscar diretamente nos placares como o sistema principal faz
-        const placarGreen = temp.querySelector(".placar-green");
-        const placarRed = temp.querySelector(".placar-red");
-
-        if (placarGreen && placarRed) {
-          const wins = parseInt(placarGreen.textContent.trim(), 10) || 0;
-          const losses = parseInt(placarRed.textContent.trim(), 10) || 0;
-
-          console.log(
-            `âœ… Dados extraÃ­dos dos placares diretos: ${wins} Ã— ${losses}`
-          );
-          return { wins, losses };
-        }
-
-        console.log("âš ï¸ Nenhum placar encontrado no HTML");
-        return { wins: 0, losses: 0 };
-      } catch (error) {
-        console.error("âŒ Erro ao extrair placar:", error);
-        return { wins: 0, losses: 0 };
-      }
-    },
-
-    // âœ… EXTRAIR DADOS DO PLACAR DO HTML - VERSÃƒO SIMPLIFICADA
-    extrairDadosPlacar(html) {
-      try {
-        // Criar elemento temporÃ¡rio para parsear HTML
-        const temp = document.createElement("div");
-        temp.innerHTML = html;
-
-        console.log("ðŸ” Buscando dados do placar no HTML retornado...");
-
-        // MÃ‰TODO 1: Buscar placar principal diretamente
-        const placarGreen = temp.querySelector(".placar-green");
-        const placarRed = temp.querySelector(".placar-red");
-
-        if (placarGreen && placarRed) {
-          const wins = parseInt(placarGreen.textContent.trim()) || 0;
-          const losses = parseInt(placarRed.textContent.trim()) || 0;
-          console.log(`âœ… MÃ©todo 1: Encontrado ${wins} Ã— ${losses}`);
-          return { wins, losses };
-        }
-
-        // MÃ‰TODO 2: Contar mentores com Green/Red
-        console.log("ðŸ” MÃ©todo 1 falhou, tentando mÃ©todo 2...");
-        const mentorCards = temp.querySelectorAll(".mentor-card");
-        let wins = 0,
-          losses = 0;
-
-        console.log(`ðŸ“Š Encontrados ${mentorCards.length} mentores`);
-
-        mentorCards.forEach((card, index) => {
-          // Buscar valores Green e Red nos mentor-cards
-          const greenValues = card.querySelectorAll(
-            ".value-box-green p:first-child"
-          );
-          const redValues = card.querySelectorAll(
-            ".value-box-red p:first-child"
-          );
-
-          let mentorWin = false,
-            mentorLoss = false;
-
-          // Verificar valores verdes (lucros)
-          greenValues.forEach((green) => {
-            if (green && green.classList && green.classList.contains("green")) {
-              const valor = this.extrairValorMonetario(green.textContent);
-              if (valor > 0) mentorWin = true;
-            }
-          });
-
-          // Verificar valores vermelhos (perdas)
-          redValues.forEach((red) => {
-            if (red && red.classList && red.classList.contains("red")) {
-              const valor = this.extrairValorMonetario(red.textContent);
-              if (valor !== 0) mentorLoss = true;
-            }
-          });
-
-          // Buscar elementos com classes green/red
-          const elementosGreen = card.querySelectorAll(".green p:first-child");
-          const elementosRed = card.querySelectorAll(".red p:first-child");
-
-          elementosGreen.forEach((el) => {
-            const valor = this.extrairValorMonetario(el.textContent);
-            if (valor > 0) mentorWin = true;
-          });
-
-          elementosRed.forEach((el) => {
-            const valor = this.extrairValorMonetario(el.textContent);
-            if (valor !== 0) mentorLoss = true;
-          });
-
-          if (mentorWin) wins++;
-          if (mentorLoss) losses++;
-        });
-
-        console.log(`âœ… MÃ©todo 2: Contados ${wins} wins, ${losses} losses`);
-        return { wins, losses };
-      } catch (error) {
-        console.error("âŒ Erro ao extrair dados do placar:", error);
-        return { wins: 0, losses: 0 };
-      }
-    },
-
-    // âœ… EXTRAIR VALOR MONETÃRIO DE STRING
-    extrairValorMonetario(texto) {
-      try {
-        if (!texto) return 0;
-
-        // Remover R$, espaÃ§os e converter vÃ­rgula para ponto
-        const numeroLimpo = texto
-          .replace(/[R$\s]/g, "")
-          .replace(",", ".")
-          .replace(/[^\d.-]/g, "");
-
-        return parseFloat(numeroLimpo) || 0;
-      } catch (error) {
-        return 0;
-      }
-    },
-
-    // âœ… APLICAR PLACAR MENSAL NO ELEMENTO
-    aplicarPlacarMensal(placarData) {
-      try {
-        const placarElement = document.getElementById("pontuacao-3");
-        if (!placarElement) return;
-
-        const greenSpan = placarElement.querySelector(".placar-green-3");
-        const redSpan = placarElement.querySelector(".placar-red-3");
-        const separadorEl = placarElement.querySelector(".separador-3");
-
-        if (greenSpan && redSpan) {
-          // If both values are zero, keep the placar visually empty until real data arrives
-          const wins = Number(placarData.wins) || 0;
-          const losses = Number(placarData.losses) || 0;
-
-          if (wins === 0 && losses === 0) {
-            // Show empty placeholders instead of "0 Ã— 0"
-            greenSpan.textContent = "";
-            redSpan.textContent = "";
-            if (separadorEl) {
-              // Make separator transparent while waiting for real data
-              separadorEl.style.setProperty(
-                "color",
-                "transparent",
-                "important"
-              );
-            }
-            // remove update class if present and remove has-values marker
-            placarElement.classList.remove("placar-atualizado");
-            placarElement.classList.remove("placar-has-values");
-          } else {
-            // Ensure separator is visible and colored for non-empty scores
-            if (separadorEl) {
-              separadorEl.style.removeProperty("color");
-            }
-
-            // Marca que o placar tem valores para controles CSS
-            placarElement.classList.add("placar-has-values");
-
-            // Aplicar valores com animaÃ§Ã£o suave
-            this.animarMudancaValor(greenSpan, wins);
-            this.animarMudancaValor(redSpan, losses);
-
-            // Aplicar classe de atualizaÃ§Ã£o
-            placarElement.classList.add("placar-atualizado");
-            setTimeout(() => {
-              placarElement.classList.remove("placar-atualizado");
-            }, 1000);
-          }
-        }
-      } catch (error) {
-        console.error("âŒ Erro ao aplicar placar:", error);
-      }
-    },
-
-    // âœ… ANIMAR MUDANÃ‡A DE VALOR
-    animarMudancaValor(elemento, novoValor) {
-      try {
-        const valorAtual = parseInt(elemento.textContent) || 0;
-
-        if (valorAtual !== novoValor) {
-          // AtualizaÃ§Ã£o direta sem animaÃ§Ã£o para evitar movimento
-          // Pequeno timeout para permitir coalescÃªncia de mÃºltiplas atualizaÃ§Ãµes
-          setTimeout(() => {
-            elemento.textContent = novoValor;
-          }, 10);
-        }
-      } catch (error) {
-        console.error("âŒ Erro na animaÃ§Ã£o:", error);
-        elemento.textContent = novoValor; // Fallback sem animaÃ§Ã£o
-      }
-    },
-
-    // âœ… MOSTRAR ERRO NO PLACAR
-    mostrarErroPlacar() {
-      try {
-        const placarElement = document.getElementById("pontuacao-3");
-        if (!placarElement) return;
-
-        placarElement.classList.add("placar-erro");
-        setTimeout(() => {
-          placarElement.classList.remove("placar-erro");
-        }, 2000);
-      } catch (error) {
-        console.error("âŒ Erro ao mostrar erro:", error);
-      }
-    },
-
-    // âœ… CONFIGURAR INTERCEPTADORES - INTEGRAÃ‡ÃƒO COM SISTEMA PRINCIPAL
-    configurarInterceptadores() {
-      try {
-        // Interceptar atualizaÃ§Ãµes do SistemaFiltroPeriodo
-        if (
-          typeof SistemaFiltroPeriodo !== "undefined" &&
-          SistemaFiltroPeriodo.atualizarPlacar
-        ) {
-          const originalAtualizarPlacar = SistemaFiltroPeriodo.atualizarPlacar;
-
-          SistemaFiltroPeriodo.atualizarPlacar = function () {
-            // Executa funÃ§Ã£o original
-            originalAtualizarPlacar.call(this);
-
-            // Atualiza placar mensal quando perÃ­odo for 'mes' â€” imediata
-            if (this.periodoAtual === "mes") {
-              console.log(
-                "ðŸ”„ SistemaFiltroPeriodo atualizou placar do mÃªs, sincronizando placar-3..."
-              );
-              // micro-delay para permitir DOM/processamento
-              if (typeof PlacarMensalManager !== "undefined") {
-                setTimeout(
-                  () => PlacarMensalManager.sincronizarComPlacarPrincipal(),
-                  50
-                );
-              }
-            }
-          };
-        }
-
-        // Interceptar mudanÃ§as de perÃ­odo
-        const radiosPeriodo = document.querySelectorAll(
-          'input[name="periodo"]'
-        );
-        radiosPeriodo.forEach((radio) => {
-          radio.addEventListener("change", (e) => {
-            console.log(
-              "ðŸ”„ PerÃ­odo alterado, atualizando placar mensal imediatamente..."
-            );
-            // atualizar imediatamente com micro-delay para DOM
-            setTimeout(() => this.atualizarPlacarMensal(), 50);
-          });
-        });
-
-        // Interceptar funÃ§Ã£o de recarregar mentores
-        if (
-          typeof MentorManager !== "undefined" &&
-          MentorManager.recarregarMentores
-        ) {
-          const originalRecarregar = MentorManager.recarregarMentores;
-
-          MentorManager.recarregarMentores = async function (...args) {
-            const resultado = await originalRecarregar.apply(this, args);
-
-            // Sempre atualizar placar mensal apÃ³s recarregar mentores â€” imediato
-            try {
-              if (typeof PlacarMensalManager !== "undefined") {
-                console.log(
-                  "ðŸ”„ Mentores recarregados, atualizando placar mensal imediatamente..."
-                );
-                setTimeout(
-                  () => PlacarMensalManager.atualizarPlacarMensal(),
-                  50
-                );
-              }
-            } catch (e) {}
-
-            return resultado;
-          };
-        }
-      } catch (error) {
-        console.error("âŒ Erro ao configurar interceptadores:", error);
       }
 
-      // --- Observador genÃ©rico para mudanÃ§as que afetam o placar (debounced) ---
-      try {
-        const self = this;
-        let moTimer = null;
-        const debouncedTrigger = () => {
-          if (moTimer) clearTimeout(moTimer);
-          moTimer = setTimeout(() => {
-            try {
-              self.atualizarPlacarMensal();
-            } catch (e) {}
-          }, 50);
-        };
+      const larguraBarra = Math.abs(progresso);
 
-        const selectors = [
-          "#pontuacao-3",
-          ".mentor-card",
-          "#mentores",
-          ".lista-meses",
-          ".mentores-container",
-        ];
-        const mo = new MutationObserver((mutations) => {
-          debouncedTrigger();
-        });
+      // Limpeza completa das classes antigas
+      let classeCor = "";
 
-        selectors.forEach((sel) => {
-          document.querySelectorAll(sel).forEach((node) => {
-            try {
-              mo.observe(node, {
-                childList: true,
-                subtree: true,
-                characterData: true,
-              });
-            } catch (e) {}
-          });
-        });
-
-        // TambÃ©m observar o body para capturar inserÃ§Ãµes de containers novos (leve)
-        mo.observe(document.body, { childList: true, subtree: true });
-      } catch (e) {
-        // silencioso
-      }
-    },
-
-    // âœ… NOVA FUNÃ‡ÃƒO: Sincronizar com placar principal quando perÃ­odo = mÃªs
-    sincronizarComPlacarPrincipal() {
-      try {
-        const placarGreen = document.querySelector(".placar-green");
-        const placarRed = document.querySelector(".placar-red");
-
-        if (placarGreen && placarRed) {
-          const wins = parseInt(placarGreen.textContent.trim(), 10) || 0;
-          const losses = parseInt(placarRed.textContent.trim(), 10) || 0;
-
-          console.log(
-            `ðŸ“Š Sincronizando placar-3 com placar principal: ${wins} Ã— ${losses}`
-          );
-          this.aplicarPlacarMensal({ wins, losses });
-
-          return true;
-        }
-
-        return false;
-      } catch (error) {
-        console.error("âŒ Erro ao sincronizar com placar principal:", error);
-        return false;
-      }
-    },
-
-    // âœ… PARAR SISTEMA
-    parar() {
-      try {
-        if (this.intervaloPlacar) {
-          clearInterval(this.intervaloPlacar);
-          this.intervaloPlacar = null;
-          console.log("ðŸ›‘ Sistema de placar mensal parado");
-        }
-      } catch (error) {
-        console.error("âŒ Erro ao parar sistema:", error);
-      }
-    },
-
-    // âœ… FORÃ‡AR ATUALIZAÃ‡ÃƒO
-    forcarAtualizacao() {
-      this.atualizandoAtualmente = false;
-      return this.atualizarPlacarMensal();
-    },
-
-    // âœ… STATUS DO SISTEMA
-    status() {
-      return {
-        ativo: !!this.intervaloPlacar,
-        atualizando: this.atualizandoAtualmente,
-        ultimaAtualizacao: this.ultimaAtualizacao,
-        elementoExiste: !!document.getElementById("pontuacao-3"),
-        intervaloAtivo: !!this.intervaloPlacar,
-      };
-    },
-  };
-
-  // ========================================
-  // ðŸŽ¨ CSS CLONADO E ADAPTADO PARA PLACAR-3
-  // ========================================
-
-  const cssPlaccar2 = `
-/* ===== PLACAR-3 - CLONE DO PLACAR ORIGINAL ===== */
-.area-central-3 {
-  position: absolute;
-  left: var(--placar-3-left, 50%);
-  top: var(--placar-3-top, 30px);
-  transform: translate(-50%, -50%);
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  font-size: clamp(12px, 3.5vw, 16px);
-  font-weight: 400;
-  color: #acafb3ff;
-  text-transform: uppercase;
-  letter-spacing: 1px;
-}
-
-.pontuacao-3 {
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  gap: clamp(5px, 1.2vw, 20px); /* pequeno gap para proximidade */
-  color: #2b2b2b; /* texto escuro para contraste com fundo cinza */
-  font-size: clamp(15px, 3.5vw, 22px); /* um pouco menor */
-  font-weight: 600 !important; /* manter grosso e forÃ§ar override */
-  /* Tornar o campo horizontal 100% para preencher de ponta a ponta */
-  position: absolute;
-  left: 0;
-  right: 0;
-  width: 100%;
-  transform: none;
-  box-sizing: border-box; /* garantir que padding nÃ£o estoure a largura */
-  /* Background container to allow mirrored/reflection effect */
-  position: relative;
-  z-index: 2;
-  background: #eef0eeff; /* cor cinza solicitada */
-  padding: 8px 16px; /* espaÃ§o interno para bordas */
-  border-radius: 6px;
-}
-
-/* Fundo espelhado (reflexÃ£o) abaixo do placar */
-.pontuacao-3::after {
-  content: "";
-  position: absolute;
-  left: 0;
-  right: 0;
-  top: 100%; /* comeÃ§a logo abaixo do placar */
-  height: 60%; /* altura da reflexÃ£o relativa ao placar */
-  background: inherit; /* replica o background do placar */
-  transform: scaleY(-1); /* espelha verticalmente */
-  transform-origin: top;
-  opacity: 0.08; /* opacidade leve para sutileza com fundo cinza */
-  filter: blur(6px) saturate(0.9);
-  -webkit-mask-image: linear-gradient(to bottom, rgba(0,0,0,0.6), rgba(0,0,0,0));
-  mask-image: linear-gradient(to bottom, rgba(0,0,0,0.6), rgba(0,0,0,0));
-  pointer-events: none;
-  border-radius: 0 0 8px 8px;
-}
-
-.placar-green-3 {
-  color: #03a158;
-  font-weight: 700 !important; /* manter grosso e forÃ§ar override */
-  font-size: inherit !important;
-}
-
-.placar-red-3 {
-  color: #e93a3a;
-  font-weight: 700 !important; /* manter grosso e forÃ§ar override */
-  font-size: inherit !important;
-}
-
-.separador-3 {
-  color: rgba(109, 107, 107, 0.95);
-  font-size: clamp(12px, 2.5vw, 16px);
-  font-weight: 400;
-  margin: 0 clamp(1px, 0.4vw, 3px); /* margem menor para mais proximidade */
-}
-
-/* Specific override using ID to beat other !important rules */
-#pontuacao-3.pontuacao-3,
-#pontuacao-3.pontuacao-3 .placar-green-3,
-#pontuacao-3.pontuacao-3 .placar-red-3 {
-  font-weight: 700 !important;
-}
-
-/* ===== EFEITOS DE ATUALIZAÃ‡ÃƒO REMOVIDOS ===== */
-/* .placar-atualizado .placar-green-3,
-.placar-atualizado .placar-red-3 {
-  text-shadow: 0 0 10px currentColor;
-  animation: placar-pulse 0.6s ease-out;
-}
-
-.placar-erro {
-  opacity: 0.5;
-  animation: placar-erro-shake 0.5s ease-in-out;
-} */
-
-/* ===== ANIMAÃ‡Ã•ES REMOVIDAS ===== */
-/* @keyframes placar-pulse {
-  0% { transform: scale(1); }
-  50% { transform: scale(1.1); }
-  100% { transform: scale(1); }
-}
-
-@keyframes placar-erro-shake {
-  0%, 100% { transform: translateX(0); }
-  25% { transform: translateX(-3px); }
-  75% { transform: translateX(2px); }
-} */
-
-/* ===== RESPONSIVIDADE ===== */
-@media (max-width: 768px) {
-  .area-central-3 {
-    font-size: clamp(10px, 2vw, 14px);
-  }
-
-  .pontuacao-3 {
-    gap: clamp(6px, 1.5vw, 12px);
-    font-size: clamp(14px, 3.5vw, 20px);
-    padding: 6px 10px;
-    border-radius: 6px;
-  }
-
-  .separador-3 {
-    font-size: clamp(12px, 2.5vw, 16px);
-    margin: 0 clamp(3px, 0.8vw, 6px);
-  }
-}
-
-@media (max-width: 480px) {
-  .area-central-3 {
-    font-size: clamp(9px, 1.8vw, 12px);
-  }
-
-  .pontuacao-3 {
-    gap: clamp(4px, 1vw, 8px);
-    font-size: clamp(12px, 3vw, 16px);
-    padding: 5px 8px;
-  }
-
-  .separador-3 {
-    font-size: clamp(10px, 2vw, 14px);
-    margin: 0 clamp(2px, 0.5vw, 4px);
-  }
-}
-`;
-
-  // ========================================
-  // ðŸ”§ FUNÃ‡Ã•ES AUXILIARES E INTEGRAÃ‡ÃƒO
-  // ========================================
-
-  // Injetar CSS no documento
-  function injetarCSS() {
-    try {
-      const styleElement = document.createElement("style");
-      styleElement.textContent = cssPlaccar2;
-      document.head.appendChild(styleElement);
-      console.log("âœ… CSS do placar mensal injetado");
-    } catch (error) {
-      console.error("âŒ Erro ao injetar CSS:", error);
-    }
-  }
-
-  // FunÃ§Ã£o global para teste rÃ¡pido do placar mensal
-  window.testarPlacarMensal = () => {
-    console.log("ðŸ§ª Testando placar mensal...");
-
-    const placar = document.getElementById("pontuacao-3");
-    if (!placar) {
-      console.error("âŒ Elemento #pontuacao-3 nÃ£o encontrado!");
-      return false;
-    }
-
-    console.log("âœ… Elemento encontrado:", placar);
-
-    // Teste visual rÃ¡pido
-    const green = placar.querySelector(".placar-green-3");
-    const red = placar.querySelector(".placar-red-3");
-
-    if (green && red) {
-      green.textContent = Math.floor(Math.random() * 10) + 1;
-      red.textContent = Math.floor(Math.random() * 10) + 1;
-      console.log(
-        `âœ… Valores de teste aplicados: ${green.textContent} Ã— ${red.textContent}`
+      // Remover TODAS as classes de cor possíveis
+      barraProgresso.classList.remove(
+        "barra-meta-batida-3",
+        "barra-meta-superada-3",
+        "barra-negativo-3",
+        "barra-lucro-3",
+        "barra-neutro-3",
+        "barra-sem-banca-3",
+        "barra-erro-3"
       );
 
-      // ForÃ§ar atualizaÃ§Ã£o real apÃ³s teste
+      // Garantir classe base
+      if (!barraProgresso.classList.contains("widget-barra-progresso-3")) {
+        barraProgresso.classList.add("widget-barra-progresso-3");
+      }
+
+      // Aplicar classe correta com sufixo -3
+      if (
+        resultado.statusClass === "meta-batida" ||
+        resultado.statusClass === "meta-superada"
+      ) {
+        classeCor = "barra-meta-batida-3";
+        console.log(
+          `✅ BARRA ANUAL META BATIDA/SUPERADA - Saldo: R$ ${saldoAno.toFixed(
+            2
+          )}, Meta: R$ ${metaCalculada.toFixed(2)}`
+        );
+      } else {
+        classeCor = `barra-${resultado.statusClass}-3`;
+        console.log(
+          `✅ BARRA ANUAL NORMAL - Status: ${
+            resultado.statusClass
+          }, Saldo: R$ ${saldoAno.toFixed(2)}`
+        );
+      }
+
+      // Aplicar classe e estilos
+      barraProgresso.classList.add(classeCor);
+
+      // Forçar reset de estilos inline antigos
+      barraProgresso.style.width = `${larguraBarra}%`;
+      barraProgresso.style.backgroundColor = "";
+      barraProgresso.style.background = "";
+      barraProgresso.style.filter = "";
+      barraProgresso.style.animation = "";
+
+      console.log(
+        `✅ BARRA ANUAL - Classe aplicada: ${classeCor}, Largura: ${larguraBarra}%`
+      );
+
+      // Porcentagem
+      if (porcentagemBarra) {
+        const porcentagemTexto = Math.round(progresso) + "%";
+        porcentagemBarra.innerHTML = `
+          <span class="porcentagem-fundo-3 ${classeCor}">${porcentagemTexto}</span>
+        `;
+
+        if (larguraBarra <= 10) {
+          porcentagemBarra.classList.add("pequeno");
+        } else {
+          porcentagemBarra.classList.remove("pequeno");
+        }
+
+        if (larguraBarra <= 0) {
+          porcentagemBarra.classList.add("oculta");
+        } else {
+          porcentagemBarra.classList.remove("oculta");
+        }
+      }
+
+      // Atualizar ícones dinâmicos do saldo
+      this.atualizarIconesSaldoDinamicos(saldoAno);
+    } catch (error) {
+      console.error("Erro ao atualizar barra progresso anual:", error);
+    }
+  },
+
+  // Mostrar erro anual
+  mostrarErroMetaAnual() {
+    try {
+      const metaElement = document.getElementById("meta-valor-3");
+      if (metaElement) {
+        metaElement.innerHTML =
+          '<i class="fa-solid fa-coins"></i><div class="meta-valor-container-3"><span class="valor-texto-3 loading-text-3">R$ 0,00</span></div>';
+      }
+    } catch (error) {
+      console.error("Erro ao mostrar erro meta anual:", error);
+    }
+  },
+
+  // Inicializar sistema anual
+  inicializar() {
+    try {
+      const metaElement = document.getElementById("meta-valor-3");
+      if (metaElement) {
+        metaElement.innerHTML =
+          '<i class="fa-solid fa-coins"></i><div class="meta-valor-container-3"><span class="valor-texto-3 loading-text-3">Calculando...</span></div>';
+      }
+
+      console.log(`Sistema Meta ANUAL COM VALOR TACHADO E EXTRA inicializado`);
+
+      // Garantir ícone da moeda após delay
       setTimeout(() => {
-        if (typeof PlacarMensalManager !== "undefined") {
-          PlacarMensalManager.atualizarPlacarMensal();
-        }
-      }, 2000);
+        this.garantirIconeMoeda();
+      }, 1500);
 
-      return true;
+      // Inicializar com delay
+      setTimeout(() => {
+        this.atualizarMetaAnual();
+      }, 1000);
+    } catch (error) {
+      console.error("Erro na inicialização anual:", error);
+    }
+  },
+
+  // Sincronizar com mudanças
+  sincronizarComSistema() {
+    try {
+      this.atualizarMetaAnual(true);
+    } catch (error) {
+      console.error("Erro ao sincronizar anual:", error);
+    }
+  },
+};
+
+// ========================================
+// FUNÇÕES GLOBAIS E ATALHOS ANUAIS
+// ========================================
+
+window.atualizarMetaAnual = () => {
+  if (typeof MetaAnualManager !== "undefined") {
+    return MetaAnualManager.atualizarMetaAnual();
+  }
+  return null;
+};
+
+window.$3 = {
+  force: () => {
+    if (typeof MetaAnualManager !== "undefined") {
+      MetaAnualManager.atualizandoAtualmente = false;
+      return MetaAnualManager.atualizarMetaAnual();
+    }
+    return null;
+  },
+
+  sync: () => {
+    if (typeof MetaAnualManager !== "undefined") {
+      return MetaAnualManager.sincronizarComSistema();
+    }
+    return null;
+  },
+
+  // Função para testar valor tachado e extra anual
+  testExtra: () => {
+    console.log("Testando valor tachado e extra ANUAL...");
+
+    if (typeof MetaAnualManager === "undefined") {
+      return "MetaAnualManager não encontrado";
     }
 
-    console.error("âŒ Elementos internos nÃ£o encontrados");
-    return false;
-  };
+    // Simular diferentes cenários de teste
+    const testData = {
+      meta_display: 12000,
+      meta_display_formatada: "R$ 12.000,00",
+      banca: 50000,
+      rotulo_periodo: "Meta do Ano",
+    };
 
-  // FunÃ§Ã£o global para controle do placar mensal
-  window.PlacarMensal = {
-    iniciar: () => {
-      console.log("ðŸš€ Iniciando placar mensal...");
-      return PlacarMensalManager.inicializar();
-    },
-    parar: () => {
-      console.log("ðŸ›‘ Parando placar mensal...");
-      return PlacarMensalManager.parar();
-    },
-    atualizar: () => {
-      console.log("ðŸ”„ Atualizando placar mensal...");
-      return PlacarMensalManager.forcarAtualizacao();
-    },
-    status: () => PlacarMensalManager.status(),
-    info: () => {
-      const status = PlacarMensalManager.status();
-      console.log("ðŸ“Š Status Placar Mensal:", status);
-      return status;
-    },
-    teste: () => testarPlacarMensal(),
-  };
+    // Teste 1: Meta anual exatamente batida
+    setTimeout(() => {
+      console.log("Teste 1: Meta ANUAL exatamente batida (R$ 12000)");
+      const resultado = MetaAnualManager.calcularMetaFinalAnualComExtra(
+        12000,
+        12000,
+        50000,
+        testData
+      );
+      MetaAnualManager.atualizarMetaElementoAnualComExtra(resultado);
+    }, 1000);
 
-  // ========================================
-  // ðŸš€ INICIALIZAÃ‡ÃƒO AUTOMÃTICA
-  // ========================================
+    // Teste 2: Meta superada
+    setTimeout(() => {
+      console.log("Teste 2: Meta ANUAL superada (R$ 15000 - extra R$ 3000)");
+      const resultado = MetaAnualManager.calcularMetaFinalAnualComExtra(
+        15000,
+        12000,
+        50000,
+        testData
+      );
+      MetaAnualManager.atualizarMetaElementoAnualComExtra(resultado);
+    }, 2500);
 
-  function inicializarPlacarMensal() {
+    // Teste 3: Meta não batida
+    setTimeout(() => {
+      console.log("Teste 3: Meta ANUAL não batida (R$ 8000)");
+      const resultado = MetaAnualManager.calcularMetaFinalAnualComExtra(
+        8000,
+        12000,
+        50000,
+        testData
+      );
+      MetaAnualManager.atualizarMetaElementoAnualComExtra(resultado);
+    }, 4000);
+
+    return "Teste ANUAL completo em 4 segundos - valor tachado e extra";
+  },
+
+  info: () => {
     try {
-      console.log("ðŸš€ Inicializando Sistema de Placar Mensal...");
+      const metaElement = document.getElementById("meta-valor-3");
+      const saldoElement = document.getElementById("saldo-info-3");
 
-      // Injetar CSS
-      injetarCSS();
-
-      // Aguardar elemento estar disponÃ­vel
-      const verificarElemento = () => {
-        const placar = document.getElementById("pontuacao-3");
-        if (placar) {
-          // Evitar flash: ocultar atÃ© o CSS injetado e o posicionamento final serem aplicados
-          try {
-            // Aplicar com !important para sobrescrever a regra CSS que esconde o elemento
-            placar.style.setProperty("visibility", "hidden", "important");
-          } catch (e) {}
-
-          PlacarMensalManager.inicializar();
-
-          // Mostrar apÃ³s curto delay (tempo suficiente para injeÃ§Ã£o de CSS e layout)
-          setTimeout(() => {
-            try {
-              // Usar setProperty com 'important' para garantir que o inline style
-              // sobrescreva a regra do stylesheet que contÃ©m !important
-              placar.style.setProperty("visibility", "visible", "important");
-            } catch (e) {}
-          }, 120);
-
-          console.log("âœ… Sistema de Placar Mensal inicializado com sucesso!");
-        } else {
-          console.log("â³ Aguardando elemento #pontuacao-3...");
-          setTimeout(verificarElemento, 1000);
-        }
+      const info = {
+        meta: !!metaElement,
+        saldo: !!saldoElement,
+        iconeMoeda: !!metaElement?.querySelector(".fa-coins"),
+        iconeAtual: saldoElement?.querySelector("i")?.className || "N/A",
+        metaContent: metaElement ? metaElement.textContent : "N/A",
+        temTachado: !!metaElement?.querySelector(".valor-tachado-3"),
+        temExtra: !!metaElement?.querySelector(".valor-extra-3"),
+        verificacao: "Sistema Meta Anual COM valor tachado e extra",
       };
 
-      verificarElemento();
+      console.log("Info Sistema Meta Anual COM EXTRA:", info);
+      return "Info Meta Anual COM VALOR TACHADO E EXTRA verificada";
     } catch (error) {
-      console.error("âŒ Erro na inicializaÃ§Ã£o do placar mensal:", error);
+      console.error("Erro ao obter info anual:", error);
+      return "Erro ao obter informações anuais";
+    }
+  },
+};
+
+// ========================================
+// INICIALIZAÇÃO SISTEMA ANUAL
+// ========================================
+
+function inicializarSistemaMetaAnual() {
+  try {
+    console.log(
+      "Inicializando Sistema Meta ANUAL COM VALOR TACHADO E EXTRA..."
+    );
+
+    if (typeof MetaAnualManager !== "undefined") {
+      MetaAnualManager.inicializar();
+      console.log("MetaAnualManager COM EXTRA inicializado");
+    }
+
+    console.log("Sistema Meta ANUAL COM VALOR TACHADO E EXTRA inicializado!");
+    console.log("Características:");
+    console.log("   ✅ Sempre mostra META DO ANO");
+    console.log("   ✅ Ícone da moeda garantido");
+    console.log("   ✅ Ícones dinâmicos do saldo anual");
+    console.log("   ✅ Barra de progresso anual");
+    console.log("   ✅ Classes Font Awesome corretas");
+    console.log("   ✅ VALOR TACHADO quando meta batida");
+    console.log("   ✅ VALOR EXTRA em dourado quando meta superada");
+  } catch (error) {
+    console.error("Erro na inicialização sistema anual:", error);
+  }
+}
+
+// ========================================
+// INTERCEPTAÇÃO RÁPIDA ANUAL
+// ========================================
+
+(function () {
+  let ultimaAtualizacao = 0;
+  const MIN_INTERVAL_MS = 300;
+
+  function atualizarRapidoAnual() {
+    const agora = Date.now();
+    if (agora - ultimaAtualizacao < MIN_INTERVAL_MS) return;
+
+    ultimaAtualizacao = agora;
+
+    if (typeof MetaAnualManager !== "undefined") {
+      MetaAnualManager.atualizandoAtualmente = false;
+      MetaAnualManager.atualizarMetaAnual(false);
     }
   }
 
-  // Aguardar DOM
-  if (document.readyState === "loading") {
-    document.addEventListener("DOMContentLoaded", () => {
-      setTimeout(inicializarPlacarMensal, 1000);
-    });
-  } else {
-    setTimeout(inicializarPlacarMensal, 500);
-  }
-
-  // ========================================
-  // ðŸ“ COMANDOS DE CONSOLE PARA DEBUG
-  // ========================================
-
-  console.log("ðŸ“Š Sistema de Placar Mensal carregado!");
-  console.log("ðŸ”§ Comandos disponÃ­veis:");
-  console.log("  PlacarMensal.iniciar() - Iniciar sistema");
-  console.log("  PlacarMensal.parar() - Parar sistema");
-  console.log("  PlacarMensal.atualizar() - ForÃ§ar atualizaÃ§Ã£o");
-  console.log("  PlacarMensal.status() - Ver status");
-  console.log("  PlacarMensal.info() - InformaÃ§Ãµes detalhadas");
-
-  // Export para uso externo
-  window.PlacarMensalManager = PlacarMensalManager;
-  // ========================================================================================================================
-  //                                         FIM JS DO PLACAR DO BLOCO 2 MÃŠS
-  // ========================================================================================================================
-  //
-  //
-  //
-  //
-  //
-  //
-  //
-  //
-  //
-  //
-  // ========================================================================================================================
-  //                     CARREGA OS DADOS DOS VALORES DE ( DATA - PLACAR - SALDO ) VIA AJAX IMEDIATO
-  // ========================================================================================================================
-
-  const ListaDiasManagerCorrigido = {
-    // Controle de estado
-    atualizandoAtualmente: false,
-    intervaloAtualizacao: null,
-    ultimaAtualizacao: null,
-    hashUltimosDados: "",
-    metaAtual: 0,
-    periodoAtual: "dia",
-
-    // ConfiguraÃ§Ãµes
-    INTERVALO_MS: 3000, // Atualiza a cada 3 segundos
-    TIMEOUT_MS: 5000,
-
-    // Inicializar sistema
-    inicializar() {
-      console.log(
-        "ðŸš€ Inicializando sistema corrigido de atualizaÃ§Ã£o da lista de dias..."
-      );
-
-      // Detectar meta inicial
-      this.detectarMetaEPeriodo();
-
-      // Primeira atualizaÃ§Ã£o imediata
-      this.atualizarListaDias();
-
-      // Configurar intervalo de atualizaÃ§Ã£o
-      this.intervaloAtualizacao = setInterval(() => {
-        this.atualizarListaDias();
-      }, this.INTERVALO_MS);
-
-      // Configurar interceptadores de eventos
-      this.configurarInterceptadores();
-
-      // Configurar observador sanitizador para evitar reaplicaÃ§Ã£o de estilos/Ã­cones
-      try {
-        this.configurarObservadorSanitizacao();
-      } catch (e) {}
-
-      // One-time hard cleanup: remove any inline styles left on existing .gd-linha-dia
-      // e garantir que a flag CSS que forÃ§a largura fixa seja aplicada.
-      try {
-        document
-          .querySelectorAll(
-            ".lista-meses .gd-linha-dia, .lista-meses .gd-linha-dia .data"
-          )
-          .forEach((el) => {
-            if (el.hasAttribute("style")) el.removeAttribute("style");
-          });
-        // Aplicar classe global para regras CSS de alta prioridade
-        document.documentElement.classList.add("force-data-fixed");
-      } catch (e) {}
-
-      console.log("âœ… Sistema corrigido ativo!");
+  // Eventos de usuário
+  document.addEventListener(
+    "submit",
+    (e) => {
+      setTimeout(atualizarRapidoAnual, 50);
     },
+    true
+  );
 
-    // Detectar meta e perÃ­odo atual
-    detectarMetaEPeriodo() {
-      try {
-        const dadosInfo = document.getElementById("dados-mes-info");
-        if (dadosInfo) {
-          this.periodoAtual = dadosInfo.dataset.periodoAtual || "dia";
-
-          switch (this.periodoAtual) {
-            case "mes":
-              this.metaAtual = parseFloat(dadosInfo.dataset.metaMensal) || 0;
-              break;
-            case "ano":
-              this.metaAtual = parseFloat(dadosInfo.dataset.metaAnual) || 0;
-              break;
-            default:
-              this.metaAtual = parseFloat(dadosInfo.dataset.metaDiaria) || 0;
-          }
-        }
-
-        // Fallback: tentar detectar do radio button
-        const radioSelecionado = document.querySelector(
-          'input[name="periodo"]:checked'
-        );
-        if (radioSelecionado) {
-          this.periodoAtual = radioSelecionado.value;
-        }
-
-        console.log(
-          `Meta detectada: R$ ${this.metaAtual.toFixed(2)} (${
-            this.periodoAtual
-          })`
-        );
-      } catch (error) {
-        console.error("Erro ao detectar meta:", error);
-        this.metaAtual = 0;
+  document.addEventListener(
+    "click",
+    (e) => {
+      if (
+        e.target.closest('button, .btn, input[type="submit"], a[data-action]')
+      ) {
+        setTimeout(atualizarRapidoAnual, 50);
       }
     },
+    true
+  );
 
-    // AtualizaÃ§Ã£o principal
-    // CORRIGIR A FUNÇÃO atualizarListaDias no ListaDiasManagerCorrigido
+  // Hook no fetch
+  try {
+    const _fetch = window.fetch;
+    window.fetch = function (...args) {
+      const url = args[0] && args[0].toString ? args[0].toString() : "";
+      return _fetch.apply(this, args).then((resp) => {
+        try {
+          if (
+            /dados_banca|carregar-mentores|controle|valor_mentores/i.test(url)
+          ) {
+            setTimeout(atualizarRapidoAnual, 50);
+          }
+        } catch (e) {}
+        return resp;
+      });
+    };
+  } catch (e) {
+    console.warn("Não foi possível hookar fetch para atualizações ANUAL", e);
+  }
 
-    async atualizarListaDias() {
-      if (this.atualizandoAtualmente) return;
+  // Interval fallback
+  setInterval(atualizarRapidoAnual, 8000);
 
-      this.atualizandoAtualmente = true;
+  // Primeira atualização
+  setTimeout(atualizarRapidoAnual, 50);
 
-      try {
-        // 🔧 CORREÇÃO: Buscar dados do ano inteiro para mostrar todos os meses
-        const anoAtual = new Date().getFullYear();
-        const url = `obter_dados_mes.php?ano=${anoAtual}&modo=ano`;
+  window.atualizarRapidoAnual = atualizarRapidoAnual;
 
-        console.log("📡 Buscando dados:", url);
+  console.log("Sistema rápido ANUAL ativo");
+})();
 
-        const response = await fetch(url, {
-          method: "GET",
-          headers: {
-            "Cache-Control": "no-cache",
-            "X-Requested-With": "XMLHttpRequest",
-          },
-          signal: AbortSignal.timeout(this.TIMEOUT_MS),
-        });
+// Aguardar DOM
+if (document.readyState === "loading") {
+  document.addEventListener("DOMContentLoaded", () => {
+    setTimeout(inicializarSistemaMetaAnual, 1500);
+  });
+} else {
+  setTimeout(inicializarSistemaMetaAnual, 1000);
+}
 
-        if (!response.ok) throw new Error(`HTTP ${response.status}`);
+console.log("Sistema Meta ANUAL COM VALOR TACHADO E EXTRA carregado!");
+console.log("Comandos ANUAIS:");
+console.log("  $3.force() - Forçar atualização");
+console.log("  $3.testExtra() - Testar valor tachado e extra");
+console.log("  $3.sync() - Sincronizar");
+console.log("  $3.info() - Ver status completo");
 
-        const dados = await response.json();
+// Export para uso externo
+window.MetaAnualManager = MetaAnualManager;
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+/* ===================================================================
+   JAVASCRIPT - LISTA DE MESES BLOCO 3 (ANUAL) - ATUALIZAÇÃO AJAX CORRIGIDA
+   Sistema de atualização em tempo real dos valores via AJAX
+   =================================================================== */
 
-        console.log("📡 RESPOSTA COMPLETA:", dados);
+const ListaMesesManagerAnual = {
+  // Controle de estado
+  atualizandoAtualmente: false,
+  intervaloAtualizacao: null,
+  ultimaAtualizacao: null,
+  hashUltimosDados: "",
+  metaAtual: 0,
+  metaMensal: 0,
+  periodoAtual: "ano",
+  forcarProximaAtualizacao: false,
 
-        if (!dados.success) {
-          throw new Error(dados.message || "Erro na resposta do servidor");
-        }
+  // Configurações
+  INTERVALO_MS: 3000, // Atualiza a cada 3 segundos
+  TIMEOUT_MS: 8000,
 
-        // Verificar se houve mudança
-        const hashAtual = this.gerarHashDados(dados);
-        if (hashAtual === this.hashUltimosDados) {
-          return; // Sem mudanças
-        }
+  // Inicializar sistema
+  inicializar() {
+    console.log(
+      "Inicializando sistema de atualização AJAX da lista de meses..."
+    );
 
+    // Detectar meta inicial
+    this.detectarMetaEPeriodo();
+
+    // Configurar sincronização com sistema principal
+    this.sincronizarComSistemaPrincipal();
+
+    // Primeira atualização imediata
+    this.atualizarListaMeses();
+
+    // Configurar intervalo de atualização mais frequente
+    this.intervaloAtualizacao = setInterval(() => {
+      this.atualizarListaMeses();
+    }, this.INTERVALO_MS);
+
+    // Configurar interceptadores de eventos mais abrangentes
+    this.configurarInterceptadores();
+
+    console.log("Sistema de lista de meses AJAX ativo!");
+  },
+
+  // Detectar meta mensal e período atual
+  detectarMetaEPeriodo() {
+    try {
+      const dadosInfo = document.getElementById("dados-ano-info");
+      if (dadosInfo) {
+        this.periodoAtual = dadosInfo.dataset.periodoAtual || "ano";
+        this.metaMensal = parseFloat(dadosInfo.dataset.metaMensal) || 0;
+        this.metaAtual = parseFloat(dadosInfo.dataset.metaAnual) || 0;
+      }
+
+      // Fallback: tentar detectar do radio button
+      const radioSelecionado = document.querySelector(
+        'input[name="periodo"]:checked'
+      );
+      if (radioSelecionado) {
+        this.periodoAtual = radioSelecionado.value;
+      }
+
+      console.log(
+        `Meta mensal detectada: R$ ${this.metaMensal.toFixed(
+          2
+        )} | Meta anual: R$ ${this.metaAtual.toFixed(2)}`
+      );
+    } catch (error) {
+      console.error("Erro ao detectar meta mensal:", error);
+      this.metaMensal = 0;
+      this.metaAtual = 0;
+    }
+  },
+
+  // Atualização principal via AJAX usando dados_banca.php
+  async atualizarListaMeses() {
+    if (this.atualizandoAtualmente && !this.forcarProximaAtualizacao) {
+      return;
+    }
+
+    this.atualizandoAtualmente = true;
+    this.forcarProximaAtualizacao = false;
+
+    try {
+      console.log("Buscando dados atualizados via dados_banca.php...");
+
+      // Buscar dados do sistema principal (dados_banca.php)
+      const response = await fetch("dados_banca.php?periodo=ano", {
+        method: "GET",
+        headers: {
+          "Cache-Control": "no-cache",
+          "X-Requested-With": "XMLHttpRequest",
+          "X-Periodo-Filtro": "ano",
+          "X-Timestamp": Date.now().toString(),
+        },
+        signal: AbortSignal.timeout(this.TIMEOUT_MS),
+      });
+
+      if (!response.ok) throw new Error(`HTTP ${response.status}`);
+
+      const dadosBanca = await response.json();
+
+      if (!dadosBanca || !dadosBanca.success) {
+        throw new Error("Dados inválidos ou erro no servidor");
+      }
+
+      // Buscar dados mensais específicos
+      const responseMeses = await fetch("obter_dados_ano.php", {
+        method: "GET",
+        headers: {
+          "Cache-Control": "no-cache",
+          "X-Requested-With": "XMLHttpRequest",
+          "X-Timestamp": Date.now().toString(),
+        },
+        signal: AbortSignal.timeout(this.TIMEOUT_MS),
+      });
+
+      let dadosMeses = {};
+      if (responseMeses.ok) {
+        const dataMeses = await responseMeses.json();
+        dadosMeses = dataMeses.dados_por_mes || {};
+      }
+
+      // Combinar dados para renderização
+      const dadosCombinados = {
+        dados_por_mes: dadosMeses,
+        configuracao_meta: {
+          meta_mensal_para_trofeu: dadosBanca.meta_mensal || 0,
+          meta_anual: dadosBanca.meta_anual || 0,
+          tipo_meta: dadosBanca.tipo_meta || "turbo",
+        },
+        ano: new Date().getFullYear(),
+        sistema_principal: dadosBanca,
+      };
+
+      // Verificar se houve mudança real nos dados
+      const hashAtual = this.gerarHashDados(dadosCombinados);
+      const mudouDados = hashAtual !== this.hashUltimosDados;
+
+      if (mudouDados || this.forcarProximaAtualizacao) {
+        console.log("Dados mudaram, atualizando lista...");
         this.hashUltimosDados = hashAtual;
 
-        // Renderizar todos os meses do ano
-        this.renderizarMesCompleto(dados);
+        // Atualizar meta mensal baseada nos dados do sistema principal
+        this.metaMensal = dadosBanca.meta_mensal || 0;
+        this.metaAtual = dadosBanca.meta_anual || 0;
+
+        // Renderizar todos os meses do ano com dados atualizados
+        this.renderizarAnoCompleto(dadosCombinados);
 
         this.ultimaAtualizacao = new Date();
         console.log(
-          "✅ Lista atualizada:",
+          "Lista de meses atualizada via dados_banca.php:",
           this.ultimaAtualizacao.toLocaleTimeString()
         );
-      } catch (error) {
-        console.error("❌ Erro na atualização:", error);
-      } finally {
-        this.atualizandoAtualmente = false;
+        console.log(`Meta mensal ativa: R$ ${this.metaMensal.toFixed(2)}`);
+      } else {
+        console.log("Dados inalterados, mantendo lista atual");
       }
-    },
+    } catch (error) {
+      console.error("Erro na atualização AJAX dos meses:", error);
 
-    // Renderizar mÃªs completo
-    // Função renderizarMesCompleto corrigida - SEMPRE renderiza meses
-    // PROBLEMA IDENTIFICADO: A lógica de agregação dos dados mensais está incorreta
-    // SOLUÇÃO: Corrigir a busca e soma dos dados por mês
+      // Em caso de erro, tentar buscar dados do DOM atual
+      this.tentarAtualizacaoFallback();
+    } finally {
+      this.atualizandoAtualmente = false;
+    }
+  },
 
-    // FUNÇÃO CORRIGIDA - renderizarMesCompleto
-    // FUNÇÃO RENDERIZARMESCOMPLETO COMPLETAMENTE CORRIGIDA
+  // Fallback: tentar atualizar com dados do DOM
+  tentarAtualizacaoFallback() {
+    try {
+      console.log("Tentando atualização fallback...");
 
-    // CORREÇÃO DO CÁLCULO DE META MENSAL NO renderizarMesCompleto
+      // Buscar dados básicos para atualizar pelo menos os totais visíveis
+      const placarGreen = document.querySelector(".placar-green");
+      const placarRed = document.querySelector(".placar-red");
 
-    renderizarMesCompleto(responseData) {
-      const container = document.querySelector(".lista-meses");
-      if (!container) return;
-
-      // Preservar posição do scroll
-      const scrollTop = container.scrollTop;
-
-      // Mapear estado atual de troféus
-      const metaExistenteMap = {};
-      container
-        .querySelectorAll(".gd-linha-dia, .gd-linha-mes")
-        .forEach((el) => {
-          const date = el.getAttribute("data-date");
-          if (date) {
-            metaExistenteMap[date] =
-              el.getAttribute("data-meta-batida") === "true";
-          }
-        });
-
-      const dados = responseData.dados || {};
-      const dadosPorMes = responseData.dados_por_mes || {};
-      const ano = responseData.ano || new Date().getFullYear();
-
-      console.log("🔍 DADOS RECEBIDOS:", dados);
-      console.log("🔍 DADOS POR MÊS:", dadosPorMes);
-
-      const hoje = new Date();
-      const mesAtual = hoje.getMonth() + 1;
-      const anoAtual = hoje.getFullYear();
-
-      // 🔧 BUSCAR META MENSAL CORRETA - NÃO META DIÁRIA
-      const dadosAnoInfoEl = document.getElementById("dados-ano-info");
-      let metaMensalCorreta = 0;
-
-      if (dadosAnoInfoEl) {
-        // Primeiro tentar pegar meta mensal diretamente
-        const metaMensalDireta = parseFloat(
-          dadosAnoInfoEl.getAttribute("data-meta-mensal")
-        );
-
-        if (metaMensalDireta && metaMensalDireta > 0) {
-          metaMensalCorreta = metaMensalDireta;
-          console.log("📊 META MENSAL DIRETA:", metaMensalCorreta);
-        } else {
-          // Se não tem meta mensal, calcular da meta anual (anual ÷ 12)
-          const metaAnual =
-            parseFloat(dadosAnoInfoEl.getAttribute("data-meta-anual")) || 0;
-          if (metaAnual > 0) {
-            metaMensalCorreta = metaAnual / 12;
-            console.log(
-              "📊 META MENSAL CALCULADA (anual ÷ 12):",
-              metaMensalCorreta
-            );
-          }
-        }
+      if (placarGreen && placarRed) {
+        // Forçar uma nova busca em 2 segundos
+        setTimeout(() => {
+          this.forcarProximaAtualizacao = true;
+          this.atualizarListaMeses();
+        }, 2000);
       }
+    } catch (error) {
+      console.error("Erro no fallback:", error);
+    }
+  },
 
-      // Se ainda não encontrou a meta, tentar buscar do sistema
-      if (metaMensalCorreta === 0) {
-        // Buscar meta do período atual selecionado
-        const radioSelecionado = document.querySelector(
-          'input[name="periodo"]:checked'
-        );
-        const periodoAtual = radioSelecionado ? radioSelecionado.value : "ano";
+  // Renderizar ano completo com dados AJAX
+  renderizarAnoCompleto(responseData) {
+    const container = document.querySelector(".lista-meses");
+    if (!container) {
+      console.warn("Container .lista-meses não encontrado");
+      return;
+    }
 
-        if (periodoAtual === "ano" && dadosAnoInfoEl) {
-          const metaAnual =
-            parseFloat(dadosAnoInfoEl.getAttribute("data-meta-anual")) || 0;
-          metaMensalCorreta = metaAnual / 12;
-        } else if (periodoAtual === "mes" && dadosAnoInfoEl) {
-          metaMensalCorreta =
-            parseFloat(dadosAnoInfoEl.getAttribute("data-meta-mensal")) || 0;
-        }
+    // Preservar posição do scroll
+    const scrollTop = container.scrollTop;
 
-        console.log(
-          "📊 META MENSAL DO PERÍODO ATIVO:",
-          metaMensalCorreta,
-          "período:",
-          periodoAtual
-        );
-      }
-
-      console.log("📊 META MENSAL FINAL DEFINIDA:", metaMensalCorreta);
-
-      // Limpar container
-      const prevMinHeight = container.style.minHeight;
-      container.style.minHeight = container.clientHeight + "px";
-      container.innerHTML = "";
-
-      const monthNames = [
-        "Janeiro",
-        "Fevereiro",
-        "Março",
-        "Abril",
-        "Maio",
-        "Junho",
-        "Julho",
-        "Agosto",
-        "Setembro",
-        "Outubro",
-        "Novembro",
-        "Dezembro",
-      ];
-
-      const fragment = document.createDocumentFragment();
-
-      // PROCESSAR CADA MÊS (1-12)
-      for (let m = 1; m <= 12; m++) {
-        const mesStr = String(m).padStart(2, "0");
-        const chaveMes = `${ano}-${mesStr}`;
-
-        console.log(
-          `\n📅 PROCESSANDO ${monthNames[m - 1]} (${mesStr}/${ano}):`
-        );
-
-        // Buscar dados do mês
-        let dadosMes = dadosPorMes[chaveMes] || {
-          total_valor_green: 0,
-          total_valor_red: 0,
-          total_green: 0,
-          total_red: 0,
+    // Mapear estado atual para preservar troféus
+    const estadoAtualMap = {};
+    container.querySelectorAll(".gd-linha-mes").forEach((el) => {
+      const dataKey = el.getAttribute("data-date");
+      if (dataKey) {
+        estadoAtualMap[dataKey] = {
+          metaBatida: el.getAttribute("data-meta-mensal-batida") === "true",
+          valorAtual: el.querySelector(".valor")?.textContent || "",
+          placarAtual: {
+            green: el.querySelector(".verde-bold")?.textContent || "0",
+            red: el.querySelector(".vermelho-bold")?.textContent || "0",
+          },
         };
+      }
+    });
 
-        // Se não encontrou, tentar outras formas (mantendo a lógica existente)
-        if (
-          dadosMes.total_valor_green === 0 &&
-          dadosMes.total_valor_red === 0 &&
-          dadosMes.total_green === 0 &&
-          dadosMes.total_red === 0
-        ) {
-          // Buscar em formatos alternativos
-          const formatosPossiveis = [
-            chaveMes,
-            `${mesStr}/${ano}`,
-            `${mesStr}-${ano}`,
-            `mes_${mesStr}_${ano}`,
-            `month_${m}_${ano}`,
-          ];
+    // Dados do response
+    const dadosPorMes = responseData.dados_por_mes || {};
+    const configMeta = responseData.configuracao_meta || {};
+    const ano = responseData.ano || new Date().getFullYear();
 
-          for (const formato of formatosPossiveis) {
-            if (dados[formato]) {
-              dadosMes = dados[formato];
-              console.log(`  ✅ Encontrado formato [${formato}]:`, dadosMes);
-              break;
-            }
-          }
+    // Atualizar meta mensal baseada na configuração
+    this.metaMensal = configMeta.meta_mensal_para_trofeu || this.metaMensal;
 
-          // Se ainda não encontrou, somar dados diários
-          if (
-            dadosMes.total_valor_green === 0 &&
-            dadosMes.total_valor_red === 0
-          ) {
-            const chaveDiaBase = `${ano}-${mesStr}`;
-            Object.keys(dados).forEach((chave) => {
-              if (chave.startsWith(chaveDiaBase + "-") && chave.length === 10) {
-                const d = dados[chave];
-                dadosMes.total_valor_green += parseFloat(
-                  d.total_valor_green || 0
-                );
-                dadosMes.total_valor_red += parseFloat(d.total_valor_red || 0);
-                dadosMes.total_green += parseInt(d.total_green || 0, 10);
-                dadosMes.total_red += parseInt(d.total_red || 0, 10);
-              }
-            });
-          }
-        }
+    // Data de hoje
+    const hoje = this.obterDataHoje();
+    const mesAtual = parseInt(hoje.split("-")[1], 10);
 
-        // CALCULAR SALDO DO MÊS
-        const saldo_mes = dadosMes.total_valor_green - dadosMes.total_valor_red;
-        const isMesFuturo = anoAtual === ano && m > mesAtual;
-        const temDadosReais =
-          dadosMes.total_valor_green > 0 ||
-          dadosMes.total_valor_red > 0 ||
-          dadosMes.total_green > 0 ||
-          dadosMes.total_red > 0;
+    // Nomes dos meses
+    const nomesMeses = [
+      "Janeiro",
+      "Fevereiro",
+      "Março",
+      "Abril",
+      "Maio",
+      "Junho",
+      "Julho",
+      "Agosto",
+      "Setembro",
+      "Outubro",
+      "Novembro",
+      "Dezembro",
+    ];
 
-        const saldo_mes_final = isMesFuturo && !temDadosReais ? 0 : saldo_mes;
+    // Criar fragment para performance
+    const fragment = document.createDocumentFragment();
 
-        // 🔧 CORREÇÃO PRINCIPAL: META MENSAL, NÃO DIÁRIA
-        const metaBatida =
-          metaMensalCorreta > 0 && saldo_mes_final >= metaMensalCorreta;
+    // Gerar todos os meses do ano
+    for (let mes = 1; mes <= 12; mes++) {
+      const mesStr = mes.toString().padStart(2, "0");
+      const chaveMetasMes = `${ano}-${mesStr}`;
+      const nomeMes = nomesMeses[mes - 1];
 
-        console.log(`  💰 VERIFICAÇÃO DE META para ${monthNames[m - 1]}:`);
-        console.log(`     Saldo do mês: R$ ${saldo_mes_final.toFixed(2)}`);
-        console.log(`     Meta mensal: R$ ${metaMensalCorreta.toFixed(2)}`);
-        console.log(`     Meta batida: ${metaBatida ? "SIM" : "NÃO"}`);
+      // Dados do mês (ou padrão se não existir)
+      const dadosMes = dadosPorMes[chaveMetasMes] || {
+        total_valor_green: 0,
+        total_valor_red: 0,
+        total_green: 0,
+        total_red: 0,
+        saldo: 0,
+      };
 
-        const saldo_formatado = saldo_mes_final.toLocaleString("pt-BR", {
-          minimumFractionDigits: 2,
-          maximumFractionDigits: 2,
-        });
+      // Calcular saldo do mês
+      const saldo_mes =
+        dadosMes.saldo ||
+        parseFloat(dadosMes.total_valor_green) -
+          parseFloat(dadosMes.total_valor_red);
 
-        // CLASSES E CORES
-        let cor_valor, classe_texto, placar_cinza;
+      const saldo_formatado = saldo_mes.toLocaleString("pt-BR", {
+        minimumFractionDigits: 2,
+        maximumFractionDigits: 2,
+      });
 
-        if (isMesFuturo && !temDadosReais) {
-          cor_valor = "texto-cinza";
-          classe_texto = "texto-cinza";
-          placar_cinza = "texto-cinza";
-        } else {
-          cor_valor =
-            saldo_mes_final === 0
-              ? "texto-cinza"
-              : saldo_mes_final > 0
-              ? "verde-bold"
-              : "vermelho-bold";
-          classe_texto = saldo_mes_final === 0 ? "texto-cinza" : "";
-          placar_cinza =
-            dadosMes.total_green === 0 && dadosMes.total_red === 0
-              ? "texto-cinza"
-              : "";
-        }
+      // Verificar mudança nos valores
+      const estadoAnterior = estadoAtualMap[chaveMetasMes];
+      const valorFormatadoNovo = `R$ ${saldo_formatado}`;
+      const placarGreenNovo = parseInt(dadosMes.total_green).toString();
+      const placarRedNovo = parseInt(dadosMes.total_red).toString();
 
-        const classes = ["gd-linha-dia"];
+      const houveMudanca =
+        !estadoAnterior ||
+        estadoAnterior.valorAtual !== valorFormatadoNovo ||
+        estadoAnterior.placarAtual.green !== placarGreenNovo ||
+        estadoAnterior.placarAtual.red !== placarRedNovo;
 
-        if (isMesFuturo && !temDadosReais) {
-          classes.push("mes-futuro", "valor-zero");
-        } else {
-          if (saldo_mes_final > 0) classes.push("valor-positivo");
-          else if (saldo_mes_final < 0) classes.push("valor-negativo");
-          else classes.push("valor-zero");
-        }
-
-        // Marcar mês atual
-        if (anoAtual === ano && m === mesAtual) {
-          classes.push("gd-dia-hoje");
-          classes.push(
-            saldo_mes_final >= 0 ? "gd-borda-verde" : "gd-borda-vermelha"
-          );
-        }
-
-        // Destacar meses passados
-        if (anoAtual === ano && m < mesAtual) {
-          if (saldo_mes_final > 0) classes.push("gd-mes-destaque");
-          else if (saldo_mes_final < 0)
-            classes.push("gd-mes-destaque-negativo");
-          if (dadosMes.total_green === 0 && dadosMes.total_red === 0) {
-            classes.push("gd-mes-sem-valor");
-          }
-        }
-
-        // CRIAR ELEMENTO DO MÊS
-        const data_mysql = chaveMes;
-        const data_exibicao = `${monthNames[m - 1]}/${ano}`;
-        const finalMetaBatida = metaBatida || !!metaExistenteMap[data_mysql];
-
-        // 🏆 ÍCONE BASEADO NA META MENSAL
-        const iconeClasse = finalMetaBatida
-          ? "fa-trophy trofeu-icone"
-          : "fa-check";
-
-        const divMes = document.createElement("div");
-        divMes.className = classes.join(" ");
-        divMes.setAttribute("data-date", data_mysql);
-        divMes.setAttribute(
-          "data-meta-batida",
-          finalMetaBatida ? "true" : "false"
+      if (houveMudanca) {
+        console.log(
+          `Valores mudaram para ${nomeMes}: ${valorFormatadoNovo} | Placar: ${placarGreenNovo} × ${placarRedNovo}`
         );
-        divMes.setAttribute("data-saldo", String(saldo_mes_final));
-        divMes.setAttribute("data-meta-mensal", String(metaMensalCorreta)); // 🔧 META MENSAL
-        divMes.setAttribute("data-periodo-atual", "ano");
+      }
 
-        // HTML
-        if (isMesFuturo && !temDadosReais) {
-          divMes.innerHTML = `
-        <span class="data ${classe_texto}">${data_exibicao}</span>
-        <div class="placar-dia">
-          <span class="placar verde-bold ${placar_cinza}">-</span>
-          <span class="placar separador ${placar_cinza}">×</span>
-          <span class="placar vermelho-bold ${placar_cinza}">-</span>
-        </div>
-        <span class="valor ${cor_valor}">-</span>
-        <span class="icone ${classe_texto}">
-          <i class="fa-solid ${iconeClasse}"></i>
+      // VERIFICAÇÃO RIGOROSA DE META MENSAL
+      let metaMensalBatida = false;
+
+      if (this.metaMensal > 0) {
+        metaMensalBatida = saldo_mes >= this.metaMensal;
+      } else {
+        // Sem meta configurada: critério restritivo (R$ 500 por mês)
+        metaMensalBatida = saldo_mes >= 500;
+      }
+
+      // Classes e estilos
+      const cor_valor =
+        saldo_mes === 0
+          ? "texto-cinza"
+          : saldo_mes > 0
+          ? "verde-bold"
+          : "vermelho-bold";
+
+      const classe_texto = saldo_mes === 0 ? "texto-cinza" : "";
+
+      const placar_cinza =
+        parseInt(dadosMes.total_green) === 0 &&
+        parseInt(dadosMes.total_red) === 0
+          ? "texto-cinza"
+          : "";
+
+      // Classes do mês
+      const classes = ["gd-linha-mes"];
+
+      // Adicionar classe de valor
+      if (saldo_mes > 0) {
+        classes.push("valor-positivo");
+      } else if (saldo_mes < 0) {
+        classes.push("valor-negativo");
+      } else {
+        classes.push("valor-zero");
+      }
+
+      // Verificar se é o mês atual
+      if (mes === mesAtual) {
+        classes.push("gd-mes-hoje", "mes-atual");
+      } else {
+        classes.push("mes-normal");
+      }
+
+      // Ícone baseado na meta mensal
+      const iconeClasse = metaMensalBatida
+        ? "fa-trophy trofeu-icone"
+        : "fa-check";
+      const iconeClassesFull = `fa-solid ${iconeClasse}`;
+
+      // Criar elemento
+      const divMes = document.createElement("div");
+      divMes.className = classes.join(" ");
+      divMes.setAttribute("data-date", chaveMetasMes);
+      divMes.setAttribute(
+        "data-meta-mensal-batida",
+        metaMensalBatida ? "true" : "false"
+      );
+      divMes.setAttribute("data-saldo", saldo_mes);
+      divMes.setAttribute("data-timestamp", Date.now());
+
+      divMes.innerHTML = `
+        <span class="data-mes ${classe_texto}">
+          ${nomeMes}
         </span>
-      `;
-        } else {
-          divMes.innerHTML = `
-        <span class="data ${classe_texto}">${data_exibicao}</span>
-        <div class="placar-dia">
-          <span class="placar verde-bold ${placar_cinza}">${dadosMes.total_green}</span>
+        <div class="placar-mes">
+          <span class="placar verde-bold ${placar_cinza}">${parseInt(
+        dadosMes.total_green
+      )}</span>
           <span class="placar separador ${placar_cinza}">×</span>
-          <span class="placar vermelho-bold ${placar_cinza}">${dadosMes.total_red}</span>
+          <span class="placar vermelho-bold ${placar_cinza}">${parseInt(
+        dadosMes.total_red
+      )}</span>
         </div>
         <span class="valor ${cor_valor}">R$ ${saldo_formatado}</span>
         <span class="icone ${classe_texto}">
-          <i class="fa-solid ${iconeClasse}"></i>
+          <i class="${iconeClassesFull}"></i>
         </span>
       `;
-        }
 
-        // LOG com informação de troféu
-        if (temDadosReais) {
-          console.log(`  📊 TOTAL ${monthNames[m - 1]}:`, {
-            verde: `R$ ${dadosMes.total_valor_green.toFixed(2)}`,
-            vermelho: `R$ ${dadosMes.total_valor_red.toFixed(2)}`,
-            saldo: `R$ ${saldo_mes_final.toFixed(2)}`,
-            wins: dadosMes.total_green,
-            losses: dadosMes.total_red,
-            trofeu: finalMetaBatida ? "🏆" : "❌",
-          });
-        } else {
-          console.log(
-            `  ⚪ ${monthNames[m - 1]}: ${
-              isMesFuturo ? "Mês futuro" : "Sem dados"
-            }`
-          );
-        }
-
-        fragment.appendChild(divMes);
-      }
-
-      // FINALIZAR
-      container.appendChild(fragment);
-
-      try {
-        document
-          .querySelectorAll(".lista-meses .gd-linha-dia .data")
-          .forEach((el) => {
-            if (el.hasAttribute("style")) el.removeAttribute("style");
-          });
-      } catch (e) {}
-
-      container.scrollTop = scrollTop;
-      container.style.minHeight = prevMinHeight || "";
-
-      if (!this.ultimaAtualizacao) {
-        setTimeout(() => this.focarMesAtual(), 500);
-      }
-
-      console.log(
-        `\n🎯 RESULTADO FINAL: ${fragment.children.length} meses renderizados\n`
-      );
-      console.log(`🏆 META MENSAL USADA: R$ ${metaMensalCorreta.toFixed(2)}`);
-
-      window.dispatchEvent(
-        new CustomEvent("listaDiasAtualizada", {
-          detail: { dados: responseData, timestamp: new Date() },
-        })
-      );
-    },
-
-    // Gerar hash simples dos dados para detectar mudanças
-
-    // Função para focar no mês atual (YYYY-MM)
-    focarMesAtual: function () {
-      try {
-        const hoje = new Date();
-        const anoAtual = hoje.getFullYear();
-        const mesAtual = String(hoje.getMonth() + 1).padStart(2, "0");
-        const chaveMesAtual = `${anoAtual}-${mesAtual}`;
-
-        const mesHoje = document.querySelector(
-          `[data-date="${chaveMesAtual}"]`
-        );
-
-        if (!mesHoje) return;
-
-        const container = document.querySelector(".lista-meses");
-        if (container) {
-          const containerHeight = container.clientHeight;
-          const elementTop = mesHoje.offsetTop;
-          const elementHeight = mesHoje.offsetHeight;
-
-          const scrollPosition =
-            elementTop - containerHeight / 2 + elementHeight / 2;
-
-          if (typeof container.scrollTo === "function") {
-            container.scrollTo({
-              top: Math.max(0, scrollPosition),
-              behavior: "smooth",
-            });
-          } else {
-            container.scrollTop = Math.max(0, scrollPosition);
-          }
-        }
-
-        // destaque temporário
-        mesHoje.classList.add("dia-foco");
-        setTimeout(() => mesHoje.classList.remove("dia-foco"), 2000);
-      } catch (error) {
-        console.error("Erro ao focar no mês atual:", error);
-      }
-    },
-
-    // Remove inline styles and unwanted icons inside .data cells to prevent
-    // other scripts from shifting layout after render. This is defensive and
-    // idempotent.
-    sanitizeDataCells() {
-      try {
-        // Alvo: tanto .lista-meses quanto .lista-dias (compatibilidade)
-        const nodes = document.querySelectorAll(
-          ".lista-meses .gd-linha-dia .data, .lista-dias .gd-linha-dia .data"
-        );
-
-        nodes.forEach((el) => {
-          // Remover estilos inline que possam alterar largura/alinhamento
-          if (el.hasAttribute("style")) el.removeAttribute("style");
-
-          // Garantir que não estamos forçando tamanhos via JS
-          el.style.minWidth = "";
-          el.style.maxWidth = "";
-
-          // Remover ícones de calendário reaplicados por scripts terceiros
-          el.querySelectorAll("i").forEach((icon) => {
-            const cls = (icon.className || "").toLowerCase();
-            if (
-              cls.includes("calendar") ||
-              cls.includes("fa-calendar") ||
-              cls.includes("fa-calendar-day") ||
-              cls.includes("fa-calendar-alt")
-            ) {
-              try {
-                icon.remove();
-              } catch (e) {}
-            }
-          });
-        });
-      } catch (e) {
-        // silencioso
-      }
-    },
-
-    // Observador defensivo: observa inserÃ§Ãµes dentro de .lista-meses e
-    // remove rapidamente quaisquer inline styles ou Ã­cones que reapareÃ§am.
-    configurarObservadorSanitizacao() {
-      try {
-        const containers = document.querySelectorAll(
-          ".lista-meses, .lista-dias"
-        );
-
-        // Se nenhum container encontrado, observar body como fallback
-        if (!containers || containers.length === 0) {
-          this._sanitizerObservers = this._sanitizerObservers || [];
-          const mo = new MutationObserver((mutations) => {
-            let precisa = false;
-            for (const m of mutations) {
-              if (m.type === "childList" || m.type === "attributes") {
-                precisa = true;
-                break;
-              }
-            }
-            if (precisa) {
-              clearTimeout(this._sanitizeTimer);
-              this._sanitizeTimer = setTimeout(
-                () => this.sanitizeDataCells(),
-                40
-              );
-            }
-          });
-          mo.observe(document.body, {
-            childList: true,
-            subtree: true,
-            attributes: true,
-          });
-          this._sanitizerObservers.push(mo);
-          return;
-        }
-
-        this._sanitizerObservers = [];
-        containers.forEach((container) => {
-          const mo = new MutationObserver((mutations) => {
-            let precisa = false;
-            for (const m of mutations) {
-              if (m.type === "childList" || m.type === "attributes") {
-                precisa = true;
-                break;
-              }
-            }
-            if (precisa) {
-              clearTimeout(this._sanitizeTimer);
-              this._sanitizeTimer = setTimeout(
-                () => this.sanitizeDataCells(),
-                40
-              );
-            }
-          });
-
-          mo.observe(container, {
-            childList: true,
-            subtree: true,
-            attributes: true,
-          });
-          this._sanitizerObservers.push(mo);
-        });
-      } catch (e) {}
-    },
-
-    // Obter data de hoje
-    obterDataHoje() {
-      const d = new Date();
-      const yy = d.getFullYear();
-      const mm = String(d.getMonth() + 1).padStart(2, "0");
-      const dd = String(d.getDate()).padStart(2, "0");
-      return `${yy}-${mm}-${dd}`;
-    },
-
-    // Focar no dia atual
-    focarDiaAtual() {
-      const hoje = this.obterDataHoje();
-      const diaHoje = document.querySelector(`[data-date="${hoje}"]`);
-
-      if (diaHoje) {
-        const container = document.querySelector(".lista-meses");
-        if (container) {
-          const containerHeight = container.clientHeight;
-          const elementTop = diaHoje.offsetTop;
-          const elementHeight = diaHoje.offsetHeight;
-
-          const scrollPosition =
-            elementTop - containerHeight / 2 + elementHeight / 2;
-
-          container.scrollTo({
-            top: Math.max(0, scrollPosition),
-            behavior: "smooth",
-          });
-        }
-
-        // Adicionar classe de destaque temporÃ¡rio
-        diaHoje.classList.add("dia-foco");
+      // Adicionar animação se houve mudança
+      if (houveMudanca) {
+        divMes.classList.add("atualizado-via-ajax");
         setTimeout(() => {
-          diaHoje.classList.remove("dia-foco");
-        }, 2000);
-      }
-    },
-
-    // Focar no período atual: dia (padrão) ou mês quando em modo ANO
-    focarPeriodoAtual() {
-      if (this.periodoFixo === "ano") {
-        // delegar para a função específica de mês
-        try {
-          this.focarMesAtual();
-          return;
-        } catch (e) {
-          // se falhar, cair para o fallback
-        }
+          divMes.classList.remove("atualizado-via-ajax");
+        }, 1000);
       }
 
-      // fallback para foco por dia
-      this.focarDiaAtual();
-    },
+      fragment.appendChild(divMes);
+    }
 
-    // Hash dos dados
-    gerarHashDados(dados) {
-      return JSON.stringify(dados);
-    },
+    // Substituir conteúdo do container
+    container.innerHTML = "";
+    container.appendChild(fragment);
 
-    // Configurar interceptadores
-    configurarInterceptadores() {
-      // Interceptar submissÃ£o de formulÃ¡rios
-      document.addEventListener("submit", (e) => {
-        const form = e.target;
-        if (
-          form.id === "form-mentor" ||
-          form.classList.contains("formulario-mentor")
-        ) {
-          setTimeout(() => {
-            this.atualizandoAtualmente = false;
-            this.atualizarListaDias();
-          }, 300);
-        }
+    // Restaurar scroll
+    container.scrollTop = scrollTop;
+
+    // Disparar evento personalizado
+    window.dispatchEvent(
+      new CustomEvent("listaMesesAtualizadaAjax", {
+        detail: {
+          dados: responseData,
+          timestamp: new Date(),
+          totalMeses: 12,
+        },
+      })
+    );
+  },
+
+  // Obter data de hoje
+  obterDataHoje() {
+    const d = new Date();
+    const yy = d.getFullYear();
+    const mm = String(d.getMonth() + 1).padStart(2, "0");
+    const dd = String(d.getDate()).padStart(2, "0");
+    return `${yy}-${mm}-${dd}`;
+  },
+
+  // Hash dos dados para detectar mudanças
+  gerarHashDados(dados) {
+    try {
+      return JSON.stringify({
+        dados_por_mes: dados.dados_por_mes || {},
+        timestamp: Math.floor(Date.now() / 10000), // Agrupando por 10 segundos
       });
+    } catch (error) {
+      return Date.now().toString();
+    }
+  },
 
-      // Interceptar cliques em botÃµes
-      document.addEventListener("click", (e) => {
-        if (
-          e.target.matches('button[type="submit"], .btn-enviar, .btn-confirmar')
-        ) {
-          setTimeout(() => {
-            this.atualizandoAtualmente = false;
-            this.atualizarListaDias();
-          }, 300);
-        }
+  // Configurar interceptadores mais robustos
+  configurarInterceptadores() {
+    console.log("Configurando interceptadores AJAX...");
+
+    // 1. Interceptar submissão de formulários
+    document.addEventListener("submit", (e) => {
+      const form = e.target;
+      console.log("Formulário submetido:", form.id || form.className);
+
+      // Identificar formulários relevantes
+      if (
+        form.id === "form-mentor" ||
+        form.classList.contains("formulario-mentor") ||
+        form.querySelector('input[name="valor_green"]') ||
+        form.querySelector('input[name="valor_red"]')
+      ) {
+        console.log("Formulário relevante detectado, agendando atualização...");
+
+        setTimeout(() => {
+          this.forcarProximaAtualizacao = true;
+          this.atualizandoAtualmente = false;
+          this.atualizarListaMeses();
+        }, 500);
+      }
+    });
+
+    // 2. Interceptar cliques em botões relevantes
+    document.addEventListener("click", (e) => {
+      const target = e.target;
+
+      if (
+        target.matches(
+          'button[type="submit"], .btn-enviar, .btn-confirmar, .btn-salvar'
+        ) ||
+        target.closest(
+          'button[type="submit"], .btn-enviar, .btn-confirmar, .btn-salvar'
+        )
+      ) {
+        console.log("Botão relevante clicado:", target.textContent?.trim());
+
+        setTimeout(() => {
+          this.forcarProximaAtualizacao = true;
+          this.atualizandoAtualmente = false;
+          this.atualizarListaMeses();
+        }, 300);
+      }
+
+      // Interceptar botões de exclusão
+      if (
+        target.matches(
+          '.btn-excluir, .excluir-entrada, [data-action="excluir"]'
+        ) ||
+        target.closest(
+          '.btn-excluir, .excluir-entrada, [data-action="excluir"]'
+        )
+      ) {
+        console.log("Ação de exclusão detectada");
+
+        setTimeout(() => {
+          this.forcarProximaAtualizacao = true;
+          this.atualizandoAtualmente = false;
+          this.atualizarListaMeses();
+        }, 800);
+      }
+    });
+
+    // 3. Interceptar mudanças no filtro de período
+    document.querySelectorAll('input[name="periodo"]').forEach((radio) => {
+      radio.addEventListener("change", (e) => {
+        console.log("Período alterado para:", e.target.value);
+
+        this.periodoAtual = e.target.value;
+        this.detectarMetaEPeriodo();
+        this.forcarProximaAtualizacao = true;
+        this.atualizandoAtualmente = false;
+        this.atualizarListaMeses();
       });
+    });
 
-      // Interceptar mudanÃ§as no filtro de perÃ­odo
-      document.querySelectorAll('input[name="periodo"]').forEach((radio) => {
-        radio.addEventListener("change", (e) => {
-          if (e.target.checked) {
-            this.periodoAtual = e.target.value;
-            this.detectarMetaEPeriodo();
-            this.atualizandoAtualmente = false;
-            this.atualizarListaDias();
-          }
-        });
-      });
-
-      // Hook no fetch
+    // 4. Hook no fetch global mais robusto para dados_banca.php
+    if (!window.fetchHookedForMeses) {
       const originalFetch = window.fetch;
+
       window.fetch = async function (...args) {
         const response = await originalFetch.apply(this, args);
 
-        const url = args[0]?.toString() || "";
-        if (
-          url.includes("cadastrar-valor") ||
-          url.includes("excluir-entrada") ||
-          url.includes("dados_banca")
-        ) {
-          setTimeout(() => {
-            if (typeof ListaDiasManagerCorrigido !== "undefined") {
-              ListaDiasManagerCorrigido.atualizandoAtualmente = false;
-              ListaDiasManagerCorrigido.atualizarListaDias();
-            }
-          }, 200);
+        try {
+          const url = args[0]?.toString() || "";
+
+          // URLs que indicam mudança nos dados - FOCO EM dados_banca.php
+          const urlsRelevantes = [
+            "dados_banca.php",
+            "dados_banca",
+            "cadastrar-valor",
+            "excluir-entrada",
+            "carregar-mentores",
+            "salvar-mentor",
+            "atualizar-valores",
+          ];
+
+          if (urlsRelevantes.some((relevante) => url.includes(relevante))) {
+            console.log("Fetch relevante detectado para lista meses:", url);
+
+            // Delay maior para dados_banca.php garantir processamento
+            const delay = url.includes("dados_banca") ? 800 : 400;
+
+            setTimeout(() => {
+              if (typeof ListaMesesManagerAnual !== "undefined") {
+                console.log("Forçando atualização da lista após fetch:", url);
+                ListaMesesManagerAnual.forcarProximaAtualizacao = true;
+                ListaMesesManagerAnual.atualizandoAtualmente = false;
+                ListaMesesManagerAnual.atualizarListaMeses();
+              }
+            }, delay);
+          }
+        } catch (e) {
+          console.warn("Erro no hook fetch:", e);
         }
 
         return response;
       };
 
-      // Eventos customizados
-      window.addEventListener("metaAtualizada", () => {
-        this.detectarMetaEPeriodo();
-        this.atualizarListaDias();
-      });
+      window.fetchHookedForMeses = true;
+      console.log("Hook do fetch configurado para dados_banca.php");
+    }
 
-      window.addEventListener("mentoresAtualizados", () => {
-        this.atualizarListaDias();
-      });
-    },
+    // 5. Hook específico para interceptar dados_banca.php
+    this.configurarHookDadosBanca();
 
-    // Parar sistema
-    parar() {
-      if (this.intervaloAtualizacao) {
-        clearInterval(this.intervaloAtualizacao);
-        this.intervaloAtualizacao = null;
-        console.log("ðŸ›‘ Sistema parado");
-      }
-    },
-
-    // ForÃ§ar atualizaÃ§Ã£o
-    forcarAtualizacao() {
-      this.atualizandoAtualmente = false;
+    // 6. Eventos customizados
+    window.addEventListener("metaAtualizada", () => {
+      console.log("Evento metaAtualizada detectado");
       this.detectarMetaEPeriodo();
-      return this.atualizarListaDias();
-    },
-
-    // Status do sistema
-    status() {
-      return {
-        ativo: !!this.intervaloAtualizacao,
-        atualizando: this.atualizandoAtualmente,
-        ultimaAtualizacao: this.ultimaAtualizacao,
-        metaAtual: this.metaAtual,
-        periodoAtual: this.periodoAtual,
-      };
-    },
-  };
-
-  // ========================================================================================================================
-  //                                    INTEGRAÃ‡ÃƒO COM SISTEMA EXISTENTE
-  // ========================================================================================================================
-
-  // Substituir o sistema anterior se existir
-  if (typeof ListaDiasRealtimeManager !== "undefined") {
-    // Parar sistema antigo
-    if (ListaDiasRealtimeManager.intervaloAtualizacao) {
-      clearInterval(ListaDiasRealtimeManager.intervaloAtualizacao);
-    }
-    console.log("Sistema anterior parado, substituindo...");
-  }
-
-  // Aguardar DOM carregar
-  if (document.readyState === "loading") {
-    document.addEventListener("DOMContentLoaded", () => {
-      setTimeout(() => {
-        ListaDiasManagerCorrigido.inicializar();
-      }, 1000);
+      this.forcarProximaAtualizacao = true;
+      this.atualizarListaMeses();
     });
-  } else {
-    setTimeout(() => {
-      ListaDiasManagerCorrigido.inicializar();
-    }, 500);
-  }
 
-  // ========================================================================================================================
-  //                                        COMANDOS GLOBAIS
-  // ========================================================================================================================
+    window.addEventListener("mentoresAtualizados", () => {
+      console.log("Evento mentoresAtualizados detectado");
+      this.forcarProximaAtualizacao = true;
+      this.atualizarListaMeses();
+    });
 
-  window.ListaDiasCorrigido = {
-    parar: () => ListaDiasManagerCorrigido.parar(),
-    iniciar: () => ListaDiasManagerCorrigido.inicializar(),
-    atualizar: () => ListaDiasManagerCorrigido.forcarAtualizacao(),
-    status: () => ListaDiasManagerCorrigido.status(),
-    focar: () => ListaDiasManagerCorrigido.focarPeriodoAtual(),
-  };
+    // 7. Observer para mudanças no DOM
+    this.configurarObserverDOM();
+  },
 
-  // Substituir comandos antigos
-  window.ListaDias = window.ListaDiasCorrigido;
-
-  console.log("ðŸ“… Sistema corrigido da lista de dias carregado!");
-  console.log("ðŸ”§ CorreÃ§Ãµes aplicadas:");
-  console.log("  âœ… Exibe TODOS os dias do mÃªs");
-  console.log("  âœ… AtualizaÃ§Ã£o em tempo real funcionando");
-  console.log("  âœ… Ãcone de trofÃ©u para meta batida");
-  console.log("  âœ… DetecÃ§Ã£o automÃ¡tica da meta atual");
-  console.log(
-    "Comandos: ListaDias.atualizar(), ListaDias.status(), ListaDias.focar()"
-  );
-
-  // ========================================================================================================================
-  //                   FIM CARREGA OS DADOS DOS VALORES DE ( DATA - PLACAR - SALDO ) VIA AJAX IMEDIATO
-  // ========================================================================================================================
-  //
-  //
-  //
-  //
-  //
-  //
-  //
-  //
-  // ========================================================================================================================
-  //                                  TROFÃ‰U - PARA APARECER  QUANDO A META Ã‰ BATIDA
-  // ========================================================================================================================
-
-  // SISTEMA MONITOR CONTÃNUO - VERIFICAÃ‡ÃƒO RIGOROSA DE META
-  (function () {
-    "use strict";
-
-    console.log("Sistema Monitor ContÃ­nuo - VERIFICAÃ‡ÃƒO RIGOROSA...");
-
-    const MonitorContinuo = {
-      ativo: false,
-      intervaloMonitor: null,
-      intervaloForcador: null,
-      intervaloForcaBruta: null,
-      estadoCorretoHoje: null,
-      ultimoRotulo: "",
-      metasBatidasCache: new Map(),
-      metaHistoricaCache: new Map(),
-      verificandoHistorico: false,
-      forcarTrofeuHoje: false,
-      ultimoSaldoHoje: 0,
-      ultimaMetaHoje: 0,
-      // NOVA: ConfiguraÃ§Ã£o rigorosa
-      metaDiariaConfigurada: 0,
-      modoRigoroso: true,
-
-      inicializar() {
-        console.log("Iniciando monitor RIGOROSO...");
-
-        this.ativo = true;
-        this.destruirTudo();
-
-        // Primeiro buscar meta real
-        this.buscarMetaRealDoSistema();
-
-        // VerificaÃ§Ã£o inicial limpa
-        this.limparTodosOsTrofeus();
-
-        // Verificar hoje primeiro
+  // Hook específico para dados_banca.php
+  configurarHookDadosBanca() {
+    try {
+      // Interceptar qualquer chamada para dados_banca.php
+      const interceptarDadosBanca = () => {
+        console.log("dados_banca.php chamado, atualizando lista meses...");
         setTimeout(() => {
-          this.verificarMetaDiariaHojeAgora();
-        }, 500);
-
-        // VerificaÃ§Ã£o histÃ³rica rigorosa
-        setTimeout(() => {
-          this.verificarMetasHistoricasRigoroso();
+          this.forcarProximaAtualizacao = true;
+          this.atualizandoAtualmente = false;
+          this.atualizarListaMeses();
         }, 1000);
+      };
 
-        // Monitor principal (cada 1 segundo)
-        this.intervaloMonitor = setInterval(() => {
-          this.monitorarRotulo();
-          this.verificarMetaDiariaHojeAgora();
-        }, 1000);
+      // Observer para XMLHttpRequest (caso não use fetch)
+      if (window.XMLHttpRequest) {
+        const originalOpen = XMLHttpRequest.prototype.open;
+        XMLHttpRequest.prototype.open = function (method, url, ...args) {
+          if (url && url.toString().includes("dados_banca")) {
+            this.addEventListener("loadend", () => {
+              interceptarDadosBanca();
+            });
+          }
+          return originalOpen.apply(this, [method, url, ...args]);
+        };
+      }
 
-        // ForÃ§ador normal (cada 2 segundos)
-        this.intervaloForcador = setInterval(() => {
-          this.forcarEstadoCorreto();
-        }, 2000);
+      // Escutar eventos customizados do sistema principal
+      window.addEventListener("bancaAtualizada", interceptarDadosBanca);
+      window.addEventListener("metaAtualizada", interceptarDadosBanca);
+      window.addEventListener("dadosBancaAtualizados", interceptarDadosBanca);
 
-        // ForÃ§ador BRUTO especificamente para hoje (cada 500ms)
-        this.intervaloForcaBruta = setInterval(() => {
-          this.forcarTrofeuHojeBruto();
-        }, 500);
+      console.log("Hook específico dados_banca.php configurado");
+    } catch (error) {
+      console.warn("Erro ao configurar hook dados_banca.php:", error);
+    }
+  },
 
-        console.log("Monitor RIGOROSO ativo");
-      },
+  // Observer para mudanças no DOM
+  configurarObserverDOM() {
+    try {
+      // Observer para detectar mudanças nos placares principais
+      const placarContainer = document.querySelector(".container");
 
-      destruirTudo() {
-        console.log("DESTRUINDO sistemas de trofÃ©u...");
+      if (placarContainer) {
+        const observer = new MutationObserver((mutations) => {
+          let deveAtualizar = false;
 
-        // Parar intervalos
-        const maxId = setTimeout(() => {}, 0);
-        for (let i = 1; i <= maxId; i++) {
-          try {
-            clearInterval(i);
-            clearTimeout(i);
-          } catch (e) {}
-        }
+          mutations.forEach((mutation) => {
+            if (
+              mutation.type === "childList" ||
+              mutation.type === "characterData"
+            ) {
+              // Verificar se a mudança foi em elementos relevantes
+              const target = mutation.target;
 
-        // Desabilitar sistemas conhecidos
-        const sistemas = [
-          "SistemaTrofeuCompleto",
-          "SistemaTrofeuIntegrado",
-          "SistemaTrofeuCorrigido",
-          "SistemaTrofeuNumerico",
-          "SistemaTrofeuFinal",
-          "TrofeuUltraAgressivo",
-          "TrofeuCirurgico",
-          "TrofeuDefinitivo",
-          "SistemaDestruidor",
-          "OverriderFinal",
-          "SistemaSimples",
-          "MetaDiariaManager",
-        ];
+              if (
+                target.classList?.contains("placar-green") ||
+                target.classList?.contains("placar-red") ||
+                target.closest(".placar-green, .placar-red, .mentor-card")
+              ) {
+                deveAtualizar = true;
+              }
+            }
+          });
 
-        sistemas.forEach((nome) => {
-          if (window[nome] && nome !== "MonitorContinuo") {
-            try {
-              window[nome].ativo = false;
-              if (window[nome].parar) window[nome].parar();
-              window[nome] = null;
-              delete window[nome];
-            } catch (e) {}
+          if (deveAtualizar) {
+            console.log("Mudança no DOM detectada, atualizando lista...");
+
+            setTimeout(() => {
+              this.forcarProximaAtualizacao = true;
+              this.atualizandoAtualmente = false;
+              this.atualizarListaMeses();
+            }, 200);
           }
         });
-      },
 
-      // NOVA FUNÃ‡ÃƒO: Buscar meta real do sistema
-      async buscarMetaRealDoSistema() {
-        try {
-          console.log("Buscando meta MENSAL real do sistema...");
+        observer.observe(placarContainer, {
+          childList: true,
+          subtree: true,
+          characterData: true,
+        });
 
-          let metaEncontrada = 0;
-          let tipoMeta = "mensal";
+        console.log("Observer DOM configurado");
+      }
+    } catch (error) {
+      console.warn("Erro ao configurar observer DOM:", error);
+    }
+  },
 
-          // Fonte 1: dados-ano-info - PRIORIZAR META MENSAL
-          const dadosAnoInfo = document.getElementById("dados-ano-info");
-          if (dadosAnoInfo) {
-            // Primeiro tentar meta mensal direta
-            const metaMensal = dadosAnoInfo.getAttribute("data-meta-mensal");
-            if (metaMensal && parseFloat(metaMensal) > 0) {
-              metaEncontrada = parseFloat(metaMensal);
-              tipoMeta = "mensal";
+  // Sincronizar com sistema principal (MetaManager, BancaManager, etc.)
+  sincronizarComSistemaPrincipal() {
+    try {
+      console.log("Configurando sincronização com sistema principal...");
+
+      // 1. Hook no MetaManager se existir
+      if (
+        typeof window.MetaManager !== "undefined" &&
+        window.MetaManager.atualizarMeta
+      ) {
+        const originalAtualizarMeta = window.MetaManager.atualizarMeta;
+
+        window.MetaManager.atualizarMeta = async function (...args) {
+          const resultado = await originalAtualizarMeta.apply(this, args);
+
+          setTimeout(() => {
+            if (typeof ListaMesesManagerAnual !== "undefined") {
               console.log(
-                `Meta MENSAL do dados-ano-info: R$ ${metaEncontrada.toFixed(2)}`
+                "MetaManager.atualizarMeta executado, sincronizando lista..."
               );
-            } else {
-              // Se não tem meta mensal, calcular da anual
-              const metaAnual = dadosAnoInfo.getAttribute("data-meta-anual");
-              if (metaAnual && parseFloat(metaAnual) > 0) {
-                metaEncontrada = parseFloat(metaAnual) / 12;
-                tipoMeta = "anual/12";
-                console.log(
-                  `Meta MENSAL calculada (anual ÷ 12): R$ ${metaEncontrada.toFixed(
-                    2
-                  )}`
-                );
-              }
+              ListaMesesManagerAnual.forcarProximaAtualizacao = true;
+              ListaMesesManagerAnual.atualizandoAtualmente = false;
+              ListaMesesManagerAnual.atualizarListaMeses();
             }
-          }
-
-          // Fonte 2: Verificar período selecionado
-          if (metaEncontrada === 0) {
-            const radioSelecionado = document.querySelector(
-              'input[name="periodo"]:checked'
-            );
-            const periodoAtual = radioSelecionado
-              ? radioSelecionado.value
-              : "ano";
-
-            if (periodoAtual === "ano" && dadosAnoInfo) {
-              const metaAnual =
-                parseFloat(dadosAnoInfo.getAttribute("data-meta-anual")) || 0;
-              if (metaAnual > 0) {
-                metaEncontrada = metaAnual / 12;
-                tipoMeta = "anual/12 (período ano)";
-                console.log(
-                  `Meta MENSAL do período ano: R$ ${metaEncontrada.toFixed(2)}`
-                );
-              }
-            } else if (periodoAtual === "mes" && dadosAnoInfo) {
-              const metaMensal =
-                parseFloat(dadosAnoInfo.getAttribute("data-meta-mensal")) || 0;
-              if (metaMensal > 0) {
-                metaEncontrada = metaMensal;
-                tipoMeta = "mensal (período mês)";
-                console.log(
-                  `Meta MENSAL do período mês: R$ ${metaEncontrada.toFixed(2)}`
-                );
-              }
-            }
-          }
-
-          // Fonte 3: PHP como fallback
-          if (metaEncontrada === 0) {
-            try {
-              const response = await fetch("dados_banca.php?periodo=ano", {
-                method: "GET",
-                headers: {
-                  "Cache-Control": "no-cache",
-                  "X-Requested-With": "XMLHttpRequest",
-                },
-              });
-
-              if (response.ok) {
-                const data = await response.json();
-                if (data.success) {
-                  // Priorizar meta mensal do PHP
-                  if (data.meta_mensal && parseFloat(data.meta_mensal) > 0) {
-                    metaEncontrada = parseFloat(data.meta_mensal);
-                    tipoMeta = "mensal (PHP)";
-                  } else if (
-                    data.meta_anual &&
-                    parseFloat(data.meta_anual) > 0
-                  ) {
-                    metaEncontrada = parseFloat(data.meta_anual) / 12;
-                    tipoMeta = "anual/12 (PHP)";
-                  }
-                  console.log(
-                    `Meta MENSAL do PHP: R$ ${metaEncontrada.toFixed(
-                      2
-                    )} (${tipoMeta})`
-                  );
-                }
-              }
-            } catch (e) {
-              console.log("Erro ao buscar meta do PHP:", e);
-            }
-          }
-
-          // Salvar meta configurada
-          this.metaDiariaConfigurada = metaEncontrada; // Mantém o nome mas agora é mensal
-          this.ultimaMetaHoje = metaEncontrada;
-          this.tipoMetaAtual = tipoMeta;
-
-          console.log(
-            `META MENSAL CONFIGURADA: R$ ${metaEncontrada.toFixed(
-              2
-            )} (${tipoMeta})`
-          );
-
-          return metaEncontrada;
-        } catch (error) {
-          console.error("Erro ao buscar meta mensal real:", error);
-          this.metaDiariaConfigurada = 0;
-          return 0;
-        }
-      },
-
-      // NOVA FUNÃ‡ÃƒO: Limpar todos os trofÃ©us inicialmente
-      limparTodosOsTrofeus() {
-        try {
-          console.log(
-            "Limpando TODOS os trofÃ©us para verificaÃ§Ã£o rigorosa..."
-          );
-
-          // Limpar caches
-          this.metasBatidasCache.clear();
-          this.metaHistoricaCache.clear();
-
-          // Aplicar checks em todas as linhas
-          document.querySelectorAll(".gd-linha-dia").forEach((linha) => {
-            const icone = linha.querySelector(".icone i");
-            if (icone) {
-              this.aplicarCheckForcado(icone, linha);
-            }
-          });
-
-          console.log(
-            "Todos os trofÃ©us limpos - sÃ³ serÃ£o adicionados se meta realmente batida"
-          );
-        } catch (error) {
-          console.error("Erro ao limpar trofÃ©us:", error);
-        }
-      },
-
-      // FUNÃ‡ÃƒO CORRIGIDA: VerificaÃ§Ã£o rigorosa da meta de hoje
-      async verificarMetaDiariaHojeAgora() {
-        try {
-          const hoje = this.obterDataHoje();
-
-          // 🔧 CORREÇÃO: Para meses, verificar o mês atual, não o dia
-          const [ano, mes, dia] = hoje.split("-");
-          const chaveMesAtual = `${ano}-${mes}`;
-
-          // Buscar linha do mês atual (não do dia)
-          let linha = document.querySelector(`[data-date="${chaveMesAtual}"]`);
-
-          // Se não encontrar o mês, tentar o dia (fallback)
-          if (!linha) {
-            linha = document.querySelector(`[data-date="${hoje}"]`);
-          }
-
-          if (!linha) {
-            console.log("Linha do mês/dia atual não encontrada");
-            return false;
-          }
-
-          // Extrair saldo atual
-          const valorElement = linha.querySelector(".valor");
-          if (!valorElement) {
-            console.log("Elemento valor não encontrado");
-            return false;
-          }
-
-          const valorTexto = valorElement.textContent
-            .replace(/[^\d,-]/g, "")
-            .replace(",", ".");
-          const saldoAtual = parseFloat(valorTexto) || 0;
-
-          // Usar meta mensal configurada
-          let metaMensal = this.metaDiariaConfigurada; // Agora é mensal
-
-          if (metaMensal === 0) {
-            metaMensal = await this.buscarMetaRealDoSistema();
-          }
-
-          // Salvar para comparação
-          this.ultimoSaldoHoje = saldoAtual;
-          this.ultimaMetaHoje = metaMensal;
-
-          // 🔧 VERIFICAÇÃO COM META MENSAL
-          let metaBatida = false;
-
-          if (metaMensal > 0) {
-            metaBatida = saldoAtual >= metaMensal;
-            console.log(
-              `MÊS ATUAL (${chaveMesAtual}): Saldo R$ ${saldoAtual.toFixed(
-                2
-              )} ${metaBatida ? ">=" : "<"} Meta Mensal R$ ${metaMensal.toFixed(
-                2
-              )} = ${metaBatida ? "BATIDA" : "NÃO BATIDA"}`
-            );
-          } else {
-            // Sem meta configurada: critério restritivo para mês
-            metaBatida = saldoAtual >= 500; // Valor maior para meta mensal
-            console.log(
-              `MÊS ATUAL (sem meta): Saldo R$ ${saldoAtual.toFixed(2)} ${
-                metaBatida ? ">=" : "<"
-              } R$ 500,00 = ${metaBatida ? "BATIDA" : "NÃO BATIDA"}`
-            );
-          }
-
-          // Atualizar flags
-          this.forcarTrofeuHoje = metaBatida;
-          this.estadoCorretoHoje = metaBatida;
-
-          // Atualizar cache
-          if (metaBatida) {
-            this.metasBatidasCache.set(chaveMesAtual, true);
-            // Também marcar o dia atual se necessário
-            this.metasBatidasCache.set(hoje, true);
-          } else {
-            this.metasBatidasCache.delete(chaveMesAtual);
-            this.metasBatidasCache.delete(hoje);
-          }
-
-          return metaBatida;
-        } catch (error) {
-          console.error("Erro ao verificar meta mensal atual:", error);
-          return false;
-        }
-      },
-
-      // NOVA FUNÃ‡ÃƒO: VerificaÃ§Ã£o histÃ³rica RIGOROSA
-      async verificarMetasHistoricasRigoroso() {
-        if (this.verificandoHistorico) return;
-
-        this.verificandoHistorico = true;
-        console.log("Verificando metas histÃ³ricas RIGOROSAMENTE...");
-
-        try {
-          const linhas = document.querySelectorAll(".gd-linha-dia");
-          const datasParaVerificar = [];
-
-          linhas.forEach((linha) => {
-            const dataLinha = linha.getAttribute("data-date");
-            const hoje = this.obterDataHoje();
-
-            if (dataLinha && dataLinha < hoje) {
-              datasParaVerificar.push(dataLinha);
-            }
-          });
-
-          console.log(
-            `Verificando RIGOROSAMENTE ${datasParaVerificar.length} datas anteriores`
-          );
-
-          // Garantir que temos a meta configurada
-          if (this.metaDiariaConfigurada === 0) {
-            await this.buscarMetaRealDoSistema();
-          }
-
-          for (const data of datasParaVerificar) {
-            await this.verificarMetaEspecificaRigoroso(data);
-            await new Promise((resolve) => setTimeout(resolve, 100));
-          }
-
-          console.log("VerificaÃ§Ã£o histÃ³rica RIGOROSA concluÃ­da");
-        } catch (error) {
-          console.error(
-            "Erro ao verificar metas histÃ³ricas rigorosas:",
-            error
-          );
-        } finally {
-          this.verificandoHistorico = false;
-        }
-      },
-
-      // NOVA FUNÃ‡ÃƒO: VerificaÃ§Ã£o rigorosa de meta especÃ­fica
-      async verificarMetaEspecificaRigoroso(data) {
-        try {
-          // 🔧 DETERMINAR SE É DATA DE DIA OU MÊS
-          const isDataMes = data.length === 7; // YYYY-MM
-          const isDataDia = data.length === 10; // YYYY-MM-DD
-
-          let linha, saldoVerificar, chaveCache;
-
-          if (isDataMes) {
-            // É um mês: YYYY-MM
-            linha = document.querySelector(`[data-date="${data}"]`);
-            chaveCache = data;
-          } else if (isDataDia) {
-            // É um dia: buscar o mês correspondente YYYY-MM
-            const [ano, mes, dia] = data.split("-");
-            const chaveMes = `${ano}-${mes}`;
-            linha = document.querySelector(`[data-date="${chaveMes}"]`);
-            chaveCache = chaveMes;
-
-            // Se não encontrar o mês, tentar o dia
-            if (!linha) {
-              linha = document.querySelector(`[data-date="${data}"]`);
-              chaveCache = data;
-            }
-          } else {
-            console.log(`Formato de data inválido: ${data}`);
-            return;
-          }
-
-          if (!linha) {
-            console.log(`Linha não encontrada para: ${data}`);
-            return;
-          }
-
-          const valorElement = linha.querySelector(".valor");
-          if (!valorElement) return;
-
-          const valorTexto = valorElement.textContent
-            .replace(/[^\d,-]/g, "")
-            .replace(",", ".");
-          saldoVerificar = parseFloat(valorTexto) || 0;
-
-          // Usar a meta mensal configurada
-          const metaMensal = this.metaDiariaConfigurada; // Agora é mensal
-
-          // VERIFICAÇÃO RIGOROSA COM META MENSAL
-          let metaBatida = false;
-          let criterioUsado = "";
-
-          if (metaMensal > 0) {
-            metaBatida = saldoVerificar >= metaMensal;
-            criterioUsado = `Meta mensal R$ ${metaMensal.toFixed(2)}`;
-          } else {
-            // Sem meta configurada: critério restritivo para mês
-            metaBatida = saldoVerificar >= 500;
-            criterioUsado = "Critério restritivo mensal R$ 500,00";
-          }
-
-          console.log(
-            `${data}: R$ ${saldoVerificar.toFixed(2)} vs ${criterioUsado} = ${
-              metaBatida ? "BATIDA" : "NÃO BATIDA"
-            }`
-          );
-
-          // Salvar no cache
-          this.metaHistoricaCache.set(chaveCache, {
-            saldoPeriodo: saldoVerificar,
-            metaMensal: metaMensal,
-            metaBatida: metaBatida,
-            criterioUsado: criterioUsado,
-            dataVerificacao: new Date().toISOString(),
-            tipoVerificacao: isDataMes ? "mês" : "dia->mês",
-          });
-
-          // Atualizar cache de metas batidas
-          if (metaBatida) {
-            this.metasBatidasCache.set(chaveCache, true);
-          } else {
-            this.metasBatidasCache.delete(chaveCache);
-          }
-        } catch (error) {
-          console.error(`Erro ao verificar rigorosamente ${data}:`, error);
-        }
-      },
-
-      monitorarRotulo() {
-        try {
-          const rotuloElement =
-            document.getElementById("rotulo-meta") ||
-            document.querySelector(".widget-meta-rotulo");
-
-          if (!rotuloElement) return;
-
-          const rotuloTexto = rotuloElement.textContent.toLowerCase().trim();
-
-          if (rotuloTexto !== this.ultimoRotulo) {
-            console.log(`RÃ“TULO MUDOU: "${rotuloTexto}"`);
-            this.ultimoRotulo = rotuloTexto;
-
-            // Sempre verificar meta diÃ¡ria real, nÃ£o interpretar rÃ³tulo
-            this.verificarMetaDiariaHojeAgora();
-          }
-        } catch (error) {
-          console.error("Erro no monitor de rÃ³tulo:", error);
-        }
-      },
-
-      forcarTrofeuHojeBruto() {
-        if (!this.forcarTrofeuHoje) return;
-
-        try {
-          const hoje = this.obterDataHoje();
-          const linha = document.querySelector(`[data-date="${hoje}"]`);
-
-          if (!linha) return;
-
-          const icone = linha.querySelector(".icone i");
-          if (!icone) return;
-
-          // FORÃ‡A BRUTA: Se deve ter trofÃ©u mas nÃ£o tem, aplicar IMEDIATAMENTE
-          if (!icone.classList.contains("fa-trophy")) {
-            console.log("FORÃ‡A BRUTA: Aplicando trofÃ©u de hoje");
-            this.aplicarTrofeuForcado(icone, linha);
-          }
-        } catch (error) {
-          console.error("Erro na forÃ§a bruta:", error);
-        }
-      },
-
-      forcarEstadoCorreto() {
-        const hoje = this.obterDataHoje();
-        let forcacoesFeitas = 0;
-
-        document.querySelectorAll(".gd-linha-dia").forEach((linha) => {
-          const icone = linha.querySelector(".icone i");
-          const dataLinha = linha.getAttribute("data-date");
-
-          if (!icone || !dataLinha) return;
-
-          const deveSerTrofeu = this.deveExibirTrofeu(dataLinha, hoje);
-
-          if (deveSerTrofeu) {
-            if (!icone.classList.contains("fa-trophy")) {
-              this.aplicarTrofeuForcado(icone, linha);
-              forcacoesFeitas++;
-            }
-          } else {
-            if (!icone.classList.contains("fa-check")) {
-              this.aplicarCheckForcado(icone, linha);
-              forcacoesFeitas++;
-            }
-          }
-        });
-
-        if (forcacoesFeitas > 0) {
-          console.log(`FORÃ‡ADOS: ${forcacoesFeitas} Ã­cones`);
-        }
-      },
-
-      deveExibirTrofeu(dataLinha, hoje) {
-        // Hoje: usar verificaÃ§Ã£o direta
-        if (dataLinha === hoje) {
-          return this.forcarTrofeuHoje;
-        }
-
-        // Anteriores: APENAS se estiver no cache (verificado rigorosamente)
-        return this.metasBatidasCache.has(dataLinha);
-      },
-
-      aplicarTrofeuForcado(icone, linha) {
-        try {
-          icone.removeAttribute("style");
-          icone.className = "fa-solid fa-trophy trofeu-icone-forcado";
-          linha.setAttribute("data-meta-batida", "true");
-          linha.classList.add("meta-forcada");
-
-          const dataLinha = linha.getAttribute("data-date");
-          if (dataLinha) {
-            this.metasBatidasCache.set(dataLinha, true);
-          }
-        } catch (e) {
-          console.error("Erro ao aplicar trofÃ©u:", e);
-        }
-      },
-
-      aplicarCheckForcado(icone, linha) {
-        try {
-          icone.removeAttribute("style");
-          icone.className = "fa-solid fa-check check-icone-forcado";
-          linha.setAttribute("data-meta-batida", "false");
-          linha.classList.remove("meta-forcada");
-        } catch (e) {
-          console.error("Erro ao aplicar check:", e);
-        }
-      },
-
-      obterDataHoje() {
-        const d = new Date();
-        const ano = d.getFullYear();
-        const mes = String(d.getMonth() + 1).padStart(2, "0");
-        const dia = String(d.getDate()).padStart(2, "0");
-        return `${ano}-${mes}-${dia}`;
-      },
-
-      parar() {
-        this.ativo = false;
-
-        if (this.intervaloMonitor) {
-          clearInterval(this.intervaloMonitor);
-          this.intervaloMonitor = null;
-        }
-
-        if (this.intervaloForcador) {
-          clearInterval(this.intervaloForcador);
-          this.intervaloForcador = null;
-        }
-
-        if (this.intervaloForcaBruta) {
-          clearInterval(this.intervaloForcaBruta);
-          this.intervaloForcaBruta = null;
-        }
-
-        console.log("Monitor rigoroso parado");
-      },
-
-      status() {
-        return {
-          ativo: this.ativo,
-          modoRigoroso: this.modoRigoroso,
-          metaDiariaConfigurada: this.metaDiariaConfigurada,
-          forcarTrofeuHoje: this.forcarTrofeuHoje,
-          ultimoSaldoHoje: this.ultimoSaldoHoje,
-          metasBatidasCache: Array.from(this.metasBatidasCache.keys()).sort(),
-          totalMetasBatidas: this.metasBatidasCache.size,
-          metasHistoricasVerificadas: this.metaHistoricaCache.size,
-          trofeusVisiveis: document.querySelectorAll(".fa-trophy").length,
-          checksVisiveis: document.querySelectorAll(".fa-check").length,
-          verificandoHistorico: this.verificandoHistorico,
-          modo: "RIGOROSO - SÃ³ trofÃ©u se meta realmente batida",
-        };
-      },
-    };
-
-    // Comandos globais
-    window.MonitorContinuo = {
-      status: () => {
-        const s = MonitorContinuo.status();
-        console.log("MONITOR RIGOROSO STATUS:");
-        Object.entries(s).forEach(([key, value]) => {
-          console.log(`   ${key}: ${value}`);
-        });
-        return s;
-      },
-
-      parar: () => {
-        MonitorContinuo.parar();
-      },
-
-      reiniciar: () => {
-        MonitorContinuo.parar();
-        setTimeout(() => MonitorContinuo.inicializar(), 1000);
-      },
-
-      // Comando para reverificar TUDO rigorosamente
-      reverificarRigoroso: async () => {
-        console.log("ReverificaÃ§Ã£o RIGOROSA iniciada...");
-
-        // Buscar meta real primeiro
-        await MonitorContinuo.buscarMetaRealDoSistema();
-
-        // Limpar tudo
-        MonitorContinuo.limparTodosOsTrofeus();
-
-        // Verificar hoje
-        await MonitorContinuo.verificarMetaDiariaHojeAgora();
-
-        // Verificar histÃ³rico
-        await MonitorContinuo.verificarMetasHistoricasRigoroso();
-
-        // Aplicar resultados
-        MonitorContinuo.forcarEstadoCorreto();
-
-        const metasBatidas = Array.from(
-          MonitorContinuo.metasBatidasCache.keys()
-        ).sort();
-        console.log(
-          `RESULTADO RIGOROSO: ${metasBatidas.length} datas com meta REALMENTE batida:`,
-          metasBatidas
-        );
-
-        return metasBatidas;
-      },
-
-      // Ver cache detalhado com informaÃ§Ãµes de Meta Fixa vs Turbo
-      verCache: () => {
-        const historico = Array.from(
-          MonitorContinuo.metaHistoricaCache.entries()
-        );
-        console.log("CACHE RIGOROSO COM DETALHES DE META:");
-        historico.forEach(([data, info]) => {
-          console.log(
-            `  ${data}: R$ ${info.saldoDia.toFixed(2)} vs ${
-              info.criterioUsado
-            } = ${info.metaBatida ? "BATIDA" : "NÃƒO BATIDA"}`
-          );
-          if (info.detalhesCalculo) {
-            console.log(`    ${info.detalhesCalculo.observacao}`);
-            console.log(`    FÃ³rmula: ${info.detalhesCalculo.formula}`);
-          }
-        });
-        return historico;
-      },
-
-      // Debug detalhado com informaÃ§Ãµes de Meta Turbo
-      debug: () => {
-        console.log("DEBUG RIGOROSO COM META TURBO:");
-        console.log(
-          `  Meta configurada base: R$ ${MonitorContinuo.metaDiariaConfigurada.toFixed(
-            2
-          )}`
-        );
-        console.log(`  Modo rigoroso: ${MonitorContinuo.modoRigoroso}`);
-        console.log(
-          `  Total trofÃ©us vÃ¡lidos: ${MonitorContinuo.metasBatidasCache.size}`
-        );
-
-        const hoje = MonitorContinuo.obterDataHoje();
-        const linha = document.querySelector(`[data-date="${hoje}"]`);
-
-        if (linha) {
-          const icone = linha.querySelector(".icone i");
-          const valor = linha.querySelector(".valor");
-
-          console.log("  HOJE:");
-          console.log(`    Data: ${hoje}`);
-          console.log(`    Saldo: ${valor ? valor.textContent : "N/A"}`);
-          console.log(`    Ãcone: ${icone ? icone.className : "N/A"}`);
-          console.log(
-            `    Deve ter trofÃ©u: ${MonitorContinuo.forcarTrofeuHoje}`
-          );
-
-          // Mostrar detalhes do cache se existir
-          const cacheHoje = MonitorContinuo.metaHistoricaCache.get(hoje);
-          if (cacheHoje && cacheHoje.detalhesCalculo) {
-            console.log(`    Tipo de meta: ${cacheHoje.detalhesCalculo.tipo}`);
-            console.log(`    ${cacheHoje.detalhesCalculo.observacao}`);
-            console.log(`    FÃ³rmula: ${cacheHoje.detalhesCalculo.formula}`);
-          }
-        }
-      },
-
-      // NOVO: Debug especÃ­fico para uma data
-      debugData: async (data) => {
-        const linha = document.querySelector(`[data-date="${data}"]`);
-
-        if (linha) {
-          const icone = linha.querySelector(".icone i");
-          const valor = linha.querySelector(".valor");
-          const cacheInfo = MonitorContinuo.metaHistoricaCache.get(data);
-
-          console.log(`DEBUG DETALHADO ${data}:`);
-          console.log("  Saldo na tela:", valor ? valor.textContent : "N/A");
-          console.log("  Ãcone atual:", icone ? icone.className : "N/A");
-          console.log(
-            "  Cache tem trofÃ©u:",
-            MonitorContinuo.metasBatidasCache.has(data)
-          );
-
-          if (cacheInfo) {
-            console.log("  Cache detalhado:", cacheInfo);
-            if (cacheInfo.detalhesCalculo) {
-              console.log(`  Tipo: ${cacheInfo.detalhesCalculo.tipo}`);
-              console.log(`  ${cacheInfo.detalhesCalculo.observacao}`);
-              console.log(`  FÃ³rmula: ${cacheInfo.detalhesCalculo.formula}`);
-            }
-          } else {
-            console.log("  NÃ£o hÃ¡ dados no cache - recalculando...");
-
-            // Recalcular para esta data
-            const valorTexto = valor
-              ? valor.textContent.replace(/[^\d,-]/g, "").replace(",", ".")
-              : "0";
-            const saldoDia = parseFloat(valorTexto) || 0;
-
-            const dadosMetaEspecifica =
-              await MonitorContinuo.calcularMetaParaDataEspecifica(
-                data,
-                saldoDia
-              );
-            console.log("  CÃ¡lculo especÃ­fico:", dadosMetaEspecifica);
-          }
-        } else {
-          console.log(`Linha nÃ£o encontrada para data ${data}`);
-        }
-      },
-
-      // NOVO: Comparar Meta Fixa vs Meta Turbo para uma data especÃ­fica
-      compararMetas: async (data) => {
-        console.log(`COMPARANDO META FIXA vs TURBO para ${data}:`);
-
-        const linha = document.querySelector(`[data-date="${data}"]`);
-        if (!linha) {
-          console.log("Data nÃ£o encontrada");
-          return;
-        }
-
-        const valorElement = linha.querySelector(".valor");
-        const saldoDia = valorElement
-          ? parseFloat(
-              valorElement.textContent.replace(/[^\d,-]/g, "").replace(",", ".")
-            ) || 0
-          : 0;
-
-        // Buscar configuraÃ§Ã£o atual
-        const config = await MonitorContinuo.buscarConfiguracaoCompleta();
-        if (!config) {
-          console.log("Erro ao buscar configuraÃ§Ã£o");
-          return;
-        }
-
-        // Calcular Meta Fixa
-        const metaFixa =
-          config.bancaInicial * (config.diaria / 100) * config.unidade;
-        const resultadoFixa = saldoDia >= metaFixa;
-
-        // Calcular Meta Turbo
-        const lucroAcumulado =
-          await MonitorContinuo.calcularLucroAcumuladoAteData(data);
-        const bancaTurbo =
-          lucroAcumulado > 0
-            ? config.bancaInicial + lucroAcumulado
-            : config.bancaInicial;
-        const metaTurbo = bancaTurbo * (config.diaria / 100) * config.unidade;
-        const resultadoTurbo = saldoDia >= metaTurbo;
-
-        console.log(`  Saldo do dia: R$ ${saldoDia.toFixed(2)}`);
-        console.log(`  Banca inicial: R$ ${config.bancaInicial.toFixed(2)}`);
-        console.log(
-          `  Lucro acumulado atÃ© ${data}: R$ ${lucroAcumulado.toFixed(2)}`
-        );
-        console.log(`  ConfiguraÃ§Ã£o: ${config.diaria}% Ã— ${config.unidade}`);
-        console.log("");
-        console.log(`  META FIXA:`);
-        console.log(
-          `    Base: R$ ${config.bancaInicial.toFixed(
-            2
-          )} (sempre banca inicial)`
-        );
-        console.log(`    Meta: R$ ${metaFixa.toFixed(2)}`);
-        console.log(
-          `    Resultado: ${resultadoFixa ? "BATIDA" : "NÃƒO BATIDA"}`
-        );
-        console.log("");
-        console.log(`  META TURBO:`);
-        console.log(
-          `    Base: R$ ${bancaTurbo.toFixed(2)} (banca inicial ${
-            lucroAcumulado > 0 ? "+ lucro" : "sem lucro"
-          })`
-        );
-        console.log(`    Meta: R$ ${metaTurbo.toFixed(2)}`);
-        console.log(
-          `    Resultado: ${resultadoTurbo ? "BATIDA" : "NÃƒO BATIDA"}`
-        );
-        console.log("");
-        console.log(
-          `  TIPO ATUAL CONFIGURADO: ${config.tipoMeta.toUpperCase()}`
-        );
-        console.log(
-          `  RESULTADO APLICADO: ${
-            config.tipoMeta === "fixa"
-              ? resultadoFixa
-                ? "BATIDA"
-                : "NÃƒO BATIDA"
-              : resultadoTurbo
-              ? "BATIDA"
-              : "NÃƒO BATIDA"
-          }`
-        );
-
-        return {
-          saldoDia,
-          metaFixa: { valor: metaFixa, batida: resultadoFixa },
-          metaTurbo: { valor: metaTurbo, batida: resultadoTurbo },
-          tipoAtual: config.tipoMeta,
-          resultadoAplicado:
-            config.tipoMeta === "fixa" ? resultadoFixa : resultadoTurbo,
-        };
-      },
-
-      // Configurar meta manualmente
-      configurarMeta: (valor) => {
-        MonitorContinuo.metaDiariaConfigurada = parseFloat(valor) || 0;
-        console.log(
-          `Meta configurada manualmente: R$ ${MonitorContinuo.metaDiariaConfigurada.toFixed(
-            2
-          )}`
-        );
-
-        // Reverificar tudo com nova meta
-        setTimeout(() => {
-          MonitorContinuo.reverificarRigoroso();
-        }, 100);
-      },
-    };
-
-    // Compatibilidade
-    window.Trofeu = window.MonitorContinuo;
-
-    // Interceptar mudanÃ§as de perÃ­odo
-    function interceptarMudancasPeriodo() {
-      const radios = document.querySelectorAll('input[name="periodo"]');
-
-      radios.forEach((radio) => {
-        radio.addEventListener("change", function (e) {
-          console.log(`INTERCEPTADO: MudanÃ§a para ${e.target.value}`);
-
-          setTimeout(() => {
-            MonitorContinuo.verificarMetaDiariaHojeAgora();
-            MonitorContinuo.forcarTrofeuHojeBruto();
-          }, 200);
-
-          setTimeout(() => {
-            MonitorContinuo.forcarEstadoCorreto();
           }, 500);
-        });
-      });
-    }
 
-    // InicializaÃ§Ã£o
-    function iniciar() {
-      if (document.readyState === "loading") {
-        document.addEventListener("DOMContentLoaded", () => {
+          return resultado;
+        };
+      }
+
+      // 2. Hook no BancaManager se existir
+      if (
+        typeof window.BancaManager !== "undefined" &&
+        window.BancaManager.atualizarBanca
+      ) {
+        const originalAtualizarBanca = window.BancaManager.atualizarBanca;
+
+        window.BancaManager.atualizarBanca = async function (...args) {
+          const resultado = await originalAtualizarBanca.apply(this, args);
+
           setTimeout(() => {
-            MonitorContinuo.inicializar();
-            interceptarMudancasPeriodo();
-          }, 1000);
-        });
-      } else {
-        setTimeout(() => {
-          MonitorContinuo.inicializar();
-          interceptarMudancasPeriodo();
-        }, 1000);
+            if (typeof ListaMesesManagerAnual !== "undefined") {
+              console.log(
+                "BancaManager.atualizarBanca executado, sincronizando lista..."
+              );
+              ListaMesesManagerAnual.forcarProximaAtualizacao = true;
+              ListaMesesManagerAnual.atualizandoAtualmente = false;
+              ListaMesesManagerAnual.atualizarListaMeses();
+            }
+          }, 500);
+
+          return resultado;
+        };
       }
-    }
 
-    iniciar();
+      // 3. Hook no atualizarDadosBanca se existir
+      if (typeof window.atualizarDadosBanca === "function") {
+        const originalAtualizarDadosBanca = window.atualizarDadosBanca;
 
-    console.log("MONITOR RIGOROSO CARREGADO!");
-    console.log("Funcionalidades:");
-    console.log("   - VerificaÃ§Ã£o RIGOROSA de metas");
-    console.log(
-      "   - Limpa todos os trofÃ©us e sÃ³ adiciona se meta realmente batida"
-    );
-    console.log("   - Busca meta real do sistema");
-    console.log("   - CritÃ©rio restritivo se nÃ£o hÃ¡ meta configurada");
-    console.log("");
-    console.log("Comandos:");
-    console.log(
-      "   MonitorContinuo.reverificarRigoroso() - Reverificar com rigor"
-    );
-    console.log(
-      "   MonitorContinuo.configurarMeta(100) - Configurar meta manualmente"
-    );
-    console.log(
-      "   MonitorContinuo.verCache() - Ver verificaÃ§Ãµes detalhadas"
-    );
-    console.log("   MonitorContinuo.debug() - Debug rigoroso");
-  })();
-  // ========================================================================================================================
-  //                                 FIM  TROFÃ‰U - PARA APARECER  QUANDO A META Ã‰ BATIDA
-  // ========================================================================================================================
-  //
-  //
-  //
-  //
-  //
-  //
-  //
-  //
-  //
-  //
-  //
-  //
-  //
-  //
-  // ========================================================================================================================
-  //                                 AS CORES DO CSS PARA FICAR FIXA FUNCIONANDO
-  // ========================================================================================================================
-  if (
-    typeof ListaDiasManagerCorrigido !== "undefined" &&
-    ListaDiasManagerCorrigido.intervaloAtualizacao
-  ) {
-    clearInterval(ListaDiasManagerCorrigido.intervaloAtualizacao);
-    console.log("ðŸ›‘ ListaDiasManagerCorrigido parado");
-  }
+        window.atualizarDadosBanca = async function (...args) {
+          const resultado = await originalAtualizarDadosBanca.apply(this, args);
 
-  if (
-    typeof SistemaTrofeuCompleto !== "undefined" &&
-    SistemaTrofeuCompleto.intervaloAtualizacao
-  ) {
-    clearInterval(SistemaTrofeuCompleto.intervaloAtualizacao);
-    console.log("ðŸ›‘ SistemaTrofeuCompleto parado");
-  }
+          setTimeout(() => {
+            if (typeof ListaMesesManagerAnual !== "undefined") {
+              console.log(
+                "atualizarDadosBanca executado, sincronizando lista..."
+              );
+              ListaMesesManagerAnual.forcarProximaAtualizacao = true;
+              ListaMesesManagerAnual.atualizandoAtualmente = false;
+              ListaMesesManagerAnual.atualizarListaMeses();
+            }
+          }, 600);
 
-  if (typeof SistemaMonitorCores !== "undefined") {
-    SistemaMonitorCores.parar();
-    console.log("ðŸ›‘ SistemaMonitorCores parado");
-  }
+          return resultado;
+        };
+      }
 
-  // Limpar todos os intervalos existentes
-  // Limpar apenas intervalos conhecidos de sistemas conflitantes.
-  // Evita usar um loop global que pode parar timers de terceiros (ex.: MetaMensalManager).
-  try {
-    if (
-      typeof ListaDiasManagerCorrigido !== "undefined" &&
-      ListaDiasManagerCorrigido.intervaloAtualizacao
-    ) {
-      clearInterval(ListaDiasManagerCorrigido.intervaloAtualizacao);
-    }
-    if (
-      typeof SistemaTrofeuCompleto !== "undefined" &&
-      SistemaTrofeuCompleto.intervaloAtualizacao
-    ) {
-      clearInterval(SistemaTrofeuCompleto.intervaloAtualizacao);
-    }
-  } catch (e) {
-    // silencioso
-  }
-
-  // ========================================
-  // SISTEMA ÃšNICO E EFICIENTE
-  // ========================================
-
-  const SistemaUnicoSemConflito = {
-    intervalo: null,
-    ultimaAtualizacao: "",
-    metaAtual: 50,
-    _ultimaExecucaoProcessar: 0,
-
-    // FunÃ§Ã£o principal que faz TUDO de uma vez
-    processarCompleto() {
-      const agoraTs = Date.now();
-      // Evitar reexecuÃ§Ãµes muito rÃ¡pidas que competem com re-renders
-      if (agoraTs - this._ultimaExecucaoProcessar < 400) return;
-      this._ultimaExecucaoProcessar = agoraTs;
-
-      const linhas = document.querySelectorAll(".gd-linha-dia");
-      if (linhas.length === 0) return;
-
-      let alteracoes = 0;
-
-      linhas.forEach((linha) => {
-        const valorElemento = linha.querySelector(".valor");
-        if (!valorElemento) return;
-
-        const valorTexto = valorElemento.textContent.trim();
-        const numeroLimpo = valorTexto
-          .replace(/[R$\s]/g, "")
-          .replace(",", ".")
-          .replace(/[^\d.-]/g, "");
-
-        const valor = parseFloat(numeroLimpo) || 0;
-
-        // Determinar classe de cor
-        let classeCorreta = "valor-zero";
-        if (valor > 0) classeCorreta = "valor-positivo";
-        else if (valor < 0) classeCorreta = "valor-negativo";
-
-        // Aplicar classe APENAS se nÃ£o tiver
-        if (!linha.classList.contains(classeCorreta)) {
-          linha.classList.remove(
-            "valor-positivo",
-            "valor-negativo",
-            "valor-zero"
-          );
-          linha.classList.add(classeCorreta);
-          alteracoes++;
-        }
-
-        // Aplicar Ã­cone de trofÃ©u se meta batida
-        const iconeEl = linha.querySelector(".icone i");
-        if (iconeEl && valor >= this.metaAtual) {
-          if (!iconeEl.classList.contains("fa-trophy")) {
-            iconeEl.classList.remove("fa-check");
-            iconeEl.classList.add("fa-trophy", "trofeu-icone", "fa-solid");
-            linha.setAttribute("data-meta-batida", "true");
+      // 4. Interceptar chamadas AJAX do jQuery se existir
+      if (typeof $ !== "undefined" && $.ajaxSetup) {
+        $(document).ajaxComplete(function (event, xhr, settings) {
+          if (
+            settings.url &&
+            (settings.url.includes("dados_banca") ||
+              settings.url.includes("cadastrar-valor") ||
+              settings.url.includes("excluir-entrada"))
+          ) {
+            console.log("Ajax jQuery detectado:", settings.url);
+            setTimeout(() => {
+              if (typeof ListaMesesManagerAnual !== "undefined") {
+                ListaMesesManagerAnual.forcarProximaAtualizacao = true;
+                ListaMesesManagerAnual.atualizandoAtualmente = false;
+                ListaMesesManagerAnual.atualizarListaMeses();
+              }
+            }, 700);
           }
-        } else if (iconeEl) {
-          if (!iconeEl.classList.contains("fa-check")) {
-            iconeEl.classList.remove("fa-trophy", "trofeu-icone");
-            iconeEl.classList.add("fa-check", "fa-solid");
-            linha.setAttribute("data-meta-batida", "false");
-          }
+        });
+      }
+
+      // 5. Monitorar mudanças na URL/hash
+      let ultimaUrl = window.location.href;
+      setInterval(() => {
+        if (window.location.href !== ultimaUrl) {
+          ultimaUrl = window.location.href;
+          console.log("URL mudou, sincronizando lista...");
+          setTimeout(() => {
+            this.forcarProximaAtualizacao = true;
+            this.atualizandoAtualmente = false;
+            this.atualizarListaMeses();
+          }, 300);
         }
+      }, 1000);
+
+      console.log("Sincronização com sistema principal configurada");
+    } catch (error) {
+      console.warn("Erro ao configurar sincronização:", error);
+    }
+  },
+
+  // Forçar atualização
+  forcarAtualizacao() {
+    console.log("Forçando atualização da lista de meses...");
+    this.forcarProximaAtualizacao = true;
+    this.atualizandoAtualmente = false;
+    this.detectarMetaEPeriodo();
+    return this.atualizarListaMeses();
+  },
+
+  // Parar sistema
+  parar() {
+    if (this.intervaloAtualizacao) {
+      clearInterval(this.intervaloAtualizacao);
+      this.intervaloAtualizacao = null;
+      console.log("Sistema de lista de meses parado");
+    }
+  },
+
+  // Status do sistema
+  status() {
+    return {
+      ativo: !!this.intervaloAtualizacao,
+      atualizando: this.atualizandoAtualmente,
+      ultimaAtualizacao: this.ultimaAtualizacao,
+      metaMensal: this.metaMensal,
+      metaAnual: this.metaAtual,
+      periodoAtual: this.periodoAtual,
+      hashAtual: this.hashUltimosDados.substring(0, 50) + "...",
+      forcarProxima: this.forcarProximaAtualizacao,
+    };
+  },
+};
+
+// ========================================
+// COMANDOS GLOBAIS ATUALIZADOS
+// ========================================
+
+window.ListaMesesAnual = {
+  parar: () => ListaMesesManagerAnual.parar(),
+  iniciar: () => ListaMesesManagerAnual.inicializar(),
+  atualizar: () => ListaMesesManagerAnual.forcarAtualizacao(),
+  status: () => ListaMesesManagerAnual.status(),
+  info: () => {
+    const status = ListaMesesManagerAnual.status();
+    console.log("Status Lista Meses AJAX:", status);
+    return status;
+  },
+
+  forcar: () => {
+    console.log("FORÇANDO atualização via dados_banca.php...");
+    ListaMesesManagerAnual.forcarProximaAtualizacao = true;
+    ListaMesesManagerAnual.atualizandoAtualmente = false;
+    return ListaMesesManagerAnual.atualizarListaMeses();
+  },
+
+  // Comando especial para debug/teste
+  testeConexao: async () => {
+    console.log("Testando conexão com dados_banca.php...");
+
+    try {
+      const response = await fetch("dados_banca.php?periodo=ano&teste=1", {
+        method: "GET",
+        headers: {
+          "Cache-Control": "no-cache",
+          "X-Requested-With": "XMLHttpRequest",
+          "X-Periodo-Filtro": "ano",
+        },
       });
 
-      if (alteracoes > 0) {
-        console.log(`âœ… Sistema Ãºnico: ${alteracoes} alteraÃ§Ãµes aplicadas`);
+      if (response.ok) {
+        const data = await response.json();
+        console.log(
+          "dados_banca.php respondeu:",
+          data.success ? "SUCESSO" : "ERRO"
+        );
+        console.log("Meta mensal retornada:", data.meta_mensal || 0);
+        console.log("Meta anual retornada:", data.meta_anual || 0);
+        console.log("Tipo meta:", data.tipo_meta || "turbo");
+        return data;
+      } else {
+        console.error("dados_banca.php erro HTTP:", response.status);
+        return null;
       }
-    },
+    } catch (error) {
+      console.error("Erro ao testar dados_banca.php:", error);
+      return null;
+    }
+  },
+
+  // Forçar sincronização imediata
+  sincronizar: () => {
+    console.log("Sincronizando com sistema principal...");
+    ListaMesesManagerAnual.detectarMetaEPeriodo();
+    ListaMesesManagerAnual.forcarProximaAtualizacao = true;
+    ListaMesesManagerAnual.atualizandoAtualmente = false;
+    return ListaMesesManagerAnual.atualizarListaMeses();
+  },
+};
+
+// CSS para animação de atualização
+const cssAnimacao = `
+<style>
+.atualizado-via-ajax {
+  animation: pulseAjax 1s ease-in-out;
+  border-left-color: #3b82f6 !important;
+}
+
+@keyframes pulseAjax {
+  0%, 100% { 
+    transform: scale(1); 
+    opacity: 1; 
+  }
+  50% { 
+    transform: scale(1.02); 
+    opacity: 0.9; 
+    background-color: rgba(59, 130, 246, 0.1) !important;
+  }
+}
+</style>
+`;
+
+// Adicionar CSS de animação
+if (!document.getElementById("css-ajax-animacao")) {
+  const style = document.createElement("div");
+  style.id = "css-ajax-animacao";
+  style.innerHTML = cssAnimacao;
+  document.head.appendChild(style);
+}
+
+// ========================================
+// INICIALIZAÇÃO AUTOMÁTICA MELHORADA
+// ========================================
+
+function inicializarSistemaMesesAnualAjax() {
+  console.log("Iniciando sistema de meses com AJAX...");
+
+  // Aguardar um pouco mais para garantir que o DOM está pronto
+  setTimeout(() => {
+    if (typeof ListaMesesManagerAnual !== "undefined") {
+      ListaMesesManagerAnual.inicializar();
+      console.log("Sistema AJAX de meses inicializado!");
+    }
+  }, 1500);
+}
+
+// Aguardar DOM
+if (document.readyState === "loading") {
+  document.addEventListener("DOMContentLoaded", () => {
+    setTimeout(inicializarSistemaMesesAnualAjax, 1000);
+  });
+} else {
+  setTimeout(inicializarSistemaMesesAnualAjax, 500);
+}
+
+console.log("Sistema de Lista de Meses AJAX carregado!");
+console.log("Características AJAX:");
+console.log("  ✅ Atualização automática via AJAX a cada 3 segundos");
+console.log("  ✅ Detecção de mudanças em formulários");
+console.log("  ✅ Hook no fetch global para interceptar requisições");
+console.log("  ✅ Observer DOM para mudanças em tempo real");
+console.log("  ✅ Animação visual quando valores mudam");
+console.log("  ✅ Preservação de scroll e estado dos troféus");
+console.log("");
+console.log("Comandos:");
+console.log("  ListaMesesAnual.atualizar() - Forçar atualização");
+console.log("  ListaMesesAnual.forcar() - Forçar próxima atualização");
+console.log("  ListaMesesAnual.status() - Ver status completo");
+console.log("  ListaMesesAnual.info() - Ver informações detalhadas");
+console.log("  ListaMesesAnual.testeConexao() - Testar dados_banca.php");
+console.log("  ListaMesesAnual.sincronizar() - Sincronizar sistema");
+
+// Export para uso externo
+window.ListaMesesManagerAnual = ListaMesesManagerAnual;
+
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+/* ===================================================================
+   JAVASCRIPT - LISTA DE MESES ATUALIZAÇÃO SIMPLES E DIRETA
+   Intercepta dados_banca.php e atualiza lista automaticamente
+   =================================================================== */
+
+const ListaMesesSimples = {
+  atualizando: false,
+  ultimaAtualizacao: null,
+  metaMensal: 0,
+
+  // Inicializar
+  init() {
+    console.log("Iniciando sistema simples de atualização da lista...");
 
     // Detectar meta atual
-    detectarMeta() {
-      try {
-        const dadosInfo = document.getElementById("dados-mes-info");
-        if (dadosInfo) {
-          const periodo = dadosInfo.dataset.periodoAtual || "dia";
-          switch (periodo) {
-            case "mes":
-              this.metaAtual = parseFloat(dadosInfo.dataset.metaMensal) || 50;
-              break;
-            case "ano":
-              this.metaAtual = parseFloat(dadosInfo.dataset.metaAnual) || 50;
-              break;
-            default:
-              this.metaAtual = parseFloat(dadosInfo.dataset.metaDiaria) || 50;
-          }
-        }
-      } catch (error) {
-        this.metaAtual = 50;
-      }
-    },
+    this.detectarMeta();
 
-    // Inicializar sistema Ãºnico
-    iniciar() {
-      console.log("ðŸš€ Iniciando sistema Ãºnico sem conflitos...");
+    // Interceptar todas as chamadas para dados_banca.php
+    this.interceptarDadosBanca();
 
-      // Detectar meta
-      this.detectarMeta();
+    // Interceptar submissões de formulários
+    this.interceptarFormularios();
 
-      // Processar imediatamente
-      this.processarCompleto();
-
-      // Intervalo ÃšNICO de 5 segundos (mais espaÃ§ado para evitar conflitos)
-      this.intervalo = setInterval(() => {
-        this.processarCompleto();
-      }, 5000);
-
-      // Hook simples no fetch
-      const originalFetch = window.fetch;
-      window.fetch = async function (...args) {
-        const response = await originalFetch.apply(this, args);
-
-        // Aguardar resposta e processar apÃ³s delay
-        setTimeout(() => {
-          if (SistemaUnicoSemConflito) {
-            SistemaUnicoSemConflito.processarCompleto();
-          }
-        }, 1000);
-
-        return response;
-      };
-
-      console.log("âœ… Sistema Ãºnico ativo - intervalo de 5 segundos");
-    },
-
-    // Parar sistema
-    parar() {
-      if (this.intervalo) {
-        clearInterval(this.intervalo);
-        this.intervalo = null;
-        console.log("ðŸ›‘ Sistema Ãºnico parado");
-      }
-    },
-
-    // Status
-    status() {
-      const linhas = document.querySelectorAll(".gd-linha-dia");
-      const comCores = document.querySelectorAll(
-        ".gd-linha-dia.valor-positivo, .gd-linha-dia.valor-negativo, .gd-linha-dia.valor-zero"
-      );
-
-      return {
-        ativo: !!this.intervalo,
-        totalLinhas: linhas.length,
-        linhasComCores: comCores.length,
-        metaAtual: this.metaAtual,
-        eficiencia:
-          linhas.length > 0
-            ? Math.round((comCores.length / linhas.length) * 100) + "%"
-            : "0%",
-      };
-    },
-  };
-
-  // ========================================
-  // DESABILITAR SISTEMAS ANTIGOS GLOBALMENTE
-  // ========================================
-
-  // Sobrescrever variÃ¡veis globais para evitar reativaÃ§Ã£o
-  window.ListaDiasManagerCorrigido = null;
-  window.SistemaTrofeuCompleto = null;
-  window.SistemaMonitorCores = null;
-  window.BackupCores = null;
-  // NÃ£o sobrescrever MetaMensalManager - isso interrompe o carregamento/atualizaÃ§Ã£o da meta.
-  // Preservamos o gerenciador de meta para que o sistema mensal continue funcionando.
-  // Se necessÃ¡rio descomente a linha abaixo para forÃ§ar limpeza (nÃ£o recomendado):
-  // window.MetaMensalManager = null;
-
-  // Comandos globais simplificados
-  window.SistemaUnico = {
-    iniciar: () => SistemaUnicoSemConflito.iniciar(),
-    parar: () => SistemaUnicoSemConflito.parar(),
-    processar: () => SistemaUnicoSemConflito.processarCompleto(),
-    status: () => SistemaUnicoSemConflito.status(),
-    info: () => {
-      const status = SistemaUnicoSemConflito.status();
-      console.log("ðŸ“Š Status Sistema Ãšnico:", status);
-      return status;
-    },
-  };
-
-  // Comandos de compatibilidade
-  window.Cores = window.SistemaUnico;
-  window.ListaDias = window.SistemaUnico;
-  window.Trofeu = window.SistemaUnico;
-
-  // ========================================
-  // INICIALIZAÃ‡ÃƒO AUTOMÃTICA
-  // ========================================
-
-  function inicializarSistemaUnico() {
-    // Aguardar elementos estarem prontos
+    // Primeira atualização
     setTimeout(() => {
-      SistemaUnicoSemConflito.iniciar();
-    }, 2000);
-  }
+      this.atualizarLista();
+    }, 1000);
 
-  // Rolagem para a linha do dia atual (gd-dia-hoje) dentro de .lista-meses
-  // Rolagem para a linha do dia atual (gd-dia-hoje) com fallback robusto
-  function scrollToHoje() {
+    console.log("Sistema simples ativo!");
+  },
+
+  // Detectar meta mensal
+  detectarMeta() {
     try {
-      const hojeEl = document.querySelector(".gd-dia-hoje");
-      if (!hojeEl) return false;
-
-      // Encontra o ancestral rolÃ¡vel mais prÃ³ximo
-      function findScrollableAncestor(el) {
-        let parent = el.parentElement;
-        while (parent && parent !== document.body) {
-          const style = window.getComputedStyle(parent);
-          const overflowY = style.overflowY;
-          if (
-            (overflowY === "auto" || overflowY === "scroll") &&
-            parent.scrollHeight > parent.clientHeight
-          ) {
-            return parent;
-          }
-          parent = parent.parentElement;
-        }
-        // fallback: pÃ¡gina inteira
-        return document.scrollingElement || document.documentElement;
+      const dadosInfo = document.getElementById("dados-ano-info");
+      if (dadosInfo) {
+        this.metaMensal = parseFloat(dadosInfo.dataset.metaMensal) || 0;
       }
-
-      const container = findScrollableAncestor(hojeEl);
-
-      // Se o container for o documento, usar scrollIntoView no elemento
-      if (
-        container === document.scrollingElement ||
-        container === document.documentElement
-      ) {
-        if (typeof hojeEl.scrollIntoView === "function") {
-          hojeEl.scrollIntoView({
-            behavior: "smooth",
-            block: "center",
-            inline: "nearest",
-          });
-        } else {
-          const rect = hojeEl.getBoundingClientRect();
-          const absoluteY = window.scrollY + rect.top;
-          window.scrollTo({
-            top: absoluteY - window.innerHeight / 2 + rect.height / 2,
-            behavior: "smooth",
-          });
-        }
-      } else {
-        // Calcular posiÃ§Ã£o relativa ao container e rolar esse container
-        const elRect = hojeEl.getBoundingClientRect();
-        const containerRect = container.getBoundingClientRect();
-        const offsetTop = elRect.top - containerRect.top + container.scrollTop;
-        const targetScrollTop = Math.max(
-          0,
-          offsetTop - container.clientHeight / 2 + hojeEl.clientHeight / 2
-        );
-        if (typeof container.scrollTo === "function") {
-          container.scrollTo({ top: targetScrollTop, behavior: "smooth" });
-        } else {
-          container.scrollTop = targetScrollTop;
-        }
-      }
-
-      return true;
-    } catch (e) {
-      console.error("Erro ao rolar para hoje:", e);
-      return false;
+      console.log(`Meta mensal: R$ ${this.metaMensal.toFixed(2)}`);
+    } catch (error) {
+      console.error("Erro ao detectar meta:", error);
     }
-  }
+  },
 
-  // Inicializar baseado no estado do DOM
-  if (document.readyState === "loading") {
-    document.addEventListener("DOMContentLoaded", inicializarSistemaUnico);
-  } else {
-    inicializarSistemaUnico();
-  }
+  // Interceptar dados_banca.php
+  interceptarDadosBanca() {
+    // Hook no fetch
+    const originalFetch = window.fetch;
 
-  // Tentar rolar para hoje agora; se o elemento ainda nÃ£o existir ou for criado depois,
-  // usar MutationObserver para disparar quando a linha for adicionada.
-  (function ensureScrollToHoje() {
-    const tried = scrollToHoje();
-    if (tried) return;
+    window.fetch = async function (...args) {
+      const response = await originalFetch.apply(this, args);
 
-    // Observar a lista de dias se existir, senÃ£o observar o body
-    const lista = document.querySelector(".lista-meses") || document.body;
-    if (!lista) return;
+      try {
+        const url = args[0]?.toString() || "";
 
-    const mo = new MutationObserver((mutations, observer) => {
-      if (document.querySelector(".gd-dia-hoje")) {
-        scrollToHoje();
-        observer.disconnect();
+        if (url.includes("dados_banca")) {
+          console.log("dados_banca.php chamado - atualizando lista");
+
+          setTimeout(() => {
+            if (typeof ListaMesesSimples !== "undefined") {
+              ListaMesesSimples.atualizarLista();
+            }
+          }, 800);
+        }
+      } catch (e) {
+        // Silencioso
+      }
+
+      return response;
+    };
+
+    // Hook no XMLHttpRequest
+    const originalOpen = XMLHttpRequest.prototype.open;
+    XMLHttpRequest.prototype.open = function (method, url, ...args) {
+      if (url && url.includes("dados_banca")) {
+        this.addEventListener("loadend", () => {
+          setTimeout(() => {
+            if (typeof ListaMesesSimples !== "undefined") {
+              console.log("XMLHttpRequest dados_banca.php - atualizando lista");
+              ListaMesesSimples.atualizarLista();
+            }
+          }, 800);
+        });
+      }
+      return originalOpen.apply(this, [method, url, ...args]);
+    };
+
+    console.log("Interceptação de dados_banca.php configurada");
+  },
+
+  // Interceptar formulários
+  interceptarFormularios() {
+    // Submissão de formulários
+    document.addEventListener("submit", (e) => {
+      const form = e.target;
+
+      if (
+        form.id === "form-mentor" ||
+        form.classList.contains("formulario-mentor") ||
+        form.querySelector('input[name="valor_green"]') ||
+        form.querySelector('input[name="valor_red"]')
+      ) {
+        console.log("Formulário submetido - atualizando lista em 1s");
+
+        setTimeout(() => {
+          this.atualizarLista();
+        }, 1000);
       }
     });
 
-    mo.observe(lista, { childList: true, subtree: true });
+    // Cliques em botões
+    document.addEventListener("click", (e) => {
+      const target = e.target;
 
-    // Timeout de seguranÃ§a para desconectar o observer apÃ³s 6s
-    setTimeout(() => {
-      try {
-        mo.disconnect();
-      } catch (e) {}
-    }, 6000);
-  })();
+      if (
+        target.matches('button[type="submit"], .btn-enviar, .btn-confirmar') ||
+        target.closest('button[type="submit"], .btn-enviar, .btn-confirmar')
+      ) {
+        setTimeout(() => {
+          this.atualizarLista();
+        }, 500);
+      }
+    });
 
-  console.log("ðŸŽ¯ Sistema Ãšnico Sem Conflitos carregado!");
-  console.log("ðŸ“‹ CaracterÃ­sticas:");
-  console.log("   âœ… Um Ãºnico intervalo de 5 segundos");
-  console.log("   âœ… NÃ£o reconstrÃ³i HTML desnecessariamente");
-  console.log("   âœ… Aplica cores e trofÃ©us juntos");
-  console.log("   âœ… Remove todos os sistemas conflitantes");
-  console.log("");
-  console.log("ðŸ”§ Comandos Ãºnicos:");
-  console.log("   SistemaUnico.status() - Ver status");
-  console.log("   SistemaUnico.processar() - Processar agora");
-  console.log("   SistemaUnico.parar() - Parar sistema");
+    console.log("Interceptação de formulários configurada");
+  },
 
-  // Export para uso
-  window.SistemaUnicoSemConflito = SistemaUnicoSemConflito;
-  // ========================================================================================================================
-  //                                FIM AS CORES DO CSS PARA FICAR FIXA FUNCIONANDO
-  // ========================================================================================================================
-  //
-  //
-  //
-  //
-})();
+  // Atualizar lista principal
+  async atualizarLista() {
+    if (this.atualizando) return;
 
+    this.atualizando = true;
+
+    try {
+      console.log("Atualizando lista de meses...");
+
+      // Buscar dados via dados_banca.php
+      const response = await fetch("dados_banca.php?periodo=ano", {
+        method: "GET",
+        headers: {
+          "Cache-Control": "no-cache",
+          "X-Requested-With": "XMLHttpRequest",
+        },
+      });
+
+      if (!response.ok) {
+        throw new Error(`HTTP ${response.status}`);
+      }
+
+      const dados = await response.json();
+
+      if (!dados.success) {
+        throw new Error("Erro nos dados retornados");
+      }
+
+      // Atualizar meta mensal
+      this.metaMensal = dados.meta_mensal || 0;
+
+      // Buscar dados mensais específicos
+      await this.buscarDadosMensais();
+
+      this.ultimaAtualizacao = new Date();
+      console.log(
+        "Lista atualizada:",
+        this.ultimaAtualizacao.toLocaleTimeString()
+      );
+    } catch (error) {
+      console.error("Erro ao atualizar lista:", error);
+    } finally {
+      this.atualizando = false;
+    }
+  },
+
+  // Buscar dados mensais e renderizar
+  async buscarDadosMensais() {
+    try {
+      const response = await fetch("obter_dados_ano.php", {
+        method: "GET",
+        headers: {
+          "Cache-Control": "no-cache",
+          "X-Requested-With": "XMLHttpRequest",
+        },
+      });
+
+      if (response.ok) {
+        const dados = await response.json();
+        this.renderizarMeses(dados.dados_por_mes || {});
+      } else {
+        console.warn("Erro ao buscar dados mensais");
+      }
+    } catch (error) {
+      console.error("Erro ao buscar dados mensais:", error);
+    }
+  },
+
+  // Renderizar meses
+  renderizarMeses(dadosPorMes) {
+    const container = document.querySelector(".lista-meses");
+    if (!container) return;
+
+    const scrollTop = container.scrollTop;
+    const ano = new Date().getFullYear();
+    const mesAtual = new Date().getMonth() + 1;
+
+    const nomesMeses = [
+      "Janeiro",
+      "Fevereiro",
+      "Março",
+      "Abril",
+      "Maio",
+      "Junho",
+      "Julho",
+      "Agosto",
+      "Setembro",
+      "Outubro",
+      "Novembro",
+      "Dezembro",
+    ];
+
+    let htmlMeses = "";
+
+    for (let mes = 1; mes <= 12; mes++) {
+      const mesStr = mes.toString().padStart(2, "0");
+      const chave = `${ano}-${mesStr}`;
+      const nomeMes = nomesMeses[mes - 1];
+
+      const dadosMes = dadosPorMes[chave] || {
+        total_valor_green: 0,
+        total_valor_red: 0,
+        total_green: 0,
+        total_red: 0,
+      };
+
+      const saldo =
+        parseFloat(dadosMes.total_valor_green) -
+        parseFloat(dadosMes.total_valor_red);
+      const saldoFormatado = saldo.toLocaleString("pt-BR", {
+        minimumFractionDigits: 2,
+        maximumFractionDigits: 2,
+      });
+
+      // Verificar meta mensal
+      let metaBatida = false;
+      if (this.metaMensal > 0) {
+        metaBatida = saldo >= this.metaMensal;
+      } else {
+        metaBatida = saldo >= 500; // Critério padrão
+      }
+
+      // Classes
+      let classes = "gd-linha-mes";
+      if (saldo > 0) classes += " valor-positivo";
+      else if (saldo < 0) classes += " valor-negativo";
+      else classes += " valor-zero";
+
+      if (mes === mesAtual) classes += " gd-mes-hoje mes-atual";
+
+      // Cores
+      const corValor =
+        saldo === 0
+          ? "texto-cinza"
+          : saldo > 0
+          ? "verde-bold"
+          : "vermelho-bold";
+
+      const classeTexto = saldo === 0 ? "texto-cinza" : "";
+
+      const placarCinza =
+        parseInt(dadosMes.total_green) === 0 &&
+        parseInt(dadosMes.total_red) === 0
+          ? "texto-cinza"
+          : "";
+
+      // Ícone
+      const icone = metaBatida ? "fa-trophy trofeu-icone" : "fa-check";
+
+      htmlMeses += `
+        <div class="${classes}" 
+             data-date="${chave}" 
+             data-meta-mensal-batida="${metaBatida ? "true" : "false"}"
+             data-saldo="${saldo}">
+          
+          <span class="data-mes ${classeTexto}">${nomeMes}</span>
+          
+          <div class="placar-mes">
+            <span class="placar verde-bold ${placarCinza}">${parseInt(
+        dadosMes.total_green
+      )}</span>
+            <span class="placar separador ${placarCinza}">×</span>
+            <span class="placar vermelho-bold ${placarCinza}">${parseInt(
+        dadosMes.total_red
+      )}</span>
+          </div>
+          
+          <span class="valor ${corValor}">R$ ${saldoFormatado}</span>
+          
+          <span class="icone ${classeTexto}">
+            <i class="fa-solid ${icone}"></i>
+          </span>
+        </div>
+      `;
+    }
+
+    container.innerHTML = htmlMeses;
+    container.scrollTop = scrollTop;
+
+    console.log("Meses renderizados com sucesso");
+  },
+
+  // Forçar atualização
+  forcar() {
+    console.log("Forçando atualização...");
+    this.atualizando = false;
+    this.atualizarLista();
+  },
+
+  // Status
+  status() {
+    return {
+      atualizando: this.atualizando,
+      ultimaAtualizacao: this.ultimaAtualizacao,
+      metaMensal: this.metaMensal,
+    };
+  },
+};
+
+// Comandos globais simples
+window.ListaMeses = {
+  atualizar: () => ListaMesesSimples.forcar(),
+  status: () => ListaMesesSimples.status(),
+  info: () => {
+    console.log("Status:", ListaMesesSimples.status());
+    return ListaMesesSimples.status();
+  },
+};
+
+// Auto-inicialização
+function initListaMeses() {
+  if (typeof ListaMesesSimples !== "undefined") {
+    ListaMesesSimples.init();
+  }
+}
+
+if (document.readyState === "loading") {
+  document.addEventListener("DOMContentLoaded", () => {
+    setTimeout(initListaMeses, 500);
+  });
+} else {
+  setTimeout(initListaMeses, 300);
+}
+
+console.log("Sistema simples de lista de meses carregado!");
+console.log("Comandos:");
+console.log("  ListaMeses.atualizar() - Forçar atualização");
+console.log("  ListaMeses.status() - Ver status");
+
+// Export
+window.ListaMesesSimples = ListaMesesSimples;
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+/* ===================================================================
+   - GRAFICO - GRAFICO - GRAFICO - GRAFICO - GRAFICO - GRAFICO -
+   =================================================================== */
+
+/* ===================================================================
+   - GRAFICO - GRAFICO - GRAFICO - GRAFICO - GRAFICO - GRAFICO -
+   =================================================================== */
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
 //
 //
