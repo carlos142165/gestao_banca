@@ -23,12 +23,17 @@
   -------------------------------------------------- */
 :root {
   --titulo-ano-bloco3-margin-top: 0px; /* (ícone + 2025) */
+  --classe-mes-string-margin-top: 1px; /* gap acima de cada .gd-linha-mes */
+  --classe-mes-string-margin-bottom: 1px; /* gap abaixo de cada .gd-linha-mes */
   --area-central-3-margin-top: 0px; /* placar titulo */
   --widget-meta-valor-3-padding-top: 20px; /*  valor da meta */
   --rotulo-restando-meta-ano-margin-top: -3px; /* 'Restando p/ Meta do Ano' */
   --barra-progresso-bloco3-margin-top: 0px; /*  barra de progresso */
   --rotulo-saldo-bloco3-margin-top: 0px; /*  rotulo saldo + valor saldo */
-  --grafico-bloco3-margin-top: 12px; /* GRAFICO */
+  --grafico-bloco3-margin-top: 16px; /* GRAFICO */
+  --lista-meses-margin-top: -10px; /* LISTA MESES - distância padrão entre gráfico e lista */
+  --resumo-ano-header-offset: 60px; /* altura do cabeçalho (usar em resumo-ano calc) */
+  --grafico-width: calc(100% - 32px); /* largura padrão do gráfico/lista */
 
   /* --------------------------------------------------
    - MARGIN TOP - MARGIN TOP - MARGIN TOP -
@@ -51,12 +56,74 @@
 
   /* --------------------------------------------------
    - MARGIN LEFT - MARGIN LEFT - MARGIN LEFT -
-  -------------------------------------------------- */
+    --resumo-ano-padding-top: 76px; /* altura do cabeçalho + folga */
   /**/
   /**/
   /**/
   /**/
   /**/
+}
+
+/* ===================================================================
+   AJUSTES PARA LISTA DE MESES - MESMO TAMANHO DO GRÁFICO
+   =================================================================== */
+
+/* CONTAINER PRINCIPAL DA LISTA DE MESES - LARGURA IGUAL AO GRÁFICO */
+.lista-meses {
+  width: 100% !important;
+  max-width: 100% !important;
+
+  /* Preencher toda a largura do bloco-3 */
+  margin: var(--lista-meses-margin-top, 8px) 0 0 0 !important;
+
+  /* REMOVER SCROLL E OCUPAR TODA ALTURA */
+  overflow: visible !important;
+  overflow-x: hidden !important;
+  overflow-y: visible !important;
+  max-height: none !important;
+  height: auto !important;
+  min-height: auto !important;
+
+  /* MANTER VISUAL */
+  padding: 12px 16px !important;
+  background: rgba(247, 246, 246, 0.95) !important;
+  border-radius: 12px !important;
+  box-sizing: border-box !important;
+
+  /* REMOVER PROPRIEDADES DE SCROLL */
+  scrollbar-width: none !important;
+  scrollbar-color: transparent transparent !important;
+
+  /* ESPAÇAMENTO */
+  gap: 0 !important;
+  row-gap: 2px !important;
+
+  /* GARANTIR VISIBILIDADE TOTAL */
+  contain: none !important;
+  flex-grow: 0 !important;
+  flex-shrink: 0 !important;
+}
+
+/* REMOVER SCROLLBAR COMPLETAMENTE */
+.lista-meses::-webkit-scrollbar {
+  display: none !important;
+  width: 0 !important;
+  height: 0 !important;
+}
+
+.lista-meses::-webkit-scrollbar-track {
+  display: none !important;
+}
+
+.lista-meses::-webkit-scrollbar-thumb {
+  display: none !important;
+}
+
+/* REMOVER GRADIENTES DE SCROLL */
+.lista-meses::before,
+.lista-meses::after {
+  display: none !important;
+  content: none !important;
 }
 
 /* =======================================================================================================================================================
@@ -120,6 +187,14 @@
 /* Assegurar que o bloco-3 seja o containing block */
 .container .bloco.bloco-3 {
   position: relative !important;
+}
+
+/* Ajuste adicional: empurrar o resumo-ano para baixo considerando o cabeçalho absoluto
+   usa a variável --lista-meses-margin-top para permitir override inline */
+.bloco-3 .resumo-ano {
+  margin-top: calc(
+    var(--lista-meses-margin-top, 8px) + var(--resumo-ano-header-offset, 60px)
+  ) !important;
 }
 
 /* Área central do placar anual */
@@ -857,7 +932,8 @@
   scrollbar-color: rgba(148, 163, 184, 0.3) transparent !important;
   height: var(--lista-meses-height, auto) !important;
   max-height: var(--lista-meses-maxheight, 420px) !important;
-  margin-top: var(--lista-meses-margin-top, 20px) !important;
+  padding-top: var(--lista-meses-margin-top, 8px) !important;
+  margin-top: var(--lista-meses-margin-top, 8px) !important;
   box-sizing: border-box !important;
   scrollbar-gutter: stable both-edges !important;
 
@@ -902,7 +978,7 @@
   max-height: 28px !important;
 
   padding: 0 12px !important;
-  margin: 0 0 2px 0 !important;
+  margin: 0 0 var(--classe-mes-string-margin-bottom, 2px) 0 !important;
 
   background: rgba(255, 255, 255, 0.7) !important;
   border: 1px solid rgba(226, 232, 240, 0.5) !important;
@@ -1411,7 +1487,7 @@
 
 /* Otimizar espaçamento entre linhas */
 .gd-linha-mes + .gd-linha-mes {
-  margin-top: 1px !important;
+  margin-top: var(--classe-mes-string-margin-top, 1px) !important;
 }
 
 /* Última linha sem margem inferior */
@@ -1477,7 +1553,7 @@
 
 .grafico-mensal-container-3 {
   position: relative !important;
-  width: calc(100% - 32px) !important;
+  width: var(--grafico-width) !important;
   height: 200px !important;
   margin: 16px auto !important;
   padding: 16px !important;
@@ -1656,71 +1732,62 @@
 }
 
 /* ===================================================================
-   4. LISTA DE MESES - COM SCROLL E ALTURA CONTROLADA
+   AJUSTES PARA O BLOCO 3 - ALTURA COMPLETA
+   =================================================================== */
+
+/* PERMITIR QUE O BLOCO 3 CRESÇA CONFORME NECESSÁRIO */
+.container .bloco.bloco-3 {
+  height: auto !important;
+  max-height: none !important;
+  min-height: auto !important;
+  overflow: visible !important;
+}
+
+/* RESUMO ANO - SEM LIMITAÇÃO DE ALTURA */
+.bloco-3 .resumo-ano {
+  height: auto !important;
+  max-height: none !important;
+  overflow: visible !important;
+  contain: none !important;
+}
+
+/* ===================================================================
+   SOBRESCREVER REGRAS ESPECÍFICAS DO BLOCO 3
    =================================================================== */
 
 .bloco-3 .resumo-ano .lista-meses {
-  position: relative !important;
-  width: calc(100% - 32px) !important;
-  margin: 8px auto 16px auto !important;
+  /* PREENCHE A LARGURA DO BLOCO (SEM DEPENDER DO GRÁFICO) */
+  width: 100% !important;
+  max-width: 100% !important;
+
+  /* Sem margem lateral, ocupa todo o espaço interno do bloco */
+  margin: var(--lista-meses-margin-top, 8px) 0 16px 0 !important;
+
+  /* SEM SCROLL - ALTURA TOTAL */
+  height: auto !important;
+  max-height: none !important;
+  min-height: auto !important;
+  overflow: visible !important;
+  overflow-x: hidden !important;
+  overflow-y: visible !important;
+
+  /* REMOVER SCROLL PROPERTIES */
+  scrollbar-width: none !important;
+  -webkit-overflow-scrolling: auto !important;
+  scroll-behavior: auto !important;
+
+  /* MANTER ESPAÇAMENTO */
   padding: 12px 16px !important;
   box-sizing: border-box !important;
-
-  /* ALTURA CONTROLADA COM SCROLL */
-  height: auto !important;
-  max-height: 280px !important;
-  min-height: 200px !important;
-  flex-grow: 1 !important;
-  flex-shrink: 1 !important;
-
-  /* SCROLL CONFIGURADO */
-  overflow-x: hidden !important;
-  overflow-y: auto !important;
-  scrollbar-width: thin !important;
-  scrollbar-color: rgba(148, 163, 184, 0.4) rgba(248, 249, 250, 0.3) !important;
 
   /* VISUAL */
   background: rgba(247, 246, 246, 0.95) !important;
   border-radius: 12px !important;
 
-  /* ESPAÇAMENTO */
-  gap: 0 !important;
-  row-gap: 2px !important;
-
-  /* GARANTIR QUE FIQUE DENTRO DO BLOCO */
-  contain: layout style !important;
-}
-
-/* SCROLLBAR CUSTOMIZADA */
-.bloco-3 .resumo-ano .lista-meses::-webkit-scrollbar {
-  width: 6px !important;
-  background: rgba(248, 249, 250, 0.3) !important;
-  border-radius: 3px !important;
-}
-
-.bloco-3 .resumo-ano .lista-meses::-webkit-scrollbar-track {
-  background: rgba(248, 249, 250, 0.5) !important;
-  border-radius: 3px !important;
-  margin: 4px 0 !important;
-}
-
-.bloco-3 .resumo-ano .lista-meses::-webkit-scrollbar-thumb {
-  background: linear-gradient(
-    180deg,
-    rgba(148, 163, 184, 0.6),
-    rgba(148, 163, 184, 0.4)
-  ) !important;
-  border-radius: 3px !important;
-  border: 1px solid rgba(255, 255, 255, 0.2) !important;
-  min-height: 20px !important;
-}
-
-.bloco-3 .resumo-ano .lista-meses::-webkit-scrollbar-thumb:hover {
-  background: linear-gradient(
-    180deg,
-    rgba(148, 163, 184, 0.8),
-    rgba(148, 163, 184, 0.6)
-  ) !important;
+  /* SEM CONTENÇÃO */
+  contain: none !important;
+  flex-grow: 0 !important;
+  flex-shrink: 0 !important;
 }
 
 /* ===================================================================
@@ -1740,7 +1807,7 @@
   max-height: 32px !important;
 
   padding: 0 12px !important;
-  margin: 0 0 6px 0 !important;
+  margin: 0 0 var(--classe-mes-string-margin-bottom, 6px) 0 !important;
 
   background: rgba(255, 255, 255, 0.85) !important;
   border: 1px solid rgba(226, 232, 240, 0.7) !important;
@@ -1787,69 +1854,7 @@
    4. LISTA DE MESES - COM SCROLL E ALTURA CONTROLADA
    =================================================================== */
 
-.bloco-3 .resumo-ano .lista-meses {
-  position: relative !important;
-  width: calc(100% - 32px) !important;
-  margin: 8px auto 16px auto !important;
-  padding: 12px 16px !important;
-  box-sizing: border-box !important;
-
-  /* ALTURA CONTROLADA COM SCROLL */
-  height: auto !important;
-  max-height: 280px !important;
-  min-height: 200px !important;
-  flex-grow: 1 !important;
-  flex-shrink: 1 !important;
-
-  /* SCROLL CONFIGURADO */
-  overflow-x: hidden !important;
-  overflow-y: auto !important;
-  scrollbar-width: thin !important;
-  scrollbar-color: rgba(148, 163, 184, 0.4) rgba(248, 249, 250, 0.3) !important;
-
-  /* VISUAL */
-  background: rgba(247, 246, 246, 0.95) !important;
-  border-radius: 12px !important;
-
-  /* ESPAÇAMENTO */
-  gap: 0 !important;
-  row-gap: 2px !important;
-
-  /* GARANTIR QUE FIQUE DENTRO DO BLOCO */
-  contain: layout style !important;
-}
-
-/* SCROLLBAR CUSTOMIZADA */
-.bloco-3 .resumo-ano .lista-meses::-webkit-scrollbar {
-  width: 6px !important;
-  background: rgba(248, 249, 250, 0.3) !important;
-  border-radius: 3px !important;
-}
-
-.bloco-3 .resumo-ano .lista-meses::-webkit-scrollbar-track {
-  background: rgba(248, 249, 250, 0.5) !important;
-  border-radius: 3px !important;
-  margin: 4px 0 !important;
-}
-
-.bloco-3 .resumo-ano .lista-meses::-webkit-scrollbar-thumb {
-  background: linear-gradient(
-    180deg,
-    rgba(148, 163, 184, 0.6),
-    rgba(148, 163, 184, 0.4)
-  ) !important;
-  border-radius: 3px !important;
-  border: 1px solid rgba(255, 255, 255, 0.2) !important;
-  min-height: 20px !important;
-}
-
-.bloco-3 .resumo-ano .lista-meses::-webkit-scrollbar-thumb:hover {
-  background: linear-gradient(
-    180deg,
-    rgba(148, 163, 184, 0.8),
-    rgba(148, 163, 184, 0.6)
-  ) !important;
-}
+/* (duplicate removed - consolidated list styles are defined earlier) */
 
 /* ===================================================================
    5. LINHAS DOS MESES - OTIMIZADAS E COMPACTAS

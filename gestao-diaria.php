@@ -1743,8 +1743,8 @@ ob_end_flush();
 })();
 </script>
 
-        <!-- ===== LISTA DE MESES DO ANO ===== -->
-        <div class="lista-meses">
+  <!-- ===== LISTA DE MESES DO ANO ===== -->
+  <div class="lista-meses">
             
 <?php
 // ===== CONFIGURAÇÕES E VARIÁVEIS =====
