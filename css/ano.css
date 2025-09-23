@@ -1,4 +1,79 @@
-﻿/* ===================================================================
+﻿/**/
+/**/
+/**/
+/**/
+/**/
+
+/**/
+/**/
+/**/
+/**/
+/**/
+/**/
+/* =======================================================================================================================================================
+     - ROOT- ROOT - ROOT  - ROOT- ROOT - ROOT  - ROOT- ROOT - ROOT  - ROOT- ROOT - ROOT  - ROOT- ROOT - ROOT - ROOT- ROOT - ROOT
+  =======================================================================================================================================================*/
+/**/
+/**/
+/**/
+/**/
+/**/
+/* --------------------------------------------------
+   - MARGIN TOP - MARGIN TOP - MARGIN TOP -
+  -------------------------------------------------- */
+:root {
+  --titulo-ano-bloco3-margin-top: 0px; /* (ícone + 2025) */
+  --area-central-3-margin-top: 0px; /* placar titulo */
+  --widget-meta-valor-3-padding-top: 20px; /*  valor da meta */
+  --rotulo-restando-meta-ano-margin-top: -3px; /* 'Restando p/ Meta do Ano' */
+  --barra-progresso-bloco3-margin-top: 0px; /*  barra de progresso */
+  --rotulo-saldo-bloco3-margin-top: 0px; /*  rotulo saldo + valor saldo */
+  --grafico-bloco3-margin-top: 12px; /* GRAFICO */
+
+  /* --------------------------------------------------
+   - MARGIN TOP - MARGIN TOP - MARGIN TOP -
+  -------------------------------------------------- */
+  /**/
+  /**/
+  /**/
+  /**/
+  /**/
+  /* --------------------------------------------------
+   - MARGIN LEFT - MARGIN RIGHT - MARGIN LEFT -
+  -------------------------------------------------- */
+  --titulo-ano-bloco3-margin-left: 0px; /* (ícone + 2025) */
+  --titulo-ano-icone-gap: 7px; /* Espaçamento entre ícone calendário e texto do ano */
+  --area-central-3-margin-left: 0px; /* placar titulo */
+  --widget-meta-valor-3-margin-left: 0px; /*  valor da meta */
+  --rotulo-restando-meta-ano-margin-left: 0px; /* 'Restando p/ Meta do Ano' */
+  --barra-progresso-bloco3-margin-left: 0px; /*  barra de progresso */
+  --rotulo-saldo-bloco3-margin-left: 0px; /*  rotulo saldo + valor saldo */
+
+  /* --------------------------------------------------
+   - MARGIN LEFT - MARGIN LEFT - MARGIN LEFT -
+  -------------------------------------------------- */
+  /**/
+  /**/
+  /**/
+  /**/
+  /**/
+}
+
+/* =======================================================================================================================================================
+     - ROOT- ROOT - ROOT  - ROOT- ROOT - ROOT  - ROOT- ROOT - ROOT  - ROOT- ROOT - ROOT  - ROOT- ROOT - ROOT - ROOT- ROOT - ROOT
+  =======================================================================================================================================================*/
+/**/
+/**/
+/**/
+/**/
+/**/
+/**/
+/**/
+/**/
+/**/
+/**/
+/**/
+/* ===================================================================
    CSS DO TOPO - BLOCO 3 (ANUAL) - CAMPO ARMAZENA DATA E PLACAR
    Baseado no Bloco 2 com adaptações para período anual
    =================================================================== */
@@ -57,6 +132,8 @@
   position: relative !important;
   z-index: 3 !important;
   padding: 0 12px !important;
+  margin-top: var(--area-central-3-margin-top, 0px) !important;
+  margin-left: var(--area-central-3-margin-left, 0px) !important;
   box-sizing: border-box !important;
 }
 
@@ -94,7 +171,7 @@
   z-index: 6 !important;
   display: flex !important;
   align-items: center !important;
-  gap: 5px !important;
+  gap: var(--titulo-ano-icone-gap, 5px) !important;
 }
 
 /* ÍCONE DO CALENDÁRIO NO TÍTULO ANUAL */
@@ -113,6 +190,11 @@
   padding: 0 !important;
   margin: 0 !important;
   line-height: 0 !important;
+}
+
+/* Aplicar margin-top do root para o container do gráfico mensal (bloco 3) */
+.container .grafico-mensal-container-3 {
+  margin-top: var(--grafico-bloco3-margin-top, 12px) !important;
 }
 
 /* PLACAR CENTRAL ANUAL - VISÍVEL E CENTRALIZADO */
@@ -351,7 +433,8 @@
   margin-left: var(--widget-meta-valor-3-margin-left, 0px) !important;
   padding-left: 0 !important;
   width: auto !important;
-  margin-top: var(--widget-meta-valor-3-margin-top, 5px) !important;
+  margin-top: 25px !important;
+  padding-top: var(--widget-meta-valor-3-padding-top, 20px) !important;
 }
 
 /* ÍCONE DA MOEDA ANUAL */
@@ -1351,6 +1434,226 @@
 /**/
 /**/
 /**/
+/* ===================================================================
+  - GRAFICO - GRAFICO - GRAFICO - GRAFICO - GRAFICO - GRAFICO -
+   =================================================================== */
+/* old graph CSS block removed — consolidated to final clean version above */
+
+/* ===================================================================
+   LABELS DOS MESES - ALINHAMENTO PERFEITO
+   =================================================================== */
+
+.grafico-labels-3 {
+  position: relative !important;
+  width: 100% !important;
+  height: 30px !important;
+  display: flex !important;
+  align-items: center !important;
+  justify-content: space-between !important; /* Mesmo alinhamento das barras */
+  padding: 8px 8px 0 8px !important; /* Mesmo padding das barras */
+  margin-top: 4px !important;
+}
+
+.label-mes-3 {
+  flex: 1 !important; /* Cada label ocupa 1/12 do espaço */
+  text-align: center !important;
+  font-family: "Rajdhani", sans-serif !important;
+  font-size: 9px !important;
+  font-weight: 600 !important;
+  color: #64748b !important;
+  text-transform: uppercase !important;
+  letter-spacing: 0.5px !important;
+  max-width: calc(100% / 12) !important; /* Mesmo tamanho das barras */
+}
+
+.label-mes-3.atual {
+  color: #10b981 !important;
+  font-weight: 700 !important;
+}
+
+/* ===================================================================
+   CSS GRÁFICO MENSAL - VERSÃO FINAL LIMPA
+   =================================================================== */
+
+.grafico-mensal-container-3 {
+  position: relative !important;
+  width: calc(100% - 32px) !important;
+  height: 200px !important;
+  margin: 16px auto !important;
+  padding: 16px !important;
+  background: rgba(255, 255, 255, 0.95) !important;
+  border-radius: 12px !important;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.06) !important;
+  overflow: hidden !important;
+  box-sizing: border-box !important;
+}
+
+.grafico-mensal-3 {
+  position: relative !important;
+  width: 100% !important;
+  height: 100% !important;
+  display: flex !important;
+  flex-direction: column !important;
+}
+
+.grafico-canvas-3 {
+  position: relative !important;
+  width: 100% !important;
+  height: calc(100% - 30px) !important;
+  background: linear-gradient(
+    to top,
+    rgba(248, 250, 252, 0.8) 0%,
+    rgba(241, 245, 249, 0.4) 100%
+  ) !important;
+  border-radius: 8px !important;
+  overflow: hidden !important;
+}
+
+.grafico-grid-3 {
+  position: absolute !important;
+  top: 0 !important;
+  left: 0 !important;
+  right: 0 !important;
+  bottom: 0 !important;
+  background-image: linear-gradient(
+      to top,
+      rgba(148, 163, 184, 0.1) 1px,
+      transparent 1px
+    ),
+    linear-gradient(to right, rgba(148, 163, 184, 0.1) 1px, transparent 1px) !important;
+  background-size: 100% 20%, 8.33% 100% !important;
+  pointer-events: none !important;
+}
+
+/* ===================================================================
+   CONTAINER DAS BARRAS - ALINHAMENTO PERFEITO
+   =================================================================== */
+
+/* CONTAINER PARA CADA MÊS - 12 CONTAINERS IGUAIS */
+.barra-mes-3 {
+  flex: 1 !important;
+  display: flex !important;
+  flex-direction: row !important;
+  align-items: flex-end !important;
+  justify-content: center !important;
+  height: 100% !important;
+  position: relative !important;
+  max-width: calc(100% / 12) !important;
+  min-width: 20px !important;
+  gap: 2px !important;
+}
+
+/* PILARES INDIVIDUAIS */
+.barra-valor-3 {
+  width: 6px !important;
+  border-radius: 2px 2px 0 0 !important;
+  transition: all 0.3s ease !important;
+  position: relative !important;
+  min-height: 0 !important;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.15) !important;
+}
+
+/* ===================================================================
+   LABELS DOS MESES - ALINHAMENTO PERFEITO
+   =================================================================== */
+
+.label-mes-3 {
+  flex: 1 !important;
+  text-align: center !important;
+  font-family: "Rajdhani", sans-serif !important;
+  font-size: 9px !important;
+  font-weight: 600 !important;
+  color: #64748b !important;
+  text-transform: uppercase !important;
+  letter-spacing: 0.5px !important;
+  max-width: calc(100% / 12) !important;
+}
+
+/* ===================================================================
+   RESPONSIVIDADE
+   =================================================================== */
+
+@media (max-width: 768px) {
+  .grafico-mensal-container-3 {
+    height: 180px !important;
+    margin: 12px auto !important;
+    padding: 12px !important;
+  }
+
+  .barra-valor-3 {
+    width: 5px !important;
+  }
+
+  .barra-mes-3 {
+    min-width: 15px !important;
+    gap: 1px !important;
+  }
+
+  .label-mes-3 {
+    font-size: 8px !important;
+  }
+}
+
+@media (max-width: 480px) {
+  .grafico-mensal-container-3 {
+    height: 160px !important;
+    margin: 10px auto !important;
+    padding: 10px !important;
+  }
+
+  .barra-valor-3 {
+    width: 4px !important;
+  }
+
+  .barra-mes-3 {
+    min-width: 12px !important;
+    gap: 1px !important;
+  }
+
+  .label-mes-3 {
+    font-size: 7px !important;
+  }
+
+  .grafico-barras-3 {
+    padding: 0 4px !important;
+  }
+
+  .grafico-labels-3 {
+    padding: 8px 4px 0 4px !important;
+  }
+}
+
+/* ===================================================================
+   LINHA DE BASE ZERO
+   =================================================================== */
+
+.grafico-canvas-3::before {
+  content: "" !important;
+  position: absolute !important;
+  bottom: 0 !important;
+  left: 0 !important;
+  right: 0 !important;
+  height: 1px !important;
+  background: rgba(100, 116, 139, 0.4) !important;
+  z-index: 5 !important;
+}
+
+/* ===================================================================
+   GARANTIR ALINHAMENTO PERFEITO
+   =================================================================== */
+
+.grafico-mensal-container-3 * {
+  box-sizing: border-box !important;
+}
+
+/* Garantir que todos os 12 meses tenham o mesmo espaço */
+/* Duplicated grafico-barras and flex-basis rules removed — consolidated in the single clean block above */
+
+.grafico-labels-3 > .label-mes-3 {
+  flex-basis: calc(100% / 12) !important;
+  flex-grow: 0 !important;
+  flex-shrink: 0 !important;
+}
 
 /* ===================================================================
    4. LISTA DE MESES - COM SCROLL E ALTURA CONTROLADA
@@ -1844,16 +2147,3 @@
   box-shadow: 0 1px 4px rgba(67, 70, 77, 0.08) inset !important;
   font-weight: 700 !important;
 }
-/**/
-/**/
-/**/
-/**/
-/**/
-/**/
-/**/
-/**/
-/**/
-/**/
-/* ===================================================================
-   TESTE
-   =================================================================== */

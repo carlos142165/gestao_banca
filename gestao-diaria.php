@@ -1230,7 +1230,6 @@ ob_end_flush();
         </div>
 
 <!-- ===== GRÁFICO DE TOTAIS MENSAIS - VERSÃO LIMPA ===== -->
-<!-- ===== GRÁFICO DE TOTAIS MENSAIS - VERSÃO LIMPA ===== -->
 <div class="grafico-mensal-container-3">
     <div class="grafico-mensal-3" id="grafico-mensal-3">
         <div class="grafico-canvas-3">
@@ -1269,7 +1268,7 @@ ob_end_flush();
     height: 130px !important;
     margin: 12px auto !important;
     padding: 12px !important;
-    background: rgba(255, 255, 255, 0.95) !important;
+    background: #f3f5f4 !important;
     border-radius: 12px !important;
     box-shadow: 0 2px 8px rgba(0, 0, 0, 0.06) !important;
     overflow: hidden !important;
