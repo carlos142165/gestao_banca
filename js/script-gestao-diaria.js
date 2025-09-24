@@ -51,14 +51,16 @@ document.addEventListener("DOMContentLoaded", function () {
           const rootStyle = getComputedStyle(document.documentElement);
           // Prefer bloco-1 specific variable, fallback to general one
           const fsB1 = rootStyle.getPropertyValue("--fs-placar-top-b1") || "";
-          const fs = fsB1.trim() || (rootStyle.getPropertyValue("--fs-placar-top") || "").trim();
+          const fs =
+            fsB1.trim() ||
+            (rootStyle.getPropertyValue("--fs-placar-top") || "").trim();
           if (fs) {
             separador.style.setProperty("font-size", fs, "important");
           }
           // Apply font-weight from root variable and force with important (default to 300)
           const fwRaw = rootStyle.getPropertyValue("--fs-placar-weight") || "";
-          const fw = fwRaw.trim() || '300';
-          separador.style.setProperty('font-weight', fw, 'important');
+          const fw = fwRaw.trim() || "300";
+          separador.style.setProperty("font-weight", fw, "important");
         }
       } catch (e) {
         // silently ignore if environment doesn't support setProperty priority
@@ -1100,15 +1102,15 @@ const MentorManager = {
         card.classList.add("card-neutro");
       }
 
-          // Apply font-weight from root variable and force with important
-          try {
-            const fw = rootStyle.getPropertyValue('--fs-placar-weight') || '';
-            if (fw && fw.trim() !== '') {
-              separador.style.setProperty('font-weight', fw.trim(), 'important');
-            }
-          } catch (e) {
-            // ignore
-          }
+      // Apply font-weight from root variable and force with important
+      try {
+        const fw = rootStyle.getPropertyValue("--fs-placar-weight") || "";
+        if (fw && fw.trim() !== "") {
+          separador.style.setProperty("font-weight", fw.trim(), "important");
+        }
+      } catch (e) {
+        // ignore
+      }
       // Garante que as imagens têm fallback
       const img = card.querySelector(".mentor-img");
       if (img && !img.hasAttribute("onerror")) {
@@ -1783,7 +1785,17 @@ const TelaEdicaoManager = {
 
     const { info, cor } = this.processarDadosEntrada(entrada);
 
-    div.style.borderLeft = `6px solid ${cor}`;
+    // Use semantic classes instead of inline styles so global CSS can control appearance
+    if (cor === "#4CAF50" || cor.toLowerCase().indexOf("4caf50") !== -1) {
+      div.classList.add("entrada-card", "entrada-card--positivo");
+    } else if (
+      cor === "#e74c3c" ||
+      cor.toLowerCase().indexOf("e74c3c") !== -1
+    ) {
+      div.classList.add("entrada-card", "entrada-card--negativo");
+    } else {
+      div.classList.add("entrada-card");
+    }
     div.innerHTML = `
       <div class="entrada-info">${info}</div>
       <div class="entrada-acoes">
@@ -4807,7 +4819,20 @@ console.log(
     }
 
     toast.innerHTML = `${icon}<span>${message}</span>`;
-    toast.style.borderLeft = `4px solid ${borderColor}`;
+    // Use CSS classes for toast borders instead of inline styles
+    if (
+      borderColor === "#48bb78" ||
+      borderColor.toLowerCase().indexOf("48bb78") !== -1
+    ) {
+      toast.classList.add("toast--sucesso");
+    } else if (
+      borderColor === "#e53e3e" ||
+      borderColor.toLowerCase().indexOf("e53e3e") !== -1
+    ) {
+      toast.classList.add("toast--erro");
+    } else {
+      // default
+    }
     toast.style.transform = "translateX(0)";
 
     // Remove após 4 segundos
@@ -5238,6 +5263,10 @@ async function executarExclusaoDefinitiva(mentorId, nome) {
 // Toast customizado
 function mostrarToastCustom(mensagem, tipo) {
   const toast = document.createElement("div");
+  toast.classList.add(
+    "toast",
+    tipo === "sucesso" ? "toast--sucesso" : "toast--erro"
+  );
   toast.style.cssText = `
         position: fixed;
         top: 30px;
@@ -5252,7 +5281,6 @@ function mostrarToastCustom(mensagem, tipo) {
         font-weight: 600;
         transform: translateX(400px);
         transition: transform 0.4s cubic-bezier(0.4, 0, 0.2, 1);
-        border-left: 4px solid ${tipo === "sucesso" ? "#48bb78" : "#e53e3e"};
         max-width: 350px;
         font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
     `;

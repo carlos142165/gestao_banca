@@ -3196,7 +3196,7 @@ document.addEventListener('DOMContentLoaded', function() {
   color: #155724;
   background: linear-gradient(145deg, rgba(40, 167, 69, 0.12), rgba(40, 167, 69, 0.06));
   border: 1px solid rgba(40, 167, 69, 0.2);
-  border-left: 4px solid #28a745;
+  border-left: 4px solid var(--gd-valor-positive-border, #28a745);
   box-shadow: 
     0 2px 8px rgba(40, 167, 69, 0.15),
     0 1px 3px rgba(40, 167, 69, 0.1);
@@ -3208,7 +3208,7 @@ document.addEventListener('DOMContentLoaded', function() {
   color: #721c24;
   background: linear-gradient(145deg, rgba(220, 53, 69, 0.12), rgba(220, 53, 69, 0.06));
   border: 1px solid rgba(220, 53, 69, 0.2);
-  border-left: 4px solid #dc3545;
+  border-left: 4px solid var(--gd-valor-negative-border, #dc3545);
   box-shadow: 
     0 2px 8px rgba(220, 53, 69, 0.15),
     0 1px 3px rgba(220, 53, 69, 0.1);
@@ -3220,7 +3220,7 @@ document.addEventListener('DOMContentLoaded', function() {
   color: #495057;
   background: linear-gradient(145deg, rgba(108, 117, 125, 0.12), rgba(108, 117, 125, 0.06));
   border: 1px solid rgba(108, 117, 125, 0.2);
-  border-left: 4px solid #6c757d;
+  border-left: 4px solid var(--gd-valor-zero-border, #6c757d);
   box-shadow: 
     0 2px 8px rgba(108, 117, 125, 0.15),
     0 1px 3px rgba(108, 117, 125, 0.1);
@@ -5453,8 +5453,10 @@ if (toggle && menu && hiddenInput) {
 <!-- -->
 <!-- -->
     <script src="js/modal-confirmacao.js"></script>
+</body>
+</html>
 
-
+  <script src="js/override-root-styles.js" defer></script>
 
 </body>
 </html>

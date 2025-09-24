@@ -1,3 +1,844 @@
+/* ===== CSS COMPLEMENTAR PARA FUNDO E BORDA DO DIA ATUAL ===== */
+/* Adicione este CSS ao seu arquivo estilo-campo-mes.css */
+
+/* ===== FUNDO E BORDA - DIA ATUAL COM VALOR POSITIVO ===== */
+.dia-atual-css-control.gd-dia-hoje.valor-positivo,
+.dia-atual-css-control.gd-dia-hoje[data-dia-hoje-estado="positivo"] {
+  background: linear-gradient(
+    90deg,
+    #edfcf0fa,
+    rgba(230, 253, 242, 0.98)
+  ) !important;
+  border-left: var(--dia-atual-positivo-border-left-width, 4px)
+    var(--dia-atual-positivo-border-left-style, solid)
+    var(--dia-atual-positivo-border-left-color, #058b32) !important;
+  padding-left: 13px !important;
+}
+
+/* Final override: força visibilidade da borda esquerda para o dia atual
+   Usa variáveis do :root e alta especificidade para vencer overrides
+   Mantém variações por estado (positivo/negativo/zero) */
+html
+  body
+  .container
+  .bloco.bloco-2
+  .resumo-mes
+  .lista-dias
+  .gd-linha-dia.gd-dia-hoje,
+html body .container .bloco.bloco-2 .resumo-mes .lista-dias .gd-linha-dia.hoje {
+  border-left-width: var(--dia-atual-border-left-width) !important;
+  border-left-style: var(--dia-atual-border-left-style) !important;
+  border-left-color: var(--dia-atual-zero-border-left-color) !important;
+  padding-left: var(--dia-atual-padding-left) !important;
+  box-shadow: none !important;
+}
+
+html
+  body
+  .container
+  .bloco.bloco-2
+  .resumo-mes
+  .lista-dias
+  .gd-linha-dia.gd-dia-hoje.valor-positivo,
+html
+  body
+  .container
+  .bloco.bloco-2
+  .resumo-mes
+  .lista-dias
+  .gd-linha-dia.hoje.valor-positivo {
+  border-left-color: var(--dia-atual-positivo-border-left-color) !important;
+}
+
+html
+  body
+  .container
+  .bloco.bloco-2
+  .resumo-mes
+  .lista-dias
+  .gd-linha-dia.gd-dia-hoje.valor-negativo,
+html
+  body
+  .container
+  .bloco.bloco-2
+  .resumo-mes
+  .lista-dias
+  .gd-linha-dia.hoje.valor-negativo {
+  border-left-color: var(--dia-atual-negativo-border-left-color) !important;
+}
+
+html
+  body
+  .container
+  .bloco.bloco-2
+  .resumo-mes
+  .lista-dias
+  .gd-linha-dia.gd-dia-hoje.valor-zero,
+html
+  body
+  .container
+  .bloco.bloco-2
+  .resumo-mes
+  .lista-dias
+  .gd-linha-dia.hoje.valor-zero {
+  border-left-color: var(--dia-atual-zero-border-left-color) !important;
+}
+
+/* ===== FUNDO E BORDA - DIA ATUAL COM VALOR NEGATIVO ===== */
+.dia-atual-css-control.gd-dia-hoje.valor-negativo,
+.dia-atual-css-control.gd-dia-hoje[data-dia-hoje-estado="negativo"] {
+  background: linear-gradient(
+    90deg,
+    rgba(255, 242, 242, 0.98),
+    rgba(255, 238, 238, 0.98)
+  ) !important;
+  border-left: var(--dia-atual-negativo-border-left-width, 4px)
+    var(--dia-atual-negativo-border-left-style, solid)
+    var(--dia-atual-negativo-border-left-color, #ec0606) !important;
+  padding-left: 13px !important;
+}
+
+/* ===== FUNDO E BORDA - DIA ATUAL COM VALOR ZERO ===== */
+.dia-atual-css-control.gd-dia-hoje.valor-zero,
+.dia-atual-css-control.gd-dia-hoje[data-dia-hoje-estado="zero"] {
+  background: linear-gradient(
+    90deg,
+    rgba(255, 255, 255, 0.98),
+    rgba(248, 249, 250, 0.98)
+  ) !important;
+  border-left: var(--dia-atual-zero-border-left-width, 4px)
+    var(--dia-atual-zero-border-left-style, solid)
+    var(--dia-atual-zero-border-left-color, #43464d) !important;
+  padding-left: 13px !important;
+}
+
+/* ===== GARANTIR QUE NÃO TENHA TRANSIÇÕES (ANTI-PISCAR) ===== */
+.dia-atual-css-control.gd-dia-hoje,
+.dia-atual-css-control.gd-dia-hoje *,
+[data-dia-hoje-estado].gd-dia-hoje,
+[data-dia-hoje-estado].gd-dia-hoje * {
+  transition: none !important;
+  animation: none !important;
+  transform: none !important;
+  will-change: auto !important;
+}
+
+/* ===== CORES DOS ELEMENTOS INTERNOS USANDO VARIÁVEIS DO :ROOT ===== */
+
+/* Data */
+.dia-atual-css-control.gd-dia-hoje .data {
+  color: var(--dia-atual-data-color, #111827) !important;
+  font-weight: var(--dia-atual-data-weight, 700) !important;
+  opacity: 1 !important;
+}
+
+/* Placar */
+.dia-atual-css-control.gd-dia-hoje .placar-dia,
+.dia-atual-css-control.gd-dia-hoje .placar-dia * {
+  color: var(--dia-atual-placar-color, #111827) !important;
+  font-weight: var(--dia-atual-placar-weight, 700) !important;
+  opacity: 1 !important;
+}
+
+/* Valor */
+.dia-atual-css-control.gd-dia-hoje .valor {
+  color: var(--dia-atual-valor-color, #111827) !important;
+  font-weight: var(--dia-atual-valor-weight, 700) !important;
+  opacity: 1 !important;
+}
+
+/* Ícone */
+.dia-atual-css-control.gd-dia-hoje .icone i {
+  color: var(--dia-atual-icone-color, #111827) !important;
+  font-weight: var(--dia-atual-icone-weight, 700) !important;
+  opacity: 1 !important;
+}
+
+/* ===== FORÇA MÁXIMA - SOBRESCREVER ESTILOS INLINE ===== */
+.dia-atual-css-control.gd-dia-hoje[style] {
+  background: inherit !important;
+  border-left: var(--dia-atual-border-left-width, 4px)
+    var(--dia-atual-border-left-style, solid)
+    var(--dia-atual-border-left-color, #43464d) !important;
+  padding-left: var(--dia-atual-padding-left, 13px) !important;
+}
+
+/* ===== PREVENIR CONFLITOS COM OUTROS SISTEMAS ===== */
+.dia-atual-css-control {
+  position: relative !important;
+  z-index: 1 !important;
+}
+
+/* ===== ALTA ESPECIFICIDADE PARA GARANTIR APLICAÇÃO ===== */
+html
+  body
+  .container
+  .bloco.bloco-2
+  .resumo-mes
+  .lista-dias
+  .dia-atual-css-control.gd-dia-hoje.valor-positivo {
+  background: linear-gradient(
+    90deg,
+    #edfcf0fa,
+    rgba(230, 253, 242, 0.98)
+  ) !important;
+  border-left: 4px solid var(--dia-atual-positivo-border-left-color, #058b32) !important;
+  padding-left: 13px !important;
+}
+
+html
+  body
+  .container
+  .bloco.bloco-2
+  .resumo-mes
+  .lista-dias
+  .dia-atual-css-control.gd-dia-hoje.valor-negativo {
+  background: linear-gradient(
+    90deg,
+    rgba(255, 242, 242, 0.98),
+    rgba(255, 238, 238, 0.98)
+  ) !important;
+  border-left: 4px solid var(--dia-atual-negativo-border-left-color, #ec0606) !important;
+  padding-left: 13px !important;
+}
+
+html
+  body
+  .container
+  .bloco.bloco-2
+  .resumo-mes
+  .lista-dias
+  .dia-atual-css-control.gd-dia-hoje.valor-zero {
+  background: linear-gradient(
+    90deg,
+    rgba(255, 255, 255, 0.98),
+    rgba(248, 249, 250, 0.98)
+  ) !important;
+  border-left: 4px solid var(--dia-atual-zero-border-left-color, #43464d) !important;
+  padding-left: 13px !important;
+}
+
+/* =======================================================================================================================================================
+                                        CORREÇÃO DEFINITIVA - CORES DO DIA ATUAL
+  =======================================================================================================================================================*/
+
+/* Classes para substituir inline styles aplicados por scripts */
+.entrada-card {
+  padding: 12px !important;
+  border-radius: 8px !important;
+  background: #fff !important;
+  box-shadow: 0 1px 2px rgba(0, 0, 0, 0.03) !important;
+  border-left: 4px solid transparent !important;
+}
+.entrada-card.entrada-card--positivo {
+  border-left-color: var(--gd-valor-positive-border, #00a651) !important;
+}
+.entrada-card.entrada-card--negativo {
+  border-left-color: var(--gd-valor-negative-border, #d64545) !important;
+}
+
+/* Toast classes to replace inline borderLeft */
+.toast--sucesso {
+  border-left: 4px solid var(--gd-valor-positive-border, #00a651) !important;
+}
+.toast--erro {
+  border-left: 4px solid var(--gd-valor-negative-border, #d64545) !important;
+}
+
+/* ===== CORES DO DIA ATUAL - SELETORES CORRIGIDOS E ESPECÍFICOS ===== */
+
+/* Dia atual + valor positivo (verde) */
+html
+  body
+  .container
+  .bloco.bloco-2
+  .resumo-mes
+  .lista-dias
+  .gd-linha-dia.valor-positivo.gd-dia-hoje,
+html
+  body
+  .container
+  .bloco.bloco-2
+  .resumo-mes
+  .lista-dias
+  .gd-linha-dia.gd-dia-hoje.valor-positivo,
+html
+  body
+  .container
+  .bloco.bloco-2
+  .resumo-mes
+  .lista-dias
+  .gd-linha-dia.valor-positivo[data-date*="2025"]:has(.gd-dia-hoje),
+.gd-linha-dia.valor-positivo.gd-dia-hoje,
+.gd-linha-dia.gd-dia-hoje.valor-positivo {
+  /* Background verde claro */
+  background: linear-gradient(
+    90deg,
+    #edfcf0fa,
+    rgba(230, 253, 242, 0.98)
+  ) !important;
+
+  /* Borda esquerda verde forte */
+  border-left: 4px solid var(--dia-atual-positivo-border-left-color, #058b32) !important;
+
+  /* Padding para acomodar a borda */
+  padding-left: 13px !important;
+
+  /* Remover outras sombras */
+  box-shadow: none !important;
+}
+
+/* Elementos internos do dia atual positivo */
+html
+  body
+  .container
+  .bloco.bloco-2
+  .resumo-mes
+  .lista-dias
+  .gd-linha-dia.valor-positivo.gd-dia-hoje
+  .data,
+html
+  body
+  .container
+  .bloco.bloco-2
+  .resumo-mes
+  .lista-dias
+  .gd-linha-dia.gd-dia-hoje.valor-positivo
+  .data,
+.gd-linha-dia.valor-positivo.gd-dia-hoje .data,
+.gd-linha-dia.gd-dia-hoje.valor-positivo .data {
+  color: var(--dia-atual-positivo-data-color, #058b32) !important;
+  font-weight: var(--dia-atual-data-weight, 500) !important;
+  opacity: 1 !important;
+}
+
+html
+  body
+  .container
+  .bloco.bloco-2
+  .resumo-mes
+  .lista-dias
+  .gd-linha-dia.valor-positivo.gd-dia-hoje
+  .placar-dia,
+html
+  body
+  .container
+  .bloco.bloco-2
+  .resumo-mes
+  .lista-dias
+  .gd-linha-dia.valor-positivo.gd-dia-hoje
+  .placar-dia
+  *,
+html
+  body
+  .container
+  .bloco.bloco-2
+  .resumo-mes
+  .lista-dias
+  .gd-linha-dia.gd-dia-hoje.valor-positivo
+  .placar-dia,
+html
+  body
+  .container
+  .bloco.bloco-2
+  .resumo-mes
+  .lista-dias
+  .gd-linha-dia.gd-dia-hoje.valor-positivo
+  .placar-dia
+  *,
+.gd-linha-dia.valor-positivo.gd-dia-hoje .placar-dia,
+.gd-linha-dia.valor-positivo.gd-dia-hoje .placar-dia *,
+.gd-linha-dia.gd-dia-hoje.valor-positivo .placar-dia,
+.gd-linha-dia.gd-dia-hoje.valor-positivo .placar-dia * {
+  color: var(--dia-atual-positivo-placar-color, #058b32) !important;
+  font-weight: var(--dia-atual-placar-weight, 700) !important;
+  opacity: 1 !important;
+}
+
+html
+  body
+  .container
+  .bloco.bloco-2
+  .resumo-mes
+  .lista-dias
+  .gd-linha-dia.valor-positivo.gd-dia-hoje
+  .valor,
+html
+  body
+  .container
+  .bloco.bloco-2
+  .resumo-mes
+  .lista-dias
+  .gd-linha-dia.gd-dia-hoje.valor-positivo
+  .valor,
+.gd-linha-dia.valor-positivo.gd-dia-hoje .valor,
+.gd-linha-dia.gd-dia-hoje.valor-positivo .valor {
+  color: var(--dia-atual-positivo-valor-color, #058b32) !important;
+  font-weight: var(--dia-atual-valor-weight, 500) !important;
+  opacity: 1 !important;
+}
+
+html
+  body
+  .container
+  .bloco.bloco-2
+  .resumo-mes
+  .lista-dias
+  .gd-linha-dia.valor-positivo.gd-dia-hoje
+  .icone
+  i,
+html
+  body
+  .container
+  .bloco.bloco-2
+  .resumo-mes
+  .lista-dias
+  .gd-linha-dia.gd-dia-hoje.valor-positivo
+  .icone
+  i,
+.gd-linha-dia.valor-positivo.gd-dia-hoje .icone i,
+.gd-linha-dia.gd-dia-hoje.valor-positivo .icone i {
+  color: var(--dia-atual-positivo-icone-color, #058b32) !important;
+  font-weight: var(--dia-atual-icone-weight, 700) !important;
+  opacity: 1 !important;
+}
+
+/* ===== DIA ATUAL + VALOR NEGATIVO (VERMELHO) ===== */
+
+html
+  body
+  .container
+  .bloco.bloco-2
+  .resumo-mes
+  .lista-dias
+  .gd-linha-dia.valor-negativo.gd-dia-hoje,
+html
+  body
+  .container
+  .bloco.bloco-2
+  .resumo-mes
+  .lista-dias
+  .gd-linha-dia.gd-dia-hoje.valor-negativo,
+.gd-linha-dia.valor-negativo.gd-dia-hoje,
+.gd-linha-dia.gd-dia-hoje.valor-negativo {
+  /* Background vermelho claro */
+  background: linear-gradient(
+    90deg,
+    rgba(255, 242, 242, 0.98),
+    rgba(255, 238, 238, 0.98)
+  ) !important;
+
+  /* Borda esquerda vermelha forte */
+  border-left: 4px solid var(--dia-atual-negativo-border-left-color, #ec0606) !important;
+
+  /* Padding para acomodar a borda */
+  padding-left: 13px !important;
+
+  /* Remover outras sombras */
+  box-shadow: none !important;
+}
+
+/* Elementos internos do dia atual negativo */
+html
+  body
+  .container
+  .bloco.bloco-2
+  .resumo-mes
+  .lista-dias
+  .gd-linha-dia.valor-negativo.gd-dia-hoje
+  .data,
+html
+  body
+  .container
+  .bloco.bloco-2
+  .resumo-mes
+  .lista-dias
+  .gd-linha-dia.gd-dia-hoje.valor-negativo
+  .data,
+.gd-linha-dia.valor-negativo.gd-dia-hoje .data,
+.gd-linha-dia.gd-dia-hoje.valor-negativo .data {
+  color: var(--dia-atual-negativo-data-color, #ec0606) !important;
+  font-weight: var(--dia-atual-data-weight, 500) !important;
+  opacity: 1 !important;
+}
+
+html
+  body
+  .container
+  .bloco.bloco-2
+  .resumo-mes
+  .lista-dias
+  .gd-linha-dia.valor-negativo.gd-dia-hoje
+  .placar-dia,
+html
+  body
+  .container
+  .bloco.bloco-2
+  .resumo-mes
+  .lista-dias
+  .gd-linha-dia.valor-negativo.gd-dia-hoje
+  .placar-dia
+  *,
+html
+  body
+  .container
+  .bloco.bloco-2
+  .resumo-mes
+  .lista-dias
+  .gd-linha-dia.gd-dia-hoje.valor-negativo
+  .placar-dia,
+html
+  body
+  .container
+  .bloco.bloco-2
+  .resumo-mes
+  .lista-dias
+  .gd-linha-dia.gd-dia-hoje.valor-negativo
+  .placar-dia
+  *,
+.gd-linha-dia.valor-negativo.gd-dia-hoje .placar-dia,
+.gd-linha-dia.valor-negativo.gd-dia-hoje .placar-dia *,
+.gd-linha-dia.gd-dia-hoje.valor-negativo .placar-dia,
+.gd-linha-dia.gd-dia-hoje.valor-negativo .placar-dia * {
+  color: var(--dia-atual-negativo-placar-color, #ec0606) !important;
+  font-weight: var(--dia-atual-placar-weight, 700) !important;
+  opacity: 1 !important;
+}
+
+html
+  body
+  .container
+  .bloco.bloco-2
+  .resumo-mes
+  .lista-dias
+  .gd-linha-dia.valor-negativo.gd-dia-hoje
+  .valor,
+html
+  body
+  .container
+  .bloco.bloco-2
+  .resumo-mes
+  .lista-dias
+  .gd-linha-dia.gd-dia-hoje.valor-negativo
+  .valor,
+.gd-linha-dia.valor-negativo.gd-dia-hoje .valor,
+.gd-linha-dia.gd-dia-hoje.valor-negativo .valor {
+  color: var(--dia-atual-negativo-valor-color, #ec0606) !important;
+  font-weight: var(--dia-atual-valor-weight, 500) !important;
+  opacity: 1 !important;
+}
+
+html
+  body
+  .container
+  .bloco.bloco-2
+  .resumo-mes
+  .lista-dias
+  .gd-linha-dia.valor-negativo.gd-dia-hoje
+  .icone
+  i,
+html
+  body
+  .container
+  .bloco.bloco-2
+  .resumo-mes
+  .lista-dias
+  .gd-linha-dia.gd-dia-hoje.valor-negativo
+  .icone
+  i,
+.gd-linha-dia.valor-negativo.gd-dia-hoje .icone i,
+.gd-linha-dia.gd-dia-hoje.valor-negativo .icone i {
+  color: var(--dia-atual-negativo-icone-color, #ec0606) !important;
+  font-weight: var(--dia-atual-icone-weight, 700) !important;
+  opacity: 1 !important;
+}
+
+/* ===== DIA ATUAL + VALOR ZERO (CINZA ESCURO) ===== */
+
+html
+  body
+  .container
+  .bloco.bloco-2
+  .resumo-mes
+  .lista-dias
+  .gd-linha-dia.valor-zero.gd-dia-hoje,
+html
+  body
+  .container
+  .bloco.bloco-2
+  .resumo-mes
+  .lista-dias
+  .gd-linha-dia.gd-dia-hoje.valor-zero,
+.gd-linha-dia.valor-zero.gd-dia-hoje,
+.gd-linha-dia.gd-dia-hoje.valor-zero {
+  /* Background branco/cinza claro */
+  background: linear-gradient(
+    90deg,
+    rgba(255, 255, 255, 0.98),
+    rgba(248, 249, 250, 0.98)
+  ) !important;
+
+  /* Borda esquerda cinza escura */
+  border-left: 4px solid var(--dia-atual-zero-border-left-color, #43464d) !important;
+
+  /* Padding para acomodar a borda */
+  padding-left: 13px !important;
+
+  /* Sombra sutil */
+  box-shadow: 0 2px 8px rgba(67, 70, 77, 0.08) inset !important;
+}
+
+/* Elementos internos do dia atual zero */
+html
+  body
+  .container
+  .bloco.bloco-2
+  .resumo-mes
+  .lista-dias
+  .gd-linha-dia.valor-zero.gd-dia-hoje
+  .data,
+html
+  body
+  .container
+  .bloco.bloco-2
+  .resumo-mes
+  .lista-dias
+  .gd-linha-dia.gd-dia-hoje.valor-zero
+  .data,
+.gd-linha-dia.valor-zero.gd-dia-hoje .data,
+.gd-linha-dia.gd-dia-hoje.valor-zero .data {
+  color: var(--dia-atual-zero-data-color, #111827) !important;
+  font-weight: var(--dia-atual-data-weight, 500) !important;
+  opacity: 1 !important;
+}
+
+html
+  body
+  .container
+  .bloco.bloco-2
+  .resumo-mes
+  .lista-dias
+  .gd-linha-dia.valor-zero.gd-dia-hoje
+  .placar-dia,
+html
+  body
+  .container
+  .bloco.bloco-2
+  .resumo-mes
+  .lista-dias
+  .gd-linha-dia.valor-zero.gd-dia-hoje
+  .placar-dia
+  *,
+html
+  body
+  .container
+  .bloco.bloco-2
+  .resumo-mes
+  .lista-dias
+  .gd-linha-dia.gd-dia-hoje.valor-zero
+  .placar-dia,
+html
+  body
+  .container
+  .bloco.bloco-2
+  .resumo-mes
+  .lista-dias
+  .gd-linha-dia.gd-dia-hoje.valor-zero
+  .placar-dia
+  *,
+.gd-linha-dia.valor-zero.gd-dia-hoje .placar-dia,
+.gd-linha-dia.valor-zero.gd-dia-hoje .placar-dia *,
+.gd-linha-dia.gd-dia-hoje.valor-zero .placar-dia,
+.gd-linha-dia.gd-dia-hoje.valor-zero .placar-dia * {
+  color: var(--dia-atual-zero-placar-color, #111827) !important;
+  font-weight: var(--dia-atual-placar-weight, 700) !important;
+  opacity: 1 !important;
+}
+
+html
+  body
+  .container
+  .bloco.bloco-2
+  .resumo-mes
+  .lista-dias
+  .gd-linha-dia.valor-zero.gd-dia-hoje
+  .valor,
+html
+  body
+  .container
+  .bloco.bloco-2
+  .resumo-mes
+  .lista-dias
+  .gd-linha-dia.gd-dia-hoje.valor-zero
+  .valor,
+.gd-linha-dia.valor-zero.gd-dia-hoje .valor,
+.gd-linha-dia.gd-dia-hoje.valor-zero .valor {
+  color: var(--dia-atual-zero-valor-color, #111827) !important;
+  font-weight: var(--dia-atual-valor-weight, 500) !important;
+  opacity: 1 !important;
+}
+
+html
+  body
+  .container
+  .bloco.bloco-2
+  .resumo-mes
+  .lista-dias
+  .gd-linha-dia.valor-zero.gd-dia-hoje
+  .icone
+  i,
+html
+  body
+  .container
+  .bloco.bloco-2
+  .resumo-mes
+  .lista-dias
+  .gd-linha-dia.gd-dia-hoje.valor-zero
+  .icone
+  i,
+.gd-linha-dia.valor-zero.gd-dia-hoje .icone i,
+.gd-linha-dia.gd-dia-hoje.valor-zero .icone i {
+  color: var(--dia-atual-zero-icone-color, #111827) !important;
+  font-weight: var(--dia-atual-icone-weight, 700) !important;
+  opacity: 1 !important;
+}
+
+/* ===== FORÇA APLICAÇÃO EM TEMPO REAL ===== */
+
+/* Seletor genérico que pega o dia atual independente da estrutura */
+[data-date="2025-09-23"].gd-dia-hoje.valor-positivo,
+.gd-linha-dia[data-date*="2025-09-23"].valor-positivo {
+  background: linear-gradient(
+    90deg,
+    #edfcf0fa,
+    rgba(230, 253, 242, 0.98)
+  ) !important;
+  border-left: var(--dia-atual-border-left-width)
+    var(--dia-atual-border-left-style)
+    var(--dia-atual-positivo-border-left-color) !important;
+  padding-left: 13px !important;
+}
+
+[data-date="2025-09-23"].gd-dia-hoje.valor-negativo,
+.gd-linha-dia[data-date*="2025-09-23"].valor-negativo {
+  background: linear-gradient(
+    90deg,
+    rgba(255, 242, 242, 0.98),
+    rgba(255, 238, 238, 0.98)
+  ) !important;
+  border-left: var(--dia-atual-border-left-width)
+    var(--dia-atual-border-left-style)
+    var(--dia-atual-negativo-border-left-color) !important;
+  padding-left: 13px !important;
+}
+
+[data-date="2025-09-23"].gd-dia-hoje.valor-zero,
+.gd-linha-dia[data-date*="2025-09-23"].valor-zero {
+  background: linear-gradient(
+    90deg,
+    rgba(255, 255, 255, 0.98),
+    rgba(248, 249, 250, 0.98)
+  ) !important;
+  border-left: var(--dia-atual-border-left-width)
+    var(--dia-atual-border-left-style) var(--dia-atual-zero-border-left-color) !important;
+  padding-left: 13px !important;
+}
+
+/* ===== FALLBACK UNIVERSAL PARA QUALQUER DIA ATUAL ===== */
+
+/* Usar atributo data-date dinâmico via JavaScript */
+.gd-linha-dia.gd-dia-hoje {
+  /* Aplicação de cores será feita via JavaScript baseado no valor */
+  position: relative !important;
+  z-index: 2 !important;
+  transition: all 160ms ease !important;
+}
+
+/* ===== CORREÇÃO ADICIONAL - GARANTIR VISIBILIDADE ===== */
+
+/* Remover animação de pulso que pode interferir */
+html
+  body
+  .container
+  .bloco.bloco-2
+  .resumo-mes
+  .lista-dias
+  .gd-linha-dia.gd-dia-hoje {
+  animation: none !important;
+}
+
+/* Garantir que não seja sobrescrito por outras regras */
+.gd-linha-dia.gd-dia-hoje[data-meta-batida="true"],
+.gd-linha-dia.gd-dia-hoje[data-meta-batida="false"] {
+  --gd-dia-hoje-marker: 1; /* marker property to avoid empty ruleset */
+}
+
+/* ===== FORÇAR APLICAÇÃO VIA JAVASCRIPT ===== */
+
+/* Esta regra será aplicada dinamicamente via JS */
+.dia-atual-aplicado.valor-positivo {
+  background: linear-gradient(
+    90deg,
+    #edfcf0fa,
+    rgba(230, 253, 242, 0.98)
+  ) !important;
+  border-left: var(--dia-atual-border-left-width)
+    var(--dia-atual-border-left-style)
+    var(--dia-atual-positivo-border-left-color) !important;
+  padding-left: 13px !important;
+}
+
+.dia-atual-aplicado.valor-negativo {
+  background: linear-gradient(
+    90deg,
+    rgba(255, 242, 242, 0.98),
+    rgba(255, 238, 238, 0.98)
+  ) !important;
+  border-left: var(--dia-atual-border-left-width)
+    var(--dia-atual-border-left-style)
+    var(--dia-atual-negativo-border-left-color) !important;
+  padding-left: 13px !important;
+}
+
+.dia-atual-aplicado.valor-zero {
+  background: linear-gradient(
+    90deg,
+    rgba(255, 255, 255, 0.98),
+    rgba(248, 249, 250, 0.98)
+  ) !important;
+  border-left: var(--dia-atual-border-left-width)
+    var(--dia-atual-border-left-style) var(--dia-atual-zero-border-left-color) !important;
+  padding-left: 13px !important;
+}
+
+/* Cores dos elementos internos quando aplicado */
+.dia-atual-aplicado.valor-positivo .data,
+.dia-atual-aplicado.valor-positivo .placar-dia,
+.dia-atual-aplicado.valor-positivo .placar-dia *,
+.dia-atual-aplicado.valor-positivo .valor,
+.dia-atual-aplicado.valor-positivo .icone i {
+  color: #058b32 !important;
+  opacity: 1 !important;
+}
+
+.dia-atual-aplicado.valor-negativo .data,
+.dia-atual-aplicado.valor-negativo .placar-dia,
+.dia-atual-aplicado.valor-negativo .placar-dia *,
+.dia-atual-aplicado.valor-negativo .valor,
+.dia-atual-aplicado.valor-negativo .icone i {
+  color: #ec0606 !important;
+  opacity: 1 !important;
+}
+
+.dia-atual-aplicado.valor-zero .data,
+.dia-atual-aplicado.valor-zero .placar-dia,
+.dia-atual-aplicado.valor-zero .placar-dia *,
+.dia-atual-aplicado.valor-zero .valor,
+.dia-atual-aplicado.valor-zero .icone i {
+  color: #111827 !important;
+  opacity: 1 !important;
+}
+
 /* ===================================================================
    CORREÇÃO: Bloco 2 responsivo ao zoom - expansão proporcional
    Remove altura fixa e permite expansão natural junto com outros blocos
@@ -200,6 +1041,10 @@ html body .container .bloco.bloco-2 .resumo-mes {
     min-height: calc(100vh - 220px) !important;
   }
 }
+
+/* DEBUG: Force-visible left stripe for 'hoje' rows to verify selectors match.
+   Remove this after verification. Very high specificity + !important. */
+/* Debug stripe removed to allow :root variables to control the left border */
 
 /* 11. FORÇA OVERRIDE PARA ESTILOS INLINE EXISTENTES */
 .container .bloco.bloco-2[style],
@@ -449,10 +1294,10 @@ html body .container .bloco.bloco-2 .resumo-mes {
 /* RESPONSIVIDADE */
 @media (max-width: 768px) {
   .mentor-rank-externo {
-    width: 28px !important;
-    height: 28px !important;
-    min-width: 28px !important;
-    min-height: 28px !important;
+    width: var(--gd-linha-dia-height, 28px) !important;
+    height: var(--gd-linha-dia-height, 28px) !important;
+    min-width: var(--gd-linha-dia-min-height, 28px) !important;
+    min-height: var(--gd-linha-dia-min-height, 28px) !important;
     font-size: 11px !important;
   }
 }
@@ -702,7 +1547,7 @@ body .mentor-item:not(.sem-valores) .mentor-rank-externo {
   --rotulo-restando-meta-mes-margin-left: 0px; /* 'Restando p/ Meta do Mês' */
   --widget-barra-container-2-margin-left: 0px; /* margem-left para a barra de progresso */
   --rotulo-saldo-bloco2-margin-left: 0px; /* rótulo + saldo do Bloco 2 */
-  --titulo-mes-margin-left: -7px; /*  DATA (ex: 'SETEMBRO 2025') */
+  --titulo-mes-margin-left: 0px; /*  DATA (ex: 'SETEMBRO 2025') */
   --placar-2-left: 50%; /* PLACAR TOPO */
   --lista-dias-data-margin-left: 6px; /* DATA .lista-dias */
   --placar-2-translate: -20px; /* PLACAR DA LISTA */
@@ -727,8 +1572,171 @@ body .mentor-item:not(.sem-valores) .mentor-rank-externo {
   -------------------------------------------------- */
   --lista-dias-lateral-padding: -10px; /* BLOCO .lista-dias (positive by default) */
 
+  /* CAMPO RESPONSAVEL PELO : ( DATA + PLACAR + VALOR + ICONE )*/
+  --gd-linha-dia-height: 28px; /* altura do campo de cada linha */
+  --gd-linha-dia-min-height: 28px; /* altura do campo de cada linha */
+  --gd-linha-dia-max-height: 28px; /* altura do campo de cada linha */
+  --gd-linha-dia-gap: 16px; /* horizontal margin between items */
+  --gd-linha-dia-padding-x: 12px; /* horizontal padding inside each item */
+  --gd-linha-dia-row-gap: 0px; /* vertical margin between rows */
+  --gd-linha-dia-font-size: 14px; /* tamanho da fonte */
+  --gd-linha-dia-font-weight: 400; /* peso da fonte (padronizado para valores) */
+
   /* --------------------------------------------------
  PADDING - PADDING - PADDING - PADDING - PADDING
+  -------------------------------------------------- */
+  /**/
+  /**/
+  /**/
+  /**/
+  /**/
+  /**/
+
+  /* --------------------------------------------------
+    COR - DATA - PLACAR - VALOR - ICONE - BORDA
+  -------------------------------------------------- */
+
+  /* Valor Positivo (Verde) */
+  --gd-valor-positive-bg: rgb(242, 255, 247);
+  --gd-valor-positive-border: #00a651;
+  --gd-valor-positive-text: #00a651;
+  --gd-valor-positive-border-width: 3px;
+  --gd-valor-positive-padding-left: 13px;
+
+  /* Valor Negativo (Vermelho) */
+  --gd-valor-negative-bg: rgb(255, 235, 235);
+  --gd-valor-negative-border: #d64545;
+  --gd-valor-negative-text: #dc2626;
+  --gd-valor-negative-border-width: 3px;
+  --gd-valor-negative-padding-left: 13px;
+
+  /* Valor Zero (Neutro) */
+  --gd-valor-zero-bg: rgba(255, 255, 255, 0.95);
+  --gd-valor-zero-border: rgba(156, 163, 175, 0.3);
+  --gd-valor-zero-text: #94a3b8;
+  --gd-valor-zero-border-width: 3px;
+  --gd-valor-zero-padding-left: 13px;
+
+  /* Hover Effects */
+  --gd-valor-positive-hover-bg: rgba(141, 219, 170, 0.18);
+  --gd-valor-negative-hover-bg: rgba(247, 224, 224, 0.9);
+  --gd-valor-zero-hover-bg: rgba(255, 255, 255, 1);
+
+  /* Transições */
+  --gd-valor-transition: background-color 0.15s ease, border-color 0.15s ease,
+    color 0.15s ease;
+  /**/
+  /**/
+  /**/
+  /**/
+  /**/
+  /**/
+
+  /* --------------------------------------------------
+    COR - DATA - PLACAR - VALOR - ICONE - BORDA
+  -------------------------------------------------- */
+  /**/
+  /**/
+  /**/
+  /**/
+  /**/
+  /**/
+  /* --------------------------------------------------
+    COR - DIA ATUAL - COR - DIA ATUAL - COR - DIA ATUAL
+  -------------------------------------------------- */
+
+  /* Backgrounds para o dia atual */
+  --dia-atual-positivo-bg: linear-gradient(
+    90deg,
+    #edfcf0fa,
+    rgba(230, 253, 242, 0.98)
+  );
+  --dia-atual-negativo-bg: linear-gradient(
+    90deg,
+    rgba(255, 242, 242, 0.98),
+    rgba(255, 238, 238, 0.98)
+  );
+  --dia-atual-zero-bg: linear-gradient(
+    90deg,
+    rgba(255, 255, 255, 0.98),
+    rgba(248, 249, 250, 0.98)
+  );
+
+  /* Cores dos textos - dia atual genérico */
+  --dia-atual-data-color: #111827;
+  --dia-atual-data-weight: 700;
+
+  --dia-atual-placar-color: #111827;
+  --dia-atual-placar-weight: 700;
+
+  --dia-atual-valor-color: #111827;
+  --dia-atual-valor-weight: 700;
+
+  --dia-atual-icone-color: #111827;
+  --dia-atual-icone-weight: 700;
+
+  /* Para combinações com valores específicos */
+  /* Dia atual + valor positivo */
+  --dia-atual-positivo-data-color: #058b32;
+  --dia-atual-positivo-placar-color: #058b32;
+  --dia-atual-positivo-valor-color: #058b32;
+  --dia-atual-positivo-icone-color: #058b32;
+
+  /* Dia atual + valor negativo */
+  --dia-atual-negativo-data-color: #ec0606;
+  --dia-atual-negativo-placar-color: #ec0606;
+  --dia-atual-negativo-valor-color: #ec0606;
+  --dia-atual-negativo-icone-color: #ec0606;
+
+  /* Dia atual + valor zero */
+  --dia-atual-zero-data-color: #111827;
+  --dia-atual-zero-placar-color: #111827;
+  --dia-atual-zero-valor-color: #111827;
+  --dia-atual-zero-icone-color: #111827;
+
+  /* Bordas do dia atual - genérico */
+  --dia-atual-border-left-color: #43464d;
+  --dia-atual-border-left-width: 3px;
+  --dia-atual-border-left-style: solid;
+
+  /* Dia atual + valor positivo */
+  --dia-atual-positivo-border-left-color: #058b32;
+  --dia-atual-positivo-border-left-width: 3px;
+  --dia-atual-positivo-border-left-style: solid;
+
+  /* Dia atual + valor negativo */
+  --dia-atual-negativo-border-left-color: #ec0606;
+  --dia-atual-negativo-border-left-width: 3px;
+  --dia-atual-negativo-border-left-style: solid;
+
+  /* Dia atual + valor zero */
+  --dia-atual-zero-border-left-color: #43464d;
+  --dia-atual-zero-border-left-width: 3px;
+  --dia-atual-zero-border-left-style: solid;
+
+  /* Padding após borda */
+  --dia-atual-padding-left: 13px;
+
+  /* Backwards-compatible aliases (some files reference these variants) */
+  --dia-atual-border-width: var(--dia-atual-border-left-width, 4px);
+  --dia-atual-border-style: var(--dia-atual-border-left-style, solid);
+  --dia-atual-border-color: var(--dia-atual-border-left-color, #43464d);
+
+  --dia-atual-positivo-border-color: var(
+    --dia-atual-positivo-border-left-color,
+    #058b32
+  );
+  --dia-atual-negativo-border-color: var(
+    --dia-atual-negativo-border-left-color,
+    #ec0606
+  );
+  --dia-atual-zero-border-color: var(
+    --dia-atual-zero-border-left-color,
+    #43464d
+  );
+
+  /* --------------------------------------------------
+    COR - DIA ATUAL - COR - DIA ATUAL - COR - DIA ATUAL
   -------------------------------------------------- */
   /**/
   /**/
@@ -817,6 +1825,43 @@ body .mentor-item:not(.sem-valores) .mentor-rank-externo {
   .bloco-meta-simples
   .campo-armazena-data-placar {
   padding: 0 !important;
+}
+
+/* Compact override: make .lista-dias visually compact like .lista-meses in ano.css */
+.container .bloco.bloco-2 .resumo-mes .lista-dias,
+.container .bloco.bloco-2 .resumo-mes .lista-dias.compact {
+  width: 100% !important;
+  max-width: 100% !important;
+  margin: var(--lista-dias-margin-top, 8px) 0 0 0 !important;
+  overflow: visible !important;
+  overflow-x: hidden !important;
+  overflow-y: visible !important;
+  max-height: none !important;
+  height: auto !important;
+  min-height: auto !important;
+  padding: 8px 12px !important;
+  background: rgba(247, 246, 246, 0.95) !important;
+  border-radius: 10px !important;
+  box-sizing: border-box !important;
+  scrollbar-width: none !important;
+  scrollbar-color: transparent transparent !important;
+  gap: 0 !important;
+  row-gap: 2px !important;
+  contain: none !important;
+  flex-grow: 0 !important;
+  flex-shrink: 0 !important;
+}
+
+.container .bloco.bloco-2 .resumo-mes .lista-dias::-webkit-scrollbar {
+  display: none !important;
+  width: 0 !important;
+  height: 0 !important;
+}
+
+.container .bloco.bloco-2 .resumo-mes .lista-dias::before,
+.container .bloco.bloco-2 .resumo-mes .lista-dias::after {
+  display: none !important;
+  content: none !important;
 }
 /* Fixo-topo variant: make the small header flush to bloco-2 lateral edges with rounded border */
 .container .bloco.bloco-2 .resumo-mes .bloco-meta-simples.fixo-topo {
@@ -1767,18 +2812,35 @@ body .mentor-item:not(.sem-valores) .mentor-rank-externo {
   margin-left: 10px !important;
 }
 
-/* Ajuste: reduzir altura vertical de cada linha do dia para 32px e centralizar conteúdo */
-.linha-dia {
-  height: 32px !important;
-  min-height: 32px !important;
-  max-height: 32px !important;
-  padding: 4px 8px !important;
+/* Ajuste: tornar cada linha do dia compacta, igual às linhas de mês */
+.linha-dia,
+.container .bloco.bloco-2 .resumo-mes .lista-dias .linha-dia {
   display: flex !important;
+  flex-direction: row !important;
   align-items: center !important;
-  gap: 8px !important;
-  overflow: hidden !important;
+  justify-content: space-between !important;
+  flex-wrap: nowrap !important;
+
+  width: 100% !important;
+  height: var(--gd-linha-dia-height, 28px) !important;
+  min-height: var(--gd-linha-dia-min-height, 28px) !important;
+  max-height: var(--gd-linha-dia-max-height, 28px) !important;
+
+  padding: 0 12px !important;
+  margin: 0 0 var(--lista-dias-row-gap, 2px) 0 !important;
+
+  background: rgba(255, 255, 255, 0.7) !important;
+  border: 1px solid rgba(226, 232, 240, 0.5) !important;
+  border-radius: 6px !important;
+
+  font-family: "Rajdhani", sans-serif !important;
+  font-weight: var(--gd-linha-dia-font-weight, 400) !important;
+  font-size: 13px !important;
+  line-height: 1.1 !important;
+
+  transition: all 0.12s ease !important;
   box-sizing: border-box !important;
-  margin-top: -8px !important;
+  overflow: hidden !important;
 }
 
 /* Alinhar a coluna de data à direita (solicitação) */
@@ -1856,8 +2918,39 @@ body .mentor-item:not(.sem-valores) .mentor-rank-externo {
 .container .bloco.bloco-2 .resumo-mes .linha-dia .placar,
 .container .bloco.bloco-2 .resumo-mes .linha-dia .valor,
 .container .bloco.bloco-2 .resumo-mes .linha-dia .icone {
+  /* Emergency override: ensure day-row state backgrounds are visible
+     This rule is deliberately specific and uses !important so legacy
+     inline styles do not hide the intended visual states while the
+     JS that injects inline styles is being migrated. Remove when
+     the source JS stops writing visual inline styles. */
+  body .container .bloco.bloco-2 .resumo-mes .gd-linha-dia.valor-positivo,
+  body .container .bloco.bloco-2 .resumo-mes .linha-dia.valor-positivo {
+    background: var(--gd-valor-positive-bg) !important;
+    border-left: 4px solid var(--gd-valor-positive-border) !important;
+    padding-left: 12px !important;
+  }
+
+  body .container .bloco.bloco-2 .resumo-mes .gd-linha-dia.valor-negativo,
+  body .container .bloco.bloco-2 .resumo-mes .linha-dia.valor-negativo {
+    background: var(--gd-valor-negative-bg) !important;
+    border-left: 4px solid var(--gd-valor-negative-border) !important;
+    padding-left: 12px !important;
+  }
+
+  body .container .bloco.bloco-2 .resumo-mes .gd-linha-dia.valor-zero,
+  body .container .bloco.bloco-2 .resumo-mes .linha-dia.valor-zero {
+    background: transparent !important;
+    border-left: 4px solid var(--gd-valor-zero-border, rgba(156, 163, 175, 0.3)) !important;
+    padding-left: 12px !important;
+  }
   font-weight: 400 !important; /* normal / mais fino */
   font-family: inherit !important;
+}
+
+/* Ensure the value text uses the standardized font weight */
+.linha-dia .valor,
+.container .bloco.bloco-2 .resumo-mes .linha-dia .valor {
+  font-weight: var(--gd-linha-dia-font-weight, 400) !important;
 }
 
 /* ==================================================================================================
@@ -2866,8 +3959,11 @@ html body .container .bloco.bloco-2 .resumo-mes > .lista-dias,
 .container .bloco.bloco-2 .resumo-mes .lista-dias .gd-linha-dia.valor-zero,
 .gd-linha-dia.valor-zero {
   background: rgba(255, 255, 255, 0.95) !important;
-  border-left: 4px solid var(--lista-dias-border-left, var(--color-neutral)) !important;
-  border-color: rgba(156, 163, 175, 0.3) !important;
+  border-left: 4px solid
+    var(
+      --gd-valor-zero-border,
+      var(--lista-dias-border-left, var(--color-neutral))
+    ) !important;
   padding-left: 13px !important;
 }
 
@@ -2878,40 +3974,157 @@ html body .container .bloco.bloco-2 .resumo-mes > .lista-dias,
   .gd-linha-dia.valor-zero:hover,
 .gd-linha-dia.valor-zero:hover {
   background: rgba(255, 255, 255, 1) !important;
-  border-left: 4px solid #6b7280 !important;
-  border-color: rgba(156, 163, 175, 0.4) !important;
-}
-
-/* Tornar o DIA ATUAL (quando vazio) mais visível: cinza mais escuro e opacidade plena
-   Cobre várias convenções de classe para o "hoje" (hoje, atual, today, current, active) */
-.gd-linha-dia.valor-zero.hoje,
-.gd-linha-dia.valor-zero.atual,
-.gd-linha-dia.valor-zero.today,
-.gd-linha-dia.valor-zero.current,
-.gd-linha-dia.valor-zero.active {
-  opacity: 1 !important; /* visibilidade plena */
-  background: rgba(
-    229,
-    231,
-    235,
-    0.98
-  ) !important; /* cinza levemente mais escuro */
-  border-left: 4px solid var(--lista-dias-border-left-today, #6b7280) !important; /* borda esquerda mais visível */
-}
-
-/* Ensure all lines show a subtle left border by default (neutral) */
-.container .bloco.bloco-2 .resumo-mes .lista-dias .gd-linha-dia,
-.gd-linha-dia {
-  border-left: 4px solid var(--lista-dias-border-left, rgba(156, 163, 175, 0.3)) !important;
-}
-
-/* Today's row variants: use darker left border */
-.gd-linha-dia.hoje,
-.gd-linha-dia.atual,
-.gd-linha-dia.today,
-.gd-linha-dia.current,
-.gd-linha-dia.active {
   border-left: 4px solid var(--lista-dias-border-left-today, #6b7280) !important;
+}
+
+/* ===== BORDAS LEFT DO DIA ATUAL - CONTROLADAS POR VARIÁVEIS ===== */
+
+/* Dia atual - base */
+html body .container .bloco.bloco-2 .resumo-mes .lista-dias .gd-linha-dia.hoje,
+html body .container .bloco.bloco-2 .resumo-mes .lista-dias .gd-linha-dia.atual,
+html body .container .bloco.bloco-2 .resumo-mes .lista-dias .gd-linha-dia.today,
+html
+  body
+  .container
+  .bloco.bloco-2
+  .resumo-mes
+  .lista-dias
+  .gd-linha-dia.current,
+html
+  body
+  .container
+  .bloco.bloco-2
+  .resumo-mes
+  .lista-dias
+  .gd-linha-dia.active,
+html
+  body
+  .container
+  .bloco.bloco-2
+  .resumo-mes
+  .lista-dias
+  .gd-linha-dia.gd-dia-hoje,
+html
+  body
+  .container
+  .bloco.bloco-2
+  .resumo-mes
+  .lista-dias
+  .gd-linha-dia[data-hoje],
+html
+  body
+  .container
+  .bloco.bloco-2
+  .resumo-mes
+  .lista-dias
+  .gd-linha-dia[data-hoje="true"] {
+  border-left: var(--dia-atual-border-left-width)
+    var(--dia-atual-border-left-style) var(--dia-atual-border-left-color) !important;
+}
+
+/* Also support legacy `.linha-dia` class variants (some templates use this) */
+html body .container .bloco.bloco-2 .resumo-mes .lista-dias .linha-dia.hoje,
+html body .container .bloco.bloco-2 .resumo-mes .lista-dias .linha-dia.atual,
+html body .container .bloco.bloco-2 .resumo-mes .lista-dias .linha-dia.today,
+html body .container .bloco.bloco-2 .resumo-mes .lista-dias .linha-dia.current,
+html body .container .bloco.bloco-2 .resumo-mes .lista-dias .linha-dia.active,
+html
+  body
+  .container
+  .bloco.bloco-2
+  .resumo-mes
+  .lista-dias
+  .linha-dia[data-hoje],
+html
+  body
+  .container
+  .bloco.bloco-2
+  .resumo-mes
+  .lista-dias
+  .linha-dia[data-hoje="true"] {
+  border-left: var(--dia-atual-border-left-width)
+    var(--dia-atual-border-left-style) var(--dia-atual-border-left-color) !important;
+}
+
+/* Dia atual + valor positivo */
+html
+  body
+  .container
+  .bloco.bloco-2
+  .resumo-mes
+  .lista-dias
+  .gd-linha-dia.hoje.valor-positivo,
+html
+  body
+  .container
+  .bloco.bloco-2
+  .resumo-mes
+  .lista-dias
+  .gd-linha-dia.valor-positivo.gd-dia-hoje,
+html
+  body
+  .container
+  .bloco.bloco-2
+  .resumo-mes
+  .lista-dias
+  .gd-linha-dia.valor-positivo[data-hoje] {
+  border-left: var(--dia-atual-positivo-border-left-width)
+    var(--dia-atual-positivo-border-left-style)
+    var(--dia-atual-positivo-border-left-color) !important;
+}
+
+/* Dia atual + valor negativo */
+html
+  body
+  .container
+  .bloco.bloco-2
+  .resumo-mes
+  .lista-dias
+  .gd-linha-dia.hoje.valor-negativo,
+html
+  body
+  .container
+  .bloco.bloco-2
+  .resumo-mes
+  .lista-dias
+  .gd-linha-dia.valor-negativo.gd-dia-hoje,
+html
+  body
+  .container
+  .bloco.bloco-2
+  .resumo-mes
+  .lista-dias
+  .gd-linha-dia.valor-negativo[data-hoje] {
+  border-left: var(--dia-atual-negativo-border-left-width)
+    var(--dia-atual-negativo-border-left-style)
+    var(--dia-atual-negativo-border-left-color) !important;
+}
+
+/* Dia atual + valor zero */
+html
+  body
+  .container
+  .bloco.bloco-2
+  .resumo-mes
+  .lista-dias
+  .gd-linha-dia.hoje.valor-zero,
+html
+  body
+  .container
+  .bloco.bloco-2
+  .resumo-mes
+  .lista-dias
+  .gd-linha-dia.valor-zero.gd-dia-hoje,
+html
+  body
+  .container
+  .bloco.bloco-2
+  .resumo-mes
+  .lista-dias
+  .gd-linha-dia.valor-zero[data-hoje] {
+  border-left: var(--dia-atual-zero-border-left-width)
+    var(--dia-atual-zero-border-left-style)
+    var(--dia-atual-zero-border-left-color) !important;
 }
 
 /* Garantir texto/ícone/valor escuros para o dia atual sem valor */
@@ -3038,9 +4251,15 @@ html body .container .bloco.bloco-2 .resumo-mes > .lista-dias,
   gap: 16px !important;
 
   width: 100% !important;
-  height: 32px !important;
-  padding: 0 16px !important;
-  margin: 0 0 4px 0 !important;
+  height: var(
+    --gd-linha-dia-height,
+    28px
+  ) !important; /* compact height to match meses */
+  min-height: var(--gd-linha-dia-min-height, 28px) !important;
+  max-height: var(--gd-linha-dia-max-height, 28px) !important;
+  padding: 0 12px !important; /* match meses horizontal padding */
+  margin: 0 0
+    var(--gd-linha-mes-row-gap, var(--classe-mes-string-margin-bottom, 2px)) 0 !important;
 
   font-family: "Rajdhani", sans-serif !important;
   font-size: 14px !important;
@@ -3049,6 +4268,26 @@ html body .container .bloco.bloco-2 .resumo-mes > .lista-dias,
   border-radius: 8px !important;
   transition: all 0.15s ease !important;
   box-sizing: border-box !important;
+}
+
+/* High-specificity authoritative override to force compact look identical to .gd-linha-mes */
+html body .container .bloco.bloco-2 .resumo-mes .lista-dias .gd-linha-dia,
+html body .lista-dias .gd-linha-dia,
+.main-content .container .bloco.bloco-2 .resumo-mes .lista-dias .gd-linha-dia {
+  height: var(--gd-linha-dia-height, 28px) !important;
+  min-height: var(--gd-linha-dia-min-height, 28px) !important;
+  max-height: var(--gd-linha-dia-max-height, 28px) !important;
+  padding: 0 12px !important;
+  margin: 0 0
+    var(--gd-linha-mes-row-gap, var(--classe-mes-string-margin-bottom, 2px)) 0 !important;
+  background: rgba(255, 255, 255, 0.7) !important;
+  border: 1px solid rgba(226, 232, 240, 0.5) !important;
+  border-radius: 6px !important;
+  font-family: "Rajdhani", sans-serif !important;
+  font-weight: 500 !important;
+  font-size: 13px !important;
+  line-height: 1.1 !important;
+  overflow: hidden !important;
 }
 
 /* Extra strong overrides to ensure .lista-dias is scrollable and fills available space */
@@ -3362,6 +4601,98 @@ html
   background: inherit !important;
   border: inherit !important;
   padding: inherit !important;
+}
+
+/* -----------------------------------------------------------------------------
+   Final Fix: guarantee the left border for the "dia atual" (today) is always
+   visible. This block clears any border shorthand that may have been applied
+   later and then applies a dedicated left border using the :root variables.
+   It targets both the generic selector and state variations (positivo/negativo/zero)
+   and also covers elements that have an inline `style` attribute.
+----------------------------------------------------------------------------- */
+html
+  body
+  .container
+  .bloco.bloco-2
+  .resumo-mes
+  .lista-dias
+  .gd-linha-dia.gd-dia-hoje,
+html
+  body
+  .container
+  .bloco.bloco-2
+  .resumo-mes
+  .lista-dias
+  .gd-linha-dia.gd-dia-hoje[style] {
+  border-top: none !important;
+  border-right: none !important;
+  border-bottom: none !important;
+  border-left: var(--dia-atual-border-left-width, 4px)
+    var(--dia-atual-border-left-style, solid)
+    var(--dia-atual-border-left-color, #43464d) !important;
+  padding-left: var(--dia-atual-padding-left, 13px) !important;
+  box-shadow: none !important;
+}
+
+/* State-specific colors must override the generic color above */
+html
+  body
+  .container
+  .bloco.bloco-2
+  .resumo-mes
+  .lista-dias
+  .gd-linha-dia.gd-dia-hoje.valor-positivo,
+html
+  body
+  .container
+  .bloco.bloco-2
+  .resumo-mes
+  .lista-dias
+  .gd-linha-dia.gd-dia-hoje.valor-positivo[style] {
+  border-left-color: var(
+    --dia-atual-positivo-border-left-color,
+    #058b32
+  ) !important;
+}
+
+html
+  body
+  .container
+  .bloco.bloco-2
+  .resumo-mes
+  .lista-dias
+  .gd-linha-dia.gd-dia-hoje.valor-negativo,
+html
+  body
+  .container
+  .bloco.bloco-2
+  .resumo-mes
+  .lista-dias
+  .gd-linha-dia.gd-dia-hoje.valor-negativo[style] {
+  border-left-color: var(
+    --dia-atual-negativo-border-left-color,
+    #ec0606
+  ) !important;
+}
+
+html
+  body
+  .container
+  .bloco.bloco-2
+  .resumo-mes
+  .lista-dias
+  .gd-linha-dia.gd-dia-hoje.valor-zero,
+html
+  body
+  .container
+  .bloco.bloco-2
+  .resumo-mes
+  .lista-dias
+  .gd-linha-dia.gd-dia-hoje.valor-zero[style] {
+  border-left-color: var(
+    --dia-atual-zero-border-left-color,
+    #43464d
+  ) !important;
 }
 
 /* =======================================================================================================================================================
@@ -4280,7 +5611,8 @@ html body .container .bloco.bloco-2 .resumo-mes .lista-dias .gd-linha-dia.active
 html body .container .bloco.bloco-2 .resumo-mes .lista-dias .gd-linha-dia.valor-zero.hoje,
 html body .container .bloco.bloco-2 .resumo-mes .lista-dias .gd-linha-dia.valor-positivo.hoje,
 html body .container .bloco.bloco-2 .resumo-mes .lista-dias .gd-linha-dia.valor-negativo.hoje {
-  border-left: 4px solid var(--lista-dias-border-left-today, #43464d) !important;
+  border-left: var(--dia-atual-border-left-width)
+    var(--dia-atual-border-left-style) var(--dia-atual-border-left-color) !important;
 }
 
 /* =======================================================================================================================================================
@@ -4330,14 +5662,96 @@ html
     rgba(255, 255, 255, 0.98),
     rgba(248, 249, 250, 0.98)
   ) !important;
-  border-left: 4px solid var(--lista-dias-border-left-today, #43464d) !important;
+  border-left: var(--dia-atual-border-left-width)
+    var(--dia-atual-border-left-style) var(--dia-atual-border-left-color) !important;
   box-shadow: 0 2px 8px rgba(67, 70, 77, 0.08) inset !important;
   transform: translateZ(0) !important;
   transition: background 160ms ease, box-shadow 160ms ease,
     border-left-color 160ms ease !important;
 }
 
-/* Fortalecer contraste do texto e ícone dentro do dia de hoje */
+/* Specific left-border overrides for dia atual combined with value states */
+html
+  body
+  .container
+  .bloco.bloco-2
+  .resumo-mes
+  .lista-dias
+  .gd-linha-dia.hoje.valor-positivo,
+html
+  body
+  .container
+  .bloco.bloco-2
+  .resumo-mes
+  .lista-dias
+  .gd-linha-dia.valor-positivo.gd-dia-hoje,
+html
+  body
+  .container
+  .bloco.bloco-2
+  .resumo-mes
+  .lista-dias
+  .gd-linha-dia.valor-positivo[data-hoje] {
+  border-left: var(--dia-atual-positivo-border-left-width)
+    var(--dia-atual-positivo-border-left-style)
+    var(--dia-atual-positivo-border-left-color) !important;
+}
+
+html
+  body
+  .container
+  .bloco.bloco-2
+  .resumo-mes
+  .lista-dias
+  .gd-linha-dia.hoje.valor-negativo,
+html
+  body
+  .container
+  .bloco.bloco-2
+  .resumo-mes
+  .lista-dias
+  .gd-linha-dia.valor-negativo.gd-dia-hoje,
+html
+  body
+  .container
+  .bloco.bloco-2
+  .resumo-mes
+  .lista-dias
+  .gd-linha-dia.valor-negativo[data-hoje] {
+  border-left: var(--dia-atual-negativo-border-left-width)
+    var(--dia-atual-negativo-border-left-style)
+    var(--dia-atual-negativo-border-left-color) !important;
+}
+
+html
+  body
+  .container
+  .bloco.bloco-2
+  .resumo-mes
+  .lista-dias
+  .gd-linha-dia.hoje.valor-zero,
+html
+  body
+  .container
+  .bloco.bloco-2
+  .resumo-mes
+  .lista-dias
+  .gd-linha-dia.valor-zero.gd-dia-hoje,
+html
+  body
+  .container
+  .bloco.bloco-2
+  .resumo-mes
+  .lista-dias
+  .gd-linha-dia.valor-zero[data-hoje] {
+  border-left: var(--dia-atual-zero-border-left-width)
+    var(--dia-atual-zero-border-left-style)
+    var(--dia-atual-zero-border-left-color) !important;
+}
+
+/* ===== TEXTO DO DIA ATUAL - CONTROLE SEPARADO POR ELEMENTO ===== */
+
+/* Data do dia atual (peso normal) */
 html
   body
   .container
@@ -4352,8 +5766,22 @@ html
   .bloco.bloco-2
   .resumo-mes
   .lista-dias
-  .gd-linha-dia.hoje
-  .valor,
+  .gd-linha-dia.gd-dia-hoje
+  .data,
+html
+  body
+  .container
+  .bloco.bloco-2
+  .resumo-mes
+  .lista-dias
+  .gd-linha-dia[data-hoje]
+  .data {
+  color: var(--dia-atual-data-color) !important;
+  font-weight: var(--dia-atual-data-weight) !important;
+  opacity: 1 !important;
+}
+
+/* Placar do dia atual (peso forte) */
 html
   body
   .container
@@ -4362,6 +5790,85 @@ html
   .lista-dias
   .gd-linha-dia.hoje
   .placar-dia,
+html
+  body
+  .container
+  .bloco.bloco-2
+  .resumo-mes
+  .lista-dias
+  .gd-linha-dia.hoje
+  .placar-dia
+  *,
+html
+  body
+  .container
+  .bloco.bloco-2
+  .resumo-mes
+  .lista-dias
+  .gd-linha-dia.gd-dia-hoje
+  .placar-dia,
+html
+  body
+  .container
+  .bloco.bloco-2
+  .resumo-mes
+  .lista-dias
+  .gd-linha-dia.gd-dia-hoje
+  .placar-dia
+  *,
+html
+  body
+  .container
+  .bloco.bloco-2
+  .resumo-mes
+  .lista-dias
+  .gd-linha-dia[data-hoje]
+  .placar-dia,
+html
+  body
+  .container
+  .bloco.bloco-2
+  .resumo-mes
+  .lista-dias
+  .gd-linha-dia[data-hoje]
+  .placar-dia
+  * {
+  color: var(--dia-atual-placar-color) !important;
+  font-weight: var(--dia-atual-placar-weight) !important;
+  opacity: 1 !important;
+}
+
+/* Valor do dia atual (peso normal) */
+html
+  body
+  .container
+  .bloco.bloco-2
+  .resumo-mes
+  .lista-dias
+  .gd-linha-dia.hoje
+  .valor,
+html
+  body
+  .container
+  .bloco.bloco-2
+  .resumo-mes
+  .lista-dias
+  .gd-linha-dia.gd-dia-hoje
+  .valor,
+html
+  body
+  .container
+  .bloco.bloco-2
+  .resumo-mes
+  .lista-dias
+  .gd-linha-dia[data-hoje]
+  .valor {
+  color: var(--dia-atual-valor-color) !important;
+  font-weight: var(--dia-atual-valor-weight) !important;
+  opacity: 1 !important;
+}
+
+/* Ícone do dia atual (peso forte) */
 html
   body
   .container
@@ -4370,37 +5877,7 @@ html
   .lista-dias
   .gd-linha-dia.hoje
   .icone
-  i {
-  color: #111827 !important; /* quase preto para máxima legibilidade */
-  font-weight: 700 !important;
-  opacity: 1 !important;
-}
-
-/* Also apply inner contrast to gd-dia-hoje and [data-hoje] variants */
-html
-  body
-  .container
-  .bloco.bloco-2
-  .resumo-mes
-  .lista-dias
-  .gd-linha-dia.gd-dia-hoje
-  .data,
-html
-  body
-  .container
-  .bloco.bloco-2
-  .resumo-mes
-  .lista-dias
-  .gd-linha-dia.gd-dia-hoje
-  .valor,
-html
-  body
-  .container
-  .bloco.bloco-2
-  .resumo-mes
-  .lista-dias
-  .gd-linha-dia.gd-dia-hoje
-  .placar-dia,
+  i,
 html
   body
   .container
@@ -4417,22 +5894,35 @@ html
   .resumo-mes
   .lista-dias
   .gd-linha-dia[data-hoje]
-  .data,
+  .icone
+  i {
+  color: var(--dia-atual-icone-color) !important;
+  font-weight: var(--dia-atual-icone-weight) !important;
+  opacity: 1 !important;
+}
+
+/* ===== COMBINAÇÕES COM VALORES ESPECÍFICOS ===== */
+
+/* Dia atual + valor positivo */
 html
   body
   .container
   .bloco.bloco-2
   .resumo-mes
   .lista-dias
-  .gd-linha-dia[data-hoje]
-  .valor,
+  .gd-linha-dia.valor-positivo.hoje
+  .data {
+  color: var(--dia-atual-positivo-data-color) !important;
+  font-weight: var(--dia-atual-data-weight) !important;
+}
+
 html
   body
   .container
   .bloco.bloco-2
   .resumo-mes
   .lista-dias
-  .gd-linha-dia[data-hoje]
+  .gd-linha-dia.valor-positivo.hoje
   .placar-dia,
 html
   body
@@ -4440,12 +5930,154 @@ html
   .bloco.bloco-2
   .resumo-mes
   .lista-dias
-  .gd-linha-dia[data-hoje]
+  .gd-linha-dia.valor-positivo.hoje
+  .placar-dia
+  * {
+  color: var(--dia-atual-positivo-placar-color) !important;
+  font-weight: var(--dia-atual-placar-weight) !important;
+}
+
+html
+  body
+  .container
+  .bloco.bloco-2
+  .resumo-mes
+  .lista-dias
+  .gd-linha-dia.valor-positivo.hoje
+  .valor {
+  color: var(--dia-atual-positivo-valor-color) !important;
+  font-weight: var(--dia-atual-valor-weight) !important;
+}
+
+html
+  body
+  .container
+  .bloco.bloco-2
+  .resumo-mes
+  .lista-dias
+  .gd-linha-dia.valor-positivo.hoje
   .icone
   i {
-  color: #111827 !important; /* high contrast */
-  font-weight: 700 !important;
-  opacity: 1 !important;
+  color: var(--dia-atual-positivo-icone-color) !important;
+  font-weight: var(--dia-atual-icone-weight) !important;
+}
+
+/* Dia atual + valor negativo */
+html
+  body
+  .container
+  .bloco.bloco-2
+  .resumo-mes
+  .lista-dias
+  .gd-linha-dia.valor-negativo.hoje
+  .data {
+  color: var(--dia-atual-negativo-data-color) !important;
+  font-weight: var(--dia-atual-data-weight) !important;
+}
+
+html
+  body
+  .container
+  .bloco.bloco-2
+  .resumo-mes
+  .lista-dias
+  .gd-linha-dia.valor-negativo.hoje
+  .placar-dia,
+html
+  body
+  .container
+  .bloco.bloco-2
+  .resumo-mes
+  .lista-dias
+  .gd-linha-dia.valor-negativo.hoje
+  .placar-dia
+  * {
+  color: var(--dia-atual-negativo-placar-color) !important;
+  font-weight: var(--dia-atual-placar-weight) !important;
+}
+
+html
+  body
+  .container
+  .bloco.bloco-2
+  .resumo-mes
+  .lista-dias
+  .gd-linha-dia.valor-negativo.hoje
+  .valor {
+  color: var(--dia-atual-negativo-valor-color) !important;
+  font-weight: var(--dia-atual-valor-weight) !important;
+}
+
+html
+  body
+  .container
+  .bloco.bloco-2
+  .resumo-mes
+  .lista-dias
+  .gd-linha-dia.valor-negativo.hoje
+  .icone
+  i {
+  color: var(--dia-atual-negativo-icone-color) !important;
+  font-weight: var(--dia-atual-icone-weight) !important;
+}
+
+/* Dia atual + valor zero */
+html
+  body
+  .container
+  .bloco.bloco-2
+  .resumo-mes
+  .lista-dias
+  .gd-linha-dia.valor-zero.hoje
+  .data {
+  color: var(--dia-atual-zero-data-color) !important;
+  font-weight: var(--dia-atual-data-weight) !important;
+}
+
+html
+  body
+  .container
+  .bloco.bloco-2
+  .resumo-mes
+  .lista-dias
+  .gd-linha-dia.valor-zero.hoje
+  .placar-dia,
+html
+  body
+  .container
+  .bloco.bloco-2
+  .resumo-mes
+  .lista-dias
+  .gd-linha-dia.valor-zero.hoje
+  .placar-dia
+  * {
+  color: var(--dia-atual-zero-placar-color) !important;
+  font-weight: var(--dia-atual-placar-weight) !important;
+}
+
+html
+  body
+  .container
+  .bloco.bloco-2
+  .resumo-mes
+  .lista-dias
+  .gd-linha-dia.valor-zero.hoje
+  .valor {
+  color: var(--dia-atual-zero-valor-color) !important;
+  font-weight: var(--dia-atual-valor-weight) !important;
+}
+
+html
+  body
+  .container
+  .bloco.bloco-2
+  .resumo-mes
+  .lista-dias
+  .gd-linha-dia.valor-zero.hoje
+  .icone
+  i {
+  color: var(--dia-atual-zero-icone-color) !important;
+  font-weight: var(--dia-atual-icone-weight) !important;
 }
 
 /* Pequena animação de pulso sutil para chamar atenção sem distrair */
@@ -4463,6 +6095,33 @@ html
 
 html body .container .bloco.bloco-2 .resumo-mes .lista-dias .gd-linha-dia.hoje {
   animation: hojePulse 2.8s ease-in-out infinite !important;
+}
+/* Authoritative: use root variables to control .gd-linha-dia sizing and spacing
+   Placed at end to increase specificity and reduce conflicts with inline styles. */
+html body .container .bloco.bloco-2 .resumo-mes .lista-dias .gd-linha-dia,
+html body .lista-dias .gd-linha-dia,
+.main-content .container .bloco.bloco-2 .resumo-mes .lista-dias .gd-linha-dia {
+  display: flex !important;
+  flex-direction: row !important;
+  align-items: center !important;
+  justify-content: flex-start !important;
+  gap: var(--gd-linha-dia-gap, 16px) !important;
+
+  width: 100% !important;
+  height: var(--gd-linha-dia-height, 28px) !important;
+  min-height: var(--gd-linha-dia-min-height, 28px) !important;
+  max-height: var(--gd-linha-dia-max-height, 28px) !important;
+  padding: 0 var(--gd-linha-dia-padding-x, 12px) !important;
+  margin: 0 0 var(--gd-linha-dia-row-gap, 2px) 0 !important;
+
+  font-family: var(--font-family-heading, "Rajdhani", sans-serif) !important;
+  font-size: var(--gd-linha-dia-font-size, 14px) !important;
+  font-weight: var(--gd-linha-dia-font-weight, 500) !important;
+
+  border-radius: var(--gd-linha-dia-border-radius, 8px) !important;
+  transition: var(--gd-linha-dia-transition, all 0.15s ease) !important;
+  box-sizing: border-box !important;
+  overflow: hidden !important;
 }
 
 /* Quando o dia atual tem valor positivo -> manter verde visual */
@@ -4492,7 +6151,9 @@ html
     #edfcf0fa,
     rgba(230, 253, 242, 0.98)
   ) !important;
-  border-left: 4px solid #058b32 !important; /* verde forte */
+  border-left: var(--dia-atual-border-left-width)
+    var(--dia-atual-border-left-style)
+    var(--dia-atual-positivo-border-left-color) !important; /* verde forte via var */
   box-shadow: none !important;
 }
 
@@ -4522,7 +6183,9 @@ html
     rgba(255, 242, 242, 0.98),
     rgba(255, 238, 238, 0.98)
   ) !important;
-  border-left: 4px solid #ec0606 !important; /* vermelho forte */
+  border-left: var(--dia-atual-border-left-width)
+    var(--dia-atual-border-left-style)
+    var(--dia-atual-negativo-border-left-color) !important; /* vermelho forte via var */
   box-shadow: none !important;
 }
 
@@ -4560,7 +6223,10 @@ html
   .gd-linha-dia.valor-positivo
   .icone
   i {
-  color: #058b32 !important; /* verde escuro para contraste */
+  color: var(
+    --dia-atual-positivo-data-color,
+    #058b32
+  ) !important; /* verde escuro via var */
   font-weight: 500 !important;
 }
 
@@ -4597,7 +6263,10 @@ html
   .gd-linha-dia.valor-negativo
   .icone
   i {
-  color: #ec0606 !important; /* vermelho escuro para contraste */
+  color: var(
+    --dia-atual-negativo-data-color,
+    #ec0606
+  ) !important; /* vermelho escuro via var */
   font-weight: 500 !important;
 }
 
@@ -4622,3 +6291,863 @@ html
 /* (Removed earlier header-expansion override — header must remain inside the bloco)
    Kept a single contained override later in the file to remove hairline seams
    while ensuring the header stays inside the bloco. */
+/* ===== CORREÇÃO FORÇADA DAS CORES - MÁXIMA ESPECIFICIDADE ===== */
+
+/* ===== CORES CONTROLADAS POR VARIÁVEIS ROOT ===== */
+
+/* VALOR POSITIVO - Verde */
+html
+  body
+  .container
+  .bloco.bloco-2
+  .resumo-mes
+  .lista-dias
+  .gd-linha-dia.valor-positivo,
+html
+  body
+  .main-content
+  .container
+  .bloco.bloco-2
+  .resumo-mes
+  .lista-dias
+  .gd-linha-dia.valor-positivo,
+.gd-linha-dia.valor-positivo {
+  background: var(--gd-valor-positive-bg) !important;
+  border-left: var(--gd-valor-positive-border-width) solid
+    var(--gd-valor-positive-border) !important;
+  padding-left: var(--gd-valor-positive-padding-left) !important;
+  transition: var(--gd-valor-transition) !important;
+}
+
+.gd-linha-dia.valor-positivo:hover {
+  background: var(--gd-valor-positive-hover-bg) !important;
+}
+
+.gd-linha-dia.valor-positivo .data,
+.gd-linha-dia.valor-positivo .valor,
+.gd-linha-dia.valor-positivo .placar-dia {
+  color: var(--gd-valor-positive-text) !important;
+}
+
+/* VALOR NEGATIVO - Vermelho */
+html
+  body
+  .container
+  .bloco.bloco-2
+  .resumo-mes
+  .lista-dias
+  .gd-linha-dia.valor-negativo,
+html
+  body
+  .main-content
+  .container
+  .bloco.bloco-2
+  .resumo-mes
+  .lista-dias
+  .gd-linha-dia.valor-negativo,
+.gd-linha-dia.valor-negativo {
+  background: var(--gd-valor-negative-bg) !important;
+  border-left: var(--gd-valor-negative-border-width) solid
+    var(--gd-valor-negative-border) !important;
+  padding-left: var(--gd-valor-negative-padding-left) !important;
+  transition: var(--gd-valor-transition) !important;
+}
+
+.gd-linha-dia.valor-negativo:hover {
+  background: var(--gd-valor-negative-hover-bg) !important;
+}
+
+.gd-linha-dia.valor-negativo .data,
+.gd-linha-dia.valor-negativo .valor,
+.gd-linha-dia.valor-negativo .placar-dia {
+  color: var(--gd-valor-negative-text) !important;
+}
+
+/* VALOR ZERO - Neutro */
+html
+  body
+  .container
+  .bloco.bloco-2
+  .resumo-mes
+  .lista-dias
+  .gd-linha-dia.valor-zero,
+html
+  body
+  .main-content
+  .container
+  .bloco.bloco-2
+  .resumo-mes
+  .lista-dias
+  .gd-linha-dia.valor-zero,
+.gd-linha-dia.valor-zero {
+  background: var(--gd-valor-zero-bg) !important;
+  border-left: var(--gd-valor-zero-border-width) solid
+    var(--gd-valor-zero-border) !important;
+  padding-left: var(--gd-valor-zero-padding-left) !important;
+  transition: var(--gd-valor-transition) !important;
+}
+
+.gd-linha-dia.valor-zero:hover {
+  background: var(--gd-valor-zero-hover-bg) !important;
+}
+
+.gd-linha-dia.valor-zero .data,
+.gd-linha-dia.valor-zero .valor,
+.gd-linha-dia.valor-zero .placar-dia {
+  color: var(--gd-valor-zero-text) !important;
+}
+/* ===================================================================
+   CORREÇÃO DEFINITIVA: CORES DO DIA ATUAL COM VARIÁVEIS ROOT
+   - Força aplicação das cores da borda esquerda e background
+   - Usa máxima especificidade para sobrescrever regras conflitantes
+   =================================================================== */
+
+/* ===== ATUALIZAÇÃO DAS VARIÁVEIS ROOT ===== */
+
+/* ===== CORREÇÃO FORÇADA - DIA ATUAL + VALOR POSITIVO ===== */
+html
+  body
+  .container
+  .bloco.bloco-2
+  .resumo-mes
+  .lista-dias
+  .gd-linha-dia.hoje.valor-positivo,
+html
+  body
+  .container
+  .bloco.bloco-2
+  .resumo-mes
+  .lista-dias
+  .gd-linha-dia.valor-positivo.gd-dia-hoje,
+html
+  body
+  .container
+  .bloco.bloco-2
+  .resumo-mes
+  .lista-dias
+  .gd-linha-dia.valor-positivo[data-hoje="true"],
+html
+  body
+  .container
+  .bloco.bloco-2
+  .resumo-mes
+  .lista-dias
+  .gd-linha-dia.valor-positivo.atual,
+html
+  body
+  .container
+  .bloco.bloco-2
+  .resumo-mes
+  .lista-dias
+  .gd-linha-dia.valor-positivo.today,
+html
+  body
+  .container
+  .bloco.bloco-2
+  .resumo-mes
+  .lista-dias
+  .gd-linha-dia.valor-positivo.current,
+html
+  body
+  .container
+  .bloco.bloco-2
+  .resumo-mes
+  .lista-dias
+  .gd-linha-dia.valor-positivo.active,
+.gd-linha-dia.hoje.valor-positivo,
+.gd-linha-dia.valor-positivo.gd-dia-hoje,
+.gd-linha-dia.valor-positivo[data-hoje="true"] {
+  /* Background verde claro */
+  background: var(--dia-atual-positivo-bg) !important;
+
+  /* Borda esquerda verde forte */
+  border-left: var(--dia-atual-border-left-width)
+    var(--dia-atual-border-left-style)
+    var(--dia-atual-positivo-border-left-color) !important;
+
+  /* Padding para acomodar a borda */
+  padding-left: var(--dia-atual-padding-left) !important;
+
+  /* Remover outras sombras conflitantes */
+  box-shadow: none !important;
+
+  /* Garantir transição suave */
+  transition: background-color 0.15s ease, border-color 0.15s ease !important;
+}
+
+/* ===== CORREÇÃO FORÇADA - DIA ATUAL + VALOR NEGATIVO ===== */
+html
+  body
+  .container
+  .bloco.bloco-2
+  .resumo-mes
+  .lista-dias
+  .gd-linha-dia.hoje.valor-negativo,
+html
+  body
+  .container
+  .bloco.bloco-2
+  .resumo-mes
+  .lista-dias
+  .gd-linha-dia.valor-negativo.gd-dia-hoje,
+html
+  body
+  .container
+  .bloco.bloco-2
+  .resumo-mes
+  .lista-dias
+  .gd-linha-dia.valor-negativo[data-hoje="true"],
+html
+  body
+  .container
+  .bloco.bloco-2
+  .resumo-mes
+  .lista-dias
+  .gd-linha-dia.valor-negativo.atual,
+html
+  body
+  .container
+  .bloco.bloco-2
+  .resumo-mes
+  .lista-dias
+  .gd-linha-dia.valor-negativo.today,
+html
+  body
+  .container
+  .bloco.bloco-2
+  .resumo-mes
+  .lista-dias
+  .gd-linha-dia.valor-negativo.current,
+html
+  body
+  .container
+  .bloco.bloco-2
+  .resumo-mes
+  .lista-dias
+  .gd-linha-dia.valor-negativo.active,
+.gd-linha-dia.hoje.valor-negativo,
+.gd-linha-dia.valor-negativo.gd-dia-hoje,
+.gd-linha-dia.valor-negativo[data-hoje="true"] {
+  /* Background vermelho claro */
+  background: var(--dia-atual-negativo-bg) !important;
+
+  /* Borda esquerda vermelha forte */
+  border-left: var(--dia-atual-border-left-width)
+    var(--dia-atual-border-left-style)
+    var(--dia-atual-negativo-border-left-color) !important;
+
+  /* Padding para acomodar a borda */
+  padding-left: var(--dia-atual-padding-left) !important;
+
+  /* Remover outras sombras conflitantes */
+  box-shadow: none !important;
+
+  /* Garantir transição suave */
+  transition: background-color 0.15s ease, border-color 0.15s ease !important;
+}
+
+/* ===== CORREÇÃO FORÇADA - DIA ATUAL + VALOR ZERO/NEUTRO ===== */
+html body .container .bloco.bloco-2 .resumo-mes .lista-dias .gd-linha-dia.hoje.valor-zero,
+html body .container .bloco.bloco-2 .resumo-mes .lista-dias .gd-linha-dia.valor-zero.gd-dia-hoje,
+html body .container .bloco.bloco-2 .resumo-mes .lista-dias .gd-linha-dia.valor-zero[data-hoje="true"],
+html body .container .bloco.bloco-2 .resumo-mes .lista-dias .gd-linha-dia.valor-zero.atual,
+html body .container .bloco.bloco-2 .resumo-mes .lista-dias .gd-linha-dia.valor-zero.today,
+html body .container .bloco.bloco-2 .resumo-mes .lista-dias .gd-linha-dia.valor-zero.current,
+html body .container .bloco.bloco-2 .resumo-mes .lista-dias .gd-linha-dia.valor-zero.active,
+/* Também incluir caso o dia atual não tenha classe de valor específica */
+html body .container .bloco.bloco-2 .resumo-mes .lista-dias .gd-linha-dia.hoje:not(.valor-positivo):not(.valor-negativo),
+html body .container .bloco.bloco-2 .resumo-mes .lista-dias .gd-linha-dia.gd-dia-hoje:not(.valor-positivo):not(.valor-negativo),
+html body .container .bloco.bloco-2 .resumo-mes .lista-dias .gd-linha-dia[data-hoje="true"]:not(.valor-positivo):not(.valor-negativo),
+.gd-linha-dia.hoje.valor-zero,
+.gd-linha-dia.valor-zero.gd-dia-hoje,
+.gd-linha-dia.valor-zero[data-hoje="true"],
+.gd-linha-dia.hoje:not(.valor-positivo):not(.valor-negativo),
+.gd-linha-dia.gd-dia-hoje:not(.valor-positivo):not(.valor-negativo) {
+  /* Background cinza claro */
+  background: var(--dia-atual-zero-bg) !important;
+
+  /* Borda esquerda cinza escura */
+  border-left: var(--dia-atual-border-left-width)
+    var(--dia-atual-border-left-style) var(--dia-atual-zero-border-left-color) !important;
+
+  /* Padding para acomodar a borda */
+  padding-left: var(--dia-atual-padding-left) !important;
+
+  /* Sombra sutil para neutro */
+  box-shadow: 0 2px 8px rgba(67, 70, 77, 0.08) inset !important;
+
+  /* Garantir transição suave */
+  transition: background-color 0.15s ease, border-color 0.15s ease !important;
+}
+
+/* ===== CORES DOS TEXTOS PARA DIA ATUAL ===== */
+
+/* Dia atual + valor positivo - textos verdes */
+html
+  body
+  .container
+  .bloco.bloco-2
+  .resumo-mes
+  .lista-dias
+  .gd-linha-dia.hoje.valor-positivo
+  .data,
+html
+  body
+  .container
+  .bloco.bloco-2
+  .resumo-mes
+  .lista-dias
+  .gd-linha-dia.valor-positivo.gd-dia-hoje
+  .data,
+html
+  body
+  .container
+  .bloco.bloco-2
+  .resumo-mes
+  .lista-dias
+  .gd-linha-dia.hoje.valor-positivo
+  .placar-dia,
+html
+  body
+  .container
+  .bloco.bloco-2
+  .resumo-mes
+  .lista-dias
+  .gd-linha-dia.valor-positivo.gd-dia-hoje
+  .placar-dia,
+html
+  body
+  .container
+  .bloco.bloco-2
+  .resumo-mes
+  .lista-dias
+  .gd-linha-dia.hoje.valor-positivo
+  .placar-dia
+  *,
+html
+  body
+  .container
+  .bloco.bloco-2
+  .resumo-mes
+  .lista-dias
+  .gd-linha-dia.valor-positivo.gd-dia-hoje
+  .placar-dia
+  *,
+html
+  body
+  .container
+  .bloco.bloco-2
+  .resumo-mes
+  .lista-dias
+  .gd-linha-dia.hoje.valor-positivo
+  .valor,
+html
+  body
+  .container
+  .bloco.bloco-2
+  .resumo-mes
+  .lista-dias
+  .gd-linha-dia.valor-positivo.gd-dia-hoje
+  .valor,
+html
+  body
+  .container
+  .bloco.bloco-2
+  .resumo-mes
+  .lista-dias
+  .gd-linha-dia.hoje.valor-positivo
+  .icone
+  i,
+html
+  body
+  .container
+  .bloco.bloco-2
+  .resumo-mes
+  .lista-dias
+  .gd-linha-dia.valor-positivo.gd-dia-hoje
+  .icone
+  i {
+  color: var(--dia-atual-positivo-data-color) !important;
+  font-weight: var(--dia-atual-data-weight) !important;
+  opacity: 1 !important;
+}
+
+/* Dia atual + valor negativo - textos vermelhos */
+html
+  body
+  .container
+  .bloco.bloco-2
+  .resumo-mes
+  .lista-dias
+  .gd-linha-dia.hoje.valor-negativo
+  .data,
+html
+  body
+  .container
+  .bloco.bloco-2
+  .resumo-mes
+  .lista-dias
+  .gd-linha-dia.valor-negativo.gd-dia-hoje
+  .data,
+html
+  body
+  .container
+  .bloco.bloco-2
+  .resumo-mes
+  .lista-dias
+  .gd-linha-dia.hoje.valor-negativo
+  .placar-dia,
+html
+  body
+  .container
+  .bloco.bloco-2
+  .resumo-mes
+  .lista-dias
+  .gd-linha-dia.valor-negativo.gd-dia-hoje
+  .placar-dia,
+html
+  body
+  .container
+  .bloco.bloco-2
+  .resumo-mes
+  .lista-dias
+  .gd-linha-dia.hoje.valor-negativo
+  .placar-dia
+  *,
+html
+  body
+  .container
+  .bloco.bloco-2
+  .resumo-mes
+  .lista-dias
+  .gd-linha-dia.valor-negativo.gd-dia-hoje
+  .placar-dia
+  *,
+html
+  body
+  .container
+  .bloco.bloco-2
+  .resumo-mes
+  .lista-dias
+  .gd-linha-dia.hoje.valor-negativo
+  .valor,
+html
+  body
+  .container
+  .bloco.bloco-2
+  .resumo-mes
+  .lista-dias
+  .gd-linha-dia.valor-negativo.gd-dia-hoje
+  .valor,
+html
+  body
+  .container
+  .bloco.bloco-2
+  .resumo-mes
+  .lista-dias
+  .gd-linha-dia.hoje.valor-negativo
+  .icone
+  i,
+html
+  body
+  .container
+  .bloco.bloco-2
+  .resumo-mes
+  .lista-dias
+  .gd-linha-dia.valor-negativo.gd-dia-hoje
+  .icone
+  i {
+  color: var(--dia-atual-negativo-data-color) !important;
+  font-weight: var(--dia-atual-data-weight) !important;
+  opacity: 1 !important;
+}
+
+/* Dia atual + valor zero - textos cinza escuro */
+html
+  body
+  .container
+  .bloco.bloco-2
+  .resumo-mes
+  .lista-dias
+  .gd-linha-dia.hoje.valor-zero
+  .data,
+html
+  body
+  .container
+  .bloco.bloco-2
+  .resumo-mes
+  .lista-dias
+  .gd-linha-dia.valor-zero.gd-dia-hoje
+  .data,
+html
+  body
+  .container
+  .bloco.bloco-2
+  .resumo-mes
+  .lista-dias
+  .gd-linha-dia.hoje:not(.valor-positivo):not(.valor-negativo)
+  .data,
+html
+  body
+  .container
+  .bloco.bloco-2
+  .resumo-mes
+  .lista-dias
+  .gd-linha-dia.hoje.valor-zero
+  .placar-dia,
+html
+  body
+  .container
+  .bloco.bloco-2
+  .resumo-mes
+  .lista-dias
+  .gd-linha-dia.valor-zero.gd-dia-hoje
+  .placar-dia,
+html
+  body
+  .container
+  .bloco.bloco-2
+  .resumo-mes
+  .lista-dias
+  .gd-linha-dia.hoje:not(.valor-positivo):not(.valor-negativo)
+  .placar-dia,
+html
+  body
+  .container
+  .bloco.bloco-2
+  .resumo-mes
+  .lista-dias
+  .gd-linha-dia.hoje.valor-zero
+  .placar-dia
+  *,
+html
+  body
+  .container
+  .bloco.bloco-2
+  .resumo-mes
+  .lista-dias
+  .gd-linha-dia.valor-zero.gd-dia-hoje
+  .placar-dia
+  *,
+html
+  body
+  .container
+  .bloco.bloco-2
+  .resumo-mes
+  .lista-dias
+  .gd-linha-dia.hoje:not(.valor-positivo):not(.valor-negativo)
+  .placar-dia
+  *,
+html
+  body
+  .container
+  .bloco.bloco-2
+  .resumo-mes
+  .lista-dias
+  .gd-linha-dia.hoje.valor-zero
+  .valor,
+html
+  body
+  .container
+  .bloco.bloco-2
+  .resumo-mes
+  .lista-dias
+  .gd-linha-dia.valor-zero.gd-dia-hoje
+  .valor,
+html
+  body
+  .container
+  .bloco.bloco-2
+  .resumo-mes
+  .lista-dias
+  .gd-linha-dia.hoje:not(.valor-positivo):not(.valor-negativo)
+  .valor,
+html
+  body
+  .container
+  .bloco.bloco-2
+  .resumo-mes
+  .lista-dias
+  .gd-linha-dia.hoje.valor-zero
+  .icone
+  i,
+html
+  body
+  .container
+  .bloco.bloco-2
+  .resumo-mes
+  .lista-dias
+  .gd-linha-dia.valor-zero.gd-dia-hoje
+  .icone
+  i,
+html
+  body
+  .container
+  .bloco.bloco-2
+  .resumo-mes
+  .lista-dias
+  .gd-linha-dia.hoje:not(.valor-positivo):not(.valor-negativo)
+  .icone
+  i {
+  color: var(--dia-atual-zero-data-color) !important;
+  font-weight: var(--dia-atual-data-weight) !important;
+  opacity: 1 !important;
+}
+
+/* ===== FORÇA APLICAÇÃO EM TEMPO REAL (JAVASCRIPT OVERRIDE) ===== */
+
+/* Para casos onde JavaScript aplica estilos inline, garantir que as variáveis sejam respeitadas */
+.gd-linha-dia[data-dia-hoje-estado="positivo"] {
+  background: var(--dia-atual-positivo-bg) !important;
+  border-left: var(--dia-atual-border-left-width)
+    var(--dia-atual-border-left-style)
+    var(--dia-atual-positivo-border-left-color) !important;
+  padding-left: var(--dia-atual-padding-left) !important;
+}
+
+.gd-linha-dia[data-dia-hoje-estado="negativo"] {
+  background: var(--dia-atual-negativo-bg) !important;
+  border-left: var(--dia-atual-border-left-width)
+    var(--dia-atual-border-left-style)
+    var(--dia-atual-negativo-border-left-color) !important;
+  padding-left: var(--dia-atual-padding-left) !important;
+}
+
+.gd-linha-dia[data-dia-hoje-estado="zero"],
+.gd-linha-dia[data-dia-hoje-estado="neutro"] {
+  background: var(--dia-atual-zero-bg) !important;
+  border-left: var(--dia-atual-border-left-width)
+    var(--dia-atual-border-left-style) var(--dia-atual-zero-border-left-color) !important;
+  padding-left: var(--dia-atual-padding-left) !important;
+}
+
+/* ===== GARANTIR QUE NÃO HAJA TRANSIÇÕES QUE CAUSEM PISCAR ===== */
+.gd-linha-dia.hoje,
+.gd-linha-dia.gd-dia-hoje,
+.gd-linha-dia[data-hoje="true"],
+.gd-linha-dia[data-dia-hoje-estado] {
+  transition: none !important;
+  animation: none !important;
+  transform: none !important;
+  will-change: auto !important;
+}
+
+/* Também aplicar aos elementos filhos */
+.gd-linha-dia.hoje *,
+.gd-linha-dia.gd-dia-hoje *,
+.gd-linha-dia[data-hoje="true"] *,
+.gd-linha-dia[data-dia-hoje-estado] * {
+  transition: none !important;
+  animation: none !important;
+  transform: none !important;
+  will-change: auto !important;
+}
+
+/* ===== FALLBACK UNIVERSAL PARA QUALQUER DIA ATUAL ===== */
+
+/* Classe aplicável via JavaScript para forçar estado */
+.dia-atual-css-control.gd-dia-hoje.valor-positivo {
+  background: var(--dia-atual-positivo-bg) !important;
+  border-left: var(--dia-atual-border-left-width)
+    var(--dia-atual-border-left-style)
+    var(--dia-atual-positivo-border-left-color) !important;
+  padding-left: var(--dia-atual-padding-left) !important;
+}
+
+.dia-atual-css-control.gd-dia-hoje.valor-negativo {
+  background: var(--dia-atual-negativo-bg) !important;
+  border-left: var(--dia-atual-border-left-width)
+    var(--dia-atual-border-left-style)
+    var(--dia-atual-negativo-border-left-color) !important;
+  padding-left: var(--dia-atual-padding-left) !important;
+}
+
+.dia-atual-css-control.gd-dia-hoje.valor-zero,
+.dia-atual-css-control.gd-dia-hoje:not(.valor-positivo):not(.valor-negativo) {
+  background: var(--dia-atual-zero-bg) !important;
+  border-left: var(--dia-atual-border-left-width)
+    var(--dia-atual-border-left-style) var(--dia-atual-zero-border-left-color) !important;
+  padding-left: var(--dia-atual-padding-left) !important;
+}
+
+/* ===== DEBUG: INDICADOR VISUAL TEMPORÁRIO ===== */
+/* Remova esta seção após confirmar que funciona */
+/*
+.gd-linha-dia.hoje::after,
+.gd-linha-dia.gd-dia-hoje::after {
+  content: "HOJE";
+  position: absolute;
+  right: -50px;
+  top: 50%;
+  transform: translateY(-50%);
+  background: rgba(255, 0, 0, 0.8);
+  color: white;
+  padding: 2px 6px;
+  font-size: 10px;
+  border-radius: 3px;
+  z-index: 9999;
+}
+*/
+
+/* ===== RESPONSIVIDADE ===== */
+@media (max-width: 768px) {
+  :root {
+    --dia-atual-border-left-width: 3px;
+    --dia-atual-padding-left: 11px;
+  }
+}
+
+@media (max-width: 480px) {
+  :root {
+    --dia-atual-border-left-width: 2px;
+    --dia-atual-padding-left: 10px;
+  }
+}
+
+/* ===== ALTA ESPECIFICIDADE PARA GARANTIR APLICAÇÃO ===== */
+html
+  body
+  .main-content
+  .container
+  .bloco.bloco-2
+  .resumo-mes
+  .lista-dias
+  .gd-linha-dia.hoje.valor-positivo {
+  background: var(--dia-atual-positivo-bg) !important;
+  border-left: var(--dia-atual-border-left-width) solid
+    var(--dia-atual-positivo-border-left-color) !important;
+  padding-left: var(--dia-atual-padding-left) !important;
+}
+
+html
+  body
+  .main-content
+  .container
+  .bloco.bloco-2
+  .resumo-mes
+  .lista-dias
+  .gd-linha-dia.hoje.valor-negativo {
+  background: var(--dia-atual-negativo-bg) !important;
+  border-left: var(--dia-atual-border-left-width) solid
+    var(--dia-atual-negativo-border-left-color) !important;
+  padding-left: var(--dia-atual-padding-left) !important;
+}
+
+html
+  body
+  .main-content
+  .container
+  .bloco.bloco-2
+  .resumo-mes
+  .lista-dias
+  .gd-linha-dia.hoje.valor-zero,
+html
+  body
+  .main-content
+  .container
+  .bloco.bloco-2
+  .resumo-mes
+  .lista-dias
+  .gd-linha-dia.hoje:not(.valor-positivo):not(.valor-negativo) {
+  background: var(--dia-atual-zero-bg) !important;
+  border-left: var(--dia-atual-border-left-width) solid
+    var(--dia-atual-zero-border-left-color) !important;
+  padding-left: var(--dia-atual-padding-left) !important;
+}
+.dia-atual-forcado {
+  border-left: 4px solid #43464d !important;
+  padding-left: 13px !important;
+  background: linear-gradient(
+    90deg,
+    rgba(255, 255, 255, 0.98),
+    rgba(248, 249, 250, 0.98)
+  ) !important;
+}
+
+.dia-atual-forcado.valor-positivo {
+  border-left-color: #058b32 !important;
+  background: linear-gradient(
+    90deg,
+    #edfcf0fa,
+    rgba(230, 253, 242, 0.98)
+  ) !important;
+}
+
+.dia-atual-forcado.valor-negativo {
+  border-left-color: #ec0606 !important;
+  background: linear-gradient(
+    90deg,
+    rgba(255, 242, 242, 0.98),
+    rgba(255, 238, 238, 0.98)
+  ) !important;
+}
+
+/* ===== ENFORCE TEXT COLORS - HIGH SPECIFICITY FALLBACK ===== */
+/* Ensure date, placar and valor text reflect positive/negative/neutral states
+   even when other styles or inline rules try to override them. */
+html body .lista-dias .gd-linha-dia.valor-positivo .data,
+html body .lista-dias .gd-linha-dia.valor-positivo .placar-day,
+html body .lista-dias .gd-linha-dia.valor-positivo .placar,
+html body .lista-dias .gd-linha-dia.valor-positivo .placar *,
+html body .lista-dias .gd-linha-dia.valor-positivo .valor,
+.gd-linha-dia .placar .verde-bold,
+.gd-linha-dia .valor.verde-bold,
+.gd-linha-dia.gd-dia-hoje .placar .verde-bold,
+.gd-linha-dia.gd-dia-hoje .valor.verde-bold {
+  color: var(--color-positive) !important;
+}
+
+/* Stronger green variant used for placar numbers */
+html body .lista-dias .gd-linha-dia .placar .verde-bold,
+html body .lista-dias .gd-linha-dia.gd-dia-hoje .placar .verde-bold {
+  color: var(--color-positive-strong, var(--color-positive)) !important;
+  font-weight: 700 !important;
+}
+
+/* Negative (red) */
+html body .lista-dias .gd-linha-dia.valor-negativo .data,
+html body .lista-dias .gd-linha-dia.valor-negativo .placar,
+html body .lista-dias .gd-linha-dia.valor-negativo .placar *,
+html body .lista-dias .gd-linha-dia.valor-negativo .valor,
+.gd-linha-dia .placar .vermelho-bold,
+.gd-linha-dia .valor.vermelho-bold,
+.gd-linha-dia.gd-dia-hoje .placar .vermelho-bold,
+.gd-linha-dia.gd-dia-hoje .valor.vermelho-bold {
+  color: var(--color-negative) !important;
+}
+
+/* Neutral / zero */
+html body .lista-dias .gd-linha-dia.valor-zero .data,
+html body .lista-dias .gd-linha-dia.valor-zero .placar,
+html body .lista-dias .gd-linha-dia.valor-zero .placar *,
+html body .lista-dias .gd-linha-dia.valor-zero .valor,
+.gd-linha-dia .placar .texto-cinza,
+.gd-linha-dia .valor.texto-cinza,
+.gd-linha-dia.gd-dia-hoje .placar .texto-cinza,
+.gd-linha-dia.gd-dia-hoje .valor.texto-cinza {
+  color: var(--color-neutral) !important;
+}
+
+/* Also cover attribute-driven state and compatibility classes */
+.gd-linha-dia[data-dia-hoje-estado="positivo"] .data,
+.gd-linha-dia[data-dia-hoje-estado="positivo"] .placar,
+.gd-linha-dia[data-dia-hoje-estado="positivo"] .valor {
+  color: var(--color-positive) !important;
+}
+.gd-linha-dia[data-dia-hoje-estado="negativo"] .data,
+.gd-linha-dia[data-dia-hoje-estado="negativo"] .placar,
+.gd-linha-dia[data-dia-hoje-estado="negativo"] .valor {
+  color: var(--color-negative) !important;
+}
+.gd-linha-dia[data-dia-hoje-estado="zero"] .data,
+.gd-linha-dia[data-dia-hoje-estado="zero"] .placar,
+.gd-linha-dia[data-dia-hoje-estado="zero"] .valor {
+  color: var(--color-neutral) !important;
+}
+
+/* Small fallback: enforce color on inner spans if parent color is overridden */
+.gd-linha-dia .data[style],
+.gd-linha-dia .placar[style],
+.gd-linha-dia .valor[style] {
+  color: inherit !important;
+}

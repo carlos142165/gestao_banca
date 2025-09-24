@@ -1952,7 +1952,17 @@ const ListaDiasManagerCorrigido = {
       }
 
       if (data_mysql === hoje) {
-        classes.push("gd-dia-hoje");
+        // Add multiple compatibility classes so older CSS selectors
+        // (hoje / atual / today / current / active) also match.
+        classes.push(
+          "gd-dia-hoje",
+          "hoje",
+          "atual",
+          "today",
+          "current",
+          "active",
+          "dia-atual-css-control"
+        );
         classes.push(saldo_dia >= 0 ? "gd-borda-verde" : "gd-borda-vermelha");
       } else {
         classes.push("dia-normal");
@@ -3240,9 +3250,9 @@ const SistemaUnicoSemConflito = {
   _ultimaExecucaoProcessar: 0,
 
   // Função principal que faz TUDO de uma vez
+  // Função principal que faz TUDO de uma vez
   processarCompleto() {
     const agoraTs = Date.now();
-    // Evitar reexecuções muito rápidas que competem com re-renders
     if (agoraTs - this._ultimaExecucaoProcessar < 400) return;
     this._ultimaExecucaoProcessar = agoraTs;
 
@@ -3263,23 +3273,34 @@ const SistemaUnicoSemConflito = {
 
       const valor = parseFloat(numeroLimpo) || 0;
 
-      // Determinar classe de cor
-      let classeCorreta = "valor-zero";
-      if (valor > 0) classeCorreta = "valor-positivo";
-      else if (valor < 0) classeCorreta = "valor-negativo";
+      // LIMPAR TODAS as classes de valor existentes ANTES de aplicar a nova
+      linha.classList.remove("valor-positivo", "valor-negativo", "valor-zero");
 
-      // Aplicar classe APENAS se não tiver
-      if (!linha.classList.contains(classeCorreta)) {
-        linha.classList.remove(
-          "valor-positivo",
-          "valor-negativo",
-          "valor-zero"
-        );
-        linha.classList.add(classeCorreta);
-        alteracoes++;
+      // Determinar e aplicar a classe correta
+      let classeCorreta = "";
+      if (valor > 0) {
+        classeCorreta = "valor-positivo";
+      } else if (valor < 0) {
+        classeCorreta = "valor-negativo";
+      } else {
+        classeCorreta = "valor-zero";
       }
 
-      // Aplicar ícone de troféu se meta batida
+      // Aplicar a classe com força
+      linha.classList.add(classeCorreta);
+
+      // FORÇAR aplicação visual removendo qualquer estilo inline conflitante
+      linha.style.removeProperty("background");
+      // Não remover a borda esquerda se esta linha é o dia atual — preserva
+      // a indicação visual criada por outras camadas (CSS ou servidor).
+      if (!linha.classList.contains("gd-dia-hoje")) {
+        linha.style.removeProperty("border-left");
+      }
+      linha.style.removeProperty("padding-left");
+
+      alteracoes++;
+
+      // Aplicar ícone de troféu se meta batida (manter código existente)
       const iconeEl = linha.querySelector(".icone i");
       if (iconeEl && valor >= this.metaAtual) {
         if (!iconeEl.classList.contains("fa-trophy")) {
@@ -3297,7 +3318,9 @@ const SistemaUnicoSemConflito = {
     });
 
     if (alteracoes > 0) {
-      console.log(`✅ Sistema único: ${alteracoes} alterações aplicadas`);
+      console.log(
+        `✅ Sistema único: ${alteracoes} linhas processadas com cores`
+      );
     }
   },
 
@@ -3400,6 +3423,7 @@ window.BackupCores = null;
 // window.MetaMensalManager = null;
 
 // Comandos globais simplificados
+// Comandos globais simplificados
 window.SistemaUnico = {
   iniciar: () => SistemaUnicoSemConflito.iniciar(),
   parar: () => SistemaUnicoSemConflito.parar(),
@@ -3409,6 +3433,24 @@ window.SistemaUnico = {
     const status = SistemaUnicoSemConflito.status();
     console.log("📊 Status Sistema Único:", status);
     return status;
+  },
+  debug: () => {
+    const linhas = document.querySelectorAll(".gd-linha-dia");
+    console.log("=== DEBUG CORES ===");
+
+    linhas.forEach((linha, index) => {
+      const valor = linha.querySelector(".valor")?.textContent || "N/A";
+      const classes = Array.from(linha.classList)
+        .filter((c) => c.includes("valor-"))
+        .join(", ");
+      const styles = linha.getAttribute("style") || "none";
+
+      console.log(`Linha ${index + 1}:`);
+      console.log(`  Valor: ${valor}`);
+      console.log(`  Classes: ${classes || "nenhuma"}`);
+      console.log(`  Style inline: ${styles}`);
+      console.log("---");
+    });
   },
 };
 

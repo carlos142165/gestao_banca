@@ -22,6 +22,10 @@
    - MARGIN TOP - MARGIN TOP - MARGIN TOP -
   -------------------------------------------------- */
 :root {
+  /* Ensure month-row (.gd-linha-mes) uses the same central variables as day-rows
+     If --gd-linha-dia variables exist elsewhere they will take precedence; these
+     provide fallbacks and aliasing so both widgets stay in sync. */
+
   --titulo-ano-bloco3-margin-top: 0px; /* (ícone + 2025) */
   --classe-mes-string-margin-top: 1px; /* gap acima de cada .gd-linha-mes */
   --classe-mes-string-margin-bottom: 1px; /* gap abaixo de cada .gd-linha-mes */
@@ -62,6 +66,24 @@
   /**/
   /**/
   /**/
+  /* --------------------------------------------------
+   PADDING - PADDING - PADDING - PADDING - PADDING
+  -------------------------------------------------- */
+  /* Desktop (PC) explicit defaults for month-row sizing — keeps parity with day-rows */
+  --gd-linha-mes-height: 28px;
+  --gd-linha-mes-min-height: 28px;
+  --gd-linha-mes-max-height: 28px;
+  --gd-linha-mes-gap: 16px;
+  --gd-linha-mes-padding-x: 12px;
+  --gd-linha-mes-row-gap: 0px;
+  --gd-linha-mes-font-size: 14px;
+  --gd-linha-mes-font-weight: 500;
+  --gd-linha-mes-border-radius: 5px;
+  --gd-linha-mes-transition: all 0.12s ease;
+
+  /* --------------------------------------------------
+ PADDING - PADDING - PADDING - PADDING - PADDING
+  -------------------------------------------------- */
 }
 
 /* ===================================================================
@@ -176,6 +198,16 @@
   align-items: center !important;
   justify-content: center !important;
   box-sizing: border-box !important;
+
+  /* DEBUG: Force-visible left stripe for 'hoje' rows in annual list to verify selectors match.
+   Remove after verification. High specificity + !important. */
+  html body .lista-meses .gd-linha-mes.hoje,
+  html body .lista-meses .linha-mes.hoje,
+  html body .lista-meses .gd-linha-mes[data-hoje="true"],
+  html body .lista-meses .linha-mes[data-hoje="true"] {
+    border-left: 6px solid magenta !important;
+    box-shadow: none !important;
+  }
 
   /* Z-index para ficar acima do conteúdo */
   z-index: 100 !important;
@@ -973,12 +1005,13 @@
   flex-wrap: nowrap !important;
 
   width: 100% !important;
-  height: 28px !important;
-  min-height: 28px !important;
-  max-height: 28px !important;
+  height: var(--gd-linha-mes-height, 28px) !important;
+  min-height: var(--gd-linha-mes-min-height, 28px) !important;
+  max-height: var(--gd-linha-mes-max-height, 28px) !important;
 
-  padding: 0 12px !important;
-  margin: 0 0 var(--classe-mes-string-margin-bottom, 2px) 0 !important;
+  padding: 0 var(--gd-linha-mes-padding-x, 12px) !important;
+  margin: 0 0
+    var(--gd-linha-mes-row-gap, var(--classe-mes-string-margin-bottom, 2px)) 0 !important;
 
   background: rgba(255, 255, 255, 0.7) !important;
   border: 1px solid rgba(226, 232, 240, 0.5) !important;
@@ -1315,6 +1348,372 @@
 /* COLORIR ÍCONE CONFORME ESTADO DO VALOR */
 .gd-linha-mes.valor-positivo .icone i {
   color: var(--color-positive, #059669) !important;
+}
+
+/* ===== DIA ATUAL - CONTROLADO POR VARIÁVEIS ROOT ===== */
+
+/* Dia atual - base */
+html body .container .bloco.bloco-2 .resumo-mes .lista-dias .gd-linha-dia.hoje,
+html body .container .bloco.bloco-2 .resumo-mes .lista-dias .gd-linha-dia.atual,
+html body .container .bloco.bloco-2 .resumo-mes .lista-dias .gd-linha-dia.today,
+html
+  body
+  .container
+  .bloco.bloco-2
+  .resumo-mes
+  .lista-dias
+  .gd-linha-dia.current,
+html
+  body
+  .container
+  .bloco.bloco-2
+  .resumo-mes
+  .lista-dias
+  .gd-linha-dia.active,
+html
+  body
+  .container
+  .bloco.bloco-2
+  .resumo-mes
+  .lista-dias
+  .gd-linha-dia.gd-dia-hoje,
+html
+  body
+  .container
+  .bloco.bloco-2
+  .resumo-mes
+  .lista-dias
+  .gd-linha-dia[data-hoje],
+html
+  body
+  .container
+  .bloco.bloco-2
+  .resumo-mes
+  .lista-dias
+  .gd-linha-dia[data-hoje="true"] {
+  background: var(--dia-atual-bg) !important;
+  border-left: var(--dia-atual-border-width) var(--dia-atual-border-style)
+    var(--dia-atual-border-color) !important;
+  box-shadow: var(--dia-atual-shadow) !important;
+  transform: translateZ(0) !important;
+  transition: var(--dia-atual-transition) !important;
+}
+
+/* Texto do dia atual - base */
+html
+  body
+  .container
+  .bloco.bloco-2
+  .resumo-mes
+  .lista-dias
+  .gd-linha-dia.hoje
+  .data,
+html
+  body
+  .container
+  .bloco.bloco-2
+  .resumo-mes
+  .lista-dias
+  .gd-linha-dia.hoje
+  .valor,
+html
+  body
+  .container
+  .bloco.bloco-2
+  .resumo-mes
+  .lista-dias
+  .gd-linha-dia.hoje
+  .placar-dia,
+html
+  body
+  .container
+  .bloco.bloco-2
+  .resumo-mes
+  .lista-dias
+  .gd-linha-dia.hoje
+  .icone
+  i,
+html
+  body
+  .container
+  .bloco.bloco-2
+  .resumo-mes
+  .lista-dias
+  .gd-linha-dia.gd-dia-hoje
+  .data,
+html
+  body
+  .container
+  .bloco.bloco-2
+  .resumo-mes
+  .lista-dias
+  .gd-linha-dia.gd-dia-hoje
+  .valor,
+html
+  body
+  .container
+  .bloco.bloco-2
+  .resumo-mes
+  .lista-dias
+  .gd-linha-dia.gd-dia-hoje
+  .placar-dia,
+html
+  body
+  .container
+  .bloco.bloco-2
+  .resumo-mes
+  .lista-dias
+  .gd-linha-dia.gd-dia-hoje
+  .icone
+  i,
+html
+  body
+  .container
+  .bloco.bloco-2
+  .resumo-mes
+  .lista-dias
+  .gd-linha-dia[data-hoje]
+  .data,
+html
+  body
+  .container
+  .bloco.bloco-2
+  .resumo-mes
+  .lista-dias
+  .gd-linha-dia[data-hoje]
+  .valor,
+html
+  body
+  .container
+  .bloco.bloco-2
+  .resumo-mes
+  .lista-dias
+  .gd-linha-dia[data-hoje]
+  .placar-dia,
+html
+  body
+  .container
+  .bloco.bloco-2
+  .resumo-mes
+  .lista-dias
+  .gd-linha-dia[data-hoje]
+  .icone
+  i {
+  color: var(--dia-atual-text-color) !important;
+  font-weight: var(--dia-atual-text-weight) !important;
+  opacity: 1 !important;
+}
+
+/* Dia atual + valor positivo */
+html
+  body
+  .container
+  .bloco.bloco-2
+  .resumo-mes
+  .lista-dias
+  .gd-linha-dia.hoje.valor-positivo,
+html
+  body
+  .container
+  .bloco.bloco-2
+  .resumo-mes
+  .lista-dias
+  .gd-linha-dia.valor-positivo.gd-dia-hoje,
+html
+  body
+  .container
+  .bloco.bloco-2
+  .resumo-mes
+  .lista-dias
+  .gd-linha-dia.valor-positivo[data-hoje] {
+  background: var(--dia-atual-positivo-bg) !important;
+  border-left: var(--dia-atual-border-width) var(--dia-atual-border-style)
+    var(--dia-atual-positivo-border) !important;
+  box-shadow: none !important;
+}
+
+html
+  body
+  .container
+  .bloco.bloco-2
+  .resumo-mes
+  .lista-dias
+  .gd-linha-dia.valor-positivo.hoje
+  .data,
+html
+  body
+  .container
+  .bloco.bloco-2
+  .resumo-mes
+  .lista-dias
+  .gd-linha-dia.valor-positivo.hoje
+  .valor,
+html
+  body
+  .container
+  .bloco.bloco-2
+  .resumo-mes
+  .lista-dias
+  .gd-linha-dia.valor-positivo.hoje
+  .placar-dia,
+html
+  body
+  .container
+  .bloco.bloco-2
+  .resumo-mes
+  .lista-dias
+  .gd-linha-dia.valor-positivo.hoje
+  .icone
+  i {
+  color: var(--dia-atual-positivo-text) !important;
+  font-weight: var(--dia-atual-text-weight) !important;
+}
+
+/* Dia atual + valor negativo */
+html
+  body
+  .container
+  .bloco.bloco-2
+  .resumo-mes
+  .lista-dias
+  .gd-linha-dia.hoje.valor-negativo,
+html
+  body
+  .container
+  .bloco.bloco-2
+  .resumo-mes
+  .lista-dias
+  .gd-linha-dia.valor-negativo.gd-dia-hoje,
+html
+  body
+  .container
+  .bloco.bloco-2
+  .resumo-mes
+  .lista-dias
+  .gd-linha-dia.valor-negativo[data-hoje] {
+  background: var(--dia-atual-negativo-bg) !important;
+  border-left: var(--dia-atual-border-width) var(--dia-atual-border-style)
+    var(--dia-atual-negativo-border) !important;
+  box-shadow: none !important;
+}
+
+html
+  body
+  .container
+  .bloco.bloco-2
+  .resumo-mes
+  .lista-dias
+  .gd-linha-dia.valor-negativo.hoje
+  .data,
+html
+  body
+  .container
+  .bloco.bloco-2
+  .resumo-mes
+  .lista-dias
+  .gd-linha-dia.valor-negativo.hoje
+  .valor,
+html
+  body
+  .container
+  .bloco.bloco-2
+  .resumo-mes
+  .lista-dias
+  .gd-linha-dia.valor-negativo.hoje
+  .placar-dia,
+html
+  body
+  .container
+  .bloco.bloco-2
+  .resumo-mes
+  .lista-dias
+  .gd-linha-dia.valor-negativo.hoje
+  .icone
+  i {
+  color: var(--dia-atual-negativo-text) !important;
+  font-weight: var(--dia-atual-text-weight) !important;
+}
+
+/* Dia atual + valor zero */
+html
+  body
+  .container
+  .bloco.bloco-2
+  .resumo-mes
+  .lista-dias
+  .gd-linha-dia.hoje.valor-zero,
+html
+  body
+  .container
+  .bloco.bloco-2
+  .resumo-mes
+  .lista-dias
+  .gd-linha-dia.valor-zero.gd-dia-hoje,
+html
+  body
+  .container
+  .bloco.bloco-2
+  .resumo-mes
+  .lista-dias
+  .gd-linha-dia.valor-zero[data-hoje] {
+  background: var(--dia-atual-zero-bg) !important;
+  border-left: var(--dia-atual-border-width) var(--dia-atual-border-style)
+    var(--dia-atual-zero-border) !important;
+  box-shadow: none !important;
+}
+
+html
+  body
+  .container
+  .bloco.bloco-2
+  .resumo-mes
+  .lista-dias
+  .gd-linha-dia.valor-zero.hoje
+  .data,
+html
+  body
+  .container
+  .bloco.bloco-2
+  .resumo-mes
+  .lista-dias
+  .gd-linha-dia.valor-zero.hoje
+  .valor,
+html
+  body
+  .container
+  .bloco.bloco-2
+  .resumo-mes
+  .lista-dias
+  .gd-linha-dia.valor-zero.hoje
+  .placar-dia,
+html
+  body
+  .container
+  .bloco.bloco-2
+  .resumo-mes
+  .lista-dias
+  .gd-linha-dia.valor-zero.hoje
+  .icone
+  i {
+  color: var(--dia-atual-zero-text) !important;
+  font-weight: var(--dia-atual-text-weight) !important;
+}
+
+/* Animação do dia atual */
+@keyframes hojePulse {
+  0% {
+    box-shadow: var(--dia-atual-pulse-shadow-start);
+  }
+  50% {
+    box-shadow: var(--dia-atual-pulse-shadow-mid);
+  }
+  100% {
+    box-shadow: var(--dia-atual-pulse-shadow-end);
+  }
+}
+
+html body .container .bloco.bloco-2 .resumo-mes .lista-dias .gd-linha-dia.hoje {
+  animation: hojePulse var(--dia-atual-animation-duration) ease-in-out infinite !important;
 }
 
 .gd-linha-mes.valor-negativo .icone i {
@@ -1802,20 +2201,21 @@
   flex-wrap: nowrap !important;
 
   width: 100% !important;
-  height: 32px !important;
-  min-height: 32px !important;
-  max-height: 32px !important;
+  height: var(--gd-linha-mes-height, 32px) !important;
+  min-height: var(--gd-linha-mes-min-height, 32px) !important;
+  max-height: var(--gd-linha-mes-max-height, 32px) !important;
 
-  padding: 0 12px !important;
-  margin: 0 0 var(--classe-mes-string-margin-bottom, 6px) 0 !important;
+  padding: 0 var(--gd-linha-mes-padding-x, 12px) !important;
+  margin: 0 0
+    var(--gd-linha-mes-row-gap, var(--classe-mes-string-margin-bottom, 6px)) 0 !important;
 
   background: rgba(255, 255, 255, 0.85) !important;
   border: 1px solid rgba(226, 232, 240, 0.7) !important;
   border-radius: 8px !important;
 
   font-family: "Rajdhani", sans-serif !important;
-  font-weight: 600 !important;
-  font-size: 13px !important;
+  font-weight: var(--gd-linha-mes-font-weight, 600) !important;
+  font-size: var(--gd-linha-mes-font-size, 13px) !important;
   line-height: 1 !important;
 
   transition: all 0.12s ease !important;
@@ -1870,28 +2270,28 @@
 
   /* DIMENSÕES OTIMIZADAS */
   width: 100% !important;
-  height: 26px !important;
-  min-height: 26px !important;
-  max-height: 26px !important;
+  height: var(--gd-linha-mes-height, 26px) !important;
+  min-height: var(--gd-linha-mes-min-height, 26px) !important;
+  max-height: var(--gd-linha-mes-max-height, 26px) !important;
 
   /* ESPAÇAMENTO */
-  padding: 0 10px !important;
-  margin: 0 0 2px 0 !important;
+  padding: 0 var(--gd-linha-mes-padding-x, 10px) !important;
+  margin: 0 0 var(--gd-linha-mes-row-gap, 2px) 0 !important;
 
   /* VISUAL */
   background: rgba(255, 255, 255, 0.8) !important;
   border: 1px solid rgba(226, 232, 240, 0.6) !important;
-  border-radius: 6px !important;
+  border-radius: var(--gd-linha-mes-border-radius, 6px) !important;
 
   /* TRANSIÇÕES */
-  transition: all 0.15s ease !important;
+  transition: var(--gd-linha-mes-transition, all 0.15s ease) !important;
   box-sizing: border-box !important;
   overflow: hidden !important;
 
   /* FONTE */
   font-family: "Rajdhani", sans-serif !important;
-  font-weight: 500 !important;
-  font-size: 12px !important;
+  font-weight: var(--gd-linha-mes-font-weight, 500) !important;
+  font-size: var(--gd-linha-mes-font-size, 12px) !important;
   line-height: 1.2 !important;
 }
 
