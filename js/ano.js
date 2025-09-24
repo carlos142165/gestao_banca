@@ -2714,3 +2714,217 @@ window.ListaMesesSimples = ListaMesesSimples;
 //
 //
 //
+// ===================================================================
+// CORREÇÃO JAVASCRIPT - APLICAR CLASSES DE BACKGROUND CORRETAS
+// ===================================================================
+
+// Função para aplicar classes corretas baseadas no saldo
+function aplicarClassesBackground(elemento, saldo) {
+  // Remover todas as classes de valor anteriores
+  elemento.classList.remove("valor-positivo", "valor-negativo", "valor-zero");
+
+  // Aplicar classe correta baseada no saldo
+  if (saldo > 0) {
+    elemento.classList.add("valor-positivo");
+  } else if (saldo < 0) {
+    elemento.classList.add("valor-negativo");
+  } else {
+    elemento.classList.add("valor-zero");
+  }
+
+  // Garantir que não há estilos inline interferindo
+  elemento.style.background = "";
+  elemento.style.backgroundColor = "";
+}
+
+// Correção na função renderizarMeses do ListaMesesSimples
+if (typeof ListaMesesSimples !== "undefined") {
+  const originalRenderizarMeses = ListaMesesSimples.renderizarMeses;
+
+  ListaMesesSimples.renderizarMeses = function (dadosPorMes) {
+    const container = document.querySelector(".lista-meses");
+    if (!container) return;
+
+    const scrollTop = container.scrollTop;
+    const ano = new Date().getFullYear();
+    const mesAtual = new Date().getMonth() + 1;
+
+    const nomesMeses = [
+      "Janeiro",
+      "Fevereiro",
+      "Março",
+      "Abril",
+      "Maio",
+      "Junho",
+      "Julho",
+      "Agosto",
+      "Setembro",
+      "Outubro",
+      "Novembro",
+      "Dezembro",
+    ];
+
+    let htmlMeses = "";
+
+    for (let mes = 1; mes <= 12; mes++) {
+      const mesStr = mes.toString().padStart(2, "0");
+      const chave = `${ano}-${mesStr}`;
+      const nomeMes = nomesMeses[mes - 1];
+
+      const dadosMes = dadosPorMes[chave] || {
+        total_valor_green: 0,
+        total_valor_red: 0,
+        total_green: 0,
+        total_red: 0,
+      };
+
+      const saldo =
+        parseFloat(dadosMes.total_valor_green) -
+        parseFloat(dadosMes.total_valor_red);
+      const saldoFormatado = saldo.toLocaleString("pt-BR", {
+        minimumFractionDigits: 2,
+        maximumFractionDigits: 2,
+      });
+
+      // Verificar meta mensal
+      let metaBatida = false;
+      if (this.metaMensal > 0) {
+        metaBatida = saldo >= this.metaMensal;
+      } else {
+        metaBatida = saldo >= 500; // Critério padrão
+      }
+
+      // CLASSES CORRETAS - INCLUINDO CLASSES DE BACKGROUND
+      let classes = "gd-linha-mes";
+
+      // IMPORTANTE: Adicionar classes de valor para o CSS aplicar backgrounds
+      if (saldo > 0) {
+        classes += " valor-positivo";
+      } else if (saldo < 0) {
+        classes += " valor-negativo";
+      } else {
+        classes += " valor-zero";
+      }
+
+      if (mes === mesAtual) {
+        classes += " gd-mes-hoje mes-atual";
+      } else {
+        classes += " mes-normal";
+      }
+
+      // Cores dos textos
+      const corValor =
+        saldo === 0
+          ? "texto-cinza"
+          : saldo > 0
+          ? "verde-bold"
+          : "vermelho-bold";
+      const classeTexto = saldo === 0 ? "texto-cinza" : "";
+      const placarCinza =
+        parseInt(dadosMes.total_green) === 0 &&
+        parseInt(dadosMes.total_red) === 0
+          ? "texto-cinza"
+          : "";
+
+      // Ícone
+      const icone = metaBatida ? "fa-trophy trofeu-icone" : "fa-check";
+
+      htmlMeses += `
+        <div class="${classes}" 
+             data-date="${chave}" 
+             data-meta-mensal-batida="${metaBatida ? "true" : "false"}"
+             data-saldo="${saldo}">
+          
+          <span class="data-mes ${classeTexto}">${nomeMes}</span>
+          
+          <div class="placar-mes">
+            <span class="placar verde-bold ${placarCinza}">${parseInt(
+        dadosMes.total_green
+      )}</span>
+            <span class="placar separador ${placarCinza}">×</span>
+            <span class="placar vermelho-bold ${placarCinza}">${parseInt(
+        dadosMes.total_red
+      )}</span>
+          </div>
+          
+          <span class="valor ${corValor}">R$ ${saldoFormatado}</span>
+          
+          <span class="icone ${classeTexto}">
+            <i class="fa-solid ${icone}"></i>
+          </span>
+        </div>
+      `;
+    }
+
+    container.innerHTML = htmlMeses;
+    container.scrollTop = scrollTop;
+
+    // IMPORTANTE: Após renderizar, garantir que as classes estão aplicadas
+    container.querySelectorAll(".gd-linha-mes").forEach((linha) => {
+      const saldo = parseFloat(linha.dataset.saldo) || 0;
+      aplicarClassesBackground(linha, saldo);
+    });
+
+    console.log("Meses renderizados com backgrounds corretos");
+  };
+}
+
+// Correção similar para ListaMesesManagerAnual se existir
+if (typeof ListaMesesManagerAnual !== "undefined") {
+  const originalRenderizarAnoCompleto =
+    ListaMesesManagerAnual.renderizarAnoCompleto;
+
+  ListaMesesManagerAnual.renderizarAnoCompleto = function (responseData) {
+    // Chamar função original primeiro
+    if (originalRenderizarAnoCompleto) {
+      originalRenderizarAnoCompleto.call(this, responseData);
+    }
+
+    // Depois aplicar correções de background
+    const container = document.querySelector(".lista-meses");
+    if (container) {
+      container.querySelectorAll(".gd-linha-mes").forEach((linha) => {
+        const saldo = parseFloat(linha.dataset.saldo) || 0;
+        aplicarClassesBackground(linha, saldo);
+      });
+
+      console.log("Backgrounds aplicados após renderização anual");
+    }
+  };
+}
+
+// Função para corrigir elementos já existentes
+function corrigirBackgroundsExistentes() {
+  const linhas = document.querySelectorAll(".gd-linha-mes");
+
+  linhas.forEach((linha) => {
+    const valorElemento = linha.querySelector(".valor");
+    if (!valorElemento) return;
+
+    const textoValor = valorElemento.textContent
+      .replace(/[R$\s]/g, "")
+      .replace(",", ".");
+    const saldo = parseFloat(textoValor) || 0;
+
+    aplicarClassesBackground(linha, saldo);
+  });
+
+  console.log(`Backgrounds corrigidos para ${linhas.length} linhas existentes`);
+}
+
+// Aplicar correção imediata
+setTimeout(corrigirBackgroundsExistentes, 100);
+
+// Aplicar correção quando a lista for atualizada
+window.addEventListener("listaMesesAtualizadaAjax", () => {
+  setTimeout(corrigirBackgroundsExistentes, 50);
+});
+
+// Comando global para debug
+window.corrigirBackgrounds = () => {
+  corrigirBackgroundsExistentes();
+  console.log("Backgrounds corrigidos manualmente");
+};
+
+console.log("Correção de backgrounds JavaScript carregada!");
+console.log("Comando: corrigirBackgrounds() - Para aplicar correção manual");

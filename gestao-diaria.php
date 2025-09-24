@@ -1055,7 +1055,7 @@ ob_end_flush();
                                 $classe_valor_cor = 'valor-zero';
                             }
                             
-                            $cor_valor = ($saldo_dia == 0) ? 'texto-cinza' : ($saldo_dia > 0 ? 'verde-bold' : 'vermelho-bold');
+                            $cor_valor = ($saldo_dia == 0) ? 'texto-cinza' : ($saldo_dia > 0 ? 'placar-green' : 'placar-red');
                             $classe_texto = ($saldo_dia == 0) ? 'texto-cinza' : '';
                             $placar_cinza = ((int)$dados_dia['total_green'] === 0 && (int)$dados_dia['total_red'] === 0) ? 'texto-cinza' : '';
                             
@@ -1102,11 +1102,11 @@ ob_end_flush();
                                 
                                 <span class="data '.$classe_texto.'">'.$data_exibicao.'</span>
 
-                                <div class="placar-dia">
-                                    <span class="placar verde-bold '.$placar_cinza.'">'.(int)$dados_dia['total_green'].'</span>
-                                    <span class="placar separador '.$placar_cinza.'">×</span>
-                                    <span class="placar vermelho-bold '.$placar_cinza.'">'.(int)$dados_dia['total_red'].'</span>
-                                </div>
+                <div class="placar-dia">
+                  <span class="placar placar-green '.$placar_cinza.'">'.(int)$dados_dia['total_green'].'</span>
+                  <span class="placar separador '.$placar_cinza.'">×</span>
+                  <span class="placar placar-red '.$placar_cinza.'">'.(int)$dados_dia['total_red'].'</span>
+                </div>
 
                                 <span class="valor '.$cor_valor.'">R$ '.$saldo_formatado.'</span>
 
@@ -1519,8 +1519,8 @@ ob_end_flush();
             
             if (indice === -1) return;
             
-            const green = parseInt(linha.querySelector('.placar.verde-bold')?.textContent || '0') || 0;
-            const red = parseInt(linha.querySelector('.placar.vermelho-bold')?.textContent || '0') || 0;
+            const green = parseInt(linha.querySelector('.placar.placar-green')?.textContent || '0') || 0;
+            const red = parseInt(linha.querySelector('.placar.placar-red')?.textContent || '0') || 0;
             
             const valorEl = linha.querySelector('.valor');
             let saldo = 0;
@@ -1851,7 +1851,7 @@ for ($mes = 1; $mes <= 12; $mes++) {
         $classe_valor_cor_mes = 'valor-zero';
     }
     
-    $cor_valor_mes = ($saldo_mes_ano == 0) ? 'texto-cinza' : ($saldo_mes_ano > 0 ? 'verde-bold' : 'vermelho-bold');
+  $cor_valor_mes = ($saldo_mes_ano == 0) ? 'texto-cinza' : ($saldo_mes_ano > 0 ? 'placar-green' : 'placar-red');
     $classe_texto_mes = ($saldo_mes_ano == 0) ? 'texto-cinza' : '';
     $placar_cinza_mes = ((int)$dados_mes_ano['total_green'] === 0 && (int)$dados_mes_ano['total_red'] === 0) ? 'texto-cinza' : '';
     
@@ -1902,11 +1902,11 @@ for ($mes = 1; $mes <= 12; $mes++) {
         
         <span class="data-mes '.$classe_texto_mes.'">'.$data_exibicao_mes.'</span>
 
-        <div class="placar-mes">
-            <span class="placar verde-bold '.$placar_cinza_mes.'">'.(int)$dados_mes_ano['total_green'].'</span>
-            <span class="placar separador '.$placar_cinza_mes.'">×</span>
-            <span class="placar vermelho-bold '.$placar_cinza_mes.'">'.(int)$dados_mes_ano['total_red'].'</span>
-        </div>
+    <div class="placar-mes">
+      <span class="placar placar-green '.$placar_cinza_mes.'">'.(int)$dados_mes_ano['total_green'].'</span>
+      <span class="placar separador '.$placar_cinza_mes.'">×</span>
+      <span class="placar placar-red '.$placar_cinza_mes.'">'.(int)$dados_mes_ano['total_red'].'</span>
+    </div>
 
         <span class="valor '.$cor_valor_mes.'">R$ '.$saldo_formatado_mes.'</span>
 

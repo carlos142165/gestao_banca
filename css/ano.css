@@ -1363,34 +1363,11 @@ html
   .resumo-mes
   .lista-dias
   .gd-linha-dia.current,
-html
-  body
-  .container
-  .bloco.bloco-2
-  .resumo-mes
-  .lista-dias
-  .gd-linha-dia.active,
-html
-  body
-  .container
-  .bloco.bloco-2
-  .resumo-mes
-  .lista-dias
-  .gd-linha-dia.gd-dia-hoje,
-html
-  body
-  .container
-  .bloco.bloco-2
-  .resumo-mes
-  .lista-dias
-  .gd-linha-dia[data-hoje],
-html
-  body
-  .container
-  .bloco.bloco-2
-  .resumo-mes
-  .lista-dias
-  .gd-linha-dia[data-hoje="true"] {
+/* Simplified: base today styling */
+.gd-linha-dia.gd-dia-hoje,
+.gd-linha-dia.gd-dia-hoje[style],
+.gd-linha-dia[data-hoje],
+.gd-linha-dia[data-hoje="true"] {
   background: var(--dia-atual-bg) !important;
   border-left: var(--dia-atual-border-width) var(--dia-atual-border-style)
     var(--dia-atual-border-color) !important;
@@ -1400,132 +1377,24 @@ html
 }
 
 /* Texto do dia atual - base */
-html
-  body
-  .container
-  .bloco.bloco-2
-  .resumo-mes
-  .lista-dias
-  .gd-linha-dia.hoje
-  .data,
-html
-  body
-  .container
-  .bloco.bloco-2
-  .resumo-mes
-  .lista-dias
-  .gd-linha-dia.hoje
-  .valor,
-html
-  body
-  .container
-  .bloco.bloco-2
-  .resumo-mes
-  .lista-dias
-  .gd-linha-dia.hoje
-  .placar-dia,
-html
-  body
-  .container
-  .bloco.bloco-2
-  .resumo-mes
-  .lista-dias
-  .gd-linha-dia.hoje
-  .icone
-  i,
-html
-  body
-  .container
-  .bloco.bloco-2
-  .resumo-mes
-  .lista-dias
-  .gd-linha-dia.gd-dia-hoje
-  .data,
-html
-  body
-  .container
-  .bloco.bloco-2
-  .resumo-mes
-  .lista-dias
-  .gd-linha-dia.gd-dia-hoje
-  .valor,
-html
-  body
-  .container
-  .bloco.bloco-2
-  .resumo-mes
-  .lista-dias
-  .gd-linha-dia.gd-dia-hoje
-  .placar-dia,
-html
-  body
-  .container
-  .bloco.bloco-2
-  .resumo-mes
-  .lista-dias
-  .gd-linha-dia.gd-dia-hoje
-  .icone
-  i,
-html
-  body
-  .container
-  .bloco.bloco-2
-  .resumo-mes
-  .lista-dias
-  .gd-linha-dia[data-hoje]
-  .data,
-html
-  body
-  .container
-  .bloco.bloco-2
-  .resumo-mes
-  .lista-dias
-  .gd-linha-dia[data-hoje]
-  .valor,
-html
-  body
-  .container
-  .bloco.bloco-2
-  .resumo-mes
-  .lista-dias
-  .gd-linha-dia[data-hoje]
-  .placar-dia,
-html
-  body
-  .container
-  .bloco.bloco-2
-  .resumo-mes
-  .lista-dias
-  .gd-linha-dia[data-hoje]
-  .icone
-  i {
+/* Text for today - simplified */
+.gd-linha-dia.gd-dia-hoje .data,
+.gd-linha-dia.gd-dia-hoje .valor,
+.gd-linha-dia.gd-dia-hoje .placar-dia,
+.gd-linha-dia.gd-dia-hoje .icone i,
+.gd-linha-dia[data-hoje] .data,
+.gd-linha-dia[data-hoje] .valor,
+.gd-linha-dia[data-hoje] .placar-dia,
+.gd-linha-dia[data-hoje] .icone i {
   color: var(--dia-atual-text-color) !important;
   font-weight: var(--dia-atual-text-weight) !important;
   opacity: 1 !important;
 }
 
 /* Dia atual + valor positivo */
-html
-  body
-  .container
-  .bloco.bloco-2
-  .resumo-mes
-  .lista-dias
-  .gd-linha-dia.hoje.valor-positivo,
-html
-  body
-  .container
-  .bloco.bloco-2
-  .resumo-mes
-  .lista-dias
-  .gd-linha-dia.valor-positivo.gd-dia-hoje,
-html
-  body
-  .container
-  .bloco.bloco-2
-  .resumo-mes
-  .lista-dias
-  .gd-linha-dia.valor-positivo[data-hoje] {
+/* Today positive */
+.gd-linha-dia.gd-dia-hoje.valor-positivo,
+.gd-linha-dia[data-hoje].valor-positivo {
   background: var(--dia-atual-positivo-bg) !important;
   border-left: var(--dia-atual-border-width) var(--dia-atual-border-style)
     var(--dia-atual-positivo-border) !important;
@@ -1570,27 +1439,9 @@ html
 }
 
 /* Dia atual + valor negativo */
-html
-  body
-  .container
-  .bloco.bloco-2
-  .resumo-mes
-  .lista-dias
-  .gd-linha-dia.hoje.valor-negativo,
-html
-  body
-  .container
-  .bloco.bloco-2
-  .resumo-mes
-  .lista-dias
-  .gd-linha-dia.valor-negativo.gd-dia-hoje,
-html
-  body
-  .container
-  .bloco.bloco-2
-  .resumo-mes
-  .lista-dias
-  .gd-linha-dia.valor-negativo[data-hoje] {
+/* Today negative */
+.gd-linha-dia.gd-dia-hoje.valor-negativo,
+.gd-linha-dia[data-hoje].valor-negativo {
   background: var(--dia-atual-negativo-bg) !important;
   border-left: var(--dia-atual-border-width) var(--dia-atual-border-style)
     var(--dia-atual-negativo-border) !important;
@@ -1635,27 +1486,9 @@ html
 }
 
 /* Dia atual + valor zero */
-html
-  body
-  .container
-  .bloco.bloco-2
-  .resumo-mes
-  .lista-dias
-  .gd-linha-dia.hoje.valor-zero,
-html
-  body
-  .container
-  .bloco.bloco-2
-  .resumo-mes
-  .lista-dias
-  .gd-linha-dia.valor-zero.gd-dia-hoje,
-html
-  body
-  .container
-  .bloco.bloco-2
-  .resumo-mes
-  .lista-dias
-  .gd-linha-dia.valor-zero[data-hoje] {
+/* Today zero */
+.gd-linha-dia.gd-dia-hoje.valor-zero,
+.gd-linha-dia[data-hoje].valor-zero {
   background: var(--dia-atual-zero-bg) !important;
   border-left: var(--dia-atual-border-width) var(--dia-atual-border-style)
     var(--dia-atual-zero-border) !important;
@@ -2551,4 +2384,918 @@ html body .container .bloco.bloco-2 .resumo-mes .lista-dias .gd-linha-dia.hoje {
   border-left: 3px solid #43464d !important;
   box-shadow: 0 1px 4px rgba(67, 70, 77, 0.08) inset !important;
   font-weight: 700 !important;
+}
+/**/
+/**/
+/**/
+/**/
+/**/
+/**/
+/**/
+/**/
+/**/
+/**/
+/**/
+/**/
+/**/
+/**/
+/**/
+/**/
+/**/
+/**/
+/**/
+/**/
+/**/
+/**/
+/**/
+/**/
+/**/
+/**/
+/**/
+/**/
+/**/
+/**/
+/**/
+/**/
+/**/
+/**/
+/**/
+/**/
+/**/
+/* ===================================================================
+  - COR - DATA - PLACAR - ICONE 
+   =================================================================== */
+
+/* RESETAR TODOS OS BACKGROUNDS PRIMEIRO */
+.gd-linha-mes {
+  background: rgba(255, 255, 255, 0.7) !important;
+  border: 1px solid rgba(226, 232, 240, 0.5) !important;
+}
+
+/* SALDO POSITIVO - VERDE */
+.gd-linha-mes.valor-positivo,
+.lista-meses .gd-linha-mes.valor-positivo,
+.bloco-3 .lista-meses .gd-linha-mes.valor-positivo,
+html
+  body
+  .container
+  .bloco.bloco-3
+  .resumo-ano
+  .lista-meses
+  .gd-linha-mes.valor-positivo {
+  background: rgb(242, 255, 247) !important;
+  border-left: 3px solid #059669 !important;
+  padding-left: 10px !important;
+}
+
+/* SALDO NEGATIVO - VERMELHO */
+.gd-linha-mes.valor-negativo,
+.lista-meses .gd-linha-mes.valor-negativo,
+.bloco-3 .lista-meses .gd-linha-mes.valor-negativo,
+html
+  body
+  .container
+  .bloco.bloco-3
+  .resumo-ano
+  .lista-meses
+  .gd-linha-mes.valor-negativo {
+  background: rgb(255, 235, 235) !important;
+  border-left: 3px solid #dc2626 !important;
+  padding-left: 10px !important;
+}
+
+/* SALDO ZERO - CINZA */
+.gd-linha-mes.valor-zero,
+.lista-meses .gd-linha-mes.valor-zero,
+.bloco-3 .lista-meses .gd-linha-mes.valor-zero,
+html
+  body
+  .container
+  .bloco.bloco-3
+  .resumo-ano
+  .lista-meses
+  .gd-linha-mes.valor-zero {
+  background: rgba(255, 255, 255, 1) !important;
+  border-left: 3px solid rgba(156, 163, 175, 0.3) !important;
+  padding-left: 10px !important;
+}
+
+/* ===================================================================
+   MÊS ATUAL - DESTAQUE ESPECIAL COM BACKGROUNDS CORRETOS
+   =================================================================== */
+
+/* MÊS ATUAL - BASE */
+.gd-linha-mes.gd-mes-hoje,
+.gd-linha-mes.mes-atual,
+.lista-meses .gd-linha-mes.gd-mes-hoje,
+.lista-meses .gd-linha-mes.mes-atual,
+.bloco-3 .lista-meses .gd-linha-mes.gd-mes-hoje,
+.bloco-3 .lista-meses .gd-linha-mes.mes-atual {
+  background: linear-gradient(
+    90deg,
+    rgba(255, 255, 255, 0.98),
+    rgba(248, 249, 250, 0.98)
+  ) !important;
+  border-left: 3px solid #43464d !important;
+  box-shadow: 0 1px 4px rgba(67, 70, 77, 0.08) inset !important;
+  font-weight: 400 !important;
+}
+
+/* MÊS ATUAL + POSITIVO */
+.gd-linha-mes.gd-mes-hoje.valor-positivo,
+.gd-linha-mes.mes-atual.valor-positivo,
+.lista-meses .gd-linha-mes.gd-mes-hoje.valor-positivo,
+.lista-meses .gd-linha-mes.mes-atual.valor-positivo {
+  background: linear-gradient(
+    90deg,
+    #edfcf0fa,
+    rgba(230, 253, 242, 0.98)
+  ) !important;
+  border-left: 3px solid #058b32 !important;
+  box-shadow: none !important;
+}
+
+/* MÊS ATUAL + NEGATIVO */
+.gd-linha-mes.gd-mes-hoje.valor-negativo,
+.gd-linha-mes.mes-atual.valor-negativo,
+.lista-meses .gd-linha-mes.gd-mes-hoje.valor-negativo,
+.lista-meses .gd-linha-mes.mes-atual.valor-negativo {
+  background: linear-gradient(
+    90deg,
+    rgba(255, 242, 242, 0.98),
+    rgba(255, 238, 238, 0.98)
+  ) !important;
+  border-left: 3px solid #ec0606 !important;
+  box-shadow: none !important;
+}
+
+/* MÊS ATUAL + ZERO */
+.gd-linha-mes.gd-mes-hoje.valor-zero,
+.gd-linha-mes.mes-atual.valor-zero,
+.lista-meses .gd-linha-mes.gd-mes-hoje.valor-zero,
+.lista-meses .gd-linha-mes.mes-atual.valor-zero {
+  background: linear-gradient(
+    90deg,
+    rgba(249, 250, 251, 0.98),
+    rgba(243, 244, 246, 0.98)
+  ) !important;
+  border-left: 3px solid #9ca3af !important;
+  box-shadow: none !important;
+}
+
+/* ===================================================================
+   FORÇA APLICAÇÃO USANDO SELETORES JAVASCRIPT
+   =================================================================== */
+
+/* Elementos gerados pelo JavaScript */
+.gd-linha-mes[data-date],
+.gd-linha-mes[data-saldo],
+.gd-linha-mes[data-meta-mensal-batida] {
+  /* Garantir que elementos gerados pelo JS herdem as cores */
+  background: inherit !important;
+  border-left: inherit !important;
+}
+
+/* Forçar com base no data-saldo */
+.gd-linha-mes[data-saldo] {
+  transition: all 0.15s ease !important;
+}
+
+/* ===================================================================
+   OVERRIDE PARA ELEMENTOS ESPECÍFICOS GERADOS PELO JAVASCRIPT
+   =================================================================== */
+
+/* Quando o JS adiciona elementos, forçar cores baseadas no conteúdo */
+.gd-linha-mes .valor.verde-bold {
+  color: #059669 !important;
+}
+
+.gd-linha-mes .valor.vermelho-bold {
+  color: #dc2626 !important;
+}
+
+.gd-linha-mes .valor.texto-cinza {
+  color: #6b7280 !important;
+}
+
+/* ===================================================================
+   ANIMAÇÃO DE ATUALIZAÇÃO VIA AJAX - COM BACKGROUND
+   =================================================================== */
+
+.atualizado-via-ajax {
+  animation: pulseAjaxComBackground 1s ease-in-out !important;
+  border-left-color: #3b82f6 !important;
+}
+
+@keyframes pulseAjaxComBackground {
+  0%,
+  100% {
+    transform: scale(1);
+    opacity: 1;
+  }
+  50% {
+    transform: scale(1.02);
+    opacity: 0.9;
+    background-color: rgba(59, 130, 246, 0.15) !important;
+    box-shadow: 0 2px 8px rgba(59, 130, 246, 0.2) !important;
+  }
+}
+
+/* ===================================================================
+   HOVER COM BACKGROUNDS PRESERVADOS
+   =================================================================== */
+
+.gd-linha-mes:hover {
+  transform: translateX(2px) !important;
+  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.06) !important;
+  /* O background será herdado da classe de estado */
+}
+
+/* Hover específico para cada estado */
+.gd-linha-mes.valor-positivo:hover {
+  background: rgba(141, 219, 170, 0.18) !important;
+}
+
+.gd-linha-mes.valor-negativo:hover {
+  background: rgba(247, 224, 224, 0.9) !important;
+}
+
+.gd-linha-mes.valor-zero:hover {
+  background: rgba(255, 255, 255, 1) !important;
+}
+
+/* ===================================================================
+   DEBUG - FORÇAR BACKGROUNDS VISÍVEIS (REMOVER APÓS TESTE)
+   =================================================================== */
+
+/* Uncomment para debug - força cores visíveis para teste
+.gd-linha-mes.valor-positivo {
+  background: rgba(0, 255, 0, 0.2) !important;
+  border: 2px solid green !important;
+}
+
+.gd-linha-mes.valor-negativo {
+  background: rgba(255, 0, 0, 0.2) !important;
+  border: 2px solid red !important;
+}
+
+.gd-linha-mes.valor-zero {
+  background: rgba(128, 128, 128, 0.2) !important;
+  border: 2px solid gray !important;
+}
+*/
+
+/* ===================================================================
+   GARANTIR QUE O JAVASCRIPT NÃO SOBRESCREVA OS ESTILOS
+   =================================================================== */
+
+/* Importante: prevenir que estilos inline do JS sobrescrevam */
+.gd-linha-mes[style*="background"] {
+  background: unset !important;
+}
+
+/* Aplicar background correto após reset */
+.gd-linha-mes[style*="background"].valor-positivo {
+  background: rgba(141, 219, 170, 0.12) !important;
+}
+
+.gd-linha-mes[style*="background"].valor-negativo {
+  background: rgb(247, 224, 224) !important;
+}
+
+.gd-linha-mes[style*="background"].valor-zero {
+  background: rgba(255, 255, 255, 0.95) !important;
+}
+/* ===================================================================
+   VARIÁVEIS ROOT PARA LISTA DE MESES - BACKGROUNDS E FONTES
+   Compatibilidade visual com bloco 2 e controle centralizado
+   =================================================================== */
+
+/* ===================================================================
+   VARIÁVEIS ROOT PARA LISTA DE MESES - BACKGROUNDS E FONTES
+   Compatibilidade visual com bloco 2 e controle centralizado
+   =================================================================== */
+
+:root {
+  /* --------------------------------------------------
+     BACKGROUNDS DOS MESES - ESTADOS DE SALDO
+     -------------------------------------------------- */
+
+  /* Mês com saldo POSITIVO - Verde suave */
+  --mes-positivo-bg: rgba(242, 255, 247);
+  --mes-positivo-border: 3px solid #059669;
+  --mes-positivo-hover-bg: rgba(141, 219, 170, 0.18);
+
+  /* Mês com saldo NEGATIVO - Vermelho suave */
+  --mes-negativo-bg: rgb(255, 235, 235);
+  --mes-negativo-border: 3px solid #dc2626;
+  --mes-negativo-hover-bg: rgba(247, 224, 224, 0.9);
+
+  /* Mês com saldo ZERO - Mesma opacidade do bloco 2 */
+  --mes-zero-bg: rgba(
+    255,
+    255,
+    255,
+    0.7
+  ); /* Mesma opacidade dos textos do bloco 2 */
+  --mes-zero-border: 3px solid rgba(156, 163, 175, 0.3);
+  --mes-zero-hover-bg: rgba(255, 255, 255, 0.85);
+  --mes-zero-opacity: 0.7; /* Para manter consistência visual */
+
+  /* Background base das linhas dos meses */
+  --mes-base-bg: rgba(255, 255, 255, 0.7);
+  --mes-base-border: 1px solid rgba(226, 232, 240, 0.5);
+
+  /* --------------------------------------------------
+     MÊS ATUAL - DESTAQUE ESPECIAL
+     -------------------------------------------------- */
+
+  /* Mês atual - base neutra */
+  --mes-atual-bg: linear-gradient(
+    90deg,
+    rgba(255, 255, 255, 0.98),
+    rgba(248, 249, 250, 0.98)
+  );
+  --mes-atual-border: 3px solid #43464d;
+  --mes-atual-shadow: 0 1px 4px rgba(67, 70, 77, 0.08) inset;
+
+  /* Mês atual + positivo */
+  --mes-atual-positivo-bg: linear-gradient(
+    90deg,
+    #edfcf0fa,
+    rgba(230, 253, 242, 0.98)
+  );
+  --mes-atual-positivo-border: 3px solid #058b32;
+
+  /* Mês atual + negativo */
+  --mes-atual-negativo-bg: linear-gradient(
+    90deg,
+    rgba(255, 242, 242, 0.98),
+    rgba(255, 238, 238, 0.98)
+  );
+  --mes-atual-negativo-border: 3px solid #ec0606;
+
+  /* Mês atual + zero */
+  --mes-atual-zero-bg: linear-gradient(
+    90deg,
+    rgba(249, 250, 251, 0.98),
+    rgba(243, 244, 246, 0.98)
+  );
+  --mes-atual-zero-border: 3px solid #9ca3af;
+
+  /* --------------------------------------------------
+     CORES DAS FONTES - ELEMENTOS DA LINHA DO MÊS
+     -------------------------------------------------- */
+
+  /* NOME DO MÊS (data-mes) */
+  --mes-data-color: #374151;
+  --mes-data-color-positivo: #00a651;
+  --mes-data-color-negativo: #dc2626;
+  --mes-data-color-zero: #6b7280;
+  --mes-data-color-atual: #111827;
+  --mes-data-font-size: 13px;
+  --mes-data-font-weight: 400; /* Padronizado para 400 */
+  --mes-data-font-family: "Rajdhani", sans-serif;
+
+  /* PLACAR (placar-mes) */
+  --mes-placar-color-green: #00a651;
+  --mes-placar-color-red: #dc2626;
+  --mes-placar-color-separador: #94a3b8;
+  --mes-placar-color-cinza: #94a3b8;
+  --mes-placar-font-size: 12px;
+  --mes-placar-font-weight: 400; /* Padronizado para 400 */
+  --mes-placar-font-family: "Rajdhani", sans-serif;
+
+  /* VALOR (saldo mensal) */
+  --mes-valor-color-positivo: #00a651;
+  --mes-valor-color-negativo: #dc2626;
+  --mes-valor-color-zero: #6b7280;
+  --mes-valor-font-size: 12px;
+  --mes-valor-font-weight: 400; /* Padronizado para 400 */
+  --mes-valor-font-family: "Rajdhani", sans-serif;
+
+  /* ÍCONE (troféu/check) */
+  --mes-icone-color-check: #6b7280;
+  --mes-icone-color-trofeu: #f59e0b;
+  --mes-icone-color-cinza: #94a3b8;
+  --mes-icone-color-positivo: #00a651; /* Nova variável para ícone seguir cor do saldo */
+  --mes-icone-color-negativo: #dc2626; /* Nova variável para ícone seguir cor do saldo */
+  --mes-icone-font-size: 11px;
+  --mes-icone-font-weight: 900;
+  --mes-icone-font-family: "Font Awesome 6 Free";
+
+  /* --------------------------------------------------
+     TAMANHOS DOS ELEMENTOS
+     -------------------------------------------------- */
+
+  /* Larguras das colunas */
+  --mes-data-width: 70px;
+  --mes-placar-width: 60px;
+  --mes-valor-width: 70px;
+  --mes-icone-width: 18px;
+
+  /* Gaps e margens */
+  --mes-data-margin-right: 8px;
+  --mes-placar-margin-right: 8px;
+  --mes-valor-margin-right: 8px;
+  --mes-icone-margin-right: 0px;
+
+  /* --------------------------------------------------
+     OPACIDADE E TRANSPARÊNCIA (BLOCO 2 COMPATIBILITY)
+     -------------------------------------------------- */
+
+  /* Opacidade dos meses sem valor (R$ 0,00) */
+  --mes-sem-valor-opacity: 0.7; /* Mesma opacidade dos textos sem valor do bloco 2 */
+  --mes-sem-valor-bg-alpha: 0.7; /* Alpha do background para meses zerados */
+
+  /* Opacidade dos textos cinza */
+  --mes-texto-cinza-opacity: 0.7;
+  --mes-placar-cinza-opacity: 0.7;
+
+  /* --------------------------------------------------
+     TRANSIÇÕES E ANIMAÇÕES
+     -------------------------------------------------- */
+
+  --mes-transition: all 0.15s ease;
+  --mes-hover-transform: translateX(2px);
+  --mes-hover-shadow: 0 2px 6px rgba(0, 0, 0, 0.06);
+
+  /* Animação de atualização via AJAX */
+  --mes-ajax-update-duration: 1s;
+  --mes-ajax-update-color: #3b82f6;
+  --mes-ajax-update-bg: rgba(59, 130, 246, 0.15);
+  --mes-ajax-update-shadow: 0 2px 8px rgba(59, 130, 246, 0.2);
+}
+
+/* ===================================================================
+   APLICAÇÃO DAS VARIÁVEIS - BACKGROUNDS DOS MESES
+   =================================================================== */
+
+/* RESETAR BACKGROUND BASE - REMOVER DUPLICIDADE */
+.gd-linha-mes {
+  background: var(--mes-base-bg) !important;
+  border: var(--mes-base-border) !important;
+  transition: var(--mes-transition) !important;
+}
+
+/* SALDO POSITIVO - VERSÃO ÚNICA E CORRIGIDA */
+.gd-linha-mes.valor-positivo,
+.lista-meses .gd-linha-mes.valor-positivo,
+.bloco-3 .lista-meses .gd-linha-mes.valor-positivo,
+html
+  body
+  .container
+  .bloco.bloco-3
+  .resumo-ano
+  .lista-meses
+  .gd-linha-mes.valor-positivo {
+  background: var(--mes-positivo-bg) !important;
+  border-left: var(--mes-positivo-border) !important;
+  padding-left: 10px !important;
+}
+
+.gd-linha-mes.valor-positivo:hover {
+  background: var(--mes-positivo-hover-bg) !important;
+}
+
+/* SALDO NEGATIVO - VERSÃO ÚNICA E CORRIGIDA */
+.gd-linha-mes.valor-negativo,
+.lista-meses .gd-linha-mes.valor-negativo,
+.bloco-3 .lista-meses .gd-linha-mes.valor-negativo,
+html
+  body
+  .container
+  .bloco.bloco-3
+  .resumo-ano
+  .lista-meses
+  .gd-linha-mes.valor-negativo {
+  background: var(--mes-negativo-bg) !important;
+  border-left: var(--mes-negativo-border) !important;
+  padding-left: 10px !important;
+}
+
+.gd-linha-mes.valor-negativo:hover {
+  background: var(--mes-negativo-hover-bg) !important;
+}
+
+/* SALDO ZERO - MESMA OPACIDADE DO BLOCO 2 - VERSÃO ÚNICA */
+.gd-linha-mes.valor-zero,
+.lista-meses .gd-linha-mes.valor-zero,
+.bloco-3 .lista-meses .gd-linha-mes.valor-zero,
+html
+  body
+  .container
+  .bloco.bloco-3
+  .resumo-ano
+  .lista-meses
+  .gd-linha-mes.valor-zero {
+  background: var(--mes-zero-bg) !important;
+  border-left: var(--mes-zero-border) !important;
+  padding-left: 10px !important;
+  opacity: var(
+    --mes-sem-valor-opacity
+  ) !important; /* Mesma opacidade do bloco 2 */
+}
+
+.gd-linha-mes.valor-zero:hover {
+  background: var(--mes-zero-hover-bg) !important;
+  opacity: 0.85 !important; /* Menos opaco no hover */
+}
+
+/* ===================================================================
+   APLICAÇÃO DAS VARIÁVEIS - MÊS ATUAL COM CORES CORRETAS
+   =================================================================== */
+
+/* MÊS ATUAL - BASE NEUTRA (quando não tem classe de saldo específica) */
+.gd-linha-mes.gd-mes-hoje:not(.valor-positivo):not(.valor-negativo):not(
+    .valor-zero
+  ),
+.gd-linha-mes.mes-atual:not(.valor-positivo):not(.valor-negativo):not(
+    .valor-zero
+  ) {
+  background: var(--mes-atual-bg) !important;
+  border-left: var(--mes-atual-border) !important;
+  box-shadow: var(--mes-atual-shadow) !important;
+}
+
+/* MÊS ATUAL + POSITIVO - CORRIGIDO */
+.gd-linha-mes.gd-mes-hoje.valor-positivo,
+.gd-linha-mes.mes-atual.valor-positivo,
+.lista-meses .gd-linha-mes.gd-mes-hoje.valor-positivo,
+.lista-meses .gd-linha-mes.mes-atual.valor-positivo {
+  background: var(--mes-atual-positivo-bg) !important;
+  border-left: var(--mes-atual-positivo-border) !important;
+  box-shadow: none !important;
+}
+
+/* MÊS ATUAL + NEGATIVO - CORRIGIDO */
+.gd-linha-mes.gd-mes-hoje.valor-negativo,
+.gd-linha-mes.mes-atual.valor-negativo,
+.lista-meses .gd-linha-mes.gd-mes-hoje.valor-negativo,
+.lista-meses .gd-linha-mes.mes-atual.valor-negativo {
+  background: var(--mes-atual-negativo-bg) !important;
+  border-left: var(--mes-atual-negativo-border) !important;
+  box-shadow: none !important;
+}
+
+/* MÊS ATUAL + ZERO - CORRIGIDO */
+.gd-linha-mes.gd-mes-hoje.valor-zero,
+.gd-linha-mes.mes-atual.valor-zero,
+.lista-meses .gd-linha-mes.gd-mes-hoje.valor-zero,
+.lista-meses .gd-linha-mes.mes-atual.valor-zero {
+  background: var(--mes-atual-zero-bg) !important;
+  border-left: var(--mes-atual-zero-border) !important;
+  box-shadow: none !important;
+  opacity: 1 !important; /* Mês atual sempre visível */
+}
+
+/* ===================================================================
+   APLICAÇÃO DAS VARIÁVEIS - FONTES DOS ELEMENTOS (CORRIGIDO)
+   =================================================================== */
+
+/* NOME DO MÊS (data-mes) - PADRONIZADO FONT-WEIGHT 400 */
+.gd-linha-mes .data-mes {
+  font-family: var(--mes-data-font-family) !important;
+  font-size: var(--mes-data-font-size) !important;
+  font-weight: var(--mes-data-font-weight) !important; /* 400 */
+  color: var(--mes-data-color) !important;
+  width: var(--mes-data-width) !important;
+  min-width: var(--mes-data-width) !important;
+  max-width: var(--mes-data-width) !important;
+  margin-right: var(--mes-data-margin-right) !important;
+}
+
+/* CORES DO NOME DO MÊS POR ESTADO - INCLUINDO MÊS ATUAL */
+.gd-linha-mes.valor-positivo .data-mes {
+  color: var(--mes-data-color-positivo) !important;
+  font-weight: var(--mes-data-font-weight) !important; /* 400 */
+}
+
+.gd-linha-mes.valor-negativo .data-mes {
+  color: var(--mes-data-color-negativo) !important;
+  font-weight: var(--mes-data-font-weight) !important; /* 400 */
+}
+
+.gd-linha-mes.valor-zero .data-mes {
+  color: var(--mes-data-color-zero) !important;
+  font-weight: var(--mes-data-font-weight) !important; /* 400 */
+  opacity: var(--mes-texto-cinza-opacity) !important;
+}
+
+/* MÊS ATUAL - NOME DEVE SEGUIR A COR DO SALDO (CORRIGIDO) */
+.gd-linha-mes.gd-mes-hoje.valor-positivo .data-mes,
+.gd-linha-mes.mes-atual.valor-positivo .data-mes {
+  color: var(
+    --mes-data-color-positivo
+  ) !important; /* Verde para saldo positivo */
+  font-weight: var(--mes-data-font-weight) !important; /* 400 */
+}
+
+.gd-linha-mes.gd-mes-hoje.valor-negativo .data-mes,
+.gd-linha-mes.mes-atual.valor-negativo .data-mes {
+  color: var(
+    --mes-data-color-negativo
+  ) !important; /* Vermelho para saldo negativo */
+  font-weight: var(--mes-data-font-weight) !important; /* 400 */
+}
+
+.gd-linha-mes.gd-mes-hoje.valor-zero .data-mes,
+.gd-linha-mes.mes-atual.valor-zero .data-mes {
+  color: var(--mes-data-color-zero) !important; /* Cinza para saldo zero */
+  font-weight: var(--mes-data-font-weight) !important; /* 400 */
+}
+
+/* MÊS ATUAL sem classe de saldo específica */
+.gd-linha-mes.gd-mes-hoje:not(.valor-positivo):not(.valor-negativo):not(
+    .valor-zero
+  )
+  .data-mes,
+.gd-linha-mes.mes-atual:not(.valor-positivo):not(.valor-negativo):not(
+    .valor-zero
+  )
+  .data-mes {
+  color: var(--mes-data-color-atual) !important;
+  font-weight: var(--mes-data-font-weight) !important; /* 400 */
+}
+
+/* PLACAR MENSAL (placar-mes) - PADRONIZADO FONT-WEIGHT 400 */
+.gd-linha-mes .placar-mes {
+  font-family: var(--mes-placar-font-family) !important;
+  font-size: var(--mes-placar-font-size) !important;
+  font-weight: var(--mes-placar-font-weight) !important; /* 400 */
+  width: var(--mes-placar-width) !important;
+  min-width: var(--mes-placar-width) !important;
+  max-width: var(--mes-placar-width) !important;
+  margin-right: var(--mes-placar-margin-right) !important;
+}
+
+.gd-linha-mes .placar-mes .verde-bold,
+.gd-linha-mes .placar-mes .placar-green {
+  color: var(--mes-placar-color-green) !important;
+  font-weight: var(--mes-placar-font-weight) !important; /* 400 */
+}
+
+.gd-linha-mes .placar-mes .vermelho-bold,
+.gd-linha-mes .placar-mes .placar-red {
+  color: var(--mes-placar-color-red) !important;
+  font-weight: var(--mes-placar-font-weight) !important; /* 400 */
+}
+
+.gd-linha-mes .placar-mes .separador {
+  color: var(--mes-placar-color-separador) !important;
+  font-weight: var(--mes-placar-font-weight) !important; /* 400 */
+}
+
+.gd-linha-mes .placar-mes .texto-cinza {
+  color: var(--mes-placar-color-cinza) !important;
+  opacity: var(--mes-placar-cinza-opacity) !important;
+  font-weight: var(--mes-placar-font-weight) !important; /* 400 */
+}
+
+/* VALOR (saldo mensal) - PADRONIZADO FONT-WEIGHT 400 */
+.gd-linha-mes .valor {
+  font-family: var(--mes-valor-font-family) !important;
+  font-size: var(--mes-valor-font-size) !important;
+  font-weight: var(--mes-valor-font-weight) !important; /* 400 */
+  width: var(--mes-valor-width) !important;
+  min-width: var(--mes-valor-width) !important;
+  max-width: var(--mes-valor-width) !important;
+  margin-right: var(--mes-valor-margin-right) !important;
+}
+
+.gd-linha-mes .valor.verde-bold,
+.gd-linha-mes .valor.placar-green {
+  color: var(--mes-valor-color-positivo) !important;
+  font-weight: var(--mes-valor-font-weight) !important; /* 400 */
+}
+
+.gd-linha-mes .valor.vermelho-bold,
+.gd-linha-mes .valor.placar-red {
+  color: var(--mes-valor-color-negativo) !important;
+  font-weight: var(--mes-valor-font-weight) !important; /* 400 */
+}
+
+.gd-linha-mes .valor.texto-cinza {
+  color: var(--mes-valor-color-zero) !important;
+  opacity: var(--mes-texto-cinza-opacity) !important;
+  font-weight: var(--mes-valor-font-weight) !important; /* 400 */
+}
+
+/* ===================================================================
+   ÍCONE - SEGUIR COR DO SALDO (CORRIGIDO)
+   =================================================================== */
+
+.gd-linha-mes .icone {
+  width: var(--mes-icone-width) !important;
+  min-width: var(--mes-icone-width) !important;
+  max-width: var(--mes-icone-width) !important;
+  height: var(--mes-icone-width) !important;
+  margin-right: var(--mes-icone-margin-right) !important;
+}
+
+.gd-linha-mes .icone i {
+  font-family: var(--mes-icone-font-family) !important;
+  font-size: var(--mes-icone-font-size) !important;
+  font-weight: var(--mes-icone-font-weight) !important;
+}
+
+/* ÍCONE CHECK PADRÃO */
+.gd-linha-mes .icone i.fa-check {
+  color: var(--mes-icone-color-check) !important;
+}
+
+/* ÍCONE TROFÉU - SEMPRE DOURADO (PRIORIDADE MÁXIMA) */
+.gd-linha-mes .icone i.fa-trophy,
+.gd-linha-mes .icone i.fa-trophy.trofeu-icone,
+.gd-linha-mes[data-meta-mensal-batida="true"] .icone i.fa-trophy {
+  color: var(--mes-icone-color-trofeu) !important;
+  text-shadow: 0 1px 0 rgba(0, 0, 0, 0.08) !important;
+}
+
+/* ÍCONE SEGUIR COR DO SALDO (APENAS QUANDO NÃO É TROFÉU) */
+.gd-linha-mes.valor-positivo .icone i:not(.fa-trophy) {
+  color: var(--mes-icone-color-positivo) !important; /* Verde */
+}
+
+.gd-linha-mes.valor-negativo .icone i:not(.fa-trophy) {
+  color: var(--mes-icone-color-negativo) !important; /* Vermelho */
+}
+
+.gd-linha-mes.valor-zero .icone i:not(.fa-trophy) {
+  color: var(--mes-icone-color-cinza) !important; /* Cinza */
+  opacity: var(--mes-texto-cinza-opacity) !important;
+}
+
+/* MÊS ATUAL - ÍCONE DEVE SEGUIR COR DO SALDO (CORRIGIDO) */
+.gd-linha-mes.gd-mes-hoje.valor-positivo .icone i:not(.fa-trophy),
+.gd-linha-mes.mes-atual.valor-positivo .icone i:not(.fa-trophy) {
+  color: var(--mes-icone-color-positivo) !important; /* Verde */
+}
+
+.gd-linha-mes.gd-mes-hoje.valor-negativo .icone i:not(.fa-trophy),
+.gd-linha-mes.mes-atual.valor-negativo .icone i:not(.fa-trophy) {
+  color: var(--mes-icone-color-negativo) !important; /* Vermelho */
+}
+
+.gd-linha-mes.gd-mes-hoje.valor-zero .icone i:not(.fa-trophy),
+.gd-linha-mes.mes-atual.valor-zero .icone i:not(.fa-trophy) {
+  color: var(--mes-icone-color-cinza) !important; /* Cinza */
+}
+
+/* ===================================================================
+   HOVER COM VARIÁVEIS
+   =================================================================== */
+
+.gd-linha-mes:hover {
+  transform: var(--mes-hover-transform) !important;
+  box-shadow: var(--mes-hover-shadow) !important;
+}
+
+/* ===================================================================
+   ANIMAÇÃO DE ATUALIZAÇÃO AJAX COM VARIÁVEIS
+   =================================================================== */
+
+.atualizado-via-ajax {
+  animation: pulseAjaxComVariaveis var(--mes-ajax-update-duration) ease-in-out !important;
+  border-left-color: var(--mes-ajax-update-color) !important;
+}
+
+@keyframes pulseAjaxComVariaveis {
+  0%,
+  100% {
+    transform: scale(1);
+    opacity: 1;
+  }
+  50% {
+    transform: scale(1.02);
+    opacity: 0.9;
+    background-color: var(--mes-ajax-update-bg) !important;
+    box-shadow: var(--mes-ajax-update-shadow) !important;
+  }
+}
+
+/* ===================================================================
+   RESPONSIVIDADE DAS VARIÁVEIS
+   =================================================================== */
+
+@media (max-width: 768px) {
+  :root {
+    /* Reduzir tamanhos de fonte em tablets */
+    --mes-data-font-size: 12px;
+    --mes-placar-font-size: 11px;
+    --mes-valor-font-size: 11px;
+    --mes-icone-font-size: 9px;
+
+    /* Ajustar larguras */
+    --mes-data-width: 60px;
+    --mes-placar-width: 50px;
+    --mes-valor-width: 60px;
+    --mes-icone-width: 16px;
+
+    /* Reduzir margens */
+    --mes-data-margin-right: 6px;
+    --mes-placar-margin-right: 6px;
+    --mes-valor-margin-right: 6px;
+  }
+}
+
+@media (max-width: 480px) {
+  :root {
+    /* Reduzir ainda mais em mobile */
+    --mes-data-font-size: 11px;
+    --mes-placar-font-size: 10px;
+    --mes-valor-font-size: 10px;
+    --mes-icone-font-size: 8px;
+
+    /* Ajustar larguras para mobile */
+    --mes-data-width: 50px;
+    --mes-placar-width: 45px;
+    --mes-valor-width: 55px;
+    --mes-icone-width: 14px;
+
+    /* Reduzir margens */
+    --mes-data-margin-right: 4px;
+    --mes-placar-margin-right: 4px;
+    --mes-valor-margin-right: 4px;
+  }
+}
+
+/* ===================================================================
+   UTILITÁRIOS E OVERRIDES FINAIS
+   =================================================================== */
+
+/* Garantir que elementos sem valor usem a opacidade correta */
+.gd-linha-mes[data-saldo="0"],
+.gd-linha-mes[data-saldo="0.00"] {
+  opacity: var(--mes-sem-valor-opacity) !important;
+}
+
+/* Mês atual sempre com opacidade total */
+.gd-linha-mes.gd-mes-hoje,
+.gd-linha-mes.mes-atual {
+  opacity: 1 !important;
+}
+
+/* Forçar aplicação das variáveis mesmo com estilos inline */
+.gd-linha-mes[style] {
+  background: unset !important;
+}
+
+.gd-linha-mes[style].valor-zero {
+  background: var(--mes-zero-bg) !important;
+  opacity: var(--mes-sem-valor-opacity) !important;
+}
+
+/* ===================================================================
+   LIMPEZA FINAL - REMOVER CONFLITOS DE CSS DUPLICADO
+   =================================================================== */
+
+/* Sobrescrever qualquer regra anterior conflitante com especificidade alta */
+html
+  body
+  .container
+  .bloco.bloco-3
+  .resumo-ano
+  .lista-meses
+  .gd-linha-mes
+  .data-mes,
+html
+  body
+  .container
+  .bloco.bloco-3
+  .resumo-ano
+  .lista-meses
+  .gd-linha-mes
+  .valor,
+html
+  body
+  .container
+  .bloco.bloco-3
+  .resumo-ano
+  .lista-meses
+  .gd-linha-mes
+  .placar-mes,
+html
+  body
+  .container
+  .bloco.bloco-3
+  .resumo-ano
+  .lista-meses
+  .gd-linha-mes
+  .icone
+  i {
+  font-weight: var(--mes-data-font-weight) !important; /* Força 400 em tudo */
+}
+
+/* Garantir que troféu sempre seja dourado, mesmo em mês atual */
+html
+  body
+  .container
+  .bloco.bloco-3
+  .resumo-ano
+  .lista-meses
+  .gd-linha-mes
+  .icone
+  i.fa-trophy {
+  color: var(--mes-icone-color-trofeu) !important;
 }
