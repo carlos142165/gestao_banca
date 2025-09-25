@@ -816,11 +816,11 @@ body .mentor-item:not(.sem-valores) .mentor-rank-externo {
   --font-family-mono: "Courier New", Courier, monospace;
 
   /* Pesos */
-  --fw-regular: 500;
-  --fw-medium: 500;
-  --fw-semibold: 500;
-  --date-font-weight: 500; /* Peso datas  */
-  --date-font-weight-positive: 500; /* Peso datas positivos */
+  --fw-regular: 400;
+  --fw-medium: 400;
+  --fw-semibold: 400;
+  --date-font-weight: 400; /* Peso datas  */
+  --date-font-weight-positive: 400; /* Peso datas positivos */
 
   /* Tamanhos */
   --fs-xs: 12px; /* Fontes para tela Celular */
@@ -887,8 +887,8 @@ body .mentor-item:not(.sem-valores) .mentor-rank-externo {
   --rotulo-saldo-bloco2-margin-left: 0px; /* rótulo + saldo do Bloco 2 */
   --titulo-mes-margin-left: 0px; /*  DATA (ex: 'SETEMBRO 2025') */
   --placar-2-left: 50%; /* PLACAR TOPO */
-  --lista-dias-data-margin-left: 6px; /* DATA .lista-dias */
-  --placar-2-translate: -20px; /* PLACAR DA LISTA */
+  --lista-dias-data-margin-left: -4px; /* DATA .lista-dias */
+  --placar-2-translate: -10px; /* PLACAR DA LISTA */
   --lista-dias-valor-margin-left: 20px; /* VALOR .lista-dias */
   --lista-dias-icone-margin-left: 0px; /* ICONE .lista-dias */
   --lista-dias-icone-margin-right-edge: -18px; /* ICONE .lista-dias */
@@ -914,8 +914,8 @@ body .mentor-item:not(.sem-valores) .mentor-rank-externo {
   --gd-linha-dia-height: 28px; /* altura do campo de cada linha */
   --gd-linha-dia-min-height: 28px; /* altura do campo de cada linha */
   --gd-linha-dia-max-height: 28px; /* altura do campo de cada linha */
-  --gd-linha-dia-gap: 16px; /* horizontal margin between items */
-  --gd-linha-dia-padding-x: 12px; /* horizontal padding inside each item */
+  --gd-linha-dia-gap: 10px; /* horizontal margin between items */
+  --gd-linha-dia-padding-x: 16px; /* horizontal padding inside each item */
   --gd-linha-dia-row-gap: 0px; /* vertical margin between rows */
   --gd-linha-dia-font-size: 14px; /* tamanho da fonte */
   --gd-linha-dia-font-weight: 400; /* peso da fonte (padronizado para valores) */
