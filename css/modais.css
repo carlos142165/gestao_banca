@@ -133,20 +133,24 @@
   left: 0;
   width: 100%;
   height: 100%;
-  background: rgba(0, 0, 0, 0.7);
+  border-radius: 24px;
   z-index: 9999999;
   display: flex;
   justify-content: center;
   align-items: center;
 }
 
-.modais-container .modal-content {
+.modais-container .modal-conteudo {
   background: #fff;
   padding: 25px;
   border-radius: 10px;
   text-align: center;
-  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
-  font-family: "Segoe UI", sans-serif;
+  /* Fully rounded corners */
+  border-radius: 24px;
+  background-image: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  background-repeat: no-repeat;
+  background-position: top center;
+  background-size: 100% 80px; /* gradient occupies top 80px */
   z-index: 100000;
   position: relative;
 }
@@ -221,6 +225,39 @@
   text-align: center;
   max-width: 400px;
   width: 90%;
+
+  /* ==================================================================================================================
+   EMERGENCY OVERRIDE: Force modal-confirmacao-exclusao to top of stacking order (duplicate coverage)
+==================================================================================================================*/
+  body > #modal-confirmacao-exclusao,
+  #modal-confirmacao-exclusao {
+    position: fixed !important;
+    inset: 0 !important;
+    width: 100vw !important;
+    height: 100vh !important;
+    display: none !important;
+    align-items: center !important;
+    justify-content: center !important;
+    visibility: hidden !important;
+    pointer-events: none !important;
+    background: rgba(0, 0, 0, 0.85) !important;
+    z-index: 2147483647 !important;
+  }
+
+  body > #modal-confirmacao-exclusao.show,
+  #modal-confirmacao-exclusao.show {
+    display: flex !important;
+    visibility: visible !important;
+    pointer-events: auto !important;
+  }
+
+  #modal-confirmacao-exclusao .modal-content,
+  #modal-confirmacao-exclusao .modal-conteudo {
+    position: fixed !important;
+    z-index: 2147483648 !important;
+  }
+
+  /* End emergency override */
   margin: 20px;
   box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
   position: relative;
@@ -235,6 +272,7 @@
   padding: 25px;
   border-radius: 10px;
   width: 90%;
+
   max-width: 400px;
   text-align: center;
   box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
@@ -282,7 +320,10 @@
   background-color: #fff;
   margin: auto;
   padding: 30px;
-  border-radius: 20px;
+  /* Fully rounded corners */
+  border-radius: 24px;
+  /* Clip children and pseudo-elements to the rounded corners */
+  overflow: hidden;
   max-width: 450px;
   width: 90%;
   box-shadow: 0 10px 30px rgba(0, 0, 0, 0.2);
@@ -292,6 +333,12 @@
   transition: transform 0.3s ease-out;
   /* Garantir que o conteúdo do modal fique acima do overlay e de outros elementos */
   z-index: 1000001 !important;
+
+  /* Decorative gradient header as background so it fully covers the top area */
+  background-image: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  background-repeat: no-repeat;
+  background-position: top center;
+  background-size: 100% 80px; /* gradient occupies top 80px */
 }
 
 @keyframes modalSlideIn {
@@ -762,4 +809,59 @@
   }
 }
 
-/* ===== CSS PARA MENSAGENS TOAST ===== */
+/* ===== TESTE TESTE TESTE TESTE  TESTE TESTE TESTE TESTE TESTE TESTE ===== */
+
+/* ===== CORREÇÃO Z-INDEX PARA MODAL DE CONFIRMAÇÃO ===== */
+
+/* Modal principal (formulário) - z-index mais baixo */
+.modais-container .modal {
+  z-index: 9999 !important;
+}
+
+.modais-container .modal-conteudo {
+  z-index: 10000 !important;
+}
+
+/* Modal de confirmação de exclusão - z-index mais alto */
+#modal-confirmacao-exclusao {
+  z-index: 99999 !important;
+  background: rgba(0, 0, 0, 0.8) !important;
+  display: none;
+  justify-content: center !important;
+  align-items: center !important;
+}
+
+#modal-confirmacao-exclusao.show {
+  display: flex !important;
+}
+
+#modal-confirmacao-exclusao .modal-content {
+  z-index: 100000 !important;
+  background: white !important;
+  padding: 40px 30px !important;
+  border-radius: 20px !important;
+  max-width: 400px !important;
+  width: 90% !important;
+  text-align: center !important;
+  box-shadow: 0 25px 50px rgba(0, 0, 0, 0.4) !important;
+  position: relative !important;
+  transform: none !important;
+}
+
+/* Garantir que o modal de confirmação fique acima de tudo */
+body > #modal-confirmacao-exclusao {
+  position: fixed !important;
+  top: 0 !important;
+  left: 0 !important;
+  width: 100vw !important;
+  height: 100vh !important;
+  z-index: 2147483647 !important; /* Valor máximo seguro */
+}
+
+body > #modal-confirmacao-exclusao .modal-content {
+  position: fixed !important;
+  top: 50% !important;
+  left: 50% !important;
+  transform: translate(-50%, -50%) !important;
+  z-index: 2147483647 !important;
+}

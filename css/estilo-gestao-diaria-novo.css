@@ -218,6 +218,144 @@
   --widget-scrollbar-thumb-border-radius: 8px;
 }
 
+/* ========================
+   OVERRIDE: Aumentar altura dos itens de entrada no modal (tela de edição)
+   Garante que cada entrada possa exibir todo o conteúdo sem corte.
+   Colocado aqui para sobrescrever regras em `modais.css` sem editar o arquivo original.
+   ======================== */
+
+/* Remove altura fixa e define uma altura mínima confortável */
+.modais-container .entrada-card {
+  height: auto !important; /* permitir o conteúdo ditar a altura */
+  min-height: 68px !important; /* maior que o padrão anterior (50px) */
+  padding: 14px 16px !important; /* mais espaço interno para o conteúdo */
+  align-items: center !important; /* centraliza verticalmente o conteúdo */
+  gap: 10px !important;
+}
+
+/* Ajustes no bloco de informação para evitar margens negativas que compactam o layout */
+.modais-container .entrada-info p {
+  margin: 0 !important;
+  margin-bottom: 4px !important;
+  line-height: 1.35 !important;
+  font-size: 14px !important;
+}
+
+/* Ações (ícones) alinhadas ao centro verticalmente */
+.modais-container .entrada-acoes {
+  display: flex !important;
+  align-items: center !important;
+  justify-content: center !important;
+}
+
+/* Ajuste no botão lixeira para não criar deslocamento vertical inesperado */
+.modais-container .btn-lixeira {
+  margin-top: 0 !important;
+  padding: 6px !important;
+}
+
+/* Responsividade: garantir que em telas pequenas as entradas não fiquem apertadas */
+@media (max-width: 480px) {
+  .modais-container .entrada-card {
+    min-height: 64px !important;
+    padding: 12px 12px !important;
+    flex-direction: column !important;
+    align-items: flex-start !important;
+    gap: 6px !important;
+  }
+
+  .modais-container .entrada-acoes {
+    align-self: flex-end !important;
+  }
+}
+
+/* ========================
+   OVERRIDES: Modal width, scrollbar fina e lixeira à direita
+   - Torna a tela de edição/exclusão maior no desktop
+   - Força scrollbar mais fina (WebKit + Firefox) no container de edição/modal
+   - Posiciona o botão lixeira no canto direito das entradas
+   ======================== */
+
+/* Aumentar largura da tela de edição (tela onde aparecem as entradas) */
+.modais-container .tela-edicao {
+  max-width: 340px !important;
+  width: min(92%, 540px) !important;
+  padding: 22px !important; /* leve aumento de padding para respirar */
+  box-sizing: border-box !important;
+}
+
+/* Também aumentar levemente o modal de confirmação (quando aplicável) */
+.modal-confirmacao-entrada .modal-conteudo-exclusao {
+  max-width: 340px !important;
+  width: min(92%, 340px) !important;
+}
+
+/* Scrollbar fina para o container de edição/modal (WebKit browsers) */
+.modais-container .tela-edicao::-webkit-scrollbar,
+.modal-confirmacao-entrada .modal-conteudo-exclusao::-webkit-scrollbar {
+  width: 6px !important;
+  height: 6px !important;
+}
+
+.modais-container .tela-edicao::-webkit-scrollbar-track,
+.modal-confirmacao-entrada .modal-conteudo-exclusao::-webkit-scrollbar-track {
+  background: transparent !important;
+  border-radius: var(--scrollbar-track-border-radius, 8px) !important;
+}
+
+.modais-container .tela-edicao::-webkit-scrollbar-thumb,
+.modal-confirmacao-entrada .modal-conteudo-exclusao::-webkit-scrollbar-thumb {
+  background: rgba(60, 60, 60, 0.22) !important;
+  border-radius: var(--scrollbar-thumb-border-radius, 8px) !important;
+}
+
+.modais-container .tela-edicao:hover::-webkit-scrollbar-thumb,
+.modal-confirmacao-entrada
+  .modal-conteudo-exclusao:hover::-webkit-scrollbar-thumb {
+  background: rgba(60, 60, 60, 0.36) !important;
+}
+
+/* Firefox thin scrollbar */
+.modais-container .tela-edicao,
+.modal-confirmacao-entrada .modal-conteudo-exclusao {
+  scrollbar-width: thin !important;
+  scrollbar-color: rgba(60, 60, 60, 0.22) transparent !important;
+}
+
+/* Garantir que a lixeira (btn-lixeira) fique à direita das entradas */
+.modais-container .entrada-card {
+  display: flex !important;
+  justify-content: space-between !important; /* texto à esquerda, ações à direita */
+  align-items: center !important;
+}
+
+.modais-container .entrada-card .entrada-acoes {
+  display: flex !important;
+  justify-content: flex-end !important;
+  align-items: center !important;
+  gap: 8px !important;
+}
+
+.modais-container .btn-lixeira,
+.modais-container .btn-icon.btn-lixeira {
+  margin-top: 0 !important;
+  margin-left: 8px !important;
+  color: #b4b4b4ff !important;
+}
+
+@media (max-width: 480px) {
+  /* em dispositivos pequenos mantemos comportamento empilhado, mas lixeira alinhada à direita */
+  .modais-container .entrada-card {
+    flex-direction: column !important;
+    align-items: flex-start !important;
+  }
+
+  .modais-container .entrada-card .entrada-acoes {
+    width: 100% !important;
+    justify-content: flex-end !important;
+  }
+}
+
 /* Preserva o deslocamento vertical durante a animação de entrada
    evita que a animação sobrescreva o translateY definido por variáveis. */
 @keyframes fadeInScale {
@@ -680,6 +818,39 @@ html body .main-content .container > .bloco.bloco-1,
 .bloco-1 .widget-meta-item .data-header-integrada {
   transform: none !important; /* container must not translate; child text will */
   padding-top: 0 !important;
+  /* High-specificity fallback: garantir margin-left da barra de progresso */
+  #widget-meta .widget-barra-container,
+  .widget-meta-item .widget-barra-container,
+  .widget-barra-container {
+    margin-left: var(--widget-barra-container-margin-left) !important;
+  }
+  box-sizing: border-box;
+  position: -webkit-sticky !important; /* support for older Safari */
+  position: sticky !important; /* stick to the top of its scroll container */
+  left: 0 !important;
+  right: 0 !important;
+  z-index: 9999; /* acima do conteúdo interno */
+  border: none !important;
+  outline: none !important;
+
+  /* Solução para acabamento perfeito dos cantos arredondados */
+  -webkit-transform: translateZ(0);
+  transform: translateZ(0);
+  -webkit-backface-visibility: hidden;
+  backface-visibility: hidden;
+  will-change: transform;
+
+  /* Clipping mask para garantir bordas perfeitas */
+  overflow: hidden !important;
+  -webkit-mask-image: -webkit-radial-gradient(white, black);
+  mask-image: radial-gradient(white, black);
+
+  /* Garantir que o gradiente preencha perfeitamente os cantos */
+  background-origin: border-box !important;
+  background-clip: border-box !important;
+
+  /* Remover qualquer borda ou sombra que cause dentilhado */
+  box-shadow: none !important;
 }
 
 /* Utilitário para reverter se necessário */
@@ -1466,6 +1637,21 @@ body .mentor-item:not(.sem-valores) .mentor-rank-externo {
   margin-right: 0 !important;
 }
 
+/* Match bloco-2 stacking and visual flush so the top contour renders identically */
+.container .bloco.bloco-1 {
+  z-index: 10000 !important; /* same as bloco-2 to avoid compositing differences */
+  border: none !important;
+  box-shadow: none !important;
+}
+
+.bloco-1 .widget-meta-item {
+  margin: 0 !important;
+  padding: 0 !important;
+  box-shadow: none !important;
+  border: none !important;
+  background-clip: padding-box !important;
+}
+
 .container-resumos {
   display: flex !important;
   flex-direction: column !important;
@@ -1665,20 +1851,6 @@ body .mentor-item:not(.sem-valores) .mentor-rank-externo {
 
 /* ===== TOPO FIXO COM DATA E PLACAR - RESPONSIVO ===== */
 .widget-meta-item .data-header-integrada {
-  width: 100% !important; /* ocupar toda a largura do widget */
-  margin: 0 !important; /* margin-left moved to the date/icon only */
-  height: 60px;
-  background: linear-gradient(
-    90deg,
-    #9ea39d 0%,
-    #b5cfb1 50%,
-    #abb3ab 100%
-  ) !important;
-  border-radius: 20px 20px 0 0 !important; /* somente cantos de cima arredondados */
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  padding: 0 12px !important; /* padding interno reduzido */
   /* High-specificity fallback: garantir margin-left da barra de progresso */
   #widget-meta .widget-barra-container,
   .widget-meta-item .widget-barra-container,
@@ -1690,19 +1862,53 @@ body .mentor-item:not(.sem-valores) .mentor-rank-externo {
   position: sticky !important; /* stick to the top of its scroll container */
   left: 0 !important;
   right: 0 !important;
-  z-index: 60; /* acima do conteúdo interno */
-  /* Removido para evitar linha que pode causar dentilhado/aliasing
-     se necessário reintroduzir use rgba com alpha muito baixo */
-  border-bottom: none !important;
+  z-index: 9999; /* acima do conteúdo interno */
+  border: none !important;
+  outline: none !important;
 
-  /* Forçar renderização em camada própria para suavizar cantos arredondados */
+  /* Solução para acabamento perfeito dos cantos arredondados */
   -webkit-transform: translateZ(0);
   transform: translateZ(0);
   -webkit-backface-visibility: hidden;
   backface-visibility: hidden;
-  will-change: transform, box-shadow;
-  outline: none !important; /* remove outline que pode gerar linha branca */
-  box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.025), 0 0 0 rgba(0, 0, 0, 0) !important; /* leve acabamento interno que disfarça hairlines */
+  will-change: transform;
+
+  /* Clipping mask para garantir bordas perfeitas */
+  overflow: hidden !important;
+  -webkit-mask-image: -webkit-radial-gradient(white, black);
+  mask-image: radial-gradient(white, black);
+
+  /* Garantir que o gradiente preencha perfeitamente os cantos */
+  background-origin: border-box !important;
+  background-clip: border-box !important;
+
+  /* Remover qualquer borda ou sombra que cause dentilhado */
+  box-shadow: none !important;
+}
+
+/* Decorative overlay to paint a crisp contour and mask any hairline seams
+   The pseudo-element sits above the background but below content, drawing
+   only the small finishing strokes (so the underlying block doesn't show
+   through at the rounded corners). */
+.widget-meta-item .data-header-integrada::after {
+  content: "";
+  position: absolute;
+  left: 0;
+  right: 0;
+  top: 0;
+  height: 100%;
+  pointer-events: none;
+  border-radius: 20px 20px 0 0;
+  box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.06); /* subtle inner highlight */
+  /* a very thin stroke to hide any seam while keeping the gradient visible */
+  -webkit-mask-image: linear-gradient(#000, #000);
+  mask-image: linear-gradient(#000, #000);
+  z-index: 1; /* sit above background but below header content */
+}
+
+.widget-meta-item .data-header-integrada > * {
+  position: relative;
+  z-index: 2; /* ensure content (icons, text) stays above the decorative overlay */
 }
 
 /* High-specificity fallback: use widget ID to ensure margins from :root are applied
@@ -2767,20 +2973,39 @@ body .mentor-item:not(.sem-valores) .mentor-rank-externo {
 
 /* FORCE: make bloco-1 header visually match bloco-2 top to remove hairline/seam */
 .bloco-1 .widget-meta-item .data-header-integrada {
-  /* restore original gradient look but keep composition hints for sharp edges */
-  background: linear-gradient(
-    90deg,
-    #9ea39d 0%,
-    #b5cfb1 50%,
-    #abb3ab 100%
-  ) !important;
-  color: #ffffff !important; /* header uses white text for contrast */
-  box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.02) !important; /* subtle inner finish to keep contour crisp */
-  -webkit-backface-visibility: hidden !important;
-  backface-visibility: hidden !important;
-  -webkit-transform: translateZ(0) !important;
-  transform: translateZ(0) !important;
-  background-clip: padding-box !important;
+  /* High-specificity fallback: garantir margin-left da barra de progresso */
+  #widget-meta .widget-barra-container,
+  .widget-meta-item .widget-barra-container,
+  .widget-barra-container {
+    margin-left: var(--widget-barra-container-margin-left) !important;
+  }
+  box-sizing: border-box;
+  position: -webkit-sticky !important; /* support for older Safari */
+  position: sticky !important; /* stick to the top of its scroll container */
+  left: 0 !important;
+  right: 0 !important;
+  z-index: 9999; /* acima do conteúdo interno */
+  border: none !important;
+  outline: none !important;
+
+  /* Solução para acabamento perfeito dos cantos arredondados */
+  -webkit-transform: translateZ(0);
+  transform: translateZ(0);
+  -webkit-backface-visibility: hidden;
+  backface-visibility: hidden;
+  will-change: transform;
+
+  /* Clipping mask para garantir bordas perfeitas */
+  overflow: hidden !important;
+  -webkit-mask-image: -webkit-radial-gradient(white, black);
+  mask-image: radial-gradient(white, black);
+
+  /* Garantir que o gradiente preencha perfeitamente os cantos */
+  background-origin: border-box !important;
+  background-clip: border-box !important;
+
+  /* Remover qualquer borda ou sombra que cause dentilhado */
+  box-shadow: none !important;
 }
 
 .bloco-1 .widget-meta-item .data-header-integrada .fa-solid,
@@ -3829,8 +4054,10 @@ p {
   right: 0;
   height: 80px;
   background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-  border-radius: 24px 24px 0 0;
-  z-index: 1;
+  /* Match the parent radius and place behind content to avoid white seams */
+  /* This decorative pseudo-element is disabled because the modal container
+     now uses a background gradient. Keeping it could create stacking/seam issues. */
+  display: none !important;
 }
 
 /* FORÇA: garantir que .widget-meta-valor respeite a variável do :root para margin-left */
@@ -3873,6 +4100,8 @@ p {
   flex-direction: column;
   gap: 25px;
   position: relative;
+  /* Ensure form content sits above the decorative header */
+  z-index: 2;
 }
 
 /* ===== PREVIEW DA FOTO MODERNIZADO ===== */
@@ -4303,7 +4532,8 @@ p {
   display: flex;
   align-items: center;
   justify-content: center;
-  border-radius: 24px;
+  /* Match modal top-only radius so bottom corners stay square */
+  border-radius: inherit;
 }
 
 /* ===== MELHORIAS VISUAIS ===== */
@@ -4339,7 +4569,8 @@ p {
   height: 100% !important;
   background: rgba(0, 0, 0, 0.8) !important;
   backdrop-filter: blur(10px) !important;
-  z-index: 999999 !important;
+  /* Raised above the main modal (.modal-conteudo z-index: 1000001) */
+  z-index: 2147483646 !important;
   display: none !important;
   align-items: center !important;
   justify-content: center !important;
@@ -4353,7 +4584,8 @@ p {
   width: 90% !important;
   text-align: center !important;
   box-shadow: 0 25px 50px rgba(0, 0, 0, 0.4) !important;
-  z-index: 1000000 !important;
+  /* Ensure the content sits above the overlay and other modals */
+  z-index: 2147483647 !important;
 }
 
 /* ===== ADICIONAR NO FINAL DO <STYLE> ===== */
@@ -4366,7 +4598,7 @@ p {
   width: 100vw !important;
   height: 100vh !important;
   background: rgba(0, 0, 0, 0.8) !important;
-  z-index: 999999 !important;
+  z-index: 2147483646 !important;
   display: none !important;
   align-items: center !important;
   justify-content: center !important;
@@ -4380,7 +4612,7 @@ p {
   width: 90% !important;
   text-align: center !important;
   box-shadow: 0 25px 50px rgba(0, 0, 0, 0.4) !important;
-  z-index: 1000000 !important;
+  z-index: 2147483647 !important;
 }
 
 #modal-confirmacao-exclusao .botao-confirmar {
@@ -4426,6 +4658,43 @@ p {
 /* ✅ CSS PARA VALOR TACHADO E EXTRA */
 
 /* Container da meta valor */
+
+/* ==================================================================================================================
+   EMERGENCY OVERRIDE: Force modal-confirmacao-exclusao to top of stacking order
+   This is a last-resort rule that ensures the confirmation overlay cannot be occluded
+   by any other element. It is intentionally intrusive (uses !important and maximum z-index).
+   Remove after verifying behavior in all pages.
+==================================================================================================================*/
+body > #modal-confirmacao-exclusao,
+#modal-confirmacao-exclusao {
+  position: fixed !important;
+  inset: 0 !important; /* shorthand for top/right/bottom/left */
+  width: 100vw !important;
+  height: 100vh !important;
+  display: none !important; /* JS toggles display */
+  align-items: center !important;
+  justify-content: center !important;
+  visibility: hidden !important;
+  pointer-events: none !important;
+  background: rgba(0, 0, 0, 0.85) !important;
+  z-index: 2147483647 !important; /* max safe int */
+}
+
+/* When shown, ensure it's visible and interactive */
+body > #modal-confirmacao-exclusao.show,
+#modal-confirmacao-exclusao.show {
+  display: flex !important;
+  visibility: visible !important;
+  pointer-events: auto !important;
+}
+
+#modal-confirmacao-exclusao .modal-content,
+#modal-confirmacao-exclusao .modal-conteudo {
+  position: fixed !important;
+  z-index: 2147483648 !important;
+}
+
+/* End emergency override */
 .meta-valor-container {
   display: flex;
   flex-direction: column;
@@ -5063,21 +5332,33 @@ html body .main-content .container > .bloco.bloco-1,
   padding-top: 0 !important;
 }
 
-/* Final override: ensure no header container uses the header var to shift the whole block.
-   Only the child `.data-principal-integrada` should be translated. */
 .widget-meta-item .data-header-integrada,
 .bloco-1 .widget-meta-item .data-header-integrada,
-.widget-meta-container .data-header-integrada,
 #widget-meta > .data-header-integrada,
 #widget-meta .data-header-integrada {
-  transform: none !important;
-  margin-top: 0 !important;
-  padding-top: 0 !important;
+  display: flex !important;
+  align-items: center !important;
+  justify-content: space-between !important;
+  width: 100% !important;
+  height: 60px !important; /* restore visible header height */
+  padding: 0 12px !important;
+  box-sizing: border-box !important;
+  background: linear-gradient(
+    90deg,
+    #9ea39d 0%,
+    #b5cfb1 50%,
+    #abb3ab 100%
+  ) !important;
+  border-radius: 15px 15px 0 0 !important;
+  color: #ffffff !important;
+  overflow: hidden !important; /* keep rounded corners clean */
+  -webkit-transform: translateZ(0) !important;
+  transform: translateZ(0) !important;
 }
 
 /* DEBUG / FORÇA: regra de alta especificidade para garantir que a
-   variável :root controle a margem superior do conteúdo do widget.
-   Remova após validação. */
+  variável :root controle a margem superior do conteúdo do widget.
+  Remova após validação. */
 #widget-meta .widget-conteudo-principal,
 html body #widget-meta .widget-conteudo-principal,
 .bloco-1 #widget-meta .widget-conteudo-principal {
@@ -5104,4 +5385,33 @@ html body #widget-meta .widget-conteudo-principal,
 .widget-info-progresso {
   margin-top: var(--widget-info-progresso-margin-top) !important;
   margin-left: var(--widget-info-progresso-margin-left) !important;
+}
+
+/* Normalizar borda superior dos headers para casar com o border-radius dos blocos
+   Evita que cantos de outros elementos internos 'vazem' e mostrem cores diferentes.
+   Use alta especificidade e !important para garantir aplicação contra regras anteriores. */
+.container .bloco,
+.container .bloco.bloco-1,
+.container .bloco.bloco-2,
+.container .bloco.bloco-3 {
+  border-radius: 15px !important; /* padronizar */
+  -webkit-background-clip: padding-box !important;
+  background-clip: padding-box !important;
+}
+
+.container .bloco .widget-meta-item,
+.container .bloco .widget-meta-item .data-header-integrada,
+.container .bloco .data-header-integrada {
+  border-top-left-radius: 15px !important;
+  border-top-right-radius: 15px !important;
+  background-clip: padding-box !important;
+  -webkit-background-clip: padding-box !important;
+  overflow: hidden !important; /* garante que filhos não vazem além dos cantos arredondados */
+  box-shadow: none !important; /* evitar sombras que podem revelar seams */
+}
+
+/* remover possíveis margens/paddings que criem gap entre header e o topo do bloco */
+.container .bloco .widget-meta-item .data-header-integrada {
+  margin: 0 !important;
+  padding-top: 0 !important;
 }

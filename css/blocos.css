@@ -155,6 +155,51 @@ body {
   background-clip: padding-box !important;
 }
 
+/* Ensure bloco-1 matches bloco-2 visual/stacking behaviour to avoid contour seams */
+.container .bloco.bloco-1 {
+  /* Match bloco-3 layout: remove lateral/top padding so internal fields can sit flush
+     with the block edges while keeping a small bottom padding for spacing. */
+  padding-left: 0 !important;
+  padding-right: 0 !important;
+  padding-top: 0 !important; /* remove top padding to allow header elements to stick to top */
+  padding-bottom: 20px !important; /* keep bottom spacing similar to bloco-3 */
+  position: relative !important;
+  z-index: 10000 !important;
+  background-clip: padding-box !important;
+  border: none !important;
+  box-shadow: none !important;
+  border-radius: 15px !important; /* match bloco-3 rounding */
+}
+
+/* Ensure children of bloco-1 behave like bloco-3: full width, no extra margins/padding */
+.container .bloco.bloco-1 > * {
+  width: 100% !important;
+  max-width: 100% !important;
+  margin: 0 !important;
+  padding-left: 0 !important;
+  padding-right: 0 !important;
+  box-sizing: border-box !important;
+}
+
+.container .bloco.bloco-1 .lista-dias,
+.container .bloco.bloco-1 .resumo-mes,
+.container .bloco.bloco-1 .algum-conteudo {
+  margin: 0 !important;
+  padding: 0 !important;
+  width: 100% !important;
+}
+
+/* If bloco-1 uses an absolute header/field like bloco-3, ensure it is positioned flush */
+.container .bloco.bloco-1 .campo-armazena-data-placar-1 {
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  width: 100%;
+  margin: 0 auto;
+  z-index: 101000;
+}
+
 /* Se houver necessidade de ter um visual "pulled" (larger inner box), simular com
    padding interno invés de margin negativa para não cobrir as bordas do .bloco. */
 .container .bloco.bloco-2 .resumo-mes .lista-dias.pulled {

@@ -324,6 +324,8 @@ const ToastManager = {
 // ✅ GERENCIADOR DE MODAIS - VERSÃO MELHORADA
 const ModalManager = {
   modalAtual: null,
+  // Keep track of modals whose z-index we temporarily lowered so we can restore them
+  _temporarilyLoweredModals: [],
 
   abrir(modalId) {
     const modal = document.getElementById(modalId);
@@ -336,6 +338,69 @@ const ModalManager = {
 
     // Prepara o modal
     modal.style.display = "block";
+    // If this is the confirmation modal, ensure it lives directly under body
+    // and has very high z-index so it cannot be obscured by other stacking contexts.
+    if (modalId === "modal-confirmacao-exclusao") {
+      try {
+        // Lower any other open modal/dialogs temporarily so they cannot occlude
+        // the confirmation modal. We record them to restore later.
+        this._temporarilyLoweredModals = [];
+        // Find other modal elements that might occlude (visible or with .show)
+        document.querySelectorAll(".modal").forEach((m) => {
+          if (m.id && m.id !== modalId) {
+            const isVisible =
+              (window.getComputedStyle(m).display !== "none" &&
+                window.getComputedStyle(m).visibility !== "hidden") ||
+              m.classList.contains("show");
+            const prev = {
+              el: m,
+              z: m.style.zIndex || "",
+              position: m.style.position || "",
+              visibility: m.style.visibility || "",
+              pointerEvents: m.style.pointerEvents || "",
+            };
+            this._temporarilyLoweredModals.push(prev);
+
+            try {
+              // If it's visible, hide it to avoid any occlusion; otherwise still lower z-index
+              if (isVisible) {
+                m.style.setProperty("visibility", "hidden", "important");
+                m.style.setProperty("pointer-events", "none", "important");
+              }
+              // Force a low z-index with priority so it cannot beat the confirmation modal
+              m.style.setProperty("z-index", "1000", "important");
+            } catch (e) {
+              // ignore
+            }
+          }
+        });
+
+        // Ensure the confirmation modal lives under document.body
+        if (modal.parentNode !== document.body) {
+          document.body.appendChild(modal);
+        }
+
+        // Make the overlay occupy full viewport and sit on top using important
+        modal.style.position = "fixed";
+        modal.style.top = "0";
+        modal.style.left = "0";
+        modal.style.width = "100vw";
+        modal.style.height = "100vh";
+        modal.style.pointerEvents = "auto";
+        // set with priority to avoid stylesheet overrides
+        modal.style.setProperty("z-index", "2147483646", "important");
+
+        const inner =
+          modal.querySelector(".modal-content") ||
+          modal.querySelector(".modal-conteudo");
+        if (inner) {
+          inner.style.position = "fixed";
+          inner.style.setProperty("z-index", "2147483647", "important");
+        }
+      } catch (err) {
+        console.warn("Could not re-parent modal-confirmacao-exclusao:", err);
+      }
+    }
     document.body.style.overflow = "hidden";
 
     // Aplica animação
@@ -364,8 +429,76 @@ const ModalManager = {
     // Limpa estado do modal
     this.modalAtual = null;
 
+    // Cleanup inline styles if it was the confirmation modal
+    if (modalId === "modal-confirmacao-exclusao") {
+      try {
+        // Clear inline properties
+        modal.style.removeProperty("z-index");
+        modal.style.position = "";
+        modal.style.top = "";
+        modal.style.left = "";
+        modal.style.width = "";
+        modal.style.height = "";
+        modal.style.pointerEvents = "";
+        const inner =
+          modal.querySelector(".modal-content") ||
+          modal.querySelector(".modal-conteudo");
+        if (inner) {
+          inner.style.removeProperty("z-index");
+          inner.style.position = "";
+        }
+
+        // Restore any modals we temporarily lowered
+        if (Array.isArray(this._temporarilyLoweredModals)) {
+          this._temporarilyLoweredModals.forEach((prev) => {
+            try {
+              if (prev && prev.el) {
+                // Restore saved inline values (if any)
+                prev.el.style.zIndex = prev.z || "";
+                prev.el.style.position = prev.position || "";
+                prev.el.style.visibility = prev.visibility || "";
+                prev.el.style.pointerEvents = prev.pointerEvents || "";
+              }
+            } catch (e) {
+              // ignore
+            }
+          });
+        }
+        this._temporarilyLoweredModals = [];
+      } catch (err) {
+        console.warn("Cleanup failed for modal-confirmacao-exclusao:", err);
+      }
+    }
     // Remove todos os event listeners
     this.removerEventosModal(modal);
+
+    // If we just closed some other modal while the confirmation is open,
+    // re-assert the confirmation modal to ensure it stays on top.
+    try {
+      if (modalId !== "modal-confirmacao-exclusao") {
+        const conf = document.getElementById("modal-confirmacao-exclusao");
+        if (conf && conf.style.display !== "none") {
+          if (conf.parentNode !== document.body) {
+            document.body.appendChild(conf);
+          }
+          conf.style.setProperty("z-index", "2147483646", "important");
+          conf.style.setProperty("position", "fixed", "important");
+          conf.style.setProperty("top", "0", "important");
+          conf.style.setProperty("left", "0", "important");
+          conf.style.setProperty("width", "100vw", "important");
+          conf.style.setProperty("height", "100vh", "important");
+          const inner =
+            conf.querySelector(".modal-content") ||
+            conf.querySelector(".modal-conteudo");
+          if (inner) {
+            inner.style.setProperty("z-index", "2147483647", "important");
+            inner.style.setProperty("position", "fixed", "important");
+          }
+        }
+      }
+    } catch (e) {
+      // ignore
+    }
   },
 
   adicionarEventosModal(modal) {

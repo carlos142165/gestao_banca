@@ -2064,18 +2064,7 @@ document.addEventListener('DOMContentLoaded', function() {
       </form>
     </div>
   </div>
-   <!-- Modal de confirmação de exclusão -->
-  <div id="modal-confirmacao-exclusao" class="modal-confirmacao" style="display: none;">
-    <div class="modal-content">
-      <p class="modal-texto"></p>
-      <div class="botoes-modal">
-        <button type="button" class="botao-confirmar">Sim, excluir</button>
-        <button type="button" class="botao-cancelar">Cancelar</button>
-      </div>
-    </div>
-  </div>
-
-
+<!-- Modal de confirmação de exclusão (movido para o final do documento) -->
 </div>
 <!-- ==================================================================================================================================== --> 
 <!--                                  💼  FIM FORMULARIO DE CADASTRO DO MENTOR + MODAL EXCLUSÃO DO MENTOR                           
@@ -4259,59 +4248,94 @@ const SistemaCadastroNovo = {
             input.value = 'R$ 0,00';
         }
 
-    input.addEventListener('input', (e) => {
-      const raw = e.target.value || '';
-      let onlyDigits = raw.replace(/\D/g, '');
+    // Live centavos formatter with caret preservation and recursion guard
+    input.addEventListener('input', function (e) {
+      const el = e.target;
+      if (el._isFormatting) return;
 
-      // Se usuário incluiu separador decimal (vírgula ou ponto), manter o comportamento anterior
-      if (raw.indexOf(',') !== -1 || raw.indexOf('.') !== -1) {
-        if (onlyDigits === '') {
-          e.target.value = 'R$ 0,00';
-          return;
-        }
+      // Save caret position
+      let selStart = el.selectionStart || 0;
+      const prevLen = el.value.length;
 
-        if (onlyDigits.length < 3) {
-          onlyDigits = onlyDigits.padStart(3, '0');
-        }
+      // Extract digits only (we treat typed digits as centavos)
+      const digits = (el.value || '').replace(/\D/g, '').slice(0, 15);
 
-        const reais = onlyDigits.slice(0, -2);
-        const centavos = onlyDigits.slice(-2);
-        e.target.value = `R$ ${parseInt(reais).toLocaleString('pt-BR')},${centavos}`;
-      } else {
-        // Sem separador: tratar todos os dígitos como reais (usuário digitou '10' esperando R$ 10,00)
-        if (onlyDigits === '') {
-          e.target.value = 'R$ 0,00';
-          return;
-        }
-
-        const reaisNum = parseInt(onlyDigits, 10) || 0;
-        e.target.value = `R$ ${reaisNum.toLocaleString('pt-BR')},00`;
+      if (digits === '') {
+        el.value = '';
+        return;
       }
 
-      setTimeout(() => {
+      const cents = parseInt(digits, 10) || 0;
+      const value = cents / 100;
+      const formatted = 'R$ ' + value.toLocaleString('pt-BR', { minimumFractionDigits: 2, maximumFractionDigits: 2 });
+
+      // Apply formatting with guard to avoid re-entrance
+      el._isFormatting = true;
+      el.value = formatted;
+
+      // Restore caret relative to end
+      const newLen = el.value.length;
+      const diff = newLen - prevLen;
+      let newPos = selStart + diff;
+      if (newPos < 0) newPos = 0;
+      if (newPos > newLen) newPos = newLen;
+      try { el.setSelectionRange(newPos, newPos); } catch (err) { /* ignore */ }
+
+      // small timeout to clear guard
+      setTimeout(() => { el._isFormatting = false; }, 0);
+
+      // Update calculations and saldo check (small debounce)
+      if (this._mascaraTimeout) clearTimeout(this._mascaraTimeout);
+      this._mascaraTimeout = setTimeout(() => {
         if (this.estado.tipoOperacao === 'red') {
           this.atualizarCalculoRed();
         } else {
           this.atualizarCalculo();
         }
-      }, 50);
-    });
+        this.verificarSaldoInput(el);
+      }, 60);
+    }.bind(this));
 
-        input.addEventListener('focus', (e) => {
-            setTimeout(() => {
-                e.target.select();
-            }, 50);
-        });
+    // Keep selection on focus for fast replace
+    input.addEventListener('focus', (e) => { setTimeout(() => { try { e.target.select(); } catch (err){} }, 40); });
+
+    // Ensure final formatting on blur (already formatted live, but normalize any pasted raw)
+    input.addEventListener('blur', (e) => {
+      const parsed = this.converterParaFloat(e.target.value || '0');
+      e.target.value = 'R$ ' + Math.abs(parsed).toLocaleString('pt-BR', { minimumFractionDigits: 2, maximumFractionDigits: 2 });
+    });
     },
 
     converterParaFloat(valorBRL) {
-        if (!valorBRL || typeof valorBRL !== 'string') return 0;
-        return parseFloat(
-            valorBRL
-                .replace(/[^\d,.-]/g, '')
-                .replace(/\./g, '')
-                .replace(',', '.')
-        ) || 0;
+    if (valorBRL === null || valorBRL === undefined) return 0;
+    let s = String(valorBRL).trim();
+    if (s === '') return 0;
+
+    // Keep only digits, dot, comma and minus
+    s = s.replace(/[^0-9,.-]/g, '');
+
+    const hasComma = s.indexOf(',') !== -1;
+    const hasDot = s.indexOf('.') !== -1;
+
+    if (hasComma && hasDot) {
+      // Likely format: '1.234.567,89' -> dots are thousands, comma is decimal
+      s = s.replace(/\./g, '').replace(',', '.');
+    } else if (hasComma && !hasDot) {
+      // Format like '1234,56' -> replace comma with dot
+      s = s.replace(',', '.');
+    } else if (!hasComma && hasDot) {
+      // Could be '1234.56' (decimal) or '1.234' (thousand). Heuristic:
+      const lastDot = s.lastIndexOf('.');
+      const decimals = s.length - lastDot - 1;
+      if (decimals === 3) {
+        // e.g. '1.234' -> treat as thousands separator
+        s = s.replace(/\./g, '');
+      }
+      // otherwise keep dot as decimal separator
+    }
+
+    const n = parseFloat(s.replace(/\s+/g, ''));
+    return isNaN(n) ? 0 : n;
     },
 
   // Conversão robusta para centavos inteiros (aceita número ou string BRL)
@@ -5452,12 +5476,76 @@ if (toggle && menu && hiddenInput) {
 <!-- -->
 <!-- -->
 <!-- -->
+<!-- ==================================================================================================================================== --> 
+<!--                                         💼  DEIXA MODAL DE EXCLUSÃO COM O ZINDEX SUPERIOR                          
+ ====================================================================================================================================== -->
+
+  <!-- Modal de confirmação de exclusão (fora de quaisquer containers para garantir que fique no topo) -->
+  <div id="modal-confirmacao-exclusao" class="modal-confirmacao" style="display: none; position: fixed; top: 0; left: 0; width: 100vw; height: 100vh; z-index: 2147483646;">
+    <div class="modal-content" style="position: fixed; top: 50%; left: 50%; transform: translate(-50%, -50%); z-index: 2147483647;">
+      <p class="modal-texto"></p>
+      <div class="botoes-modal">
+        <button type="button" class="botao-confirmar">Sim, excluir</button>
+        <button type="button" class="botao-cancelar">Cancelar</button>
+      </div>
+    </div>
+  </div>
+
+
+    <script>
+// Correção rápida para z-index do modal de confirmação
+document.addEventListener('DOMContentLoaded', function() {
+    // Move o modal de confirmação para o body quando a página carregar
+    const modalConfirmacao = document.getElementById('modal-confirmacao-exclusao');
+    if (modalConfirmacao && modalConfirmacao.parentNode !== document.body) {
+        document.body.appendChild(modalConfirmacao);
+    }
+});
+
+// Intercepta a abertura do modal de confirmação
+const originalExcluirMentorDireto = window.excluirMentorDireto;
+window.excluirMentorDireto = function() {
+    // Garante que o modal principal tenha z-index menor
+    const modalForm = document.getElementById('modal-form');
+    if (modalForm) {
+        modalForm.style.zIndex = '9999';
+    }
+    
+    // Chama a função original
+    if (originalExcluirMentorDireto) {
+        originalExcluirMentorDireto();
+    }
+    
+    // Garante que o modal de confirmação tenha z-index maior
+    setTimeout(() => {
+        const modalConfirmacao = document.getElementById('modal-confirmacao-exclusao');
+        if (modalConfirmacao) {
+            modalConfirmacao.style.zIndex = '99999';
+            modalConfirmacao.style.position = 'fixed';
+            modalConfirmacao.style.top = '0';
+            modalConfirmacao.style.left = '0';
+            modalConfirmacao.style.width = '100vw';
+            modalConfirmacao.style.height = '100vh';
+        }
+    }, 100);
+};
+</script>
+<!-- ==================================================================================================================================== --> 
+<!--                                         💼  DEIXA MODAL DE EXCLUSÃO COM O ZINDEX SUPERIOR                          
+ ====================================================================================================================================== -->
+ <!-- -->
+<!-- -->
+<!-- -->
+<!-- -->
+<!-- -->
+<!-- -->
+<!-- -->
+<!-- -->
+<!-- -->
+<!-- -->
+<!-- -->
     <script src="js/modal-confirmacao.js"></script>
-</body>
-</html>
-
-  <script src="js/override-root-styles.js" defer></script>
-
+    <script src="js/override-root-styles.js" defer></script>
 </body>
 </html>
 
