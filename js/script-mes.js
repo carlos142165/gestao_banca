@@ -181,10 +181,26 @@ const MetaMensalManager = {
   _lastHTML: null,
   _restoring: false,
 
-  // Atualizar meta mensal - versão específica
+  // CORREÇÕES ADICIONADAS
+  TIMEOUT_DESTRAVAMENTO: 10000, // 10 segundos
+  ultimoInicioAtualizacao: null,
+
+  // FUNÇÃO PRINCIPAL CORRIGIDA
   async atualizarMetaMensal(aguardarDados = false, attempts = 0) {
-    if (this.atualizandoAtualmente) return null;
+    // CORREÇÃO 1: Timeout de segurança para destravar
+    const timeoutId = setTimeout(() => {
+      console.warn("DESTRAVANDO MetaMensalManager por timeout de segurança");
+      this.atualizandoAtualmente = false;
+      this.ultimoInicioAtualizacao = null;
+    }, this.TIMEOUT_DESTRAVAMENTO);
+
+    if (this.atualizandoAtualmente) {
+      clearTimeout(timeoutId);
+      return null;
+    }
+
     this.atualizandoAtualmente = true;
+    this.ultimoInicioAtualizacao = Date.now();
 
     try {
       if (aguardarDados) {
@@ -198,6 +214,8 @@ const MetaMensalManager = {
           "X-Requested-With": "XMLHttpRequest",
           "X-Periodo-Filtro": "mes",
         },
+        // CORREÇÃO 2: Adicionar timeout na requisição
+        signal: AbortSignal.timeout(8000),
       });
 
       if (!response.ok) throw new Error(`HTTP ${response.status}`);
@@ -207,6 +225,7 @@ const MetaMensalManager = {
         "MetaMensalManager - resposta dados_banca.php?periodo=mes:",
         data
       );
+
       if (!data.success) throw new Error(data.message);
 
       if (data.tipo_meta) {
@@ -216,10 +235,15 @@ const MetaMensalManager = {
       const dadosProcessados = this.processarDadosMensais(data);
       this.atualizarTodosElementosMensais(dadosProcessados);
 
+      // CORREÇÃO 3: Limpar timeout se sucesso
+      clearTimeout(timeoutId);
+      this.ultimoInicioAtualizacao = null;
       return dadosProcessados;
     } catch (error) {
       console.error("Erro Meta Mensal:", error);
-      // Tentativa de retry simples com backoff (até 2 retries adicionais)
+      clearTimeout(timeoutId);
+
+      // CORREÇÃO 4: Melhor sistema de retry
       if (attempts < 2) {
         const delay = attempts === 0 ? 1000 : 3000;
         console.warn(
@@ -228,7 +252,8 @@ const MetaMensalManager = {
           } falhou, retry em ${delay}ms...`
         );
         await new Promise((resolve) => setTimeout(resolve, delay));
-        this.atualizandoAtualmente = false; // limpar flag para poder refazer
+        this.atualizandoAtualmente = false;
+        this.ultimoInicioAtualizacao = null;
         return this.atualizarMetaMensal(aguardarDados, attempts + 1);
       }
 
@@ -236,7 +261,37 @@ const MetaMensalManager = {
       return null;
     } finally {
       this.atualizandoAtualmente = false;
+      this.ultimoInicioAtualizacao = null;
+      clearTimeout(timeoutId);
     }
+  },
+
+  // CORREÇÃO 5: Função de desbloqueio forçado
+  forcarDesbloqueio() {
+    console.log("Forçando desbloqueio do MetaMensalManager");
+    this.atualizandoAtualmente = false;
+    this.ultimoInicioAtualizacao = null;
+
+    // Tentar atualização imediata
+    setTimeout(() => {
+      this.atualizarMetaMensal(false);
+    }, 100);
+  },
+
+  // CORREÇÃO 6: Monitor de saúde do sistema
+  iniciarMonitorSaude() {
+    setInterval(() => {
+      // Se ficou mais de 30 segundos travado, destravar
+      if (this.atualizandoAtualmente && this.ultimoInicioAtualizacao) {
+        const agora = Date.now();
+        if (agora - this.ultimoInicioAtualizacao > 30000) {
+          console.warn(
+            "Sistema meta travado há mais de 30s - destravando automaticamente"
+          );
+          this.forcarDesbloqueio();
+        }
+      }
+    }, 5000);
   },
 
   // Processar dados especificamente para mensal
@@ -268,7 +323,6 @@ const MetaMensalManager = {
     }
   },
 
-  // ✅ NOVA FUNÇÃO: CALCULAR META FINAL MENSAL COM VALOR TACHADO E EXTRA
   // ✅ CALCULAR META FINAL MENSAL COM VALOR TACHADO E EXTRA - CORRIGIDO
   calcularMetaFinalMensalComExtra(saldoMes, metaCalculada, bancaTotal, data) {
     try {
@@ -649,6 +703,7 @@ const MetaMensalManager = {
       console.error("Erro ao limpar estado da barra mensal:", error);
     }
   },
+
   atualizarBarraProgressoMensal(resultado, data) {
     try {
       const barraProgresso = document.getElementById("barra-progresso-2");
@@ -779,7 +834,7 @@ const MetaMensalManager = {
     }
   },
 
-  // Inicializar sistema mensal (com garantia do ícone)
+  // Inicializar sistema mensal (com garantia do ícone) - CORRIGIDO
   inicializar() {
     try {
       const metaElement = document.getElementById("meta-valor-2");
@@ -814,6 +869,9 @@ const MetaMensalManager = {
 
       console.log(`Sistema Meta MENSAL COM VALOR TACHADO E EXTRA inicializado`);
 
+      // CORREÇÃO: Ativar monitor de saúde
+      this.iniciarMonitorSaude();
+
       // Garantir ícone da moeda após delay
       setTimeout(() => {
         this.garantirIconeMoeda();
@@ -839,44 +897,380 @@ const MetaMensalManager = {
                 "Meta mensal ainda em loading — forçando atualização de fallback"
               );
               // Force re-fetch mais agressivo
-              this.atualizandoAtualmente = false;
-              this.atualizarMetaMensal(true).then((res) => {
-                if (!res) {
-                  // fallback visual discreto
-                  try {
-                    const valorSpan =
-                      metaElement.querySelector(".valor-texto-2") ||
-                      metaElement;
-                    valorSpan.textContent = "—"; // placeholder leve
-                    valorSpan.classList.remove(
-                      "loading-text-2",
-                      "loading-text"
-                    );
-                  } catch (e) {
-                    // silencioso
-                  }
-                }
-              });
+              this.forcarDesbloqueio();
             }
           }
         } catch (e) {
-          console.error("Erro no watchdog de meta mensal:", e);
+          // silencioso
         }
       }, 3000);
     } catch (error) {
-      console.error("Erro na inicialização mensal:", error);
+      console.error("Erro na inicialização sistema mensal:", error);
     }
   },
 
-  // Sincronizar com mudanças do bloco 1
-  sincronizarComBloco1() {
-    try {
-      this.atualizarMetaMensal(true);
-    } catch (error) {
-      console.error("Erro ao sincronizar com bloco 1:", error);
-    }
-  },
+  // fechar o objeto MetaMensalManager
 };
+
+// ========================================
+// SISTEMA DE INICIALIZAÇÃO ROBUSTO APÓS RELOAD
+// ========================================
+
+(function () {
+  "use strict";
+
+  // Flag global para evitar múltiplas inicializações
+  if (window.metaSystemInitialized) {
+    console.log("Sistema já inicializado, pulando...");
+    return;
+  }
+
+  console.log("Iniciando sistema META robusto após reload...");
+
+  // ========================================
+  // MONITOR DE INICIALIZAÇÃO PERSISTENTE
+  // ========================================
+
+  const SistemaInicializacaoRobusta = {
+    tentativasInicializacao: 0,
+    maxTentativas: 10,
+    intervaloTentativas: 1000,
+    sistemaAtivo: false,
+
+    // Verificar se elementos necessários existem
+    verificarElementosNecessarios() {
+      const elementos = {
+        metaValor: document.getElementById("meta-valor-2"),
+        rotuloMeta: document.getElementById("rotulo-meta-2"),
+        barraProgresso: document.getElementById("barra-progresso-2"),
+        saldoInfo: document.getElementById("saldo-info-2"),
+      };
+
+      const elementosEncontrados = Object.values(elementos).filter(
+        (el) => el !== null
+      ).length;
+      const totalElementos = Object.keys(elementos).length;
+
+      console.log(
+        `Elementos encontrados: ${elementosEncontrados}/${totalElementos}`
+      );
+
+      return elementosEncontrados >= 2; // Pelo menos 2 elementos principais
+    },
+
+    // Verificar se MetaMensalManager existe e está funcional
+    verificarMetaManager() {
+      if (typeof MetaMensalManager === "undefined") {
+        console.warn("MetaMensalManager não encontrado");
+        return false;
+      }
+
+      if (typeof MetaMensalManager.atualizarMetaMensal !== "function") {
+        console.warn("MetaMensalManager.atualizarMetaMensal não é função");
+        return false;
+      }
+
+      console.log("MetaMensalManager verificado com sucesso");
+      return true;
+    },
+
+    // Forçar inicialização do sistema
+    forcarInicializacao() {
+      try {
+        console.log("Forçando inicialização do MetaMensalManager...");
+
+        // Resetar flags de controle
+        if (typeof MetaMensalManager !== "undefined") {
+          MetaMensalManager.atualizandoAtualmente = false;
+          MetaMensalManager.ultimoInicioAtualizacao = null;
+
+          // Inicializar monitor de saúde se não existir
+          if (!MetaMensalManager.monitorAtivo) {
+            MetaMensalManager.iniciarMonitorSaude();
+            MetaMensalManager.monitorAtivo = true;
+          }
+
+          // Primeira atualização imediata
+          setTimeout(() => {
+            MetaMensalManager.atualizarMetaMensal(false);
+          }, 500);
+
+          // Segunda tentativa de segurança
+          setTimeout(() => {
+            if (MetaMensalManager.atualizandoAtualmente === false) {
+              MetaMensalManager.atualizarMetaMensal(true);
+            }
+          }, 2000);
+
+          console.log("MetaMensalManager reinicializado com sucesso");
+          return true;
+        }
+
+        return false;
+      } catch (error) {
+        console.error("Erro ao forçar inicialização:", error);
+        return false;
+      }
+    },
+
+    // Tentar inicialização com retry
+    tentarInicializacao() {
+      this.tentativasInicializacao++;
+
+      console.log(
+        `Tentativa de inicialização ${this.tentativasInicializacao}/${this.maxTentativas}`
+      );
+
+      // Verificar elementos DOM
+      if (!this.verificarElementosNecessarios()) {
+        console.log("Elementos DOM ainda não disponíveis, aguardando...");
+        this.agendarProximaTentativa();
+        return;
+      }
+
+      // Verificar MetaMensalManager
+      if (!this.verificarMetaManager()) {
+        console.log("MetaMensalManager ainda não disponível, aguardando...");
+        this.agendarProximaTentativa();
+        return;
+      }
+
+      // Tentar inicialização
+      if (this.forcarInicializacao()) {
+        this.sistemaAtivo = true;
+        window.metaSystemInitialized = true;
+
+        // Configurar interceptadores AJAX
+        this.configurarInterceptadoresAjax();
+
+        // Monitor contínuo
+        this.iniciarMonitorContinuo();
+
+        console.log("Sistema META inicializado com sucesso após reload!");
+        return;
+      }
+
+      this.agendarProximaTentativa();
+    },
+
+    // Agendar próxima tentativa
+    agendarProximaTentativa() {
+      if (this.tentativasInicializacao >= this.maxTentativas) {
+        console.error(
+          "Máximo de tentativas atingido. Sistema META pode não estar funcionando."
+        );
+        return;
+      }
+
+      setTimeout(() => {
+        this.tentarInicializacao();
+      }, this.intervaloTentativas);
+    },
+
+    // Configurar interceptadores AJAX para manter sistema ativo
+    configurarInterceptadoresAjax() {
+      // Hook no fetch global
+      if (window.fetch && !window.fetch._metaHooked) {
+        const originalFetch = window.fetch;
+
+        window.fetch = async function (...args) {
+          const response = await originalFetch.apply(this, args);
+
+          try {
+            const url = args[0]?.toString() || "";
+
+            // URLs que devem triggerar atualização da meta
+            const urlsRelevantes = [
+              "dados_banca.php",
+              "cadastrar-valor",
+              "excluir-entrada",
+              "carregar-mentores",
+            ];
+
+            if (urlsRelevantes.some((relevante) => url.includes(relevante))) {
+              setTimeout(() => {
+                if (
+                  typeof MetaMensalManager !== "undefined" &&
+                  !MetaMensalManager.atualizandoAtualmente
+                ) {
+                  console.log("Triggering meta update via AJAX hook");
+                  MetaMensalManager.atualizarMetaMensal(false);
+                }
+              }, 300);
+            }
+          } catch (e) {
+            // Silencioso para não quebrar outras funcionalidades
+          }
+
+          return response;
+        };
+
+        window.fetch._metaHooked = true;
+        console.log("Hook AJAX configurado");
+      }
+    },
+
+    // Monitor contínuo para garantir que sistema permaneça ativo
+    iniciarMonitorContinuo() {
+      setInterval(() => {
+        // Verificar se MetaMensalManager ainda está ativo
+        if (typeof MetaMensalManager !== "undefined") {
+          const agora = Date.now();
+
+          // Se não atualizou nos últimos 60 segundos, forçar atualização
+          if (!MetaMensalManager.ultimaAtualizacaoSucesso) {
+            MetaMensalManager.ultimaAtualizacaoSucesso = agora;
+          } else if (
+            agora - MetaMensalManager.ultimaAtualizacaoSucesso >
+            60000
+          ) {
+            console.log("Sistema META inativo há mais de 60s, reativando...");
+
+            if (!MetaMensalManager.atualizandoAtualmente) {
+              MetaMensalManager.atualizandoAtualmente = false;
+              MetaMensalManager.atualizarMetaMensal(false);
+            }
+          }
+        }
+      }, 15000); // Verificar a cada 15 segundos
+    },
+
+    // Iniciar processo
+    iniciar() {
+      console.log("Iniciando sistema de inicialização robusta...");
+      this.tentarInicializacao();
+    },
+  };
+
+  // ========================================
+  // MELHORIAS NO META MENSAL MANAGER
+  // ========================================
+
+  // Aguardar MetaMensalManager estar disponível e adicionar melhorias
+  function melhorarMetaMensalManager() {
+    if (typeof MetaMensalManager === "undefined") {
+      setTimeout(melhorarMetaMensalManager, 100);
+      return;
+    }
+
+    // Adicionar flag de última atualização bem-sucedida
+    if (!MetaMensalManager.ultimaAtualizacaoSucesso) {
+      MetaMensalManager.ultimaAtualizacaoSucesso = Date.now();
+    }
+
+    // Melhorar função de atualização para registrar sucesso
+    if (
+      MetaMensalManager.atualizarMetaMensal &&
+      !MetaMensalManager._melhorado
+    ) {
+      const funcaoOriginal = MetaMensalManager.atualizarMetaMensal;
+
+      MetaMensalManager.atualizarMetaMensal = async function (...args) {
+        try {
+          const resultado = await funcaoOriginal.apply(this, args);
+
+          if (resultado) {
+            this.ultimaAtualizacaoSucesso = Date.now();
+            console.log(
+              "Meta atualizada com sucesso:",
+              new Date().toLocaleTimeString()
+            );
+          }
+
+          return resultado;
+        } catch (error) {
+          console.error("Erro na atualização da meta:", error);
+          throw error;
+        }
+      };
+
+      MetaMensalManager._melhorado = true;
+      console.log("MetaMensalManager melhorado");
+    }
+  }
+
+  // ========================================
+  // COMANDOS GLOBAIS MELHORADOS
+  // ========================================
+
+  // Comando melhorado para destravar
+  window.destravaMeta = function () {
+    console.log("Destravando sistema META...");
+
+    if (typeof MetaMensalManager !== "undefined") {
+      MetaMensalManager.atualizandoAtualmente = false;
+      MetaMensalManager.ultimoInicioAtualizacao = null;
+
+      setTimeout(() => {
+        MetaMensalManager.atualizarMetaMensal(false);
+      }, 100);
+
+      console.log("Sistema destravado e atualização forçada");
+    } else {
+      console.warn("MetaMensalManager não encontrado");
+    }
+  };
+
+  // Comando para verificar status
+  window.statusMeta = function () {
+    if (typeof MetaMensalManager === "undefined") {
+      console.log("MetaMensalManager: NÃO ENCONTRADO");
+      return;
+    }
+
+    const agora = Date.now();
+    const ultimaAtualizacao = MetaMensalManager.ultimaAtualizacaoSucesso || 0;
+    const tempoSemAtualizacao = Math.round((agora - ultimaAtualizacao) / 1000);
+
+    console.log("STATUS META SISTEMA:");
+    console.log("  Ativo:", typeof MetaMensalManager !== "undefined");
+    console.log("  Atualizando:", MetaMensalManager.atualizandoAtualmente);
+    console.log("  Última atualização:", tempoSemAtualizacao + "s atrás");
+    console.log("  Monitor ativo:", MetaMensalManager.monitorAtivo || false);
+    console.log(
+      "  Sistema inicializado:",
+      window.metaSystemInitialized || false
+    );
+  };
+
+  // Comando para reinicializar completamente
+  window.reiniciarMeta = function () {
+    console.log("Reinicializando sistema META completamente...");
+
+    window.metaSystemInitialized = false;
+    SistemaInicializacaoRobusta.sistemaAtivo = false;
+    SistemaInicializacaoRobusta.tentativasInicializacao = 0;
+
+    setTimeout(() => {
+      SistemaInicializacaoRobusta.iniciar();
+    }, 100);
+  };
+
+  // ========================================
+  // INICIALIZAÇÃO
+  // ========================================
+
+  // Inicializar baseado no estado do DOM
+  function iniciarSistema() {
+    melhorarMetaMensalManager();
+
+    setTimeout(() => {
+      SistemaInicializacaoRobusta.iniciar();
+    }, 500);
+  }
+
+  if (document.readyState === "loading") {
+    document.addEventListener("DOMContentLoaded", iniciarSistema);
+  } else {
+    iniciarSistema();
+  }
+
+  console.log("Sistema robusto de META carregado");
+  console.log("Comandos disponíveis:");
+  console.log("  destravaMeta() - Destravar se parar");
+  console.log("  statusMeta() - Ver status atual");
+  console.log("  reiniciarMeta() - Reinicializar completamente");
+})();
 
 // ========================================
 // FUNÇÕES GLOBAIS E ATALHOS
@@ -4205,44 +4599,3 @@ document.head.appendChild(cssEstavel);
 //
 //
 //
-// ✅ FUNÇÃO PARA FORÇAR ATUALIZAÇÃO DO BLOCO 2
-window.forcarBloco2 = function () {
-  if (typeof MetaMensalManager !== "undefined") {
-    console.log("🔄 Forçando atualização do Bloco 2...");
-    MetaMensalManager.atualizandoAtualmente = false;
-    MetaMensalManager.atualizarMetaMensal(true);
-  }
-};
-
-// ✅ FUNÇÃO PARA DEBUG DO BLOCO 2
-window.debugBloco2 = function () {
-  const metaElement = document.getElementById("meta-valor-2");
-  const rotuloElement = document.getElementById("rotulo-meta-2");
-  const barraElement = document.getElementById("barra-progresso-2");
-
-  console.log("📊 DEBUG BLOCO 2:");
-  console.log(
-    "Meta Element:",
-    metaElement ? metaElement.innerHTML : "NÃO ENCONTRADO"
-  );
-  console.log(
-    "Rótulo Element:",
-    rotuloElement ? rotuloElement.innerHTML : "NÃO ENCONTRADO"
-  );
-  console.log(
-    "Barra Element:",
-    barraElement ? barraElement.style.width : "NÃO ENCONTRADO"
-  );
-  console.log(
-    "MetaMensalManager ativo:",
-    typeof MetaMensalManager !== "undefined"
-  );
-
-  if (typeof MetaMensalManager !== "undefined") {
-    console.log(
-      "Atualizando atualmente:",
-      MetaMensalManager.atualizandoAtualmente
-    );
-    console.log("Período atual:", MetaMensalManager.periodoFixo);
-  }
-};
