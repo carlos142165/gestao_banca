@@ -188,14 +188,10 @@ const PlacarAnualManager = {
         greenSpan.textContent = wins;
         redSpan.textContent = losses;
 
-        // Separador sempre visível
+        // Separador sempre visível - prefer class toggling instead of inline styles
         if (separadorEl) {
-          separadorEl.style.setProperty(
-            "color",
-            "rgba(109, 107, 107, 0.95)",
-            "important"
-          );
-          separadorEl.style.setProperty("opacity", "1", "important");
+          separadorEl.classList.remove("separador-transparente");
+          // ensure base separator color class is present (handled by CSS)
         }
 
         // Marcar que o placar tem valores

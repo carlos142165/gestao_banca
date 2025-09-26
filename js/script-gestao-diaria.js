@@ -176,7 +176,7 @@ const CampoMentoresHeightManager = {
         mo.observe(topo, { childList: true, subtree: true, attributes: true });
         this.observer = mo;
         // Also poll size as a safety net
-        this._pollInterval = setInterval(() => this._debouncedAdjust(), 500);
+        this._pollInterval = setInterval(() => this._debouncedAdjust(), 1000);
       }
 
       // Also adjust on window resize
@@ -262,7 +262,7 @@ const CampoBloco2HeightManager = {
         const mo = new MutationObserver(() => this._debouncedAdjust());
         mo.observe(topo, { childList: true, subtree: true, attributes: true });
         this.observer = mo;
-        this._pollInterval = setInterval(() => this._debouncedAdjust(), 500);
+        this._pollInterval = setInterval(() => this._debouncedAdjust(), 1000);
       }
 
       window.addEventListener("resize", this._debouncedAdjust);

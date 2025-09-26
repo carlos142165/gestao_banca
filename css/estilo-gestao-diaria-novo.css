@@ -5415,3 +5415,40 @@ html body #widget-meta .widget-conteudo-principal,
   margin: 0 !important;
   padding-top: 0 !important;
 }
+
+/* ===== PERFORMANCE MODE (SAFE, REVERSIBLE) =====
+   Aplicar a classe `.gestao-perf-mode` em `document.documentElement` reduz
+   efeitos caros: filtros, backdrop-filter, animações contínuas e sombras.
+   Mantém layout e acessibilidade — só reduz trabalho de pintura/composição.
+*/
+.gestao-perf-mode * {
+  animation: none !important;
+  transition: none !important;
+  will-change: auto !important;
+  filter: none !important;
+  -webkit-filter: none !important;
+  backdrop-filter: none !important;
+}
+
+.gestao-perf-mode .widget-meta-item,
+.gestao-perf-mode .bloco,
+.gestao-perf-mode .card,
+.gestao-perf-mode .panel,
+.gestao-perf-mode .popup {
+  box-shadow: none !important;
+}
+
+.gestao-perf-mode .btn,
+.gestao-perf-mode .clickable {
+  transition: transform 120ms ease !important;
+}
+
+.gestao-perf-mode .pulse,
+.gestao-perf-mode .spinner,
+.gestao-perf-mode .shimmer {
+  animation-duration: 3s !important;
+  animation-iteration-count: 1 !important;
+  animation-play-state: paused !important;
+}
+
+/* End of perf-mode overrides */

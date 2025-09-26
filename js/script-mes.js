@@ -23,6 +23,131 @@ document.addEventListener("DOMContentLoaded", function () {
   }
 });
 
+// ===== PERFORMANCE MODE: ativa overrides CSS de baixo custo (reversível)
+// Aplica a classe `.gestao-perf-mode` ao elemento raiz para reduzir filtros,
+// animações e sombras que custam CPU/GPU. Se precisar reverter, remova a classe.
+(function enablePerfModeSafely() {
+  try {
+    if (!document.documentElement.classList.contains("gestao-perf-mode")) {
+      // Adiciona a classe com delay mínimo para permitir testes locais
+      window.setTimeout(() => {
+        document.documentElement.classList.add("gestao-perf-mode");
+      }, 150);
+    }
+  } catch (e) {
+    // Não bloquear a aplicação caso algo vá errado
+    console.error("gestao: não foi possível ativar perf-mode", e);
+  }
+})();
+
+// Helpers para debug: ativar/desativar/toggle do modo de performance sem editar arquivos
+window.gestaoPerf = {
+  enable() {
+    document.documentElement.classList.add("gestao-perf-mode");
+    console.log("gestao-perf-mode habilitado");
+  },
+  disable() {
+    document.documentElement.classList.remove("gestao-perf-mode");
+    console.log("gestao-perf-mode desabilitado");
+  },
+  toggle() {
+    document.documentElement.classList.toggle("gestao-perf-mode");
+    console.log(
+      "gestao-perf-mode agora:",
+      document.documentElement.classList.contains("gestao-perf-mode")
+        ? "ON"
+        : "OFF"
+    );
+  },
+};
+
+// Observer para detectar alterações externas em #meta-valor-2
+(function observeMetaValor2() {
+  try {
+    function attach() {
+      const el = document.getElementById("meta-valor-2");
+      if (!el) return;
+
+      const observer = new MutationObserver((mutations) => {
+        for (const m of mutations) {
+          if (
+            m.type === "childList" ||
+            m.type === "characterData" ||
+            m.type === "subtree"
+          ) {
+            try {
+              const lastBy = el.getAttribute("data-last-set-by");
+              const lastAt = Number(el.getAttribute("data-last-set-at") || 0);
+              const now = Date.now();
+              if (lastBy === "MetaMensalManager" && now - lastAt < 2000) {
+                continue; // alteração nossa, ignorar
+              }
+
+              console.warn(
+                "META-VALUE-2: detectada alteração externa ao manager",
+                {
+                  newHTML: el.innerHTML,
+                  text: el.textContent,
+                  lastSetBy: lastBy,
+                  lastSetAt: lastAt,
+                  timestamp: now,
+                }
+              );
+
+              // Se temos um HTML salvo e não estamos restaurando, restaurar
+              try {
+                if (
+                  typeof MetaMensalManager !== "undefined" &&
+                  MetaMensalManager._lastHTML &&
+                  !MetaMensalManager._restoring
+                ) {
+                  MetaMensalManager._restoring = true;
+                  console.log(
+                    "META-VALUE-2: restaurando último HTML conhecido pelo manager"
+                  );
+                  el.innerHTML = MetaMensalManager._lastHTML;
+                  el.setAttribute(
+                    "data-last-set-by",
+                    "MetaMensalManager-restored"
+                  );
+                  el.setAttribute("data-last-set-at", String(Date.now()));
+                  // limpar flag após curto delay
+                  setTimeout(() => {
+                    MetaMensalManager._restoring = false;
+                  }, 500);
+                }
+              } catch (restoreErr) {
+                console.error("Erro ao restaurar meta-valor-2:", restoreErr);
+              }
+
+              console.warn(new Error("stack").stack);
+            } catch (e) {
+              console.error("Erro no observer meta-valor-2:", e);
+            }
+          }
+        }
+      });
+
+      observer.observe(el, {
+        childList: true,
+        subtree: true,
+        characterData: true,
+      });
+      console.log(
+        "Observer instalado em #meta-valor-2 para detectar sobrescritas externas"
+      );
+    }
+
+    if (document.readyState === "loading") {
+      document.addEventListener("DOMContentLoaded", attach, { once: true });
+    } else {
+      attach();
+    }
+  } catch (e) {
+    console.error("Erro ao instalar observer de meta-valor-2:", e);
+  }
+})();
+
 //
 //
 //
@@ -52,9 +177,12 @@ const MetaMensalManager = {
   atualizandoAtualmente: false,
   periodoFixo: "mes",
   tipoMetaAtual: "turbo",
+  // internal debug/restore fields
+  _lastHTML: null,
+  _restoring: false,
 
   // Atualizar meta mensal - versão específica
-  async atualizarMetaMensal(aguardarDados = false) {
+  async atualizarMetaMensal(aguardarDados = false, attempts = 0) {
     if (this.atualizandoAtualmente) return null;
     this.atualizandoAtualmente = true;
 
@@ -75,6 +203,10 @@ const MetaMensalManager = {
       if (!response.ok) throw new Error(`HTTP ${response.status}`);
 
       const data = await response.json();
+      console.debug(
+        "MetaMensalManager - resposta dados_banca.php?periodo=mes:",
+        data
+      );
       if (!data.success) throw new Error(data.message);
 
       if (data.tipo_meta) {
@@ -87,6 +219,19 @@ const MetaMensalManager = {
       return dadosProcessados;
     } catch (error) {
       console.error("Erro Meta Mensal:", error);
+      // Tentativa de retry simples com backoff (até 2 retries adicionais)
+      if (attempts < 2) {
+        const delay = attempts === 0 ? 1000 : 3000;
+        console.warn(
+          `MetaMensalManager: tentativa ${
+            attempts + 1
+          } falhou, retry em ${delay}ms...`
+        );
+        await new Promise((resolve) => setTimeout(resolve, delay));
+        this.atualizandoAtualmente = false; // limpar flag para poder refazer
+        return this.atualizarMetaMensal(aguardarDados, attempts + 1);
+      }
+
       this.mostrarErroMetaMensal();
       return null;
     } finally {
@@ -97,7 +242,10 @@ const MetaMensalManager = {
   // Processar dados especificamente para mensal
   processarDadosMensais(data) {
     try {
-      const metaFinal = parseFloat(data.meta_mensal) || 0;
+      const metaRaw = data.meta_mensal;
+      const metaFinal = isFinite(Number(metaRaw))
+        ? Number(metaRaw)
+        : parseFloat(metaRaw) || 0;
       const rotuloFinal = "Meta do Mês";
       const lucroMensal = parseFloat(data.lucro) || 0;
 
@@ -121,6 +269,7 @@ const MetaMensalManager = {
   },
 
   // ✅ NOVA FUNÇÃO: CALCULAR META FINAL MENSAL COM VALOR TACHADO E EXTRA
+  // ✅ CALCULAR META FINAL MENSAL COM VALOR TACHADO E EXTRA - CORRIGIDO
   calcularMetaFinalMensalComExtra(saldoMes, metaCalculada, bancaTotal, data) {
     try {
       let metaFinal,
@@ -135,18 +284,24 @@ const MetaMensalManager = {
       console.log(`   Banca: R$ ${bancaTotal.toFixed(2)}`);
 
       if (bancaTotal <= 0) {
-        metaFinal = bancaTotal;
+        metaFinal = metaCalculada;
         rotulo = "Deposite p/ Começar";
         statusClass = "sem-banca";
         console.log(`📊 RESULTADO MENSAL: Sem banca`);
       }
-      // ✅ META BATIDA OU SUPERADA - COM VALOR EXTRA
+      // ✅ CORREÇÃO: META BATIDA OU SUPERADA - COM VERIFICAÇÃO PRECISA
       else if (saldoMes > 0 && metaCalculada > 0 && saldoMes >= metaCalculada) {
         valorExtra = saldoMes - metaCalculada;
         mostrarTachado = true;
-        metaFinal = metaCalculada; // Mostra o valor da meta original
+        metaFinal = metaCalculada;
 
-        if (valorExtra > 0) {
+        // ✅ VERIFICAÇÃO PRECISA: Diferença menor que 1 centavo = meta exata
+        if (Math.abs(valorExtra) < 0.01) {
+          rotulo = `Meta do Mês Batida! <i class='fa-solid fa-trophy'></i>`;
+          statusClass = "meta-batida";
+          valorExtra = 0; // Zerar diferenças mínimas
+          console.log(`🎯 META MENSAL EXATA`);
+        } else if (valorExtra > 0.01) {
           rotulo = `Meta do Mês Superada! <i class='fa-solid fa-trophy'></i>`;
           statusClass = "meta-superada";
           console.log(
@@ -155,7 +310,7 @@ const MetaMensalManager = {
         } else {
           rotulo = `Meta do Mês Batida! <i class='fa-solid fa-trophy'></i>`;
           statusClass = "meta-batida";
-          console.log(`🎯 META MENSAL EXATA`);
+          valorExtra = 0;
         }
       }
       // ✅ CASO ESPECIAL: Meta é zero (já foi batida)
@@ -167,7 +322,7 @@ const MetaMensalManager = {
         statusClass = "meta-batida";
         console.log(`🎯 META MENSAL ZERO (já batida)`);
       } else if (saldoMes < 0) {
-        metaFinal = metaCalculada - saldoMes;
+        metaFinal = metaCalculada + Math.abs(saldoMes);
         rotulo = `Restando p/ Meta do Mês`;
         statusClass = "negativo";
         console.log(`📊 RESULTADO MENSAL: Negativo`);
@@ -326,7 +481,26 @@ const MetaMensalManager = {
         metaValor.classList.add("valor-meta-2", resultado.statusClass);
       }
 
-      metaValor.innerHTML = htmlConteudo;
+      // Guardar o HTML para possível restauração em caso de sobrescrita externa
+      try {
+        this._lastHTML = htmlConteudo;
+        // Persistir último HTML conhecido para sobreviver a reloads rápidos
+        try {
+          localStorage.setItem("gestao_meta_valor_2_lastHTML", this._lastHTML);
+        } catch (e) {
+          // localStorage pode falhar em ambientes restritos; não bloquear
+        }
+
+        metaValor.innerHTML = htmlConteudo;
+        metaValor.setAttribute("data-last-set-by", "MetaMensalManager");
+        metaValor.setAttribute("data-last-set-at", String(Date.now()));
+      } catch (e) {
+        try {
+          metaValor.innerHTML = htmlConteudo;
+        } catch (ee) {
+          console.error("Erro ao definir innerHTML meta-valor-2:", ee);
+        }
+      }
     } catch (error) {
       console.error("Erro ao atualizar meta elemento mensal com extra:", error);
     }
@@ -611,8 +785,31 @@ const MetaMensalManager = {
       const metaElement = document.getElementById("meta-valor-2");
       if (metaElement) {
         // USAR CLASSES CORRETAS DO FONT AWESOME
-        metaElement.innerHTML =
-          '<i class="fa-solid fa-coins"></i><div class="meta-valor-container-2"><span class="valor-texto-2 loading-text-2">Calculando...</span></div>';
+        // Primeiro tentar restaurar do localStorage para evitar piscar "Calculando..." após reload
+        let restored = false;
+        try {
+          const cached = localStorage.getItem("gestao_meta_valor_2_lastHTML");
+          if (cached) {
+            this._lastHTML = cached;
+            metaElement.innerHTML = cached;
+            metaElement.setAttribute(
+              "data-last-set-by",
+              "MetaMensalManager-cached"
+            );
+            metaElement.setAttribute("data-last-set-at", String(Date.now()));
+            restored = true;
+            console.log(
+              "MetaMensalManager: restaurado HTML do cache localStorage"
+            );
+          }
+        } catch (e) {
+          // ignore localStorage errors
+        }
+
+        if (!restored) {
+          metaElement.innerHTML =
+            '<i class="fa-solid fa-coins"></i><div class="meta-valor-container-2"><span class="valor-texto-2 loading-text-2">Calculando...</span></div>';
+        }
       }
 
       console.log(`Sistema Meta MENSAL COM VALOR TACHADO E EXTRA inicializado`);
@@ -626,6 +823,46 @@ const MetaMensalManager = {
       setTimeout(() => {
         this.atualizarMetaMensal();
       }, 1000);
+
+      // WATCHDOG: se após 3s o elemento ainda mostra 'carregando' ou a classe de loading,
+      // tentamos forçar uma nova requisição e mostramos um fallback visual para o usuário.
+      setTimeout(() => {
+        try {
+          const metaElement = document.getElementById("meta-valor-2");
+          if (metaElement) {
+            const texto = (metaElement.textContent || "").toLowerCase();
+            const temLoadingClass = !!metaElement.querySelector(
+              ".loading-text-2, .loading-text"
+            );
+            if (texto.includes("carreg") || temLoadingClass) {
+              console.warn(
+                "Meta mensal ainda em loading — forçando atualização de fallback"
+              );
+              // Force re-fetch mais agressivo
+              this.atualizandoAtualmente = false;
+              this.atualizarMetaMensal(true).then((res) => {
+                if (!res) {
+                  // fallback visual discreto
+                  try {
+                    const valorSpan =
+                      metaElement.querySelector(".valor-texto-2") ||
+                      metaElement;
+                    valorSpan.textContent = "—"; // placeholder leve
+                    valorSpan.classList.remove(
+                      "loading-text-2",
+                      "loading-text"
+                    );
+                  } catch (e) {
+                    // silencioso
+                  }
+                }
+              });
+            }
+          }
+        } catch (e) {
+          console.error("Erro no watchdog de meta mensal:", e);
+        }
+      }, 3000);
     } catch (error) {
       console.error("Erro na inicialização mensal:", error);
     }
@@ -785,21 +1022,35 @@ function inicializarSistemaMetaMensal() {
 (function () {
   // Timestamp da última atualização bem-sucedida
   let ultimaAtualizacao = 0;
-  // Intervalo mínimo entre atualizações (ms) - reduzido para responder rapidamente
-  const MIN_INTERVAL_MS = 200; // evita loops agressivos, permite resposta quase imediata
+  // Intervalo mínimo entre atualizações (ms) - aumentar para reduzir carga
+  const MIN_INTERVAL_MS = 1000; // throttle mais conservador para reduzir picos
+  // Handle para debounce/agrupamento de múltiplos gatilhos
+  let atualizarTimeoutHandle = null;
 
   function atualizarRapido() {
-    const agora = Date.now();
-    if (agora - ultimaAtualizacao < MIN_INTERVAL_MS) return; // Evitar spam
+    // Se já existe um agendamento pendente, não agendar outro
+    if (atualizarTimeoutHandle) return;
 
-    ultimaAtualizacao = agora;
+    const exec = () => {
+      const agora = Date.now();
+      if (agora - ultimaAtualizacao < MIN_INTERVAL_MS) {
+        atualizarTimeoutHandle = null;
+        return; // respeitar intervalo mínimo
+      }
 
-    if (typeof MetaMensalManager !== "undefined") {
-      // Forçar estado para permitir reexecução imediata
-      MetaMensalManager.atualizandoAtualmente = false;
-      // Sem delay
-      MetaMensalManager.atualizarMetaMensal(false);
-    }
+      ultimaAtualizacao = agora;
+
+      if (typeof MetaMensalManager !== "undefined") {
+        // Forçar estado para permitir reexecução
+        MetaMensalManager.atualizandoAtualmente = false;
+        MetaMensalManager.atualizarMetaMensal(false);
+      }
+
+      atualizarTimeoutHandle = null;
+    };
+
+    // Debounce curto para agrupar eventos em uma única atualização
+    atualizarTimeoutHandle = setTimeout(exec, 120);
   }
 
   // Chamadas diretas em eventos do usuário: executar imediatamente (ou com micro-delay)
@@ -815,41 +1066,128 @@ function inicializarSistemaMetaMensal() {
   document.addEventListener(
     "click",
     (e) => {
-      if (
-        e.target.closest('button, .btn, input[type="submit"], a[data-action]')
-      ) {
+      // Tornar seleção de clicks mais seletiva para evitar triggers desnecessários
+      const target = e.target;
+      const candidate = target.closest(
+        'button, .btn, input[type="submit"], a[data-action], [data-trigger-update]'
+      );
+      if (candidate) {
         setTimeout(atualizarRapido, 50);
       }
     },
     true
   );
 
-  // Hook em fetch para detectar requisições que alteram dados e disparar atualização após retorno
-  try {
-    const _fetch = window.fetch;
-    window.fetch = function (...args) {
-      const url = args[0] && args[0].toString ? args[0].toString() : "";
-      return _fetch.apply(this, args).then((resp) => {
-        try {
-          if (
-            /dados_banca|carregar-mentores|controle|valor_mentores/i.test(url)
-          ) {
-            // pequeno atraso para permitir processamento do servidor/DOM
-            setTimeout(atualizarRapido, 50);
+  // Hook resiliente para fetch + XMLHttpRequest
+  (function installResilientAjaxHooks() {
+    const URL_RE =
+      /obter_dados_mes|dados_banca|carregar-mentores|cadastrar-valor|cadastrar-valor-novo|excluir-entrada/i;
+
+    function tryHookFetch() {
+      try {
+        const current = window.fetch;
+        if (!current) return;
+        if (current.__gestao_hook) return; // já hookado
+
+        const orig = current.bind(window);
+
+        const wrapped = function (...args) {
+          let url = "";
+          try {
+            url = args[0] && args[0].toString ? args[0].toString() : "";
+          } catch (e) {
+            url = "";
           }
-        } catch (e) {}
-        return resp;
-      });
-    };
-  } catch (e) {
-    console.warn(
-      "Não foi possível hookar fetch para atualizações automáticas MENSAL",
-      e
-    );
-  }
+
+          const p = orig(...args);
+          try {
+            p.then((resp) => {
+              try {
+                if (URL_RE.test(url)) {
+                  // pequeno atraso para permitir processamento do servidor/DOM
+                  setTimeout(atualizarRapido, 50);
+                }
+              } catch (e) {}
+              return resp;
+            }).catch(() => {});
+          } catch (e) {}
+          return p;
+        };
+
+        try {
+          wrapped.__gestao_hook = true;
+          // preservar toString e outras propriedades úteis
+          try {
+            wrapped.toString = function () {
+              return orig.toString();
+            };
+          } catch (e) {}
+          window.fetch = wrapped;
+          console.log("gestao: fetch hook instalado");
+        } catch (e) {
+          // falha silenciosa
+        }
+      } catch (e) {}
+    }
+
+    function tryHookXHR() {
+      try {
+        const proto = XMLHttpRequest && XMLHttpRequest.prototype;
+        if (!proto) return;
+        if (proto.__gestao_xhr_hooked) return;
+
+        const origOpen = proto.open;
+        const origSend = proto.send;
+
+        proto.open = function (method, url, ...rest) {
+          try {
+            this.__gestao_request_url = url ? String(url) : "";
+          } catch (e) {
+            this.__gestao_request_url = "";
+          }
+          return origOpen.apply(this, [method, url, ...rest]);
+        };
+
+        proto.send = function (...args) {
+          try {
+            this.addEventListener("loadend", function () {
+              try {
+                const finalUrl = (
+                  this.responseURL ||
+                  this.__gestao_request_url ||
+                  ""
+                ).toString();
+                if (URL_RE.test(finalUrl)) {
+                  setTimeout(atualizarRapido, 50);
+                }
+              } catch (e) {}
+            });
+          } catch (e) {}
+          return origSend.apply(this, args);
+        };
+
+        proto.__gestao_xhr_hooked = true;
+        console.log("gestao: XHR hook instalado");
+      } catch (e) {}
+    }
+
+    // Instalar imediatamente
+    tryHookFetch();
+    tryHookXHR();
+
+    // Reaplicar algumas vezes caso outros scripts sobrescrevam os hooks
+    let attempts = 0;
+    const maxAttempts = 6;
+    const interval = setInterval(() => {
+      attempts++;
+      tryHookFetch();
+      tryHookXHR();
+      if (attempts >= maxAttempts) clearInterval(interval);
+    }, 1000);
+  })();
 
   // Interval fallback (mais longo) para garantir eventual consistência
-  setInterval(atualizarRapido, 5000);
+  const fallbackIntervalHandle = setInterval(atualizarRapido, 5000);
 
   // Primeira atualização imediata
   setTimeout(atualizarRapido, 50);
@@ -858,7 +1196,7 @@ function inicializarSistemaMetaMensal() {
   window.atualizarRapidoMensal = atualizarRapido;
 
   console.log(
-    "Sistema rápido MENSAL (melhorado) ativo - responde imediatamente a mudanças"
+    "Sistema rápido MENSAL (melhorado) ativo - responde a mudanças mas com throttle/agrupamento para reduzir carga"
   );
 })();
 
@@ -880,6 +1218,38 @@ console.log("  $2.info() - Ver status completo");
 
 // Export para uso externo
 window.MetaMensalManager = MetaMensalManager;
+// Utilitário global: limpa flags "atualizandoAtualmente" em vários managers
+// Útil para garantir que ações do usuário (ex.: excluir, trocar periodo) não sejam bloqueadas.
+window.gestaoClearUpdatingFlags = function () {
+  try {
+    const managers = [
+      "ListaDiasManagerCorrigido",
+      "MetaMensalManager",
+      "MetaDiariaManager",
+      "PlacarMensalManager",
+      "PlacarAnualManager",
+      "MentorManager",
+      "SistemaUnicoSemConflito",
+      "MonitorContinuo",
+      "ListaMesesManagerAnual",
+    ];
+
+    managers.forEach((name) => {
+      try {
+        const obj = window[name];
+        if (obj && typeof obj === "object") {
+          if ("atualizandoAtualmente" in obj) obj.atualizandoAtualmente = false;
+          if (
+            "forcarAtualizacao" in obj &&
+            typeof obj.forcarAtualizacao === "function"
+          ) {
+            // não executar forçar por padrão aqui - apenas limpar flags
+          }
+        }
+      } catch (e) {}
+    });
+  } catch (e) {}
+};
 // AQUI FINAL PARTE DO CODIGO QUE QTUALIZA EM TEMPO REAL VIA AJAX OS VALORES
 // ========================================================================================================================
 //                               FIM JS DAOS CAMPOS ONDE FILTRA O MÊS BARRA DE PROGRESSO META E SALDO
@@ -1166,8 +1536,8 @@ const PlacarMensalManager = {
           greenSpan.textContent = "";
           redSpan.textContent = "";
           if (separadorEl) {
-            // Make separator transparent while waiting for real data
-            separadorEl.style.setProperty("color", "transparent", "important");
+            // Make separator visually hidden while waiting for real data by toggling a class
+            separadorEl.classList.add("separador-transparente");
           }
           // remove update class if present and remove has-values marker
           placarElement.classList.remove("placar-atualizado");
@@ -1175,7 +1545,7 @@ const PlacarMensalManager = {
         } else {
           // Ensure separator is visible and colored for non-empty scores
           if (separadorEl) {
-            separadorEl.style.removeProperty("color");
+            separadorEl.classList.remove("separador-transparente");
           }
 
           // Marca que o placar tem valores para controles CSS
@@ -1720,7 +2090,7 @@ const ListaDiasManagerCorrigido = {
   periodoAtual: "dia",
 
   // Configurações
-  INTERVALO_MS: 3000, // Atualiza a cada 3 segundos
+  INTERVALO_MS: 10000, // Atualiza a cada 10 segundos (reduz carga)
   TIMEOUT_MS: 5000,
 
   // Inicializar sistema
@@ -1736,9 +2106,20 @@ const ListaDiasManagerCorrigido = {
     this.atualizarListaDias();
 
     // Configurar intervalo de atualização
-    this.intervaloAtualizacao = setInterval(() => {
-      this.atualizarListaDias();
-    }, this.INTERVALO_MS);
+    this._startInterval = () => {
+      if (this.intervaloAtualizacao) return;
+      this.intervaloAtualizacao = setInterval(() => {
+        this.atualizarListaDias();
+      }, this.INTERVALO_MS);
+    };
+    this._stopInterval = () => {
+      if (this.intervaloAtualizacao) {
+        clearInterval(this.intervaloAtualizacao);
+        this.intervaloAtualizacao = null;
+      }
+    };
+
+    this._startInterval();
 
     // Configurar interceptadores de eventos
     this.configurarInterceptadores();
@@ -1763,6 +2144,24 @@ const ListaDiasManagerCorrigido = {
     } catch (e) {}
 
     console.log("✅ Sistema corrigido ativo!");
+
+    // Pausar atualizações quando a aba estiver oculta (economia de recursos)
+    this._onVisibilityChange = () => {
+      if (document.hidden) {
+        this._stopInterval();
+        console.log(
+          "ListaDias: aba oculta — atualizações temporariamente pausadas"
+        );
+      } else {
+        // Ao voltar, fazer uma atualização imediata e reiniciar o intervalo
+        console.log("ListaDias: aba visível — retomando atualizações");
+        this.atualizandoAtualmente = false;
+        this.atualizarListaDias();
+        this._startInterval();
+      }
+    };
+
+    document.addEventListener("visibilitychange", this._onVisibilityChange);
   },
 
   // Detectar meta e período atual
@@ -2001,11 +2400,15 @@ const ListaDiasManagerCorrigido = {
           ${data_exibicao}
         </span>
         <div class="placar-dia">
-          <span class="placar placar-green ${placar_cinza}">${parseInt(
+          <!-- Adiciona classes compatíveis com o CSS do placar-2 (placar-green-2 / placar-red-2)
+               para garantir que as regras de cor sejam aplicadas tanto ao placar principal
+               quanto ao placar mensal/clonado. Mantém também as classes originais para
+               compatibilidade retroativa. -->
+          <span class="placar placar-green placar-green-2 ${placar_cinza}">${parseInt(
         dadosDia.total_green
       )}</span>
-          <span class="placar separador ${placar_cinza}">x</span>
-          <span class="placar placar-red ${placar_cinza}">${parseInt(
+          <span class="placar separador separador-2 ${placar_cinza}">x</span>
+          <span class="placar placar-red placar-red-2 ${placar_cinza}">${parseInt(
         dadosDia.total_red
       )}</span>
         </div>
@@ -2107,9 +2510,9 @@ const ListaDiasManagerCorrigido = {
           }
         }
         if (precisa) {
-          // Debounce curto
+          // Debounce curto (mais largo para reduzir cpu sob mutações altas)
           clearTimeout(this._sanitizeTimer);
-          this._sanitizeTimer = setTimeout(() => this.sanitizeDataCells(), 40);
+          this._sanitizeTimer = setTimeout(() => this.sanitizeDataCells(), 150);
         }
       });
 
@@ -2200,33 +2603,82 @@ const ListaDiasManagerCorrigido = {
         if (e.target.checked) {
           this.periodoAtual = e.target.value;
           this.detectarMetaEPeriodo();
+          // Garantir que qualquer bloqueio seja removido e forçar atualização imediata
           this.atualizandoAtualmente = false;
-          this.atualizarListaDias();
+          // Usar forcarAtualizacao que também reaplica meta/deteccao
+          try {
+            this.forcarAtualizacao();
+          } catch (err) {
+            // Fallback para chamada direta se algo falhar
+            this.atualizarListaDias();
+          }
         }
       });
     });
 
-    // Hook no fetch
+    // Hook no fetch - desencadear atualização apropriada dependendo do endpoint
     const originalFetch = window.fetch;
     window.fetch = async function (...args) {
+      // Inicia a requisição normalmente
       const response = await originalFetch.apply(this, args);
 
-      const url = args[0]?.toString() || "";
-      if (
-        url.includes("cadastrar-valor") ||
-        url.includes("excluir-entrada") ||
-        url.includes("dados_banca")
-      ) {
-        setTimeout(() => {
+      try {
+        const url = args[0]?.toString() || "";
+
+        // Se for exclusão, forçar atualização imediata (sem esperar timeout extra)
+        if (url.includes("excluir-entrada")) {
           if (typeof ListaDiasManagerCorrigido !== "undefined") {
             ListaDiasManagerCorrigido.atualizandoAtualmente = false;
-            ListaDiasManagerCorrigido.atualizarListaDias();
+            // Forçar atualização direta
+            ListaDiasManagerCorrigido.forcarAtualizacao();
           }
-        }, 200);
+        } else if (
+          url.includes("cadastrar-valor") ||
+          url.includes("dados_banca")
+        ) {
+          // Pequeno delay para permitir que o servidor finalize mudanças antes de refetchar
+          setTimeout(() => {
+            if (typeof ListaDiasManagerCorrigido !== "undefined") {
+              ListaDiasManagerCorrigido.atualizandoAtualmente = false;
+              ListaDiasManagerCorrigido.atualizarListaDias();
+            }
+          }, 200);
+        }
+      } catch (e) {
+        // silencioso
       }
 
       return response;
     };
+
+    // Listener otimista para cliques em botões de exclusão — atualiza a lista imediatamente
+    document.addEventListener(
+      "click",
+      (e) => {
+        try {
+          const target = e.target.closest(
+            '.btn-excluir, .excluir-entrada, [data-action="excluir"], button[data-excluir], a.excluir-entrada, .btn-delete'
+          );
+          if (target) {
+            if (typeof ListaDiasManagerCorrigido !== "undefined") {
+              ListaDiasManagerCorrigido.atualizandoAtualmente = false;
+              ListaDiasManagerCorrigido.forcarAtualizacao();
+            }
+            if (typeof MetaMensalManager !== "undefined") {
+              MetaMensalManager.atualizandoAtualmente = false;
+              MetaMensalManager.atualizarMetaMensal(false);
+            }
+            if (typeof PlacarMensalManager !== "undefined") {
+              PlacarMensalManager.atualizandoAtualmente = false;
+              PlacarMensalManager.atualizarPlacarMensal();
+            }
+          }
+        } catch (err) {
+          // silencioso
+        }
+      },
+      true
+    );
 
     // Eventos customizados
     window.addEventListener("metaAtualizada", () => {
@@ -2378,21 +2830,21 @@ console.log(
         this.verificarMetasHistoricasRigoroso();
       }, 1000);
 
-      // Monitor principal (cada 1 segundo)
+      // Monitor principal (cada 3 segundos) - menos agressivo
       this.intervaloMonitor = setInterval(() => {
         this.monitorarRotulo();
         this.verificarMetaDiariaHojeAgora();
-      }, 1000);
+      }, 3000);
 
-      // Forçador normal (cada 2 segundos)
+      // Forçador normal (cada 5 segundos)
       this.intervaloForcador = setInterval(() => {
         this.forcarEstadoCorreto();
-      }, 2000);
+      }, 5000);
 
-      // Forçador BRUTO especificamente para hoje (cada 500ms)
+      // Forçador BRUTO especificamente para hoje (cada 2 segundos)
       this.intervaloForçaBruta = setInterval(() => {
         this.forcarTrofeuHojeBruto();
-      }, 500);
+      }, 2000);
 
       console.log("Monitor RIGOROSO ativo");
     },
@@ -3333,10 +3785,10 @@ const SistemaUnicoSemConflito = {
     // Processar imediatamente
     this.processarCompleto();
 
-    // Intervalo ÚNICO de 5 segundos (mais espaçado para evitar conflitos)
+    // Intervalo ÚNICO de 7 segundos (reduzido impacto de CPU)
     this.intervalo = setInterval(() => {
       this.processarCompleto();
-    }, 5000);
+    }, 7000);
 
     // Hook simples no fetch
     const originalFetch = window.fetch;
@@ -3555,3 +4007,242 @@ window.SistemaUnicoSemConflito = SistemaUnicoSemConflito;
 //
 //
 //
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+// ========================================================================================================================
+//                                  CODIGO PARA FORÇAR CORES FIXAS DO PLACAR
+// ========================================================================================================================
+
+// SISTEMA FINAL - PRIORIDADE ABSOLUTA PARA CORES CINZA
+// SOLUÇÃO FINAL - SISTEMA QUE SEMPRE VENCE A CORRIDA
+(function () {
+  "use strict";
+
+  let cacheElementos = new Map();
+
+  function obterDataHoje() {
+    const d = new Date();
+    const ano = d.getFullYear();
+    const mes = String(d.getMonth() + 1).padStart(2, "0");
+    const dia = String(d.getDate()).padStart(2, "0");
+    return `${ano}-${mes}-${dia}`;
+  }
+
+  function aplicarCorDefinitiva(elemento, cor) {
+    if (!elemento) return;
+
+    // Criar uma função que força a cor constantemente
+    const forcarCor = () => {
+      if (elemento.style.color !== cor) {
+        elemento.style.setProperty("color", cor, "important");
+      }
+    };
+
+    // Aplicar imediatamente
+    forcarCor();
+
+    // Observador individual que reage INSTANTANEAMENTE
+    const observer = new MutationObserver(forcarCor);
+    observer.observe(elemento, {
+      attributes: true,
+      attributeFilter: ["style", "class"],
+    });
+
+    // Interval de alta frequência só para este elemento
+    const interval = setInterval(forcarCor, 1000); // reduzir frequência para evitar carga
+
+    // Salvar no cache
+    cacheElementos.set(elemento, { cor, observer, interval });
+  }
+
+  function processarPlacares() {
+    const placares = document.querySelectorAll(".gd-linha-dia .placar-dia");
+
+    placares.forEach((placarContainer) => {
+      const linhaDia = placarContainer.closest(".gd-linha-dia");
+      if (!linhaDia) return;
+
+      const valorElement = linhaDia.querySelector(".valor");
+
+      // Verificar se o saldo é zero
+      let ehSaldoZero = false;
+      if (valorElement) {
+        const valorTexto = valorElement.textContent.trim();
+        ehSaldoZero =
+          valorTexto === "R$ 0,00" ||
+          valorTexto === "0,00" ||
+          valorTexto === "R$ 0.00" ||
+          valorTexto === "0.00" ||
+          linhaDia.classList.contains("valor-zero");
+      }
+
+      const green = placarContainer.querySelector(
+        ".placar-green, .placar.placar-green"
+      );
+      const red = placarContainer.querySelector(
+        ".placar-red, .placar.placar-red"
+      );
+      const separator = placarContainer.querySelector(".separador");
+
+      // Verificar se ambos green e red são zero
+      const greenVal = green ? parseInt(green.textContent.trim()) || 0 : 0;
+      const redVal = red ? parseInt(red.textContent.trim()) || 0 : 0;
+      const placardZeroValores = greenVal === 0 && redVal === 0;
+
+      const deveSerCinza = ehSaldoZero || placardZeroValores;
+
+      // Aplicar cor definitiva para cada elemento
+      if (deveSerCinza) {
+        aplicarCorDefinitiva(green, "#94a3b8");
+        aplicarCorDefinitiva(red, "#94a3b8");
+        aplicarCorDefinitiva(separator, "#94a3b8");
+      } else {
+        aplicarCorDefinitiva(green, "#03a158"); // Verde
+        aplicarCorDefinitiva(red, "#e93a3a"); // Vermelho
+        aplicarCorDefinitiva(separator, "#6d6b6b"); // Separador
+      }
+    });
+  }
+
+  // Processar múltiplas vezes no início
+  processarPlacares();
+  setTimeout(processarPlacares, 100);
+  setTimeout(processarPlacares, 300);
+  setTimeout(processarPlacares, 500);
+  setTimeout(processarPlacares, 1000);
+
+  // Observador para novos elementos
+  const observadorNovos = new MutationObserver((mutations) => {
+    let temNovosPlacares = false;
+
+    mutations.forEach((mutation) => {
+      if (mutation.type === "childList") {
+        mutation.addedNodes.forEach((node) => {
+          if (node.nodeType === Node.ELEMENT_NODE) {
+            if (node.classList && node.classList.contains("gd-linha-dia")) {
+              temNovosPlacares = true;
+            }
+            if (node.querySelectorAll) {
+              const placares = node.querySelectorAll(".gd-linha-dia");
+              if (placares.length > 0) temNovosPlacares = true;
+            }
+          }
+        });
+      }
+    });
+
+    if (temNovosPlacares) {
+      setTimeout(processarPlacares, 50);
+    }
+  });
+
+  const lista = document.querySelector(".lista-dias");
+  if (lista) {
+    observadorNovos.observe(lista, {
+      childList: true,
+      subtree: true,
+    });
+  }
+
+  // Função de limpeza (se necessário)
+  window.limparSistemaPlacar = function () {
+    cacheElementos.forEach(({ observer, interval }) => {
+      observer.disconnect();
+      clearInterval(interval);
+    });
+    cacheElementos.clear();
+  };
+
+  console.log(
+    "Sistema que SEMPRE VENCE ativo - cada elemento protegido individualmente"
+  );
+})();
+
+// CSS que força estabilidade visual
+const cssEstavel = document.createElement("style");
+cssEstavel.textContent = `
+  .gd-linha-dia .placar-dia .placar,
+  .gd-linha-dia .placar-dia .separador {
+    transition: none !important;
+    animation: none !important;
+    will-change: auto !important;
+  }
+`;
+document.head.appendChild(cssEstavel);
+// ========================================================================================================================
+//                                  CODIGO PARA FORÇAR CORES FIXAS DO PLACAR
+// ========================================================================================================================
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+// ✅ FUNÇÃO PARA FORÇAR ATUALIZAÇÃO DO BLOCO 2
+window.forcarBloco2 = function () {
+  if (typeof MetaMensalManager !== "undefined") {
+    console.log("🔄 Forçando atualização do Bloco 2...");
+    MetaMensalManager.atualizandoAtualmente = false;
+    MetaMensalManager.atualizarMetaMensal(true);
+  }
+};
+
+// ✅ FUNÇÃO PARA DEBUG DO BLOCO 2
+window.debugBloco2 = function () {
+  const metaElement = document.getElementById("meta-valor-2");
+  const rotuloElement = document.getElementById("rotulo-meta-2");
+  const barraElement = document.getElementById("barra-progresso-2");
+
+  console.log("📊 DEBUG BLOCO 2:");
+  console.log(
+    "Meta Element:",
+    metaElement ? metaElement.innerHTML : "NÃO ENCONTRADO"
+  );
+  console.log(
+    "Rótulo Element:",
+    rotuloElement ? rotuloElement.innerHTML : "NÃO ENCONTRADO"
+  );
+  console.log(
+    "Barra Element:",
+    barraElement ? barraElement.style.width : "NÃO ENCONTRADO"
+  );
+  console.log(
+    "MetaMensalManager ativo:",
+    typeof MetaMensalManager !== "undefined"
+  );
+
+  if (typeof MetaMensalManager !== "undefined") {
+    console.log(
+      "Atualizando atualmente:",
+      MetaMensalManager.atualizandoAtualmente
+    );
+    console.log("Período atual:", MetaMensalManager.periodoFixo);
+  }
+};

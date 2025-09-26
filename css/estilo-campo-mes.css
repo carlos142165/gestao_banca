@@ -963,6 +963,35 @@ body .mentor-item:not(.sem-valores) .mentor-rank-externo {
   /* Transições */
   --gd-valor-transition: background-color 0.15s ease, border-color 0.15s ease,
     color 0.15s ease;
+
+  /* PLACAR - PLACAR (NÃO MUDAM COM SALDO) ===== */
+  --placar-green-color-fixed: #03a158;
+  --placar-red-color-fixed: #e93a3a;
+  --placar-separator-color-fixed: #6d6b6b;
+
+  /* ===== CORES PARA SALDO ZERO (0,00) ===== */
+  --placar-zero-green-color: #94a3b8; /* Cinza para green quando saldo 0 */
+  --placar-zero-red-color: #94a3b8; /* Cinza para red quando saldo 0 */
+  --placar-zero-separator-color: #94a3b8; /* Cinza para separador quando saldo 0 */
+
+  /* ===== CORES ESPECIAIS PARA DIA ATUAL ===== */
+  --placar-hoje-green-color: #03a158;
+  --placar-hoje-red-color: #e93a3a;
+  --placar-hoje-separator-color: #6d6b6b;
+
+  /* Tamanhos */
+  --placar-font-size-fixed: 12px;
+  --placar-font-weight-fixed: 400;
+
+  /* ===== CONTROLE INDEPENDENTE DO SEPARADOR ===== */
+  --placar-separator-font-size: 9px;
+  --placar-separator-font-weight: 400;
+  --placar-separator-margin: 0 2px;
+  --placar-separator-opacity: 1;
+  --gd-placar-gap: 2px; /* gap between green number, separator and red number */
+  --gd-placar-padding-x: 4px; /* horizontal padding for each placar number */
+  --gd-placar-separador-padding-x: 2px; /* horizontal padding for the separator */
+  --gd-placar-separador-margin-x: 2px; /* margin around the separator */
   /**/
   /**/
   /**/
@@ -1113,6 +1142,60 @@ body .mentor-item:not(.sem-valores) .mentor-rank-externo {
   visibility: hidden !important;
 }
 
+/* ======================================================================
+   FORCE PLACAR COLORS - ensure placar-green is always green,
+   placar-red is always red, and texto-cinza always wins (neutral gray).
+   Also provide .separador-transparente helper for JS toggling instead
+   of inline style writes.
+   ======================================================================
+*/
+.placar.placar-green,
+[class*="placar-green"] {
+  color: var(--color-positive, #00a651) !important;
+  fill: var(--color-positive, #00a651) !important; /* SVG fallback */
+  font-weight: 700 !important;
+}
+
+.placar.placar-red,
+[class*="placar-red"] {
+  color: var(--color-negative, #dc2626) !important;
+  fill: var(--color-negative, #dc2626) !important; /* SVG fallback */
+  font-weight: 700 !important;
+}
+
+/* Neutral / zero state must override any green/red when applied */
+.placar.texto-cinza,
+[class*="texto-cinza"] {
+  color: var(--color-neutral, #94a3b8) !important;
+  fill: var(--color-neutral, #94a3b8) !important;
+  font-weight: 400 !important;
+}
+
+/* If both classes are present, ensure the zero-state wins */
+.placar.texto-cinza.placar-green,
+.placar.texto-cinza.placar-red,
+[class*="texto-cinza"][class*="placar-green"],
+[class*="texto-cinza"][class*="placar-red"] {
+  color: var(--color-neutral, #94a3b8) !important;
+  fill: var(--color-neutral, #94a3b8) !important;
+}
+
+/* Separator control: neutral color and transparent helper */
+.placar.separador {
+  color: var(--gd-placar-separador-color, rgba(109, 107, 107, 0.95)) !important;
+}
+
+.separador-transparente {
+  color: transparent !important;
+}
+
+/* Small layout niceties: use the root spacing variables if present */
+.placar {
+  gap: var(--gd-placar-gap, 2px) !important;
+  padding-left: var(--gd-placar-padding-x, 4px) !important;
+  padding-right: var(--gd-placar-padding-x, 4px) !important;
+}
+
 .container .bloco.bloco-2 .resumo-mes .lista-dias {
   /* Layout: largura controlada por variáveis no :root */
   width: var(--lista-dias-width, calc(100% + 24px)) !important;
@@ -1232,6 +1315,73 @@ body .mentor-item:not(.sem-valores) .mentor-rank-externo {
   justify-content: space-between !important;
 }
 
+/* FIX: remove faint hairline on the right edge of Bloco 2 header
+   - ensure the fixed-top header and its inner container sit flush with
+     the bloco's rounded corners and don't show any right-side seam */
+.container .bloco.bloco-2 .resumo-mes .bloco-meta-simples.fixo-topo {
+  left: 0 !important;
+  right: 0 !important;
+  width: 100% !important;
+  padding-right: 0 !important;
+  padding-left: 0 !important;
+  border-radius: 15px 15px 0 0 !important; /* match .bloco rounding */
+  background: transparent !important;
+  box-shadow: none !important;
+  outline: none !important;
+  -webkit-backface-visibility: hidden !important;
+  backface-visibility: hidden !important;
+}
+
+.container .bloco.bloco-2 .resumo-mes .campo-armazena-data-placar {
+  border-right: none !important;
+  padding-right: 0 !important;
+  margin-right: 0 !important;
+  border-radius: 15px 15px 0 0 !important; /* keep top corners rounded */
+  box-shadow: none !important;
+  background-clip: padding-box !important;
+}
+
+/* Stronger fixes for subpixel hairline artifacts (visible at 100% and zoomed levels)
+   - force same background as parent .bloco
+   - promote elements to their own layer and remove subtle outlines/shadows
+   - use transparent outline to prevent anti-alias seam rendering */
+.container .bloco.bloco-2 {
+  /* match bloco background so header blend is seamless */
+  background-color: #f3f5f4 !important;
+  -webkit-backface-visibility: hidden !important;
+  backface-visibility: hidden !important;
+  transform: translateZ(0) !important; /* promote to its own layer */
+  will-change: transform, box-shadow !important;
+  outline: 1px solid rgba(0, 0, 0, 0) !important; /* prevents hairline on some renderers */
+}
+
+.container .bloco.bloco-2 .bloco-meta-simples.fixo-topo,
+.container .bloco.bloco-2 .resumo-mes .campo-armazena-data-placar {
+  background-color: inherit !important; /* ensure exact same background */
+  box-shadow: none !important;
+  border: none !important;
+  outline: 1px solid rgba(0, 0, 0, 0) !important; /* force composite without visible border */
+  -webkit-transform: translateZ(
+    0.01px
+  ) !important; /* tiny transform to avoid subpixel seam */
+  transform: translateZ(0.01px) !important;
+}
+
+/* Fallback: if a hairline still appears on some displays, slightly overlap the right edge
+   by 0.5px (non-destructive) to hide seam only on devices that render subpixel gaps */
+.container .bloco.bloco-2 .bloco-meta-simples.fixo-topo::after {
+  content: "" !important;
+  position: absolute !important;
+  top: 0 !important;
+  right: -0.5px !important;
+  width: 1px !important;
+  height: 100% !important;
+  background: inherit !important;
+  pointer-events: none !important;
+  display: block !important;
+  border-radius: 0 15px 0 0 !important;
+}
+
 .container
   .bloco.bloco-2
   .resumo-mes
@@ -1259,6 +1409,31 @@ body .mentor-item:not(.sem-valores) .mentor-rank-externo {
 /* =======================================================================================================================================================
   UTILITÁRIOS E OCULTAR SCROLLBAR - INTEGRADO
   =======================================================================================================================================================*/
+
+/* ===== FORÇAR CINZA PARA ELEMENTOS NEUTROS (texto-cinza) =====
+   Esta regra tem alta especificidade e !important para garantir que,
+   quando a classe `texto-cinza` estiver aplicada (gerada pelo PHP ou JS),
+   o placar e o separador fiquem sempre na cor neutra, mesmo se outras
+   regras com !important tentarem aplicar verde/vermelho. */
+.gd-linha-dia .placar-dia .placar.texto-cinza,
+.gd-linha-dia .placar-dia .placar.texto-cinza.placar-green,
+.gd-linha-dia .placar-dia .placar.texto-cinza.placar-red,
+.gd-linha-dia .placar-dia .separador.texto-cinza,
+.lista-dias .placar.texto-cinza,
+.lista-dias .placar.texto-cinza.placar-green,
+.lista-dias .placar.texto-cinza.placar-red {
+  color: var(--color-neutral, #94a3b8) !important;
+  fill: var(--color-neutral, #94a3b8) !important;
+  font-weight: 400 !important;
+  opacity: 1 !important;
+}
+
+/* Também garantir que o estilo interno (i, span) herde a cor neutra */
+.gd-linha-dia .placar-dia .placar.texto-cinza *,
+.lista-dias .placar.texto-cinza * {
+  color: inherit !important;
+  fill: inherit !important;
+}
 
 /* =======================================================================================================================================================
   MANUTENÇÃO DO CSS ORIGINAL PARA OUTROS COMPONENTES - WIDGETS E META
@@ -2594,7 +2769,7 @@ html body .container .bloco.bloco-2 .resumo-mes,
   display: inline-flex !important;
   align-items: center !important;
   justify-content: center !important;
-  gap: 6px !important;
+  gap: var(--gd-placar-gap, 2px) !important; /* controlled from :root */
 
   font-family: "Rajdhani", sans-serif !important;
   font-weight: 500 !important;
@@ -2625,12 +2800,12 @@ html body .container .bloco.bloco-2 .resumo-mes,
 }
 
 .gd-linha-dia .placar {
-  padding: 0 6px !important;
+  padding: 0 var(--gd-placar-padding-x, 4px) !important; /* controlled from :root */
 }
 
 .gd-linha-dia .placar.separador {
-  padding: 0 4px !important;
-  margin: 0 2px !important;
+  padding: 0 var(--gd-placar-separador-padding-x, 2px) !important;
+  margin: 0 var(--gd-placar-separador-margin-x, 1px) !important;
 }
 
 .gd-linha-dia .placar-dia .verde-bold {
@@ -2646,7 +2821,7 @@ html body .container .bloco.bloco-2 .resumo-mes,
 .gd-linha-dia .placar-dia .separador {
   color: #94a3b8 !important;
   font-weight: 400 !important;
-  margin: 0 4px !important;
+  margin: 0 calc(var(--gd-placar-separador-margin-x, 2px)) !important; /* tighten spacing controlled from :root */
 }
 
 .gd-linha-dia .placar-dia .texto-cinza {
@@ -5736,4 +5911,305 @@ html body .lista-dias .gd-linha-dia.valor-zero .valor,
 .gd-linha-dia .placar[style],
 .gd-linha-dia .valor[style] {
   color: inherit !important;
+}
+/* =======================================================================================================================================================
+       - TESTE - - TESTE - - TESTE - - TESTE - - TESTE - - TESTE - - TESTE - - TESTE - - TESTE - - TESTE - - TESTE - 
+  =======================================================================================================================================================*/
+/* ===== FORÇAR CORES FIXAS NO PLACAR - IGNORAR ESTADO DO SALDO ===== */
+
+/* Placar verde - SEMPRE verde, independente do saldo */
+.gd-linha-dia .placar-dia .placar-green,
+.gd-linha-dia.valor-positivo .placar-dia .placar-green,
+.gd-linha-dia.valor-negativo .placar-dia .placar-green,
+.gd-linha-dia.valor-zero .placar-dia .placar-green,
+html body .lista-dias .gd-linha-dia .placar-dia .placar-green,
+html body .lista-dias .gd-linha-dia.valor-positivo .placar-dia .placar-green,
+html body .lista-dias .gd-linha-dia.valor-negativo .placar-dia .placar-green,
+html body .lista-dias .gd-linha-dia.valor-zero .placar-dia .placar-green {
+  color: var(--placar-green-color-fixed) !important;
+  font-weight: var(--placar-font-weight-fixed) !important;
+  font-size: var(--placar-font-size-fixed) !important;
+}
+
+/* Placar vermelho - SEMPRE vermelho, independente do saldo */
+.gd-linha-dia .placar-dia .placar-red,
+.gd-linha-dia.valor-positivo .placar-dia .placar-red,
+.gd-linha-dia.valor-negativo .placar-dia .placar-red,
+.gd-linha-dia.valor-zero .placar-dia .placar-red,
+html body .lista-dias .gd-linha-dia .placar-dia .placar-red,
+html body .lista-dias .gd-linha-dia.valor-positivo .placar-dia .placar-red,
+html body .lista-dias .gd-linha-dia.valor-negativo .placar-dia .placar-red,
+html body .lista-dias .gd-linha-dia.valor-zero .placar-dia .placar-red {
+  color: var(--placar-red-color-fixed) !important;
+  font-weight: var(--placar-font-weight-fixed) !important;
+  font-size: var(--placar-font-size-fixed) !important;
+}
+
+/* Separador - SEMPRE mesma cor, independente do saldo */
+.gd-linha-dia .placar-dia .separador,
+.gd-linha-dia.valor-positivo .placar-dia .separador,
+.gd-linha-dia.valor-negativo .placar-dia .separador,
+.gd-linha-dia.valor-zero .placar-dia .separador,
+html body .lista-dias .gd-linha-dia .placar-dia .separador,
+html body .lista-dias .gd-linha-dia.valor-positivo .placar-dia .separador,
+html body .lista-dias .gd-linha-dia.valor-negativo .placar-dia .separador,
+html body .lista-dias .gd-linha-dia.valor-zero .placar-dia .separador {
+  color: var(--placar-separator-color-fixed) !important;
+  font-weight: 400 !important;
+  font-size: var(--placar-font-size-fixed) !important;
+}
+
+/* Sobrescrever TODAS as tentativas de mudança de cor baseadas em estado */
+.gd-linha-dia[class*="valor-"] .placar-dia .placar-green {
+  color: var(--placar-green-color-fixed) !important;
+}
+
+.gd-linha-dia[class*="valor-"] .placar-dia .placar-red {
+  color: var(--placar-red-color-fixed) !important;
+}
+
+.gd-linha-dia[class*="valor-"] .placar-dia .separador {
+  color: var(--placar-separator-color-fixed) !important;
+}
+
+.gd-linha-dia .placar-dia .placar-green.texto-cinza {
+  color: var(--placar-green-color-fixed) !important;
+}
+
+.gd-linha-dia .placar-dia .placar-red.texto-cinza {
+  color: var(--placar-red-color-fixed) !important;
+}
+
+/* Específico para placar com valores zero mas mantendo cores */
+.gd-linha-dia .placar-dia .placar-green:contains("0"),
+.gd-linha-dia .placar-dia .placar-red:contains("0") {
+  opacity: 1 !important; /* Mantém visibilidade total */
+}
+/* Reforço extra para garantir cores fixas */
+.gd-linha-dia .placar-dia .placar-green {
+  color: var(--placar-green-color-fixed) !important;
+}
+
+.gd-linha-dia .placar-dia .placar-red {
+  color: var(--placar-red-color-fixed) !important;
+}
+
+.gd-linha-dia .placar-dia .separador {
+  color: var(--placar-separator-color-fixed) !important;
+  font-size: var(--placar-separator-font-size) !important;
+}
+
+/* ===== PERFORMANCE MODE (SAFE, REVERSIBLE) =====
+   Aplicar a classe `.gestao-perf-mode` em `document.documentElement` reduz
+   efeitos que causam pintura/composição pesada: filtros, backdrop-filter,
+   animações contínuas e detalhes de sombra. A classe é intencionalmente
+   conservadora — não altera layout estrutural, só reduz trabalho de pintura.
+*/
+.gestao-perf-mode * {
+  /* Não altere display/posição — apenas neutraliza efeitos caros */
+  transition-property: opacity, transform !important;
+  transition-duration: 180ms !important;
+  transition-timing-function: ease !important;
+  animation: none !important;
+  will-change: auto !important;
+}
+
+/* Remove filtros e backdrop-filters (GPU cost) */
+.gestao-perf-mode * {
+  filter: none !important;
+  -webkit-filter: none !important;
+  backdrop-filter: none !important;
+}
+
+/* Diminuir sombras pesadas (pintura) */
+.gestao-perf-mode .widget-meta-item,
+.gestao-perf-mode .bloco,
+.gestao-perf-mode .card,
+.gestao-perf-mode .panel,
+.gestao-perf-mode .popup {
+  box-shadow: none !important;
+}
+
+/* Desabilitar transições que usam `all` (causam recalcs de layout) */
+.gestao-perf-mode * {
+  transition: none !important;
+}
+
+/* Prefer transform-based micro transitions for interactive elements */
+.gestao-perf-mode .btn,
+.gestao-perf-mode .clickable {
+  transition: transform 120ms ease !important;
+}
+
+/* Limitar seletores universais pesados que forçam repaints */
+.gestao-perf-mode .lista-dias .gd-linha-dia * {
+  /* mantenha apenas o necessário para visibilidade */
+  opacity: 1 !important;
+}
+
+/* Small helper override: reduce animations rate on badges and pulsing visuals */
+.gestao-perf-mode .pulse,
+.gestao-perf-mode .spinner,
+.gestao-perf-mode .shimmer {
+  animation-duration: 3s !important;
+  animation-iteration-count: 1 !important;
+  animation-play-state: paused !important;
+}
+
+/* End of perf-mode overrides */
+/* Regras com máxima especificidade para evitar conflitos */
+html body .gd-linha-dia .placar-dia .placar.texto-cinza,
+html body .gd-linha-dia .placar-dia .separador.texto-cinza {
+  color: var(--color-neutral, #94a3b8) !important;
+  transition: none !important; /* Remove transições que causam piscar */
+}
+
+/* Desabilitar animações que podem causar piscar */
+.gd-linha-dia .placar-dia .placar,
+.gd-linha-dia .placar-dia .separador {
+  transition: none !important;
+  animation: none !important;
+}
+/* SOLUÇÃO CSS PURA - ESPECIFICIDADE MÁXIMA */
+html
+  body
+  .main-content
+  .container
+  .bloco.bloco-2
+  .resumo-mes
+  .lista-dias
+  .gd-linha-dia
+  .placar-dia
+  .placar-green,
+html
+  body
+  .main-content
+  .container
+  .bloco.bloco-2
+  .resumo-mes
+  .lista-dias
+  .gd-linha-dia
+  .placar-dia
+  .placar.placar-green {
+  color: #03a158 !important;
+  transition: none !important;
+  animation: none !important;
+}
+
+html
+  body
+  .main-content
+  .container
+  .bloco.bloco-2
+  .resumo-mes
+  .lista-dias
+  .gd-linha-dia
+  .placar-dia
+  .placar-red,
+html
+  body
+  .main-content
+  .container
+  .bloco.bloco-2
+  .resumo-mes
+  .lista-dias
+  .gd-linha-dia
+  .placar-dia
+  .placar.placar-red {
+  color: #e93a3a !important;
+  transition: none !important;
+  animation: none !important;
+}
+
+html
+  body
+  .main-content
+  .container
+  .bloco.bloco-2
+  .resumo-mes
+  .lista-dias
+  .gd-linha-dia
+  .placar-dia
+  .separador {
+  color: #6d6b6b !important;
+  transition: none !important;
+  animation: none !important;
+}
+
+/* SALDO ZERO - ESPECIFICIDADE AINDA MAIOR */
+html
+  body
+  .main-content
+  .container
+  .bloco.bloco-2
+  .resumo-mes
+  .lista-dias
+  .gd-linha-dia.valor-zero
+  .placar-dia
+  .placar-green,
+html
+  body
+  .main-content
+  .container
+  .bloco.bloco-2
+  .resumo-mes
+  .lista-dias
+  .gd-linha-dia.valor-zero
+  .placar-dia
+  .placar.placar-green,
+html
+  body
+  .main-content
+  .container
+  .bloco.bloco-2
+  .resumo-mes
+  .lista-dias
+  .gd-linha-dia.valor-zero
+  .placar-dia
+  .placar-red,
+html
+  body
+  .main-content
+  .container
+  .bloco.bloco-2
+  .resumo-mes
+  .lista-dias
+  .gd-linha-dia.valor-zero
+  .placar-dia
+  .placar.placar-red,
+html
+  body
+  .main-content
+  .container
+  .bloco.bloco-2
+  .resumo-mes
+  .lista-dias
+  .gd-linha-dia.valor-zero
+  .placar-dia
+  .separador {
+  color: #94a3b8 !important;
+}
+
+/* CLASSE TEXTO-CINZA - MÁXIMA PRIORIDADE */
+html
+  body
+  .main-content
+  .container
+  .bloco.bloco-2
+  .resumo-mes
+  .lista-dias
+  .gd-linha-dia
+  .placar-dia
+  .placar.texto-cinza,
+html
+  body
+  .main-content
+  .container
+  .bloco.bloco-2
+  .resumo-mes
+  .lista-dias
+  .gd-linha-dia
+  .placar-dia
+  .separador.texto-cinza {
+  color: #94a3b8 !important;
 }
