@@ -605,9 +605,10 @@ ob_end_flush();
 <!-- -->
 <!-- -->
 <!-- -->
-    <!-- ==================================================================================================================================== --> 
-<!--                                      💼   FILTRO DIA - MES - ANO BLOCO CAMPO VALOR META E SALDO                      
- ====================================================================================================================================== -->
+<!-- ==================================================================================================================== -->
+<!-- ========================== MENU TOPO - MENU TOPO - MENU TOPO - MENU TOPO - MENU TOPO ======================== -->
+<!-- ==================================================================================================================== -->
+ 
  <header class="header">
   <div class="menu-topo-container">
     <div id="top-bar"> 
@@ -664,6 +665,26 @@ ob_end_flush();
     
     <main class="main-content">
         <div class="container">
+<!-- ==================================================================================================================== -->
+<!-- ========================== MENU TOPO - MENU TOPO - MENU TOPO - MENU TOPO - MENU TOPO ======================== -->
+<!-- ==================================================================================================================== -->
+<!-- -->
+<!-- -->
+<!-- -->
+<!-- -->
+<!-- -->
+<!-- -->
+<!-- -->
+<!-- -->
+<!-- -->
+<!-- -->
+<!-- -->
+<!-- -->
+<!-- -->
+<!-- -->
+<!-- ==================================================================================================================== -->
+<!-- ========================== BLOCO 1 - BLOCO 1 - BLOCO 1 - BLOCO 1 - BLOCO 1 ======================== -->
+<!-- ==================================================================================================================== -->
             
     <div class="bloco bloco-1">
         <div class="container-resumos">
@@ -827,268 +848,624 @@ ob_end_flush();
             </div>
         </div>
     </div>
+<!-- ==================================================================================================================== -->
+<!-- ========================== BLOCO 1 - BLOCO 1 - BLOCO 1 - BLOCO 1 - BLOCO 1 ======================== -->
+<!-- ==================================================================================================================== -->
+<!-- -->
+<!-- -->
+<!-- -->
+<!-- -->
+<!-- -->
+<!-- -->
+<!-- -->
+<!-- -->
+<!-- -->
+<!-- -->
+<!-- -->
+<!-- -->
+<!-- -->
+<!-- -->
+<!-- ==================================================================================================================== -->
+<!-- ========================== BLOCO 2 - BLOCO 2 - BLOCO 2 - BLOCO 2 - BLOCO 2 ======================== -->
+<!-- ==================================================================================================================== -->
 
-    <!-- BLOCO 2: Dashboard Mensal -->
-           <div class="bloco bloco-2">
+
+<div class="bloco bloco-2">
+    
+    <!-- Resumo do mês -->
+    <div class="resumo-mes">
+        
+        <!-- Cabeçalho do mês -->
+        <div class="bloco-meta-simples fixo-topo">
+            <div class="campo-armazena-data-placar">
                 
-                <!-- Resumo do mês -->
-                <div class="resumo-mes">
-                    
-                    <!-- Cabeçalho do mês -->
-                    <div class="bloco-meta-simples fixo-topo">
-                        <div class="campo-armazena-data-placar">
-                            
-                            <!-- Título do mês atual -->
-                            <h2 class="titulo-bloco">
-                                <i class="fas fa-calendar-alt"></i> 
-                                <span id="tituloMes"></span>
-                            </h2>
+                <!-- Título do mês atual -->
+                <h2 class="titulo-bloco">
+                    <i class="fas fa-calendar-alt"></i> 
+                    <span id="tituloMes"></span>
+                </h2>
 
-              <script>
+                <script>
                 (function() {
-                  const meses = [
-                    "JANEIRO", "FEVEREIRO", "MARÇO", "ABRIL", "MAIO", "JUNHO",
-                    "JULHO", "AGOSTO", "SETEMBRO", "OUTUBRO", "NOVEMBRO", "DEZEMBRO"
-                  ];
-                  const hoje = new Date();
-                  const mesAtual = meses[hoje.getMonth()];
-                  const anoAtual = hoje.getFullYear();
-                  const tituloEl = document.getElementById("tituloMes");
-                  tituloEl.textContent = `${mesAtual} ${anoAtual}`;
+                    const meses = [
+                        "JANEIRO", "FEVEREIRO", "MARÇO", "ABRIL", "MAIO", "JUNHO",
+                        "JULHO", "AGOSTO", "SETEMBRO", "OUTUBRO", "NOVEMBRO", "DEZEMBRO"
+                    ];
+                    const hoje = new Date();
+                    const mesAtual = meses[hoje.getMonth()];
+                    const anoAtual = hoje.getFullYear();
+                    const tituloEl = document.getElementById("tituloMes");
+                    tituloEl.textContent = `${mesAtual} ${anoAtual}`;
 
-                  // Apply the same color to the calendar icon before the title
-                  // Find the closest icon element (the <i class="fas fa-calendar-alt"></i>)
-                  const tituloParent = tituloEl.closest('.titulo-bloco');
-                  if (tituloParent) {
-                    const iconEl = tituloParent.querySelector('i.fa-calendar-alt');
-                    if (iconEl) {
-                      // Compute the effective color of the title (in case CSS sets it)
-                      const computed = window.getComputedStyle(tituloEl).color;
-                      iconEl.style.color = computed;
-                    }
-                  }
-                })();
-              </script>
-
-                            <!-- Placar mensal -->
-                            <div class="area-central-2">
-                                <div class="pontuacao-2" id="pontuacao-2">
-                                    <span class="placar-green-2"></span>
-                                    <span class="separador-2">×</span>
-                                    <span class="placar-red-2"></span>
-                                </div>
-                            </div>
-                            
-                        </div>
-                    </div>
-
-                    <!-- Widget de conteúdo principal -->
-                    <div class="widget-conteudo-principal-2">
-                        <div class="conteudo-left-2">
-                            
-                            <!-- Valor da meta mensal -->
-                            <div class="widget-meta-valor-2" id="meta-valor-2">
-                                <i class="fa-solid-2 fa-coins-2"></i>
-                                <div class="meta-valor-container-2">
-                                    <span class="valor-texto-2" id="valor-texto-meta-2">carregando..</span>
-                                </div>
-                            </div>
-                            
-                            <!-- Valor que ultrapassou a meta -->
-                            <div class="valor-ultrapassou-2" id="valor-ultrapassou-2" style="display: none;">
-                                <i class="fa-solid-2 fa-trophy-2"></i>
-                                <span class="texto-ultrapassou-2">
-                                    Lucro Extra: <span id="valor-extra-2">R$ 0,00</span>
-                                </span>
-                            </div>
-                            
-                            <div class="widget-meta-rotulo-2" id="rotulo-meta-2">Meta do Dia</div>
-                            
-                            <!-- Barra de progresso mensal -->
-                            <div class="widget-barra-container-2">
-                                <div class="widget-barra-progresso-2" id="barra-progresso-2"></div>
-                                <div class="porcentagem-barra-2" id="porcentagem-barra-2">0%</div>
-                            </div>
-                            
-                            <!-- Informações de progresso com saldo -->
-                            <div class="widget-info-progresso-2">
-                                <span id="saldo-info-2" class="saldo-positivo-2">
-                                    <i class="fa-solid-2 fa-chart-line-2"></i>
-                                    <span class="saldo-info-rotulo-2">Lucro:</span>
-                                    <span class="saldo-info-valor-2">carregando..</span>
-                                </span>
-                            </div>
-                            
-                        </div>
-                    </div>
-
-                    <!-- Lista de dias do mês -->
-                    <div class="lista-dias">
-                        
-                        <?php
-                        // Configurações de meta e variáveis
-                        $meta_diaria = isset($_SESSION['meta_diaria']) ? floatval($_SESSION['meta_diaria']) : 0;
-                        $meta_mensal = isset($_SESSION['meta_mensal']) ? floatval($_SESSION['meta_mensal']) : 0;
-                        $meta_anual = isset($_SESSION['meta_anual']) ? floatval($_SESSION['meta_anual']) : 0;
-
-                        $periodo_atual = $_SESSION['periodo_filtro'] ?? 'dia';
-                        $meta_atual = ($periodo_atual === 'mes') ? $meta_mensal : 
-                                      (($periodo_atual === 'ano') ? $meta_anual : $meta_diaria);
-
-                        $hoje = date('Y-m-d');
-                        $mes_atual = date('m');
-                        $ano_atual = date('Y');
-                        $total_dias_mes = date('t');
-                        
-                        // Loop através de todos os dias do mês
-                        for ($dia = 1; $dia <= $total_dias_mes; $dia++) {
-                            $dia_formatado = str_pad($dia, 2, '0', STR_PAD_LEFT);
-                            $data_mysql = $ano_atual . '-' . $mes_atual . '-' . $dia_formatado;
-                            $data_exibicao = $dia_formatado . '/' . $mes_atual . '/' . $ano_atual;
-                            
-                            // Buscar dados do dia
-                            $dados_dia = isset($dados_por_dia[$data_mysql]) ? $dados_por_dia[$data_mysql] : [
-                                'total_valor_green' => 0,
-                                'total_valor_red' => 0,
-                                'total_green' => 0,
-                                'total_red' => 0
-                            ];
-                            
-                            // Calcular saldo do dia
-                            $saldo_dia = floatval($dados_dia['total_valor_green']) - floatval($dados_dia['total_valor_red']);
-                            $saldo_formatado = number_format($saldo_dia, 2, ',', '.');
-                            
-                            // Verificar se meta foi batida
-                            $meta_batida = false;
-                            
-                            if ($meta_diaria > 0 && $saldo_dia >= $meta_diaria) {
-                                $meta_batida = true;
-                            }
-                            
-                            if (!$meta_batida && $data_mysql < $hoje && $saldo_dia > 0) {
-                                if ($meta_diaria <= 0) {
-                                    $meta_batida = true;
-                                } elseif ($saldo_dia >= ($meta_diaria * 0.8)) {
-                                    $meta_batida = true;
-                                }
-                            }
-                            
-                            // Determinar classes e estilos visuais
-                            $classe_valor_cor = '';
-                            if ($saldo_dia > 0) {
-                                $classe_valor_cor = 'valor-positivo';
-                            } elseif ($saldo_dia < 0) {
-                                $classe_valor_cor = 'valor-negativo';
-                            } else {
-                                $classe_valor_cor = 'valor-zero';
-                            }
-                            
-                            $cor_valor = ($saldo_dia == 0) ? 'texto-cinza' : ($saldo_dia > 0 ? 'placar-green' : 'placar-red');
-                            $classe_texto = ($saldo_dia == 0) ? 'texto-cinza' : '';
-                            $placar_cinza = ((int)$dados_dia['total_green'] === 0 && (int)$dados_dia['total_red'] === 0) ? 'texto-cinza' : '';
-                            
-                            $classes_dia = [];
-                            
-                            if ($data_mysql === $hoje) {
-                                $classes_dia[] = 'gd-dia-hoje';
-                                $classes_dia[] = ($saldo_dia >= 0) ? 'gd-borda-verde' : 'gd-borda-vermelha';
-                            } else {
-                                $classes_dia[] = 'dia-normal';
-                            }
-                            
-                            if ($data_mysql < $hoje) {
-                                if ($saldo_dia > 0) {
-                                    $classes_dia[] = 'gd-dia-destaque';
-                                } elseif ($saldo_dia < 0) {
-                                    $classes_dia[] = 'gd-dia-destaque-negativo';
-                                }
-                                
-                                if ((int)$dados_dia['total_green'] === 0 && (int)$dados_dia['total_red'] === 0) {
-                                    $classes_dia[] = 'gd-dia-sem-valor';
-                                }
-                            }
-                            
-                            if ($data_mysql > $hoje) {
-                                $classes_dia[] = 'dia-futuro';
-                            }
-                            
-                            $icone_classe = $meta_batida ? 'fa-trophy trofeu-icone' : 'fa-check';
-                            
-                            $classe_dia_string = 'gd-linha-dia ' . $classe_valor_cor . ' ' . implode(' ', $classes_dia);
-                            $data_meta_attr = $meta_batida ? 'true' : 'false';
-                            $data_saldo_attr = $saldo_dia;
-                            $data_meta_diaria_attr = $meta_diaria;
-                            
-                            // Renderizar linha do dia
-                            echo '
-                            <div class="'.$classe_dia_string.'" 
-                                 data-date="'.$data_mysql.'" 
-                                 data-meta-batida="'.$data_meta_attr.'"
-                                 data-saldo="'.$data_saldo_attr.'"
-                                 data-meta-diaria="'.$data_meta_diaria_attr.'"
-                                 data-periodo-atual="'.$periodo_atual.'">
-                                
-                                <span class="data '.$classe_texto.'">'.$data_exibicao.'</span>
-
-                <div class="placar-dia">
-                  <span class="placar placar-green '.$placar_cinza.'">'.(int)$dados_dia['total_green'].'</span>
-                  <span class="placar separador '.$placar_cinza.'">x</span>
-                  <span class="placar placar-red '.$placar_cinza.'">'.(int)$dados_dia['total_red'].'</span>
-                </div>
-
-                                <span class="valor '.$cor_valor.'">R$ '.$saldo_formatado.'</span>
-
-                                <span class="icone '.$classe_texto.'">
-                                    <i class="fa-solid '.$icone_classe.'"></i>
-                                </span>
-                                
-                            </div>';
+                    // Apply the same color to the calendar icon before the title
+                    const tituloParent = tituloEl.closest('.titulo-bloco');
+                    if (tituloParent) {
+                        const iconEl = tituloParent.querySelector('i.fa-calendar-alt');
+                        if (iconEl) {
+                            const computed = window.getComputedStyle(tituloEl).color;
+                            iconEl.style.color = computed;
                         }
-                        ?>
-                        
-                        <!-- Elemento oculto com dados do mês -->
-                        <div id="dados-mes-info" style="display: none;" 
-                             data-mes="<?php echo $mes_atual; ?>" 
-                             data-ano="<?php echo $ano_atual; ?>" 
-                             data-meta-diaria="<?php echo $meta_diaria; ?>"
-                             data-meta-mensal="<?php echo $meta_mensal; ?>"
-                             data-meta-anual="<?php echo $meta_anual; ?>"
-                             data-periodo-atual="<?php echo $periodo_atual; ?>"
-                             data-hoje="<?php echo $hoje; ?>">
-                        </div>
+                    }
+                })();
+                </script>
 
-                        <!-- Script de verificação de consistência -->
-                        <script>
-                            document.addEventListener('DOMContentLoaded', function() {
-                                console.log('Verificando consistência de troféus após carregamento PHP...');
-                                
-                                const linhas = document.querySelectorAll('.gd-linha-dia');
-                                linhas.forEach(linha => {
-                                    const dataLinha = linha.getAttribute('data-date');
-                                    const metaBatida = linha.getAttribute('data-meta-batida') === 'true';
-                                    const saldo = parseFloat(linha.getAttribute('data-saldo')) || 0;
-                                    
-                                    if (dataLinha && metaBatida) {
-                                        console.log(`PHP marcou ${dataLinha} como meta batida (saldo: R$ ${saldo.toFixed(2)})`);
-                                        
-                                        if (window.MonitorContinuo && window.MonitorContinuo.marcarMetaBatida) {
-                                            setTimeout(() => {
-                                                window.MonitorContinuo.marcarMetaBatida(dataLinha);
-                                            }, 100);
-                                        }
-                                    }
-                                });
-                                
-                                console.log(`Verificação concluída - ${linhas.length} linhas processadas`);
-                            });
-                        </script>
-                        
+                <!-- Placar mensal CORRIGIDO - sempre visível 0x0 -->
+                <div class="area-central-2">
+                    <div class="pontuacao-2" id="pontuacao-2">
+                        <span class="placar-green-2">0</span>
+                        <span class="separador-2">×</span>
+                        <span class="placar-red-2">0</span>
                     </div>
                 </div>
+                
             </div>
+        </div>
 
+        <!-- Widget de conteúdo principal -->
+        <div class="widget-conteudo-principal-2">
+            <div class="conteudo-left-2">
+                
+                <!-- Valor da meta mensal -->
+                <div class="widget-meta-valor-2" id="meta-valor-2">
+                    <i class="fa-solid fa-coins"></i>
+                    <div class="meta-valor-container-2">
+                        <span class="valor-texto-2" id="valor-texto-meta-2">Calculando...</span>
+                    </div>
+                </div>
+                
+                <!-- Valor que ultrapassou a meta -->
+                <div class="valor-ultrapassou-2" id="valor-ultrapassou-2" style="display: none;">
+                    <i class="fa-solid fa-trophy"></i>
+                    <span class="texto-ultrapassou-2">
+                        Lucro Extra: <span id="valor-extra-2">R$ 0,00</span>
+                    </span>
+                </div>
+                
+                <div class="widget-meta-rotulo-2" id="rotulo-meta-2">Meta do Mês</div>
+                
+                <!-- Barra de progresso mensal -->
+                <div class="widget-barra-container-2">
+                    <div class="widget-barra-progresso-2" id="barra-progresso-2"></div>
+                    <div class="porcentagem-barra-2" id="porcentagem-barra-2">0%</div>
+                </div>
+                
+                <!-- Informações de progresso com saldo -->
+                <div class="widget-info-progresso-2">
+                    <span id="saldo-info-2" class="saldo-zero-2">
+                        <i class="fa-solid fa-wallet"></i>
+                        <span class="saldo-info-rotulo-2">Saldo Mês:</span>
+                        <span class="saldo-info-valor-2">Calculando...</span>
+                    </span>
+                </div>
+                
+            </div>
+        </div>
 
+        <!-- Lista de dias do mês -->
+        <div class="lista-dias">
             
+            <?php
+            // Configurações de meta e variáveis
+            $meta_diaria = isset($_SESSION['meta_diaria']) ? floatval($_SESSION['meta_diaria']) : 0;
+            $meta_mensal = isset($_SESSION['meta_mensal']) ? floatval($_SESSION['meta_mensal']) : 0;
+            $meta_anual = isset($_SESSION['meta_anual']) ? floatval($_SESSION['meta_anual']) : 0;
+
+            $periodo_atual = $_SESSION['periodo_filtro'] ?? 'dia';
+            $meta_atual = ($periodo_atual === 'mes') ? $meta_mensal : 
+                          (($periodo_atual === 'ano') ? $meta_anual : $meta_diaria);
+
+            $hoje = date('Y-m-d');
+            $mes_atual = date('m');
+            $ano_atual = date('Y');
+            $total_dias_mes = date('t');
+            
+            // Loop através de todos os dias do mês
+            for ($dia = 1; $dia <= $total_dias_mes; $dia++) {
+                $dia_formatado = str_pad($dia, 2, '0', STR_PAD_LEFT);
+                $data_mysql = $ano_atual . '-' . $mes_atual . '-' . $dia_formatado;
+                $data_exibicao = $dia_formatado . '/' . $mes_atual . '/' . $ano_atual;
+                
+                // CORREÇÃO: Garantir valores padrão sempre
+                $dados_dia = isset($dados_por_dia[$data_mysql]) ? $dados_por_dia[$data_mysql] : [
+                    'total_valor_green' => 0,
+                    'total_valor_red' => 0,
+                    'total_green' => 0,
+                    'total_red' => 0
+                ];
+                
+                // CORREÇÃO: Forçar valores numéricos
+                $total_green = isset($dados_dia['total_green']) ? (int)$dados_dia['total_green'] : 0;
+                $total_red = isset($dados_dia['total_red']) ? (int)$dados_dia['total_red'] : 0;
+                $total_valor_green = isset($dados_dia['total_valor_green']) ? floatval($dados_dia['total_valor_green']) : 0;
+                $total_valor_red = isset($dados_dia['total_valor_red']) ? floatval($dados_dia['total_valor_red']) : 0;
+                
+                // Calcular saldo do dia
+                $saldo_dia = $total_valor_green - $total_valor_red;
+                $saldo_formatado = number_format($saldo_dia, 2, ',', '.');
+                
+                // Verificar se meta foi batida
+                $meta_batida = false;
+                if ($meta_diaria > 0 && $saldo_dia >= $meta_diaria) {
+                    $meta_batida = true;
+                }
+                
+                if (!$meta_batida && $data_mysql < $hoje && $saldo_dia > 0) {
+                    if ($meta_diaria <= 0) {
+                        $meta_batida = true;
+                    } elseif ($saldo_dia >= ($meta_diaria * 0.8)) {
+                        $meta_batida = true;
+                    }
+                }
+                
+                // Determinar classes e estilos visuais
+                $classe_valor_cor = '';
+                if ($saldo_dia > 0) {
+                    $classe_valor_cor = 'valor-positivo';
+                } elseif ($saldo_dia < 0) {
+                    $classe_valor_cor = 'valor-negativo';
+                } else {
+                    $classe_valor_cor = 'valor-zero';
+                }
+                
+                $cor_valor = ($saldo_dia == 0) ? 'texto-cinza' : ($saldo_dia > 0 ? 'placar-green' : 'placar-red');
+                $classe_texto = ($saldo_dia == 0) ? 'texto-cinza' : '';
+                
+                // CORREÇÃO: Lógica melhorada para placar cinza
+                $placar_cinza = '';
+                $eh_saldo_zero = ($saldo_dia == 0);
+                $eh_placar_zero = ($total_green === 0 && $total_red === 0);
+                
+                // Se saldo é zero OU ambos placares são zero, aplicar cinza
+                if ($eh_saldo_zero || $eh_placar_zero) {
+                    $placar_cinza = 'texto-cinza';
+                }
+                
+                $classes_dia = [];
+                
+                if ($data_mysql === $hoje) {
+                    $classes_dia[] = 'gd-dia-hoje';
+                    $classes_dia[] = ($saldo_dia >= 0) ? 'gd-borda-verde' : 'gd-borda-vermelha';
+                } else {
+                    $classes_dia[] = 'dia-normal';
+                }
+                
+                if ($data_mysql < $hoje) {
+                    if ($saldo_dia > 0) {
+                        $classes_dia[] = 'gd-dia-destaque';
+                    } elseif ($saldo_dia < 0) {
+                        $classes_dia[] = 'gd-dia-destaque-negativo';
+                    }
+                    
+                    if ($total_green === 0 && $total_red === 0) {
+                        $classes_dia[] = 'gd-dia-sem-valor';
+                    }
+                }
+                
+                if ($data_mysql > $hoje) {
+                    $classes_dia[] = 'dia-futuro';
+                }
+                
+                $icone_classe = $meta_batida ? 'fa-trophy trofeu-icone' : 'fa-check';
+                
+                $classe_dia_string = 'gd-linha-dia ' . $classe_valor_cor . ' ' . implode(' ', $classes_dia);
+                $data_meta_attr = $meta_batida ? 'true' : 'false';
+                $data_saldo_attr = $saldo_dia;
+                $data_meta_diaria_attr = $meta_diaria;
+                
+                // CORREÇÃO: Renderizar linha sempre com placar visível
+                echo '
+                <div class="'.$classe_dia_string.'" 
+                     data-date="'.$data_mysql.'" 
+                     data-meta-batida="'.$data_meta_attr.'"
+                     data-saldo="'.$data_saldo_attr.'"
+                     data-meta-diaria="'.$data_meta_diaria_attr.'"
+                     data-periodo-atual="'.$periodo_atual.'"
+                     data-green="'.$total_green.'"
+                     data-red="'.$total_red.'">
+                    
+                    <span class="data '.$classe_texto.'">'.$data_exibicao.'</span>
+
+                    <div class="placar-dia" style="display: flex; align-items: center; justify-content: center;">
+                        <span class="placar placar-green placar-green-2 '.$placar_cinza.'" 
+                              style="display: inline !important; visibility: visible !important;">'.
+                              $total_green.
+                        '</span>
+                        <span class="placar separador separador-2 '.$placar_cinza.'" 
+                              style="display: inline !important; visibility: visible !important;">x</span>
+                        <span class="placar placar-red placar-red-2 '.$placar_cinza.'" 
+                              style="display: inline !important; visibility: visible !important;">'.
+                              $total_red.
+                        '</span>
+                    </div>
+
+                    <span class="valor '.$cor_valor.'">R$ '.$saldo_formatado.'</span>
+
+                    <span class="icone '.$classe_texto.'">
+                        <i class="fa-solid '.$icone_classe.'"></i>
+                    </span>
+                    
+                </div>';
+            }
+            ?>
+            
+            <!-- Elemento oculto com dados do mês -->
+            <div id="dados-mes-info" style="display: none;" 
+                 data-mes="<?php echo $mes_atual; ?>" 
+                 data-ano="<?php echo $ano_atual; ?>" 
+                 data-meta-diaria="<?php echo $meta_diaria; ?>"
+                 data-meta-mensal="<?php echo $meta_mensal; ?>"
+                 data-meta-anual="<?php echo $meta_anual; ?>"
+                 data-periodo-atual="<?php echo $periodo_atual; ?>"
+                 data-hoje="<?php echo $hoje; ?>">
+            </div>
+            
+        </div>
+    </div>
+</div>
+
+
+<!-- ========================================== -->
+<!-- JAVASCRIPT PARA INICIALIZAÇÃO ROBUSTA -->
+<!-- ========================================== -->
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    console.log('Inicializando sistema completo do Bloco 2...');
+    
+    // ========================================
+    // FUNÇÃO PARA GARANTIR PLACAR MENSAL VISÍVEL
+    // ========================================
+    function inicializarPlacarMensal() {
+        const placar = document.getElementById('pontuacao-2');
+        if (!placar) return;
+        
+        const green = placar.querySelector('.placar-green-2');
+        const red = placar.querySelector('.placar-red-2');
+        const separador = placar.querySelector('.separador-2');
+        
+        // Garantir conteúdo inicial
+        if (green && (!green.textContent.trim() || green.textContent.trim() === '')) {
+            green.textContent = '0';
+        }
+        
+        if (red && (!red.textContent.trim() || red.textContent.trim() === '')) {
+            red.textContent = '0';
+        }
+        
+        if (separador && (!separador.textContent.trim() || separador.textContent.trim() === '')) {
+            separador.textContent = '×';
+        }
+        
+        // Forçar visibilidade
+        if (green) {
+            green.style.display = 'inline-block';
+            green.style.visibility = 'visible';
+            green.style.opacity = '1';
+        }
+        
+        if (red) {
+            red.style.display = 'inline-block';
+            red.style.visibility = 'visible';
+            red.style.opacity = '1';
+        }
+        
+        if (separador) {
+            separador.style.display = 'inline-block';
+            separador.style.visibility = 'visible';
+            separador.style.opacity = '1';
+        }
+        
+        console.log('Placar mensal inicializado:', {
+            green: green ? green.textContent : 'N/A',
+            red: red ? red.textContent : 'N/A',
+            separador: separador ? separador.textContent : 'N/A'
+        });
+    }
+    
+    // ========================================
+    // FUNÇÃO PARA GARANTIR PLACARES DA LISTA SEMPRE VISÍVEIS
+    // ========================================
+    function garantirPlacaresListaSempreVisiveis() {
+        const linhas = document.querySelectorAll('.gd-linha-dia');
+        
+        linhas.forEach(linha => {
+            const placarContainer = linha.querySelector('.placar-dia');
+            if (!placarContainer) return;
+
+            const greenEl = placarContainer.querySelector('.placar-green, .placar.placar-green');
+            const redEl = placarContainer.querySelector('.placar-red, .placar.placar-red');
+            const separatorEl = placarContainer.querySelector('.separador');
+
+            if (greenEl && redEl && separatorEl) {
+                // Garantir que elementos sempre tenham conteúdo
+                if (!greenEl.textContent.trim() || greenEl.textContent.trim() === '') {
+                    greenEl.textContent = '0';
+                }
+                
+                if (!redEl.textContent.trim() || redEl.textContent.trim() === '') {
+                    redEl.textContent = '0';
+                }
+                
+                if (!separatorEl.textContent.trim() || separatorEl.textContent.trim() === '') {
+                    separatorEl.textContent = 'x';
+                }
+
+                // Forçar visibilidade
+                greenEl.style.display = 'inline';
+                greenEl.style.visibility = 'visible';
+                greenEl.style.opacity = '1';
+                
+                redEl.style.display = 'inline';
+                redEl.style.visibility = 'visible';
+                redEl.style.opacity = '1';
+                
+                separatorEl.style.display = 'inline';
+                separatorEl.style.visibility = 'visible';
+                separatorEl.style.opacity = '1';
+
+                // Aplicar cores corretas
+                const valorElement = linha.querySelector('.valor');
+                let ehSaldoZero = false;
+                
+                if (valorElement) {
+                    const valorTexto = valorElement.textContent.trim();
+                    ehSaldoZero = valorTexto === 'R$ 0,00' || 
+                                 valorTexto === '0,00' || 
+                                 valorTexto === 'R$ 0.00' || 
+                                 valorTexto === '0.00' ||
+                                 linha.classList.contains('valor-zero');
+                }
+
+                const greenVal = parseInt(greenEl.textContent.trim()) || 0;
+                const redVal = parseInt(redEl.textContent.trim()) || 0;
+                const placarZeroValores = greenVal === 0 && redVal === 0;
+
+                if (ehSaldoZero || placarZeroValores) {
+                    greenEl.style.setProperty('color', '#94a3b8', 'important');
+                    redEl.style.setProperty('color', '#94a3b8', 'important');
+                    separatorEl.style.setProperty('color', '#94a3b8', 'important');
+                } else {
+                    greenEl.style.setProperty('color', '#03a158', 'important');
+                    redEl.style.setProperty('color', '#e93a3a', 'important');
+                    separatorEl.style.setProperty('color', '#6d6b6b', 'important');
+                }
+            }
+        });
+    }
+    
+    // ========================================
+    // VERIFICAÇÃO DE TROFÉUS (sistema existente)
+    // ========================================
+    console.log('Verificando consistência de troféus após carregamento PHP...');
+    
+    const linhas = document.querySelectorAll('.gd-linha-dia');
+    linhas.forEach(linha => {
+        const dataLinha = linha.getAttribute('data-date');
+        const metaBatida = linha.getAttribute('data-meta-batida') === 'true';
+        const saldo = parseFloat(linha.getAttribute('data-saldo')) || 0;
+        
+        if (dataLinha && metaBatida) {
+            console.log(`PHP marcou ${dataLinha} como meta batida (saldo: R$ ${saldo.toFixed(2)})`);
+            
+            if (window.MonitorContinuo && window.MonitorContinuo.marcarMetaBatida) {
+                setTimeout(() => {
+                    window.MonitorContinuo.marcarMetaBatida(dataLinha);
+                }, 100);
+            }
+        }
+    });
+    
+    console.log(`Verificação concluída - ${linhas.length} linhas processadas`);
+    
+    // ========================================
+    // INICIALIZAÇÃO COMPLETA
+    // ========================================
+    
+    // Inicializar placar mensal imediatamente
+    inicializarPlacarMensal();
+    
+    // Inicializar placares da lista imediatamente
+    garantirPlacaresListaSempreVisiveis();
+    
+    // ========================================
+    // OBSERVADORES E MONITORES CONTÍNUOS
+    // ========================================
+    
+    // Monitor para placar mensal
+    const placar = document.getElementById('pontuacao-2');
+    if (placar) {
+        const observer = new MutationObserver(function(mutations) {
+            mutations.forEach(function(mutation) {
+                if (mutation.type === 'childList' || mutation.type === 'characterData') {
+                    setTimeout(inicializarPlacarMensal, 50);
+                }
+            });
+        });
+        
+        observer.observe(placar, {
+            childList: true,
+            subtree: true,
+            characterData: true
+        });
+    }
+    
+    // Monitor para placares da lista
+    const listaDias = document.querySelector('.lista-dias');
+    if (listaDias) {
+        const observer = new MutationObserver(() => {
+            setTimeout(() => {
+                garantirPlacaresListaSempreVisiveis();
+            }, 100);
+        });
+
+        observer.observe(listaDias, {
+            childList: true,
+            subtree: true,
+            characterData: true
+        });
+    }
+    
+    // Verificação periódica para garantir visibilidade
+    setInterval(function() {
+        inicializarPlacarMensal();
+        garantirPlacaresListaSempreVisiveis();
+    }, 3000);
+    
+    console.log('Sistema completo do Bloco 2 inicializado com sucesso!');
+});
+
+// ========================================
+// COMANDOS GLOBAIS PARA DEBUG
+// ========================================
+
+// Comando para forçar placar mensal visível
+window.mostrarPlacarMensal = function() {
+    const placar = document.getElementById('pontuacao-2');
+    if (!placar) {
+        console.log('Placar mensal não encontrado');
+        return;
+    }
+    
+    const green = placar.querySelector('.placar-green-2');
+    const red = placar.querySelector('.placar-red-2');
+    const separador = placar.querySelector('.separador-2');
+    
+    if (green) {
+        green.textContent = '0';
+        green.style.display = 'inline-block';
+        green.style.visibility = 'visible';
+    }
+    
+    if (red) {
+        red.textContent = '0';
+        red.style.display = 'inline-block';
+        red.style.visibility = 'visible';
+    }
+    
+    if (separador) {
+        separador.textContent = '×';
+        separador.style.display = 'inline-block';
+        separador.style.visibility = 'visible';
+    }
+    
+    console.log('Placar mensal forçado para 0×0');
+};
+
+// Comando para corrigir todos os placares
+window.corrigirTodosPlacares = function() {
+    const placarMensal = document.getElementById('pontuacao-2');
+    const placaresLista = document.querySelectorAll('.gd-linha-dia .placar-dia');
+    
+    console.log('Corrigindo todos os placares...');
+    
+    // Corrigir placar mensal
+    mostrarPlacarMensal();
+    
+    // Corrigir placares da lista
+    placaresLista.forEach(placarContainer => {
+        const green = placarContainer.querySelector('.placar-green');
+        const red = placarContainer.querySelector('.placar-red');
+        const separador = placarContainer.querySelector('.separador');
+        
+        if (green && (!green.textContent.trim())) green.textContent = '0';
+        if (red && (!red.textContent.trim())) red.textContent = '0';
+        if (separador && (!separador.textContent.trim())) separador.textContent = 'x';
+        
+        [green, red, separador].forEach(el => {
+            if (el) {
+                el.style.display = 'inline';
+                el.style.visibility = 'visible';
+                el.style.opacity = '1';
+            }
+        });
+    });
+    
+    console.log(`Corrigidos: 1 placar mensal + ${placaresLista.length} placares da lista`);
+};
+
+console.log('Bloco 2 carregado com todas as correções!');
+console.log('Comandos disponíveis:');
+console.log('  mostrarPlacarMensal() - Forçar placar mensal 0×0');
+console.log('  corrigirTodosPlacares() - Corrigir todos os placares');
+</script>
+
+<!-- Script: posicionar botão quando RED estiver selecionado -->
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+  const formulario = document.getElementById('formulario-mentor-novo');
+  if (!formulario) return;
+
+  const radios = formulario.querySelectorAll('input[name="tipo-operacao"], input[name="tipo-operacao"]');
+
+  function atualizarClasseRed() {
+    // Procurar input red atualmente marcado
+    const redChecked = formulario.querySelector('input[name="tipo-operacao"][value="red"]:checked');
+    if (redChecked) {
+      formulario.classList.add('red-selecionado');
+    } else {
+      formulario.classList.remove('red-selecionado');
+    }
+  }
+
+  // Eventos de change para radios dentro do formulário
+  radios.forEach(r => {
+    r.addEventListener('change', atualizarClasseRed);
+  });
+
+  // Também atualizar ao abrir o formulário (caso já venha pre-selecionado)
+  const observer = new MutationObserver(() => {
+    if (formulario.classList.contains('ativo')) {
+      // aguardar micro-tick para inputs refletirem estado
+      setTimeout(atualizarClasseRed, 40);
+    }
+  });
+
+  observer.observe(formulario, { attributes: true, attributeFilter: ['class'] });
+
+  // Inicial
+  atualizarClasseRed();
+});
+</script>
+                                 
+<!-- ==================================================================================================================== -->
+<!-- ========================== BLOCO 2 - BLOCO 2 - BLOCO 2 - BLOCO 2 - BLOCO 2 ======================== -->
+<!-- ==================================================================================================================== -->
+<!-- -->
+<!-- -->
+<!-- -->
+<!-- -->
+<!-- -->
+<!-- -->
+<!-- -->
+<!-- -->
+<!-- -->
+<!-- -->
+<!-- -->
+<!-- -->
+<!-- -->
+<!-- -->
+<!-- ==================================================================================================================== -->
+<!-- ========================== BLOCO 3 - BLOCO 3 - BLOCO 3 - BLOCO 3 - BLOCO 3 ======================== -->
+<!-- ==================================================================================================================== -->
 
 <!-- BLOCO 3: Dashboard Anual -->
 <div class="bloco bloco-3">
@@ -1930,6 +2307,24 @@ document.addEventListener('DOMContentLoaded', function() {
     </main>
     
     <footer class="footer"></footer>
+
+<!-- ==================================================================================================================== -->
+<!-- ========================== BLOCO 3 - BLOCO 3 - BLOCO 3 - BLOCO 3 - BLOCO 3 ======================== -->
+<!-- ==================================================================================================================== -->
+ <!-- -->
+<!-- -->
+<!-- -->
+<!-- -->
+<!-- -->
+<!-- -->
+<!-- -->
+<!-- -->
+<!-- -->
+<!-- -->
+<!-- -->
+<!-- -->
+<!-- -->
+<!-- -->
 <!-- -->
 <!-- -->
 <!-- -->
@@ -2155,7 +2550,7 @@ document.addEventListener('DOMContentLoaded', function() {
           <div class="campo-duplo-novo">
             <label for="input-entrada">Unidade</label>
             <input type="text" id="input-entrada" name="entrada" placeholder="R$ 0,00">
-            <div class="mensagem-status-input"></div>
+              <div class="mensagem-status-input"></div>
           </div>
           <div class="campo-duplo-novo">
             <label for="input-total" id="label-total">Total: Cashout</label>
@@ -2168,7 +2563,9 @@ document.addEventListener('DOMContentLoaded', function() {
         <div class="input-unico-novo" id="input-unico">
           <label for="input-red">Valor Red</label>
           <input type="text" id="input-red" name="valor_red" placeholder="R$ 0,00">
-          <div class="mensagem-status-input"></div>
+        <div class="mensagem-status-input"></div>
+        <!-- Mensagem específica para RED (visível somente quando 'Red' estiver selecionado) -->
+        <div class="mensagem-red-text" role="note" aria-hidden="true" style="display:none;">Cada red é um degrau, não um tropeço — quem sobe com consistência alcança o topo. Foco na estratégia, disciplina nas escolhas, e o lucro vira consequência.</div>
         </div>
       </div>
 
@@ -2188,156 +2585,232 @@ document.addEventListener('DOMContentLoaded', function() {
 </div>
 
 <style>
-/* ===== ESTILOS DO MODAL DE EXCLUSÃO CORRIGIDO ===== */
 
-/* Modal de confirmação de exclusão de entrada */
+
+/* ===== VARIÁVEIS CSS MODERNAS ===== */
+:root {
+    /* Cores principais */
+    --primary-color: #6366f1;
+    --primary-hover: #5b50f0;
+    --primary-light: #e0e7ff;
+    --secondary-color: #f1f5f9;
+    --accent-color: #06b6d4;
+    --success-color: #10b981;
+    --danger-color: #ef4444;
+    --warning-color: #8c0bf5ff;
+    --dark-color: #1e293b;
+    --light-color: #ffffff;
+    
+    /* Escala de cinzas */
+    --gray-50: #f8fafc;
+    --gray-100: #f1f5f9;
+    --gray-200: #e2e8f0;
+    --gray-300: #cbd5e1;
+    --gray-400: #94a3b8;
+    --gray-500: #64748b;
+    --gray-600: #475569;
+    --gray-700: #334155;
+    --gray-800: #1e293b;
+    --gray-900: #0f172a;
+    
+    /* Cores de texto */
+    --text-primary: #0f172a;
+    --text-secondary: #64748b;
+    --border-color: #e2e8f0;
+    
+    /* Sombras */
+    --shadow-sm: 0 1px 2px 0 rgb(0 0 0 / 0.05);
+    --shadow-md: 0 4px 6px -1px rgb(0 0 0 / 0.1), 0 2px 4px -2px rgb(0 0 0 / 0.1);
+    --shadow-lg: 0 10px 15px -3px rgb(0 0 0 / 0.1), 0 4px 6px -4px rgb(0 0 0 / 0.1);
+    --shadow-xl: 0 20px 25px -5px rgb(0 0 0 / 0.1), 0 8px 10px -6px rgb(0 0 0 / 0.1);
+    --shadow-2xl: 0 25px 50px -12px rgb(0 0 0 / 0.25);
+    
+    /* Gradientes */
+    --gradient-primary: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    --gradient-success: linear-gradient(135deg, #4ade80 0%, #22c55e 100%);
+    --gradient-danger: linear-gradient(135deg, #f87171 0%, #ef4444 100%);
+    --gradient-glassmorphism: linear-gradient(135deg, rgba(255, 255, 255, 0.1) 0%, rgba(255, 255, 255, 0.05) 100%);
+    
+    /* Blur */
+    --blur-backdrop: blur(12px);
+    
+    /* Transições */
+    --transition-fast: 0.15s cubic-bezier(0.4, 0, 0.2, 1);
+    --transition-normal: 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+    --transition-slow: 0.5s cubic-bezier(0.4, 0, 0.2, 1);
+    --transition-smooth: 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+}
+
+/* ===== RESET E BASE ===== */
+.formulario-mentor-novo * {
+    box-sizing: border-box;
+}
+
+/* ===== MODAIS DE CONFIRMAÇÃO MODERNIZADOS ===== */
+
+/* Modal de confirmação de exclusão de entrada - MODERNIZADO */
 .modal-confirmacao-entrada {
     position: fixed !important;
     top: 0 !important;
     left: 0 !important;
     width: 100vw !important;
     height: 100vh !important;
-    background: rgba(0, 0, 0, 0.6) !important;
+    background: rgba(15, 23, 42, 0.6) !important;
+    backdrop-filter: var(--blur-backdrop) !important;
+    -webkit-backdrop-filter: var(--blur-backdrop) !important;
     z-index: 999999 !important;
     display: none !important;
     justify-content: center !important;
     align-items: center !important;
-    backdrop-filter: blur(3px);
     opacity: 0;
-    transition: opacity 0.3s ease;
+    transition: all var(--transition-smooth);
+    padding: 20px;
 }
 
-/* Quando ativo/visível */
 .modal-confirmacao-entrada.ativo {
     display: flex !important;
     opacity: 1 !important;
 }
 
-/* Conteúdo do modal */
 .modal-confirmacao-entrada .modal-conteudo-exclusao {
-    background: #ffffff !important;
-    border-radius: 16px !important;
-    padding: 30px !important;
-    box-shadow: 0 20px 40px rgba(0, 0, 0, 0.3) !important;
+    background: rgba(255, 255, 255, 0.95) !important;
+    backdrop-filter: blur(20px) !important;
+    -webkit-backdrop-filter: blur(20px) !important;
+    border-radius: 24px !important;
+    padding: 40px !important;
+    box-shadow: var(--shadow-2xl) !important;
+    border: 1px solid rgba(255, 255, 255, 0.2) !important;
     text-align: center !important;
-    max-width: 450px !important;
+    max-width: 480px !important;
     width: 90% !important;
     margin: 0 auto !important;
     position: relative !important;
-    animation: modalSlideIn 0.4s ease-out !important;
+    transform: scale(0.9) translateY(20px);
+    transition: transform var(--transition-smooth);
 }
 
-@keyframes modalSlideIn {
-    from {
-        opacity: 0;
-        transform: scale(0.8) translateY(-20px);
-    }
-    to {
-        opacity: 1;
-        transform: scale(1) translateY(0);
-    }
+.modal-confirmacao-entrada.ativo .modal-conteudo-exclusao {
+    transform: scale(1) translateY(0);
 }
 
-/* Ícone de aviso */
 .modal-confirmacao-entrada .icone-aviso {
-    font-size: 48px !important;
-    color: #e74c3c !important;
-    margin-bottom: 20px !important;
-    animation: pulse 2s infinite;
+    font-size: 64px !important;
+    color: var(--danger-color) !important;
+    margin-bottom: 24px !important;
+    animation: pulse-warning 2s infinite;
 }
 
-@keyframes pulse {
-    0%, 100% { opacity: 1; }
-    50% { opacity: 0.6; }
+@keyframes pulse-warning {
+    0%, 100% { 
+        opacity: 1; 
+        transform: scale(1);
+    }
+    50% { 
+        opacity: 0.7; 
+        transform: scale(1.05);
+    }
 }
 
-/* Texto do modal */
 .modal-confirmacao-entrada .texto-confirmacao {
-    font-size: 18px !important;
-    font-weight: 600 !important;
-    color: #2c3e50 !important;
-    margin-bottom: 25px !important;
+    font-size: 20px !important;
+    font-weight: 700 !important;
+    color: var(--text-primary) !important;
+    margin-bottom: 32px !important;
     line-height: 1.5 !important;
+    font-family: 'Inter', sans-serif;
 }
 
-/* Botões do modal */
+.modal-confirmacao-entrada .texto-confirmacao p:last-child {
+    font-size: 14px !important;
+    font-weight: 500 !important;
+    color: var(--text-secondary) !important;
+    margin-top: 12px !important;
+}
+
 .modal-confirmacao-entrada .botoes-confirmacao {
     display: flex !important;
     justify-content: center !important;
-    gap: 15px !important;
-    margin-top: 20px !important;
+    gap: 16px !important;
+    margin-top: 32px !important;
 }
 
 .modal-confirmacao-entrada .btn-modal {
-    padding: 12px 24px !important;
+    padding: 16px 32px !important;
     border: none !important;
-    border-radius: 8px !important;
+    border-radius: 16px !important;
     font-size: 16px !important;
-    font-weight: 600 !important;
+    font-weight: 700 !important;
     cursor: pointer !important;
-    transition: all 0.3s ease !important;
-    min-width: 120px !important;
+    transition: all var(--transition-smooth) !important;
+    min-width: 140px !important;
     display: inline-flex !important;
     align-items: center !important;
     justify-content: center !important;
     gap: 8px !important;
+    text-transform: uppercase !important;
+    letter-spacing: 0.5px !important;
+    position: relative !important;
+    overflow: hidden !important;
+}
+
+.modal-confirmacao-entrada .btn-modal::before {
+    content: '';
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    width: 0;
+    height: 0;
+    background: rgba(255, 255, 255, 0.2);
+    border-radius: 50%;
+    transform: translate(-50%, -50%);
+    transition: all 0.6s ease;
+}
+
+.modal-confirmacao-entrada .btn-modal:hover::before {
+    width: 300px;
+    height: 300px;
 }
 
 .modal-confirmacao-entrada .btn-confirmar-exclusao {
-    background: #e74c3c !important;
+    background: var(--gradient-danger) !important;
     color: white !important;
+    box-shadow: var(--shadow-lg) !important;
 }
 
 .modal-confirmacao-entrada .btn-confirmar-exclusao:hover {
-    background: #c0392b !important;
-    transform: translateY(-2px) !important;
-    box-shadow: 0 4px 12px rgba(231, 76, 60, 0.3) !important;
+    transform: translateY(-2px) scale(1.02) !important;
+    box-shadow: 0 16px 32px rgba(239, 68, 68, 0.4) !important;
 }
 
 .modal-confirmacao-entrada .btn-cancelar-exclusao {
-    background: #95a5a6 !important;
+    background: linear-gradient(135deg, var(--gray-400) 0%, var(--gray-500) 100%) !important;
     color: white !important;
+    box-shadow: var(--shadow-lg) !important;
 }
 
 .modal-confirmacao-entrada .btn-cancelar-exclusao:hover {
-    background: #7f8c8d !important;
-    transform: translateY(-2px) !important;
-    box-shadow: 0 4px 12px rgba(149, 165, 166, 0.3) !important;
+    background: linear-gradient(135deg, var(--gray-500) 0%, var(--gray-600) 100%) !important;
+    transform: translateY(-2px) scale(1.02) !important;
+    box-shadow: 0 16px 32px rgba(148, 163, 184, 0.4) !important;
 }
 
-/* Responsividade do modal de exclusão */
-@media (max-width: 480px) {
-    .modal-confirmacao-entrada .modal-conteudo-exclusao {
-        padding: 20px !important;
-        margin: 20px !important;
-        width: calc(100% - 40px) !important;
-    }
-
-    .modal-confirmacao-entrada .botoes-confirmacao {
-        flex-direction: column !important;
-        gap: 10px !important;
-    }
-
-    .modal-confirmacao-entrada .btn-modal {
-        width: 100% !important;
-    }
-}
-
-/* ===== MODAL DE VERIFICAÇÃO DE DEPÓSITO ===== */
+/* ===== MODAL DE VERIFICAÇÃO DE DEPÓSITO MODERNIZADO ===== */
 .modal-verificacao-deposito {
     position: fixed !important;
     top: 0 !important;
     left: 0 !important;
     width: 100vw !important;
     height: 100vh !important;
-    background: rgba(0, 0, 0, 0.7) !important;
+    background: rgba(15, 23, 42, 0.7) !important;
+    backdrop-filter: var(--blur-backdrop) !important;
+    -webkit-backdrop-filter: var(--blur-backdrop) !important;
     z-index: 1000000 !important;
     display: none !important;
     justify-content: center !important;
     align-items: center !important;
-    backdrop-filter: blur(5px);
     opacity: 0;
-    transition: opacity 0.4s ease;
+    transition: opacity var(--transition-smooth);
+    padding: 20px;
 }
 
 .modal-verificacao-deposito.ativo {
@@ -2346,89 +2819,79 @@ document.addEventListener('DOMContentLoaded', function() {
 }
 
 .modal-verificacao-deposito .modal-conteudo-aviso {
-    background: linear-gradient(135deg, #ffffff 0%, #f8f9fa 100%) !important;
-    border-radius: 20px !important;
-    padding: 40px !important;
-    box-shadow: 
-        0 25px 50px rgba(0, 0, 0, 0.3) !important,
-        0 15px 35px rgba(0, 0, 0, 0.2) !important;
+    background: rgba(255, 255, 255, 0.95) !important;
+    backdrop-filter: blur(20px) !important;
+    -webkit-backdrop-filter: blur(20px) !important;
+    border-radius: 24px !important;
+    padding: 48px !important;
+    box-shadow: var(--shadow-2xl) !important;
+    border: 1px solid rgba(255, 255, 255, 0.2) !important;
     text-align: center !important;
-    max-width: 500px !important;
+    max-width: 520px !important;
     width: 90% !important;
     margin: 0 auto !important;
     position: relative !important;
-    animation: modalBounceIn 0.6s cubic-bezier(0.175, 0.885, 0.32, 1.275) !important;
-    border: 2px solid rgba(255, 193, 7, 0.3) !important;
+    transform: scale(0.9) translateY(20px);
+    transition: transform var(--transition-smooth);
 }
 
-@keyframes modalBounceIn {
-    0% {
-        opacity: 0;
-        transform: scale(0.3) translateY(-50px);
-    }
-    50% {
-        opacity: 0.8;
-        transform: scale(1.05) translateY(-10px);
-    }
-    100% {
-        opacity: 1;
-        transform: scale(1) translateY(0);
-    }
+.modal-verificacao-deposito.ativo .modal-conteudo-aviso {
+    transform: scale(1) translateY(0);
 }
 
 .modal-verificacao-deposito .icone-aviso-deposito {
-    font-size: 64px !important;
-    color: #ffc107 !important;
-    margin-bottom: 25px !important;
-    animation: pulseWarning 2s infinite;
+    font-size: 72px !important;
+    color: var(--warning-color) !important;
+    margin-bottom: 32px !important;
+    animation: bounce-warning 2s infinite;
 }
 
-@keyframes pulseWarning {
+@keyframes bounce-warning {
     0%, 100% { 
-        opacity: 1; 
-        transform: scale(1);
+        transform: translateY(0) scale(1);
     }
     50% { 
-        opacity: 0.7; 
-        transform: scale(1.1);
+        transform: translateY(-8px) scale(1.05);
     }
 }
 
 .modal-verificacao-deposito .titulo-aviso {
-    font-size: 24px !important;
-    font-weight: 700 !important;
-    color: #2c3e50 !important;
-    margin-bottom: 15px !important;
-    line-height: 1.4 !important;
+    font-size: 28px !important;
+    font-weight: 800 !important;
+    color: var(--text-primary) !important;
+    margin-bottom: 16px !important;
+    line-height: 1.3 !important;
+    font-family: 'Inter', sans-serif;
 }
 
 .modal-verificacao-deposito .texto-aviso {
-    font-size: 16px !important;
-    color: #495057 !important;
-    margin-bottom: 30px !important;
+    font-size: 18px !important;
+    color: var(--text-secondary) !important;
+    margin-bottom: 40px !important;
     line-height: 1.6 !important;
+    font-weight: 500;
 }
 
 .modal-verificacao-deposito .botoes-aviso {
     display: flex !important;
     justify-content: center !important;
-    gap: 15px !important;
+    gap: 16px !important;
     flex-wrap: wrap !important;
 }
 
 .modal-verificacao-deposito .btn-modal-deposito {
-    padding: 15px 25px !important;
+    padding: 18px 32px !important;
     border: none !important;
-    border-radius: 12px !important;
+    border-radius: 16px !important;
     font-size: 16px !important;
     font-weight: 700 !important;
     cursor: pointer !important;
-    transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275) !important;
-    min-width: 140px !important;
+    transition: all var(--transition-smooth) !important;
+    min-width: 160px !important;
     display: inline-flex !important;
     align-items: center !important;
     justify-content: center !important;
-    gap: 10px !important;
+    gap: 12px !important;
     text-transform: uppercase !important;
     letter-spacing: 0.5px !important;
     position: relative !important;
@@ -2442,7 +2905,7 @@ document.addEventListener('DOMContentLoaded', function() {
     left: 50%;
     width: 0;
     height: 0;
-    background: rgba(255, 255, 255, 0.3);
+    background: rgba(255, 255, 255, 0.2);
     border-radius: 50%;
     transform: translate(-50%, -50%);
     transition: all 0.6s ease;
@@ -2454,864 +2917,856 @@ document.addEventListener('DOMContentLoaded', function() {
 }
 
 .modal-verificacao-deposito .btn-abrir-banca {
-    background: linear-gradient(135deg, #28a745 0%, #20c997 100%) !important;
+    background: var(--gradient-success) !important;
     color: white !important;
-    box-shadow: 0 6px 20px rgba(40, 167, 69, 0.3) !important;
+    box-shadow: var(--shadow-lg) !important;
 }
 
 .modal-verificacao-deposito .btn-abrir-banca:hover {
-    background: linear-gradient(135deg, #218838 0%, #1ea087 100%) !important;
     transform: translateY(-3px) scale(1.05) !important;
-    box-shadow: 0 10px 30px rgba(40, 167, 69, 0.4) !important;
+    box-shadow: 0 20px 40px rgba(16, 185, 129, 0.4) !important;
 }
 
 .modal-verificacao-deposito .btn-fechar-aviso {
-    background: linear-gradient(135deg, #6c757d 0%, #495057 100%) !important;
+    background: linear-gradient(135deg, var(--gray-400) 0%, var(--gray-500) 100%) !important;
     color: white !important;
-    box-shadow: 0 6px 20px rgba(108, 117, 125, 0.3) !important;
+    box-shadow: var(--shadow-lg) !important;
 }
 
 .modal-verificacao-deposito .btn-fechar-aviso:hover {
-    background: linear-gradient(135deg, #5a6268 0%, #3d4347 100%) !important;
+    background: linear-gradient(135deg, var(--gray-500) 0%, var(--gray-600) 100%) !important;
     transform: translateY(-3px) scale(1.05) !important;
-    box-shadow: 0 10px 30px rgba(108, 117, 125, 0.4) !important;
+    box-shadow: 0 20px 40px rgba(148, 163, 184, 0.4) !important;
 }
 
-/* Responsividade do modal de verificação */
-@media (max-width: 480px) {
-    .modal-verificacao-deposito .modal-conteudo-aviso {
-        padding: 30px 20px !important;
-        width: calc(100% - 40px) !important;
-    }
+/* ===== SISTEMA NOVO DE CADASTRO MODERNIZADO ===== */
 
-    .modal-verificacao-deposito .botoes-aviso {
-        flex-direction: column !important;
-        gap: 12px !important;
-    }
-
-    .modal-verificacao-deposito .btn-modal-deposito {
-        width: 100% !important;
-        min-width: auto !important;
-    }
-}
-
-/* ===== CSS DO NOVO SISTEMA DE CADASTRO COM ELEGÂNCIA ===== */
-
-/* ✅ OVERLAY ELEGANTE COM ESCURECIMENTO E BLUR */
+/* Overlay elegante com glassmorphism */
 .formulario-mentor-overlay {
-  position: fixed !important;
-  top: 0 !important;
-  left: 0 !important;
-  width: 100vw !important;
-  height: 100vh !important;
-  background: rgba(0, 0, 0, 0.0) !important; /* Começa transparente */
-  backdrop-filter: blur(0px) !important; /* Começa sem blur */
-  z-index: 9998 !important;
-  display: none !important;
-  opacity: 0 !important;
-  transition: all 0.4s cubic-bezier(0.25, 0.46, 0.45, 0.94) !important; /* Curva suave */
+    position: fixed !important;
+    top: 0 !important;
+    left: 0 !important;
+    width: 100vw !important;
+    height: 100vh !important;
+    background: rgba(15, 23, 42, 0.0) !important;
+    backdrop-filter: blur(0px) !important;
+    -webkit-backdrop-filter: blur(0px) !important;
+    z-index: 9998 !important;
+    display: none !important;
+    opacity: 0 !important;
+    transition: all var(--transition-smooth) !important;
 }
 
 .formulario-mentor-overlay.ativo {
-  display: block !important;
-  opacity: 1 !important;
-  background: rgba(0, 0, 0, 0.7) !important; /* Escurece elegantemente */
-  backdrop-filter: blur(8px) !important; /* Blur suave */
+    display: block !important;
+    opacity: 1 !important;
+    background: rgba(15, 23, 42, 0.7) !important;
+    backdrop-filter: var(--blur-backdrop) !important;
+    -webkit-backdrop-filter: var(--blur-backdrop) !important;
 }
 
-/* Container principal do novo formulário */
+/* Container principal do formulário modernizado */
 .formulario-mentor-novo {
-  position: fixed;
-  top: 50%;
-  left: 50%;
-  transform: translate(-50%, -50%) scale(0.7); /* ✅ Começa menor */
-  background: linear-gradient(135deg, #ffffff 0%, #f8f9fa 50%, #ffffff 100%);
-  border-radius: 24px; /* ✅ Bordas mais suaves */
-  padding: 30px;
-  box-shadow: 
-    0 25px 50px rgba(0, 0, 0, 0.25), /* ✅ Sombra mais dramática */
-    0 15px 35px rgba(0, 0, 0, 0.15),
-    0 5px 15px rgba(0, 0, 0, 0.1);
-  z-index: 9999;
-  display: none;
-  width: 400px; /* ✅ Levemente maior */
-  max-height: 85vh;
-  min-width: 350px;
-  max-width: 440px; /* ✅ Ajustado */
-  border: 1px solid rgba(255, 255, 255, 0.2); /* ✅ Borda sutil */
-  font-family: "Poppins", sans-serif;
-  margin: 0;
-  box-sizing: border-box;
-  overflow: hidden;
-  max-width: calc(100vw - 40px);
-  max-height: calc(100vh - 40px);
-  opacity: 0; /* ✅ Começa transparente */
-  transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275) !important; /* ✅ Curva elegante com bounce */
+    position: fixed;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    background: rgba(255, 255, 255, 0.95);
+    backdrop-filter: blur(20px);
+    -webkit-backdrop-filter: blur(20px);
+    border-radius: 24px;
+    padding: 24px;
+    box-shadow: 
+        0 32px 64px rgba(0, 0, 0, 0.12),
+        0 16px 32px rgba(0, 0, 0, 0.08),
+        inset 0 1px 0 rgba(255, 255, 255, 0.6);
+    z-index: 9999;
+    display: none;
+    width: 480px;
+    min-width: 380px;
+    max-width: 480px;
+    border: 1px solid rgba(255, 255, 255, 0.2);
+    font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+    margin: 0;
+    box-sizing: border-box;
+    height: auto;
+    min-height: 580px;
+    max-height: calc(100vh - 40px);
+    overflow-x: hidden;
+    overflow-y: auto;
+    -webkit-overflow-scrolling: touch;
+    opacity: 0;
+    transition: all var(--transition-smooth) !important;
 }
 
-/* ✅ ESTADO ATIVO COM ANIMAÇÃO SUAVE */
+/* Estados do formulário */
 .formulario-mentor-novo.ativo {
-  display: block;
-  opacity: 1 !important;
-  transform: translate(-50%, -50%) scale(1) !important; /* ✅ Escala para tamanho normal */
+    display: block;
+    opacity: 1 !important;
+    transform: translate(-50%, -50%) scale(1) !important;
 }
 
-/* ✅ ESTADO DE FECHAMENTO COM ANIMAÇÃO SUAVE */
 .formulario-mentor-novo.fechando {
-  opacity: 0 !important;
-  transform: translate(-50%, -50%) scale(0.8) !important; /* ✅ Diminui suavemente */
-  transition: all 0.3s cubic-bezier(0.55, 0.085, 0.68, 0.53) !important; /* ✅ Curva de saída */
+    opacity: 0 !important;
+    transform: translate(-50%, -50%) scale(0.95) !important;
+    transition: all var(--transition-normal) !important;
 }
 
-/* Botão fechar com hover elegante */
+/* Botão fechar modernizado */
 .formulario-mentor-novo .btn-fechar-novo {
-  position: absolute;
-  top: 15px;
-  right: 15px;
-  background: rgba(220, 53, 69, 0.1);
-  color: #dc3545;
-  border: none;
-  border-radius: 50%;
-  width: 36px; /* ✅ Levemente maior */
-  height: 36px;
-  cursor: pointer;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  transition: all 0.3s cubic-bezier(0.25, 0.46, 0.45, 0.94);
-  font-size: 16px;
-  z-index: 10;
-  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1); /* ✅ Sombra sutil */
+    position: absolute;
+    top: 16px;
+    right: 16px;
+    width: 40px;
+    height: 40px;
+    background: rgba(239, 68, 68, 0.1);
+    color: var(--danger-color);
+    border: none;
+    border-radius: 12px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: all var(--transition-normal);
+    font-size: 16px;
+    z-index: 10;
+    box-shadow: var(--shadow-sm);
+    cursor: pointer;
+    backdrop-filter: blur(10px);
+    -webkit-backdrop-filter: blur(10px);
 }
 
 .formulario-mentor-novo .btn-fechar-novo:hover {
-  background: #dc3545;
-  color: white;
-  transform: scale(1.15) rotate(90deg); /* ✅ Rotação suave */
-  box-shadow: 0 4px 15px rgba(220, 53, 69, 0.3);
+    background: var(--danger-color);
+    color: white;
+    transform: scale(1.1) rotate(90deg);
+    box-shadow: var(--shadow-lg);
 }
 
-/* ✅ INFO DO MENTOR COM ELEGÂNCIA */
+/* Info do mentor modernizada */
 .mentor-info-novo {
-  text-align: center;
-  margin-bottom: 25px;
-  padding-bottom: 20px;
-  border-bottom: 2px solid rgba(233, 236, 239, 0.6);
-  position: relative;
+    text-align: center;
+    margin-bottom: 24px;
+    padding-bottom: 20px;
+    border-bottom: 1px solid var(--border-color);
+    position: relative;
 }
 
-/* ✅ EFEITO SHIMMER NA FOTO */
 .mentor-foto-novo {
-  width: 90px; /* ✅ Levemente maior */
-  height: 90px;
-  border-radius: 50%;
-  object-fit: cover;
-  border: 4px solid #007bff; /* ✅ Borda mais espessa */
-  margin-bottom: 12px;
-  box-shadow: 
-    0 8px 25px rgba(0, 123, 255, 0.2),
-    0 4px 10px rgba(0, 0, 0, 0.1);
-  transition: all 0.3s cubic-bezier(0.25, 0.46, 0.45, 0.94);
-  position: relative;
-  overflow: hidden;
+    width: 88px;
+    height: 88px;
+    border-radius: 22px;
+    object-fit: cover;
+    border: 3px solid var(--primary-color);
+    margin-bottom: 12px;
+    box-shadow: var(--shadow-lg);
+    transition: all var(--transition-normal);
+    position: relative;
+    overflow: hidden;
 }
 
 .mentor-foto-novo::before {
-  content: '';
-  position: absolute;
-  top: -50%;
-  left: -50%;
-  width: 200%;
-  height: 200%;
-  background: linear-gradient(
-    45deg,
-    transparent,
-    rgba(255, 255, 255, 0.3),
-    transparent
-  );
-  transform: rotate(45deg);
-  transition: all 0.6s ease;
-  opacity: 0;
+    content: '';
+    position: absolute;
+    top: -50%;
+    left: -50%;
+    width: 200%;
+    height: 200%;
+    background: linear-gradient(
+        45deg,
+        transparent,
+        rgba(255, 255, 255, 0.3),
+        transparent
+    );
+    transform: rotate(45deg);
+    transition: all 0.6s ease;
+    opacity: 0;
 }
 
 .mentor-foto-novo:hover::before {
-  opacity: 1;
-  transform: rotate(45deg) translate(100%, 100%);
+    opacity: 1;
+    transform: rotate(45deg) translate(100%, 100%);
 }
 
 .mentor-foto-novo:hover {
-  transform: scale(1.05);
-  box-shadow: 
-    0 12px 35px rgba(0, 123, 255, 0.3),
-    0 6px 15px rgba(0, 0, 0, 0.15);
+    transform: scale(1.05);
+    box-shadow: 0 16px 32px rgba(99, 102, 241, 0.3);
 }
 
 .mentor-nome-novo {
-  font-size: 18px; /* ✅ Levemente maior */
-  font-weight: 700;
-  color: #2c3e50;
-  margin: 0;
-  text-transform: capitalize;
-  letter-spacing: 0.5px; /* ✅ Espaçamento elegante */
+    font-size: 20px;
+    font-weight: 700;
+    color: var(--text-primary);
+    margin: 0;
+    text-transform: capitalize;
+    letter-spacing: -0.02em;
 }
 
-/* ✅ OPÇÕES COM MICRO-ANIMAÇÕES */
+/* Sistema de opções modernizado */
 .opcoes-container-novo {
-  display: flex;
-  justify-content: center;
-  gap: 15px; /* ✅ Gap maior */
-  margin-bottom: 25px;
-  padding: 0 10px;
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 12px;
+    margin: 24px 0;
+    padding: 0;
 }
 
 .opcao-novo {
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  cursor: pointer;
-  transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275); /* ✅ Bounce suave */
-  padding: 12px; /* ✅ Padding maior */
-  border-radius: 16px; /* ✅ Bordas mais suaves */
-  border: 2px solid transparent;
-  min-width: 70px;
-  position: relative;
-  overflow: hidden;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    cursor: pointer;
+    transition: all var(--transition-smooth);
+    padding: 16px 12px;
+    border-radius: 16px;
+    border: 2px solid var(--border-color);
+    min-width: auto;
+    position: relative;
+    overflow: hidden;
+    flex: 1;
+    background: var(--light-color);
 }
 
 .opcao-novo::before {
-  content: '';
-  position: absolute;
-  top: 0;
-  left: -100%;
-  width: 100%;
-  height: 100%;
-  background: linear-gradient(
-    90deg,
-    transparent,
-    rgba(0, 123, 255, 0.1),
-    transparent
-  );
-  transition: all 0.6s ease;
-}
-
-.opcao-novo:hover::before {
-  left: 100%;
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: var(--gradient-primary);
+    opacity: 0;
+    transition: opacity var(--transition-normal);
+    z-index: 0;
 }
 
 .opcao-novo:hover {
-  background: rgba(0, 123, 255, 0.08);
-  border-color: rgba(0, 123, 255, 0.3);
-  transform: translateY(-2px) scale(1.02); /* ✅ Levitação suave */
-  box-shadow: 0 8px 25px rgba(0, 123, 255, 0.15);
+    border-color: var(--primary-color);
+    transform: translateY(-2px);
+    box-shadow: var(--shadow-lg);
 }
 
 .opcao-novo.selecionada {
-  background: linear-gradient(135deg, rgba(0, 123, 255, 0.15), rgba(0, 123, 255, 0.08));
-  border-color: #007bff;
-  transform: translateY(-3px) scale(1.05); /* ✅ Mais proeminente */
-  box-shadow: 
-    0 12px 35px rgba(0, 123, 255, 0.25),
-    0 6px 15px rgba(0, 0, 0, 0.1);
+    border-color: var(--primary-color);
+    background: var(--primary-light);
+    transform: translateY(-2px);
+    box-shadow: var(--shadow-lg);
+}
+
+.opcao-novo.selecionada::before {
+    opacity: 0.05;
 }
 
 .opcao-novo input[type="radio"] {
-  width: 18px; /* ✅ Levemente maior */
-  height: 18px;
-  margin-bottom: 8px;
-  cursor: pointer;
-  accent-color: #007bff;
-  transition: all 0.3s ease;
+    width: 16px;
+    height: 16px;
+    margin-bottom: 8px;
+    cursor: pointer;
+    accent-color: var(--primary-color);
+    transition: all var(--transition-fast);
+    position: relative;
+    z-index: 1;
 }
 
 .opcao-novo label {
-  font-size: 14px; /* ✅ Levemente maior */
-  font-weight: 600;
-  color: #495057;
-  cursor: pointer;
-  transition: all 0.3s cubic-bezier(0.25, 0.46, 0.45, 0.94);
-  user-select: none;
-  letter-spacing: 0.3px;
+    font-size: 14px;
+    font-weight: 600;
+    color: var(--text-primary);
+    cursor: pointer;
+    transition: all var(--transition-normal);
+    user-select: none;
+    letter-spacing: 0.02em;
+    position: relative;
+    z-index: 1;
 }
 
 .opcao-novo.selecionada label {
-  color: #007bff;
-  font-weight: 700;
-  text-shadow: 0 1px 2px rgba(0, 123, 255, 0.2);
+    color: var(--primary-color);
+    font-weight: 700;
 }
 
-/* ✅ MENSAGEM INICIAL COM FADE ELEGANTE */
+/* Mensagem inicial modernizada */
 .mensagem-inicial-gestao {
-  text-align: center;
-  padding: 25px; /* ✅ Padding maior */
-  background: linear-gradient(145deg, #f8f9fa 0%, #ffffff 50%, #f0f2f5 100%);
-  border-radius: 16px; /* ✅ Bordas mais suaves */
-  margin: 20px 0;
-  box-shadow: 
-    0 8px 25px rgba(0, 0, 0, 0.08),
-    0 3px 10px rgba(0, 0, 0, 0.05);
-  opacity: 1; /* Mantém visível */
-  transition: all 0.5s cubic-bezier(0.25, 0.46, 0.45, 0.94);
-  display: block; /* Sempre visível */
-  transform: translateY(0); /* Sem translação inicial */
-  border: 1px solid rgba(0, 123, 255, 0.1);
+    text-align: center;
+    padding: 24px;
+    background: linear-gradient(135deg, var(--gray-50) 0%, var(--light-color) 100%);
+    border-radius: 20px;
+    margin: 16px 0 24px 0;
+    box-shadow: var(--shadow-sm);
+    opacity: 1;
+    transition: all var(--transition-slow);
+    display: block;
+    transform: translateY(0);
+    border: 1px solid var(--border-color);
 }
 
 .mensagem-inicial-gestao i {
-  font-size: 28px; /* ✅ Ícone maior */
-  color: #007bff;
-  margin-bottom: 15px;
-  animation: pulse-icon 2s ease-in-out infinite; /* ✅ Animação do ícone */
+    font-size: 32px;
+    color: var(--primary-color);
+    margin-bottom: 16px;
+    animation: float-icon 3s ease-in-out infinite;
 }
 
-@keyframes pulse-icon {
-  0%, 100% { 
-    transform: scale(1); 
-    opacity: 1; 
-  }
-  50% { 
-    transform: scale(1.05); 
-    opacity: 0.8; 
-  }
+@keyframes float-icon {
+    0%, 100% { 
+        transform: translateY(0) scale(1); 
+    }
+    50% { 
+        transform: translateY(-6px) scale(1.05); 
+    }
 }
 
 .mensagem-inicial-gestao p {
-  margin: 0;
-  font-size: 14px; /* ✅ Texto maior */
-  line-height: 1.7; /* ✅ Espaçamento melhor */
-  color: #495057;
-  font-weight: 500;
-  letter-spacing: 0.3px;
+    margin: 0;
+    font-size: 15px;
+    line-height: 1.6;
+    color: var(--text-secondary);
+    font-weight: 500;
+    letter-spacing: 0.01em;
 }
 
-.mensagem-inicial-gestao.ativo {
-  opacity: 1;
-  transform: translateY(0);
-  display: block !important; /* Força a exibição mesmo quando outras classes tentarem esconder */
-  visibility: visible !important; /* Garante que fique visível */
-}
-
-/* ✅ INPUTS COM ANIMAÇÕES SUAVES */
+/* Área de inputs modernizada */
 .inputs-area-novo {
-  margin-bottom: 6px; /* Ajustado para reduzir espaçamento vertical entre blocos */
-  min-height: 120px;
+    margin-bottom: 20px;
+    min-height: 120px;
+    position: relative;
 }
 
 .inputs-duplos-novo,
 .input-unico-novo {
-  opacity: 0;
-  transform: translateX(-20px);
-  transition: all 0.5s cubic-bezier(0.175, 0.885, 0.32, 1.275);
-  display: none;
+    opacity: 0;
+    transform: translateX(-20px);
+    transition: all var(--transition-slow);
+    display: none;
+    margin-top: 16px;
+}
+
+.inputs-duplos-novo:not(.ativo),
+.input-unico-novo:not(.ativo) {
+    display: none !important;
+    opacity: 0 !important;
+    visibility: hidden !important;
+    height: 0 !important;
+    overflow: hidden !important;
 }
 
 .inputs-duplos-novo.ativo,
 .input-unico-novo.ativo {
-  opacity: 1;
-  transform: translateX(0);
-  display: block;
+    opacity: 1;
+    transform: translateX(0);
+    display: block;
 }
 
-.campo-duplo-novo {
-  margin-bottom: 8px; /* espaço reduzido entre os campos duplos */
+/* Campos duplos modernizados */
+.inputs-duplos-novo.ativo {
+    display: block !important;
+    margin-top: 8px !important;
+    margin-bottom: 16px !important;
 }
 
-/* Espaçamento específico: deixar ~25px entre Unidade (primeiro campo) e Total (segundo campo) */
-.inputs-duplos-novo .campo-duplo-novo:first-child {
-  margin-bottom: -25px;
+.inputs-duplos-novo.ativo .campo-duplo-novo {
+    margin-bottom: 16px !important;
 }
 
-/* Espaço maior entre o bloco de inputs e o bloco de resultado/status (~40px) */
-.inputs-duplos-novo {
-  margin-bottom: -10px;
+.inputs-duplos-novo.ativo .campo-duplo-novo:last-child {
+    margin-bottom: 0 !important;
 }
 
-/* Para Red (input único) também aplicar espaço maior antes do status */
+.inputs-duplos-novo.ativo .campo-duplo-novo label {
+    margin-bottom: 8px !important;
+    font-size: 13px;
+    font-weight: 600;
+    color: var(--text-secondary);
+    letter-spacing: 0.02em;
+    display: block;
+    text-transform: uppercase;
+}
+
+.inputs-duplos-novo.ativo .campo-duplo-novo input {
+    width: 100%;
+    padding: 16px 20px !important;
+    margin-bottom: 0 !important;
+    border: 2px solid var(--border-color);
+    border-radius: 16px;
+    font-size: 16px;
+    font-weight: 600;
+    color: var(--text-primary);
+    background: var(--light-color);
+    transition: all var(--transition-normal);
+    box-sizing: border-box;
+    box-shadow: var(--shadow-sm);
+    outline: none;
+}
+
+/* Campo único (RED) modernizado */
 .input-unico-novo {
-  margin-bottom: -10px;
+    margin-top: 16px !important;
+    margin-bottom: 20px !important;
+    text-align: center;
 }
 
-.campo-duplo-novo label {
-  display: block;
-  font-size: 13px; /* ✅ Levemente maior */
-  font-weight: 600;
-  color: #6c757d;
-  margin-bottom: 6px;
-  letter-spacing: 0.5px;
-  transition: all 0.3s ease;
+.input-unico-novo.ativo {
+    margin-top: 16px !important;
+    margin-bottom: 20px !important;
 }
 
-.campo-duplo-novo input {
-  width: 100%;
-  padding: 12px 15px;
-  border: 2px solid #e9ecef;
-  border-radius: 12px;
-  font-size: 16px;
-  font-weight: 600;
-  color: #495057;
-  background: linear-gradient(145deg, #ffffff, #f8f9fa);
-  transition: all 0.4s cubic-bezier(0.25, 0.46, 0.45, 0.94);
-  box-sizing: border-box;
-  box-shadow: inset 0 2px 4px rgba(0, 0, 0, 0.05);
-}
-
-.campo-duplo-novo input:focus {
-  outline: none;
-  border-color: #007bff;
-  box-shadow: 
-    0 0 0 4px rgba(0, 123, 255, 0.15),
-    inset 0 2px 4px rgba(0, 0, 0, 0.05);
-  transform: translateY(-1px);
-  background: #ffffff;
-}
-.campo-duplo-novo input:hover:not(:focus) {
-  border-color: rgba(0, 123, 255, 0.5);
-  transform: translateY(-0.5px);
+.input-unico-novo label {
+    display: block;
+    font-size: 13px;
+    font-weight: 600;
+    color: var(--danger-color);
+    margin-bottom: 12px !important;
+    letter-spacing: 0.02em;
+    text-transform: uppercase;
 }
 
 .input-unico-novo input {
-  width: 100%;
-  padding: 15px;
-  border: 2px solid #f8d7da;
-  border-radius: 12px;
-  font-size: 18px;
-  font-weight: 700;
-  color: #dc3545;
-  background: linear-gradient(145deg, #fff5f5, #ffffff);
-  text-align: center;
-  transition: all 0.4s cubic-bezier(0.25, 0.46, 0.45, 0.94);
-  box-sizing: border-box;
-  box-shadow: inset 0 2px 4px rgba(220, 53, 69, 0.05);
+    width: 100%;
+    padding: 20px !important;
+    border: 2px solid rgba(239, 68, 68, 0.2);
+    border-radius: 16px;
+    font-size: 18px;
+    font-weight: 700;
+    color: var(--danger-color);
+    background: linear-gradient(135deg, #fef2f2 0%, var(--light-color) 100%);
+    text-align: center;
+    transition: all var(--transition-normal);
+    box-sizing: border-box;
+    box-shadow: var(--shadow-sm);
+    outline: none;
 }
+
+/* Estados de foco e hover modernizados */
+.campo-duplo-novo input:focus,
 .input-unico-novo input:focus {
-  outline: none;
-  border-color: #dc3545;
-  box-shadow: 
-    0 0 0 4px rgba(220, 53, 69, 0.15),
-    inset 0 2px 4px rgba(220, 53, 69, 0.05);
-  transform: scale(1.02);
-  background: #ffffff;
+    border-color: var(--primary-color);
+    box-shadow: 0 0 0 4px rgba(99, 102, 241, 0.1);
+    transform: translateY(-1px);
 }
-.input-unico-novo {
-  text-align: center;
+
+.input-unico-novo input:focus {
+    border-color: var(--danger-color);
+    box-shadow: 0 0 0 4px rgba(239, 68, 68, 0.1);
 }
+
+.campo-duplo-novo input:hover:not(:focus),
+.input-unico-novo input:hover:not(:focus) {
+    border-color: var(--primary-hover);
+    transform: translateY(-1px);
+}
+
+/* Estados de erro elegantes */
 .campo-duplo-novo input.erro,
 .input-unico-novo input.erro {
-  border-color: #dc3545;
-  box-shadow: 
-    0 0 0 4px rgba(220, 53, 69, 0.15),
-    inset 0 2px 4px rgba(220, 53, 69, 0.05);
-  animation: shake-elegant 0.5s ease-in-out;
-}
-.input-unico-novo label {
-  display: block;
-  font-size: 14px;
-  font-weight: 600;
-  color: #dc3545;
-  margin-bottom: 10px;
-  letter-spacing: 0.5px;
-  text-transform: uppercase;
-  font-size: 12px;
-}
-
-/* ✅ STATUS COM ANIMAÇÃO FLUIDA */
-.status-calculo-novo {
-  text-align: center;
-  padding: 12px;
-  border-radius: 16px;
-  background: linear-gradient(145deg, #f8f9fa, #ffffff);
-  border: 2px solid #e9ecef;
-  margin-bottom: 6px; /* reduzir espaço entre status e botão */
-  margin-top: 6px; /* ajuste sutil no topo */
-  min-height: 50px;
-  display: flex;
-  flex-direction: column;
-  justify-content: center;
-  transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
-  box-shadow: 0 4px 15px rgba(0, 0, 0, 0.05);
-}
-
-.rotulo-status-novo {
-  font-size: 12px;
-  font-weight: 600;
-  color: #6c757d;
-  letter-spacing: 1px;
-  margin-bottom: 5px;
-  text-transform: uppercase;
-  transition: all 0.3s ease;
-}
-
-.valor-status-novo {
-  font-size: 18px;
-  font-weight: 700;
-  transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
-  text-shadow: 0 1px 2px rgba(0, 0, 0, 0.1);
-}
-
-.status-calculo-novo.status-positivo-ativo {
-  background: linear-gradient(145deg, rgba(40, 167, 69, 0.08), rgba(40, 167, 69, 0.03));
-  border-color: rgba(40, 167, 69, 0.3);
-  box-shadow: 0 6px 20px rgba(40, 167, 69, 0.15);
-}
-
-.status-calculo-novo.status-negativo-ativo {
-  background: linear-gradient(145deg, rgba(220, 53, 69, 0.08), rgba(220, 53, 69, 0.03));
-  border-color: rgba(220, 53, 69, 0.3);
-  box-shadow: 0 6px 20px rgba(220, 53, 69, 0.15);
-}
-
-.status-calculo-novo.animando {
-  transform: scale(1.02);
-  animation: pulse-status 0.6s ease-in-out;
-}
-
-@keyframes pulse-status {
-  0%, 100% { 
-    transform: scale(1.02); 
-  }
-  50% { 
-    transform: scale(1.05); 
-  }
-}
-
-/* ✅ BOTÃO COM ELEGÂNCIA MÁXIMA */
-.botao-enviar-novo {
-  width: 100%;
-  padding: 15px;
-  margin-top: 2px; /* Aproximação menor entre status e botão */
-  background: linear-gradient(135deg, #007bff 0%, #0056b3 50%, #004085 100%);
-  color: white;
-  border: none;
-  border-radius: 14px;
-  font-size: 16px;
-  font-weight: 700;
-  cursor: pointer;
-  transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
-  letter-spacing: 0.5px;
-  text-transform: uppercase;
-  font-size: 14px;
-  box-shadow: 
-    0 8px 25px rgba(0, 123, 255, 0.3),
-    0 4px 10px rgba(0, 0, 0, 0.1);
-  position: relative;
-  overflow: hidden;
-}
-
-.botao-enviar-novo::before {
-  content: '';
-  position: absolute;
-  top: 50%;
-  left: 50%;
-  width: 0;
-  height: 0;
-  background: rgba(255, 255, 255, 0.2);
-  border-radius: 50%;
-  transform: translate(-50%, -50%);
-  transition: all 0.6s ease;
-}
-
-.botao-enviar-novo:hover::before {
-  width: 300px;
-  height: 300px;
-}
-
-.botao-enviar-novo:hover {
-  transform: translateY(-3px) scale(1.02);
-  box-shadow: 
-    0 12px 35px rgba(0, 123, 255, 0.4),
-    0 6px 15px rgba(0, 0, 0, 0.15);
-  background: linear-gradient(135deg, #0056b3 0%, #004085 50%, #002752 100%);
-}
-
-.botao-enviar-novo:active {
-  transform: translateY(-1px) scale(0.98);
-  transition: all 0.1s ease;
-}
-
-.botao-enviar-novo:disabled {
-  background: linear-gradient(135deg, #6c757d, #495057);
-  cursor: not-allowed;
-  transform: none;
-  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
-}
-
-.botao-enviar-novo.carregando {
-  position: relative;
-  color: transparent;
-}
-
-.botao-enviar-novo.carregando::after {
-  content: '';
-  position: absolute;
-  top: 50%;
-  left: 50%;
-  transform: translate(-50%, -50%);
-  width: 22px;
-  height: 22px;
-  border: 3px solid transparent;
-  border-top: 3px solid white;
-  border-radius: 50%;
-  animation: spin-elegant 1s linear infinite;
-}
-
-@keyframes spin-elegant {
-  0% { 
-    transform: translate(-50%, -50%) rotate(0deg); 
-  }
-  100% { 
-    transform: translate(-50%, -50%) rotate(360deg); 
-  }
-}
-
-/* ✅ MENSAGENS DE STATUS COM ANIMAÇÕES ELEGANTES */
-.mensagem-status-input {
-  font-size: 12px;
-  margin-top: 6px; /* reduzir espaço vertical interno */
-  margin-bottom: 6px;
-  line-height: 1.5;
-  padding: 8px 12px;
-  border-radius: 8px;
-  display: block !important;
-  text-align: center;
-  font-weight: 500;
-  max-width: 100%;
-  box-sizing: border-box;
-  
-  /* ✅ ALTURA FIXA PARA EVITAR MOVIMENTAÇÃO */
-  min-height: 36px; /* reduzido para aproximar visualmente os campos */
-  height: auto;
-  
-  /* ✅ TRANSIÇÕES SUAVES E ELEGANTES */
-  transition: 
-    opacity 0.4s cubic-bezier(0.4, 0, 0.2, 1), 
-    transform 0.4s cubic-bezier(0.4, 0, 0.2, 1),
-    background-color 0.3s ease,
-    border-color 0.3s ease,
-    box-shadow 0.3s ease;
-  
-  /* ✅ FLEXBOX PARA CENTRALIZAR TEXTO VERTICALMENTE */
-  display: flex !important;
-  align-items: center;
-  justify-content: center;
-  
-  /* ✅ EVITAR MUDANÇAS BRUSCAS NO LAYOUT */
-  overflow: hidden;
-  word-wrap: break-word;
-  white-space: normal;
-  
-  /* ✅ ESTADO INICIAL - INVISÍVEL MAS OCUPANDO ESPAÇO */
-  opacity: 0;
-  transform: translateY(-5px);
-  
-  /* ✅ BACKGROUND PADRÃO TRANSPARENTE */
-  background: transparent;
-  border: 1px solid transparent;
-  box-shadow: none;
-}
-
-.mensagem-status-input.positivo {
-  opacity: 1 !important;
-  transform: translateY(0) !important;
-  color: #155724;
-  background: linear-gradient(145deg, rgba(40, 167, 69, 0.12), rgba(40, 167, 69, 0.06));
-  border: 1px solid rgba(40, 167, 69, 0.2);
-  border-left: 4px solid var(--gd-valor-positive-border, #28a745);
-  box-shadow: 
-    0 2px 8px rgba(40, 167, 69, 0.15),
-    0 1px 3px rgba(40, 167, 69, 0.1);
-}
-
-.mensagem-status-input.negativo {
-  opacity: 1 !important;
-  transform: translateY(0) !important;
-  color: #721c24;
-  background: linear-gradient(145deg, rgba(220, 53, 69, 0.12), rgba(220, 53, 69, 0.06));
-  border: 1px solid rgba(220, 53, 69, 0.2);
-  border-left: 4px solid var(--gd-valor-negative-border, #dc3545);
-  box-shadow: 
-    0 2px 8px rgba(220, 53, 69, 0.15),
-    0 1px 3px rgba(220, 53, 69, 0.1);
-}
-
-.mensagem-status-input.neutro {
-  opacity: 1 !important;
-  transform: translateY(0) !important;
-  color: #495057;
-  background: linear-gradient(145deg, rgba(108, 117, 125, 0.12), rgba(108, 117, 125, 0.06));
-  border: 1px solid rgba(108, 117, 125, 0.2);
-  border-left: 4px solid var(--gd-valor-zero-border, #6c757d);
-  box-shadow: 
-    0 2px 8px rgba(108, 117, 125, 0.15),
-    0 1px 3px rgba(108, 117, 125, 0.1);
-}
-
-.mensagem-status-input.animar {
-  animation: fadeInUp-suave 0.5s cubic-bezier(0.4, 0, 0.2, 1) forwards;
-}
-
-@keyframes fadeInUp-suave {
-  0% {
-    opacity: 0;
-    transform: translateY(-8px) scale(0.98);
-  }
-  50% {
-    opacity: 0.7;
-    transform: translateY(-2px) scale(1.01);
-  }
-  100% {
-    opacity: 1;
-    transform: translateY(0) scale(1);
-  }
-}
-.mensagem-status-input:empty {
-  min-height: 45px;
-  opacity: 0;
-}
-.mensagem-status-input:empty::after {
-  content: " ";
-  white-space: pre;
-  display: block;
-  height: 1px;
-}
-
-/* ✅ RESPONSIVIDADE ELEGANTE */
-@media (max-width: 480px) {
-  .mensagem-status-input {
-    font-size: 11px;
-    min-height: 40px;
-    padding: 6px 10px;
-    margin-top: 6px;
-    margin-bottom: 6px;
-  }
-}
-
-/* ✅ HOVER SUAVE NAS MENSAGENS VISÍVEIS */
-.mensagem-status-input.positivo:hover,
-.mensagem-status-input.negativo:hover,
-.mensagem-status-input.neutro:hover {
-  transform: translateY(-1px) !important;
-  box-shadow: 
-    0 4px 12px rgba(0, 0, 0, 0.1),
-    0 2px 6px rgba(0, 0, 0, 0.05);
-}
-
-/* ✅ CORREÇÃO PARA EVITAR FLICKER */
-.mensagem-status-input * {
-  transition: inherit;
-}
-
-/* ✅ SMOOTH SCROLL PARA O CONTAINER */
-.inputs-area-novo {
-  scroll-behavior: smooth;
-}
-
-/* ✅ ESTABILIZAÇÃO FINAL DO LAYOUT */
-.formulario-mentor-novo .campo-duplo-novo,
-.formulario-mentor-novo .input-unico-novo {
-  contain: layout style;
-  will-change: auto;
-}
-
-/* ✅ PREVENÇÃO DE SCROLL COM ELEGÂNCIA */
-body.modal-aberto {
-  overflow: hidden !important;
-  padding-right: 0 !important;
-  transition: all 0.3s ease;
-}
-
-/* ✅ ESTADOS DE VALIDAÇÃO ELEGANTES */
-.campo-duplo-novo,
-.input-unico-novo {
-  margin-bottom: 15px;
-  position: relative;
-  min-height: auto; /* Deixar altura automática */
-}
-
-.campo-duplo-novo input.sucesso {
-  border-color: #28a745;
-  box-shadow: 
-    0 0 0 4px rgba(40, 167, 69, 0.15),
-    inset 0 2px 4px rgba(40, 167, 69, 0.05);
-  animation: success-pulse 0.6s ease-in-out;
+    border-color: var(--danger-color);
+    box-shadow: 0 0 0 4px rgba(239, 68, 68, 0.1);
+    animation: shake-elegant 0.5s ease-in-out;
 }
 
 @keyframes shake-elegant {
-  0%, 100% { transform: translateX(0) translateY(-1px); }
-  10%, 30%, 50%, 70%, 90% { transform: translateX(-3px) translateY(-1px); }
-  20%, 40%, 60%, 80% { transform: translateX(3px) translateY(-1px); }
+    0%, 100% { transform: translateX(0) translateY(-1px); }
+    10%, 30%, 50%, 70%, 90% { transform: translateX(-3px) translateY(-1px); }
+    20%, 40%, 60%, 80% { transform: translateX(3px) translateY(-1px); }
+}
+
+/* Status de cálculo modernizado */
+.status-calculo-novo {
+    text-align: center;
+    padding: 20px;
+    border-radius: 20px;
+    background: linear-gradient(135deg, var(--gray-50) 0%, var(--light-color) 100%);
+    border: 2px solid var(--border-color);
+    margin: 20px 0 16px 0;
+    min-height: 80px;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    transition: all var(--transition-smooth);
+    box-shadow: var(--shadow-sm);
+}
+
+.rotulo-status-novo {
+    font-size: 11px;
+    font-weight: 700;
+    color: var(--text-secondary);
+    letter-spacing: 0.1em;
+    margin-bottom: 8px;
+    text-transform: uppercase;
+    transition: all var(--transition-normal);
+}
+
+.valor-status-novo {
+    font-size: 24px;
+    font-weight: 800;
+    transition: all var(--transition-smooth);
+    text-shadow: 0 1px 2px rgba(0, 0, 0, 0.1);
+    color: var(--text-primary);
+}
+
+.status-calculo-novo.status-positivo-ativo {
+    background: linear-gradient(135deg, #ecfdf5 0%, #f0fdf4 100%);
+    border-color: rgba(16, 185, 129, 0.3);
+    box-shadow: 0 8px 32px rgba(16, 185, 129, 0.1);
+}
+
+.status-calculo-novo.status-positivo-ativo .valor-status-novo {
+    color: var(--success-color);
+}
+
+.status-calculo-novo.status-negativo-ativo {
+    background: linear-gradient(135deg, #fef2f2 0%, #fff1f1 100%);
+    border-color: rgba(239, 68, 68, 0.3);
+    box-shadow: 0 8px 32px rgba(239, 68, 68, 0.1);
+}
+
+.status-calculo-novo.status-negativo-ativo .valor-status-novo {
+    color: var(--danger-color);
+}
+
+.status-calculo-novo.animando {
+    transform: scale(1.02);
+    animation: pulse-status 0.6s ease-in-out;
+}
+
+@keyframes pulse-status {
+    0%, 100% { 
+        transform: scale(1.02); 
+    }
+    50% { 
+        transform: scale(1.05); 
+    }
+}
+
+/* Botão de envio modernizado */
+.botao-enviar-novo {
+    width: 100%;
+    padding: 18px 24px;
+    margin-top: 20px;
+    background: var(--gradient-primary);
+    color: var(--light-color);
+    border: none;
+    border-radius: 18px;
+    font-size: 16px;
+    font-weight: 700;
+    cursor: pointer;
+    transition: all var(--transition-smooth);
+    letter-spacing: 0.05em;
+    text-transform: uppercase;
+    box-shadow: var(--shadow-lg);
+    position: relative;
+    overflow: hidden;
+}
+
+.botao-enviar-novo::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: -100%;
+    width: 100%;
+    height: 100%;
+    background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.2), transparent);
+    transition: left 0.5s ease;
+}
+
+.botao-enviar-novo:hover::before {
+    left: 100%;
+}
+
+.botao-enviar-novo:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 16px 32px rgba(99, 102, 241, 0.3);
+}
+
+.botao-enviar-novo:active {
+    transform: translateY(0);
+}
+
+.botao-enviar-novo:disabled {
+    background: var(--gray-400);
+    cursor: not-allowed;
+    transform: none;
+    box-shadow: var(--shadow-sm);
+}
+
+.botao-enviar-novo.carregando {
+    background: var(--gray-400);
+    cursor: wait;
+    position: relative;
+    color: transparent;
+}
+
+.botao-enviar-novo.carregando::after {
+    content: '';
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    width: 20px;
+    height: 20px;
+    border: 2px solid transparent;
+    border-top: 2px solid white;
+    border-radius: 50%;
+    animation: spin-elegant 1s linear infinite;
+}
+
+@keyframes spin-elegant {
+    0% { 
+        transform: translate(-50%, -50%) rotate(0deg); 
+    }
+    100% { 
+        transform: translate(-50%, -50%) rotate(360deg); 
+    }
+}
+
+.botao-enviar-novo.bloqueado {
+    background: var(--gradient-danger) !important;
+    cursor: not-allowed !important;
+    opacity: 0.9 !important;
+    animation: pulse-blocked 2s infinite;
+}
+
+@keyframes pulse-blocked {
+    0%, 100% { opacity: 0.9; }
+    50% { opacity: 0.7; }
+}
+
+.botao-enviar-novo.bloqueado:hover {
+    background: var(--gradient-danger) !important;
+    transform: none !important;
+    box-shadow: var(--shadow-lg) !important;
+}
+
+/* Mensagens de status modernizadas */
+.mensagem-status-input {
+    font-size: 12px;
+    margin-top: 8px;
+    margin-bottom: 4px;
+    line-height: 1.4;
+    padding: 10px 14px;
+    border-radius: 12px;
+    display: block !important;
+    text-align: center;
+    font-weight: 600;
+    max-width: 100%;
+    box-sizing: border-box;
+    min-height: 20px;
+    height: auto;
+    transition: 
+        opacity var(--transition-smooth), 
+        transform var(--transition-smooth),
+        background-color var(--transition-normal),
+        border-color var(--transition-normal),
+        box-shadow var(--transition-normal);
+    display: flex !important;
+    align-items: center;
+    justify-content: center;
+    overflow: hidden;
+    word-wrap: break-word;
+    white-space: normal;
+    opacity: 0;
+    transform: translateY(-8px);
+    background: transparent;
+    border: 1px solid transparent;
+    box-shadow: none;
+}
+
+.mensagem-status-input.positivo {
+    opacity: 1 !important;
+    transform: translateY(0) !important;
+    color: #155724;
+    background: linear-gradient(135deg, #ecfdf5 0%, #f0fdf4 100%);
+    border: 1px solid rgba(16, 185, 129, 0.2);
+    border-left: 3px solid var(--success-color);
+    box-shadow: var(--shadow-sm);
+}
+
+.mensagem-status-input.negativo {
+    opacity: 1 !important;
+    transform: translateY(0) !important;
+    color: #721c24;
+    background: linear-gradient(135deg, #fef2f2 0%, #fff1f1 100%);
+    border: 1px solid rgba(239, 68, 68, 0.2);
+    border-left: 3px solid var(--danger-color);
+    box-shadow: var(--shadow-sm);
+}
+
+.mensagem-status-input.neutro {
+    opacity: 1 !important;
+    transform: translateY(0) !important;
+    color: #495057;
+    background: linear-gradient(135deg, var(--gray-100) 0%, var(--light-color) 100%);
+    border: 1px solid var(--border-color);
+    border-left: 3px solid var(--gray-400);
+    box-shadow: var(--shadow-sm);
+}
+
+.mensagem-status-input.animar {
+    animation: fadeInUp-suave 0.5s var(--transition-smooth) forwards;
+}
+
+@keyframes fadeInUp-suave {
+    0% {
+        opacity: 0;
+        transform: translateY(-12px) scale(0.98);
+    }
+    50% {
+        opacity: 0.7;
+        transform: translateY(-2px) scale(1.01);
+    }
+    100% {
+        opacity: 1;
+        transform: translateY(0) scale(1);
+    }
+}
+
+.mensagem-status-input:empty {
+    min-height: 20px;
+    opacity: 0;
+}
+
+.mensagem-status-input:empty::after {
+    content: " ";
+    white-space: pre;
+    display: block;
+    height: 1px;
+}
+
+/* Hover suave nas mensagens visíveis */
+.mensagem-status-input.positivo:hover,
+.mensagem-status-input.negativo:hover,
+.mensagem-status-input.neutro:hover {
+    transform: translateY(-1px) !important;
+    box-shadow: var(--shadow-md);
+}
+
+/* Mensagem específica para RED */
+.mensagem-red-text {
+    margin-top: 12px;
+    font-size: 13px;
+    color: var(--text-secondary);
+    text-align: left;
+    padding: 16px;
+    border-radius: 16px;
+    background: linear-gradient(135deg, #fef2f2 0%, #fff1f1 100%);
+    border: 1px solid rgba(239, 68, 68, 0.1);
+    transition: all var(--transition-smooth);
+    opacity: 0;
+    transform: translateY(-8px);
+    pointer-events: none;
+    display: block;
+    width: 100%;
+    box-sizing: border-box;
+    line-height: 1.5;
+    font-weight: 500;
+}
+
+.formulario-mentor-novo.red-selecionado .mensagem-red-text {
+    display: block !important;
+    opacity: 1 !important;
+    transform: translateY(0) !important;
+    pointer-events: auto;
+}
+
+/* Estados especiais para validação de saldo */
+.campo-duplo-novo,
+.input-unico-novo {
+    margin-bottom: 16px;
+    position: relative;
+    min-height: auto;
+}
+
+.campo-duplo-novo input.sucesso {
+    border-color: var(--success-color);
+    box-shadow: 0 0 0 4px rgba(16, 185, 129, 0.1);
+    animation: success-pulse 0.6s ease-in-out;
 }
 
 @keyframes success-pulse {
-  0% { 
-    transform: scale(1) translateY(-1px); 
-    box-shadow: 0 0 0 4px rgba(40, 167, 69, 0.15); 
-  }
-  50% { 
-    transform: scale(1.02) translateY(-2px); 
-    box-shadow: 0 0 0 8px rgba(40, 167, 69, 0.25); 
-  }
-  100% { 
-    transform: scale(1) translateY(-1px); 
-    box-shadow: 0 0 0 4px rgba(40, 167, 69, 0.15); 
-  }
+    0% { 
+        transform: scale(1) translateY(-1px); 
+        box-shadow: 0 0 0 4px rgba(16, 185, 129, 0.1); 
+    }
+    50% { 
+        transform: scale(1.01) translateY(-2px); 
+        box-shadow: 0 0 0 8px rgba(16, 185, 129, 0.15); 
+    }
+    100% { 
+        transform: scale(1) translateY(-1px); 
+        box-shadow: 0 0 0 4px rgba(16, 185, 129, 0.1); 
+    }
 }
 
-/* ✅ AJUSTES FINAIS PARA TELAS MUITO PEQUENAS */
-@media (max-width: 400px) {
-  .formulario-mentor-novo {
-    width: calc(100vw - 30px) !important;
-    min-width: 280px !important;
-    max-width: calc(100vw - 30px) !important;
-    left: 50% !important;
-    right: auto !important;
-    transform: translate(-50%, -50%) scale(0.7) !important;
-    margin: 0 !important;
-  }
-  
-  .formulario-mentor-novo.ativo {
-    transform: translate(-50%, -50%) scale(1) !important;
-  }
-  
-  .formulario-mentor-novo.fechando {
-    transform: translate(-50%, -50%) scale(0.8) !important;
-  }
+/* Posicionamento especial para RED */
+.formulario-mentor-novo.red-selecionado {
+    padding-bottom: 100px;
 }
 
-/* ✅ ANIMAÇÕES GLOBAIS ELEGANTES */
+.formulario-mentor-novo.red-selecionado .botao-enviar-novo {
+    position: absolute;
+    left: 24px;
+    right: 24px;
+    bottom: 24px;
+    margin: 0;
+    width: auto;
+    z-index: 20;
+}
+
+.formulario-mentor-novo.red-selecionado .status-calculo-novo {
+    position: absolute;
+    left: 24px;
+    right: 24px;
+    bottom: 85px;
+    margin: 0;
+    z-index: 15;
+    width: auto;
+    box-shadow: var(--shadow-lg);
+}
+
+.formulario-mentor-novo.red-selecionado .input-unico-novo label[for="input-red"] {
+    margin-top: 20px;
+    display: block;
+}
+
+/* Scroll suave e estabilização */
+.inputs-area-novo {
+    scroll-behavior: smooth;
+}
+
+.formulario-mentor-novo .campo-duplo-novo,
+.formulario-mentor-novo .input-unico-novo {
+    contain: layout style;
+    will-change: auto;
+}
+
+/* Prevenção de scroll com elegância */
+body.modal-aberto {
+    overflow: hidden !important;
+    padding-right: 0 !important;
+    transition: all var(--transition-normal);
+}
+
+/* Animações globais elegantes */
 @keyframes fadeIn-elegant {
-  0% {
-    opacity: 0;
-    transform: translate(-50%, -60%) scale(0.7);
-  }
-  100% {
-    opacity: 1;
-    transform: translate(-50%, -50%) scale(1);
-  }
+    0% {
+        opacity: 0;
+        transform: translate(-50%, -54%);
+    }
+    100% {
+        opacity: 1;
+        transform: translate(-50%, -50%);
+    }
 }
 
 @keyframes fadeOut-elegant {
-  0% {
-    opacity: 1;
-    transform: translate(-50%, -50%) scale(1);
-  }
-  100% {
-    opacity: 0;
-    transform: translate(-50%, -45%) scale(0.8);
-  }
+    0% {
+        opacity: 1;
+        transform: translate(-50%, -50%);
+    }
+    100% {
+        opacity: 0;
+        transform: translate(-50%, -46%);
+    }
 }
 
-/* ✅ PREVENÇÃO DE CONFLITOS COM ELEGÂNCIA */
-.formulario-mentor-novo * {
-  box-sizing: border-box;
-}
-
-.formulario-mentor-novo .mentor-card,
-.formulario-mentor-novo .mentor-item,
-.formulario-mentor-novo .formulario-mentor {
-  all: initial;
-  font-family: "Poppins", sans-serif;
-}
-
-/* Animações globais */
 @keyframes slideInRight {
     from {
         transform: translateX(100%);
@@ -3322,46 +3777,337 @@ body.modal-aberto {
         opacity: 1;
     }
 }
-/* Estilos do Bloco 2 movidos para: css/estilo-campo-mes.css */
+
+/* Prevenção de conflitos */
+.formulario-mentor-novo .mentor-card,
+.formulario-mentor-novo .mentor-item,
+.formulario-mentor-novo .formulario-mentor {
+    all: initial;
+    font-family: 'Inter', sans-serif;
+}
+
+/* ===== RESPONSIVIDADE COMPLETA ===== */
+
+/* Tablets e telas médias */
+@media (max-width: 768px) {
+    .formulario-mentor-novo {
+        width: calc(100vw - 40px) !important;
+        min-width: 320px !important;
+        max-width: calc(100vw - 40px) !important;
+        padding: 20px !important;
+        margin: 20px;
+    }
+    
+    .mentor-foto-novo {
+        width: 72px;
+        height: 72px;
+    }
+    
+    .mentor-nome-novo {
+        font-size: 18px;
+    }
+    
+    .opcoes-container-novo {
+        grid-template-columns: 1fr;
+        gap: 8px;
+    }
+    
+    .opcao-novo {
+        padding: 12px;
+        flex-direction: row;
+        justify-content: center;
+    }
+    
+    .opcao-novo input[type="radio"] {
+        margin-bottom: 0;
+        margin-right: 8px;
+    }
+}
+
+/* Smartphones */
+@media (max-width: 480px) {
+    .formulario-mentor-novo {
+        width: calc(100vw - 20px) !important;
+        min-width: 280px !important;
+        max-width: calc(100vw - 20px) !important;
+        padding: 16px !important;
+        margin: 10px;
+        border-radius: 20px;
+    }
+    
+    .formulario-mentor-novo.ativo {
+        transform: translate(-50%, -50%) scale(1) !important;
+    }
+    
+    .formulario-mentor-novo.fechando {
+        transform: translate(-50%, -50%) scale(0.95) !important;
+    }
+
+    .mentor-foto-novo {
+        width: 64px;
+        height: 64px;
+        border-radius: 16px;
+    }
+
+    .mentor-nome-novo {
+        font-size: 16px;
+    }
+
+    .opcoes-container-novo {
+        gap: 6px;
+        margin: 16px 0;
+    }
+
+    .opcao-novo {
+        padding: 10px 8px;
+        border-radius: 12px;
+    }
+
+    .opcao-novo label {
+        font-size: 13px;
+    }
+
+    .mensagem-inicial-gestao {
+        padding: 16px;
+        margin: 12px 0 16px 0;
+    }
+
+    .mensagem-inicial-gestao i {
+        font-size: 28px;
+        margin-bottom: 12px;
+    }
+
+    .mensagem-inicial-gestao p {
+        font-size: 14px;
+    }
+
+    .inputs-duplos-novo.ativo .campo-duplo-novo {
+        margin-bottom: 12px !important;
+    }
+    
+    .inputs-duplos-novo.ativo .campo-duplo-novo label {
+        margin-bottom: 6px !important;
+        font-size: 12px;
+    }
+    
+    .inputs-duplos-novo.ativo .campo-duplo-novo input {
+        padding: 14px 16px !important;
+        font-size: 16px;
+        border-radius: 14px;
+    }
+
+    .input-unico-novo input {
+        padding: 16px !important;
+        font-size: 16px;
+        border-radius: 14px;
+    }
+
+    .status-calculo-novo {
+        padding: 16px;
+        margin: 16px 0 12px 0;
+        min-height: 70px;
+        border-radius: 16px;
+    }
+
+    .valor-status-novo {
+        font-size: 20px;
+    }
+
+    .botao-enviar-novo {
+        padding: 16px 20px;
+        margin-top: 16px !important;
+        font-size: 15px;
+        border-radius: 16px;
+    }
+
+    .mensagem-status-input {
+        font-size: 11px;
+        min-height: 18px;
+        padding: 8px 12px;
+        margin-top: 6px;
+        margin-bottom: 2px;
+        border-radius: 10px;
+    }
+
+    .mensagem-red-text {
+        margin-top: 8px;
+        padding: 12px;
+        font-size: 12px;
+        border-radius: 12px;
+    }
+
+    /* Ajustes para RED em mobile */
+    .formulario-mentor-novo.red-selecionado {
+        padding-bottom: 80px;
+    }
+
+    .formulario-mentor-novo.red-selecionado .botao-enviar-novo {
+        left: 16px;
+        right: 16px;
+        bottom: 16px;
+    }
+
+    .formulario-mentor-novo.red-selecionado .status-calculo-novo {
+        left: 16px;
+        right: 16px;
+        bottom: 72px;
+    }
+
+    /* Modais responsivos */
+    .modal-confirmacao-entrada .modal-conteudo-exclusao,
+    .modal-verificacao-deposito .modal-conteudo-aviso {
+        padding: 24px !important;
+        margin: 16px !important;
+        width: calc(100% - 32px) !important;
+        border-radius: 20px !important;
+    }
+
+    .modal-confirmacao-entrada .botoes-confirmacao,
+    .modal-verificacao-deposito .botoes-aviso {
+        flex-direction: column !important;
+        gap: 12px !important;
+    }
+
+    .modal-confirmacao-entrada .btn-modal,
+    .modal-verificacao-deposito .btn-modal-deposito {
+        width: 100% !important;
+        min-width: auto !important;
+    }
+
+    .modal-confirmacao-entrada .icone-aviso {
+        font-size: 48px !important;
+        margin-bottom: 16px !important;
+    }
+
+    .modal-verificacao-deposito .icone-aviso-deposito {
+        font-size: 56px !important;
+        margin-bottom: 20px !important;
+    }
+
+    .modal-confirmacao-entrada .texto-confirmacao {
+        font-size: 18px !important;
+        margin-bottom: 24px !important;
+    }
+
+    .modal-verificacao-deposito .titulo-aviso {
+        font-size: 22px !important;
+        margin-bottom: 12px !important;
+    }
+
+    .modal-verificacao-deposito .texto-aviso {
+        font-size: 16px !important;
+        margin-bottom: 28px !important;
+    }
+}
+
+/* Muito pequeno - fallback */
+@media (max-width: 320px) {
+    .formulario-mentor-novo {
+        width: calc(100vw - 16px) !important;
+        padding: 12px !important;
+        margin: 8px;
+    }
+    
+    .opcoes-container-novo {
+        grid-template-columns: 1fr;
+    }
+    
+    .opcao-novo {
+        padding: 8px;
+    }
+    
+    .mentor-foto-novo {
+        width: 56px;
+        height: 56px;
+    }
+    
+    .mentor-nome-novo {
+        font-size: 15px;
+    }
+}
+
+/* ===== ANIMAÇÕES E MICRO-INTERAÇÕES FINAIS ===== */
+
+/* Micro animação para cards de opção */
+.opcao-novo {
+    transition: all var(--transition-normal);
+}
+
+.opcao-novo:active {
+    transform: translateY(-1px) scale(0.98);
+}
+
+/* Animação suave para inputs */
+.campo-duplo-novo input,
+.input-unico-novo input {
+    transition: all var(--transition-normal);
+}
+
+.campo-duplo-novo input:focus,
+.input-unico-novo input:focus {
+    transform: translateY(-1px) scale(1.01);
+}
+
+/* Loading spinner melhorado */
+@keyframes spin-elegant {
+    0% { 
+        transform: translate(-50%, -50%) rotate(0deg); 
+    }
+    100% { 
+        transform: translate(-50%, -50%) rotate(360deg); 
+    }
+}
+
+/* Estados de hover para elementos interativos */
+.btn-fechar-novo,
+.opcao-novo,
+.botao-enviar-novo {
+    transition: all var(--transition-normal);
+}
+
+.btn-fechar-novo:active,
+.opcao-novo:active,
+.botao-enviar-novo:active {
+    transform: scale(0.98);
+}
+
+/* Efeito glassmorphism adicional para elementos importantes */
+.mentor-info-novo,
+.status-calculo-novo,
+.mensagem-inicial-gestao {
+    backdrop-filter: blur(10px);
+    -webkit-backdrop-filter: blur(10px);
+}
+
+/* Transições suaves para estados de carregamento */
+.botao-enviar-novo.carregando,
 .botao-enviar-novo.bloqueado {
-    background: #dc3545 !important;
-    cursor: not-allowed !important;
-    opacity: 0.7 !important;
-    transition: all 0.3s ease;
+    transition: all var(--transition-normal);
 }
 
-.botao-enviar-novo.bloqueado:hover {
-    background: #dc3545 !important;
-    transform: none !important;
+/* Final: garantir que todas as animações funcionem perfeitamente */
+* {
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
 }
 
-.mensagem-status-input.negativo {
-    color: #dc3545 !important;
-    font-size: 0.75rem !important;
-    font-weight: 600 !important;
-    animation: pulse 0.5s ease-in-out !important;
-    margin-top: 5px;
+/* Scrollbar personalizada para o modal */
+.formulario-mentor-novo::-webkit-scrollbar {
+    width: 6px;
 }
 
-@keyframes pulse {
-    0% { opacity: 0; transform: translateY(-5px); }
-    100% { opacity: 1; transform: translateY(0); }
+.formulario-mentor-novo::-webkit-scrollbar-track {
+    background: rgba(0, 0, 0, 0.05);
+    border-radius: 3px;
 }
 
-.formulario-mentor-overlay {
-    position: fixed;
-    top: 0;
-    left: 0;
-    width: 100%;
-    height: 100%;
-    background: rgba(0, 0, 0, 0.5);
-    z-index: 999999;
-    opacity: 0;
-    transition: opacity 0.3s ease;
+.formulario-mentor-novo::-webkit-scrollbar-thumb {
+    background: var(--gray-300);
+    border-radius: 3px;
 }
 
-.formulario-mentor-overlay.ativo {
-    opacity: 1;
+.formulario-mentor-novo::-webkit-scrollbar-thumb:hover {
+    background: var(--gray-400);
 }
 </style>
 
@@ -4348,7 +5094,15 @@ const SistemaCadastroNovo = {
         this.elementos.formulario.offsetHeight;
         
         requestAnimationFrame(() => {
-            this.elementos.formulario.classList.add('ativo');
+      this.elementos.formulario.classList.add('ativo');
+
+      // Ensure internal scroll at top to avoid visual jumps
+      try {
+        const modal = this.elementos.formulario;
+        if (modal) modal.scrollTop = 0;
+      } catch (err) {
+        console.warn('Erro ao resetar scroll do modal na abertura:', err);
+      }
         });
         
         this.estado.formularioAberto = true;
@@ -4898,6 +5652,24 @@ const SistemaCadastroNovo = {
                 this.elementos.labelTotal.textContent = textoLabel;
             }
         }
+
+    // --- Stabilize modal size to avoid growth when showing/hiding internal sections ---
+    try {
+      const modal = this.elementos.formulario;
+      if (modal) {
+        // Force a reflow and ensure scroll stays at top of content area
+        modal.style.willChange = 'transform, height';
+        // If content caused height change, limit visual jump by setting scroll
+        modal.scrollTop = 0;
+
+        // Small timeout to remove the will-change hint
+        setTimeout(() => {
+          modal.style.willChange = '';
+        }, 300);
+      }
+    } catch (err) {
+      console.warn('Erro ao estabilizar tamanho do modal:', err);
+    }
     },
 
     atualizarCalculo() {
@@ -5475,6 +6247,7 @@ window.excluirMentorDireto = function() {
 <!-- -->
     <script src="js/modal-confirmacao.js"></script>
     <script src="js/override-root-styles.js" defer></script>
+   
 </body>
 </html>
 

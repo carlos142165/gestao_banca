@@ -589,22 +589,59 @@ const MetaMensalManager = {
   },
 
   // Atualizar rótulo - bloco 2
+  // Atualizar rótulo - bloco 2 (VERSÃO CORRIGIDA COM MARGIN UNIFICADA)
+  // Atualizar rótulo - bloco 2 (VERSÃO CORRIGIDA COM MARGIN UNIFICADA + ESPAÇAMENTO PARA META SUPERADA)
+  // Atualizar rótulo - bloco 2 (VERSÃO CORRIGIDA COM MARGIN UNIFICADA + ESPAÇAMENTO PARA META SUPERADA)
   atualizarRotuloMensal(rotulo) {
     try {
       const rotuloElement = document.getElementById("rotulo-meta-2");
       if (rotuloElement) {
         rotuloElement.innerHTML = rotulo;
-        // Se o rótulo indicar "Restando" aplicamos uma classe para permitir
-        // ajustes CSS específicos (margem top controlada por variável :root)
-        try {
-          const texto = (rotuloElement.textContent || "").toLowerCase();
-          if (texto.includes("restando")) {
-            rotuloElement.classList.add("rotulo-restando");
-          } else {
-            rotuloElement.classList.remove("rotulo-restando");
-          }
-        } catch (e) {
-          // silencioso
+
+        // ===== CORREÇÃO: APLICAR MESMA MARGEM PARA TODOS OS TIPOS DE RÓTULO =====
+
+        // Remover todas as classes de controle de margem
+        rotuloElement.classList.remove(
+          "rotulo-restando",
+          "rotulo-meta-batida",
+          "rotulo-meta-superada",
+          "rotulo-com-extra-spacing"
+        );
+
+        // Verificar se existe valor tachado/superado (meta superada)
+        const metaValorElement = document.getElementById("meta-valor-2");
+        const temValorTachado =
+          metaValorElement &&
+          (metaValorElement.querySelector(".valor-tachado-2") ||
+            metaValorElement.classList.contains("meta-com-extra-2"));
+
+        // Analisar o conteúdo do rótulo para aplicar a classe correta
+        const texto = (rotuloElement.textContent || rotulo || "").toLowerCase();
+
+        if (texto.includes("restando")) {
+          rotuloElement.classList.add("rotulo-restando");
+          console.log("Aplicada classe: rotulo-restando");
+        } else if (
+          texto.includes("superada") ||
+          texto.includes("meta do mês superada")
+        ) {
+          rotuloElement.classList.add("rotulo-meta-superada");
+          // APENAS para meta superada adicionar espaçamento extra
+          rotuloElement.classList.add("rotulo-com-extra-spacing");
+          console.log(
+            "Aplicada classe: rotulo-meta-superada + rotulo-com-extra-spacing"
+          );
+        } else if (
+          texto.includes("batida") ||
+          texto.includes("meta do mês batida")
+        ) {
+          rotuloElement.classList.add("rotulo-meta-batida");
+          // Meta batida usa margem padrão (SEM espaçamento extra)
+          console.log("Aplicada classe: rotulo-meta-batida (margem padrão)");
+        } else if (texto.includes("meta do mês") || texto.includes("meta")) {
+          // Para qualquer outro rótulo relacionado à meta, aplicar classe para margem padrão
+          rotuloElement.classList.add("rotulo-meta-batida");
+          console.log("Aplicada classe padrão: rotulo-meta-batida");
         }
       } else {
         console.warn("Elemento rotulo-meta-2 não encontrado");
@@ -4599,3 +4636,293 @@ document.head.appendChild(cssEstavel);
 //
 //
 //
+// CORREÇÃO DO PLACAR ESTÁVEL - BLOCO 2
+// Sempre mostra 0×0 mesmo sem valores, evita piscar
+
+(function () {
+  "use strict";
+
+  console.log("Inicializando correção do placar estável...");
+
+  const PlacarEstavel = {
+    // Garantir que o placar sempre mostre 0×0
+    inicializarPlacarEstavel() {
+      const placar = document.getElementById("pontuacao-2");
+      if (!placar) {
+        console.warn("Placar #pontuacao-2 não encontrado");
+        return;
+      }
+
+      this.garantirEstruturaPlacar(placar);
+      this.aplicarValoresIniciais(placar);
+      this.configurarObservador(placar);
+    },
+
+    // Garantir que a estrutura HTML existe
+    garantirEstruturaPlacar(placar) {
+      let greenSpan = placar.querySelector(".placar-green-2");
+      let separador = placar.querySelector(".separador-2");
+      let redSpan = placar.querySelector(".placar-red-2");
+
+      // Criar elementos se não existirem
+      if (!greenSpan) {
+        greenSpan = document.createElement("span");
+        greenSpan.className = "placar-green-2";
+        placar.appendChild(greenSpan);
+      }
+
+      if (!separador) {
+        separador = document.createElement("span");
+        separador.className = "separador-2";
+        placar.appendChild(separador);
+      }
+
+      if (!redSpan) {
+        redSpan = document.createElement("span");
+        redSpan.className = "placar-red-2";
+        placar.appendChild(redSpan);
+      }
+
+      // Garantir ordem correta
+      if (placar.children[0] !== greenSpan) {
+        placar.insertBefore(greenSpan, placar.firstChild);
+      }
+      if (placar.children[1] !== separador) {
+        placar.insertBefore(separador, greenSpan.nextSibling);
+      }
+      if (placar.children[2] !== redSpan) {
+        placar.appendChild(redSpan);
+      }
+    },
+
+    // Aplicar valores iniciais estáveis
+    aplicarValoresIniciais(placar) {
+      const greenSpan = placar.querySelector(".placar-green-2");
+      const separador = placar.querySelector(".separador-2");
+      const redSpan = placar.querySelector(".placar-red-2");
+
+      if (greenSpan) {
+        greenSpan.textContent = "0";
+        greenSpan.style.display = "inline-block";
+        greenSpan.style.visibility = "visible";
+        greenSpan.style.opacity = "1";
+      }
+
+      if (separador) {
+        separador.textContent = "×";
+        separador.style.display = "inline-block";
+        separador.style.visibility = "visible";
+        separador.style.opacity = "1";
+        // Remover classe que causa transparência
+        separador.classList.remove("separador-transparente");
+      }
+
+      if (redSpan) {
+        redSpan.textContent = "0";
+        redSpan.style.display = "inline-block";
+        redSpan.style.visibility = "visible";
+        redSpan.style.opacity = "1";
+      }
+
+      // Marcar que o placar tem valores para controle CSS
+      placar.classList.add("placar-has-values");
+
+      console.log("Placar estabilizado: 0×0");
+    },
+
+    // Configurar observador para interceptar mudanças
+    configurarObservador(placar) {
+      const observer = new MutationObserver((mutations) => {
+        let needsReset = false;
+
+        mutations.forEach((mutation) => {
+          if (
+            mutation.type === "childList" ||
+            mutation.type === "characterData"
+          ) {
+            // Verificar se algum elemento ficou vazio ou foi removido
+            const greenSpan = placar.querySelector(".placar-green-2");
+            const separador = placar.querySelector(".separador-2");
+            const redSpan = placar.querySelector(".placar-red-2");
+
+            if (
+              !greenSpan ||
+              !separador ||
+              !redSpan ||
+              greenSpan.textContent.trim() === "" ||
+              separador.textContent.trim() === "" ||
+              redSpan.textContent.trim() === ""
+            ) {
+              needsReset = true;
+            }
+          }
+
+          if (
+            mutation.type === "attributes" &&
+            mutation.attributeName === "style"
+          ) {
+            // Verificar se algum elemento foi ocultado via estilo
+            const target = mutation.target;
+            if (
+              target.style.display === "none" ||
+              target.style.visibility === "hidden" ||
+              target.style.opacity === "0"
+            ) {
+              needsReset = true;
+            }
+          }
+        });
+
+        if (needsReset) {
+          // Pequeno delay para evitar conflito com outros scripts
+          setTimeout(() => {
+            this.garantirEstruturaPlacar(placar);
+            this.aplicarValoresIniciais(placar);
+          }, 50);
+        }
+      });
+
+      observer.observe(placar, {
+        childList: true,
+        subtree: true,
+        characterData: true,
+        attributes: true,
+        attributeFilter: ["style", "class"],
+      });
+
+      console.log("Observador do placar configurado");
+    },
+
+    // Atualizar valores mas manter sempre visível
+    atualizarValores(green, red) {
+      const placar = document.getElementById("pontuacao-2");
+      if (!placar) return;
+
+      const greenSpan = placar.querySelector(".placar-green-2");
+      const redSpan = placar.querySelector(".placar-red-2");
+      const separador = placar.querySelector(".separador-2");
+
+      // Garantir que os elementos existem
+      this.garantirEstruturaPlacar(placar);
+
+      // Atualizar valores mas nunca deixar vazio
+      if (greenSpan) {
+        greenSpan.textContent = green || "0";
+      }
+      if (redSpan) {
+        redSpan.textContent = red || "0";
+      }
+      if (separador) {
+        separador.textContent = "×";
+      }
+
+      // Sempre manter visível
+      this.forcarVisibilidade(placar);
+
+      console.log(`Placar atualizado: ${green || "0"}×${red || "0"}`);
+    },
+
+    // Forçar visibilidade de todos os elementos
+    forcarVisibilidade(placar) {
+      const elementos = placar.querySelectorAll(
+        ".placar-green-2, .separador-2, .placar-red-2"
+      );
+
+      elementos.forEach((elemento) => {
+        elemento.style.display = "inline-block";
+        elemento.style.visibility = "visible";
+        elemento.style.opacity = "1";
+
+        // Remover classes que causam invisibilidade
+        elemento.classList.remove("separador-transparente", "oculto", "hidden");
+      });
+
+      placar.classList.add("placar-has-values");
+    },
+
+    // Interceptar sistema existente
+    interceptarSistemaExistente() {
+      // Interceptar PlacarMensalManager se existir
+      if (window.PlacarMensalManager) {
+        const originalAplicar = window.PlacarMensalManager.aplicarPlacarMensal;
+
+        window.PlacarMensalManager.aplicarPlacarMensal = (placarData) => {
+          const wins = Number(placarData.wins) || 0;
+          const losses = Number(placarData.losses) || 0;
+
+          // Usar nossa função estável em vez da original
+          this.atualizarValores(wins, losses);
+        };
+
+        console.log("PlacarMensalManager interceptado");
+      }
+
+      // Interceptar outros sistemas que possam afetar o placar
+      const placar = document.getElementById("pontuacao-2");
+      if (placar) {
+        // Sobrescrever innerHTML com segurança
+        const originalInnerHTML = Object.getOwnPropertyDescriptor(
+          Element.prototype,
+          "innerHTML"
+        );
+
+        Object.defineProperty(placar, "innerHTML", {
+          set: function (value) {
+            originalInnerHTML.set.call(this, value);
+            // Após qualquer mudança no innerHTML, reestabilizar
+            setTimeout(() => {
+              PlacarEstavel.garantirEstruturaPlacar(this);
+              PlacarEstavel.aplicarValoresIniciais(this);
+            }, 10);
+          },
+          get: function () {
+            return originalInnerHTML.get.call(this);
+          },
+        });
+      }
+    },
+  };
+
+  // Função de inicialização
+  function inicializar() {
+    PlacarEstavel.inicializarPlacarEstavel();
+    PlacarEstavel.interceptarSistemaExistente();
+
+    // Verificação periódica para garantir estabilidade
+    setInterval(() => {
+      const placar = document.getElementById("pontuacao-2");
+      if (placar) {
+        const greenSpan = placar.querySelector(".placar-green-2");
+        const separador = placar.querySelector(".separador-2");
+        const redSpan = placar.querySelector(".placar-red-2");
+
+        // Se qualquer elemento estiver ausente ou vazio, reestabilizar
+        if (
+          !greenSpan ||
+          !separador ||
+          !redSpan ||
+          greenSpan.textContent.trim() === "" ||
+          separador.textContent.trim() === "" ||
+          redSpan.textContent.trim() === ""
+        ) {
+          console.log("Reestabilizando placar...");
+          PlacarEstavel.garantirEstruturaPlacar(placar);
+          PlacarEstavel.aplicarValoresIniciais(placar);
+        }
+      }
+    }, 3000);
+  }
+
+  // Aguardar DOM carregar
+  if (document.readyState === "loading") {
+    document.addEventListener("DOMContentLoaded", inicializar);
+  } else {
+    inicializar();
+  }
+
+  // Expor globalmente para debug
+  window.PlacarEstavel = PlacarEstavel;
+
+  console.log("Sistema de placar estável carregado");
+  console.log("Comando disponível: PlacarEstavel.atualizarValores(green, red)");
+})();

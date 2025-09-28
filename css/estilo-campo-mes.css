@@ -1653,6 +1653,18 @@ body .mentor-item:not(.sem-valores) .mentor-rank-externo {
   margin-top: var(--rotulo-restando-meta-mes-margin-top, -10px) !important;
 }
 
+/* Also ensure the same margin is applied when the meta status on #meta-valor-2
+   indicates the monthly target was reached or surpassed. The .meta-batida
+   / .meta-superada classes are added to #meta-valor-2 by JS/PHP, and the
+   rotulo element appears later in the DOM, so use the general sibling selector
+   (~) to target it regardless of intermediate elements. */
+#meta-valor-2.meta-batida ~ #rotulo-meta-2,
+#meta-valor-2.meta-superada ~ #rotulo-meta-2,
+#meta-valor-2.meta-batida ~ .widget-meta-rotulo-2,
+#meta-valor-2.meta-superada ~ .widget-meta-rotulo-2 {
+  margin-top: var(--rotulo-restando-meta-mes-margin-top, -10px) !important;
+}
+
 /* CODIGO DO CAMPO : widget-barra-container-2 / #barra-progresso-2
   - Container e barra visual que mostra o progresso em relação à meta (Bloco 2)
 */
@@ -5912,9 +5924,9 @@ html body .lista-dias .gd-linha-dia.valor-zero .valor,
 .gd-linha-dia .valor[style] {
   color: inherit !important;
 }
-/* =======================================================================================================================================================
+/* ===========================================================================================================================
        - TESTE - - TESTE - - TESTE - - TESTE - - TESTE - - TESTE - - TESTE - - TESTE - - TESTE - - TESTE - - TESTE - 
-  =======================================================================================================================================================*/
+  ============================================================================================================================*/
 /* ===== FORÇAR CORES FIXAS NO PLACAR - IGNORAR ESTADO DO SALDO ===== */
 
 /* Placar verde - SEMPRE verde, independente do saldo */
@@ -6212,4 +6224,31 @@ html
   .placar-dia
   .separador.texto-cinza {
   color: #94a3b8 !important;
+}
+/* ===== MARGEM PADRÃO PARA TODOS OS RÓTULOS DE META ===== */
+#rotulo-meta-2.rotulo-meta-batida,
+.widget-meta-rotulo-2.rotulo-meta-batida,
+#rotulo-meta-2.rotulo-meta-superada,
+.widget-meta-rotulo-2.rotulo-meta-superada,
+#rotulo-meta-2.rotulo-restando,
+.widget-meta-rotulo-2.rotulo-restando {
+  margin-top: var(--rotulo-restando-meta-mes-margin-top, -12px) !important;
+}
+
+/* ===== ESPAÇAMENTO EXTRA APENAS QUANDO HÁ VALOR TACHADO/SUPERADO ===== */
+#rotulo-meta-2.rotulo-com-extra-spacing,
+.widget-meta-rotulo-2.rotulo-com-extra-spacing {
+  margin-top: calc(
+    var(--rotulo-restando-meta-mes-margin-top, -12px) + 8px
+  ) !important;
+}
+
+/* ===== ALTERNATIVA: CONTROLE MAIS FINO DO ESPAÇAMENTO ===== */
+/* Se quiser controlar o espaçamento extra via variável CSS também */
+#rotulo-meta-2.rotulo-com-extra-spacing,
+.widget-meta-rotulo-2.rotulo-com-extra-spacing {
+  margin-top: calc(
+    var(--rotulo-restando-meta-mes-margin-top, -12px) +
+      var(--rotulo-extra-spacing, 8px)
+  ) !important;
 }
