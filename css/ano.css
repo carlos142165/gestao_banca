@@ -1,4 +1,9 @@
-﻿/**/
+﻿/* Garante que o espaçamento do separador do placar-mes da lista de meses use a variável root */
+.gd-linha-mes .placar-mes .placar.separador {
+  padding: 0 var(--placar-mes-separador-gap, 10px) !important;
+  margin: 0 var(--placar-mes-separador-gap, 10px) !important;
+}
+/**/
 /**/
 /**/
 /**/
@@ -18,13 +23,11 @@
 /**/
 /**/
 /**/
-/* --------------------------------------------------
+
+:root {
+  /* --------------------------------------------------
    - MARGIN TOP - MARGIN TOP - MARGIN TOP -
   -------------------------------------------------- */
-:root {
-  /* Ensure month-row (.gd-linha-mes) uses the same central variables as day-rows
-     If --gd-linha-dia variables exist elsewhere they will take precedence; these
-     provide fallbacks and aliasing so both widgets stay in sync. */
 
   --titulo-ano-bloco3-margin-top: 0px; /* (ícone + 2025) */
   --classe-mes-string-margin-top: 1px; /* gap acima de cada .gd-linha-mes */
@@ -57,10 +60,8 @@
   --rotulo-restando-meta-ano-margin-left: 0px; /* 'Restando p/ Meta do Ano' */
   --barra-progresso-bloco3-margin-left: 0px; /*  barra de progresso */
   --rotulo-saldo-bloco3-margin-left: 0px; /*  rotulo saldo + valor saldo */
+  --placar-mes-separador-gap: 2px; /* placar lista separador */
 
-  /* --------------------------------------------------
-   - MARGIN LEFT - MARGIN LEFT - MARGIN LEFT -
-    --resumo-ano-padding-top: 76px; /* altura do cabeçalho + folga */
   /**/
   /**/
   /**/
@@ -1097,11 +1098,14 @@
   max-width: 60px !important;
 
   gap: 3px !important;
-  padding: 0 2px !important;
+  padding: var(--placar-mes-padding-y, 0px) var(--placar-mes-padding-x, 2px) !important;
 
   order: 2 !important;
+  margin-top: var(--placar-mes-margin-top, 0px) !important;
+  margin-bottom: var(--placar-mes-margin-bottom, 0px) !important;
   margin-right: 8px !important;
-  margin-left: 0px !important;
+  margin-left: var(--placar-mes-margin-left, 0px) !important;
+  /* margin-left padrão 0px, mas controlável */
 }
 
 .gd-linha-mes .placar-mes .placar,
@@ -1113,13 +1117,9 @@
   line-height: inherit !important;
 }
 
-.gd-linha-mes .placar {
-  padding: 0 2px !important;
-}
-
 .gd-linha-mes .placar.separador {
-  padding: 0 2px !important;
-  margin: 0 1px !important;
+  padding: 0 var(--placar-mes-separador-gap, 8px) !important;
+  margin: 0 var(--placar-mes-separador-gap, 8px) !important;
 }
 
 .gd-linha-mes .placar-mes .verde-bold {
@@ -1135,7 +1135,7 @@
 .gd-linha-mes .placar-mes .separador {
   color: #94a3b8 !important;
   font-weight: 400 !important;
-  margin: 0 2px !important;
+  /* margin controlado apenas pela variável root */
 }
 
 .gd-linha-mes .placar-mes .texto-cinza {
@@ -3548,18 +3548,135 @@ html
 /* ===================================================================
    DEBUG - FORÇAR VISIBILIDADE (REMOVER APÓS CONFIRMAR FUNCIONAMENTO)
    =================================================================== */
+/**/
+/**/
+/**/
+/**/
+/**/
+/**/
+/**/
+/**/
+/**/
+/**/
+/**/
+/**/
+/**/
+/**/
+/**/
+/**/
+/**/
+/**/
+/**/
+/**/
+/**/
+/**/
+/**/
+/**/
+/**/
+/* ===================================================================
+  - PLACAR - PLACAR - PLACAR - PLACAR - PLACAR - PLACAR
+   =================================================================== */
 
-/* Descomente para debug visual
+/* ===================================================================
+   CORREÇÃO: VARIÁVEL ROOT PARA SEPARADOR DO PLACAR MENSAL
+   =================================================================== */
+
+/* Versão principal - funcionará para a maioria dos casos */
+.gd-linha-mes .placar-mes .placar.separador {
+  padding: 0 var(--placar-mes-separador-gap, 10px) !important;
+  margin: 0 var(--placar-mes-separador-gap, 10px) !important;
+}
+
+/* Versão com alta especificidade para garantir aplicação */
+.lista-meses .gd-linha-mes .placar-mes .placar.separador,
+.bloco-3 .lista-meses .gd-linha-mes .placar-mes .placar.separador,
+html
+  body
+  .container
+  .bloco.bloco-3
+  .resumo-ano
+  .lista-meses
+  .gd-linha-mes
+  .placar-mes
+  .placar.separador {
+  padding-left: var(--placar-mes-separador-gap, 10px) !important;
+  padding-right: var(--placar-mes-separador-gap, 10px) !important;
+  margin-left: var(--placar-mes-separador-gap, 10px) !important;
+  margin-right: var(--placar-mes-separador-gap, 10px) !important;
+}
+
+/* 3. SOBRESCREVER QUALQUER REGRA CONFLITANTE */
+
+/* Garantir que o separador use as variáveis root */
 .gd-linha-mes .placar-mes {
-  border: 1px solid red !important;
-  background: rgba(255, 255, 0, 0.1) !important;
+  /* Usar gap em vez de margin/padding individual */
+  gap: var(--placar-mes-gap, 8px) !important;
+  display: inline-flex !important;
+  align-items: center !important;
+  justify-content: center !important;
 }
 
+/* Remover margin/padding dos elementos internos para que o gap funcione */
 .gd-linha-mes .placar-mes .placar {
-  background: rgba(0, 255, 0, 0.2) !important;
+  margin: 0 !important;
+  padding: 0 !important;
 }
 
+/* Aplicar apenas no separador se necessário margin/padding adicional */
+.gd-linha-mes .placar-mes .placar.separador {
+  /* Usar as variáveis root para espaçamento extra se necessário */
+  margin-left: var(--placar-mes-separador-gap, 0px) !important;
+  margin-right: var(--placar-mes-separador-gap, 0px) !important;
+  padding-left: var(--placar-mes-separador-gap, 0px) !important;
+  padding-right: var(--placar-mes-separador-gap, 0px) !important;
+}
+
+/* 4. VERSÃO ALTERNATIVA USANDO APENAS GAP (RECOMENDADO) */
+
+/* Esta abordagem é mais limpa - usar gap em vez de margin/padding */
+.gd-linha-mes .placar-mes.usar-gap {
+  gap: var(--placar-mes-separador-gap, 10px) !important;
+  display: inline-flex !important;
+  align-items: center !important;
+  justify-content: center !important;
+}
+
+.gd-linha-mes .placar-mes.usar-gap .placar {
+  margin: 0 !important;
+  padding: 0 !important;
+}
+
+/* 5. FALLBACK PARA COMPATIBILIDADE */
+
+/* Se gap não funcionar, usar esta versão */
+.gd-linha-mes .placar-mes .placar:not(.separador) + .separador {
+  margin-left: var(--placar-mes-separador-gap, 10px) !important;
+}
+
+.gd-linha-mes .placar-mes .separador + .placar:not(.separador) {
+  margin-left: var(--placar-mes-separador-gap, 10px) !important;
+}
+
+/* 6. DEBUG - FORÇAR VISUALIZAÇÃO (REMOVER APÓS TESTE) */
+/*
 .gd-linha-mes .placar-mes .separador {
-  background: rgba(0, 0, 255, 0.2) !important;
+  background-color: rgba(255, 0, 0, 0.1) !important;
+  border: 1px solid red !important;
 }
 */
+
+/* 7. RESPONSIVIDADE DAS VARIÁVEIS */
+
+@media (max-width: 768px) {
+  :root {
+    --placar-mes-separador-gap: 8px;
+    --placar-mes-gap: 6px;
+  }
+}
+
+@media (max-width: 480px) {
+  :root {
+    --placar-mes-separador-gap: 6px;
+    --placar-mes-gap: 4px;
+  }
+}

@@ -5452,3 +5452,245 @@ html body #widget-meta .widget-conteudo-principal,
 }
 
 /* End of perf-mode overrides */
+.data-header-integrada {
+  background: linear-gradient(
+    90deg,
+    #9ea39d 0%,
+    #b5cfb1 50%,
+    #abb3ab 100%
+  ) !important;
+  margin-top: -1px !important;
+  padding-top: 1px !important;
+  border-radius: 20px 20px 0 0 !important;
+  overflow: hidden !important;
+}
+/* =======================================================================================
+   CORREÇÃO DEFINITIVA: Combate direto contra JavaScript + CSS Override Total
+   
+   Esta correção usa todas as técnicas possíveis para garantir bordas perfeitas
+   ======================================================================================= */
+
+/* 1. RESET TOTAL - Remover qualquer background/borda que cause vazamento */
+.widget-meta-item,
+.widget-meta-container,
+.widget-meta-row,
+.bloco-1,
+.container-resumos {
+  background: none !important;
+  background-color: transparent !important;
+  background-image: none !important;
+  border: none !important;
+  box-shadow: none !important;
+  outline: none !important;
+}
+
+/* 2. BACKGROUND SÓLIDO FORÇADO no container principal */
+.bloco-1 {
+  background: #f3f5f4 !important;
+  border-radius: 15px !important;
+  overflow: hidden !important;
+}
+
+/* 3. WIDGET META com fundo sólido */
+.widget-meta-item {
+  background: #f3f5f4 !important;
+  border-radius: 15px !important;
+  overflow: hidden !important;
+  position: relative !important;
+}
+
+/* 4. HEADER com TODAS as técnicas anti-JavaScript */
+.data-header-integrada {
+  /* Background sólido absoluto */
+  background: #9ea39d !important;
+  background-color: #9ea39d !important;
+  background-image: linear-gradient(
+    90deg,
+    #9ea39d 0%,
+    #b5cfb1 50%,
+    #abb3ab 100%
+  ) !important;
+
+  /* Bordas forçadas */
+  border-radius: 15px 15px 0 0 !important;
+  border-top-left-radius: 15px !important;
+  border-top-right-radius: 15px !important;
+  border-bottom-left-radius: 0 !important;
+  border-bottom-right-radius: 0 !important;
+
+  /* Estrutura */
+  position: relative !important;
+  top: 0 !important;
+  left: 0 !important;
+  right: 0 !important;
+  width: 100% !important;
+  height: 60px !important;
+
+  /* Remover espaçamentos */
+  margin: 0 !important;
+  margin-top: 0 !important;
+  margin-left: 0 !important;
+  margin-right: 0 !important;
+  margin-bottom: 0 !important;
+
+  /* Padding controlado */
+  padding: 0 12px !important;
+  padding-top: 0 !important;
+  padding-bottom: 0 !important;
+
+  /* Overflow e clipping */
+  overflow: hidden !important;
+  box-sizing: border-box !important;
+
+  /* Anti-transparência */
+  opacity: 1 !important;
+
+  /* Display e layout */
+  display: flex !important;
+  align-items: center !important;
+  justify-content: space-between !important;
+
+  /* Z-index */
+  z-index: 9999 !important;
+
+  /* Clipping de fundo */
+  background-clip: padding-box !important;
+  -webkit-background-clip: padding-box !important;
+
+  /* Composição limpa */
+  transform: translateZ(0) !important;
+  -webkit-transform: translateZ(0) !important;
+  backface-visibility: hidden !important;
+  -webkit-backface-visibility: hidden !important;
+}
+
+/* 5. PSEUDO-ELEMENTO para garantir fundo sólido */
+.data-header-integrada::before {
+  content: "";
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: linear-gradient(90deg, #9ea39d 0%, #b5cfb1 50%, #abb3ab 100%);
+  border-radius: 15px 15px 0 0;
+  z-index: -1;
+  pointer-events: none;
+}
+
+/* 6. MÁSCARA para esconder qualquer vazamento */
+.widget-meta-item::before {
+  content: "";
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: 60px;
+  background: linear-gradient(90deg, #9ea39d 0%, #b5cfb1 50%, #abb3ab 100%);
+  border-radius: 15px 15px 0 0;
+  z-index: 1;
+  pointer-events: none;
+}
+
+/* 7. CONTEÚDO do header acima da máscara */
+.data-header-integrada > * {
+  position: relative;
+  z-index: 2;
+}
+
+/* 8. OVERRIDE para QUALQUER estilo inline */
+.data-header-integrada[style] {
+  background: linear-gradient(
+    90deg,
+    #9ea39d 0%,
+    #b5cfb1 50%,
+    #abb3ab 100%
+  ) !important;
+  border-radius: 15px 15px 0 0 !important;
+  margin: 0 !important;
+}
+
+/* 9. ESPECIFICIDADE MÁXIMA - Todos os seletores possíveis */
+html body .main-content .container .bloco.bloco-1 .data-header-integrada,
+.widget-meta-item .data-header-integrada,
+.bloco-1 .widget-meta-item .data-header-integrada,
+#widget-meta > .data-header-integrada,
+#widget-meta .data-header-integrada,
+.container-resumos .data-header-integrada,
+.widget-meta-container .data-header-integrada,
+.widget-meta-row .data-header-integrada {
+  background: linear-gradient(
+    90deg,
+    #9ea39d 0%,
+    #b5cfb1 50%,
+    #abb3ab 100%
+  ) !important;
+  background-color: #9ea39d !important;
+  border-radius: 15px 15px 0 0 !important;
+  margin: 0 !important;
+  padding: 0 12px !important;
+  height: 60px !important;
+  overflow: hidden !important;
+  position: relative !important;
+  z-index: 9999 !important;
+}
+
+/* 10. TÉCNICA FINAL: CSS Animation para sobrescrever JavaScript continuamente */
+@keyframes forceHeaderStyle {
+  0%,
+  100% {
+    background: linear-gradient(90deg, #9ea39d 0%, #b5cfb1 50%, #abb3ab 100%);
+    border-radius: 15px 15px 0 0;
+    margin: 0;
+    overflow: hidden;
+  }
+}
+
+.data-header-integrada {
+  animation: forceHeaderStyle 0.1s infinite;
+}
+
+/* 11. FALLBACK VISUAL: Border sólida como última linha de defesa */
+.data-header-integrada {
+  border-top: 3px solid #9ea39d !important;
+  border-left: 3px solid #9ea39d !important;
+  border-right: 3px solid #9ea39d !important;
+  border-bottom: none !important;
+}
+
+/* 12. CONTAINER PRINCIPAL - Fundo sólido garantido */
+.bloco-1 {
+  background: #f3f5f4 !important;
+  background-color: #f3f5f4 !important;
+  background-image: none !important;
+}
+
+/* 13. OVERRIDE JAVASCRIPT ESPECÍFICO - Interceptar variáveis CSS */
+:root {
+  --header-bg: linear-gradient(
+    90deg,
+    #9ea39d 0%,
+    #b5cfb1 50%,
+    #abb3ab 100%
+  ) !important;
+  --header-radius: 15px 15px 0 0 !important;
+}
+
+.data-header-integrada {
+  background: var(--header-bg) !important;
+  border-radius: var(--header-radius) !important;
+}
+
+/* 14. ÚLTIMA TENTATIVA: Usar outline para simular borda */
+.data-header-integrada {
+  outline: 3px solid #9ea39d;
+  outline-offset: -3px;
+}
+
+/* 15. DEBUG: Para testar se CSS está funcionando */
+.debug-force-red .data-header-integrada {
+  background: red !important;
+  border: 5px solid blue !important;
+}
+
+/* Para ativar debug, adicione classe 'debug-force-red' ao .bloco-1 */

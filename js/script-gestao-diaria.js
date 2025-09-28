@@ -3749,7 +3749,7 @@ function atualizarIndicadorPeriodoHeader(periodo) {
       icone: "fa-calendar-days",
     },
     ano: {
-      texto: `Ano ${new Date().getFullYear()}`,
+      texto: `${new Date().getFullYear()}`,
       icone: "fa-calendar",
     },
   };

@@ -1,35 +1,39 @@
 /* ===== CSS PARA MENSAGENS TOAST DISCRETAS ===== */
 
 /* Toast principal da página - Centralizado abaixo do menu */
+/* Toast fixo no topo direito, sem background, cor amarela */
 .toast {
-  /* Toast como overlay fixo no topo, não deve influenciar o fluxo do documento */
   position: fixed;
-  top: 22px; /* leve no topo */
-  left: 50%;
-  transform: translateX(-50%) translateY(-10px);
-  min-width: auto;
-  max-width: 90%;
-  padding: 8px 12px;
+  top: 24px;
+  right: 24px;
+  left: auto;
+  transform: none;
+  min-width: 260px;
+  max-width: 400px;
+  padding: 10px 18px;
   border-radius: 6px;
-  font-size: 14px;
-  font-weight: 500;
+  font-size: 15px;
+  font-weight: 600;
   font-family: "Segoe UI", sans-serif;
-  text-align: center;
-  background: rgba(255, 255, 255, 0.95);
-  border: 1px solid rgba(0, 0, 0, 0.06);
-  box-shadow: 0 6px 20px rgba(0, 0, 0, 0.08);
+  text-align: left;
+  background: transparent !important;
+  border: none !important;
+  box-shadow: none !important;
   z-index: 99999;
   opacity: 0;
-  transition: opacity 0.35s ease, transform 0.35s ease;
-  display: none; /* oculto por padrão */
-  padding-left: 28px;
+  transition: opacity 0.35s ease, top 0.35s ease;
+  display: none;
+  color: #ffd600 !important;
+  padding-left: 0;
 }
 
 /* Estados do toast */
 .toast.ativo {
   display: block !important;
   opacity: 1 !important;
-  transform: translateX(-50%) translateY(0) !important;
+  top: 24px !important;
+  right: 24px !important;
+  color: #ffd600 !important;
 }
 
 .toast.hidden {
@@ -118,33 +122,14 @@
 }
 
 /* Toast dentro do modal de gerenciamento - Dentro do formulário */
-#toastModal {
-  padding: 10px 15px !important;
-  border-radius: 6px;
-  font-size: 13px;
-  font-weight: 500;
-  text-align: center;
-  margin-top: 10px;
-  opacity: 0;
-  transition: opacity 0.3s ease;
-  border: 1px solid transparent;
-  display: block; /* Sempre visível como elemento */
+.toast.sucesso,
+.toast.erro,
+.toast.aviso,
+.toast.info {
+  color: #ffd600 !important;
 }
-
-#toastModal.show {
-  opacity: 1 !important;
-}
-
-#toastModal.sucesso {
-  background-color: #d4edda !important;
-  color: #155724 !important;
-  border-color: #c3e6cb !important;
-}
-
-#toastModal.erro {
-  background-color: #f8d7da !important;
-  color: #721c24 !important;
-  border-color: #f5c6cb !important;
+.toast::before {
+  display: none !important;
 }
 
 #toastModal.aviso {
@@ -243,8 +228,9 @@
   /* Toast de status (centralizado no topo) */
   position: fixed;
   top: 22px;
-  left: 50%;
-  transform: translateX(-50%) translateY(-10px);
+  right: 24px;
+  transform: translateY(-10px);
+  left: auto;
   padding: 8px 12px;
   border-radius: 6px;
   font-size: 14px;
@@ -322,32 +308,38 @@
   position: relative;
 }
 
-#toast-msg::before {
-  position: absolute;
-  left: 0;
-  top: 50%;
-  transform: translateY(-50%);
-  font-family: "Font Awesome 6 Free";
-  font-weight: 900;
-  font-size: 14px;
-  content: "\f05a";
-  color: #333;
-}
-
-#toast-msg.show {
-  display: block;
-  opacity: 1;
-}
-
-#toast-msg.hidden {
-  display: none;
-  opacity: 0;
-}
-
-/* Toast dentro de modais - ESTILO ORIGINAL MANTIDO */
-#toastModal {
-  padding: 10px 15px;
+#toast-msg {
+  position: fixed;
+  top: 24px;
+  right: 24px;
+  left: auto;
+  min-width: 260px;
+  max-width: 400px;
+  padding: 10px 18px;
   border-radius: 6px;
+  font-size: 15px;
+  font-weight: 600;
+  font-family: "Segoe UI", sans-serif;
+  text-align: left;
+  background: transparent !important;
+  border: none !important;
+  box-shadow: none !important;
+  z-index: 10000;
+  opacity: 0;
+  transition: opacity 0.3s ease;
+  display: none;
+  color: #ffd600 !important;
+}
+#toast-msg.show {
+  display: block !important;
+  opacity: 1 !important;
+  color: #ffd600 !important;
+}
+#toast-msg.hidden {
+  display: none !important;
+  opacity: 0 !important;
+}
+#toast-msg {
   font-size: 13px;
   font-weight: 500;
   text-align: center;
@@ -401,10 +393,11 @@
   display: block;
   opacity: 1;
 }
-
 #toast-msg.hidden {
+  animation: slideInRight 0.3s ease-out;
   display: none;
   opacity: 0;
+  animation: slideInRight 0.3s ease-out;
 }
 
 /* Animações - Ajustadas para posição central */

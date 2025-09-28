@@ -231,20 +231,21 @@ document.addEventListener("DOMContentLoaded", () => {
   }
 
   // ✅ FUNÇÃO PARA EXIBIR NOTIFICAÇÕES
-  function exibirNotificacao(mensagem, tipo = "info") {
-    const toastContainer = document.getElementById("toastModal");
-    if (!toastContainer) {
-      console.warn("⚠️ Container de notificação não encontrado");
-      return;
+  // Exibe todas as mensagens toast em um único local no topo direito, cor amarela, sem background
+  function exibirNotificacao(mensagem, tipo = "aviso") {
+    let toast = document.getElementById("toast-msg");
+    if (!toast) {
+      toast = document.createElement("div");
+      toast.id = "toast-msg";
+      toast.className = "toast";
+      document.body.appendChild(toast);
     }
-
-    toastContainer.textContent = mensagem;
-    toastContainer.className = `show ${tipo}`;
-
+    toast.textContent = mensagem;
+    toast.className = `toast ativo ${tipo}`;
     setTimeout(() => {
-      toastContainer.className = "hide";
-      toastContainer.textContent = "";
-    }, 3000);
+      toast.className = "toast";
+      toast.textContent = "";
+    }, 3500);
   }
 
   // ✅ FUNÇÃO CENTRALIZADA PARA ATUALIZAÇÕES IMEDIATAS
@@ -771,27 +772,28 @@ document.addEventListener("DOMContentLoaded", () => {
     }
   }
 
-  function exibirToast(mensagem, tipo = "info") {
-    const toastContainer = document.getElementById("toastModal");
-    if (!toastContainer) return;
-
-    toastContainer.textContent = mensagem;
-    toastContainer.className = `show ${tipo}`;
-
+  // Exibe todas as mensagens toast em um único local no topo direito, cor amarela, sem background
+  function exibirToast(mensagem, tipo = "aviso") {
+    let toast = document.getElementById("toast-msg");
+    if (!toast) {
+      toast = document.createElement("div");
+      toast.id = "toast-msg";
+      toast.className = "toast";
+      document.body.appendChild(toast);
+    }
+    toast.textContent = mensagem;
+    toast.className = `toast ativo ${tipo}`;
     setTimeout(() => {
-      toastContainer.className = "hide";
-      toastContainer.textContent = "";
-    }, 3000);
-
+      toast.className = "toast";
+      toast.textContent = "";
+    }, 3500);
     if (tipo === "sucesso") {
       const campoValor = document.getElementById("valorBanca");
       if (campoValor) campoValor.value = "";
-
       const dropdownToggle = document.querySelector(".dropdown-toggle");
       if (dropdownToggle) {
-        dropdownToggle.innerHTML = `<i class="fa-solid fa-hand-pointer"></i> Selecione Uma Opção <i class="fa-solid fa-chevron-down"></i>`;
+        dropdownToggle.innerHTML = `<i class=\"fa-solid fa-hand-pointer\"></i> Selecione Uma Opção <i class=\"fa-solid fa-chevron-down\"></i>`;
       }
-
       const campoAcao = document.getElementById("acaoBanca");
       if (campoAcao) campoAcao.value = "";
     }

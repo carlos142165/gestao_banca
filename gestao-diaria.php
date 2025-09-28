@@ -2210,7 +2210,7 @@ for ($mes = 1; $mes <= 12; $mes++) {
 
     <div class="placar-mes">
       <span class="placar placar-green '.$placar_cinza_mes.'">'.(int)$dados_mes_ano['total_green'].'</span>
-      <span class="placar separador '.$placar_cinza_mes.'">×</span>
+      <span class="placar separador '.$placar_cinza_mes.'">x</span>
       <span class="placar placar-red '.$placar_cinza_mes.'">'.(int)$dados_mes_ano['total_red'].'</span>
     </div>
 
