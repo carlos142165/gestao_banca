@@ -2561,12 +2561,12 @@ document.addEventListener('DOMContentLoaded', function() {
 
         <!-- Input único para Red -->
         <div class="input-unico-novo" id="input-unico">
-          <label for="input-red">Valor Red</label>
-          <input type="text" id="input-red" name="valor_red" placeholder="R$ 0,00">
-        <div class="mensagem-status-input"></div>
-        <!-- Mensagem específica para RED (visível somente quando 'Red' estiver selecionado) -->
-        <div class="mensagem-red-text" role="note" aria-hidden="true" style="display:none;">Cada red é um degrau, não um tropeço — quem sobe com consistência alcança o topo. Foco na estratégia, disciplina nas escolhas, e o lucro vira consequência.</div>
-        </div>
+                    <!-- Mensagem específica para RED (visível somente quando 'Red' estiver selecionado) -->
+                
+                    <label for="input-red">Valor Red</label>
+                    <input type="text" id="input-red" name="valor_red" placeholder="R$ 0,00">
+                    <div class="mensagem-status-input"></div>
+                </div>
       </div>
 
       <!-- Status do cálculo -->
@@ -3299,14 +3299,16 @@ document.addEventListener('DOMContentLoaded', function() {
 
 /* Campo único (RED) modernizado */
 .input-unico-novo {
-    margin-top: 16px !important;
-    margin-bottom: 20px !important;
+    margin-top: 28px !important;
+    margin-bottom: 36px !important;
     text-align: center;
+    padding-bottom: 24px !important;
 }
 
 .input-unico-novo.ativo {
-    margin-top: 16px !important;
-    margin-bottom: 20px !important;
+    margin-top: 28px !important;
+    margin-bottom: 36px !important;
+    padding-bottom: 32px !important;
 }
 
 .input-unico-novo label {
@@ -3454,6 +3456,7 @@ document.addEventListener('DOMContentLoaded', function() {
     box-shadow: var(--shadow-lg);
     position: relative;
     overflow: hidden;
+    margin-top: 5px !important;
 }
 
 .botao-enviar-novo::before {
@@ -3640,14 +3643,16 @@ document.addEventListener('DOMContentLoaded', function() {
 
 /* Mensagem específica para RED */
 .mensagem-red-text {
-    margin-top: 12px;
-    font-size: 13px;
-    color: var(--text-secondary);
-    text-align: left;
-    padding: 16px;
-    border-radius: 16px;
-    background: linear-gradient(135deg, #fef2f2 0%, #fff1f1 100%);
-    border: 1px solid rgba(239, 68, 68, 0.1);
+    margin-bottom: 10px !important;
+    margin-top: 0 !important;
+    font-size: 14px !important;
+    color: #b91c1c !important;
+    text-align: center !important;
+    padding: 10px 14px 10px 14px !important;
+    border-radius: 8px !important;
+    background: linear-gradient(90deg, #fef2f2 0%, #f8fafc 100%) !important;
+    border: 1px solid rgba(239, 68, 68, 0.13) !important;
+    box-shadow: 0 2px 8px rgba(239, 68, 68, 0.07) !important;
     transition: all var(--transition-smooth);
     opacity: 0;
     transform: translateY(-8px);
@@ -3656,7 +3661,9 @@ document.addEventListener('DOMContentLoaded', function() {
     width: 100%;
     box-sizing: border-box;
     line-height: 1.5;
-    font-weight: 500;
+    font-weight: 600 !important;
+    position: relative;
+    z-index: 2;
 }
 
 .formulario-mentor-novo.red-selecionado .mensagem-red-text {
