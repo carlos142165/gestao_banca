@@ -821,6 +821,25 @@ document.addEventListener("DOMContentLoaded", () => {
   // ===== ATUALIZAÇÃO EM TEMPO REAL DOS CÁLCULOS =====
   // ===== ATUALIZAÇÃO EM TEMPO REAL DOS CÁLCULOS =====
   // ===== ATUALIZAÇÃO EM TEMPO REAL DOS CÁLCULOS =====
+  // ===== FUNÇÃO PARA CALCULAR DIAS RESTANTES DO MÊS =====
+  // ===== FUNÇÃO PARA CALCULAR DIAS RESTANTES DO MÊS =====
+  function calcularDiasRestantesMes() {
+    const hoje = new Date();
+    const ultimoDiaMes = new Date(hoje.getFullYear(), hoje.getMonth() + 1, 0);
+    const diasRestantes = ultimoDiaMes.getDate() - hoje.getDate() + 1;
+    return diasRestantes;
+  }
+
+  // ===== FUNÇÃO PARA CALCULAR DIAS RESTANTES DO ANO =====
+  function calcularDiasRestantesAno() {
+    const hoje = new Date();
+    const fimAno = new Date(hoje.getFullYear(), 11, 31);
+    const diffTime = fimAno - hoje;
+    const diasRestantes = Math.ceil(diffTime / (1000 * 60 * 60 * 24)) + 1;
+    return diasRestantes;
+  }
+
+  // ===== ATUALIZAÇÃO EM TEMPO REAL DOS CÁLCULOS =====
   function atualizarUnidadeEntradaTempoReal() {
     const diaria = document.getElementById("porcentagem");
     const unidade = document.getElementById("unidadeMeta");
@@ -840,7 +859,7 @@ document.addEventListener("DOMContentLoaded", () => {
 
     if (!diaria || !unidade || !resultadoUnidadeEntrada) return;
 
-    // ✅ DETERMINAR TIPO DE META SELECIONADO
+    // Determinar tipo de meta selecionado
     let tipoMetaSelecionado = "turbo";
     if (metaFixaRadio && metaFixaRadio.checked) {
       tipoMetaSelecionado = "fixa";
@@ -848,7 +867,7 @@ document.addEventListener("DOMContentLoaded", () => {
       tipoMetaSelecionado = "turbo";
     }
 
-    // ✅ EXTRAIR LUCRO DO LABEL
+    // Extrair lucro do label
     let lucroAtual = 0;
     if (lucroTotalLabel && lucroTotalLabel.textContent) {
       const lucroTexto = lucroTotalLabel.textContent
@@ -857,13 +876,24 @@ document.addEventListener("DOMContentLoaded", () => {
       lucroAtual = parseFloat(lucroTexto) || 0;
     }
 
-    // ✅ CALCULAR BANCA BASEADO NO TIPO DE META
+    // Banca total com lucro/prejuízo
     let bancaAtual = valorOriginalBanca || 0;
     let bancaSemLucro = bancaAtual - lucroAtual;
 
-    // ✅ PARA META FIXA, USAR BANCA SEM LUCRO
-    let bancaParaCalculo =
-      tipoMetaSelecionado === "fixa" ? bancaSemLucro : bancaAtual;
+    // ✅ LÓGICA CORRIGIDA: SE LUCRO É NEGATIVO, AMBAS USAM A MESMA BASE
+    let bancaParaCalculo;
+
+    if (lucroAtual < 0) {
+      // LUCRO NEGATIVO (PREJUÍZO): Ambas as metas usam banca com prejuízo
+      bancaParaCalculo = bancaAtual; // depósitos - saques + prejuízo (que subtrai)
+    } else {
+      // LUCRO POSITIVO: Depende do tipo de meta
+      if (tipoMetaSelecionado === "fixa") {
+        bancaParaCalculo = bancaSemLucro; // sem lucro
+      } else {
+        bancaParaCalculo = bancaAtual; // com lucro
+      }
+    }
 
     // Extrair valor digitado no input
     const valorInputRaw = valorBancaInput
@@ -899,25 +929,47 @@ document.addEventListener("DOMContentLoaded", () => {
     const unidadeRaw = unidade.value.replace(/\D/g, "");
     const unidadeInt = parseInt(unidadeRaw) || 0;
 
-    // ✅ CÁLCULO DA UNIDADE DE ENTRADA
+    // Cálculo da unidade de entrada
     const unidadeEntrada = bancaFutura * (percentFloat / 100);
 
-    // ✅ CÁLCULO DA META DIÁRIA
+    // Cálculo da meta diária
     const metaDiaria = unidadeEntrada * unidadeInt;
+
+    // Calcular dias restantes
+    const diasRestantesMes = calcularDiasRestantesMes();
+    const diasRestantesAno = calcularDiasRestantesAno();
+
+    // Calcular metas mensais e anuais
+    const metaMensal = metaDiaria * diasRestantesMes;
+    const metaAnual = metaDiaria * diasRestantesAno;
 
     console.log(`📊 Cálculo em tempo real:
     Tipo Meta: ${tipoMetaSelecionado.toUpperCase()}
-    Banca Total (com lucro): R$ ${bancaAtual.toFixed(2)}
-    Lucro: R$ ${lucroAtual.toFixed(2)}
+    Lucro: R$ ${lucroAtual.toFixed(2)} ${
+      lucroAtual < 0 ? "(PREJUÍZO)" : "(LUCRO)"
+    }
+    Banca Total: R$ ${bancaAtual.toFixed(2)}
     Banca Sem Lucro: R$ ${bancaSemLucro.toFixed(2)}
-    Banca Usada (${tipoMetaSelecionado}): R$ ${bancaParaCalculo.toFixed(2)}
+    Banca Usada: R$ ${bancaParaCalculo.toFixed(2)}
+    Lógica: ${
+      lucroAtual < 0
+        ? "PREJUÍZO - Ambas usam banca com prejuízo"
+        : "LUCRO - " +
+          (tipoMetaSelecionado === "fixa"
+            ? "Fixa sem lucro"
+            : "Turbo com lucro")
+    }
     Valor Digitado: R$ ${valorDigitado.toFixed(2)}
     Tipo Ação: ${tipoAcao || "nenhuma"}
     Banca Futura: R$ ${bancaFutura.toFixed(2)}
     Porcentagem: ${percentFloat}%
     Unidade Entrada: R$ ${unidadeEntrada.toFixed(2)}
     Quantidade Unidades: ${unidadeInt}
-    Meta Diária: R$ ${metaDiaria.toFixed(2)}`);
+    Meta Diária: R$ ${metaDiaria.toFixed(2)}
+    Dias Restantes Mês: ${diasRestantesMes}
+    Meta Mensal: R$ ${metaMensal.toFixed(2)}
+    Dias Restantes Ano: ${diasRestantesAno}
+    Meta Anual: R$ ${metaAnual.toFixed(2)}`);
 
     // Atualizar "Unidade de Entrada Nas Apostas"
     resultadoUnidadeEntrada.textContent = unidadeEntrada.toLocaleString(
@@ -936,18 +988,16 @@ document.addEventListener("DOMContentLoaded", () => {
       });
     }
 
-    // Atualizar "Meta do Mês" (30 dias)
+    // Atualizar "Meta do Mês"
     if (resultadoMetaMes) {
-      const metaMensal = metaDiaria * 30;
       resultadoMetaMes.textContent = metaMensal.toLocaleString("pt-BR", {
         style: "currency",
         currency: "BRL",
       });
     }
 
-    // Atualizar "Meta do Ano" (365 dias)
+    // Atualizar "Meta do Ano"
     if (resultadoMetaAno) {
-      const metaAnual = metaDiaria * 365;
       resultadoMetaAno.textContent = metaAnual.toLocaleString("pt-BR", {
         style: "currency",
         currency: "BRL",
