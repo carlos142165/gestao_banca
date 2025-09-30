@@ -817,13 +817,161 @@ document.addEventListener("DOMContentLoaded", () => {
     });
   }
 
-  // ✅ SUBSTITUA TODA A FUNÇÃO inicializarModalDeposito() POR ESTA VERSÃO COMPLETA:
+  // ===== ATUALIZAÇÃO EM TEMPO REAL DOS CÁLCULOS =====
+  // ===== ATUALIZAÇÃO EM TEMPO REAL DOS CÁLCULOS =====
+  // ===== ATUALIZAÇÃO EM TEMPO REAL DOS CÁLCULOS =====
+  // ===== ATUALIZAÇÃO EM TEMPO REAL DOS CÁLCULOS =====
+  function atualizarUnidadeEntradaTempoReal() {
+    const diaria = document.getElementById("porcentagem");
+    const unidade = document.getElementById("unidadeMeta");
+    const valorBancaInput = document.getElementById("valorBanca");
+    const acaoSelect = document.getElementById("acaoBanca");
+    const metaFixaRadio = document.getElementById("metaFixa");
+    const metaTurboRadio = document.getElementById("metaTurbo");
+    const lucroTotalLabel = document.getElementById("valorLucroLabel");
+    const resultadoUnidadeEntrada = document.getElementById(
+      "resultadoUnidadeEntrada"
+    );
+    const resultadoMetaDia = document.getElementById("resultadoMetaDia");
+    const resultadoMetaMes = document.getElementById("resultadoMetaMes");
+    const resultadoMetaAno = document.getElementById("resultadoMetaAno");
+    const resultadoEntradas = document.getElementById("resultadoEntradas");
+    const oddsMeta = document.getElementById("oddsMeta");
+
+    if (!diaria || !unidade || !resultadoUnidadeEntrada) return;
+
+    // ✅ DETERMINAR TIPO DE META SELECIONADO
+    let tipoMetaSelecionado = "turbo";
+    if (metaFixaRadio && metaFixaRadio.checked) {
+      tipoMetaSelecionado = "fixa";
+    } else if (metaTurboRadio && metaTurboRadio.checked) {
+      tipoMetaSelecionado = "turbo";
+    }
+
+    // ✅ EXTRAIR LUCRO DO LABEL
+    let lucroAtual = 0;
+    if (lucroTotalLabel && lucroTotalLabel.textContent) {
+      const lucroTexto = lucroTotalLabel.textContent
+        .replace(/[^\d,-]/g, "")
+        .replace(",", ".");
+      lucroAtual = parseFloat(lucroTexto) || 0;
+    }
+
+    // ✅ CALCULAR BANCA BASEADO NO TIPO DE META
+    let bancaAtual = valorOriginalBanca || 0;
+    let bancaSemLucro = bancaAtual - lucroAtual;
+
+    // ✅ PARA META FIXA, USAR BANCA SEM LUCRO
+    let bancaParaCalculo =
+      tipoMetaSelecionado === "fixa" ? bancaSemLucro : bancaAtual;
+
+    // Extrair valor digitado no input
+    const valorInputRaw = valorBancaInput
+      ? valorBancaInput.value.replace(/[^\d]/g, "")
+      : "0";
+    const valorDigitado = parseFloat(valorInputRaw) / 100 || 0;
+
+    // Determinar tipo de ação
+    const tipoAcao = acaoSelect ? acaoSelect.value : "";
+
+    // Calcular banca futura baseada na ação
+    let bancaFutura = bancaParaCalculo;
+
+    if (valorDigitado > 0) {
+      switch (tipoAcao) {
+        case "add":
+          bancaFutura = bancaParaCalculo + valorDigitado;
+          break;
+        case "sacar":
+          bancaFutura = Math.max(0, bancaParaCalculo - valorDigitado);
+          break;
+        default:
+          bancaFutura = bancaParaCalculo;
+          break;
+      }
+    }
+
+    // Extrair porcentagem
+    const percentualRaw = diaria.value.replace("%", "").replace(",", ".");
+    const percentFloat = parseFloat(percentualRaw) || 0;
+
+    // Extrair unidade
+    const unidadeRaw = unidade.value.replace(/\D/g, "");
+    const unidadeInt = parseInt(unidadeRaw) || 0;
+
+    // ✅ CÁLCULO DA UNIDADE DE ENTRADA
+    const unidadeEntrada = bancaFutura * (percentFloat / 100);
+
+    // ✅ CÁLCULO DA META DIÁRIA
+    const metaDiaria = unidadeEntrada * unidadeInt;
+
+    console.log(`📊 Cálculo em tempo real:
+    Tipo Meta: ${tipoMetaSelecionado.toUpperCase()}
+    Banca Total (com lucro): R$ ${bancaAtual.toFixed(2)}
+    Lucro: R$ ${lucroAtual.toFixed(2)}
+    Banca Sem Lucro: R$ ${bancaSemLucro.toFixed(2)}
+    Banca Usada (${tipoMetaSelecionado}): R$ ${bancaParaCalculo.toFixed(2)}
+    Valor Digitado: R$ ${valorDigitado.toFixed(2)}
+    Tipo Ação: ${tipoAcao || "nenhuma"}
+    Banca Futura: R$ ${bancaFutura.toFixed(2)}
+    Porcentagem: ${percentFloat}%
+    Unidade Entrada: R$ ${unidadeEntrada.toFixed(2)}
+    Quantidade Unidades: ${unidadeInt}
+    Meta Diária: R$ ${metaDiaria.toFixed(2)}`);
+
+    // Atualizar "Unidade de Entrada Nas Apostas"
+    resultadoUnidadeEntrada.textContent = unidadeEntrada.toLocaleString(
+      "pt-BR",
+      {
+        style: "currency",
+        currency: "BRL",
+      }
+    );
+
+    // Atualizar "Meta do Dia"
+    if (resultadoMetaDia) {
+      resultadoMetaDia.textContent = metaDiaria.toLocaleString("pt-BR", {
+        style: "currency",
+        currency: "BRL",
+      });
+    }
+
+    // Atualizar "Meta do Mês" (30 dias)
+    if (resultadoMetaMes) {
+      const metaMensal = metaDiaria * 30;
+      resultadoMetaMes.textContent = metaMensal.toLocaleString("pt-BR", {
+        style: "currency",
+        currency: "BRL",
+      });
+    }
+
+    // Atualizar "Meta do Ano" (365 dias)
+    if (resultadoMetaAno) {
+      const metaAnual = metaDiaria * 365;
+      resultadoMetaAno.textContent = metaAnual.toLocaleString("pt-BR", {
+        style: "currency",
+        currency: "BRL",
+      });
+    }
+
+    // Calcular entradas necessárias
+    if (oddsMeta && resultadoEntradas && unidadeEntrada > 0 && metaDiaria > 0) {
+      const oddsValor = parseFloat(oddsMeta.value.replace(",", ".")) || 1.5;
+      const lucroPorEntrada = unidadeEntrada * (oddsValor - 1);
+      const entradasNecessarias =
+        lucroPorEntrada > 0 ? Math.ceil(metaDiaria / lucroPorEntrada) : 0;
+
+      resultadoEntradas.textContent = `${entradasNecessarias} Entradas Positivas`;
+    }
+  }
 
   function inicializarModalDeposito() {
     if (modalInicializado || !modal) return;
     modalInicializado = true;
 
-    // ✅ SELETORES DOS ELEMENTOS (INCLUINDO CAMPOS DE META)
+    console.log("🚀 Inicializando Modal de Depósito...");
+
+    // ✅ SELETORES DOS ELEMENTOS
     valorBancaInput = modal.querySelector("#valorBanca");
     const valorBancaLabel = modal.querySelector("#valorBancaLabel");
     diaria = modal.querySelector("#porcentagem");
@@ -832,32 +980,18 @@ document.addEventListener("DOMContentLoaded", () => {
     resultadoUnidade = modal.querySelector("#resultadoUnidade");
     resultadoOdds = modal.querySelector("#resultadoOdds");
     oddsMeta = modal.querySelector("#oddsMeta");
-
-    // ✅ NOVOS CAMPOS DE META
     metaFixaRadio = modal.querySelector("#metaFixa");
     metaTurboRadio = modal.querySelector("#metaTurbo");
 
-    // ✅ CONFIGURAÇÃO DO CAMPO ODDS
-    if (oddsMeta) {
-      oddsMeta.addEventListener("input", () => {
-        oddsMeta.value = oddsMeta.value.replace(/[^0-9.,]/g, "");
-      });
-
-      oddsMeta.addEventListener("blur", () => {
-        let valor = oddsMeta.value.replace(",", ".");
-        let numero = parseFloat(valor);
-        oddsMeta.value = isNaN(numero) ? "1.50" : numero.toFixed(2);
-      });
-
-      let valorInicialOdds = oddsMeta.value.replace(",", ".");
-      let numeroInicialOdds = parseFloat(valorInicialOdds);
-      oddsMeta.value = isNaN(numeroInicialOdds)
-        ? "1.50"
-        : numeroInicialOdds.toFixed(2);
-    }
-
     const acaoSelect = modal.querySelector("#acaoBanca");
     const botaoAcao = modal.querySelector("#botaoAcao");
+    const lucroTotalLabel = modal.querySelector("#valorLucroLabel");
+
+    // ✅ VERIFICAR ELEMENTOS CRÍTICOS
+    if (!valorBancaInput || !valorBancaLabel || !acaoSelect) {
+      console.error("❌ Elementos críticos não encontrados!");
+      return;
+    }
 
     // ✅ CONFIGURAR SELEÇÃO AO CLICAR
     if (diaria) selecionarAoClicar(diaria);
@@ -879,31 +1013,91 @@ document.addEventListener("DOMContentLoaded", () => {
       botaoAcao.parentNode.insertBefore(mensagemErro, botaoAcao.nextSibling);
     }
 
-    const lucroTotalLabel = modal.querySelector("#valorLucroLabel");
+    // ✅ EVENTOS DOS INPUTS - ATUALIZAÇÃO EM TEMPO REAL
+    if (diaria) {
+      diaria.addEventListener("focus", () => {
+        const valorAtual = diaria.value.replace("%", "");
+        diaria.value = valorAtual;
+        diaria.select();
+      });
 
-    // ✅ CARREGAMENTO INICIAL COM SUPORTE A META
+      diaria.addEventListener("input", () => {
+        diaria.value = diaria.value.replace(/[^0-9]/g, "");
+        atualizarUnidadeEntradaTempoReal();
+      });
+
+      diaria.addEventListener("blur", () => {
+        const valor = parseInt(diaria.value) || 2;
+        diaria.value = `${valor}%`;
+        atualizarUnidadeEntradaTempoReal();
+      });
+    }
+
+    if (unidade) {
+      unidade.addEventListener("input", () => {
+        unidade.value = unidade.value.replace(/\D/g, "");
+        atualizarUnidadeEntradaTempoReal();
+      });
+
+      unidade.addEventListener("blur", () => {
+        const valor = parseInt(unidade.value) || 2;
+        unidade.value = valor;
+        atualizarUnidadeEntradaTempoReal();
+      });
+
+      unidade.addEventListener("focus", () => {
+        unidade.select();
+      });
+    }
+
+    if (oddsMeta) {
+      oddsMeta.addEventListener("input", () => {
+        oddsMeta.value = oddsMeta.value.replace(/[^0-9.,]/g, "");
+        atualizarUnidadeEntradaTempoReal();
+      });
+
+      oddsMeta.addEventListener("blur", () => {
+        let valor = oddsMeta.value.replace(",", ".");
+        let numero = parseFloat(valor);
+        oddsMeta.value = isNaN(numero) ? "1.50" : numero.toFixed(2);
+        atualizarUnidadeEntradaTempoReal();
+      });
+
+      let valorInicialOdds = oddsMeta.value.replace(",", ".");
+      let numeroInicialOdds = parseFloat(valorInicialOdds);
+      oddsMeta.value = isNaN(numeroInicialOdds)
+        ? "1.50"
+        : numeroInicialOdds.toFixed(2);
+    }
+
+    // ✅ CARREGAMENTO INICIAL
     fetch("ajax_deposito.php")
       .then((response) => response.json())
       .then((data) => {
-        if (!data.success) return;
+        if (!data.success) {
+          console.warn("⚠️ Resposta sem sucesso:", data);
+          return;
+        }
 
-        const lucro = parseFloat(data.lucro);
+        const lucro = parseFloat(data.lucro) || 0;
         if (lucroTotalLabel) {
           lucroTotalLabel.textContent = lucro.toLocaleString("pt-BR", {
             style: "currency",
             currency: "BRL",
           });
+          if (window.SistemaLucroDinamico?.atualizarLucro) {
+            window.SistemaLucroDinamico.atualizarLucro(lucro);
+          }
         }
 
-        valorOriginalBanca = parseFloat(data.banca);
+        valorOriginalBanca = parseFloat(data.banca) || 0;
+
         if (valorBancaLabel) {
-          valorBancaLabel.textContent = valorOriginalBanca.toLocaleString(
-            "pt-BR",
-            {
-              style: "currency",
-              currency: "BRL",
-            }
-          );
+          const bancaFormatada = valorOriginalBanca.toLocaleString("pt-BR", {
+            style: "currency",
+            currency: "BRL",
+          });
+          valorBancaLabel.textContent = bancaFormatada;
         }
 
         if (diaria) {
@@ -922,115 +1116,126 @@ document.addEventListener("DOMContentLoaded", () => {
             : oddsFormatada.toFixed(2);
         }
 
-        // ✅ CARREGAR TIPO DE META DO BANCO DE DADOS
-        if (data.meta) {
-          if (data.meta === "Meta Turbo" && metaTurboRadio) {
-            metaTurboRadio.checked = true;
-            destacarMetaSelecionada("turbo");
-          } else if (metaFixaRadio) {
-            metaFixaRadio.checked = true;
-            destacarMetaSelecionada("fixa");
-          }
-        } else {
-          // Default para Meta Fixa se não houver valor no banco
-          if (metaFixaRadio) {
-            metaFixaRadio.checked = true;
-            destacarMetaSelecionada("fixa");
-          }
+        if (data.meta === "Meta Turbo" && metaTurboRadio) {
+          metaTurboRadio.checked = true;
+          destacarMetaSelecionada("turbo");
+        } else if (metaFixaRadio) {
+          metaFixaRadio.checked = true;
+          destacarMetaSelecionada("fixa");
         }
 
-        if (data.meta_diaria_formatada) {
-          atualizarMetaDiaria(data.meta_diaria_formatada);
-        }
+        setTimeout(() => {
+          atualizarUnidadeEntradaTempoReal();
+        }, 100);
 
-        if (data.unidade_entrada_formatada) {
-          atualizarUnidadeEntradaFormulario(data.unidade_entrada_formatada);
-        }
+        setTimeout(() => {
+          configurarInputValorBanca();
+        }, 200);
 
-        calcularMeta(valorOriginalBanca);
         setTimeout(() => atualizarAreaDireita(), 500);
       })
       .catch((error) => {
-        console.error("Erro ao carregar dados iniciais:", error);
+        console.error("❌ Erro ao carregar dados:", error);
       });
 
-    // ✅ EVENTOS DOS DROPDOWNS E BOTÕES
+    // ✅ EVENTOS DOS DROPDOWNS
     const dropdownItems = modal.querySelectorAll(".dropdown-menu li");
+    const dropdownToggle = modal.querySelector(".dropdown-toggle");
 
     dropdownItems.forEach((item) => {
-      item.addEventListener("click", () => {
-        const tipo = item.getAttribute("data-value");
-        if (acaoSelect) acaoSelect.value = tipo;
+      item.addEventListener("click", function () {
+        const tipo = this.getAttribute("data-value");
+        const texto = this.innerHTML;
 
-        if (valorBancaInput) {
-          valorBancaInput.value = "";
-          valorBancaInput.style.display = "block";
+        if (dropdownToggle) {
+          dropdownToggle.innerHTML =
+            texto + ' <i class="fa-solid fa-chevron-down"></i>';
         }
 
+        if (acaoSelect) acaoSelect.value = tipo;
+
+        if (valorBancaInput) valorBancaInput.value = "";
         if (mensagemErro) mensagemErro.textContent = "";
 
-        if (tipo === "add") {
-          if (valorBancaInput) {
-            valorBancaInput.placeholder =
-              "Quanto quer Depositar na Banca R$ 0,00";
-            valorBancaInput.disabled = false;
-            valorBancaInput.classList.remove("desativado");
+        if (valorBancaLabel && typeof valorOriginalBanca !== "undefined") {
+          valorBancaLabel.textContent = valorOriginalBanca.toLocaleString(
+            "pt-BR",
+            {
+              style: "currency",
+              currency: "BRL",
+            }
+          );
+          atualizarUnidadeEntradaTempoReal();
+        }
+
+        if (valorBancaInput && botaoAcao) {
+          switch (tipo) {
+            case "add":
+              valorBancaInput.placeholder = "Valor do Deposito R$ 0,00";
+              valorBancaInput.disabled = false;
+              valorBancaInput.classList.remove("desativado");
+              botaoAcao.value = "Depositar na Banca";
+              break;
+
+            case "sacar":
+              valorBancaInput.placeholder = "Valor do Saque R$ 0,00";
+              valorBancaInput.disabled = false;
+              valorBancaInput.classList.remove("desativado");
+              botaoAcao.value = "Sacar da Banca";
+              break;
+
+            case "alterar":
+              valorBancaInput.placeholder = "Essa ação não requer valor";
+              valorBancaInput.disabled = true;
+              valorBancaInput.classList.add("desativado");
+              botaoAcao.value = "Salvar Alteração";
+              break;
+
+            case "resetar":
+              valorBancaInput.placeholder = "Essa ação irá zerar sua banca";
+              valorBancaInput.disabled = true;
+              valorBancaInput.classList.add("desativado");
+              botaoAcao.value = "Resetar Banca";
+              break;
+
+            default:
+              valorBancaInput.placeholder = "R$ 0,00";
+              valorBancaInput.disabled = false;
+              valorBancaInput.classList.remove("desativado");
+              botaoAcao.value = "Cadastrar Dados";
+              break;
           }
-          if (botaoAcao) botaoAcao.value = "Depositar na Banca";
-        } else if (tipo === "sacar") {
-          if (valorBancaInput) {
-            valorBancaInput.placeholder = "Quanto Quer Sacar da Banca R$ 0,00";
-            valorBancaInput.disabled = false;
-            valorBancaInput.classList.remove("desativado");
+
+          if (!valorBancaInput.disabled) {
+            setTimeout(() => valorBancaInput.focus(), 100);
           }
-          if (botaoAcao) botaoAcao.value = "Sacar da Banca";
-        } else if (tipo === "resetar") {
-          if (valorBancaInput) {
-            valorBancaInput.placeholder = "Essa ação irá zerar sua banca";
-            valorBancaInput.disabled = true;
-            valorBancaInput.classList.add("desativado");
-          }
-          if (botaoAcao) botaoAcao.value = "Resetar Banca";
-        } else if (tipo === "alterar") {
-          if (valorBancaInput) {
-            valorBancaInput.placeholder = "Essa ação não requer valor";
-            valorBancaInput.disabled = true;
-            valorBancaInput.classList.add("desativado");
-          }
-          if (botaoAcao) botaoAcao.value = "Salvar Alteração";
-        } else {
-          if (valorBancaInput) {
-            valorBancaInput.placeholder = "R$ 0,00";
-            valorBancaInput.disabled = false;
-            valorBancaInput.classList.remove("desativado");
-          }
-          if (botaoAcao) botaoAcao.value = "Cadastrar Dados";
         }
       });
     });
 
-    // ✅ EVENTO INPUT DO VALOR BANCA
-    if (valorBancaInput) {
-      // ✅ CONFIGURAR MÁSCARA DE DINHEIRO
-      valorBancaInput.addEventListener("input", function () {
-        console.log("💰 Input detectado no campo valor banca");
+    // ✅ FUNÇÃO PARA CONFIGURAR INPUT
+    // ✅ FUNÇÃO PARA CONFIGURAR INPUT - VERSÃO CORRIGIDA
+    function configurarInputValorBanca() {
+      if (!valorBancaInput) return;
 
+      const novoInput = valorBancaInput.cloneNode(true);
+      valorBancaInput.parentNode.replaceChild(novoInput, valorBancaInput);
+      valorBancaInput = novoInput;
+
+      novoInput.addEventListener("input", function () {
         let valor = this.value.replace(/[^\d]/g, "");
 
-        // ✅ BUSCAR ELEMENTOS DINAMICAMENTE PARA EVITAR ERRO
         const mensagemErro = document.getElementById("mensagemErro");
         const legendaBanca = document.getElementById("legendaBanca");
         const valorBancaLabel = document.getElementById("valorBancaLabel");
         const acaoSelect = document.getElementById("acaoBanca");
 
-        // Se campo vazio, limpar tudo
         if (!valor || valor === "0") {
           this.value = "";
           if (mensagemErro) mensagemErro.textContent = "";
           if (legendaBanca) legendaBanca.style.display = "none";
 
-          // Restaurar valor original na label
-          if (valorBancaLabel) {
+          if (valorBancaLabel && typeof valorOriginalBanca !== "undefined") {
             valorBancaLabel.textContent = valorOriginalBanca.toLocaleString(
               "pt-BR",
               {
@@ -1038,28 +1243,22 @@ document.addEventListener("DOMContentLoaded", () => {
                 currency: "BRL",
               }
             );
+            atualizarUnidadeEntradaTempoReal();
           }
           return;
         }
 
-        // ✅ FORMATAR VALOR DIGITADO
+        // ✅ FORMATAR VALOR ENQUANTO DIGITA
         const valorDigitado = parseFloat(valor) / 100;
         this.value = valorDigitado.toLocaleString("pt-BR", {
           style: "currency",
           currency: "BRL",
         });
 
-        // ✅ OBTER TIPO DE AÇÃO SELECIONADA
         const tipo = acaoSelect ? acaoSelect.value : "";
-
-        console.log(
-          `📊 Tipo de ação: ${tipo}, Valor digitado: ${valorDigitado}`
-        );
-
         let valorAtualizado = valorOriginalBanca;
         let temErro = false;
 
-        // ✅ CALCULAR BASEADO NO TIPO DE AÇÃO
         switch (tipo) {
           case "add":
             valorAtualizado = valorOriginalBanca + valorDigitado;
@@ -1067,206 +1266,59 @@ document.addEventListener("DOMContentLoaded", () => {
             break;
 
           case "sacar":
-            valorAtualizado = valorOriginalBanca - valorDigitado;
-
-            // ✅ VERIFICAR SALDO INSUFICIENTE
             if (valorDigitado > valorOriginalBanca) {
               if (mensagemErro)
                 mensagemErro.textContent = "Saldo Insuficiente.";
               temErro = true;
+              valorAtualizado = valorOriginalBanca;
             } else {
+              valorAtualizado = valorOriginalBanca - valorDigitado;
               if (mensagemErro) mensagemErro.textContent = "";
             }
             break;
 
           case "alterar":
-            // Na alteração, não muda o valor da banca
-            valorAtualizado = valorOriginalBanca;
-            break;
-
           case "resetar":
-            // No reset, não muda o valor da banca
             valorAtualizado = valorOriginalBanca;
             break;
 
           default:
-            // Se não tem tipo selecionado e banca é 0, é cadastro inicial
             if (valorOriginalBanca === 0) {
               valorAtualizado = valorDigitado;
             }
             break;
         }
 
-        // ✅ GARANTIR QUE VALOR NÃO SEJA NEGATIVO
         valorAtualizado = Math.max(0, valorAtualizado);
 
-        // ✅ ATUALIZAR LABEL DO VALOR DA BANCA
         if (valorBancaLabel) {
-          valorBancaLabel.textContent = valorAtualizado.toLocaleString(
-            "pt-BR",
-            {
-              style: "currency",
-              currency: "BRL",
-            }
-          );
-
-          console.log(`💰 Banca atualizada para: ${valorAtualizado}`);
+          const valorFormatado = valorAtualizado.toLocaleString("pt-BR", {
+            style: "currency",
+            currency: "BRL",
+          });
+          valorBancaLabel.textContent = valorFormatado;
         }
 
-        // ✅ MOSTRAR/OCULTAR LEGENDA BASEADO NO ERRO
         if (legendaBanca) {
           legendaBanca.style.display = temErro ? "none" : "block";
         }
 
-        // ✅ RECALCULAR META COM VALOR ATUALIZADO
-        if (typeof calcularMeta === "function") {
-          calcularMeta(valorAtualizado);
-        }
+        // ✅ ATUALIZAR CÁLCULOS EM TEMPO REAL
+        atualizarUnidadeEntradaTempoReal();
       });
 
-      // ✅ EVENTO FOCUS PARA SELECIONAR TUDO
-      valorBancaInput.addEventListener("focus", function () {
+      novoInput.addEventListener("focus", function () {
         this.select();
       });
 
-      // ✅ EVENTO BLUR PARA VALIDAÇÃO FINAL
-      valorBancaInput.addEventListener("blur", function () {
+      novoInput.addEventListener("blur", function () {
         if (!this.value || this.value === "R$ 0,00") {
           this.value = "";
         }
       });
-
-      console.log("✅ Eventos do campo valor banca configurados");
     }
 
-    // ✅ FUNÇÃO CALCULAR META INTERNA
-    function calcularMeta(bancaFloat) {
-      console.log(`🎯 Calculando meta para banca: ${bancaFloat}`);
-
-      // ✅ BUSCAR ELEMENTOS DINAMICAMENTE
-      const diaria = document.getElementById("porcentagem");
-      const resultadoCalculo = document.getElementById("resultadoCalculo");
-
-      const percentualRaw = diaria
-        ? diaria.value.replace("%", "").replace(",", ".")
-        : "2";
-      const percentFloat = parseFloat(percentualRaw);
-
-      if (isNaN(percentFloat) || percentFloat <= 0) {
-        if (resultadoCalculo) resultadoCalculo.textContent = "";
-        console.warn("⚠️ Percentual inválido");
-        return;
-      }
-
-      // ✅ USAR A BANCA PASSADA COMO PARÂMETRO
-      const baseCalculo = bancaFloat || 0;
-      const unidadeEntrada = baseCalculo * (percentFloat / 100);
-
-      // ✅ ATUALIZAR RESULTADO DA UNIDADE
-      if (resultadoCalculo) {
-        resultadoCalculo.textContent = `Unidade: ${unidadeEntrada.toLocaleString(
-          "pt-BR",
-          {
-            style: "currency",
-            currency: "BRL",
-          }
-        )}`;
-      }
-
-      // ✅ CALCULAR OUTRAS METAS SE AS FUNÇÕES EXISTIREM
-      if (typeof calcularUnidade === "function") {
-        calcularUnidade(unidadeEntrada);
-      }
-      if (typeof calcularOdds === "function") {
-        calcularOdds(unidadeEntrada);
-      }
-
-      console.log(`✅ Meta calculada - Unidade: ${unidadeEntrada}`);
-    }
-
-    // ✅ EVENTOS DE DROPDOWN APRIMORADOS
-    if (typeof modal !== "undefined" && modal) {
-      const dropdownItems = modal.querySelectorAll(".dropdown-menu li");
-      const dropdownToggle = modal.querySelector(".dropdown-toggle");
-
-      dropdownItems.forEach((item) => {
-        item.addEventListener("click", function () {
-          const tipo = this.getAttribute("data-value");
-          const texto = this.innerHTML;
-
-          console.log(`🎯 Selecionado: ${tipo}`);
-
-          // ✅ ATUALIZAR DROPDOWN
-          if (dropdownToggle) {
-            dropdownToggle.innerHTML =
-              texto + ' <i class="fa-solid fa-chevron-down"></i>';
-          }
-
-          // ✅ ATUALIZAR CAMPO HIDDEN
-          const acaoSelect = document.getElementById("acaoBanca");
-          if (acaoSelect) acaoSelect.value = tipo;
-
-          // ✅ CONFIGURAR CAMPO BASEADO NO TIPO
-          const valorBancaInput = document.getElementById("valorBanca");
-          const botaoAcao = document.getElementById("botaoAcao");
-          const mensagemErro = document.getElementById("mensagemErro");
-
-          if (valorBancaInput && botaoAcao) {
-            // Limpar valor e erro
-            valorBancaInput.value = "";
-            if (mensagemErro) mensagemErro.textContent = "";
-
-            switch (tipo) {
-              case "add":
-                valorBancaInput.placeholder =
-                  "Quanto quer Depositar na Banca R$ 0,00";
-                valorBancaInput.disabled = false;
-                valorBancaInput.classList.remove("desativado");
-                botaoAcao.value = "Depositar na Banca";
-                break;
-
-              case "sacar":
-                valorBancaInput.placeholder =
-                  "Quanto Quer Sacar da Banca R$ 0,00";
-                valorBancaInput.disabled = false;
-                valorBancaInput.classList.remove("desativado");
-                botaoAcao.value = "Sacar da Banca";
-                break;
-
-              case "alterar":
-                valorBancaInput.placeholder = "Essa ação não requer valor";
-                valorBancaInput.disabled = true;
-                valorBancaInput.classList.add("desativado");
-                botaoAcao.value = "Salvar Alteração";
-                break;
-
-              case "resetar":
-                valorBancaInput.placeholder = "Essa ação irá zerar sua banca";
-                valorBancaInput.disabled = true;
-                valorBancaInput.classList.add("desativado");
-                botaoAcao.value = "Resetar Banca";
-                break;
-
-              default:
-                valorBancaInput.placeholder = "R$ 0,00";
-                valorBancaInput.disabled = false;
-                valorBancaInput.classList.remove("desativado");
-                botaoAcao.value = "Cadastrar Dados";
-                break;
-            }
-
-            // ✅ FOCAR NO CAMPO SE HABILITADO
-            if (!valorBancaInput.disabled) {
-              setTimeout(() => valorBancaInput.focus(), 100);
-            }
-          }
-        });
-      });
-
-      console.log("✅ Eventos do dropdown configurados");
-    }
-
-    // ✅ EVENTO BOTÃO AÇÃO COM SUPORTE A META
+    // ✅ EVENTOS DO BOTÃO AÇÃO
     if (botaoAcao) {
       botaoAcao.addEventListener("click", (e) => {
         e.preventDefault();
@@ -1283,11 +1335,9 @@ document.addEventListener("DOMContentLoaded", () => {
           return;
         }
 
-        // ✅ VALIDAR SE TIPO DE META FOI SELECIONADO
         const tipoMeta = obterTipoMetaSelecionado();
         if (!tipoMeta) {
           exibirToast("⚠️ Selecione o tipo de meta (Fixa ou Turbo)", "aviso");
-          // Destacar campos de meta
           const campoTipoMeta = modal.querySelector(".campo-tipo-meta");
           if (campoTipoMeta) {
             campoTipoMeta.style.border = "2px solid red";
@@ -1374,17 +1424,14 @@ document.addEventListener("DOMContentLoaded", () => {
           ? parseFloat(oddsMeta.value.replace(",", "."))
           : 1.5;
 
-        // ✅ INCLUIR TIPO DE META NO ENVIO
         const dadosEnvio = {
           acao: acaoFinal,
           valor: valorNumerico.toFixed(2),
           diaria: diariaFloat,
           unidade: unidadeInt,
           odds: oddsValor,
-          tipoMeta: tipoMeta, // ✅ NOVO CAMPO
+          tipoMeta: tipoMeta,
         };
-
-        console.log("📤 Enviando dados:", dadosEnvio);
 
         fetch("ajax_deposito.php", {
           method: "POST",
@@ -1394,7 +1441,6 @@ document.addEventListener("DOMContentLoaded", () => {
           .then((res) => res.json())
           .then((resposta) => {
             if (resposta.success) {
-              // ✅ MENSAGEM PERSONALIZADA INCLUINDO TIPO DE META
               const mensagem = gerarMensagemOperacao(
                 tipoSelecionado,
                 valorNumerico
@@ -1412,13 +1458,10 @@ document.addEventListener("DOMContentLoaded", () => {
               }
 
               atualizarDadosModal();
-              setTimeout(() => atualizarAreaDireita(), 300);
-
-              const selectAcao = document.getElementById("selectAcao");
-              const inputValor = document.getElementById("inputValor");
-
-              if (selectAcao) selectAcao.value = "";
-              if (inputValor) inputValor.value = "0,00";
+              setTimeout(() => {
+                atualizarAreaDireita();
+                atualizarUnidadeEntradaTempoReal();
+              }, 300);
             } else {
               exibirToast(
                 `❌ Erro ao realizar ${tipoSelecionado}: ${
@@ -1438,7 +1481,7 @@ document.addEventListener("DOMContentLoaded", () => {
       });
     }
 
-    // ✅ EVENTOS DE CONFIRMAÇÃO DE RESET
+    // ✅ EVENTOS DE RESET
     const btnConfirmarReset = document.getElementById("btnConfirmarReset");
     if (btnConfirmarReset) {
       btnConfirmarReset.addEventListener("click", () => {
@@ -1470,7 +1513,10 @@ document.addEventListener("DOMContentLoaded", () => {
               }
 
               atualizarDadosModal();
-              setTimeout(() => atualizarAreaDireita(), 300);
+              setTimeout(() => {
+                atualizarAreaDireita();
+                atualizarUnidadeEntradaTempoReal();
+              }, 300);
 
               const confirmarReset = document.getElementById("confirmarReset");
               if (confirmarReset) confirmarReset.style.display = "none";
@@ -1493,28 +1539,29 @@ document.addEventListener("DOMContentLoaded", () => {
       });
     }
 
-    // ✅ CONFIGURAR EVENTOS DOS RADIO BUTTONS DE META
-    if (metaFixaRadio && metaTurboRadio) {
+    // ✅ EVENTOS DE MUDANÇA DE TIPO DE META
+    if (metaFixaRadio) {
       metaFixaRadio.addEventListener("change", function () {
         if (this.checked) {
-          console.log("✅ Meta Fixa selecionada");
           destacarMetaSelecionada("fixa");
+          atualizarUnidadeEntradaTempoReal();
         }
       });
+    }
 
+    if (metaTurboRadio) {
       metaTurboRadio.addEventListener("change", function () {
         if (this.checked) {
-          console.log("✅ Meta Turbo selecionada");
           destacarMetaSelecionada("turbo");
+          atualizarUnidadeEntradaTempoReal();
         }
       });
-
-      console.log("✅ Eventos de meta configurados");
     }
 
     // ✅ FINALIZAÇÃO
-    configurarEventosDeMeta();
     adicionarEventosLimpezaCampos();
+
+    console.log("✅ Modal inicializado com sucesso!");
   }
 
   // ✅ ADICIONAR ESTAS FUNÇÕES APÓS A FUNÇÃO inicializarModalDeposito():
@@ -1587,11 +1634,13 @@ document.addEventListener("DOMContentLoaded", () => {
     if (diaria) {
       diaria.addEventListener("input", () => {
         diaria.value = diaria.value.replace(/[^0-9]/g, "");
+        atualizarUnidadeEntradaTempoReal();
         calcularMeta(valorOriginalBanca);
       });
 
       diaria.addEventListener("blur", () => {
         diaria.value = formatarPorcentagem(diaria.value);
+        atualizarUnidadeEntradaTempoReal();
         calcularMeta(valorOriginalBanca);
       });
     }
@@ -1599,21 +1648,25 @@ document.addEventListener("DOMContentLoaded", () => {
     if (unidade) {
       unidade.addEventListener("input", () => {
         unidade.value = unidade.value.replace(/\D/g, "");
+        atualizarUnidadeEntradaTempoReal();
         calcularMeta(valorOriginalBanca);
       });
 
       unidade.addEventListener("blur", () => {
         unidade.value = parseInt(unidade.value) || "";
+        atualizarUnidadeEntradaTempoReal();
         calcularMeta(valorOriginalBanca);
       });
     }
 
     if (oddsMeta) {
       oddsMeta.addEventListener("input", () => {
+        atualizarUnidadeEntradaTempoReal();
         calcularOdds(unidadeCalculada);
       });
 
       oddsMeta.addEventListener("blur", () => {
+        atualizarUnidadeEntradaTempoReal();
         calcularOdds(unidadeCalculada);
       });
     }
@@ -1920,1289 +1973,258 @@ document.addEventListener("DOMContentLoaded", () => {
 //                           CALCULO DE VALOR DO PAINEL DE CONTROLE PARA EXIBIR METAS
 // ========================================================================================================================
 
-// ========================================
-// 🔧 SISTEMA INTEGRADO - CALCULADORA + ATUALIZAÇÃO AUTOMÁTICA
-// ========================================
-
-const CalculadoraModal = {
-  // ✅ CONTROLE DE ESTADO
-  calculandoAtualmente: false,
-  banca_inicial: 0.0,
-  lucro_atual: 0.0,
-  tipoMetaSelecionado: "fixa",
-  dadosCarregados: false,
-  pollingInterval: null,
-
-  // ✅ INICIALIZAR O SISTEMA
-  async inicializar() {
-    try {
-      console.log("🚀 Inicializando Sistema Integrado...");
-
-      // ✅ AGUARDAR CARREGAMENTO DOS DADOS
-      await this.carregarDadosBanca();
-
-      this.configurarEventosInputs();
-      this.configurarEventosTipoMeta();
-
-      // ✅ INTEGRAR COM O SISTEMA DE ATUALIZAÇÃO AUTOMÁTICA
-      this.integrarComSistemaAtualizacao();
-
-      // ✅ SÓ CALCULAR APÓS CARREGAR OS DADOS
-      if (this.dadosCarregados) {
-        this.calcularTodosValores();
-      } else {
-        console.warn("⚠️ Dados não carregados - exibindo valores zerados");
-        this.exibirValoresZerados();
-      }
-
-      console.log("✅ Sistema Integrado inicializado!");
-    } catch (error) {
-      console.error("❌ Erro ao inicializar:", error);
-      this.exibirValoresZerados();
-    }
-  },
-
-  // ✅ NOVA FUNÇÃO: INTEGRAR COM SISTEMA DE ATUALIZAÇÃO AUTOMÁTICA
-  integrarComSistemaAtualizacao() {
-    try {
-      console.log("🔗 Integrando com sistema de atualização automática...");
-
-      // ✅ 1. INTERCEPTAR A FUNÇÃO executarAtualizacaoImediata EXISTENTE
-      if (typeof window.executarAtualizacaoImediata === "function") {
-        const funcaoOriginal = window.executarAtualizacaoImediata;
-        window.executarAtualizacaoImediata = (
-          tipoOperacao,
-          resultado = null
-        ) => {
-          // Executar a função original
-          funcaoOriginal(tipoOperacao, resultado);
-
-          // Adicionar nossa atualização da calculadora
-          console.log(`🧮 Atualizando calculadora após: ${tipoOperacao}`);
-          setTimeout(() => {
-            this.recarregarDados();
-          }, 500);
-        };
-        console.log("✅ Função executarAtualizacaoImediata interceptada");
-      }
-
-      // ✅ 2. INTERCEPTAR BOTÕES DO MODAL ESPECIFICAMENTE
-      this.interceptarBotaoModal();
-
-      // ✅ 3. ESCUTAR EVENTOS CUSTOMIZADOS EXISTENTES
-      this.escutarEventosCustomizados();
-
-      // ✅ 4. POLLING COMO BACKUP
-      this.iniciarPolling();
-
-      console.log("✅ Integração completa configurada");
-    } catch (error) {
-      console.error("❌ Erro na integração:", error);
-    }
-  },
-
-  // ✅ INTERCEPTAR ESPECIFICAMENTE O BOTÃO DO MODAL
-  interceptarBotaoModal() {
-    try {
-      // ✅ USAR EVENT DELEGATION NO DOCUMENTO TODO
-      document.addEventListener("click", (event) => {
-        const target = event.target;
-
-        // ✅ DETECTAR ESPECIFICAMENTE O BOTÃO DO MODAL DE BANCA
-        const isModalBancaButton =
-          target.id === "botaoAcao" ||
-          ((target.type === "button" || target.type === "submit") &&
-            target.closest("#modalDeposito")) ||
-          target.closest(".modal-content");
-
-        if (isModalBancaButton) {
-          console.log("🎯 CLIQUE NO BOTÃO DO MODAL DETECTADO!");
-          console.log("   Botão:", target);
-          console.log("   ID:", target.id);
-          console.log("   Valor:", target.value);
-
-          // ✅ MÚLTIPLAS TENTATIVAS DE ATUALIZAÇÃO
-          setTimeout(() => {
-            console.log("🔄 Tentativa 1 - Recarregando calculadora...");
-            this.recarregarDados();
-          }, 800);
-
-          setTimeout(() => {
-            console.log("🔄 Tentativa 2 - Recarregando calculadora...");
-            this.recarregarDados();
-          }, 1500);
-
-          setTimeout(() => {
-            console.log("🔄 Tentativa 3 - Recarregando calculadora...");
-            this.recarregarDados();
-          }, 2500);
-        }
-      });
-
-      console.log("✅ Interceptação do botão modal configurada");
-    } catch (error) {
-      console.error("❌ Erro ao interceptar botão modal:", error);
-    }
-  },
-
-  // ✅ ESCUTAR EVENTOS CUSTOMIZADOS DO SISTEMA EXISTENTE
-  escutarEventosCustomizados() {
-    try {
-      // ✅ EVENTO bancaAtualizada
-      document.addEventListener("bancaAtualizada", () => {
-        console.log(
-          "📢 Evento bancaAtualizada recebido - atualizando calculadora"
-        );
-        setTimeout(() => this.recarregarDados(), 200);
-      });
-
-      // ✅ EVENTO areaAtualizacao
-      document.addEventListener("areaAtualizacao", (event) => {
-        console.log(
-          "📢 Evento areaAtualizacao recebido - atualizando calculadora",
-          event.detail
-        );
-        setTimeout(() => this.recarregarDados(), 300);
-      });
-
-      // ✅ EVENTO mentorCadastrado
-      document.addEventListener("mentorCadastrado", () => {
-        console.log(
-          "📢 Evento mentorCadastrado recebido - atualizando calculadora"
-        );
-        setTimeout(() => this.recarregarDados(), 400);
-      });
-
-      console.log("✅ Eventos customizados configurados");
-    } catch (error) {
-      console.error("❌ Erro ao configurar eventos customizados:", error);
-    }
-  },
-
-  // ✅ POLLING COMO BACKUP
-  iniciarPolling() {
-    try {
-      // ✅ VERIFICAR MUDANÇAS A CADA 3 SEGUNDOS
-      this.pollingInterval = setInterval(() => {
-        if (this.dadosCarregados) {
-          this.verificarMudancasSilenciosa();
-        }
-      }, 3000);
-
-      console.log("⏰ Polling de backup iniciado");
-    } catch (error) {
-      console.error("❌ Erro ao iniciar polling:", error);
-    }
-  },
-
-  // ✅ VERIFICAR MUDANÇAS SILENCIOSA (SEM LOGS EXCESSIVOS)
-  async verificarMudancasSilenciosa() {
-    try {
-      const response = await fetch("dados_banca.php", {
-        method: "GET",
-        headers: {
-          "Cache-Control": "no-cache",
-          "X-Requested-With": "XMLHttpRequest",
-        },
-      });
-
-      if (!response.ok) return;
-
-      const data = await response.json();
-
-      if (data.success) {
-        const novaBanca = parseFloat(data.banca_inicial) || 0.0;
-        const novoLucro = parseFloat(data.lucro_total_display) || 0.0;
-
-        // ✅ VERIFICAR SE HOUVE MUDANÇA
-        const mudancaBanca = Math.abs(novaBanca - this.banca_inicial) > 0.01;
-        const mudancaLucro = Math.abs(novoLucro - this.lucro_atual) > 0.01;
-
-        if (mudancaBanca || mudancaLucro) {
-          console.log(
-            "🔄 MUDANÇA DETECTADA pelo polling - atualizando calculadora"
-          );
-          await this.recarregarDados();
-        }
-      }
-    } catch (error) {
-      // Silencioso para não poluir console
-    }
-  },
-
-  // ✅ CARREGAR DADOS ATUAIS DA BANCA
-  async carregarDadosBanca() {
-    try {
-      const response = await fetch("dados_banca.php", {
-        method: "GET",
-        headers: {
-          "Cache-Control": "no-cache",
-          "X-Requested-With": "XMLHttpRequest",
-        },
-      });
-
-      if (!response.ok) throw new Error(`HTTP ${response.status}`);
-
-      const data = await response.json();
-
-      if (data.success) {
-        // ✅ USAR OS VALORES REAIS OU ZERO SE NÃO EXISTIREM
-        this.banca_inicial = parseFloat(data.banca_inicial) || 0.0;
-        this.lucro_atual = parseFloat(data.lucro_total_display) || 0.0;
-        this.dadosCarregados = true;
-
-        const valorBancaLabel = document.getElementById("valorBancaLabel");
-        const valorLucroLabel = document.getElementById("valorLucroLabel");
-
-        if (valorBancaLabel) {
-          valorBancaLabel.textContent = data.banca_formatada || "R$ 0,00";
-        }
-
-        if (valorLucroLabel) {
-          valorLucroLabel.textContent = data.lucro_total_formatado || "R$ 0,00";
-        }
-
-        console.log(
-          `📊 Dados carregados - Banca: R$ ${this.banca_inicial.toFixed(
-            2
-          )}, Lucro: R$ ${this.lucro_atual.toFixed(2)}`
-        );
-      } else {
-        console.warn(
-          "⚠️ Response não foi successful - mantendo valores zerados"
-        );
-        this.exibirValoresZerados();
-      }
-    } catch (error) {
-      console.error("❌ Erro ao carregar dados da banca:", error);
-      this.banca_inicial = 0.0;
-      this.lucro_atual = 0.0;
-      this.dadosCarregados = false;
-      this.exibirValoresZerados();
-    }
-  },
-
-  // ✅ NOVA FUNÇÃO: EXIBIR VALORES ZERADOS
-  exibirValoresZerados() {
-    try {
-      const valorBancaLabel = document.getElementById("valorBancaLabel");
-      const valorLucroLabel = document.getElementById("valorLucroLabel");
-
-      if (valorBancaLabel) {
-        valorBancaLabel.textContent = "R$ 0,00";
-      }
-
-      if (valorLucroLabel) {
-        valorLucroLabel.textContent = "R$ 0,00";
-      }
-
-      // ✅ ZERAR TODOS OS RESULTADOS
-      this.atualizarDisplays({
-        unidadeEntrada: 0,
-        metaDiaria: 0,
-        metaMensal: 0,
-        metaAnual: 0,
-        entradasPositivas: 0,
-      });
-
-      console.log("💤 Valores zerados exibidos");
-    } catch (error) {
-      console.error("❌ Erro ao exibir valores zerados:", error);
-    }
-  },
-
-  // ✅ CONFIGURAR EVENTOS DOS INPUTS
-  configurarEventosInputs() {
-    try {
-      const inputs = ["porcentagem", "unidadeMeta", "oddsMeta"];
-
-      inputs.forEach((inputId) => {
-        const input = document.getElementById(inputId);
-        if (input) {
-          input.addEventListener("input", () => this.calcularTodosValores());
-          input.addEventListener("change", () => this.calcularTodosValores());
-          input.addEventListener("blur", () => this.calcularTodosValores());
-
-          console.log(`✅ Eventos configurados para: ${inputId}`);
-        } else {
-          console.warn(`⚠️ Input não encontrado: ${inputId}`);
-        }
-      });
-    } catch (error) {
-      console.error("❌ Erro ao configurar eventos dos inputs:", error);
-    }
-  },
-
-  // ✅ CONFIGURAR EVENTOS DO TIPO DE META - COM MUDANÇA DE CORES
-  configurarEventosTipoMeta() {
-    try {
-      const radioFixa = document.getElementById("metaFixa");
-      const radioTurbo = document.getElementById("metaTurbo");
-
-      if (radioFixa) {
-        radioFixa.addEventListener("change", () => {
-          if (radioFixa.checked) {
-            this.tipoMetaSelecionado = "fixa";
-            this.aplicarEstiloMetaFixa();
-            this.calcularTodosValores();
-          }
-        });
-      }
-
-      if (radioTurbo) {
-        radioTurbo.addEventListener("change", () => {
-          if (radioTurbo.checked) {
-            this.tipoMetaSelecionado = "turbo";
-            this.aplicarEstiloMetaTurbo();
-            this.calcularTodosValores();
-          }
-        });
-      }
-
-      // ✅ APLICAR ESTILO INICIAL
-      if (radioFixa && radioFixa.checked) {
-        this.tipoMetaSelecionado = "fixa";
-        this.aplicarEstiloMetaFixa();
-      } else if (radioTurbo && radioTurbo.checked) {
-        this.tipoMetaSelecionado = "turbo";
-        this.aplicarEstiloMetaTurbo();
-      }
-
-      console.log(`✅ Tipo de meta inicial: ${this.tipoMetaSelecionado}`);
-    } catch (error) {
-      console.error("❌ Erro ao configurar eventos tipo de meta:", error);
-    }
-  },
-
-  // ✅ NOVA FUNÇÃO: APLICAR ESTILO META FIXA (AZUL)
-  aplicarEstiloMetaFixa() {
-    try {
-      console.log("🔵 Aplicando estilo Meta Fixa (Azul)");
-
-      // ✅ ALTERAR COR DOS VALORES PARA AZUL
-      const resultadoValores = document.querySelectorAll(".resultado-valor");
-      resultadoValores.forEach((elemento) => {
-        elemento.style.color = "#2196F3"; // Azul
-        elemento.style.fontWeight = "bold";
-        elemento.style.transition = "color 0.3s ease";
-      });
-
-      // ✅ DESTACAR OPÇÃO SELECIONADA
-      const opcaoFixa = document
-        .querySelector("#metaFixa")
-        .closest(".opcao-meta");
-      const opcaoTurbo = document
-        .querySelector("#metaTurbo")
-        .closest(".opcao-meta");
-
-      if (opcaoFixa) {
-        opcaoFixa.style.backgroundColor = "#E3F2FD"; // Azul claro
-        opcaoFixa.style.border = "2px solid #2196F3"; // Borda azul
-        opcaoFixa.style.borderRadius = "8px";
-        opcaoFixa.style.padding = "10px";
-        opcaoFixa.style.transition = "all 0.3s ease";
-      }
-
-      if (opcaoTurbo) {
-        opcaoTurbo.style.backgroundColor = "transparent";
-        opcaoTurbo.style.border = "1px solid #ddd";
-        opcaoTurbo.style.borderRadius = "8px";
-        opcaoTurbo.style.padding = "10px";
-      }
-
-      // ✅ ALTERAR COR DO TÍTULO
-      const tituloResultados = document.querySelector(".titulo-resultados");
-      if (tituloResultados) {
-        tituloResultados.style.color = "#2196F3";
-        tituloResultados.style.transition = "color 0.3s ease";
-      }
-
-      console.log("✅ Estilo Meta Fixa aplicado");
-    } catch (error) {
-      console.error("❌ Erro ao aplicar estilo Meta Fixa:", error);
-    }
-  },
-
-  // ✅ NOVA FUNÇÃO: APLICAR ESTILO META TURBO (LARANJA)
-  aplicarEstiloMetaTurbo() {
-    try {
-      console.log("🟠 Aplicando estilo Meta Turbo (Laranja)");
-
-      // ✅ ALTERAR COR DOS VALORES PARA LARANJA
-      const resultadoValores = document.querySelectorAll(".resultado-valor");
-      resultadoValores.forEach((elemento) => {
-        elemento.style.color = "#FF9800"; // Laranja
-        elemento.style.fontWeight = "bold";
-        elemento.style.transition = "color 0.3s ease";
-      });
-
-      // ✅ DESTACAR OPÇÃO SELECIONADA
-      const opcaoFixa = document
-        .querySelector("#metaFixa")
-        .closest(".opcao-meta");
-      const opcaoTurbo = document
-        .querySelector("#metaTurbo")
-        .closest(".opcao-meta");
-
-      if (opcaoTurbo) {
-        opcaoTurbo.style.backgroundColor = "#FFF3E0"; // Laranja claro
-        opcaoTurbo.style.border = "2px solid #FF9800"; // Borda laranja
-        opcaoTurbo.style.borderRadius = "8px";
-        opcaoTurbo.style.padding = "10px";
-        opcaoTurbo.style.transition = "all 0.3s ease";
-      }
-
-      if (opcaoFixa) {
-        opcaoFixa.style.backgroundColor = "transparent";
-        opcaoFixa.style.border = "1px solid #ddd";
-        opcaoFixa.style.borderRadius = "8px";
-        opcaoFixa.style.padding = "10px";
-      }
-
-      // ✅ ALTERAR COR DO TÍTULO
-      const tituloResultados = document.querySelector(".titulo-resultados");
-      if (tituloResultados) {
-        tituloResultados.style.color = "#FF9800";
-        tituloResultados.style.transition = "color 0.3s ease";
-      }
-
-      console.log("✅ Estilo Meta Turbo aplicado");
-    } catch (error) {
-      console.error("❌ Erro ao aplicar estilo Meta Turbo:", error);
-    }
-  },
-
-  // ✅ OBTER VALORES DOS INPUTS COM VALIDAÇÃO - SEM VALORES PADRÃO
-  obterValoresInputs() {
-    try {
-      const inputPorcentagem = document.getElementById("porcentagem");
-      let porcentagem = 0;
-
-      if (inputPorcentagem && inputPorcentagem.value) {
-        const valorLimpo = inputPorcentagem.value
-          .replace(/[^\d.,]/g, "")
-          .replace(",", ".");
-        porcentagem = parseFloat(valorLimpo) || 0;
-      }
-
-      const inputUnidade = document.getElementById("unidadeMeta");
-      let unidade = 0;
-
-      if (inputUnidade && inputUnidade.value) {
-        unidade = parseInt(inputUnidade.value) || 0;
-      }
-
-      const inputOdds = document.getElementById("oddsMeta");
-      let odds = 0;
-
-      if (inputOdds && inputOdds.value) {
-        const valorLimpo = inputOdds.value.replace(",", ".");
-        odds = parseFloat(valorLimpo) || 0;
-      }
-
-      // ✅ SE QUALQUER VALOR FOR ZERO OU INVÁLIDO, RETORNAR TUDO ZERO
-      if (porcentagem <= 0 || unidade <= 0 || odds <= 0) {
-        console.log("⚠️ Inputs vazios ou inválidos - retornando valores zero");
-        return {
-          porcentagem: 0,
-          unidade: 0,
-          odds: 0,
-        };
-      }
-
-      return {
-        porcentagem: porcentagem,
-        unidade: unidade,
-        odds: odds,
-      };
-    } catch (error) {
-      console.error("❌ Erro ao obter valores dos inputs:", error);
-      return {
-        porcentagem: 0,
-        unidade: 0,
-        odds: 0,
-      };
-    }
-  },
-
-  // ✅ CALCULAR UNIDADE DE ENTRADA
-  calcularUnidadeEntrada(valores) {
-    try {
-      if (
-        !this.dadosCarregados ||
-        this.banca_inicial <= 0 ||
-        valores.porcentagem <= 0
-      ) {
-        return 0;
-      }
-
-      const bancaBase = this.banca_inicial;
-      const porcentagemDecimal = valores.porcentagem / 100;
-      const unidadeEntrada = bancaBase * porcentagemDecimal;
-
-      return unidadeEntrada;
-    } catch (error) {
-      console.error("❌ Erro ao calcular unidade de entrada:", error);
-      return 0;
-    }
-  },
-
-  // ✅ CALCULAR META DIÁRIA - COM LÓGICA DE RECUPERAÇÃO DE PREJUÍZO CORRIGIDA
-  calcularMetaDiaria(valores) {
-    try {
-      if (
-        !this.dadosCarregados ||
-        this.banca_inicial <= 0 ||
-        valores.porcentagem <= 0 ||
-        valores.unidade <= 0
-      ) {
-        return 0;
-      }
-
-      const porcentagemDecimal = valores.porcentagem / 100;
-      let metaOriginal = 0;
-      let metaFinal = 0;
-
-      // ✅ SEMPRE CALCULAR META ORIGINAL BASEADA NA BANCA INICIAL
-      metaOriginal = this.banca_inicial * porcentagemDecimal * valores.unidade;
-
-      // ✅ VERIFICAR SE HÁ PREJUÍZO (LUCRO NEGATIVO)
-      if (this.lucro_atual < 0) {
-        // 🔴 PREJUÍZO: Meta = Meta Original + Valor Absoluto do Prejuízo
-        const valorPrejuizo = Math.abs(this.lucro_atual);
-        metaFinal = metaOriginal + valorPrejuizo;
-
-        console.log(`💔 PREJUÍZO DETECTADO (META DIÁRIA):`);
-        console.log(`   Meta Original: R$ ${metaOriginal.toFixed(2)}`);
-        console.log(`   Prejuízo do Dia: R$ ${valorPrejuizo.toFixed(2)}`);
-        console.log(
-          `   Meta Final (Original + Recuperação): R$ ${metaFinal.toFixed(2)}`
-        );
-
-        return metaFinal;
-      } else if (this.lucro_atual === 0) {
-        // ⚪ NEUTRO: Apenas a meta original
-        console.log(
-          `⚖️ LUCRO NEUTRO - Meta Diária: R$ ${metaOriginal.toFixed(2)}`
-        );
-        return metaOriginal;
-      } else {
-        // 🟢 LUCRO POSITIVO: Aplicar lógica de Meta Fixa vs Turbo
-        if (this.tipoMetaSelecionado === "fixa") {
-          // Meta Fixa: sempre usa banca inicial
-          metaFinal = metaOriginal;
-          console.log(
-            `📈 LUCRO POSITIVO - Meta Fixa: R$ ${metaFinal.toFixed(2)}`
-          );
-        } else {
-          // Meta Turbo: usa banca atual (inicial + lucro)
-          const bancaAtual = this.banca_inicial + this.lucro_atual;
-          metaFinal = bancaAtual * porcentagemDecimal * valores.unidade;
-          console.log(`🚀 LUCRO POSITIVO - Meta Turbo:`);
-          console.log(`   Banca Atual: R$ ${bancaAtual.toFixed(2)}`);
-          console.log(`   Meta Turbo: R$ ${metaFinal.toFixed(2)}`);
-        }
-        return metaFinal;
-      }
-    } catch (error) {
-      console.error("❌ Erro ao calcular meta diária:", error);
-      return 0;
-    }
-  },
-
-  // ✅ CALCULAR DIAS RESTANTES
-  calcularDiasRestantes() {
-    try {
-      const hoje = new Date();
-      const ultimoDiaMes = new Date(
-        hoje.getFullYear(),
-        hoje.getMonth() + 1,
-        0
-      ).getDate();
-      const diaAtual = hoje.getDate();
-      const diasRestantesMes = ultimoDiaMes - diaAtual + 1;
-
-      const fimAno = new Date(hoje.getFullYear(), 11, 31);
-      const diferenca = Math.ceil((fimAno - hoje) / (1000 * 60 * 60 * 24)) + 1;
-
-      return {
-        mes: diasRestantesMes,
-        ano: diferenca,
-      };
-    } catch (error) {
-      return { mes: 30, ano: 365 };
-    }
-  },
-
-  // ✅ NOVA FUNÇÃO: CALCULAR METAS DE PERÍODO - CORRIGIDA PARA INCLUIR RECUPERAÇÃO DE PERDAS
-  calcularMetasPeriodo(metaDiaria, valores) {
-    try {
-      const diasRestantes = this.calcularDiasRestantes();
-
-      // ✅ VERIFICAR SE HÁ PREJUÍZO
-      if (this.lucro_atual < 0) {
-        // 🔴 COM PREJUÍZO: Meta de período = Meta Diária (que já inclui recuperação) × Dias
-        const metaMensal = metaDiaria * diasRestantes.mes;
-        const metaAnual = metaDiaria * diasRestantes.ano;
-
-        console.log(`💔 PREJUÍZO - METAS DE PERÍODO:`);
-        console.log(
-          `   Meta Diária (com recuperação): R$ ${metaDiaria.toFixed(2)}`
-        );
-        console.log(`   Dias restantes no mês: ${diasRestantes.mes}`);
-        console.log(`   Meta Mensal: R$ ${metaMensal.toFixed(2)}`);
-        console.log(`   Dias restantes no ano: ${diasRestantes.ano}`);
-        console.log(`   Meta Anual: R$ ${metaAnual.toFixed(2)}`);
-
-        return {
-          metaMensal: metaMensal,
-          metaAnual: metaAnual,
-          diasMes: diasRestantes.mes,
-          diasAno: diasRestantes.ano,
-        };
-      }
-
-      // ✅ SEM PREJUÍZO: Aplicar lógica normal
-      const porcentagemDecimal = valores.porcentagem / 100;
-      let metaMensal = 0;
-      let metaAnual = 0;
-
-      if (this.tipoMetaSelecionado === "fixa") {
-        // 🔵 META FIXA: Calcular meta total do período e subtrair lucro já conquistado
-        const metaMensalTotal =
-          this.banca_inicial *
-          porcentagemDecimal *
-          valores.unidade *
-          diasRestantes.mes;
-        const metaAnualTotal =
-          this.banca_inicial *
-          porcentagemDecimal *
-          valores.unidade *
-          diasRestantes.ano;
-
-        // Subtrair o lucro já conquistado
-        metaMensal = Math.max(0, metaMensalTotal - this.lucro_atual);
-        metaAnual = Math.max(0, metaAnualTotal - this.lucro_atual);
-
-        console.log(`📊 META FIXA - PERÍODO:`);
-        console.log(`   Meta Mensal Total: R$ ${metaMensalTotal.toFixed(2)}`);
-        console.log(`   Lucro Atual: R$ ${this.lucro_atual.toFixed(2)}`);
-        console.log(`   Meta Mensal Restante: R$ ${metaMensal.toFixed(2)}`);
-        console.log(`   Meta Anual Total: R$ ${metaAnualTotal.toFixed(2)}`);
-        console.log(`   Meta Anual Restante: R$ ${metaAnual.toFixed(2)}`);
-      } else {
-        // 🟠 META TURBO: Usar banca atual para calcular metas de período
-        const bancaAtual = this.banca_inicial + this.lucro_atual;
-        const metaMensalTotalTurbo =
-          bancaAtual * porcentagemDecimal * valores.unidade * diasRestantes.mes;
-        const metaAnualTotalTurbo =
-          bancaAtual * porcentagemDecimal * valores.unidade * diasRestantes.ano;
-
-        // Subtrair o lucro já conquistado
-        metaMensal = Math.max(0, metaMensalTotalTurbo - this.lucro_atual);
-        metaAnual = Math.max(0, metaAnualTotalTurbo - this.lucro_atual);
-
-        console.log(`🚀 META TURBO - PERÍODO:`);
-        console.log(`   Banca Atual: R$ ${bancaAtual.toFixed(2)}`);
-        console.log(
-          `   Meta Mensal Total: R$ ${metaMensalTotalTurbo.toFixed(2)}`
-        );
-        console.log(`   Lucro Atual: R$ ${this.lucro_atual.toFixed(2)}`);
-        console.log(`   Meta Mensal Restante: R$ ${metaMensal.toFixed(2)}`);
-        console.log(
-          `   Meta Anual Total: R$ ${metaAnualTotalTurbo.toFixed(2)}`
-        );
-        console.log(`   Meta Anual Restante: R$ ${metaAnual.toFixed(2)}`);
-      }
-
-      return {
-        metaMensal: metaMensal,
-        metaAnual: metaAnual,
-        diasMes: diasRestantes.mes,
-        diasAno: diasRestantes.ano,
-      };
-    } catch (error) {
-      console.error("❌ Erro ao calcular metas de período:", error);
-      return {
-        metaMensal: 0,
-        metaAnual: 0,
-        diasMes: 30,
-        diasAno: 365,
-      };
-    }
-  },
-
-  // ✅ CALCULAR ENTRADAS POSITIVAS NECESSÁRIAS
-  calcularEntradasPositivas(valores, metaDiaria) {
-    try {
-      if (
-        !this.dadosCarregados ||
-        this.banca_inicial <= 0 ||
-        metaDiaria <= 0 ||
-        valores.porcentagem <= 0 ||
-        valores.unidade <= 0 ||
-        valores.odds <= 0
-      ) {
-        return 0;
-      }
-
-      const unidadeEntrada = this.calcularUnidadeEntrada(valores);
-      if (unidadeEntrada <= 0) return 0;
-
-      const lucroPorEntrada = unidadeEntrada * valores.odds - unidadeEntrada;
-      if (lucroPorEntrada <= 0) return 0;
-
-      const entradasNecessarias = Math.ceil(metaDiaria / lucroPorEntrada);
-      return entradasNecessarias;
-    } catch (error) {
-      return 0;
-    }
-  },
-
-  // ✅ ATUALIZAR DISPLAYS NO MODAL - COM APLICAÇÃO DE CORES
-  atualizarDisplays(resultados) {
-    try {
-      const elementos = {
-        resultadoUnidadeEntrada: resultados.unidadeEntrada,
-        resultadoMetaDia: resultados.metaDiaria,
-        resultadoMetaMes: resultados.metaMensal,
-        resultadoMetaAno: resultados.metaAnual,
-      };
-
-      Object.keys(elementos).forEach((id) => {
-        const elemento = document.getElementById(id);
-        if (elemento) {
-          elemento.textContent = this.formatarMoeda(elementos[id]);
-        }
-      });
-
-      const resultadoEntradas = document.getElementById("resultadoEntradas");
-      if (resultadoEntradas) {
-        const textoEntradas =
-          resultados.entradasPositivas === 1
-            ? "1 Entrada Positiva"
-            : `${resultados.entradasPositivas} Entradas Positivas`;
-        resultadoEntradas.textContent = textoEntradas;
-      }
-
-      // ✅ APLICAR CORES BASEADO NO TIPO DE META SELECIONADO
-      setTimeout(() => {
-        if (this.tipoMetaSelecionado === "turbo") {
-          this.aplicarEstiloMetaTurbo();
-        } else {
-          this.aplicarEstiloMetaFixa();
-        }
-      }, 100);
-
-      console.log("✅ Displays atualizados no modal com cores aplicadas");
-    } catch (error) {
-      console.error("❌ Erro ao atualizar displays:", error);
-    }
-  },
-
-  // ✅ FUNÇÃO PRINCIPAL - CALCULAR TODOS OS VALORES
-  calcularTodosValores() {
-    if (this.calculandoAtualmente) return;
-
-    this.calculandoAtualmente = true;
-
-    try {
-      if (!this.dadosCarregados || this.banca_inicial <= 0) {
-        this.exibirValoresZerados();
-        return;
-      }
-
-      const valores = this.obterValoresInputs();
-
-      if (
-        valores.porcentagem <= 0 ||
-        valores.unidade <= 0 ||
-        valores.odds <= 0
-      ) {
-        this.exibirValoresZerados();
-        return;
-      }
-
-      const unidadeEntrada = this.calcularUnidadeEntrada(valores);
-      const metaDiaria = this.calcularMetaDiaria(valores);
-      const metasPeriodo = this.calcularMetasPeriodo(metaDiaria, valores);
-      const entradasPositivas = this.calcularEntradasPositivas(
-        valores,
-        metaDiaria
-      );
-
-      const resultados = {
-        unidadeEntrada: unidadeEntrada,
-        metaDiaria: metaDiaria,
-        metaMensal: metasPeriodo.metaMensal,
-        metaAnual: metasPeriodo.metaAnual,
-        entradasPositivas: entradasPositivas,
-      };
-
-      this.atualizarDisplays(resultados);
-
-      console.log("📊 Cálculos realizados:", {
-        inputs: valores,
-        tipoMeta: this.tipoMetaSelecionado,
-        bancaInicial: this.banca_inicial,
-        lucroAtual: this.lucro_atual,
-        resultados: resultados,
-      });
-    } catch (error) {
-      console.error("❌ Erro nos cálculos:", error);
-      this.exibirValoresZerados();
-    } finally {
-      this.calculandoAtualmente = false;
-    }
-  },
-
-  // ✅ FORMATAR VALORES MONETÁRIOS
-  formatarMoeda(valor) {
-    try {
-      return valor.toLocaleString("pt-BR", {
-        style: "currency",
-        currency: "BRL",
-        minimumFractionDigits: 2,
-        maximumFractionDigits: 2,
-      });
-    } catch (error) {
-      return "R$ 0,00";
-    }
-  },
-
-  // ✅ NOVA FUNÇÃO: RECARREGAR DADOS E RECALCULAR
-  async recarregarDados() {
-    try {
-      console.log("🔄 Recarregando dados da calculadora...");
-
-      this.dadosCarregados = false;
-      this.banca_inicial = 0.0;
-      this.lucro_atual = 0.0;
-
-      await this.carregarDadosBanca();
-
-      if (this.dadosCarregados) {
-        this.calcularTodosValores();
-        console.log("✅ Calculadora atualizada com sucesso!");
-      } else {
-        this.exibirValoresZerados();
-        console.log("⚠️ Não foi possível recarregar os dados");
-      }
-
-      return this.dadosCarregados;
-    } catch (error) {
-      console.error("❌ Erro ao recarregar dados:", error);
-      this.exibirValoresZerados();
-      return false;
-    }
-  },
-
-  // ✅ FUNÇÃO PARA ALTERNAR TIPO DE META - COM CORES
-  alternarTipoMeta(tipo = null) {
-    try {
-      if (tipo === null) {
-        tipo = this.tipoMetaSelecionado === "fixa" ? "turbo" : "fixa";
-      }
-
-      const radioFixa = document.getElementById("metaFixa");
-      const radioTurbo = document.getElementById("metaTurbo");
-
-      if (tipo === "fixa" && radioFixa) {
-        radioFixa.checked = true;
-        this.tipoMetaSelecionado = "fixa";
-        this.aplicarEstiloMetaFixa();
-      } else if (tipo === "turbo" && radioTurbo) {
-        radioTurbo.checked = true;
-        this.tipoMetaSelecionado = "turbo";
-        this.aplicarEstiloMetaTurbo();
-      }
-
-      this.calcularTodosValores();
-
-      console.log(`🔄 Tipo de meta alterado para: ${this.tipoMetaSelecionado}`);
-      return `✅ Tipo alterado para: ${this.tipoMetaSelecionado}`;
-    } catch (error) {
-      console.error("❌ Erro ao alternar tipo de meta:", error);
-      return "❌ Erro ao alternar tipo!";
-    }
-  },
-
-  // ✅ NOVA FUNÇÃO: SIMULAR DIFERENTES CENÁRIOS PARA TESTE - ATUALIZADA COM LÓGICA CORRIGIDA
-  simularCenarios() {
-    console.log("🧪 SIMULANDO CENÁRIOS COM RECUPERAÇÃO DE PERDAS:");
-    console.log("===================================================");
-
-    // Salvar valores originais
-    const lucroOriginal = this.lucro_atual;
-    const tipoOriginal = this.tipoMetaSelecionado;
-
-    // Parâmetros de teste
-    const valores = { porcentagem: 2, unidade: 2, odds: 1.7 };
-    console.log(`📋 PARÂMETROS DE TESTE:`);
-    console.log(`   Porcentagem: ${valores.porcentagem}%`);
-    console.log(`   Unidade: ${valores.unidade}`);
-    console.log(`   Odds: ${valores.odds}`);
-    console.log(`   Banca Inicial: R$ ${this.banca_inicial.toFixed(2)}`);
-    console.log("");
-
-    // CENÁRIO 1: Situação Inicial (sem lucro/prejuízo)
-    this.lucro_atual = 0;
-    console.log("📊 CENÁRIO 1 - SITUAÇÃO INICIAL (NEUTRO):");
-    console.log(`   Lucro Atual: R$ ${this.lucro_atual.toFixed(2)}`);
-
-    const meta1 = this.calcularMetaDiaria(valores);
-    const metas1 = this.calcularMetasPeriodo(meta1, valores);
-
-    console.log(`   ✅ Meta Diária: R$ ${meta1.toFixed(2)}`);
-    console.log(`   ✅ Meta Mensal: R$ ${metas1.metaMensal.toFixed(2)}`);
-    console.log(`   ✅ Meta Anual: R$ ${metas1.metaAnual.toFixed(2)}`);
-    console.log("");
-
-    // CENÁRIO 2: COM PREJUÍZO DE R$ 50,00
-    this.lucro_atual = -50;
-    console.log("📊 CENÁRIO 2 - COM PREJUÍZO DE R$ 50,00:");
-    console.log(`   Lucro Atual: R$ ${this.lucro_atual.toFixed(2)} (PREJUÍZO)`);
-
-    const meta2 = this.calcularMetaDiaria(valores);
-    const metas2 = this.calcularMetasPeriodo(meta2, valores);
-
-    console.log(
-      `   🔴 Meta Diária (Original + Recuperação): R$ ${meta2.toFixed(2)}`
-    );
-    console.log(
-      `   🔴 Meta Mensal (com recuperação): R$ ${metas2.metaMensal.toFixed(2)}`
-    );
-    console.log(
-      `   🔴 Meta Anual (com recuperação): R$ ${metas2.metaAnual.toFixed(2)}`
-    );
-    console.log("");
-
-    // CENÁRIO 3: COM PREJUÍZO DE R$ 100,00
-    this.lucro_atual = -100;
-    console.log("📊 CENÁRIO 3 - COM PREJUÍZO DE R$ 100,00:");
-    console.log(
-      `   Lucro Atual: R$ ${this.lucro_atual.toFixed(2)} (PREJUÍZO MAIOR)`
-    );
-
-    const meta3 = this.calcularMetaDiaria(valores);
-    const metas3 = this.calcularMetasPeriodo(meta3, valores);
-
-    console.log(
-      `   🔴 Meta Diária (Original + Recuperação): R$ ${meta3.toFixed(2)}`
-    );
-    console.log(
-      `   🔴 Meta Mensal (com recuperação): R$ ${metas3.metaMensal.toFixed(2)}`
-    );
-    console.log(
-      `   🔴 Meta Anual (com recuperação): R$ ${metas3.metaAnual.toFixed(2)}`
-    );
-    console.log("");
-
-    // CENÁRIO 4: COM LUCRO + META FIXA
-    this.lucro_atual = 80;
-    this.tipoMetaSelecionado = "fixa";
-    console.log("📊 CENÁRIO 4 - LUCRO R$ 80,00 + META FIXA:");
-    console.log(`   Lucro Atual: R$ ${this.lucro_atual.toFixed(2)}`);
-    console.log(`   Tipo de Meta: ${this.tipoMetaSelecionado}`);
-
-    const meta4 = this.calcularMetaDiaria(valores);
-    const metas4 = this.calcularMetasPeriodo(meta4, valores);
-
-    console.log(`   🔵 Meta Diária: R$ ${meta4.toFixed(2)}`);
-    console.log(
-      `   🔵 Meta Mensal (restante): R$ ${metas4.metaMensal.toFixed(2)}`
-    );
-    console.log(
-      `   🔵 Meta Anual (restante): R$ ${metas4.metaAnual.toFixed(2)}`
-    );
-    console.log("");
-
-    // CENÁRIO 5: COM LUCRO + META TURBO
-    this.tipoMetaSelecionado = "turbo";
-    console.log("📊 CENÁRIO 5 - LUCRO R$ 80,00 + META TURBO:");
-    console.log(`   Lucro Atual: R$ ${this.lucro_atual.toFixed(2)}`);
-    console.log(`   Tipo de Meta: ${this.tipoMetaSelecionado}`);
-
-    const meta5 = this.calcularMetaDiaria(valores);
-    const metas5 = this.calcularMetasPeriodo(meta5, valores);
-
-    console.log(`   🟠 Meta Diária: R$ ${meta5.toFixed(2)}`);
-    console.log(
-      `   🟠 Meta Mensal (restante): R$ ${metas5.metaMensal.toFixed(2)}`
-    );
-    console.log(
-      `   🟠 Meta Anual (restante): R$ ${metas5.metaAnual.toFixed(2)}`
-    );
-    console.log("");
-
-    // Restaurar valores originais
-    this.lucro_atual = lucroOriginal;
-    this.tipoMetaSelecionado = tipoOriginal;
-
-    console.log("✅ SIMULAÇÃO COMPLETA! Valores originais restaurados.");
-    console.log("===================================================");
-    console.log("");
-    console.log("💡 RESUMO DA LÓGICA IMPLEMENTADA:");
-    console.log("🔴 COM PREJUÍZO:");
-    console.log(
-      "   • Meta Diária = Meta Original + Valor Absoluto do Prejuízo"
-    );
-    console.log(
-      "   • Meta Mensal/Anual = Meta Diária (com recuperação) × Dias"
-    );
-    console.log("   • Resultado: Recupera o prejuízo + cumpre a meta normal");
-    console.log("");
-    console.log("🟢 COM LUCRO:");
-    console.log("   • Meta Fixa: Subtrai lucro das metas de período");
-    console.log("   • Meta Turbo: Usa banca atual e subtrai lucro das metas");
-    console.log(
-      "   • Resultado: Mostra quanto ainda falta para atingir as metas"
-    );
-    console.log("");
-    console.log("🎯 EXEMPLO PRÁTICO:");
-    console.log("   Perdeu R$ 50,00 no dia → Precisa ganhar Meta + R$ 50,00");
-    console.log("   Meta original R$ 100,00 → Meta do dia vira R$ 150,00");
-    console.log("   Assim recupera a perda E cumpre a meta!");
-
-    return {
-      neutro: {
-        diaria: meta1,
-        mensal: metas1.metaMensal,
-        anual: metas1.metaAnual,
-      },
-      prejuizo50: {
-        diaria: meta2,
-        mensal: metas2.metaMensal,
-        anual: metas2.metaAnual,
-      },
-      prejuizo100: {
-        diaria: meta3,
-        mensal: metas3.metaMensal,
-        anual: metas3.metaAnual,
-      },
-      lucroFixa: {
-        diaria: meta4,
-        mensal: metas4.metaMensal,
-        anual: metas4.metaAnual,
-      },
-      lucroTurbo: {
-        diaria: meta5,
-        mensal: metas5.metaMensal,
-        anual: metas5.metaAnual,
-      },
-    };
-  },
-
-  // ✅ PARAR POLLING
-  pararPolling() {
-    if (this.pollingInterval) {
-      clearInterval(this.pollingInterval);
-      this.pollingInterval = null;
-      console.log("⏹️ Polling parado");
-    }
-  },
-};
-
-// ========================================
-// 🎮 ATALHOS GLOBAIS - MOVIDO PARA APÓS A DECLARAÇÃO
-// ========================================
-
-window.calc = {
-  init: function () {
-    return CalculadoraModal.inicializar();
-  },
-  reload: function () {
-    return CalculadoraModal.recarregarDados();
-  },
-  fixa: function () {
-    return CalculadoraModal.alternarTipoMeta("fixa");
-  },
-  turbo: function () {
-    return CalculadoraModal.alternarTipoMeta("turbo");
-  },
-  toggle: function () {
-    return CalculadoraModal.alternarTipoMeta();
-  },
-  recalc: function () {
-    return CalculadoraModal.calcularTodosValores();
-  },
-  status: function () {
-    console.log("📊 STATUS ATUAL:");
-    console.log(`   Dados Carregados: ${CalculadoraModal.dadosCarregados}`);
-    console.log(
-      `   Banca Inicial: R$ ${CalculadoraModal.banca_inicial.toFixed(2)}`
-    );
-    console.log(
-      `   Lucro Atual: R$ ${CalculadoraModal.lucro_atual.toFixed(2)}`
-    );
-    console.log(`   Tipo Meta: ${CalculadoraModal.tipoMetaSelecionado}`);
-
-    const valores = CalculadoraModal.obterValoresInputs();
-    console.log("📝 INPUTS ATUAIS:");
-    console.log(`   Porcentagem: ${valores.porcentagem}%`);
-    console.log(`   Unidade: ${valores.unidade}`);
-    console.log(`   Odds: ${valores.odds}`);
-
-    return "✅ Status exibido no console";
-  },
-  parar: function () {
-    return CalculadoraModal.pararPolling();
-  },
-  testar: function () {
-    console.log("🧪 TESTANDO INTEGRAÇÃO:");
-
-    // Simular evento de atualização
-    document.dispatchEvent(
-      new CustomEvent("bancaAtualizada", {
-        detail: { teste: true },
-      })
-    );
-
-    console.log("📢 Evento bancaAtualizada disparado");
-    return "🧪 Teste de integração executado";
-  },
-  simular: function () {
-    return CalculadoraModal.simularCenarios();
-  },
-  cores: function () {
-    if (CalculadoraModal.tipoMetaSelecionado === "turbo") {
-      CalculadoraModal.aplicarEstiloMetaTurbo();
-    } else {
-      CalculadoraModal.aplicarEstiloMetaFixa();
-    }
-    console.log(
-      `🎨 Cores aplicadas para: ${CalculadoraModal.tipoMetaSelecionado}`
-    );
-    return "✅ Cores aplicadas com sucesso";
-  },
-  explicar: function () {
-    console.log("📚 EXPLICAÇÃO DA LÓGICA CORRIGIDA:");
-    console.log("=====================================");
-    console.log("");
-    console.log("🎯 META DIÁRIA:");
-    console.log("   🔴 PREJUÍZO: Meta Original + Valor Absoluto do Prejuízo");
-    console.log(
-      "     • Exemplo: Meta R$ 100 + Prejuízo R$ 30 = Meta Final R$ 130"
-    );
-    console.log("     • Assim recupera a perda E cumpre a meta normal");
-    console.log("");
-    console.log("   ⚪ NEUTRO: Meta Original (sem ajustes)");
-    console.log("");
-    console.log("   🟢 LUCRO POSITIVO:");
-    console.log("     • Meta Fixa: Sempre baseada na banca inicial");
-    console.log("     • Meta Turbo: Baseada na banca atual (inicial + lucro)");
-    console.log("");
-    console.log("📅 METAS MENSAIS E ANUAIS:");
-    console.log("   🔴 COM PREJUÍZO:");
-    console.log("     • Meta = Meta Diária (que já inclui recuperação) × Dias");
-    console.log("     • Não subtrai nada - precisa recuperar + meta completa");
-    console.log("");
-    console.log("   🟢 COM LUCRO:");
-    console.log("     • Calcula meta total do período");
-    console.log("     • Subtrai o lucro já conquistado");
-    console.log("     • Mostra quanto ainda falta para completar");
-    console.log("");
-    console.log("🎯 EXEMPLO PRÁTICO - PREJUÍZO:");
-    console.log("   Banca: R$ 1.000 | Perda: R$ 50 | Meta: 2% × 2 unidades");
-    console.log("   Meta Original Diária: R$ 40");
-    console.log("   Meta com Recuperação: R$ 40 + R$ 50 = R$ 90");
-    console.log("   Meta Mensal (20 dias): R$ 90 × 20 = R$ 1.800");
-    console.log("");
-    console.log("✅ AGORA AS PERDAS SÃO RECUPERADAS EM TODOS OS PERÍODOS!");
-
-    return "✅ Explicação detalhada exibida no console";
-  },
-  // ✅ NOVA FUNÇÃO: TESTAR CENÁRIO ESPECÍFICO DE PREJUÍZO
-  testarPrejuizo: function (valor = 50) {
-    console.log(`🧪 TESTANDO CENÁRIO COM PREJUÍZO DE R$ ${valor.toFixed(2)}:`);
-    console.log("===============================================");
-
-    const lucroOriginal = CalculadoraModal.lucro_atual;
-    CalculadoraModal.lucro_atual = -Math.abs(valor);
-
-    const valores = { porcentagem: 2, unidade: 2, odds: 1.7 };
-    const metaDiaria = CalculadoraModal.calcularMetaDiaria(valores);
-    const metas = CalculadoraModal.calcularMetasPeriodo(metaDiaria, valores);
-
-    console.log(`📊 RESULTADO:`);
-    console.log(`   Prejuízo: R$ ${CalculadoraModal.lucro_atual.toFixed(2)}`);
-    console.log(
-      `   Meta Diária (com recuperação): R$ ${metaDiaria.toFixed(2)}`
-    );
-    console.log(`   Meta Mensal: R$ ${metas.metaMensal.toFixed(2)}`);
-    console.log(`   Meta Anual: R$ ${metas.metaAnual.toFixed(2)}`);
-
-    // Restaurar valor original
-    CalculadoraModal.lucro_atual = lucroOriginal;
-    console.log(`✅ Valor original restaurado: R$ ${lucroOriginal.toFixed(2)}`);
-
-    return `✅ Teste com prejuízo de R$ ${valor.toFixed(2)} concluído`;
-  },
-};
-
-// ========================================
-// ⚡ INICIALIZAÇÃO AUTOMÁTICA
-// ========================================
-
-document.addEventListener("DOMContentLoaded", function () {
-  setTimeout(function () {
-    try {
-      CalculadoraModal.inicializar();
-    } catch (error) {
-      console.error("❌ Erro na inicialização automática:", error);
-    }
-  }, 1500);
-});
-
-// ========================================
-// 📱 LOGS DE INICIALIZAÇÃO
-// ========================================
-
-console.log("✅ Sistema Integrado com Recuperação de Perdas CORRIGIDO!");
-console.log("📱 Comandos disponíveis:");
-console.log("  calc.init() - Inicializar sistema");
-console.log("  calc.reload() - Recarregar dados da banca");
-console.log("  calc.status() - Ver status atual e valores dos inputs");
-console.log("  calc.simular() - Simular diferentes cenários");
-console.log(
-  "  calc.testarPrejuizo(50) - Testar cenário específico de prejuízo"
-);
-console.log("  calc.explicar() - Explicação detalhada da lógica");
-console.log("  calc.testar() - Testar integração com sistema de atualização");
-console.log("  calc.fixa() - Alterar para Meta Fixa (Azul)");
-console.log("  calc.turbo() - Alterar para Meta Turbo (Laranja)");
-console.log("  calc.toggle() - Alternar tipo de meta");
-console.log("  calc.cores() - Forçar aplicação das cores");
-console.log("  calc.recalc() - Recalcular valores");
-console.log("  calc.parar() - Parar polling");
-console.log("");
-console.log("🎨 SISTEMA DE CORES:");
-console.log("   🔵 META FIXA: Valores em azul (#2196F3) + fundo azul claro");
-console.log(
-  "   🟠 META TURBO: Valores em laranja (#FF9800) + fundo laranja claro"
-);
-console.log("   ✨ Transições suaves entre as cores");
-console.log("");
-console.log("💡 LÓGICA DE RECUPERAÇÃO DE PERDAS IMPLEMENTADA:");
-console.log("   🔴 COM PREJUÍZO: Meta Diária = Meta Original + Valor da Perda");
-console.log(
-  "   📅 METAS PERÍODO: Meta Diária (com recuperação) × Dias restantes"
-);
-console.log(
-  "   🎯 RESULTADO: Recupera completamente as perdas + cumpre meta normal"
-);
-console.log("   ✅ Funciona para meta diária, mensal e anual");
-console.log("");
-console.log("🧪 EXEMPLO DE USO:");
-console.log("   calc.testarPrejuizo(100) - Simula perda de R$ 100");
-console.log("   calc.simular() - Vê todos os cenários possíveis");
-console.log("");
-console.log("🚀 AGORA AS PERDAS SÃO TOTALMENTE RECUPERADAS!");
-
-// ✅ EXPORTAR PARA USO EXTERNO
-window.CalculadoraModal = CalculadoraModal;
-
 //========================================================================================================================
 //                             FIM CALCULO DE VALOR DO PAINEL DE CONTROLE PARA EXIBIR METAS
 // ========================================================================================================================
 //
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//========================================================================================================================
+//                    SISTEMA DINÂMICO DE RÓTULO E ÍCONE DO LUCRO
+//========================================================================================================================
+
+const SistemaLucroDinamico = {
+  ultimoValor: null,
+
+  estados: {
+    positivo: {
+      texto: "Lucro",
+      icone: "fa-solid fa-arrow-trend-up",
+      cor: "#30ca0a",
+      classe: "positivo",
+    },
+    negativo: {
+      texto: "Negativo",
+      icone: "fa-solid fa-arrow-trend-down",
+      cor: "#e74c3c",
+      classe: "negativo",
+    },
+    neutro: {
+      texto: "Neutro",
+      icone: "fa-solid fa-minus",
+      cor: "#7f8c8d",
+      classe: "neutro",
+    },
+  },
+
+  determinarEstado(valorLucro) {
+    if (valorLucro > 0) return this.estados.positivo;
+    if (valorLucro < 0) return this.estados.negativo;
+    return this.estados.neutro;
+  },
+
+  extrairValorNumerico(textoValor) {
+    if (typeof textoValor === "number") return textoValor;
+    const valorLimpo = textoValor.replace(/[^\d,.-]/g, "").replace(",", ".");
+    return parseFloat(valorLimpo) || 0;
+  },
+
+  atualizarLucro(valorLucro) {
+    try {
+      if (typeof valorLucro === "string") {
+        valorLucro = this.extrairValorNumerico(valorLucro);
+      }
+
+      const campoLucro = document.querySelector(".campo-lucro");
+      const labelLucro = document.querySelector(".campo-lucro .label-lucro");
+      const icone = labelLucro?.querySelector("i");
+      const spanTexto = labelLucro?.querySelector("span");
+      const valorLabel = document.getElementById("valorLucroLabel");
+
+      if (!campoLucro || !labelLucro || !icone || !spanTexto || !valorLabel)
+        return false;
+
+      const estado = this.determinarEstado(valorLucro);
+
+      campoLucro.classList.remove("positivo", "negativo", "neutro");
+      valorLabel.classList.remove("positivo", "negativo", "neutro");
+
+      campoLucro.classList.add(estado.classe);
+      valorLabel.classList.add(estado.classe);
+
+      spanTexto.textContent = estado.texto;
+      spanTexto.style.color = estado.cor;
+
+      icone.className = estado.icone;
+      icone.style.color = estado.cor;
+
+      valorLabel.style.color = estado.cor;
+
+      if (!valorLabel.textContent.includes("R$")) {
+        valorLabel.textContent = valorLucro.toLocaleString("pt-BR", {
+          style: "currency",
+          currency: "BRL",
+        });
+      }
+
+      this.ultimoValor = valorLucro;
+      return true;
+    } catch (error) {
+      console.error("❌ Erro ao atualizar lucro:", error);
+      return false;
+    }
+  },
+
+  atualizarDoDOM() {
+    try {
+      const valorLabel = document.getElementById("valorLucroLabel");
+      if (!valorLabel?.textContent) return false;
+
+      const valorNumerico = this.extrairValorNumerico(valorLabel.textContent);
+
+      if (
+        this.ultimoValor === null ||
+        Math.abs(valorNumerico - this.ultimoValor) > 0.01
+      ) {
+        return this.atualizarLucro(valorNumerico);
+      }
+      return true;
+    } catch (error) {
+      return false;
+    }
+  },
+
+  async verificarEAtualizarLucro() {
+    try {
+      const response = await fetch("dados_banca.php", {
+        method: "GET",
+        headers: {
+          "Cache-Control": "no-cache",
+          "X-Requested-With": "XMLHttpRequest",
+        },
+      });
+
+      if (response.ok) {
+        const data = await response.json();
+        if (data.success) {
+          const lucro = parseFloat(data.lucro_total_display) || 0;
+          return this.atualizarLucro(lucro);
+        }
+      }
+      return this.atualizarDoDOM();
+    } catch (error) {
+      return this.atualizarDoDOM();
+    }
+  },
+
+  iniciarObservador() {
+    const valorLabel = document.getElementById("valorLucroLabel");
+    if (!valorLabel) return;
+
+    const observer = new MutationObserver(() => this.atualizarDoDOM());
+    observer.observe(valorLabel, {
+      childList: true,
+      characterData: true,
+      subtree: true,
+    });
+  },
+
+  inicializar() {
+    console.log("🚀 Inicializando Sistema de Lucro Dinâmico...");
+
+    setTimeout(() => this.atualizarDoDOM(), 100);
+    setTimeout(() => this.verificarEAtualizarLucro(), 500);
+    setTimeout(() => this.iniciarObservador(), 800);
+
+    setInterval(() => this.verificarEAtualizarLucro(), 10000);
+
+    console.log("✅ Sistema de Lucro inicializado!");
+  },
+};
+
+// Integração com eventos
+document.addEventListener("DOMContentLoaded", () => {
+  setTimeout(() => SistemaLucroDinamico.inicializar(), 1000);
+});
+
+document.addEventListener("bancaAtualizada", () => {
+  setTimeout(() => SistemaLucroDinamico.verificarEAtualizarLucro(), 200);
+});
+
+document.addEventListener("areaAtualizacao", () => {
+  setTimeout(() => SistemaLucroDinamico.verificarEAtualizarLucro(), 300);
+});
+
+// Integração com modal
+const _originalInit = window.inicializarModalDeposito;
+if (typeof _originalInit === "function") {
+  window.inicializarModalDeposito = function () {
+    _originalInit.call(this);
+    setTimeout(() => SistemaLucroDinamico.atualizarDoDOM(), 500);
+  };
+}
+
+// Atalhos globais
+window.lucro = {
+  positivo: () => {
+    SistemaLucroDinamico.atualizarLucro(150);
+    return "✅ Positivo";
+  },
+  negativo: () => {
+    SistemaLucroDinamico.atualizarLucro(-75);
+    return "✅ Negativo";
+  },
+  neutro: () => {
+    SistemaLucroDinamico.atualizarLucro(0);
+    return "✅ Neutro";
+  },
+  atualizar: (v) => {
+    SistemaLucroDinamico.atualizarLucro(v);
+    return `✅ ${v}`;
+  },
+  verificar: () => {
+    SistemaLucroDinamico.verificarEAtualizarLucro();
+    return "🔄 Verificando...";
+  },
+  dom: () => {
+    SistemaLucroDinamico.atualizarDoDOM();
+    return "🔄 DOM...";
+  },
+  status: () => {
+    const v = document.getElementById("valorLucroLabel")?.textContent || "N/A";
+    console.log(`💰 DOM: ${v} | Último: ${SistemaLucroDinamico.ultimoValor}`);
+    return v;
+  },
+};
+
+window.SistemaLucroDinamico = SistemaLucroDinamico;
+window.testarLucro = (v) => window.lucro.atualizar(v);
+
+console.log("✅ Sistema de Lucro Dinâmico carregado!");
+console.log(
+  "🧪 Comandos: lucro.positivo() | lucro.negativo() | lucro.neutro() | lucro.status()"
+);
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//========================================================================================================================
+//                                 CALCULAR OS VALORES PARA EXIBIR NO RESUMO
+//========================================================================================================================

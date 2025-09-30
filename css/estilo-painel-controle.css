@@ -1,3 +1,5 @@
+/* ===== Variáveis globais para controle do botão fechar do modal de banca ===== */
+
 .modal-gerencia-banca {
   font-family: "Poppins", sans-serif;
   color: #1e272e;
@@ -45,8 +47,8 @@
 /* ===== BOTÃO DE FECHAR ===== */
 .modal-gerencia-banca .btn-fechar {
   position: absolute;
-  top: 10px;
-  right: 10px;
+  top: var(--btn-fechar-margin-top, 10px);
+  right: var(--btn-fechar-margin-right, 10px);
   padding: 8px 12px;
   font-size: 29px;
   color: #6e7985;
@@ -543,3 +545,916 @@
     font-size: 14px;
   }
 }
+/* ===== CORREÇÕES PARA CORES DA BANCA E LUCRO ===== */
+
+/* ✅ VALOR DA BANCA COM MESMA COR DO RÓTULO */
+.campo-banca span#valorBancaLabel {
+  color: #2f4236 !important; /* Mesma cor do rótulo "Banca" */
+  font-size: 18px;
+  font-weight: bold;
+}
+
+/* ✅ CORES CONDICIONAIS PARA O VALOR DO LUCRO */
+.campo-lucro span#valorLucroLabel {
+  font-size: 18px;
+  font-weight: bold;
+  transition: color 0.3s ease;
+}
+
+/* Lucro positivo - Verde */
+.campo-lucro span#valorLucroLabel.positivo {
+  color: #30ca0a !important;
+}
+
+/* Lucro negativo - Vermelho */
+.campo-lucro span#valorLucroLabel.negativo {
+  color: #e74c3c !important;
+}
+
+/* Lucro neutro - Cinza */
+.campo-lucro span#valorLucroLabel.neutro {
+  color: #7f8c8d !important;
+}
+
+/* ✅ CORES CONDICIONAIS PARA O ÍCONE DO LUCRO */
+.campo-lucro .label-lucro i {
+  transition: color 0.3s ease;
+}
+
+/* Ícone para lucro positivo */
+.campo-lucro.positivo .label-lucro i {
+  color: #30ca0a !important;
+}
+
+/* Ícone para lucro negativo */
+.campo-lucro.negativo .label-lucro i {
+  color: #e74c3c !important;
+}
+
+/* Ícone para lucro neutro */
+.campo-lucro.neutro .label-lucro i {
+  color: #7f8c8d !important;
+}
+
+/* ✅ TRANSIÇÕES SUAVES PARA MUDANÇAS DE COR */
+.campo-lucro .label-lucro span,
+.campo-lucro span#valorLucroLabel {
+  transition: all 0.3s ease;
+}
+
+/* ✅ GARANTIR QUE A COR DA BANCA PERMANEÇA CONSISTENTE */
+.campo-banca label,
+.campo-banca label i,
+.campo-banca span#valorBancaLabel {
+  color: #2f4236 !important;
+}
+/* ===== TRANSIÇÕES SUAVES PARA LUCRO DINÂMICO ===== */
+.campo-lucro .label-lucro i,
+.campo-lucro .label-lucro span,
+.campo-lucro span#valorLucroLabel {
+  transition: color 0.3s ease, transform 0.2s ease;
+}
+
+.campo-lucro .label-lucro i {
+  display: inline-block;
+}
+
+/* ===== ANIMAÇÃO SUTIL AO MUDAR ===== */
+@keyframes pulseIcon {
+  0%,
+  100% {
+    transform: scale(1);
+  }
+  50% {
+    transform: scale(1.1);
+  }
+}
+
+.campo-lucro.positivo .label-lucro i,
+.campo-lucro.negativo .label-lucro i,
+.campo-lucro.neutro .label-lucro i {
+  animation: pulseIcon 0.5s ease;
+}
+/* ===== VARIÁVEIS CSS PARA O CAMPO LUCRO ===== */
+
+/* ===== APLICAÇÃO DAS VARIÁVEIS NO CAMPO LUCRO ===== */
+.campo-lucro {
+  flex: 1;
+  background: var(--lucro-background);
+  padding: var(--lucro-padding);
+  border-radius: var(--lucro-border-radius);
+  box-shadow: var(--lucro-box-shadow);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  text-align: left;
+  border: 1px solid var(--lucro-border-color);
+  font-family: var(--lucro-font-family);
+}
+
+.campo-lucro .conteudo {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+}
+
+.campo-lucro label,
+.campo-lucro .label-lucro {
+  display: flex;
+  align-items: center;
+  gap: var(--lucro-gap-icon);
+  font-weight: var(--lucro-font-weight-label);
+  color: var(--lucro-cor-banca);
+  margin-bottom: var(--lucro-margin-label);
+  font-size: var(--lucro-font-size-label);
+  font-family: var(--lucro-font-family);
+}
+
+.campo-lucro label i,
+.campo-lucro .label-lucro i {
+  margin-right: calc(var(--lucro-gap-icon) / 2);
+  transition: color var(--lucro-transition-duration) ease;
+}
+
+/* ===== VALOR DO LUCRO COM VARIÁVEIS ===== */
+.campo-lucro span,
+.campo-lucro span#valorLucroLabel {
+  font-size: var(--lucro-font-size-valor);
+  font-weight: var(--lucro-font-weight-valor);
+  font-family: var(--lucro-font-family);
+  transition: color var(--lucro-transition-duration) ease;
+}
+
+/* Estados condicionais usando variáveis */
+.campo-lucro span#valorLucroLabel.positivo,
+.campo-lucro.positivo .label-lucro span,
+.campo-lucro.positivo .label-lucro i {
+  color: var(--lucro-cor-positivo) !important;
+}
+
+.campo-lucro span#valorLucroLabel.negativo,
+.campo-lucro.negativo .label-lucro span,
+.campo-lucro.negativo .label-lucro i {
+  color: var(--lucro-cor-negativo) !important;
+}
+
+.campo-lucro span#valorLucroLabel.neutro,
+.campo-lucro.neutro .label-lucro span,
+.campo-lucro.neutro .label-lucro i {
+  color: var(--lucro-cor-neutro) !important;
+}
+
+/* ===== TRANSIÇÕES SUAVES ===== */
+.campo-lucro .label-lucro i,
+.campo-lucro .label-lucro span,
+.campo-lucro span#valorLucroLabel {
+  transition: color var(--lucro-transition-duration) ease,
+    transform calc(var(--lucro-transition-duration) * 0.67) ease;
+}
+
+.campo-lucro .label-lucro i {
+  display: inline-block;
+}
+/* ===== APLICAÇÃO DAS VARIÁVEIS ===== */
+
+/* ÍCONE */
+.campo-lucro .label-lucro i {
+  font-size: var(--lucro-icone-tamanho);
+  margin-right: var(--lucro-espacamento-icone-rotulo);
+  transition: color var(--lucro-transicao) ease;
+}
+
+/* Estados do ícone */
+.campo-lucro.positivo .label-lucro i {
+  color: var(--lucro-icone-cor-positivo) !important;
+}
+
+.campo-lucro.negativo .label-lucro i {
+  color: var(--lucro-icone-cor-negativo) !important;
+}
+
+.campo-lucro.neutro .label-lucro i {
+  color: var(--lucro-icone-cor-neutro) !important;
+}
+
+/* RÓTULO */
+.campo-lucro .label-lucro span {
+  font-size: var(--lucro-rotulo-tamanho);
+  font-weight: var(--lucro-rotulo-peso);
+  color: var(--lucro-rotulo-cor);
+  transition: color var(--lucro-transicao) ease;
+}
+
+/* Estados do rótulo (quando muda o texto) */
+.campo-lucro.positivo .label-lucro span,
+.campo-lucro.negativo .label-lucro span,
+.campo-lucro.neutro .label-lucro span {
+  color: var(--lucro-rotulo-cor);
+}
+
+/* SALDO */
+.campo-lucro span#valorLucroLabel {
+  font-size: var(--lucro-saldo-tamanho);
+  font-weight: var(--lucro-saldo-peso);
+  transition: color var(--lucro-transicao) ease;
+}
+
+/* Estados do saldo */
+.campo-lucro span#valorLucroLabel.positivo {
+  color: var(--lucro-saldo-cor-positivo) !important;
+}
+
+.campo-lucro span#valorLucroLabel.negativo {
+  color: var(--lucro-saldo-cor-negativo) !important;
+}
+
+.campo-lucro span#valorLucroLabel.neutro {
+  color: var(--lucro-saldo-cor-neutro) !important;
+}
+
+/* ===== RESPONSIVIDADE ===== */
+@media (max-width: 600px) {
+  :root {
+    --lucro-icone-tamanho: 14px;
+    --lucro-rotulo-tamanho: 13px;
+    --lucro-saldo-tamanho: 16px;
+    --lucro-espacamento-icone-rotulo: 6px;
+  }
+}
+
+@media (max-width: 400px) {
+  :root {
+    --lucro-icone-tamanho: 13px;
+    --lucro-rotulo-tamanho: 12px;
+    --lucro-saldo-tamanho: 15px;
+    --lucro-espacamento-icone-rotulo: 5px;
+  }
+}
+
+/* ===== ANIMAÇÃO AO MUDAR ESTADO ===== */
+@keyframes pulseIcon {
+  0%,
+  100% {
+    transform: scale(1);
+  }
+  50% {
+    transform: scale(1.1);
+  }
+}
+
+.campo-lucro.positivo .label-lucro i,
+.campo-lucro.negativo .label-lucro i,
+.campo-lucro.neutro .label-lucro i {
+  animation: pulseIcon calc(var(--lucro-transition-duration) * 1.67) ease;
+}
+/* ===== BANCA E LUCRO LADO A LADO ===== */
+.linha-banca-lucro {
+  display: flex;
+  gap: 16px;
+  justify-content: center;
+  margin-bottom: 20px;
+  margin-top: 20px;
+}
+
+.campo-banca,
+.campo-lucro {
+  flex: 1;
+  background: var(--lucro-background, #ffffff); /* ✅ FUNDO BRANCO */
+  padding: var(--lucro-padding, 16px);
+  border-radius: var(--lucro-border-radius, 12px);
+  box-shadow: var(--lucro-box-shadow, 0 2px 8px rgba(0, 0, 0, 0.05));
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  text-align: left;
+  border: 1px solid var(--lucro-border-color, #bec7bd);
+  font-family: var(--lucro-font-family, "Poppins", sans-serif);
+}
+
+/* ✅ GARANTIR QUE O CONTEÚDO INTERNO TENHA LAYOUT CORRETO */
+.campo-banca .conteudo,
+.campo-lucro .conteudo {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  width: 100%;
+}
+
+/* ===== CAMPO BANCA MANTÉM COR CONSISTENTE ===== */
+.campo-banca label,
+.campo-banca label i,
+.campo-banca span#valorBancaLabel {
+  color: var(--lucro-cor-banca) !important;
+}
+
+/* ===== RESPONSIVIDADE COM VARIÁVEIS ===== */
+@media (max-width: 600px) {
+  :root {
+    --lucro-font-size-label: 13px;
+    --lucro-font-size-valor: 16px;
+    --lucro-padding: 14px;
+    --lucro-gap-icon: 6px;
+  }
+}
+
+@media (max-width: 400px) {
+  :root {
+    --lucro-font-size-label: 12px;
+    --lucro-font-size-valor: 15px;
+    --lucro-padding: 12px;
+  }
+}
+/* ===== ALINHAMENTO: ELEMENTOS À ESQUERDA, CONJUNTO CENTRALIZADO ===== */
+.campo-banca,
+.campo-lucro {
+  flex: 1;
+  background: var(--lucro-background, #ffffff);
+  padding: var(--lucro-padding, 16px);
+  border-radius: var(--lucro-border-radius, 12px);
+  box-shadow: var(--lucro-box-shadow, 0 2px 8px rgba(0, 0, 0, 0.05));
+  display: flex;
+  justify-content: center; /* ✅ CENTRALIZA O CONTEÚDO */
+  align-items: center;
+  text-align: left;
+  border: 1px solid var(--lucro-border-color, #bec7bd);
+  font-family: var(--lucro-font-family, "Poppins", sans-serif);
+}
+
+.campo-banca .conteudo,
+.campo-lucro .conteudo {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start; /* ✅ ALINHA ELEMENTOS À ESQUERDA */
+  width: auto; /* ✅ LARGURA AUTOMÁTICA PARA CENTRALIZAR */
+  gap: 4px;
+}
+
+/* Label com ícone */
+.campo-banca label,
+.campo-lucro .label-lucro {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  font-weight: var(--banca-rotulo-peso, 600);
+  color: var(--banca-rotulo-cor, #2f4236);
+  margin-bottom: 4px;
+  font-size: var(--banca-rotulo-tamanho, 14px);
+}
+
+/* Ícone sem margens extras */
+.campo-banca label i,
+.campo-lucro .label-lucro i {
+  font-size: var(--banca-icone-tamanho, 16px);
+  margin-left: 0 !important;
+  margin-right: 0 !important;
+  transition: color var(--banca-transicao, 0.3s) ease;
+}
+
+/* Valor alinhado com o início do ícone */
+.campo-banca span#valorBancaLabel,
+.campo-lucro span#valorLucroLabel {
+  font-size: var(--banca-saldo-tamanho, 18px);
+  font-weight: var(--banca-saldo-peso, bold);
+  margin-left: 0 !important;
+  padding-left: 0 !important;
+  align-self: flex-start; /* ✅ GARANTE ALINHAMENTO À ESQUERDA */
+  transition: color var(--banca-transicao, 0.3s) ease;
+}
+/* ===== APLICAÇÃO DO MARGIN-TOP NOS VALORES ===== */
+
+/* VALOR DA BANCA */
+.campo-banca span#valorBancaLabel {
+  font-size: var(--banca-saldo-tamanho, 18px);
+  font-weight: var(--banca-saldo-peso, bold);
+  color: var(--banca-saldo-cor, #2f4236);
+  margin-top: var(
+    --banca-saldo-margin-top,
+    2px
+  ) !important; /* ✅ VARIÁVEL APLICADA */
+  margin-left: 0 !important;
+  padding-left: 0 !important;
+  transition: color var(--banca-transicao, 0.3s) ease;
+}
+
+/* VALOR DO LUCRO */
+.campo-lucro span#valorLucroLabel {
+  font-size: var(--lucro-saldo-tamanho, 18px);
+  font-weight: var(--lucro-saldo-peso, bold);
+  margin-top: var(
+    --lucro-saldo-margin-top,
+    2px
+  ) !important; /* ✅ VARIÁVEL APLICADA */
+  margin-left: 0 !important;
+  padding-left: 0 !important;
+  transition: color var(--lucro-transicao, 0.3s) ease;
+}
+
+/* Estados do saldo do lucro */
+.campo-lucro span#valorLucroLabel.positivo {
+  color: var(--lucro-saldo-cor-positivo) !important;
+}
+
+.campo-lucro span#valorLucroLabel.negativo {
+  color: var(--lucro-saldo-cor-negativo) !important;
+}
+
+.campo-lucro span#valorLucroLabel.neutro {
+  color: var(--lucro-saldo-cor-neutro) !important;
+}
+/* ===== TIPOS DE META COM VARIÁVEIS ===== */
+.campo-tipo-meta {
+  margin: var(--tipo-meta-margin);
+  padding: var(--tipo-meta-padding);
+  background: var(--tipo-meta-background);
+  border-radius: var(--tipo-meta-border-radius);
+  border: 1px solid var(--tipo-meta-border-color);
+}
+
+.titulo-meta {
+  text-align: center;
+  font-weight: var(--tipo-meta-titulo-peso);
+  color: var(--tipo-meta-titulo-cor);
+  margin-bottom: var(--tipo-meta-titulo-margin-bottom);
+  font-size: var(--tipo-meta-titulo-tamanho);
+}
+
+.opcoes-meta {
+  display: flex;
+  justify-content: center;
+  gap: var(--tipo-meta-gap-opcoes);
+  flex-wrap: wrap;
+}
+
+.opcao-meta {
+  display: flex;
+  align-items: center;
+  gap: var(--tipo-meta-gap-elementos);
+  cursor: pointer;
+}
+
+.opcao-meta input[type="radio"] {
+  width: var(--tipo-meta-radio-tamanho);
+  height: var(--tipo-meta-radio-tamanho);
+  accent-color: var(--tipo-meta-radio-cor-accent);
+  cursor: pointer;
+}
+
+.opcao-meta label {
+  font-weight: var(--tipo-meta-label-peso);
+  color: var(--tipo-meta-label-cor);
+  cursor: pointer;
+  font-size: var(--tipo-meta-label-tamanho);
+  margin: 0;
+}
+
+.opcao-meta .info-btn {
+  background: none;
+  border: none;
+  font-size: var(--tipo-meta-info-btn-tamanho);
+  cursor: pointer;
+  color: var(--tipo-meta-info-btn-cor);
+  padding: 2px;
+  display: inline-flex;
+  align-items: center;
+  transition: color var(--tipo-meta-transicao) ease,
+    transform calc(var(--tipo-meta-transicao) * 0.67) ease;
+}
+
+.opcao-meta .info-btn:hover {
+  color: var(--tipo-meta-info-btn-cor-hover);
+  transform: scale(1.1);
+}
+
+/* ===== RESPONSIVIDADE ===== */
+@media (max-width: 600px) {
+  :root {
+    --tipo-meta-titulo-tamanho: 15px;
+    --tipo-meta-label-tamanho: 13px;
+    --tipo-meta-gap-opcoes: 15px;
+    --tipo-meta-padding: 12px;
+  }
+}
+
+@media (max-width: 400px) {
+  :root {
+    --tipo-meta-titulo-tamanho: 14px;
+    --tipo-meta-label-tamanho: 12px;
+    --tipo-meta-radio-tamanho: 16px;
+    --tipo-meta-info-btn-tamanho: 13px;
+  }
+}
+
+/* ===== TOOLTIP INFO ===== */
+.tooltip-info {
+  position: absolute;
+  top: 100%;
+  left: 20%;
+  transform: translateX(-50%) translateY(10px);
+  background: var(--tooltip-background);
+  border: 2px solid var(--tooltip-border-color);
+  border-radius: var(--tooltip-border-radius);
+  box-shadow: var(--tooltip-shadow);
+  max-width: var(--tooltip-max-width);
+  width: max-content;
+  min-width: 300px;
+  z-index: var(--tooltip-z-index);
+  opacity: 0;
+  visibility: hidden;
+  transition: opacity var(--tooltip-transition) ease,
+    visibility var(--tooltip-transition) ease,
+    transform var(--tooltip-transition) ease;
+  pointer-events: none;
+  margin-top: 8px;
+}
+
+/* Mostrar tooltip ao passar o mouse ou clicar */
+.opcao-meta:hover .tooltip-info,
+.info-btn.ativo + .tooltip-info,
+.tooltip-info.ativo {
+  opacity: 1;
+  visibility: visible;
+  transform: translateX(-50%) translateY(0);
+  pointer-events: auto;
+}
+
+/* Header do Tooltip */
+.tooltip-header {
+  background: var(--tooltip-header-background);
+  color: var(--tooltip-header-color);
+  padding: var(--tooltip-header-padding);
+  border-radius: var(--tooltip-border-radius) var(--tooltip-border-radius) 0 0;
+  font-size: var(--tooltip-header-font-size);
+  font-weight: var(--tooltip-header-font-weight);
+  text-align: center;
+}
+
+/* Conteúdo do Tooltip */
+.tooltip-content {
+  padding: var(--tooltip-padding);
+  color: var(--tooltip-content-color);
+  font-size: var(--tooltip-content-font-size);
+  line-height: var(--tooltip-content-line-height);
+}
+
+.tooltip-content p {
+  margin: 0 0 12px 0;
+}
+
+.tooltip-content p:last-child {
+  margin-bottom: 0;
+}
+
+.tooltip-content strong {
+  color: #145a32;
+  font-weight: 600;
+}
+
+/* Exemplo dentro do Tooltip */
+.tooltip-exemplo {
+  background: var(--tooltip-exemplo-background);
+  border: 1px solid var(--tooltip-exemplo-border-color);
+  border-radius: 8px;
+  padding: var(--tooltip-exemplo-padding);
+  margin: 12px 0;
+}
+
+.tooltip-exemplo strong {
+  display: block;
+  margin-bottom: 8px;
+  color: #27ae60;
+}
+
+.tooltip-exemplo ul {
+  margin: 8px 0 0 0;
+  padding-left: 20px;
+  list-style: none;
+}
+
+.tooltip-exemplo li {
+  margin-bottom: 6px;
+  position: relative;
+  padding-left: 20px;
+}
+
+.tooltip-exemplo li:before {
+  content: "✓";
+  position: absolute;
+  left: 0;
+  color: #27ae60;
+  font-weight: bold;
+}
+
+.tooltip-exemplo li:last-child {
+  margin-bottom: 0;
+}
+
+/* Destaque especial */
+.tooltip-destaque {
+  background: var(--tooltip-destaque-background);
+  color: var(--tooltip-destaque-color);
+  padding: var(--tooltip-destaque-padding);
+  border-radius: 8px;
+  border-left: 4px solid #27ae60;
+  margin-top: 12px;
+  font-weight: 500;
+}
+
+/* Ajuste da posição da opcao-meta para o tooltip funcionar */
+.opcao-meta {
+  position: relative;
+  display: flex;
+  align-items: center;
+  gap: var(--tipo-meta-gap-elementos);
+  cursor: pointer;
+}
+
+/* ===== RESPONSIVIDADE DO TOOLTIP ===== */
+@media (max-width: 768px) {
+  :root {
+    --tooltip-max-width: 320px;
+  }
+
+  .tooltip-info {
+    min-width: 280px;
+    left: 50%;
+    right: auto;
+    transform: translateX(-50%) translateY(10px);
+  }
+
+  .opcao-meta:hover .tooltip-info,
+  .info-btn.ativo + .tooltip-info,
+  .tooltip-info.ativo {
+    transform: translateX(-50%) translateY(0);
+  }
+}
+
+@media (max-width: 480px) {
+  :root {
+    --tooltip-max-width: 280px;
+    --tooltip-padding: 12px;
+    --tooltip-content-font-size: 13px;
+  }
+
+  .tooltip-info {
+    min-width: 260px;
+    max-width: 90vw;
+  }
+
+  .tooltip-exemplo ul {
+    padding-left: 15px;
+  }
+
+  .tooltip-exemplo li {
+    font-size: 13px;
+  }
+}
+
+/* Animação de entrada suave */
+@keyframes tooltipFadeIn {
+  from {
+    opacity: 0;
+    transform: translateX(-50%) translateY(10px);
+  }
+  to {
+    opacity: 1;
+    transform: translateX(-50%) translateY(0);
+  }
+}
+
+.tooltip-info.ativo {
+  animation: tooltipFadeIn 0.3s ease forwards;
+}
+
+/**/
+/**/
+/**/
+/**/
+/**/
+/**/
+/**/
+/**/
+/**/
+/**/
+/**/
+/* =======================================================================================================================================================
+     - ROOT- ROOT - ROOT  - ROOT- ROOT - ROOT  - ROOT- ROOT - ROOT  - ROOT- ROOT - ROOT  - ROOT- ROOT - ROOT - ROOT- ROOT - ROOT
+  =======================================================================================================================================================*/
+:root {
+  /* --------------------------------------------------
+    CAMPO LUCRO - CAMPO LUCRO - CAMPO LUCRO -
+  -------------------------------------------------- */
+  /* Cores dos estados do lucro */
+  --lucro-icone-tamanho: 16px;
+  --lucro-icone-cor-positivo: #06a70e;
+  --lucro-icone-cor-negativo: #e6230e;
+  --lucro-icone-cor-neutro: #7f8c8d;
+
+  /* ===== RÓTULO (Label/Texto) ===== */
+  --lucro-rotulo-tamanho: 14px;
+  --lucro-rotulo-cor: #2f4236;
+  --lucro-rotulo-peso: 600;
+
+  /* ===== MARGEM ENTRE ÍCONE E RÓTULO ===== */
+  --lucro-espacamento-icone-rotulo: 8px;
+
+  /* ===== SALDO (Valor) ===== */
+  --lucro-saldo-tamanho: 18px;
+  --lucro-saldo-peso: bold;
+  --lucro-saldo-cor-positivo: #06a70e;
+  --lucro-saldo-cor-negativo: #e6230e;
+  --lucro-saldo-cor-neutro: #5d6464;
+  --lucro-saldo-margin-top: -2px;
+
+  /* ===== FUNDO E ESTRUTURA ===== */
+  --lucro-background: #ffffff;
+  --lucro-padding: 16px;
+  --lucro-border-radius: 12px;
+  --lucro-box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
+  --lucro-border-color: #bec7bd;
+  --lucro-font-family: "Poppins", sans-serif;
+  --lucro-alinhamento-horizontal: center;
+  --lucro-alinhamento-vertical: center;
+  --lucro-texto-alinhamento: center;
+
+  /* ===== EXTRAS ===== */
+  --lucro-transicao: 0.3s;
+  /* --------------------------------------------------
+    CAMPO LUCRO - CAMPO LUCRO - CAMPO LUCRO -
+  -------------------------------------------------- */
+  /**/
+  /**/
+  /**/
+  /**/
+  /**/
+  /**/
+  /**/
+  /* --------------------------------------------------
+    CAMPO BANCA - CAMPO BANCA - CAMPO BANCA
+  -------------------------------------------------- */
+
+  /* ===== ÍCONE ===== */
+  --banca-icone-tamanho: 16px;
+  --banca-icone-cor: #2f4236;
+
+  /* ===== RÓTULO (Label/Texto "Banca") ===== */
+  --banca-rotulo-tamanho: 14px;
+  --banca-rotulo-cor: #2f4236;
+  --banca-rotulo-peso: 600;
+
+  /* ===== MARGEM ENTRE ÍCONE E RÓTULO ===== */
+  --banca-espacamento-icone-rotulo: 8px;
+
+  /* ===== SALDO (Valor da Banca) ===== */
+  --banca-saldo-tamanho: 18px;
+  --banca-saldo-cor: #2f4236;
+  --banca-saldo-peso: bold;
+  --banca-saldo-margin-top: -2px; /* ✅ NOVO: Controle de espaçamento superior */
+
+  /* ===== FUNDO E ESTRUTURA ===== */
+  --banca-background: #ffffff;
+  --banca-padding: 16px;
+  --banca-border-radius: 12px;
+  --banca-box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
+  --banca-border-color: #bec7bd;
+  --banca-font-family: "Poppins", sans-serif;
+  --banca-alinhamento-horizontal: center;
+  --banca-alinhamento-vertical: center;
+  --banca-texto-alinhamento: center;
+
+  /* ===== EXTRAS ===== */
+  --banca-transicao: 0.3s;
+
+  /* --------------------------------------------------
+   CAMPO BANCA - CAMPO BANCA - CAMPO BANCA
+  -------------------------------------------------- */
+  /**/
+  /**/
+  /**/
+  /**/
+  /**/
+  /**/
+  /**/
+  /* --------------------------------------------------
+    BOTÃO DE FECHAR - BOTÃO DE FECHAR - BOTÃO DE FECHAR
+  -------------------------------------------------- */
+  --btn-fechar-margin-top: -7px;
+  --btn-fechar-margin-right: -2px;
+  /* --------------------------------------------------
+    BOTÃO DE FECHAR - BOTÃO DE FECHAR - BOTÃO DE FECHAR
+  -------------------------------------------------- */
+  /**/
+  /**/
+  /**/
+  /**/
+  /**/
+  /**/
+  /**/
+  /* --------------------------------------------------
+    CAMPO TIPO DE META - CAMPO TIPO DE META
+  -------------------------------------------------- */
+
+  /* ===== CONTAINER PRINCIPAL ===== */
+  --tipo-meta-background: #f8faf9;
+  --tipo-meta-border-color: #e9ecef;
+  --tipo-meta-border-radius: 12px;
+  --tipo-meta-padding: 15px;
+  --tipo-meta-margin: 20px 0;
+
+  /* ===== TÍTULO ===== */
+  --tipo-meta-titulo-tamanho: 16px;
+  --tipo-meta-titulo-cor: #2f4236;
+  --tipo-meta-titulo-peso: 600;
+  --tipo-meta-titulo-margin-bottom: 15px;
+
+  /* ===== LABEL DAS OPÇÕES ===== */
+  --tipo-meta-label-tamanho: 14px;
+  --tipo-meta-label-cor: #2f4236;
+  --tipo-meta-label-peso: 600;
+
+  /* ===== RADIO BUTTON ===== */
+  --tipo-meta-radio-tamanho: 18px;
+  --tipo-meta-radio-cor-accent: #14aa2d;
+
+  /* ===== BOTÃO INFO ===== */
+  --tipo-meta-info-btn-tamanho: 14px;
+  --tipo-meta-info-btn-cor: #bdbdbd;
+  --tipo-meta-info-btn-cor-hover: #fac000;
+
+  /* ===== ESTRUTURA ===== */
+  --tipo-meta-gap-opcoes: 30px;
+  --tipo-meta-gap-elementos: 8px;
+
+  /* ===== TRANSIÇÃO ===== */
+  --tipo-meta-transicao: 0.3s;
+
+  /* --------------------------------------------------
+    CAMPO TIPO DE META - CAMPO TIPO DE META
+  -------------------------------------------------- */
+  /**/
+  /**/
+  /**/
+  /**/
+  /**/
+  /**/
+  /**/
+  /* --------------------------------------------------
+    BOTÃO DE INFORMAÇÃO META-FIXA / META-TURBO 
+  -------------------------------------------------- */
+  /* Tooltip */
+  --tooltip-background: #ffffff;
+  --tooltip-border-color: #27ae60;
+  --tooltip-shadow: 0 8px 20px rgba(0, 0, 0, 0.15);
+  --tooltip-border-radius: 12px;
+  --tooltip-padding: 16px;
+  --tooltip-max-width: 400px;
+  --tooltip-z-index: 10000;
+
+  /* Header do Tooltip */
+  --tooltip-header-background: linear-gradient(135deg, #27ae60, #229954);
+  --tooltip-header-color: #ffffff;
+  --tooltip-header-padding: 12px 16px;
+  --tooltip-header-font-size: 15px;
+  --tooltip-header-font-weight: 600;
+
+  /* Conteúdo do Tooltip */
+  --tooltip-content-color: #2c3e50;
+  --tooltip-content-font-size: 14px;
+  --tooltip-content-line-height: 1.6;
+
+  /* Exemplo dentro do Tooltip */
+  --tooltip-exemplo-background: #f8f9fa;
+  --tooltip-exemplo-border-color: #e9ecef;
+  --tooltip-exemplo-padding: 12px;
+
+  /* Destaque */
+  --tooltip-destaque-color: #145a32;
+  --tooltip-destaque-background: #d5f4e6;
+  --tooltip-destaque-padding: 10px;
+
+  /* Animação */
+  --tooltip-transition: 0.3s;
+  /* --------------------------------------------------
+    BOTÃO DE INFORMAÇÃO META-FIXA / META-TURBO 
+  -------------------------------------------------- */
+  /**/
+  /**/
+  /**/
+  /**/
+  /**/
+  /**/
+  /**/
+}
+/* =======================================================================================================================================================
+     - ROOT- ROOT - ROOT  - ROOT- ROOT - ROOT  - ROOT- ROOT - ROOT  - ROOT- ROOT - ROOT  - ROOT- ROOT - ROOT - ROOT- ROOT - ROOT
+  =======================================================================================================================================================*/
+/**/
+/**/
+/**/
+/**/
+/**/
+/**/
+/**/
+/**/
+/**/
+/**/
+/**/

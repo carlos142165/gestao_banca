@@ -5895,9 +5895,9 @@ console.log('🔧 Para testar: Clique em qualquer card de mentor');
 <!--                                           💼  FORMULARIO GERENCIAMENTO DE BANCA  PAINEL CONTROLE                               
  ====================================================================================================================================== -->
 
-<!-- Link para Font Awesome -->
-<!-- Link para Font Awesome -->
-<!-- Link Font Awesome e CSS -->
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+<link rel="stylesheet" href="modal-banca.css">
+
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
 <link rel="stylesheet" href="modal-banca.css">
 
@@ -5921,9 +5921,9 @@ console.log('🔧 Para testar: Clique em qualquer card de mentor');
             <div class="conteudo">
               <label class="label-lucro">
                 <i class="fa-solid fa-money-bill-trend-up"></i>
-                <span>Lucro</span>
+                <span></span>
               </label>
-              <span id="valorLucroLabel">R$ 0,00</span>
+              <span id="valorLucroLabel"></span>
             </div>
           </div>
         </div>
@@ -5958,13 +5958,55 @@ console.log('🔧 Para testar: Clique em qualquer card de mentor');
                 <button type="button" class="info-btn" data-modal="modalFixa">
                   <i class="fa-solid fa-circle-question"></i>
                 </button>
+                
+                <!-- Tooltip Meta Fixa -->
+                <div class="tooltip-info" id="tooltipFixa">
+                  <div class="tooltip-header">🎯 Meta Fixa — Entenda o Conceito</div>
+                  <div class="tooltip-content">
+                    <p>A <strong>Meta Fixa</strong> é uma estratégia de gestão de banca onde o valor-alvo diário é calculado com base no <strong>valor depositado</strong>, sem considerar os lucros ou prejuízos acumulados. Isso garante consistência e controle emocional ao longo do mês.</p>
+                    
+                    <div class="tooltip-exemplo">
+                      <strong>📌 Como funciona:</strong>
+                      <ul>
+                        <li><strong>Valor da banca (depósito inicial):</strong> R$ 1.000</li>
+                        <li><strong>Porcentagem diária definida:</strong> 1%</li>
+                        <li><strong>Meta diária:</strong> R$ 1.000 × 1% = R$ 10,00</li>
+                        <li><strong>Meta mensal (30 dias):</strong> R$ 10,00 × 30 = R$ 300,00</li>
+                      </ul>
+                    </div>
+                  </div>
+                </div>
               </div>
+              
               <div class="opcao-meta">
                 <input type="radio" name="tipoMeta" value="turbo" id="metaTurbo">
                 <label for="metaTurbo">Meta Turbo</label>
                 <button type="button" class="info-btn" data-modal="modalTurbo">
                   <i class="fa-solid fa-circle-question"></i>
                 </button>
+                
+                <!-- Tooltip Meta Turbo -->
+                <div class="tooltip-info" id="tooltipTurbo">
+                  <div class="tooltip-header">🚀 Meta Turbo — Crescimento Acelerado</div>
+                  <div class="tooltip-content">
+                    <p>A <strong>Meta Turbo</strong> recalcula a meta diária com base no <strong>saldo atual da banca</strong>, Cada green aumenta o valor da próxima meta, acelerando o crescimento.</p>
+                    
+                    <div class="tooltip-exemplo">
+                      <strong>📌 Como funciona:</strong>
+                      <ul>
+                        <li><strong>Valor da banca inicial:</strong> R$ 1.000</li>
+                        <li><strong>Porcentagem diária definida:</strong> 1%</li>
+                        <li><strong>Meta do 1º dia:</strong> R$ 1.000 × 1% = R$ 10,00</li>
+                        <li><strong>Novo saldo após lucro:</strong> R$ 1.000 + R$ 10 = R$ 1.010</li>
+                        <li><strong>Meta do 2º dia:</strong> R$ 1.010 × 1% = R$ 10,10</li>
+              
+                        
+                      </ul>
+                    </div>
+                    
+                    
+                  </div>
+                </div>
               </div>
             </div>
           </div>
@@ -6010,22 +6052,22 @@ console.log('🔧 Para testar: Clique em qualquer card de mentor');
           <div class="titulo-resultados">📊 Resumo dos Cálculos</div>
           
           <div class="resultado-item">
-            <span class="resultado-label">Sua Unidade de Entrada Nas Apostas é:</span>
+            <span class="resultado-label">Unidade de Entrada Nas Apostas: </span>
             <span class="resultado-valor" id="resultadoUnidadeEntrada">R$ 20,00</span>
           </div>
           
           <div class="resultado-item">
-            <span class="resultado-label">Sua Meta do Dia é:</span>
+            <span class="resultado-label">Valor da Sua Meta do Dia:</span>
             <span class="resultado-valor" id="resultadoMetaDia">R$ 60,00</span>
           </div>
           
           <div class="resultado-item">
-            <span class="resultado-label">Sua Meta do Mês é:</span>
+            <span class="resultado-label">Valor da Sua Meta do Mês:</span>
             <span class="resultado-valor" id="resultadoMetaMes">R$ 1.800,00</span>
           </div>
           
           <div class="resultado-item">
-            <span class="resultado-label">Sua Meta do Ano é:</span>
+            <span class="resultado-label">Valor da Sua Meta do Ano:</span>
             <span class="resultado-valor" id="resultadoMetaAno">R$ 21.600,00</span>
           </div>
           
@@ -6050,6 +6092,60 @@ console.log('🔧 Para testar: Clique em qualquer card de mentor');
     </div>
   </div>
 </div>
+
+<script>
+// ===== CONTROLE DOS TOOLTIPS DE INFORMAÇÃO =====
+document.addEventListener('DOMContentLoaded', function() {
+  const infoButtons = document.querySelectorAll('.info-btn[data-modal="modalFixa"], .info-btn[data-modal="modalTurbo"]');
+  
+  infoButtons.forEach(button => {
+    const modal = button.getAttribute('data-modal');
+    const tooltip = button.nextElementSibling;
+    
+    // Toggle ao clicar
+    button.addEventListener('click', function(e) {
+      e.preventDefault();
+      e.stopPropagation();
+      
+      // Fecha outros tooltips
+      document.querySelectorAll('.tooltip-info').forEach(t => {
+        if (t !== tooltip) {
+          t.classList.remove('ativo');
+        }
+      });
+      
+      document.querySelectorAll('.info-btn').forEach(btn => {
+        if (btn !== button) {
+          btn.classList.remove('ativo');
+        }
+      });
+      
+      // Toggle do tooltip atual
+      tooltip.classList.toggle('ativo');
+      button.classList.toggle('ativo');
+    });
+  });
+  
+  // Fechar tooltips ao clicar fora
+  document.addEventListener('click', function(e) {
+    if (!e.target.closest('.opcao-meta')) {
+      document.querySelectorAll('.tooltip-info').forEach(tooltip => {
+        tooltip.classList.remove('ativo');
+      });
+      document.querySelectorAll('.info-btn').forEach(btn => {
+        btn.classList.remove('ativo');
+      });
+    }
+  });
+  
+  // Prevenir que cliques dentro do tooltip o fechem
+  document.querySelectorAll('.tooltip-info').forEach(tooltip => {
+    tooltip.addEventListener('click', function(e) {
+      e.stopPropagation();
+    });
+  });
+});
+</script>
 
 
 <!-- ==================================================================================================================================== --> 
