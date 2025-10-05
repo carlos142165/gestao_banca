@@ -1043,7 +1043,7 @@ document.addEventListener("DOMContentLoaded", () => {
 
         if (lucroAtual === metaDiariaBase) {
           // Exatamente igual
-          resultadoMetaDia.innerHTML = `<span style="text-decoration: line-through;">${valorRiscado}</span> Batida! 🏆`;
+          resultadoMetaDia.innerHTML = `<span style="text-decoration: line-through;">${valorRiscado}</span> Batida! <i class="fa-solid fa-trophy" style="color: #FFD700;"></i>`;
         } else {
           // Superada
           const valorExcedente = lucroAtual - metaDiariaBase;
@@ -1051,7 +1051,7 @@ document.addEventListener("DOMContentLoaded", () => {
             style: "currency",
             currency: "BRL",
           });
-          resultadoMetaDia.innerHTML = `<span style="text-decoration: line-through;">${valorRiscado}</span> Superada! +${excedenteFormatado} 🚀`;
+          resultadoMetaDia.innerHTML = `<span style="text-decoration: line-through;">${valorRiscado}</span> Superada! +${excedenteFormatado} <i class="fa-solid fa-rocket" style="color: #FF6B6B;"></i>`;
         }
       } else {
         // Meta ainda não atingida
@@ -1073,14 +1073,14 @@ document.addEventListener("DOMContentLoaded", () => {
         });
 
         if (lucroAtual === metaMensalBase) {
-          resultadoMetaMes.innerHTML = `<span style="text-decoration: line-through;">${valorRiscado}</span> Batida! 🏆`;
+          resultadoMetaMes.innerHTML = `<span style="text-decoration: line-through;">${valorRiscado}</span> Batida! <i class="fa-solid fa-trophy" style="color: #FFD700;"></i>`;
         } else {
           const valorExcedente = lucroAtual - metaMensalBase;
           const excedenteFormatado = valorExcedente.toLocaleString("pt-BR", {
             style: "currency",
             currency: "BRL",
           });
-          resultadoMetaMes.innerHTML = `<span style="text-decoration: line-through;">${valorRiscado}</span> Superada! +${excedenteFormatado} 🚀`;
+          resultadoMetaMes.innerHTML = `<span style="text-decoration: line-through;">${valorRiscado}</span> Superada! +${excedenteFormatado} <i class="fa-solid fa-rocket" style="color: #FF6B6B;"></i>`;
         }
       } else {
         resultadoMetaMes.textContent = metaMensal.toLocaleString("pt-BR", {
@@ -1101,14 +1101,14 @@ document.addEventListener("DOMContentLoaded", () => {
         });
 
         if (lucroAtual === metaAnualBase) {
-          resultadoMetaAno.innerHTML = `<span style="text-decoration: line-through;">${valorRiscado}</span> Batida! 🏆`;
+          resultadoMetaAno.innerHTML = `<span style="text-decoration: line-through;">${valorRiscado}</span> Batida! <i class="fa-solid fa-trophy" style="color: #FFD700;"></i>`;
         } else {
           const valorExcedente = lucroAtual - metaAnualBase;
           const excedenteFormatado = valorExcedente.toLocaleString("pt-BR", {
             style: "currency",
             currency: "BRL",
           });
-          resultadoMetaAno.innerHTML = `<span style="text-decoration: line-through;">${valorRiscado}</span> Superada! +${excedenteFormatado} 🚀`;
+          resultadoMetaAno.innerHTML = `<span style="text-decoration: line-through;">${valorRiscado}</span> Superada! +${excedenteFormatado} <i class="fa-solid fa-rocket" style="color: #FF6B6B;"></i>`;
         }
       } else {
         resultadoMetaAno.textContent = metaAnual.toLocaleString("pt-BR", {
@@ -1118,14 +1118,43 @@ document.addEventListener("DOMContentLoaded", () => {
       }
     }
 
-    // Calcular entradas necessárias
-    if (oddsMeta && resultadoEntradas && unidadeEntrada > 0 && metaDiaria > 0) {
+    // ✅ CALCULAR ENTRADAS NECESSÁRIAS E VERIFICAR META DO DIA
+    if (oddsMeta && resultadoEntradas) {
       const oddsValor = parseFloat(oddsMeta.value.replace(",", ".")) || 1.5;
-      const lucroPorEntrada = unidadeEntrada * (oddsValor - 1);
-      const entradasNecessarias =
-        lucroPorEntrada > 0 ? Math.ceil(metaDiaria / lucroPorEntrada) : 0;
 
-      resultadoEntradas.textContent = `${entradasNecessarias} Entradas Positivas`;
+      // Encontrar o label (span anterior ao resultadoEntradas)
+      const parentDiv = resultadoEntradas.parentElement;
+      const labelEntradas = parentDiv
+        ? parentDiv.querySelector(".resultado-label")
+        : null;
+
+      // ✅ VERIFICAR SE A META DO DIA FOI BATIDA OU SUPERADA
+      if (lucroAtual >= metaDiariaBase && metaDiariaBase > 0) {
+        // Meta atingida ou superada
+        if (labelEntradas) {
+          labelEntradas.textContent = "Parabéns:";
+        }
+
+        if (Math.abs(lucroAtual - metaDiariaBase) < 0.01) {
+          // Exatamente igual (usando margem de 0.01 para evitar problemas de arredondamento)
+          resultadoEntradas.innerHTML =
+            'Meta do Dia Batida! <i class="fa-solid fa-trophy" style="color: #FFD700;"></i>';
+        } else {
+          // Superada
+          resultadoEntradas.innerHTML =
+            'Meta do Dia Superada! <i class="fa-solid fa-rocket" style="color: #FF6B6B;"></i>';
+        }
+      } else if (unidadeEntrada > 0 && metaDiaria > 0) {
+        // Meta ainda não atingida - mostrar cálculo normal
+        if (labelEntradas) {
+          labelEntradas.textContent = "Para Bater a Meta do Dia Fazer:";
+        }
+
+        const lucroPorEntrada = unidadeEntrada * (oddsValor - 1);
+        const entradasNecessarias =
+          lucroPorEntrada > 0 ? Math.ceil(metaDiaria / lucroPorEntrada) : 0;
+        resultadoEntradas.textContent = `${entradasNecessarias} Entradas Positivas`;
+      }
     }
   }
 

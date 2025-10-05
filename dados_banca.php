@@ -1,5 +1,5 @@
 <?php
-// ✅ ARQUIVO DADOS_BANCA.PHP - LÓGICA CORRETA DE META MENSAL/ANUAL
+// ✅ ARQUIVO DADOS_BANCA.PHP - LÓGICA CORRETA DE META MENSAL/ANUAL E UND
 
 require_once 'config.php';
 require_once 'carregar_sessao.php';
@@ -228,21 +228,50 @@ function calcularMetaDiariaComTipo($conexao, $id_usuario, $total_deposito, $tota
     }
 }
 
-// ✅ FUNÇÃO PARA CALCULAR DADOS DA ÁREA DIREITA
-function calcularAreaDireita($conexao, $id_usuario, $banca_total, $tipo_meta = 'turbo') {
+// ✅ FUNÇÃO PARA CALCULAR DADOS DA ÁREA DIREITA - CORRIGIDA COM LÓGICA UND
+function calcularAreaDireita($conexao, $id_usuario, $total_deposito, $total_saque, $lucro_total, $tipo_meta = 'turbo') {
     try {
         $ultima_diaria = getUltimoCampo($conexao, 'diaria', $id_usuario);
         $diaria = $ultima_diaria ?? 2.00;
         
-        $unidade_entrada = $banca_total * ($diaria / 100);
+        $banca_inicial = $total_deposito - $total_saque;
+        $banca_atual = $banca_inicial + $lucro_total;
+        
+        // ✅ LÓGICA DE CÁLCULO DA UND BASEADA NO TIPO DE META
+        $base_calculo_und = 0;
+        $regra_aplicada = '';
+        
+        if ($lucro_total < 0) {
+            // ✅ SALDO NEGATIVO: sempre usa banca + lucro (para ambos os tipos)
+            $base_calculo_und = $banca_atual;
+            $regra_aplicada = 'Saldo negativo: Banca + Lucro';
+        } else {
+            // ✅ SALDO POSITIVO OU ZERO: depende do tipo de meta
+            if ($tipo_meta === 'fixa') {
+                // Meta Fixa: usa apenas banca (sem lucro)
+                $base_calculo_und = $banca_inicial;
+                $regra_aplicada = 'Meta Fixa: Apenas Banca';
+            } else {
+                // Meta Turbo: usa banca + lucro
+                $base_calculo_und = $banca_atual;
+                $regra_aplicada = 'Meta Turbo: Banca + Lucro';
+            }
+        }
+        
+        // Calcular unidade de entrada
+        $unidade_entrada = $base_calculo_und * ($diaria / 100);
         
         return [
             'diaria_porcentagem' => $diaria,
-            'banca_usada' => $banca_total,
+            'banca_usada' => $banca_atual, // banca total para exibição
+            'banca_inicial' => $banca_inicial,
+            'lucro_atual' => $lucro_total,
+            'base_calculo_und' => $base_calculo_und,
             'unidade_entrada' => $unidade_entrada,
+            'tipo_meta_info' => $tipo_meta,
+            'regra_aplicada' => $regra_aplicada,
             'diaria_formatada' => number_format($diaria, 0) . '%',
-            'unidade_entrada_formatada' => 'R$ ' . number_format($unidade_entrada, 2, ',', '.'),
-            'tipo_meta_info' => $tipo_meta
+            'unidade_entrada_formatada' => 'R$ ' . number_format($unidade_entrada, 2, ',', '.')
         ];
         
     } catch (Exception $e) {
@@ -250,10 +279,14 @@ function calcularAreaDireita($conexao, $id_usuario, $banca_total, $tipo_meta = '
         return [
             'diaria_porcentagem' => 2,
             'banca_usada' => 0,
+            'banca_inicial' => 0,
+            'lucro_atual' => 0,
+            'base_calculo_und' => 0,
             'unidade_entrada' => 0,
+            'tipo_meta_info' => $tipo_meta,
+            'regra_aplicada' => 'Erro no cálculo',
             'diaria_formatada' => '2%',
-            'unidade_entrada_formatada' => 'R$ 0,00',
-            'tipo_meta_info' => $tipo_meta
+            'unidade_entrada_formatada' => 'R$ 0,00'
         ];
     }
 }
@@ -517,7 +550,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         $saldo_banca_total = $total_deposito - $total_saque + $lucro_total;
         
         $meta_resultado = calcularMetaDiariaComTipo($conexao, $id_usuario, $total_deposito, $total_saque, $lucro_total, $tipo_meta);
-        $area_direita = calcularAreaDireita($conexao, $id_usuario, $saldo_banca_total, $tipo_meta);
+        $area_direita = calcularAreaDireita($conexao, $id_usuario, $total_deposito, $total_saque, $lucro_total, $tipo_meta);
         $metas_periodo = calcularMetasPorPeriodo($meta_resultado['meta_diaria'], $tipo_meta, $conexao, $id_usuario);
         
         echo json_encode([
@@ -554,7 +587,17 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             'dias_restantes_mes' => $metas_periodo['dias_restantes_mes'],
             'dias_restantes_ano' => $metas_periodo['dias_restantes_ano'],
             'periodo_info' => $metas_periodo['periodo_info'],
-            'formula_detalhada' => $meta_resultado['formula_detalhada']
+            'formula_detalhada' => $meta_resultado['formula_detalhada'],
+            'area_direita_debug' => [
+                'tipo_meta' => $tipo_meta,
+                'regra_aplicada' => $area_direita['regra_aplicada'],
+                'base_calculo_und' => $area_direita['base_calculo_und'],
+                'banca_inicial' => $area_direita['banca_inicial'],
+                'banca_atual' => $area_direita['banca_usada'],
+                'lucro_atual' => $area_direita['lucro_atual'],
+                'formula_und' => "Base UND: R$ " . number_format($area_direita['base_calculo_und'], 2, ',', '.') . 
+                                 " × {$area_direita['diaria_porcentagem']}% = {$area_direita['unidade_entrada_formatada']}"
+            ]
         ]);
         
     } catch (Exception $e) {
@@ -589,7 +632,7 @@ try {
     $ultima_odds = getUltimoCampo($conexao, 'odds', $id_usuario);
     
     $meta_resultado = calcularMetaDiariaComTipo($conexao, $id_usuario, $total_deposito, $total_saque, $lucro_total, $tipo_meta);
-    $area_direita = calcularAreaDireita($conexao, $id_usuario, $saldo_banca_total, $tipo_meta);
+    $area_direita = calcularAreaDireita($conexao, $id_usuario, $total_deposito, $total_saque, $lucro_total, $tipo_meta);
     $metas_periodo = calcularMetasPorPeriodo($meta_resultado['meta_diaria'], $tipo_meta, $conexao, $id_usuario);
     
     echo json_encode([
@@ -687,14 +730,26 @@ try {
             'debug_calculo_dias' => $metas_periodo['periodo_info']['debug_completo']
         ],
         
+        // ✅ DEBUG ÁREA DIREITA COM NOVA LÓGICA UND
         'area_direita_debug' => [
             'tipo_meta_aplicado' => $tipo_meta,
-            'formula_unidade' => "Banca Total: R$ " . number_format($saldo_banca_total, 2, ',', '.') . " × {$area_direita['diaria_porcentagem']}% = {$area_direita['unidade_entrada_formatada']}",
-            'banca_total_usada' => $saldo_banca_total,
-            'depositos' => $total_deposito,
-            'saques' => $total_saque,
-            'lucro_usado_banca' => $lucro_total,
-            'lucro_usado_calculos' => $lucro_filtrado,
+            'regra_aplicada_und' => $area_direita['regra_aplicada'],
+            'base_calculo_und' => $area_direita['base_calculo_und'],
+            'banca_inicial' => $area_direita['banca_inicial'],
+            'banca_atual' => $area_direita['banca_usada'],
+            'lucro_atual' => $area_direita['lucro_atual'],
+            'lucro_negativo' => $lucro_total < 0,
+            'formula_und' => "Base UND: R$ " . number_format($area_direita['base_calculo_und'], 2, ',', '.') . 
+                             " × {$area_direita['diaria_porcentagem']}% = {$area_direita['unidade_entrada_formatada']}",
+            'explicacao_detalhada' => [
+                'tipo_meta' => $tipo_meta,
+                'lucro_total' => $lucro_total,
+                'condicao' => $lucro_total < 0 ? 'saldo_negativo' : ($tipo_meta === 'fixa' ? 'meta_fixa' : 'meta_turbo'),
+                'base_usada' => $area_direita['base_calculo_und'],
+                'regra' => $area_direita['regra_aplicada']
+            ],
+            'depositos_total' => $total_deposito,
+            'saques_total' => $total_saque,
             'diaria_aplicada' => $area_direita['diaria_porcentagem'],
             'resultado_unidade' => $area_direita['unidade_entrada']
         ]
