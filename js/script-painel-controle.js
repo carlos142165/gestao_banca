@@ -823,6 +823,7 @@ document.addEventListener("DOMContentLoaded", () => {
   // ===== ATUALIZAÇÃO EM TEMPO REAL DOS CÁLCULOS =====
   // ===== FUNÇÃO PARA CALCULAR DIAS RESTANTES DO MÊS =====
   // ===== FUNÇÃO PARA CALCULAR DIAS RESTANTES DO MÊS =====
+  // ===== FUNÇÃO PARA CALCULAR DIAS RESTANTES DO MÊS =====
   function calcularDiasRestantesMes() {
     const hoje = new Date();
     const ultimoDiaMes = new Date(hoje.getFullYear(), hoje.getMonth() + 1, 0);
@@ -840,6 +841,10 @@ document.addEventListener("DOMContentLoaded", () => {
   }
 
   // ===== ATUALIZAÇÃO EM TEMPO REAL DOS CÁLCULOS =====
+  // ===== ATUALIZAÇÃO EM TEMPO REAL DOS CÁLCULOS - VERSÃO CORRIGIDA =====
+  // ✅ FUNÇÃO ATUALIZADA - Inserir no script-painel-controle.js
+  // Substitua a função atualizarUnidadeEntradaTempoReal() existente por esta versão
+
   function atualizarUnidadeEntradaTempoReal() {
     const diaria = document.getElementById("porcentagem");
     const unidade = document.getElementById("unidadeMeta");
@@ -859,7 +864,7 @@ document.addEventListener("DOMContentLoaded", () => {
 
     if (!diaria || !unidade || !resultadoUnidadeEntrada) return;
 
-    // Determinar tipo de meta selecionado
+    // Determinar tipo de meta
     let tipoMetaSelecionado = "turbo";
     if (metaFixaRadio && metaFixaRadio.checked) {
       tipoMetaSelecionado = "fixa";
@@ -867,7 +872,7 @@ document.addEventListener("DOMContentLoaded", () => {
       tipoMetaSelecionado = "turbo";
     }
 
-    // Extrair lucro do label
+    // Extrair lucro/prejuízo
     let lucroAtual = 0;
     if (lucroTotalLabel && lucroTotalLabel.textContent) {
       const lucroTexto = lucroTotalLabel.textContent
@@ -876,47 +881,55 @@ document.addEventListener("DOMContentLoaded", () => {
       lucroAtual = parseFloat(lucroTexto) || 0;
     }
 
-    // Banca total com lucro/prejuízo
+    // Banca atual
     let bancaAtual = valorOriginalBanca || 0;
     let bancaSemLucro = bancaAtual - lucroAtual;
 
-    // ✅ LÓGICA CORRIGIDA: SE LUCRO É NEGATIVO, AMBAS USAM A MESMA BASE
-    let bancaParaCalculo;
-
+    // ✅ BANCA PARA CALCULAR UNIDADE DE ENTRADA (usa banca atual com prejuízo)
+    let bancaParaUnidade;
     if (lucroAtual < 0) {
-      // LUCRO NEGATIVO (PREJUÍZO): Ambas as metas usam banca com prejuízo
-      bancaParaCalculo = bancaAtual; // depósitos - saques + prejuízo (que subtrai)
+      bancaParaUnidade = bancaAtual; // com prejuízo
     } else {
-      // LUCRO POSITIVO: Depende do tipo de meta
-      if (tipoMetaSelecionado === "fixa") {
-        bancaParaCalculo = bancaSemLucro; // sem lucro
-      } else {
-        bancaParaCalculo = bancaAtual; // com lucro
-      }
+      bancaParaUnidade =
+        tipoMetaSelecionado === "fixa" ? bancaSemLucro : bancaAtual;
     }
 
-    // Extrair valor digitado no input
+    // ✅ BANCA PARA CALCULAR META (usa banca SEM prejuízo quando negativo)
+    let bancaParaMeta;
+    if (lucroAtual < 0) {
+      bancaParaMeta = bancaSemLucro; // SEM prejuízo para meta base
+    } else {
+      bancaParaMeta =
+        tipoMetaSelecionado === "fixa" ? bancaSemLucro : bancaAtual;
+    }
+
+    // Extrair valor digitado
     const valorInputRaw = valorBancaInput
       ? valorBancaInput.value.replace(/[^\d]/g, "")
       : "0";
     const valorDigitado = parseFloat(valorInputRaw) / 100 || 0;
 
-    // Determinar tipo de ação
+    // Tipo de ação
     const tipoAcao = acaoSelect ? acaoSelect.value : "";
 
-    // Calcular banca futura baseada na ação
-    let bancaFutura = bancaParaCalculo;
+    // Calcular banca futura para UNIDADE
+    let bancaFuturaUnidade = bancaParaUnidade;
+    // Calcular banca futura para META
+    let bancaFuturaMeta = bancaParaMeta;
 
     if (valorDigitado > 0) {
       switch (tipoAcao) {
         case "add":
-          bancaFutura = bancaParaCalculo + valorDigitado;
+          bancaFuturaUnidade = bancaParaUnidade + valorDigitado;
+          bancaFuturaMeta = bancaParaMeta + valorDigitado;
           break;
         case "sacar":
-          bancaFutura = Math.max(0, bancaParaCalculo - valorDigitado);
+          bancaFuturaUnidade = Math.max(0, bancaParaUnidade - valorDigitado);
+          bancaFuturaMeta = Math.max(0, bancaParaMeta - valorDigitado);
           break;
         default:
-          bancaFutura = bancaParaCalculo;
+          bancaFuturaUnidade = bancaParaUnidade;
+          bancaFuturaMeta = bancaParaMeta;
           break;
       }
     }
@@ -929,49 +942,88 @@ document.addEventListener("DOMContentLoaded", () => {
     const unidadeRaw = unidade.value.replace(/\D/g, "");
     const unidadeInt = parseInt(unidadeRaw) || 0;
 
-    // Cálculo da unidade de entrada
-    const unidadeEntrada = bancaFutura * (percentFloat / 100);
+    // ✅ CALCULAR UNIDADE DE ENTRADA (usa banca atual com prejuízo)
+    const unidadeEntrada = bancaFuturaUnidade * (percentFloat / 100);
 
-    // Cálculo da meta diária
-    const metaDiaria = unidadeEntrada * unidadeInt;
+    // ✅ CALCULAR META BASE (usa banca SEM prejuízo/lucro)
+    const metaDiariaBase = bancaFuturaMeta * (percentFloat / 100) * unidadeInt;
+
+    // ✅ AJUSTAR META DIÁRIA CONSIDERANDO LUCRO/PREJUÍZO
+    let metaDiaria = metaDiariaBase;
+    if (lucroAtual < 0) {
+      // PREJUÍZO: soma o valor absoluto à meta
+      metaDiaria = metaDiariaBase + Math.abs(lucroAtual);
+    } else if (lucroAtual > 0) {
+      // LUCRO: subtrai da meta (mas nunca fica negativa)
+      metaDiaria = Math.max(0, metaDiariaBase - lucroAtual);
+    }
 
     // Calcular dias restantes
     const diasRestantesMes = calcularDiasRestantesMes();
     const diasRestantesAno = calcularDiasRestantesAno();
 
-    // Calcular metas mensais e anuais
-    const metaMensal = metaDiaria * diasRestantesMes;
-    const metaAnual = metaDiaria * diasRestantesAno;
+    // ✅ CALCULAR METAS MENSAIS E ANUAIS COM AJUSTE DE LUCRO/PREJUÍZO
+    let metaMensal, metaAnual;
 
-    console.log(`📊 Cálculo em tempo real:
-    Tipo Meta: ${tipoMetaSelecionado.toUpperCase()}
-    Lucro: R$ ${lucroAtual.toFixed(2)} ${
-      lucroAtual < 0 ? "(PREJUÍZO)" : "(LUCRO)"
+    if (lucroAtual < 0) {
+      // PREJUÍZO: soma à meta total
+      const prejuizo = Math.abs(lucroAtual);
+      metaMensal = metaDiariaBase * diasRestantesMes + prejuizo;
+      metaAnual = metaDiariaBase * diasRestantesAno + prejuizo;
+    } else if (lucroAtual > 0) {
+      // LUCRO: subtrai da meta total
+      metaMensal = Math.max(0, metaDiariaBase * diasRestantesMes - lucroAtual);
+      metaAnual = Math.max(0, metaDiariaBase * diasRestantesAno - lucroAtual);
+    } else {
+      // NEUTRO: sem ajuste
+      metaMensal = metaDiariaBase * diasRestantesMes;
+      metaAnual = metaDiariaBase * diasRestantesAno;
     }
+
+    console.log(`📊 Cálculo detalhado:
+    Tipo Meta: ${tipoMetaSelecionado.toUpperCase()}
+    Lucro/Prejuízo: R$ ${lucroAtual.toFixed(2)}
     Banca Total: R$ ${bancaAtual.toFixed(2)}
     Banca Sem Lucro: R$ ${bancaSemLucro.toFixed(2)}
-    Banca Usada: R$ ${bancaParaCalculo.toFixed(2)}
-    Lógica: ${
+    
+    UNIDADE DE ENTRADA:
+    - Banca Usada: R$ ${bancaFuturaUnidade.toFixed(2)} (com prejuízo)
+    - Cálculo: R$ ${bancaFuturaUnidade.toFixed(
+      2
+    )} × ${percentFloat}% = R$ ${unidadeEntrada.toFixed(2)}
+    
+    META DIÁRIA:
+    - Meta Base: R$ ${metaDiariaBase.toFixed(2)}
+    ${
       lucroAtual < 0
-        ? "PREJUÍZO - Ambas usam banca com prejuízo"
-        : "LUCRO - " +
-          (tipoMetaSelecionado === "fixa"
-            ? "Fixa sem lucro"
-            : "Turbo com lucro")
+        ? `- Prejuízo a recuperar: +R$ ${Math.abs(lucroAtual).toFixed(2)}`
+        : ""
     }
-    Valor Digitado: R$ ${valorDigitado.toFixed(2)}
-    Tipo Ação: ${tipoAcao || "nenhuma"}
-    Banca Futura: R$ ${bancaFutura.toFixed(2)}
-    Porcentagem: ${percentFloat}%
-    Unidade Entrada: R$ ${unidadeEntrada.toFixed(2)}
-    Quantidade Unidades: ${unidadeInt}
-    Meta Diária: R$ ${metaDiaria.toFixed(2)}
-    Dias Restantes Mês: ${diasRestantesMes}
-    Meta Mensal: R$ ${metaMensal.toFixed(2)}
-    Dias Restantes Ano: ${diasRestantesAno}
-    Meta Anual: R$ ${metaAnual.toFixed(2)}`);
+    ${lucroAtual > 0 ? `- Lucro já atingido: -R$ ${lucroAtual.toFixed(2)}` : ""}
+    - Meta Final do Dia: R$ ${metaDiaria.toFixed(2)}
+    
+    DIAS RESTANTES:
+    - Dias até fim do mês: ${diasRestantesMes}
+    - Dias até fim do ano: ${diasRestantesAno}
+    
+    META MÊS/ANO:
+    - Meta Mensal Base (${diasRestantesMes} × R$ ${metaDiariaBase.toFixed(
+      2
+    )}): R$ ${(metaDiariaBase * diasRestantesMes).toFixed(2)}
+    - Meta Anual Base (${diasRestantesAno} × R$ ${metaDiariaBase.toFixed(
+      2
+    )}): R$ ${(metaDiariaBase * diasRestantesAno).toFixed(2)}
+    ${
+      lucroAtual !== 0
+        ? `- Ajuste (${lucroAtual < 0 ? "prejuízo" : "lucro"}): ${
+            lucroAtual < 0 ? "+" : "-"
+          }R$ ${Math.abs(lucroAtual).toFixed(2)}`
+        : ""
+    }
+    - Meta Mensal Final: R$ ${metaMensal.toFixed(2)}
+    - Meta Anual Final: R$ ${metaAnual.toFixed(2)}`);
 
-    // Atualizar "Unidade de Entrada Nas Apostas"
+    // Atualizar displays
     resultadoUnidadeEntrada.textContent = unidadeEntrada.toLocaleString(
       "pt-BR",
       {
@@ -980,28 +1032,90 @@ document.addEventListener("DOMContentLoaded", () => {
       }
     );
 
-    // Atualizar "Meta do Dia"
+    // ✅ META DO DIA - COM VERIFICAÇÃO DE ATINGIMENTO
     if (resultadoMetaDia) {
-      resultadoMetaDia.textContent = metaDiaria.toLocaleString("pt-BR", {
-        style: "currency",
-        currency: "BRL",
-      });
+      if (lucroAtual >= metaDiariaBase && metaDiariaBase > 0) {
+        // Meta atingida ou superada
+        const valorRiscado = metaDiariaBase.toLocaleString("pt-BR", {
+          style: "currency",
+          currency: "BRL",
+        });
+
+        if (lucroAtual === metaDiariaBase) {
+          // Exatamente igual
+          resultadoMetaDia.innerHTML = `<span style="text-decoration: line-through;">${valorRiscado}</span> Batida! 🏆`;
+        } else {
+          // Superada
+          const valorExcedente = lucroAtual - metaDiariaBase;
+          const excedenteFormatado = valorExcedente.toLocaleString("pt-BR", {
+            style: "currency",
+            currency: "BRL",
+          });
+          resultadoMetaDia.innerHTML = `<span style="text-decoration: line-through;">${valorRiscado}</span> Superada! +${excedenteFormatado} 🚀`;
+        }
+      } else {
+        // Meta ainda não atingida
+        resultadoMetaDia.textContent = metaDiaria.toLocaleString("pt-BR", {
+          style: "currency",
+          currency: "BRL",
+        });
+      }
     }
 
-    // Atualizar "Meta do Mês"
+    // ✅ META DO MÊS - COM VERIFICAÇÃO DE ATINGIMENTO
     if (resultadoMetaMes) {
-      resultadoMetaMes.textContent = metaMensal.toLocaleString("pt-BR", {
-        style: "currency",
-        currency: "BRL",
-      });
+      const metaMensalBase = metaDiariaBase * diasRestantesMes;
+
+      if (lucroAtual >= metaMensalBase && metaMensalBase > 0) {
+        const valorRiscado = metaMensalBase.toLocaleString("pt-BR", {
+          style: "currency",
+          currency: "BRL",
+        });
+
+        if (lucroAtual === metaMensalBase) {
+          resultadoMetaMes.innerHTML = `<span style="text-decoration: line-through;">${valorRiscado}</span> Batida! 🏆`;
+        } else {
+          const valorExcedente = lucroAtual - metaMensalBase;
+          const excedenteFormatado = valorExcedente.toLocaleString("pt-BR", {
+            style: "currency",
+            currency: "BRL",
+          });
+          resultadoMetaMes.innerHTML = `<span style="text-decoration: line-through;">${valorRiscado}</span> Superada! +${excedenteFormatado} 🚀`;
+        }
+      } else {
+        resultadoMetaMes.textContent = metaMensal.toLocaleString("pt-BR", {
+          style: "currency",
+          currency: "BRL",
+        });
+      }
     }
 
-    // Atualizar "Meta do Ano"
+    // ✅ META DO ANO - COM VERIFICAÇÃO DE ATINGIMENTO
     if (resultadoMetaAno) {
-      resultadoMetaAno.textContent = metaAnual.toLocaleString("pt-BR", {
-        style: "currency",
-        currency: "BRL",
-      });
+      const metaAnualBase = metaDiariaBase * diasRestantesAno;
+
+      if (lucroAtual >= metaAnualBase && metaAnualBase > 0) {
+        const valorRiscado = metaAnualBase.toLocaleString("pt-BR", {
+          style: "currency",
+          currency: "BRL",
+        });
+
+        if (lucroAtual === metaAnualBase) {
+          resultadoMetaAno.innerHTML = `<span style="text-decoration: line-through;">${valorRiscado}</span> Batida! 🏆`;
+        } else {
+          const valorExcedente = lucroAtual - metaAnualBase;
+          const excedenteFormatado = valorExcedente.toLocaleString("pt-BR", {
+            style: "currency",
+            currency: "BRL",
+          });
+          resultadoMetaAno.innerHTML = `<span style="text-decoration: line-through;">${valorRiscado}</span> Superada! +${excedenteFormatado} 🚀`;
+        }
+      } else {
+        resultadoMetaAno.textContent = metaAnual.toLocaleString("pt-BR", {
+          style: "currency",
+          currency: "BRL",
+        });
+      }
     }
 
     // Calcular entradas necessárias
@@ -1013,6 +1127,22 @@ document.addEventListener("DOMContentLoaded", () => {
 
       resultadoEntradas.textContent = `${entradasNecessarias} Entradas Positivas`;
     }
+  }
+
+  // ✅ FUNÇÕES AUXILIARES (já devem existir no código, mas adicione se necessário)
+  function calcularDiasRestantesMes() {
+    const hoje = new Date();
+    const ultimoDiaMes = new Date(hoje.getFullYear(), hoje.getMonth() + 1, 0);
+    const diasRestantes = ultimoDiaMes.getDate() - hoje.getDate() + 1;
+    return diasRestantes;
+  }
+
+  function calcularDiasRestantesAno() {
+    const hoje = new Date();
+    const fimAno = new Date(hoje.getFullYear(), 11, 31);
+    const diffTime = fimAno - hoje;
+    const diasRestantes = Math.ceil(diffTime / (1000 * 60 * 60 * 24)) + 1;
+    return diasRestantes;
   }
 
   function inicializarModalDeposito() {
@@ -2002,30 +2132,7 @@ document.addEventListener("DOMContentLoaded", () => {
 
   console.log("✅ Sistema completo inicializado com sucesso!");
 });
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//========================================================================================================================
-//                           CALCULO DE VALOR DO PAINEL DE CONTROLE PARA EXIBIR METAS
-// ========================================================================================================================
 
-//========================================================================================================================
-//                             FIM CALCULO DE VALOR DO PAINEL DE CONTROLE PARA EXIBIR METAS
-// ========================================================================================================================
 //
 //
 //
@@ -2276,5 +2383,293 @@ console.log(
 //
 //
 //========================================================================================================================
-//                                 CALCULAR OS VALORES PARA EXIBIR NO RESUMO
+//                    INTEGRAÇÃO CORRIGIDA: CALCULAR META DIA/MÊS/ANO NO MODAL DE BANCA
 //========================================================================================================================
+
+// Função auxiliar para calcular dias restantes (já existe no código, mantemos aqui por segurança)
+function calcularDiasRestantesMesModal() {
+  const hoje = new Date();
+  const ultimoDiaMes = new Date(hoje.getFullYear(), hoje.getMonth() + 1, 0);
+  const diasRestantes = ultimoDiaMes.getDate() - hoje.getDate() + 1;
+  return diasRestantes;
+}
+
+function calcularDiasRestantesAnoModal() {
+  const hoje = new Date();
+  const fimAno = new Date(hoje.getFullYear(), 11, 31);
+  const diffTime = fimAno - hoje;
+  const diasRestantes = Math.ceil(diffTime / (1000 * 60 * 60 * 24)) + 1;
+  return diasRestantes;
+}
+
+// ✅ FUNÇÃO PRINCIPAL PARA ATUALIZAR METAS DO MODAL
+// ========================================================================================================================
+//          🔄 SISTEMA DE ATUALIZAÇÃO AUTOMÁTICA - VERSÃO DEFINITIVA
+// ========================================================================================================================
+
+// Adicionar chamada no final da função atualizarUnidadeEntradaTempoReal (se ainda não tiver)
+// Procure pela função atualizarUnidadeEntradaTempoReal() e adicione esta linha no FINAL dela:
+// atualizarMetasModalBancaSync();
+
+// ✅ ATUALIZAR quando qualquer valor de input mudar
+document.addEventListener("DOMContentLoaded", function () {
+  setTimeout(() => {
+    // Monitorar mudanças nos inputs do modal
+    const inputsParaMonitorar = [
+      "porcentagem",
+      "unidadeMeta",
+      "oddsMeta",
+      "valorBanca",
+    ];
+
+    inputsParaMonitorar.forEach((inputId) => {
+      const input = document.getElementById(inputId);
+      if (input) {
+        input.addEventListener("input", () => {
+          setTimeout(() => atualizarMetasModalBancaSync(), 50);
+        });
+        input.addEventListener("change", () => {
+          setTimeout(() => atualizarMetasModalBancaSync(), 50);
+        });
+      }
+    });
+
+    // Monitorar mudanças nos radio buttons de tipo de meta
+    const metaFixaRadio = document.getElementById("metaFixa");
+    const metaTurboRadio = document.getElementById("metaTurbo");
+
+    if (metaFixaRadio) {
+      metaFixaRadio.addEventListener("change", () => {
+        setTimeout(() => atualizarMetasModalBancaSync(), 100);
+      });
+    }
+
+    if (metaTurboRadio) {
+      metaTurboRadio.addEventListener("change", () => {
+        setTimeout(() => atualizarMetasModalBancaSync(), 100);
+      });
+    }
+
+    // ✅ MONITORAR MUDANÇAS NO LUCRO
+    const lucroLabel = document.getElementById("valorLucroLabel");
+    if (lucroLabel) {
+      const observerLucro = new MutationObserver(() => {
+        console.log("💰 Lucro mudou - recalculando metas");
+        setTimeout(() => atualizarMetasModalBancaSync(), 150);
+      });
+
+      observerLucro.observe(lucroLabel, {
+        childList: true,
+        characterData: true,
+        subtree: true,
+      });
+    }
+
+    // ✅ ATUALIZAR quando modal abrir
+    const modalDeposito = document.getElementById("modalDeposito");
+    if (modalDeposito) {
+      const observerModal = new MutationObserver((mutations) => {
+        mutations.forEach((mutation) => {
+          if (mutation.attributeName === "style") {
+            if (
+              modalDeposito.style.display === "flex" ||
+              modalDeposito.style.display === "block"
+            ) {
+              console.log("📂 Modal aberto - atualizando metas");
+              setTimeout(() => atualizarMetasModalBancaSync(), 300);
+            }
+          }
+        });
+      });
+
+      observerModal.observe(modalDeposito, {
+        attributes: true,
+        attributeFilter: ["style"],
+      });
+    }
+
+    console.log("✅ Monitoramento completo ativado!");
+  }, 1000);
+});
+
+// ✅ INTEGRAR com eventos do sistema
+document.addEventListener("bancaAtualizada", () => {
+  console.log("📢 bancaAtualizada - recalculando");
+  setTimeout(() => atualizarMetasModalBancaSync(), 200);
+});
+
+document.addEventListener("mentorCadastrado", () => {
+  console.log("📢 mentorCadastrado - recalculando");
+  setTimeout(() => atualizarMetasModalBancaSync(), 200);
+});
+
+document.addEventListener("areaAtualizacao", () => {
+  console.log("📢 areaAtualizacao - recalculando");
+  setTimeout(() => atualizarMetasModalBancaSync(), 150);
+});
+
+// ✅ FORÇAR ATUALIZAÇÃO após mudanças na banca/lucro
+const funcaoOriginalAtualizarDados = window.atualizarDadosModal;
+if (typeof funcaoOriginalAtualizarDados === "function") {
+  window.atualizarDadosModal = function () {
+    funcaoOriginalAtualizarDados.call(this);
+    setTimeout(() => {
+      console.log("🔄 atualizarDadosModal - recalculando metas");
+      atualizarMetasModalBancaSync();
+    }, 250);
+  };
+}
+
+console.log("✅ Sistema de atualização automática de metas configurado!");
+
+// ✅ HOOK NA FUNÇÃO PRINCIPAL - ADICIONAR NO FINAL DA FUNÇÃO atualizarUnidadeEntradaTempoReal()
+// Esta linha JÁ FOI ADICIONADA na função principal - NÃO PRECISA FAZER NADA AQUI
+
+// ✅ GARANTIR QUE A INTEGRAÇÃO FUNCIONE APÓS INICIALIZAÇÃO DO MODAL
+document.addEventListener("DOMContentLoaded", function () {
+  // Aguardar modal estar pronto
+  setTimeout(() => {
+    const modalDeposito = document.getElementById("modalDeposito");
+    if (modalDeposito) {
+      // Observar quando o modal é exibido
+      const observer = new MutationObserver((mutations) => {
+        mutations.forEach((mutation) => {
+          if (
+            mutation.type === "attributes" &&
+            mutation.attributeName === "style"
+          ) {
+            if (
+              modalDeposito.style.display === "flex" ||
+              modalDeposito.style.display === "block"
+            ) {
+              // Modal foi aberto, atualizar metas após um pequeno delay
+              setTimeout(() => {
+                atualizarMetasModalBancaSync();
+              }, 200);
+            }
+          }
+        });
+      });
+
+      observer.observe(modalDeposito, {
+        attributes: true,
+        attributeFilter: ["style"],
+      });
+    }
+  }, 1000);
+});
+
+console.log(
+  "✅ Integração SINCRONIZADA de Meta DIA/MÊS/ANO no modal carregada!"
+);
+
+// ========================================================================================================================
+//                    FIM: INTEGRAÇÃO CORRIGIDA
+// ========================================================================================================================
+// ========================================================================================================================
+//          🔄 SISTEMA DE ATUALIZAÇÃO AUTOMÁTICA DAS METAS QUANDO LUCRO MUDA
+// ========================================================================================================================
+
+// Variável para armazenar o último lucro processado
+let ultimoLucroProcessado = null;
+
+// Função para monitorar mudanças no lucro e recalcular metas
+function monitorarMudancasLucro() {
+  const lucroLabel = document.getElementById("valorLucroLabel");
+
+  if (!lucroLabel) {
+    console.warn("⚠️ valorLucroLabel não encontrado para monitoramento");
+    return;
+  }
+
+  // Observer para detectar mudanças no texto do lucro
+  const observer = new MutationObserver((mutations) => {
+    mutations.forEach((mutation) => {
+      if (mutation.type === "childList" || mutation.type === "characterData") {
+        const lucroAtual = lucroLabel.textContent || "R$ 0,00";
+
+        // Verificar se o lucro realmente mudou
+        if (lucroAtual !== ultimoLucroProcessado) {
+          console.log(
+            `💰 Lucro mudou de "${ultimoLucroProcessado}" para "${lucroAtual}"`
+          );
+          ultimoLucroProcessado = lucroAtual;
+
+          // Aguardar um momento para garantir que outros valores foram atualizados
+          setTimeout(() => {
+            console.log("🔄 Recalculando metas após mudança no lucro...");
+            atualizarMetasModalBancaSync();
+          }, 100);
+        }
+      }
+    });
+  });
+
+  // Observar mudanças no elemento de lucro
+  observer.observe(lucroLabel, {
+    childList: true,
+    characterData: true,
+    subtree: true,
+  });
+
+  // Inicializar com o valor atual
+  ultimoLucroProcessado = lucroLabel.textContent;
+
+  console.log("✅ Monitoramento de lucro ativado");
+}
+
+// Integrar com eventos existentes do sistema
+document.addEventListener("DOMContentLoaded", function () {
+  // Aguardar elementos estarem prontos
+  setTimeout(() => {
+    monitorarMudancasLucro();
+
+    // Atualizar quando há mudanças na banca
+    document.addEventListener("bancaAtualizada", () => {
+      console.log("📢 Evento bancaAtualizada - recalculando metas");
+      setTimeout(() => atualizarMetasModalBancaSync(), 150);
+    });
+
+    // Atualizar após cadastro de mentor
+    document.addEventListener("mentorCadastrado", () => {
+      console.log("📢 Evento mentorCadastrado - recalculando metas");
+      setTimeout(() => atualizarMetasModalBancaSync(), 200);
+    });
+
+    // Atualizar após exclusão
+    document.addEventListener("mentorExcluido", () => {
+      console.log("📢 Evento mentorExcluido - recalculando metas");
+      setTimeout(() => atualizarMetasModalBancaSync(), 200);
+    });
+
+    // Atualizar na área de atualização geral
+    document.addEventListener("areaAtualizacao", () => {
+      console.log("📢 Evento areaAtualizacao - recalculando metas");
+      setTimeout(() => atualizarMetasModalBancaSync(), 100);
+    });
+  }, 1500);
+});
+
+// Hook adicional na função de atualização de lucro existente
+if (typeof window.atualizarLucroEBancaViaAjax === "function") {
+  const funcaoOriginalLucro = window.atualizarLucroEBancaViaAjax;
+
+  window.atualizarLucroEBancaViaAjax = function () {
+    // Executa função original
+    if (funcaoOriginalLucro) {
+      funcaoOriginalLucro.call(this);
+    }
+
+    // Recalcula metas após atualização do lucro
+    setTimeout(() => {
+      console.log("🔄 Recalculando metas após atualizarLucroEBancaViaAjax");
+      atualizarMetasModalBancaSync();
+    }, 200);
+  };
+}
+
+console.log("✅ Sistema de monitoramento de lucro configurado!");
+
+// ========================================================================================================================
+//          FIM: SISTEMA DE ATUALIZAÇÃO AUTOMÁTICA
+// ========================================================================================================================
