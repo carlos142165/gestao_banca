@@ -935,18 +935,31 @@ document.addEventListener("DOMContentLoaded", () => {
     }
 
     // Extrair porcentagem
-    const percentualRaw = diaria.value.replace("%", "").replace(",", ".");
-    const percentFloat = parseFloat(percentualRaw) || 0;
+    // ✅ Extrair porcentagem - CORRIGIDO PARA ACEITAR DECIMAIS
+    let percentualRaw = diaria.value.replace("%", "").trim();
+    // Normalizar: trocar vírgula por ponto
+    percentualRaw = percentualRaw.replace(",", ".");
+    // Converter para número
+    const percentFloat = parseFloat(percentualRaw);
+
+    // ✅ Validação: se inválido ou zero, usar 1%
+    const percentFinal =
+      isNaN(percentFloat) || percentFloat <= 0 ? 1 : percentFloat;
+
+    console.log(
+      `📊 Debug Porcentagem: "${diaria.value}" → ${percentualRaw} → ${percentFinal}%`
+    );
 
     // Extrair unidade
     const unidadeRaw = unidade.value.replace(/\D/g, "");
     const unidadeInt = parseInt(unidadeRaw) || 0;
 
     // ✅ CALCULAR UNIDADE DE ENTRADA (usa banca atual com prejuízo)
-    const unidadeEntrada = bancaFuturaUnidade * (percentFloat / 100);
+    // ✅ CALCULAR UNIDADE DE ENTRADA (usa percentFinal ao invés de percentFloat)
+    const unidadeEntrada = bancaFuturaUnidade * (percentFinal / 100);
 
-    // ✅ CALCULAR META BASE (usa banca SEM prejuízo/lucro)
-    const metaDiariaBase = bancaFuturaMeta * (percentFloat / 100) * unidadeInt;
+    // ✅ CALCULAR META BASE
+    const metaDiariaBase = bancaFuturaMeta * (percentFinal / 100) * unidadeInt;
 
     // ✅ AJUSTAR META DIÁRIA CONSIDERANDO LUCRO/PREJUÍZO
     let metaDiaria = metaDiariaBase;
@@ -1225,19 +1238,48 @@ document.addEventListener("DOMContentLoaded", () => {
     // ✅ EVENTOS DOS INPUTS - ATUALIZAÇÃO EM TEMPO REAL
     if (diaria) {
       diaria.addEventListener("focus", () => {
+        // Remove o % ao focar para facilitar edição
         const valorAtual = diaria.value.replace("%", "");
         diaria.value = valorAtual;
         diaria.select();
       });
 
-      diaria.addEventListener("input", () => {
-        diaria.value = diaria.value.replace(/[^0-9]/g, "");
+      diaria.addEventListener("input", (e) => {
+        // ✅ Permite apenas números, vírgula e ponto
+        let valor = e.target.value.replace(/[^\d,.]/g, "");
+
+        // ✅ Substitui ponto por vírgula durante a digitação
+        valor = valor.replace(".", ",");
+
+        // ✅ Garante apenas uma vírgula
+        const partes = valor.split(",");
+        if (partes.length > 2) {
+          valor = partes[0] + "," + partes.slice(1).join("");
+        }
+
+        // ✅ Limita a 1 casa decimal
+        if (partes.length === 2 && partes[1].length > 1) {
+          valor = partes[0] + "," + partes[1].substring(0, 1);
+        }
+
+        e.target.value = valor;
         atualizarUnidadeEntradaTempoReal();
       });
 
       diaria.addEventListener("blur", () => {
-        const valor = parseInt(diaria.value) || 2;
-        diaria.value = `${valor}%`;
+        let valor = diaria.value.replace(",", "."); // ✅ Converte vírgula para ponto
+        let numero = parseFloat(valor) || 1;
+
+        // ✅ Limita entre 0.1 e 100
+        numero = Math.max(0.1, Math.min(100, numero));
+
+        // ✅ Formata: se for decimal usa ponto, se inteiro não mostra decimal
+        const valorFormatado =
+          numero % 1 === 0
+            ? numero.toFixed(0)
+            : numero.toFixed(1).replace(",", ".");
+
+        diaria.value = `${valorFormatado}%`;
         atualizarUnidadeEntradaTempoReal();
       });
     }
@@ -1841,16 +1883,50 @@ document.addEventListener("DOMContentLoaded", () => {
 
   function configurarEventosDeMeta() {
     if (diaria) {
-      diaria.addEventListener("input", () => {
-        diaria.value = diaria.value.replace(/[^0-9]/g, "");
+      diaria.addEventListener("focus", () => {
+        // Remove o % ao focar para facilitar edição
+        const valorAtual = diaria.value.replace("%", "");
+        diaria.value = valorAtual;
+        diaria.select();
+      });
+
+      diaria.addEventListener("input", (e) => {
+        // Permite apenas números, vírgula e ponto
+        let valor = e.target.value.replace(/[^\d,.]/g, "");
+
+        // Substitui ponto por vírgula durante a digitação
+        valor = valor.replace(".", ",");
+
+        // Garante apenas uma vírgula
+        const partes = valor.split(",");
+        if (partes.length > 2) {
+          valor = partes[0] + "," + partes.slice(1).join("");
+        }
+
+        // Limita a 1 casa decimal
+        if (partes.length === 2 && partes[1].length > 1) {
+          valor = partes[0] + "," + partes[1].substring(0, 1);
+        }
+
+        e.target.value = valor;
         atualizarUnidadeEntradaTempoReal();
-        calcularMeta(valorOriginalBanca);
       });
 
       diaria.addEventListener("blur", () => {
-        diaria.value = formatarPorcentagem(diaria.value);
+        let valor = diaria.value.replace(",", "."); // Converte vírgula para ponto
+        let numero = parseFloat(valor) || 1;
+
+        // Limita entre 0.1 e 100
+        numero = Math.max(0.1, Math.min(100, numero));
+
+        // Formata: se for decimal usa ponto, se inteiro não mostra decimal
+        const valorFormatado =
+          numero % 1 === 0
+            ? numero.toFixed(0)
+            : numero.toFixed(1).replace(",", ".");
+
+        diaria.value = `${valorFormatado}%`;
         atualizarUnidadeEntradaTempoReal();
-        calcularMeta(valorOriginalBanca);
       });
     }
 

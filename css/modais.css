@@ -865,3 +865,215 @@ body > #modal-confirmacao-exclusao .modal-content {
   transform: translate(-50%, -50%) !important;
   z-index: 2147483647 !important;
 }
+/**/
+/**/
+/**/
+/**/
+/**/
+/**/
+/**/
+/**/
+/**/
+/**/
+/**/
+/* =======================================================================================================================================================
+     - MODAL DO BOTÃO DE INFORMAÇÃO - MODAL DO BOTÃO DE INFORMAÇÃO - MODAL DO BOTÃO DE INFORMAÇÃO - MODAL DO BOTÃO DE INFORMAÇÃO
+  =======================================================================================================================================================*/
+
+/* ===== TOOLTIP COMO MODAL CENTRALIZADO ===== */
+.tooltip-info {
+  position: fixed !important;
+  top: 50% !important;
+  left: 50% !important;
+  transform: translate(-50%, -50%) scale(0.9) !important;
+  opacity: 0;
+  visibility: hidden;
+  transition: all 0.3s ease;
+  pointer-events: none;
+  z-index: 9999;
+  max-width: 600px;
+  width: 90%;
+  max-height: 80vh;
+  overflow-y: auto;
+  background: #fff;
+  border-radius: 12px;
+  box-shadow: 0 10px 40px rgba(0, 0, 0, 0.3);
+  display: none;
+}
+
+/* Overlay escuro atrás do modal */
+.tooltip-info::before {
+  content: "";
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: rgba(198, 248, 215, 0.11);
+  z-index: -1;
+  opacity: 0;
+  transition: opacity 0.3s ease;
+}
+
+/* QUANDO ATIVO - PRIORIDADE MÁXIMA */
+.tooltip-info.ativo {
+  display: block !important;
+  opacity: 1 !important;
+  visibility: visible !important;
+  transform: translate(-50%, -50%) scale(1) !important;
+  pointer-events: auto !important;
+}
+
+.tooltip-info.ativo::before {
+  opacity: 1 !important;
+}
+
+/* BLOQUEAR COMPLETAMENTE QUALQUER HOVER */
+.tooltip-info:not(.ativo),
+.info-btn:hover + .tooltip-info:not(.ativo),
+.opcao-meta:hover .tooltip-info:not(.ativo),
+label:hover + .tooltip-info:not(.ativo),
+input:hover ~ .tooltip-info:not(.ativo),
+.tooltip-info:not(.ativo):hover {
+  display: none !important;
+  opacity: 0 !important;
+  visibility: hidden !important;
+  pointer-events: none !important;
+}
+
+/* ===== BOTÃO X DE FECHAR - BRANCO SEM FUNDO ===== */
+.btn-fechar-tooltip {
+  position: absolute;
+  top: 3px;
+  right: 3px;
+  background: transparent;
+  border: none;
+  font-size: 28px;
+  line-height: 1;
+  color: #ffffff;
+  cursor: pointer;
+  width: 40px;
+  height: 40px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 50%;
+  transition: all 0.3s ease;
+  z-index: 10;
+  font-weight: 300;
+  text-shadow: 0 2px 4px rgba(0, 0, 0, 0.3);
+}
+
+.btn-fechar-tooltip:hover {
+  background: rgba(255, 255, 255, 0.2);
+  color: #ffffff;
+  transform: rotate(90deg);
+  text-shadow: 0 2px 6px rgba(0, 0, 0, 0.5);
+}
+
+.btn-fechar-tooltip:active {
+  background: rgba(255, 255, 255, 0.3);
+  transform: rotate(90deg) scale(0.95);
+}
+
+/* Ajustar padding do header para acomodar o X */
+.tooltip-header {
+  padding: 20px 55px 20px 20px;
+  position: relative;
+  font-size: 18px;
+  font-weight: 600;
+  border-bottom: 1px solid #e0e0e0;
+  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  color: #fff;
+  border-radius: 12px 12px 0 0;
+}
+
+/* Conteúdo do tooltip */
+.tooltip-content {
+  padding: 25px;
+  line-height: 1.8;
+  color: #2c3e50;
+  font-size: 15px;
+}
+
+.tooltip-content p {
+  margin-bottom: 15px;
+  line-height: 1.8;
+}
+
+.tooltip-content strong {
+  color: #667eea;
+  font-weight: 600;
+}
+
+/* Caixa de exemplo com melhor destaque */
+.tooltip-exemplo {
+  background: #f8f9fa;
+  padding: 20px;
+  border-radius: 8px;
+  margin-top: 20px;
+  border-left: 4px solid #667eea;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
+}
+
+.tooltip-exemplo strong {
+  color: #667eea;
+  display: block;
+  margin-bottom: 15px;
+  font-size: 16px;
+  font-weight: 700;
+}
+
+.tooltip-exemplo ul {
+  margin: 0;
+  padding-left: 20px;
+}
+
+.tooltip-exemplo li {
+  margin-bottom: 12px;
+  color: #34495e;
+  line-height: 1.7;
+  font-size: 14px;
+}
+
+.tooltip-exemplo li strong {
+  color: #2c3e50;
+  font-weight: 600;
+  display: inline;
+  margin: 0;
+}
+
+/* Melhorar legibilidade do texto cinza */
+.tooltip-content p {
+  color: #34495e;
+}
+
+/* Responsivo */
+@media (max-width: 768px) {
+  .tooltip-info {
+    width: 95%;
+    max-height: 90vh;
+  }
+
+  .tooltip-header {
+    font-size: 16px;
+    padding: 15px 50px 15px 15px;
+  }
+
+  .tooltip-content {
+    padding: 20px 15px;
+    font-size: 14px;
+  }
+
+  .btn-fechar-tooltip {
+    font-size: 24px;
+    width: 35px;
+    height: 35px;
+    top: 8px;
+    right: 8px;
+  }
+}
+
+/* =======================================================================================================================================================
+     - FIM MODAL DO BOTÃO DE INFORMAÇÃO - FIM MODAL DO BOTÃO DE INFORMAÇÃO - FIM MODAL DO BOTÃO DE INFORMAÇÃO - FIM MODAL DO BOTÃO DE INFORMAÇÃO
+  =======================================================================================================================================================*/

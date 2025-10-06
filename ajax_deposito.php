@@ -26,7 +26,7 @@ function calcularAreaDireita($conexao, $id_usuario, $saldo_banca_total) {
         $stmt->fetch();
         $stmt->close();
         
-        $diaria = $ultima_diaria ?? 2.00;
+    $diaria = $ultima_diaria ?? 1.00;
         
         // ✅ CORREÇÃO: Usar saldo total da banca (com lucro) para calcular UND
         // Calcular unidade de entrada: saldo_total * (diária / 100)
@@ -132,8 +132,8 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 
     $acao = $data['acao'] ?? '';
     $valor = abs(floatval($data['valor'] ?? 0));
-    $diaria = floatval($data['diaria'] ?? 2);
-    $unidade = intval($data['unidade'] ?? 2);
+    $diaria = floatval($data['diaria'] ?? 1);
+    $unidade = intval($data['unidade'] ?? 1);
     $odds = isset($data['odds']) ? floatval(str_replace(',', '.', $data['odds'])) : 1.5;
     $tipoMeta = validarTipoMeta($data['tipoMeta'] ?? 'Meta Fixa'); // ✅ VALIDAR META
     $nome = trim($data['nome'] ?? '');
@@ -162,16 +162,16 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                 'message' => 'Dados resetados com sucesso',
                 'banca' => '0.00',
                 'lucro' => '0.00',
-                'diaria' => '2.00',
-                'unidade' => 2,
+                'diaria' => '1.00',
+                'unidade' => 1,
                 'odds' => '1.50',
                 'meta' => 'Meta Fixa',
                 
                 // ✅ ÁREA DIREITA ZERADA
-                'diaria_formatada' => '2%',
+                'diaria_formatada' => '1%',
                 'unidade_entrada_formatada' => 'R$ 0,00',
                 'meta_diaria_formatada' => 'R$ 0,00',
-                'diaria_raw' => 2,
+                'diaria_raw' => 1,
                 'saldo_banca_total' => 0,
                 'unidade_entrada_raw' => 0,
                 
@@ -330,8 +330,8 @@ try {
     $mostrar_radios = $total_deposito > 0;
 
     // ✅ BUSCAR ÚLTIMOS VALORES
-    $ultima_diaria = getUltimoCampo($conexao, 'diaria', $id_usuario) ?? 2;
-    $ultima_unidade = getUltimoCampo($conexao, 'unidade', $id_usuario) ?? 2;
+    $ultima_diaria = getUltimoCampo($conexao, 'diaria', $id_usuario) ?? 1;
+    $ultima_unidade = getUltimoCampo($conexao, 'unidade', $id_usuario) ?? 1;
     $ultima_odds = getUltimoCampo($conexao, 'odds', $id_usuario);
     $ultima_meta = getUltimaMeta($conexao, $id_usuario);
 

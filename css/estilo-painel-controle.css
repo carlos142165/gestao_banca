@@ -1067,16 +1067,6 @@
   margin-top: 8px;
 }
 
-/* Mostrar tooltip ao passar o mouse ou clicar */
-.opcao-meta:hover .tooltip-info,
-.info-btn.ativo + .tooltip-info,
-.tooltip-info.ativo {
-  opacity: 1;
-  visibility: visible;
-  transform: translateX(-50%) translateY(0);
-  pointer-events: auto;
-}
-
 /* Header do Tooltip */
 .tooltip-header {
   background: var(--tooltip-header-background);
@@ -1179,12 +1169,6 @@
     left: 50%;
     right: auto;
     transform: translateX(-50%) translateY(10px);
-  }
-
-  .opcao-meta:hover .tooltip-info,
-  .info-btn.ativo + .tooltip-info,
-  .tooltip-info.ativo {
-    transform: translateX(-50%) translateY(0);
   }
 }
 

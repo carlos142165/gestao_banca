@@ -5898,8 +5898,7 @@ console.log('🔧 Para testar: Clique em qualquer card de mentor');
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
 <link rel="stylesheet" href="modal-banca.css">
 
-<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
-<link rel="stylesheet" href="modal-banca.css">
+
 
 <div class="modal-gerencia-banca">
   <div id="modalDeposito" class="modal-overlay">
@@ -5987,7 +5986,7 @@ console.log('🔧 Para testar: Clique em qualquer card de mentor');
                 
                 <!-- Tooltip Meta Turbo -->
                 <div class="tooltip-info" id="tooltipTurbo">
-                  <div class="tooltip-header">🚀 Meta Turbo — Crescimento Acelerado</div>
+                  <div class="tooltip-header">🚀 Meta Turbo — Entenda o Conceito</div>
                   <div class="tooltip-content">
                     <p>A <strong>Meta Turbo</strong> recalcula a meta diária com base no <strong>saldo atual da banca</strong>, Cada green aumenta o valor da próxima meta, acelerando o crescimento.</p>
                     
@@ -6014,14 +6013,14 @@ console.log('🔧 Para testar: Clique em qualquer card de mentor');
 
         <!-- Campos Lado a Lado -->
         <div class="campos-inline">
+                    <div class="campo-inline">
+                        <input type="text" name="diaria" id="porcentagem" value="<?= (isset($valor_diaria) && floatval($valor_diaria) > 0) ? number_format(floatval($valor_diaria), 0) . '%' : '1%' ?>" placeholder="1%">
+                    </div>
+                    <div class="campo-inline">
+                        <input type="text" name="unidade" id="unidadeMeta" value="<?= (isset($valor_unidade) && floatval($valor_unidade) > 0) ? number_format(floatval($valor_unidade), 1, ',', '') : '1' ?>" placeholder="1">
+                    </div>
           <div class="campo-inline">
-            <input type="text" name="diaria" id="porcentagem" value="<?= isset($valor_diaria) ? number_format(floatval($valor_diaria), 0) . '%' : '2%' ?>" placeholder="2%">
-          </div>
-          <div class="campo-inline">
-            <input type="text" name="unidade" id="unidadeMeta" value="<?= isset($valor_unidade) ? intval($valor_unidade) : '2' ?>" placeholder="2">
-          </div>
-          <div class="campo-inline">
-            <input type="text" name="odds" id="oddsMeta" value="<?= isset($valor_odds) ? number_format(floatval($valor_odds), 2, ',', '') : '1,70' ?>" placeholder="1,70">
+            <input type="text" name="odds" id="oddsMeta" value="<?= isset($valor_odds) ? number_format(floatval($valor_odds), 2, ',', '') : '1,50' ?>" placeholder="1,50">
           </div>
         </div>
 
@@ -6094,15 +6093,14 @@ console.log('🔧 Para testar: Clique em qualquer card de mentor');
 </div>
 
 <script>
-// ===== CONTROLE DOS TOOLTIPS DE INFORMAÇÃO =====
+// ===== CONTROLE DOS MODAIS DE INFORMAÇÃO - SÓ ABRE AO CLICAR =====
 document.addEventListener('DOMContentLoaded', function() {
   const infoButtons = document.querySelectorAll('.info-btn[data-modal="modalFixa"], .info-btn[data-modal="modalTurbo"]');
   
   infoButtons.forEach(button => {
-    const modal = button.getAttribute('data-modal');
     const tooltip = button.nextElementSibling;
     
-    // Toggle ao clicar
+    // APENAS CLICK - sem hover
     button.addEventListener('click', function(e) {
       e.preventDefault();
       e.stopPropagation();
@@ -6126,7 +6124,7 @@ document.addEventListener('DOMContentLoaded', function() {
     });
   });
   
-  // Fechar tooltips ao clicar fora
+  // Fechar ao clicar fora
   document.addEventListener('click', function(e) {
     if (!e.target.closest('.opcao-meta')) {
       document.querySelectorAll('.tooltip-info').forEach(tooltip => {
@@ -6143,6 +6141,28 @@ document.addEventListener('DOMContentLoaded', function() {
     tooltip.addEventListener('click', function(e) {
       e.stopPropagation();
     });
+  });
+  
+  // Adicionar botão X para fechar
+  document.querySelectorAll('.tooltip-info').forEach(tooltip => {
+    if (!tooltip.querySelector('.btn-fechar-tooltip')) {
+      const btnFechar = document.createElement('button');
+      btnFechar.className = 'btn-fechar-tooltip';
+      btnFechar.innerHTML = '×';
+      btnFechar.type = 'button';
+      
+      btnFechar.addEventListener('click', function(e) {
+        e.stopPropagation();
+        tooltip.classList.remove('ativo');
+        const opcaoMeta = tooltip.closest('.opcao-meta');
+        if (opcaoMeta) {
+          const btnInfo = opcaoMeta.querySelector('.info-btn');
+          if (btnInfo) btnInfo.classList.remove('ativo');
+        }
+      });
+      
+      tooltip.insertBefore(btnFechar, tooltip.firstChild);
+    }
   });
 });
 </script>
