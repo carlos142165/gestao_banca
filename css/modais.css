@@ -880,6 +880,10 @@ body > #modal-confirmacao-exclusao .modal-content {
      - MODAL DO BOTÃO DE INFORMAÇÃO - MODAL DO BOTÃO DE INFORMAÇÃO - MODAL DO BOTÃO DE INFORMAÇÃO - MODAL DO BOTÃO DE INFORMAÇÃO
   =======================================================================================================================================================*/
 
+/* =======================================================================================================================================================
+     - MODAL DO BOTÃO DE INFORMAÇÃO - MODAL DO BOTÃO DE INFORMAÇÃO - MODAL DO BOTÃO DE INFORMAÇÃO - MODAL DO BOTÃO DE INFORMAÇÃO
+  =======================================================================================================================================================*/
+
 /* ===== TOOLTIP COMO MODAL CENTRALIZADO ===== */
 .tooltip-info {
   position: fixed !important;
@@ -1026,26 +1030,53 @@ input:hover ~ .tooltip-info:not(.ativo),
 
 .tooltip-exemplo ul {
   margin: 0;
-  padding-left: 20px;
+  padding-left: 0;
+  list-style: none;
 }
 
 .tooltip-exemplo li {
-  margin-bottom: 12px;
+  margin-bottom: 18px;
   color: #34495e;
-  line-height: 1.7;
+  line-height: 1.6;
   font-size: 14px;
 }
 
+/* NOVA FORMATAÇÃO - Título em cima, valor embaixo */
 .tooltip-exemplo li strong {
   color: #2c3e50;
   font-weight: 600;
-  display: inline;
-  margin: 0;
+  display: block;
+  margin-bottom: 5px;
+  font-size: 14px;
+}
+
+/* Valor fica em uma nova linha, sem negrito */
+.tooltip-exemplo li {
+  font-weight: normal;
 }
 
 /* Melhorar legibilidade do texto cinza */
 .tooltip-content p {
   color: #34495e;
+}
+
+/* OBSERVAÇÃO - Tom discreto e leve */
+.tooltip-obs {
+  margin-top: 20px;
+  padding: 12px 15px;
+  background: #fff5f5;
+  border-left: 3px solid #e57373;
+  border-radius: 4px;
+  font-size: 12px;
+  line-height: 1.6;
+  color: #c62828;
+  opacity: 0.85;
+}
+
+.tooltip-obs strong {
+  color: #d32f2f;
+  font-weight: 600;
+  font-size: 12px;
 }
 
 /* Responsivo */
@@ -1072,8 +1103,16 @@ input:hover ~ .tooltip-info:not(.ativo),
     top: 8px;
     right: 8px;
   }
+
+  .tooltip-obs {
+    font-size: 11px;
+    padding: 10px 12px;
+  }
 }
 
+/* =======================================================================================================================================================
+     - FIM MODAL DO BOTÃO DE INFORMAÇÃO - FIM MODAL DO BOTÃO DE INFORMAÇÃO - FIM MODAL DO BOTÃO DE INFORMAÇÃO - FIM MODAL DO BOTÃO DE INFORMAÇÃO
+  =======================================================================================================================================================*/
 /* =======================================================================================================================================================
      - FIM MODAL DO BOTÃO DE INFORMAÇÃO - FIM MODAL DO BOTÃO DE INFORMAÇÃO - FIM MODAL DO BOTÃO DE INFORMAÇÃO - FIM MODAL DO BOTÃO DE INFORMAÇÃO
   =======================================================================================================================================================*/

@@ -5960,19 +5960,25 @@ console.log('🔧 Para testar: Clique em qualquer card de mentor');
                 
                 <!-- Tooltip Meta Fixa -->
                 <div class="tooltip-info" id="tooltipFixa">
+                  <button type="button" class="btn-fechar-tooltip">×</button>
                   <div class="tooltip-header">🎯 Meta Fixa — Entenda o Conceito</div>
                   <div class="tooltip-content">
-                    <p>A <strong>Meta Fixa</strong> é uma estratégia de gestão de banca onde o valor-alvo diário é calculado com base no <strong>valor depositado</strong>, sem considerar os lucros ou prejuízos acumulados. Isso garante consistência e controle emocional ao longo do mês.</p>
+                    <p>A <strong>Meta Fixa</strong> é uma estratégia de gestão de banca onde o valor-alvo diário é calculado com base no <strong>valor depositado</strong>, sem considerar os lucros acumulados. Isso garante consistência e controle emocional ao longo do mês.</p>
                     
                     <div class="tooltip-exemplo">
                       <strong>📌 Como funciona:</strong>
                       <ul>
-                        <li><strong>Valor da banca (depósito inicial):</strong> R$ 1.000</li>
-                        <li><strong>Porcentagem diária definida:</strong> 1%</li>
-                        <li><strong>Meta diária:</strong> R$ 1.000 × 1% = R$ 10,00</li>
-                        <li><strong>Meta mensal (30 dias):</strong> R$ 10,00 × 30 = R$ 300,00</li>
+                        <li><strong>Valor da banca (depósito inicial):</strong>R$ 1.000,00</li>
+                        <li><strong>Porcentagem diária definida:</strong>1%</li>
+                        <li><strong>Meta diária:</strong>R$ 1.000 × 1% = R$ 10,00</li>
+                        <li><strong>Meta mensal (30 dias):</strong>R$ 10,00 × 30 = R$ 300,00</li>
+                        <li><strong>Meta anual (365 dias):</strong>R$ 10,00 × 365 = R$ 3.650,00</li>
                       </ul>
                     </div>
+                    
+                    <p class="tooltip-obs">
+                      <strong>Obs.:</strong> Se o saldo for negativo, o cálculo é o mesmo para os dois tipos de meta, para assim preservar e proteger mais a sua banca. A meta mensal e anual vão se somando com o saldo negativo para que se alcance o saldo perdido e a meta.
+                    </p>
                   </div>
                 </div>
               </div>
@@ -5986,24 +5992,27 @@ console.log('🔧 Para testar: Clique em qualquer card de mentor');
                 
                 <!-- Tooltip Meta Turbo -->
                 <div class="tooltip-info" id="tooltipTurbo">
+                  <button type="button" class="btn-fechar-tooltip">×</button>
                   <div class="tooltip-header">🚀 Meta Turbo — Entenda o Conceito</div>
                   <div class="tooltip-content">
-                    <p>A <strong>Meta Turbo</strong> recalcula a meta diária com base no <strong>saldo atual da banca</strong>, Cada green aumenta o valor da próxima meta, acelerando o crescimento.</p>
+                    <p>A <strong>Meta Turbo</strong> recalcula a meta diária com base no <strong>saldo atual da banca</strong>. Cada green aumenta o valor da próxima meta, acelerando o crescimento.</p>
                     
                     <div class="tooltip-exemplo">
                       <strong>📌 Como funciona:</strong>
                       <ul>
-                        <li><strong>Valor da banca inicial:</strong> R$ 1.000</li>
-                        <li><strong>Porcentagem diária definida:</strong> 1%</li>
-                        <li><strong>Meta do 1º dia:</strong> R$ 1.000 × 1% = R$ 10,00</li>
-                        <li><strong>Novo saldo após lucro:</strong> R$ 1.000 + R$ 10 = R$ 1.010</li>
-                        <li><strong>Meta do 2º dia:</strong> R$ 1.010 × 1% = R$ 10,10</li>
-              
-                        
+                        <li><strong>Valor da banca inicial:</strong>R$ 1.000</li>
+                        <li><strong>Porcentagem diária definida:</strong>1%</li>
+                        <li><strong>Meta do 1º dia:</strong>R$ 1.000 × 1% = R$ 10,00</li>
+                        <li><strong>Novo saldo após lucro:</strong>R$ 1.000 + R$ 10 = R$ 1.010</li>
+                        <li><strong>Meta do 2º dia:</strong>R$ 1.010 × 1% = R$ 10,10</li>
+                        <li><strong>Meta mensal (estimada):</strong>R$ 347,85 (crescimento composto)</li>
+                        <li><strong>Meta anual (estimada):</strong>R$ 36.783,66 (crescimento composto)</li>
                       </ul>
                     </div>
                     
-                    
+                    <p class="tooltip-obs">
+                      <strong>Obs.:</strong> Se o saldo for negativo, o cálculo é o mesmo para os dois tipos de meta, para assim preservar e proteger mais a sua banca. A meta mensal e anual vão se somando com o saldo negativo para que se alcance o saldo perdido e a meta.
+                    </p>
                   </div>
                 </div>
               </div>
@@ -6013,14 +6022,20 @@ console.log('🔧 Para testar: Clique em qualquer card de mentor');
 
         <!-- Campos Lado a Lado -->
         <div class="campos-inline">
-                    <div class="campo-inline">
-                        <input type="text" name="diaria" id="porcentagem" value="<?= (isset($valor_diaria) && floatval($valor_diaria) > 0) ? number_format(floatval($valor_diaria), 0) . '%' : '1%' ?>" placeholder="1%">
-                    </div>
-                    <div class="campo-inline">
-                        <input type="text" name="unidade" id="unidadeMeta" value="<?= (isset($valor_unidade) && floatval($valor_unidade) > 0) ? number_format(floatval($valor_unidade), 1, ',', '') : '1' ?>" placeholder="1">
-                    </div>
           <div class="campo-inline">
-            <input type="text" name="odds" id="oddsMeta" value="<?= isset($valor_odds) ? number_format(floatval($valor_odds), 2, ',', '') : '1,50' ?>" placeholder="1,50">
+            <input type="text" name="diaria" id="porcentagem" 
+                   value="<?= (isset($valor_diaria) && floatval($valor_diaria) > 0) ? number_format(floatval($valor_diaria), 2, ',', '') . '%' : '1%' ?>" 
+                   placeholder="1%">
+          </div>
+          <div class="campo-inline">
+            <input type="text" name="unidade" id="unidadeMeta" 
+                   value="<?= (isset($valor_unidade) && floatval($valor_unidade) > 0) ? intval($valor_unidade) : '1' ?>" 
+                   placeholder="1">
+          </div>
+          <div class="campo-inline">
+            <input type="text" name="odds" id="oddsMeta" 
+                   value="<?= isset($valor_odds) ? number_format(floatval($valor_odds), 2, ',', '') : '1,50' ?>" 
+                   placeholder="1,50">
           </div>
         </div>
 
@@ -6051,22 +6066,22 @@ console.log('🔧 Para testar: Clique em qualquer card de mentor');
           <div class="titulo-resultados">📊 Resumo dos Cálculos</div>
           
           <div class="resultado-item">
-            <span class="resultado-label">Unidade de Entrada Nas Apostas: </span>
+            <span class="resultado-label">Unidade de Entrada: </span>
             <span class="resultado-valor" id="resultadoUnidadeEntrada">R$ 20,00</span>
           </div>
           
           <div class="resultado-item">
-            <span class="resultado-label">Valor da Sua Meta do Dia:</span>
+            <span class="resultado-label">Meta do Dia:</span>
             <span class="resultado-valor" id="resultadoMetaDia">R$ 60,00</span>
           </div>
           
           <div class="resultado-item">
-            <span class="resultado-label">Valor da Sua Meta do Mês:</span>
+            <span class="resultado-label" id="labelMetaMes">Meta do Mês:</span>
             <span class="resultado-valor" id="resultadoMetaMes">R$ 1.800,00</span>
           </div>
           
           <div class="resultado-item">
-            <span class="resultado-label">Valor da Sua Meta do Ano:</span>
+            <span class="resultado-label" id="labelMetaAno">Meta do Ano:</span>
             <span class="resultado-valor" id="resultadoMetaAno">R$ 21.600,00</span>
           </div>
           
@@ -6124,6 +6139,20 @@ document.addEventListener('DOMContentLoaded', function() {
     });
   });
   
+  // Fechar ao clicar no botão X
+  document.querySelectorAll('.btn-fechar-tooltip').forEach(btnFechar => {
+    btnFechar.addEventListener('click', function(e) {
+      e.stopPropagation();
+      const tooltip = this.closest('.tooltip-info');
+      tooltip.classList.remove('ativo');
+      const opcaoMeta = tooltip.closest('.opcao-meta');
+      if (opcaoMeta) {
+        const btnInfo = opcaoMeta.querySelector('.info-btn');
+        if (btnInfo) btnInfo.classList.remove('ativo');
+      }
+    });
+  });
+  
   // Fechar ao clicar fora
   document.addEventListener('click', function(e) {
     if (!e.target.closest('.opcao-meta')) {
@@ -6141,28 +6170,6 @@ document.addEventListener('DOMContentLoaded', function() {
     tooltip.addEventListener('click', function(e) {
       e.stopPropagation();
     });
-  });
-  
-  // Adicionar botão X para fechar
-  document.querySelectorAll('.tooltip-info').forEach(tooltip => {
-    if (!tooltip.querySelector('.btn-fechar-tooltip')) {
-      const btnFechar = document.createElement('button');
-      btnFechar.className = 'btn-fechar-tooltip';
-      btnFechar.innerHTML = '×';
-      btnFechar.type = 'button';
-      
-      btnFechar.addEventListener('click', function(e) {
-        e.stopPropagation();
-        tooltip.classList.remove('ativo');
-        const opcaoMeta = tooltip.closest('.opcao-meta');
-        if (opcaoMeta) {
-          const btnInfo = opcaoMeta.querySelector('.info-btn');
-          if (btnInfo) btnInfo.classList.remove('ativo');
-        }
-      });
-      
-      tooltip.insertBefore(btnFechar, tooltip.firstChild);
-    }
   });
 });
 </script>

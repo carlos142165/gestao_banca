@@ -1,5 +1,5 @@
 <?php
-// ✅ ARQUIVO DADOS_BANCA.PHP - LÓGICA CORRETA DE META MENSAL/ANUAL E UND
+// ✅ ARQUIVO DADOS_BANCA.PHP - CORRIGIDO PARA VALORES DECIMAIS
 
 require_once 'config.php';
 require_once 'carregar_sessao.php';
@@ -10,7 +10,7 @@ if (!$id_usuario) {
     exit;
 }
 
-// Suas funções existentes (NÃO ALTERADAS)
+// Funções auxiliares básicas
 function getSoma($conexao, $campo, $id_usuario) {
     $stmt = $conexao->prepare("SELECT SUM($campo) FROM controle WHERE id_usuario = ? AND $campo > 0");
     $stmt->bind_param("i", $id_usuario);
@@ -21,6 +21,7 @@ function getSoma($conexao, $campo, $id_usuario) {
     return $total ?? 0;
 }
 
+// ✅ CORRIGIDA: Manter decimais para diária
 function getUltimoCampo($conexao, $campo, $id_usuario) {
     $stmt = $conexao->prepare("
         SELECT $campo FROM controle
@@ -32,10 +33,16 @@ function getUltimoCampo($conexao, $campo, $id_usuario) {
     $stmt->bind_result($valor);
     $stmt->fetch();
     $stmt->close();
+    
+    // ✅ CRÍTICO: Se for diária, forçar 2 casas decimais
+    if ($campo === 'diaria' && $valor !== null) {
+        return round(floatval($valor), 2);
+    }
+    
     return $valor;
 }
 
-// ✅ NOVA FUNÇÃO: DETECTAR TIPO DE META PELO ÚLTIMO CADASTRO
+// ✅ DETECTAR TIPO DE META PELO BANCO
 function detectarTipoMetaPorBanco($conexao, $id_usuario) {
     try {
         $stmt = $conexao->prepare("
@@ -69,7 +76,7 @@ function detectarTipoMetaPorBanco($conexao, $id_usuario) {
     }
 }
 
-// ✅ FUNÇÃO: BUSCAR PRIMEIRO DEPÓSITO DO USUÁRIO (USANDO data_registro)
+// ✅ BUSCAR PRIMEIRO DEPÓSITO
 function getPrimeiroDeposito($conexao, $id_usuario) {
     try {
         $stmt = $conexao->prepare("
@@ -92,7 +99,7 @@ function getPrimeiroDeposito($conexao, $id_usuario) {
     }
 }
 
-// ✅ NOVA FUNÇÃO: CALCULAR LUCRO FILTRADO POR PERÍODO
+// ✅ CALCULAR LUCRO FILTRADO POR PERÍODO
 function calcularLucroFiltrado($conexao, $id_usuario, $periodo = 'total') {
     $condicaoData = '';
     
@@ -133,14 +140,15 @@ function calcularLucroFiltrado($conexao, $id_usuario, $periodo = 'total') {
     ];
 }
 
-// ✅ FUNÇÃO PARA CALCULAR LUCRO (MANTIDA PARA COMPATIBILIDADE)
 function calcularLucro($conexao, $id_usuario) {
     return calcularLucroFiltrado($conexao, $id_usuario, 'total');
 }
 
-// ✅ NOVA FUNÇÃO: CALCULAR META DIÁRIA COM TIPOS BASEADO NO BANCO (CORRIGIDA)
+// ✅ CORRIGIDA: CALCULAR META DIÁRIA COM DECIMAL
+// ✅ NOVA FUNÇÃO: Calcular Meta Turbo com Banca Congelada Diária
 function calcularMetaDiariaComTipo($conexao, $id_usuario, $total_deposito, $total_saque, $lucro_total, $tipo_meta = 'turbo') {
     try {
+        // Buscar porcentagem e unidade mais recentes
         $stmt = $conexao->prepare("
             SELECT diaria, unidade 
             FROM controle 
@@ -154,36 +162,60 @@ function calcularMetaDiariaComTipo($conexao, $id_usuario, $total_deposito, $tota
         $stmt->fetch();
         $stmt->close();
         
+        // Valores padrão
         if ($diaria === null) $diaria = 2.00;
+        else $diaria = round(floatval($diaria), 2);
+        
         if ($unidade === null) $unidade = 2;
         
         $banca_inicial = $total_deposito - $total_saque;
-        $banca_atual = $banca_inicial + $lucro_total;
         
+        // ✅ NOVO: Calcular lucro acumulado ATÉ ONTEM (excluindo hoje)
+        $stmt_lucro_ontem = $conexao->prepare("
+            SELECT 
+                COALESCE(SUM(valor_green), 0) as total_green_ontem,
+                COALESCE(SUM(valor_red), 0) as total_red_ontem
+            FROM valor_mentores
+            WHERE id_usuario = ? AND DATE(data_criacao) < CURDATE()
+        ");
+        $stmt_lucro_ontem->bind_param("i", $id_usuario);
+        $stmt_lucro_ontem->execute();
+        $stmt_lucro_ontem->bind_result($total_green_ontem, $total_red_ontem);
+        $stmt_lucro_ontem->fetch();
+        $stmt_lucro_ontem->close();
+        
+        $lucro_ate_ontem = $total_green_ontem - $total_red_ontem;
+        
+        // Banca com lucro até ontem (congelada para o dia de hoje)
+        $banca_inicio_dia = $banca_inicial + $lucro_ate_ontem;
+        
+        // Cálculo da meta
         $porcentagem_decimal = $diaria / 100;
         $meta_diaria = 0;
         $base_calculo = 0;
         $descricao_calculo = '';
         
         if ($tipo_meta === 'fixa') {
-            // ✅ META FIXA: Sempre usa banca inicial
+            // Meta Fixa: sempre usa banca inicial
             $base_calculo = $banca_inicial;
             $meta_diaria = $base_calculo * $porcentagem_decimal * $unidade;
             $descricao_calculo = "Meta Fixa: Banca Inicial (R$ " . number_format($banca_inicial, 2, ',', '.') . ") × {$diaria}% × {$unidade}";
         } else {
-            // ✅ META TURBO: Usa banca atual SE lucro > 0, senão usa banca inicial
-            if ($lucro_total > 0) {
-                // Lucro positivo: usa banca atual (com lucro)
-                $base_calculo = $banca_atual;
+            // ✅ Meta Turbo: usa banca com lucro ATÉ ONTEM (congelada)
+            if ($lucro_ate_ontem > 0) {
+                $base_calculo = $banca_inicio_dia;
                 $meta_diaria = $base_calculo * $porcentagem_decimal * $unidade;
-                $descricao_calculo = "Meta Turbo (Lucro +): Banca Atual (R$ " . number_format($banca_atual, 2, ',', '.') . ") × {$diaria}% × {$unidade}";
+                $descricao_calculo = "Meta Turbo: Banca Início Dia (R$ " . number_format($banca_inicio_dia, 2, ',', '.') . ") × {$diaria}% × {$unidade}";
             } else {
-                // Lucro negativo ou zero: usa banca inicial (igual meta fixa)
+                // Se lucro acumulado é negativo, usar banca inicial
                 $base_calculo = $banca_inicial;
                 $meta_diaria = $base_calculo * $porcentagem_decimal * $unidade;
                 $descricao_calculo = "Meta Turbo (Lucro -): Banca Inicial (R$ " . number_format($banca_inicial, 2, ',', '.') . ") × {$diaria}% × {$unidade}";
             }
         }
+        
+        // Banca atual (com lucro de hoje incluído)
+        $banca_atual = $banca_inicial + $lucro_total;
         
         return [
             'meta_diaria' => $meta_diaria,
@@ -191,13 +223,17 @@ function calcularMetaDiariaComTipo($conexao, $id_usuario, $total_deposito, $tota
             'unidade_usada' => $unidade,
             'banca_inicial' => $banca_inicial,
             'banca_atual' => $banca_atual,
+            'banca_inicio_dia' => $banca_inicio_dia, // ✅ NOVA: banca congelada do início do dia
+            'lucro_ate_ontem' => $lucro_ate_ontem, // ✅ NOVO: lucro acumulado até ontem
             'base_calculo' => $base_calculo,
             'tipo_meta' => $tipo_meta,
             'descricao_calculo' => $descricao_calculo,
             'lucro_total' => $lucro_total,
-            'lucro_positivo' => $lucro_total > 0,
+            'lucro_positivo' => $lucro_ate_ontem > 0,
             'formula_detalhada' => [
                 'banca_inicial' => $banca_inicial,
+                'lucro_ate_ontem' => $lucro_ate_ontem,
+                'banca_inicio_dia' => $banca_inicio_dia,
                 'lucro_total' => $lucro_total,
                 'banca_atual' => $banca_atual,
                 'tipo_aplicado' => $tipo_meta,
@@ -206,7 +242,11 @@ function calcularMetaDiariaComTipo($conexao, $id_usuario, $total_deposito, $tota
                 'unidade' => $unidade,
                 'resultado' => $meta_diaria,
                 'logica_turbo' => $tipo_meta === 'turbo' ? 
-                    ($lucro_total > 0 ? 'usa_banca_atual' : 'usa_banca_inicial') : 'nao_aplicavel'
+                    ($lucro_ate_ontem > 0 ? 'usa_banca_inicio_dia_com_lucro_ontem' : 'usa_banca_inicial') 
+                    : 'nao_aplicavel',
+                'explicacao' => $tipo_meta === 'turbo' ? 
+                    'Meta calculada com banca do início do dia (lucro até ontem). Valor fixo até 00:00h.' 
+                    : 'Meta calculada com banca inicial (sempre fixa).'
             ]
         ];
         
@@ -214,10 +254,12 @@ function calcularMetaDiariaComTipo($conexao, $id_usuario, $total_deposito, $tota
         error_log("Erro ao calcular meta diária com tipo: " . $e->getMessage());
         return [
             'meta_diaria' => 0,
-            'diaria_usada' => 2,
+            'diaria_usada' => 2.00,
             'unidade_usada' => 2,
             'banca_inicial' => 0,
             'banca_atual' => 0,
+            'banca_inicio_dia' => 0,
+            'lucro_ate_ontem' => 0,
             'base_calculo' => 0,
             'tipo_meta' => $tipo_meta,
             'descricao_calculo' => 'Erro no cálculo',
@@ -228,56 +270,51 @@ function calcularMetaDiariaComTipo($conexao, $id_usuario, $total_deposito, $tota
     }
 }
 
-// ✅ FUNÇÃO PARA CALCULAR DADOS DA ÁREA DIREITA - CORRIGIDA COM LÓGICA UND
+// ✅ CORRIGIDA: ÁREA DIREITA COM DECIMAL
 function calcularAreaDireita($conexao, $id_usuario, $total_deposito, $total_saque, $lucro_total, $tipo_meta = 'turbo') {
     try {
         $ultima_diaria = getUltimoCampo($conexao, 'diaria', $id_usuario);
-        $diaria = $ultima_diaria ?? 2.00;
+        $diaria = $ultima_diaria !== null ? $ultima_diaria : 2.00; // Já vem com decimal
         
         $banca_inicial = $total_deposito - $total_saque;
         $banca_atual = $banca_inicial + $lucro_total;
         
-        // ✅ LÓGICA DE CÁLCULO DA UND BASEADA NO TIPO DE META
         $base_calculo_und = 0;
         $regra_aplicada = '';
         
         if ($lucro_total < 0) {
-            // ✅ SALDO NEGATIVO: sempre usa banca + lucro (para ambos os tipos)
             $base_calculo_und = $banca_atual;
             $regra_aplicada = 'Saldo negativo: Banca + Lucro';
         } else {
-            // ✅ SALDO POSITIVO OU ZERO: depende do tipo de meta
             if ($tipo_meta === 'fixa') {
-                // Meta Fixa: usa apenas banca (sem lucro)
                 $base_calculo_und = $banca_inicial;
                 $regra_aplicada = 'Meta Fixa: Apenas Banca';
             } else {
-                // Meta Turbo: usa banca + lucro
                 $base_calculo_und = $banca_atual;
                 $regra_aplicada = 'Meta Turbo: Banca + Lucro';
             }
         }
         
-        // Calcular unidade de entrada
+        // ✅ Usar diária decimal no cálculo
         $unidade_entrada = $base_calculo_und * ($diaria / 100);
         
         return [
-            'diaria_porcentagem' => $diaria,
-            'banca_usada' => $banca_atual, // banca total para exibição
+            'diaria_porcentagem' => $diaria, // ✅ Com decimal
+            'banca_usada' => $banca_atual,
             'banca_inicial' => $banca_inicial,
             'lucro_atual' => $lucro_total,
             'base_calculo_und' => $base_calculo_und,
             'unidade_entrada' => $unidade_entrada,
             'tipo_meta_info' => $tipo_meta,
             'regra_aplicada' => $regra_aplicada,
-            'diaria_formatada' => number_format($diaria, 0) . '%',
+            'diaria_formatada' => number_format($diaria, 2, ',', '') . '%', // ✅ Exibe decimal
             'unidade_entrada_formatada' => 'R$ ' . number_format($unidade_entrada, 2, ',', '.')
         ];
         
     } catch (Exception $e) {
         error_log("Erro ao calcular área direita: " . $e->getMessage());
         return [
-            'diaria_porcentagem' => 2,
+            'diaria_porcentagem' => 2.00,
             'banca_usada' => 0,
             'banca_inicial' => 0,
             'lucro_atual' => 0,
@@ -285,21 +322,19 @@ function calcularAreaDireita($conexao, $id_usuario, $total_deposito, $total_saqu
             'unidade_entrada' => 0,
             'tipo_meta_info' => $tipo_meta,
             'regra_aplicada' => 'Erro no cálculo',
-            'diaria_formatada' => '2%',
+            'diaria_formatada' => '2,00%',
             'unidade_entrada_formatada' => 'R$ 0,00'
         ];
     }
 }
 
-// ✅ NOVA FUNÇÃO: CALCULAR DIAS COM LÓGICA CORRETA
+// ✅ CALCULAR DIAS RESTANTES
 function calcularDiasRestantes($conexao, $id_usuario) {
     $hoje = new DateTime();
     
-    // ✅ BUSCAR PRIMEIRO DEPÓSITO
     $primeira_data_deposito = getPrimeiroDeposito($conexao, $id_usuario);
     
     if (!$primeira_data_deposito) {
-        // Sem depósito: usar data atual
         $data_primeiro_deposito = $hoje;
         $usar_data_atual = true;
     } else {
@@ -311,9 +346,7 @@ function calcularDiasRestantes($conexao, $id_usuario) {
     $ano_atual = (int)$hoje->format('Y');
     $ultimo_dia_mes = (int)$hoje->format('t');
     
-    // ✅ LÓGICA PARA META MENSAL
     if ($usar_data_atual) {
-        // Sem depósito: dias restantes do mês atual
         $dia_atual = (int)$hoje->format('d');
         $dias_meta_mensal = $ultimo_dia_mes - $dia_atual + 1;
         $explicacao_mensal = "Sem depósito: {$dias_meta_mensal} dias restantes do mês {$mes_atual}";
@@ -322,36 +355,30 @@ function calcularDiasRestantes($conexao, $id_usuario) {
         $ano_primeiro_deposito = (int)$data_primeiro_deposito->format('Y');
         
         if ($ano_primeiro_deposito === $ano_atual && $mes_primeiro_deposito === $mes_atual) {
-            // ✅ PRIMEIRO MÊS: Do dia do depósito até fim do mês
             $dia_deposito = (int)$data_primeiro_deposito->format('d');
             $dias_meta_mensal = $ultimo_dia_mes - $dia_deposito + 1;
             $explicacao_mensal = "Primeiro mês: Do dia {$dia_deposito} até dia {$ultimo_dia_mes} = {$dias_meta_mensal} dias";
         } else {
-            // ✅ MESES SEGUINTES: Sempre mês completo (1º até último dia)
             $dias_meta_mensal = $ultimo_dia_mes;
             $explicacao_mensal = "Mês completo: Do dia 1 até dia {$ultimo_dia_mes} = {$dias_meta_mensal} dias";
         }
     }
     
-    // ✅ LÓGICA PARA META ANUAL (SEMPRE DO PRIMEIRO DEPÓSITO ATÉ 31/12)
     if ($usar_data_atual) {
-        // Sem depósito: dias restantes do ano
         $fim_ano = new DateTime($ano_atual . '-12-31 23:59:59');
         $diferenca = $hoje->diff($fim_ano);
         $dias_meta_anual = $diferenca->days + 1;
         $explicacao_anual = "Sem depósito: {$dias_meta_anual} dias restantes do ano {$ano_atual}";
     } else {
         if ($data_primeiro_deposito->format('Y') === (string)$ano_atual) {
-            // Primeiro depósito foi neste ano
             $fim_ano = new DateTime($ano_atual . '-12-31 23:59:59');
             $diferenca = $data_primeiro_deposito->diff($fim_ano);
             $dias_meta_anual = $diferenca->days + 1;
             $explicacao_anual = "Do primeiro depósito ({$data_primeiro_deposito->format('d/m/Y')}) até 31/12/{$ano_atual} = {$dias_meta_anual} dias";
         } else {
-            // Primeiro depósito foi em ano anterior: ano completo
-            $dias_meta_anual = 365; // ou 366 para ano bissexto
+            $dias_meta_anual = 365;
             if (date('L', mktime(0, 0, 0, 1, 1, $ano_atual))) {
-                $dias_meta_anual = 366; // Ano bissexto
+                $dias_meta_anual = 366;
             }
             $explicacao_anual = "Ano completo {$ano_atual}: {$dias_meta_anual} dias";
         }
@@ -371,8 +398,6 @@ function calcularDiasRestantes($conexao, $id_usuario) {
             'dias_meta_anual' => $dias_meta_anual,
             'explicacao_mensal' => $explicacao_mensal,
             'explicacao_anual' => $explicacao_anual,
-            
-            // ✅ EXEMPLO PRÁTICO
             'exemplo_usuario' => [
                 'primeiro_deposito' => $primeira_data_deposito ?? 'Não encontrado',
                 'mes_atual_info' => "Mês {$mes_atual}/{$ano_atual}",
@@ -381,8 +406,6 @@ function calcularDiasRestantes($conexao, $id_usuario) {
                 'formula_mensal' => "Meta Diária × {$dias_meta_mensal} dias = Meta Mensal",
                 'formula_anual' => "Meta Diária × {$dias_meta_anual} dias = Meta Anual"
             ],
-            
-            // ✅ DEBUG DETALHADO
             'debug_info' => [
                 'logica_aplicada' => $usar_data_atual ? 'sem_deposito' : 'com_deposito',
                 'primeiro_deposito_encontrado' => !$usar_data_atual,
@@ -397,7 +420,7 @@ function calcularDiasRestantes($conexao, $id_usuario) {
     ];
 }
 
-// ✅ FUNÇÃO CORRIGIDA: CALCULAR METAS POR PERÍODO
+// ✅ CALCULAR METAS POR PERÍODO
 function calcularMetasPorPeriodo($meta_diaria, $tipo_meta = 'turbo', $conexao, $id_usuario) {
     $diasCalculados = calcularDiasRestantes($conexao, $id_usuario);
     
@@ -414,7 +437,6 @@ function calcularMetasPorPeriodo($meta_diaria, $tipo_meta = 'turbo', $conexao, $
         'meta_diaria_formatada' => 'R$ ' . number_format($meta_diaria, 2, ',', '.'),
         'meta_mensal_formatada' => 'R$ ' . number_format($meta_mensal, 2, ',', '.'),
         'meta_anual_formatada' => 'R$ ' . number_format($meta_anual, 2, ',', '.'),
-        
         'periodo_info' => [
             'data_hoje' => $diasCalculados['info']['data_atual'],
             'primeiro_deposito' => $diasCalculados['info']['primeiro_deposito'],
@@ -423,18 +445,15 @@ function calcularMetasPorPeriodo($meta_diaria, $tipo_meta = 'turbo', $conexao, $
             'ultimo_dia_mes' => $diasCalculados['info']['ultimo_dia_mes'],
             'explicacao_mes' => $diasCalculados['info']['explicacao_mensal'],
             'explicacao_ano' => $diasCalculados['info']['explicacao_anual'],
-            
             'formula_diaria' => "Meta Diária ({$tipo_meta}): R$ " . number_format($meta_diaria, 2, ',', '.'),
             'formula_mensal' => "Meta Mensal ({$tipo_meta}): R$ " . number_format($meta_diaria, 2, ',', '.') . " × {$diasCalculados['mes']} dias = R$ " . number_format($meta_mensal, 2, ',', '.'),
             'formula_anual' => "Meta Anual ({$tipo_meta}): R$ " . number_format($meta_diaria, 2, ',', '.') . " × {$diasCalculados['ano']} dias = R$ " . number_format($meta_anual, 2, ',', '.'),
-            
             'debug_completo' => $diasCalculados['info']['debug_info'],
             'exemplo_usuario' => $diasCalculados['info']['exemplo_usuario']
         ]
     ];
 }
 
-// ✅ DETECTAR PERÍODO ATIVO
 function detectarPeriodoAtivo() {
     $periodo_requisitado = $_GET['periodo'] ?? $_POST['periodo'] ?? null;
     
@@ -450,7 +469,6 @@ function detectarPeriodoAtivo() {
     return 'dia';
 }
 
-// ✅ DETECTAR TIPO DE META ATIVO
 function detectarTipoMetaAtivo($conexao, $id_usuario) {
     $tipo_requisitado = $_GET['tipo_meta'] ?? $_POST['tipo_meta'] ?? null;
     
@@ -466,14 +484,18 @@ function detectarTipoMetaAtivo($conexao, $id_usuario) {
     return detectarTipoMetaPorBanco($conexao, $id_usuario);
 }
 
-// ✅ PROCESSAR REQUISIÇÕES POST
+// ✅ PROCESSAR POST
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     $input = json_decode(file_get_contents('php://input'), true);
     
     try {
         $acao = $input['acao'] ?? '';
         $valor = floatval($input['valor'] ?? 0);
-        $diaria = floatval($input['diaria'] ?? 2);
+        
+        // ✅ CRÍTICO: Processar diária como decimal
+        $diaria_raw = $input['diaria'] ?? 2;
+        $diaria = round(floatval(str_replace(',', '.', $diaria_raw)), 2);
+        
         $unidade = intval($input['unidade'] ?? 2);
         $odds = floatval($input['odds'] ?? 1.5);
         
@@ -491,7 +513,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                     $stmt->bind_param("iddids", $id_usuario, $valor, $diaria, $unidade, $odds, $campo_meta);
                 } else {
                     $stmt = $conexao->prepare("INSERT INTO controle (id_usuario, deposito, diaria, unidade, odds, data_registro) VALUES (?, ?, ?, ?, ?, NOW())");
-                    $stmt->bind_param("idddi", $id_usuario, $valor, $diaria, $unidade, $odds);
+                    $stmt->bind_param("iddid", $id_usuario, $valor, $diaria, $unidade, $odds);
                 }
                 break;
                 
@@ -501,7 +523,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                     $stmt->bind_param("iddids", $id_usuario, $valor, $diaria, $unidade, $odds, $campo_meta);
                 } else {
                     $stmt = $conexao->prepare("INSERT INTO controle (id_usuario, saque, diaria, unidade, odds, data_registro) VALUES (?, ?, ?, ?, ?, NOW())");
-                    $stmt->bind_param("idddi", $id_usuario, $valor, $diaria, $unidade, $odds);
+                    $stmt->bind_param("iddid", $id_usuario, $valor, $diaria, $unidade, $odds);
                 }
                 break;
                 
@@ -567,37 +589,15 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             'tipo_meta_origem' => 'banco',
             'meta_diaria' => $meta_resultado['meta_diaria'],
             'meta_diaria_formatada' => 'R$ ' . number_format($meta_resultado['meta_diaria'], 2, ',', '.'),
-            'meta_diaria_brl' => 'R$ ' . number_format($meta_resultado['meta_diaria'], 2, ',', '.'),
-            'diaria_atual' => $meta_resultado['diaria_usada'],
+            'diaria_atual' => $meta_resultado['diaria_usada'], // ✅ Com decimal
             'unidade_atual' => $meta_resultado['unidade_usada'],
-            'banca_inicial' => $meta_resultado['banca_inicial'],
-            'banca_atual' => $meta_resultado['banca_atual'],
-            'base_calculo' => $meta_resultado['base_calculo'],
-            'descricao_calculo' => $meta_resultado['descricao_calculo'],
-            'diaria_formatada' => $area_direita['diaria_formatada'],
+            'diaria_formatada' => $area_direita['diaria_formatada'], // ✅ Com decimal
             'unidade_entrada_formatada' => $area_direita['unidade_entrada_formatada'],
-            'diaria_raw' => $area_direita['diaria_porcentagem'],
-            'saldo_banca_total' => $area_direita['banca_usada'],
-            'unidade_entrada_raw' => $area_direita['unidade_entrada'],
-            'metas_periodo' => $metas_periodo,
+            'diaria_raw' => $area_direita['diaria_porcentagem'], // ✅ Valor numérico decimal
             'meta_mensal' => $metas_periodo['meta_mensal'],
-            'meta_mensal_formatada' => $metas_periodo['meta_mensal_formatada'],
-            'meta_anual' => $metas_periodo['meta_anual'], 
-            'meta_anual_formatada' => $metas_periodo['meta_anual_formatada'],
+            'meta_anual' => $metas_periodo['meta_anual'],
             'dias_restantes_mes' => $metas_periodo['dias_restantes_mes'],
-            'dias_restantes_ano' => $metas_periodo['dias_restantes_ano'],
-            'periodo_info' => $metas_periodo['periodo_info'],
-            'formula_detalhada' => $meta_resultado['formula_detalhada'],
-            'area_direita_debug' => [
-                'tipo_meta' => $tipo_meta,
-                'regra_aplicada' => $area_direita['regra_aplicada'],
-                'base_calculo_und' => $area_direita['base_calculo_und'],
-                'banca_inicial' => $area_direita['banca_inicial'],
-                'banca_atual' => $area_direita['banca_usada'],
-                'lucro_atual' => $area_direita['lucro_atual'],
-                'formula_und' => "Base UND: R$ " . number_format($area_direita['base_calculo_und'], 2, ',', '.') . 
-                                 " × {$area_direita['diaria_porcentagem']}% = {$area_direita['unidade_entrada_formatada']}"
-            ]
+            'dias_restantes_ano' => $metas_periodo['dias_restantes_ano']
         ]);
         
     } catch (Exception $e) {
@@ -606,7 +606,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     exit;
 }
 
-// ✅ PROCESSAR REQUISIÇÕES GET
+// ✅ PROCESSAR GET
 try {
     $periodo_ativo = detectarPeriodoAtivo();
     $tipo_meta = detectarTipoMetaAtivo($conexao, $id_usuario);
@@ -658,13 +658,13 @@ try {
         'tipo_meta' => $tipo_meta,
         'tipo_meta_texto' => $tipo_meta === 'fixa' ? 'Meta Fixa' : 'Meta Turbo',
         'tipo_meta_origem' => 'banco',
-        'diaria' => $ultima_diaria ?? 2,
+        'diaria' => $ultima_diaria ?? 2.00, // ✅ Com decimal
         'unidade' => $ultima_unidade ?? 2,
         'odds' => $ultima_odds ?? 1.5,
         'meta_diaria' => $meta_resultado['meta_diaria'],
         'meta_diaria_formatada' => 'R$ ' . number_format($meta_resultado['meta_diaria'], 2, ',', '.'),
         'meta_diaria_brl' => 'R$ ' . number_format($meta_resultado['meta_diaria'], 2, ',', '.'),
-        'diaria_usada' => $meta_resultado['diaria_usada'],
+        'diaria_usada' => $meta_resultado['diaria_usada'], // ✅ Com decimal
         'unidade_usada' => $meta_resultado['unidade_usada'],
         'banca_inicial' => $meta_resultado['banca_inicial'],
         'banca_atual' => $meta_resultado['banca_atual'],
@@ -674,9 +674,9 @@ try {
         'meta_display' => $meta_resultado['meta_diaria'],
         'meta_display_formatada' => 'R$ ' . number_format($meta_resultado['meta_diaria'], 2, ',', '.'),
         'rotulo_periodo' => $periodo_ativo === 'mes' ? 'Meta do Mês' : ($periodo_ativo === 'ano' ? 'Meta do Ano' : 'Meta do Dia'),
-        'diaria_formatada' => $area_direita['diaria_formatada'],
+        'diaria_formatada' => $area_direita['diaria_formatada'], // ✅ Com decimal (ex: 2,50%)
         'unidade_entrada_formatada' => $area_direita['unidade_entrada_formatada'],
-        'diaria_raw' => $area_direita['diaria_porcentagem'],
+        'diaria_raw' => $area_direita['diaria_porcentagem'], // ✅ Valor numérico decimal (ex: 2.5)
         'saldo_banca_total' => $area_direita['banca_usada'],
         'unidade_entrada_raw' => $area_direita['unidade_entrada'],
         'metas_periodo' => $metas_periodo,
@@ -688,7 +688,6 @@ try {
         'dias_restantes_ano' => $metas_periodo['dias_restantes_ano'],
         'periodo_info' => $metas_periodo['periodo_info'],
         
-        // ✅ INFORMAÇÕES DETALHADAS COM NOVA LÓGICA
         'calculo_detalhado' => [
             'tipo_meta' => $tipo_meta,
             'tipo_meta_texto' => $tipo_meta === 'fixa' ? 'Meta Fixa' : 'Meta Turbo',
@@ -701,14 +700,9 @@ try {
             'lucro_filtrado' => $lucro_filtrado,
             'lucro_total' => $lucro_total,
             'periodo_aplicado' => $periodo_ativo,
-            'diaria_percentual' => $meta_resultado['diaria_usada'],
+            'diaria_percentual' => $meta_resultado['diaria_usada'], // ✅ Com decimal
             'unidade_multiplicador' => $meta_resultado['unidade_usada'],
             'descricao_calculo' => $meta_resultado['descricao_calculo'],
-            'formula_meta_fixa' => "Meta Fixa: Banca Inicial (R$ " . number_format($meta_resultado['banca_inicial'], 2, ',', '.') . ") × {$meta_resultado['diaria_usada']}% × {$meta_resultado['unidade_usada']} = R$ " . number_format($meta_resultado['meta_diaria'], 2, ',', '.'),
-            'formula_meta_turbo' => $meta_resultado['lucro_positivo'] 
-                ? "Meta Turbo (Lucro +): Banca Atual (R$ " . number_format($meta_resultado['banca_atual'], 2, ',', '.') . ") × {$meta_resultado['diaria_usada']}% × {$meta_resultado['unidade_usada']} = R$ " . number_format($meta_resultado['meta_diaria'], 2, ',', '.')
-                : "Meta Turbo (Lucro -): Banca Inicial (R$ " . number_format($meta_resultado['banca_inicial'], 2, ',', '.') . ") × {$meta_resultado['diaria_usada']}% × {$meta_resultado['unidade_usada']} = R$ " . number_format($meta_resultado['meta_diaria'], 2, ',', '.'),
-            'formula_aplicada' => $meta_resultado['descricao_calculo'],
             'formula_detalhada_completa' => $meta_resultado['formula_detalhada'],
             'lucro_por_periodo' => [
                 'periodo_ativo' => $periodo_ativo,
@@ -717,8 +711,6 @@ try {
                 'red_filtrado' => $total_red_filtrado,
                 'diferenca_total_filtrado' => $lucro_total - $lucro_filtrado
             ],
-            
-            // ✅ NOVA LÓGICA DE CÁLCULO DE DIAS
             'logica_meta_mensal' => $metas_periodo['periodo_info']['explicacao_mes'],
             'logica_meta_anual' => $metas_periodo['periodo_info']['explicacao_ano'],
             'primeiro_deposito_data' => $metas_periodo['periodo_info']['primeiro_deposito'],
@@ -730,7 +722,6 @@ try {
             'debug_calculo_dias' => $metas_periodo['periodo_info']['debug_completo']
         ],
         
-        // ✅ DEBUG ÁREA DIREITA COM NOVA LÓGICA UND
         'area_direita_debug' => [
             'tipo_meta_aplicado' => $tipo_meta,
             'regra_aplicada_und' => $area_direita['regra_aplicada'],
@@ -750,7 +741,7 @@ try {
             ],
             'depositos_total' => $total_deposito,
             'saques_total' => $total_saque,
-            'diaria_aplicada' => $area_direita['diaria_porcentagem'],
+            'diaria_aplicada' => $area_direita['diaria_porcentagem'], // ✅ Valor decimal
             'resultado_unidade' => $area_direita['unidade_entrada']
         ]
     ]);
@@ -765,22 +756,13 @@ try {
         'tipo_meta_origem' => 'padrao',
         'meta_diaria' => 0,
         'meta_diaria_formatada' => 'R$ 0,00',
-        'meta_diaria_brl' => 'R$ 0,00',
         'meta_mensal' => 0,
-        'meta_mensal_formatada' => 'R$ 0,00',
         'meta_anual' => 0,
-        'meta_anual_formatada' => 'R$ 0,00',
-        'dias_restantes_mes' => 0,
-        'dias_restantes_ano' => 0,
-        'diaria_formatada' => '2%',
+        'diaria_formatada' => '2,00%',
         'unidade_entrada_formatada' => 'R$ 0,00',
         'periodo_ativo' => 'dia',
         'lucro' => 0,
-        'lucro_formatado' => 'R$ 0,00',
-        'banca_inicial' => 0,
-        'banca_atual' => 0,
-        'base_calculo' => 0,
-        'descricao_calculo' => 'Erro no cálculo'
+        'lucro_formatado' => 'R$ 0,00'
     ]);
 }
 ?>

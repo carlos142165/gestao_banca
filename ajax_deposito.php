@@ -11,7 +11,7 @@ if (!isset($_SESSION['usuario_id'])) {
 
 $id_usuario = intval($_SESSION['usuario_id']);
 
-// ✅ FUNÇÃO PARA CALCULAR DADOS DA ÁREA DIREITA - CORRIGIDA COM LUCRO
+// ✅ FUNÇÃO PARA CALCULAR DADOS DA ÁREA DIREITA - CORRIGIDA COM BANCA CONGELADA
 function calcularAreaDireita($conexao, $id_usuario, $saldo_banca_total) {
     try {
         // Buscar última diária cadastrada
@@ -26,27 +26,69 @@ function calcularAreaDireita($conexao, $id_usuario, $saldo_banca_total) {
         $stmt->fetch();
         $stmt->close();
         
-    $diaria = $ultima_diaria ?? 1.00;
+        // ✅ CORREÇÃO: Manter 2 casas decimais
+        $diaria = $ultima_diaria !== null ? round(floatval($ultima_diaria), 2) : 1.00;
         
-        // ✅ CORREÇÃO: Usar saldo total da banca (com lucro) para calcular UND
-        // Calcular unidade de entrada: saldo_total * (diária / 100)
-        $unidade_entrada = $saldo_banca_total * ($diaria / 100);
+        // ✅ NOVO: Calcular lucro ATÉ ONTEM (excluindo hoje)
+        $stmt_lucro_ontem = $conexao->prepare("
+            SELECT 
+                COALESCE(SUM(valor_green), 0) as total_green_ontem,
+                COALESCE(SUM(valor_red), 0) as total_red_ontem
+            FROM valor_mentores
+            WHERE id_usuario = ? AND DATE(data_criacao) < CURDATE()
+        ");
+        $stmt_lucro_ontem->bind_param("i", $id_usuario);
+        $stmt_lucro_ontem->execute();
+        $stmt_lucro_ontem->bind_result($total_green_ontem, $total_red_ontem);
+        $stmt_lucro_ontem->fetch();
+        $stmt_lucro_ontem->close();
+        
+        $lucro_ate_ontem = $total_green_ontem - $total_red_ontem;
+        
+        // ✅ Obter depósitos e saques
+        $stmt_dep = $conexao->prepare("SELECT SUM(deposito) FROM controle WHERE id_usuario = ? AND deposito > 0");
+        $stmt_dep->bind_param("i", $id_usuario);
+        $stmt_dep->execute();
+        $stmt_dep->bind_result($total_deposito);
+        $stmt_dep->fetch();
+        $stmt_dep->close();
+        
+        $stmt_saq = $conexao->prepare("SELECT SUM(saque) FROM controle WHERE id_usuario = ? AND saque > 0");
+        $stmt_saq->bind_param("i", $id_usuario);
+        $stmt_saq->execute();
+        $stmt_saq->bind_result($total_saque);
+        $stmt_saq->fetch();
+        $stmt_saq->close();
+        
+        $banca_inicial = ($total_deposito ?? 0) - ($total_saque ?? 0);
+        
+        // ✅ BANCA DO INÍCIO DO DIA (congelada até meia-noite)
+        $banca_inicio_dia = $banca_inicial + $lucro_ate_ontem;
+        
+        // ✅ Calcular unidade de entrada: banca_inicio_dia * (diária / 100)
+        $unidade_entrada = $banca_inicio_dia * ($diaria / 100);
         
         return [
             'diaria_porcentagem' => $diaria,
-            'saldo_banca_total' => $saldo_banca_total,
+            'saldo_banca_total' => $saldo_banca_total, // banca atual (com lucro de hoje)
+            'banca_inicio_dia' => $banca_inicio_dia, // ✅ NOVA: banca congelada
+            'lucro_ate_ontem' => $lucro_ate_ontem, // ✅ NOVO
             'unidade_entrada' => $unidade_entrada,
-            'diaria_formatada' => number_format($diaria, 0) . '%',
+            'diaria_formatada' => number_format($diaria, 2, ',', '') . '%',
+            'diaria_formatada_inteiro' => number_format($diaria, 0) . '%',
             'unidade_entrada_formatada' => 'R$ ' . number_format($unidade_entrada, 2, ',', '.')
         ];
         
     } catch (Exception $e) {
         error_log("Erro ao calcular área direita: " . $e->getMessage());
         return [
-            'diaria_porcentagem' => 2,
+            'diaria_porcentagem' => 1.00,
             'saldo_banca_total' => 0,
+            'banca_inicio_dia' => 0,
+            'lucro_ate_ontem' => 0,
             'unidade_entrada' => 0,
-            'diaria_formatada' => '2%',
+            'diaria_formatada' => '1,00%',
+            'diaria_formatada_inteiro' => '1%',
             'unidade_entrada_formatada' => 'R$ 0,00'
         ];
     }
@@ -63,7 +105,7 @@ function getSoma($conexao, $campo, $id_usuario) {
     return $total ?? 0;
 }
 
-// ✅ FUNÇÃO PARA BUSCAR ÚLTIMO CAMPO
+// ✅ FUNÇÃO PARA BUSCAR ÚLTIMO CAMPO - CORRIGIDA PARA DECIMAL
 function getUltimoCampo($conexao, $campo, $id_usuario) {
     $stmt = $conexao->prepare("
         SELECT $campo FROM controle
@@ -75,6 +117,12 @@ function getUltimoCampo($conexao, $campo, $id_usuario) {
     $stmt->bind_result($valor);
     $stmt->fetch();
     $stmt->close();
+    
+    // ✅ CORREÇÃO: Se for diária, garantir 2 casas decimais
+    if ($campo === 'diaria' && $valor !== null) {
+        return round(floatval($valor), 2);
+    }
+    
     return $valor;
 }
 
@@ -132,11 +180,14 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 
     $acao = $data['acao'] ?? '';
     $valor = abs(floatval($data['valor'] ?? 0));
-    $diaria = floatval($data['diaria'] ?? 1);
+    
+    // ✅ CORREÇÃO CRÍTICA: Processar diária como decimal
+    $diaria_raw = $data['diaria'] ?? 1;
+    $diaria = round(floatval(str_replace(',', '.', $diaria_raw)), 2);
+    
     $unidade = intval($data['unidade'] ?? 1);
     $odds = isset($data['odds']) ? floatval(str_replace(',', '.', $data['odds'])) : 1.5;
-    $tipoMeta = validarTipoMeta($data['tipoMeta'] ?? 'Meta Fixa'); // ✅ VALIDAR META
-    $nome = trim($data['nome'] ?? '');
+    $tipoMeta = validarTipoMeta($data['tipoMeta'] ?? 'Meta Fixa');
 
     // ✅ OPERAÇÃO DE RESET
     if ($acao === 'resetar') {
@@ -156,7 +207,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             
             $conexao->commit();
 
-            // ✅ RETORNAR DADOS ZERADOS PARA ÁREA DIREITA
+            // ✅ RETORNAR DADOS ZERADOS
             echo json_encode([
                 'success' => true, 
                 'message' => 'Dados resetados com sucesso',
@@ -166,16 +217,9 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                 'unidade' => 1,
                 'odds' => '1.50',
                 'meta' => 'Meta Fixa',
-                
-                // ✅ ÁREA DIREITA ZERADA
-                'diaria_formatada' => '1%',
+                'diaria_formatada' => '1,00%',
                 'unidade_entrada_formatada' => 'R$ 0,00',
                 'meta_diaria_formatada' => 'R$ 0,00',
-                'diaria_raw' => 1,
-                'saldo_banca_total' => 0,
-                'unidade_entrada_raw' => 0,
-                
-                // ✅ NOVO: DADOS FORMATADOS PARA ÁREA DIREITA
                 'banca_formatada' => 'R$ 0,00',
                 'lucro_formatado' => 'R$ 0,00'
             ]);
@@ -187,17 +231,16 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         exit();
     }
 
-    // ✅ OPERAÇÃO DE ALTERAÇÃO - CORRIGIDA
+    // ✅ OPERAÇÃO DE ALTERAÇÃO
     if ($acao === 'alterar') {
         try {
-            // ✅ VERIFICAR SE EXISTE REGISTRO PARA ATUALIZAR
+            // ✅ VERIFICAR SE EXISTE REGISTRO
             $stmt_check = $conexao->prepare("SELECT id FROM controle WHERE id_usuario = ? ORDER BY id DESC LIMIT 1");
             $stmt_check->bind_param("i", $id_usuario);
             $stmt_check->execute();
             $result = $stmt_check->get_result();
             
             if ($result->num_rows > 0) {
-                // ✅ ATUALIZAR ÚLTIMO REGISTRO
                 $stmt = $conexao->prepare("
                     UPDATE controle 
                     SET meta = ?, diaria = ?, unidade = ?, odds = ?, data_registro = NOW()
@@ -206,7 +249,6 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                 ");
                 $stmt->bind_param("sdidi", $tipoMeta, $diaria, $unidade, $odds, $id_usuario);
             } else {
-                // ✅ INSERIR NOVO REGISTRO SE NÃO EXISTIR
                 $stmt = $conexao->prepare("
                     INSERT INTO controle (id_usuario, meta, diaria, unidade, odds, data_registro) 
                     VALUES (?, ?, ?, ?, ?, NOW())
@@ -215,7 +257,6 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             }
 
             if ($stmt->execute()) {
-                // ✅ BUSCAR DADOS ATUALIZADOS
                 $total_deposito = getSoma($conexao, 'deposito', $id_usuario);
                 $total_saque = getSoma($conexao, 'saque', $id_usuario);
                 $dados_lucro = calcularLucro($conexao, $id_usuario);
@@ -232,18 +273,12 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                     'unidade' => $unidade,
                     'odds' => number_format($odds, 2, '.', ''),
                     'meta' => $tipoMeta,
-                    
-                    // ✅ ÁREA DIREITA ATUALIZADA
                     'diaria_formatada' => $area_direita['diaria_formatada'],
                     'unidade_entrada_formatada' => $area_direita['unidade_entrada_formatada'],
-                    'meta_diaria_formatada' => 'R$ ' . number_format($area_direita['unidade_entrada'] * $unidade, 2, ',', '.'),
-                    'diaria_raw' => $area_direita['diaria_porcentagem'],
-                    'saldo_banca_total' => $area_direita['saldo_banca_total'],
-                    'unidade_entrada_raw' => $area_direita['unidade_entrada'],
-                    
-                    // ✅ NOVO: DADOS FORMATADOS PARA ÁREA DIREITA
                     'banca_formatada' => 'R$ ' . number_format($saldo_banca_total, 2, ',', '.'),
-                    'lucro_formatado' => 'R$ ' . number_format($lucro, 2, ',', '.')
+                    'lucro_formatado' => 'R$ ' . number_format($lucro, 2, ',', '.'),
+                    'banca_inicio_dia' => $area_direita['banca_inicio_dia'],
+                    'lucro_ate_ontem' => $area_direita['lucro_ate_ontem']
                 ]);
             } else {
                 echo json_encode(['success' => false, 'message' => 'Erro ao alterar dados']);
@@ -261,7 +296,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         exit();
     }
 
-    // ✅ OPERAÇÕES DE DEPÓSITO/SAQUE - SEM DUPLICAÇÃO
+    // ✅ OPERAÇÕES DE DEPÓSITO/SAQUE
     try {
         $query = "";
         if ($acao === 'deposito' || $acao === 'cadastrar') {
@@ -274,39 +309,25 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         $stmt->bind_param("iddids", $id_usuario, $valor, $diaria, $unidade, $odds, $tipoMeta);
 
         if ($stmt->execute()) {
-            // ✅ BUSCAR DADOS ATUALIZADOS APÓS OPERAÇÃO
             $total_deposito = getSoma($conexao, 'deposito', $id_usuario);
             $total_saque = getSoma($conexao, 'saque', $id_usuario);
             $dados_lucro = calcularLucro($conexao, $id_usuario);
             $lucro = $dados_lucro['lucro'];
             $saldo_banca_total = $total_deposito - $total_saque + $lucro;
             $area_direita = calcularAreaDireita($conexao, $id_usuario, $saldo_banca_total);
-            $meta_diaria = $area_direita['unidade_entrada'] * $unidade;
             
             echo json_encode([
                 'success' => true, 
                 'message' => 'Operação realizada com sucesso',
-                'deposito' => number_format($total_deposito, 2, '.', ''),
-                'saque' => number_format($total_saque, 2, '.', ''),
                 'banca' => number_format($saldo_banca_total, 2, '.', ''),
                 'lucro' => number_format($lucro, 2, '.', ''),
                 'diaria' => number_format($diaria, 2, '.', ''),
-                'unidade' => $unidade,
-                'odds' => number_format($odds, 2, '.', ''),
-                'meta' => $tipoMeta,
-                
-                // ✅ ÁREA DIREITA ATUALIZADA
                 'diaria_formatada' => $area_direita['diaria_formatada'],
                 'unidade_entrada_formatada' => $area_direita['unidade_entrada_formatada'],
-                'meta_diaria_formatada' => 'R$ ' . number_format($meta_diaria, 2, ',', '.'),
-                'diaria_raw' => $area_direita['diaria_porcentagem'],
-                'saldo_banca_total' => $area_direita['saldo_banca_total'],
-                'unidade_entrada_raw' => $area_direita['unidade_entrada'],
-                'meta_diaria_raw' => $meta_diaria,
-                
-                // ✅ NOVO: DADOS FORMATADOS PARA ÁREA DIREITA
                 'banca_formatada' => 'R$ ' . number_format($saldo_banca_total, 2, ',', '.'),
-                'lucro_formatado' => 'R$ ' . number_format($lucro, 2, ',', '.')
+                'lucro_formatado' => 'R$ ' . number_format($lucro, 2, ',', '.'),
+                'banca_inicio_dia' => $area_direita['banca_inicio_dia'],
+                'lucro_ate_ontem' => $area_direita['lucro_ate_ontem']
             ]);
             
         } else {
@@ -315,85 +336,46 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         $stmt->close();
         
     } catch (Exception $e) {
-        echo json_encode(['success' => false, 'message' => 'Erro no banco de dados: ' . $e->getMessage()]);
+        echo json_encode(['success' => false, 'message' => 'Erro no banco: ' . $e->getMessage()]);
     }
     exit();
 }
 
-// ✅ REQUISIÇÃO GET: RETORNA DADOS DA BANCA COM ÁREA DIREITA E META
+// ✅ REQUISIÇÃO GET
 try {
     $total_deposito = getSoma($conexao, 'deposito', $id_usuario);
     $total_saque = getSoma($conexao, 'saque', $id_usuario);
     $dados_lucro = calcularLucro($conexao, $id_usuario);
     $lucro = $dados_lucro['lucro'];
     $saldo_banca_total = $total_deposito - $total_saque + $lucro;
-    $mostrar_radios = $total_deposito > 0;
-
-    // ✅ BUSCAR ÚLTIMOS VALORES
-    $ultima_diaria = getUltimoCampo($conexao, 'diaria', $id_usuario) ?? 1;
+    
+    $ultima_diaria = getUltimoCampo($conexao, 'diaria', $id_usuario) ?? 1.00;
     $ultima_unidade = getUltimoCampo($conexao, 'unidade', $id_usuario) ?? 1;
-    $ultima_odds = getUltimoCampo($conexao, 'odds', $id_usuario);
+    $ultima_odds = getUltimoCampo($conexao, 'odds', $id_usuario) ?? 1.5;
     $ultima_meta = getUltimaMeta($conexao, $id_usuario);
 
-    // ✅ odds padrão se for 0 ou nula
-    $odds_final = ($ultima_odds && floatval($ultima_odds) > 0) ? $ultima_odds : 1.5;
-
-    // ✅ CALCULAR ÁREA DIREITA COM SALDO TOTAL
     $area_direita = calcularAreaDireita($conexao, $id_usuario, $saldo_banca_total);
-    $meta_diaria = $area_direita['unidade_entrada'] * $ultima_unidade;
 
     echo json_encode([
         'success' => true,
-        'deposito' => number_format($total_deposito, 2, '.', ''),
-        'saque' => number_format($total_saque, 2, '.', ''),
         'banca' => number_format($saldo_banca_total, 2, '.', ''),
         'lucro' => number_format($lucro, 2, '.', ''),
-        'mostrar_radios' => $mostrar_radios,
         'diaria' => number_format($ultima_diaria, 2, '.', ''),
         'unidade' => intval($ultima_unidade),
-        'odds' => number_format($odds_final, 2, '.', ''),
+        'odds' => number_format($ultima_odds, 2, '.', ''),
         'meta' => $ultima_meta,
-        
-        // ✅ DADOS PARA ÁREA DIREITA
         'diaria_formatada' => $area_direita['diaria_formatada'],
         'unidade_entrada_formatada' => $area_direita['unidade_entrada_formatada'],
-        'meta_diaria_formatada' => 'R$ ' . number_format($meta_diaria, 2, ',', '.'),
-        'diaria_raw' => $area_direita['diaria_porcentagem'],
-        'saldo_banca_total' => $area_direita['saldo_banca_total'],
-        'unidade_entrada_raw' => $area_direita['unidade_entrada'],
-        'meta_diaria_raw' => $meta_diaria,
-        
-        // ✅ NOVO: DADOS FORMATADOS PARA ÁREA DIREITA
         'banca_formatada' => 'R$ ' . number_format($saldo_banca_total, 2, ',', '.'),
         'lucro_formatado' => 'R$ ' . number_format($lucro, 2, ',', '.'),
-        
-        // ✅ DEBUG
-        'area_direita_debug' => [
-            'formula' => "Saldo Total: R$ " . number_format($saldo_banca_total, 2, ',', '.') . " × {$area_direita['diaria_porcentagem']}% = {$area_direita['unidade_entrada_formatada']}",
-            'deposito_total' => $total_deposito,
-            'saque_total' => $total_saque,
-            'lucro_total' => $lucro,
-            'saldo_banca_total' => $saldo_banca_total,
-            'diaria_aplicada' => $area_direita['diaria_porcentagem'],
-            'unidade_resultado' => $area_direita['unidade_entrada'],
-            'meta_tipo' => $ultima_meta
-        ]
+        'banca_inicio_dia' => $area_direita['banca_inicio_dia'],
+        'lucro_ate_ontem' => $area_direita['lucro_ate_ontem']
     ]);
     
 } catch (Exception $e) {
     echo json_encode([
         'success' => false,
-        'message' => 'Erro ao buscar dados: ' . $e->getMessage(),
-        'banca' => '0.00',
-        'lucro' => '0.00',
-        'diaria' => '2.00',
-        'unidade' => 2,
-        'odds' => '1.50',
-        'meta' => 'Meta Fixa',
-        
-        // ✅ NOVO: DADOS FORMATADOS DE FALLBACK
-        'banca_formatada' => 'R$ 0,00',
-        'lucro_formatado' => 'R$ 0,00'
+        'message' => 'Erro: ' . $e->getMessage()
     ]);
 }
 ?>
