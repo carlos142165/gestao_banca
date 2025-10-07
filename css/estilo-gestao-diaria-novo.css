@@ -216,6 +216,59 @@
   --scrollbar-thumb-border-radius: 10px;
   --widget-scrollbar-track-border-radius: 8px;
   --widget-scrollbar-thumb-border-radius: 8px;
+  /**/
+  /**/
+  /**/
+  /**/
+  /**/
+  /* --------------------------------------------------
+   - DIAS DO MÊS - DIAS DO MÊS - DIAS DO MÊS -
+  -------------------------------------------------- */
+  /* ===== POSICIONAMENTO ===== */
+  --contador-dias-top: 1px; /* Distância do topo */
+  --contador-dias-right: -1px; /* Distância da direita */
+  --contador-dias-margin-top: 0px; /* Margem superior adicional */
+  --contador-dias-margin-right: 0px; /* Margem direita adicional */
+
+  /* ===== DIMENSÕES ===== */
+  --contador-dias-width: 50px; /* ✅ REDUZIDO: 65px → 50px */
+  --contador-dias-height: auto; /* Altura automática */
+  --contador-dias-padding: 6px 8px; /* ✅ REDUZIDO: 12px 10px → 6px 8px */
+  --contador-dias-gap: 2px; /* ✅ REDUZIDO: 4px → 2px */
+
+  /* ===== TIPOGRAFIA - LABEL "Dias" ===== */
+  --contador-dias-label-size: 8px; /* ✅ REDUZIDO: 11px → 9px */
+  --contador-dias-label-weight: 600;
+  --contador-dias-label-color: #6a0dad; /* ✅ ROXO (mesma cor da data) */
+  --contador-dias-label-spacing: 0.3px; /* ✅ REDUZIDO: 0.5px → 0.3px */
+  --contador-dias-label-transform: uppercase;
+
+  /* ===== TIPOGRAFIA - VALOR (Número) ===== */
+  --contador-dias-valor-size: 15px; /* ✅ REDUZIDO: 18px → 20px (mas mais compacto) */
+  --contador-dias-valor-weight: 800;
+  --contador-dias-valor-color: #6a0dad; /* ✅ ROXO (mesma cor da data) */
+  --contador-dias-valor-line-height: 1;
+
+  /* ===== CORES E FUNDO ===== */
+  --contador-dias-bg: transparent; /* ✅ SEM FUNDO */
+  --contador-dias-bg-hover: rgba(106, 13, 173, 0.05); /* ✅ Leve hover roxo */
+  --contador-dias-border-color: transparent; /* ✅ SEM BORDA */
+  --contador-dias-border-width: 0px; /* ✅ SEM BORDA */
+  --contador-dias-border-radius: 8px; /* ✅ REDUZIDO: 16px → 8px */
+
+  /* ===== SOMBRAS ===== */
+  --contador-dias-shadow: none; /* ✅ SEM SOMBRA */
+  --contador-dias-shadow-hover: none; /* ✅ SEM SOMBRA */
+
+  /* ===== ANIMAÇÃO ===== */
+  --contador-dias-transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+  --contador-dias-scale-hover: 1.05;
+
+  /* ===== Z-INDEX ===== */
+  --contador-dias-z-index: 1000;
+  /* --------------------------------------------------
+   DIAS DO MÊS - DIAS DO MÊS - DIAS DO MÊS -
+  -------------------------------------------------- */
 }
 
 /* ========================
@@ -5694,3 +5747,214 @@ html body .main-content .container .bloco.bloco-1 .data-header-integrada,
 }
 
 /* Para ativar debug, adicione classe 'debug-force-red' ao .bloco-1 */
+/* */
+/* */
+/* */
+/* */
+/* */
+/* */
+/* */
+/* */
+/* */
+/* */
+/* */
+/* =======================================================================================================================================================
+                                          💼  CONTADOR DE DIAS RESTANTES DO MÊS - CONTROLE TOTAL VIA ROOT
+   ==========================================================================================================================================================*/
+
+/* ===== CONTAINER PRINCIPAL ===== */
+.contador-dias-mes {
+  /* Posicionamento absoluto no canto direito */
+  position: absolute;
+  top: var(--contador-dias-top);
+  right: var(--contador-dias-right);
+  margin-top: var(--contador-dias-margin-top);
+  margin-right: var(--contador-dias-margin-right);
+
+  /* Dimensões */
+  width: var(--contador-dias-width);
+  height: var(--contador-dias-height);
+  padding: var(--contador-dias-padding);
+
+  /* Layout interno */
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: var(--contador-dias-gap);
+
+  /* Visual */
+  background: var(--contador-dias-bg);
+  border: var(--contador-dias-border-width) solid
+    var(--contador-dias-border-color);
+  border-radius: var(--contador-dias-border-radius);
+  box-shadow: var(--contador-dias-shadow);
+
+  /* Comportamento */
+  cursor: default;
+  user-select: none;
+  z-index: var(--contador-dias-z-index);
+  transition: var(--contador-dias-transition);
+
+  /* Composição */
+  box-sizing: border-box;
+}
+
+/* ===== LABEL "Dias" ===== */
+.contador-dias-label {
+  font-size: var(--contador-dias-label-size);
+  font-weight: var(--contador-dias-label-weight);
+  color: var(--contador-dias-label-color);
+  letter-spacing: var(--contador-dias-label-spacing);
+  text-transform: var(--contador-dias-label-transform);
+  line-height: 1.2;
+  margin: 0;
+  padding: 0;
+  font-family: "Inter", -apple-system, BlinkMacSystemFont, "Segoe UI",
+    sans-serif;
+}
+
+/* ===== VALOR (Número) ===== */
+.contador-dias-valor {
+  font-size: var(--contador-dias-valor-size);
+  font-weight: var(--contador-dias-valor-weight);
+  color: var(--contador-dias-valor-color);
+  line-height: var(--contador-dias-valor-line-height);
+  margin: 0;
+  padding: 0;
+  font-family: "Rajdhani", "Inter", -apple-system, sans-serif;
+  font-variant-numeric: tabular-nums;
+  letter-spacing: -0.5px;
+}
+
+/* ===== HOVER ===== */
+.contador-dias-mes:hover {
+  background: var(--contador-dias-bg-hover);
+  box-shadow: var(--contador-dias-shadow-hover);
+  transform: scale(var(--contador-dias-scale-hover));
+}
+
+.contador-dias-mes:hover .contador-dias-label {
+  color: #5a0d8d; /* Roxo mais escuro no hover */
+}
+
+.contador-dias-mes:hover .contador-dias-valor {
+  color: #5a0d8d; /* Roxo mais escuro no hover */
+}
+
+/* ===== ANIMAÇÃO DE ENTRADA ===== */
+@keyframes contadorFadeIn {
+  from {
+    opacity: 0;
+    transform: translateY(-10px) scale(0.95);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0) scale(1);
+  }
+}
+
+.contador-dias-mes {
+  animation: contadorFadeIn 0.5s cubic-bezier(0.4, 0, 0.2, 1) 0.2s backwards;
+}
+
+/* ===== ESTADO DE URGÊNCIA (Últimos 7 dias) ===== */
+.contador-dias-mes.urgente {
+  background: rgba(229, 62, 62, 0.05); /* ✅ Fundo vermelho muito sutil */
+}
+
+.contador-dias-mes.urgente .contador-dias-label {
+  color: #c53030; /* Vermelho escuro */
+  font-weight: 700;
+}
+
+.contador-dias-mes.urgente .contador-dias-valor {
+  color: #e53e3e; /* Vermelho */
+  animation: pulsarUrgente 2s ease-in-out infinite;
+}
+
+@keyframes pulsarUrgente {
+  0%,
+  100% {
+    transform: scale(1);
+    text-shadow: 0 0 0 rgba(229, 62, 62, 0);
+  }
+  50% {
+    transform: scale(1.05);
+    text-shadow: 0 0 8px rgba(229, 62, 62, 0.4);
+  }
+}
+
+/* ===== RESPONSIVIDADE ===== */
+
+/* Tablets */
+@media (max-width: 1024px) {
+  :root {
+    --contador-dias-right: 4px;
+    --contador-dias-top: 1px;
+    --contador-dias-width: 45px;
+    --contador-dias-padding: 5px 6px;
+    --contador-dias-label-size: 8px;
+    --contador-dias-valor-size: 18px;
+  }
+}
+
+/* Mobile */
+@media (max-width: 768px) {
+  :root {
+    --contador-dias-right: 3px;
+    --contador-dias-top: 1px;
+    --contador-dias-width: 40px;
+    --contador-dias-padding: 4px 5px;
+    --contador-dias-label-size: 7px;
+    --contador-dias-valor-size: 16px;
+    --contador-dias-border-radius: 6px;
+  }
+}
+
+/* Mobile pequeno */
+@media (max-width: 480px) {
+  :root {
+    --contador-dias-right: 2px;
+    --contador-dias-top: 1px;
+    --contador-dias-width: 35px;
+    --contador-dias-padding: 3px 4px;
+    --contador-dias-label-size: 6px;
+    --contador-dias-valor-size: 14px;
+    --contador-dias-border-radius: 5px;
+    --contador-dias-gap: 1px;
+  }
+}
+
+/* ===== ACESSIBILIDADE ===== */
+.contador-dias-mes:focus-visible {
+  outline: 2px solid #6a0dad; /* ✅ Outline roxo */
+  outline-offset: 2px;
+}
+
+/* Reduzir movimento para usuários sensíveis */
+@media (prefers-reduced-motion: reduce) {
+  .contador-dias-mes {
+    animation: none;
+    transition: none;
+  }
+
+  .contador-dias-mes:hover {
+    transform: none;
+  }
+
+  .contador-dias-mes.urgente .contador-dias-valor {
+    animation: none;
+  }
+}
+
+/* ===== DARK MODE (OPCIONAL) ===== */
+@media (prefers-color-scheme: dark) {
+  :root {
+    --contador-dias-label-color: #b794f4; /* Roxo claro para dark mode */
+    --contador-dias-valor-color: #d6bcfa; /* Roxo mais claro */
+  }
+}
+/* =======================================================================================================================================================
+                                          💼  FIM CONTADOR DE DIAS RESTANTES DO MÊS - CONTROLE TOTAL VIA ROOT
+   ==========================================================================================================================================================*/

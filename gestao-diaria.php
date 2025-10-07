@@ -876,50 +876,94 @@ ob_end_flush();
     <div class="resumo-mes">
         
         <!-- Cabeçalho do mês -->
-        <div class="bloco-meta-simples fixo-topo">
-            <div class="campo-armazena-data-placar">
+<div class="bloco-meta-simples fixo-topo">
+    <div class="campo-armazena-data-placar">
+        
+        <!-- Título do mês atual -->
+        <h2 class="titulo-bloco">
+            <i class="fas fa-calendar-alt"></i> 
+            <span id="tituloMes"></span>
+        </h2>
+
+        <!-- ✨ CONTADOR DE DIAS RESTANTES (NOVO) -->
+        <div class="contador-dias-mes">
+            <span class="contador-dias-label">Dias</span>
+            <span class="contador-dias-valor" id="diasRestantesMes">25</span>
+        </div>
+
+        <script>
+        (function() {
+            // ===== TÍTULO DO MÊS =====
+            const meses = [
+                "JANEIRO", "FEVEREIRO", "MARÇO", "ABRIL", "MAIO", "JUNHO",
+                "JULHO", "AGOSTO", "SETEMBRO", "OUTUBRO", "NOVEMBRO", "DEZEMBRO"
+            ];
+            const hoje = new Date();
+            const mesAtual = meses[hoje.getMonth()];
+            const anoAtual = hoje.getFullYear();
+            const tituloEl = document.getElementById("tituloMes");
+            tituloEl.textContent = `${mesAtual} ${anoAtual}`;
+            
+            // Aplicar cor ao ícone do calendário
+            const tituloParent = tituloEl.closest('.titulo-bloco');
+            if (tituloParent) {
+                const iconEl = tituloParent.querySelector('i.fa-calendar-alt');
+                if (iconEl) {
+                    const computed = window.getComputedStyle(tituloEl).color;
+                    iconEl.style.color = computed;
+                }
+            }
+
+            // ===== CALCULAR DIAS RESTANTES DO MÊS (INCLUINDO HOJE) =====
+            function calcularDiasRestantes() {
+                const hoje = new Date();
+                const ultimoDiaMes = new Date(hoje.getFullYear(), hoje.getMonth() + 1, 0);
+                const diasRestantes = ultimoDiaMes.getDate() - hoje.getDate() + 1;
                 
-                <!-- Título do mês atual -->
-                <h2 class="titulo-bloco">
-                    <i class="fas fa-calendar-alt"></i> 
-                    <span id="tituloMes"></span>
-                </h2>
-
-                <script>
-                (function() {
-                    const meses = [
-                        "JANEIRO", "FEVEREIRO", "MARÇO", "ABRIL", "MAIO", "JUNHO",
-                        "JULHO", "AGOSTO", "SETEMBRO", "OUTUBRO", "NOVEMBRO", "DEZEMBRO"
-                    ];
-                    const hoje = new Date();
-                    const mesAtual = meses[hoje.getMonth()];
-                    const anoAtual = hoje.getFullYear();
-                    const tituloEl = document.getElementById("tituloMes");
-                    tituloEl.textContent = `${mesAtual} ${anoAtual}`;
-
-                    // Apply the same color to the calendar icon before the title
-                    const tituloParent = tituloEl.closest('.titulo-bloco');
-                    if (tituloParent) {
-                        const iconEl = tituloParent.querySelector('i.fa-calendar-alt');
-                        if (iconEl) {
-                            const computed = window.getComputedStyle(tituloEl).color;
-                            iconEl.style.color = computed;
+                const elemento = document.getElementById('diasRestantesMes');
+                const container = document.querySelector('.contador-dias-mes');
+                
+                if (elemento) {
+                    elemento.textContent = diasRestantes;
+                    
+                    // ✨ Adicionar classe "urgente" se <= 7 dias
+                    if (container) {
+                        if (diasRestantes <= 7) {
+                            container.classList.add('urgente');
+                        } else {
+                            container.classList.remove('urgente');
                         }
                     }
-                })();
-                </script>
-
-                <!-- Placar mensal CORRIGIDO - sempre visível 0x0 -->
-                <div class="area-central-2">
-                    <div class="pontuacao-2" id="pontuacao-2">
-                        <span class="placar-green-2">0</span>
-                        <span class="separador-2">×</span>
-                        <span class="placar-red-2">0</span>
-                    </div>
-                </div>
-                
+                }
+            }
+            
+            // Calcular imediatamente
+            calcularDiasRestantes();
+            
+            // ✨ Atualizar automaticamente à meia-noite
+            const agora = new Date();
+            const amanha = new Date(agora.getFullYear(), agora.getMonth(), agora.getDate() + 1);
+            const msAteAmanha = amanha - agora;
+            
+            setTimeout(() => {
+                calcularDiasRestantes();
+                // Depois da primeira atualização, repetir a cada 24h
+                setInterval(calcularDiasRestantes, 86400000);
+            }, msAteAmanha);
+        })();
+        </script>
+        
+        <!-- Placar mensal CORRIGIDO - sempre visível 0x0 -->
+        <div class="area-central-2">
+            <div class="pontuacao-2" id="pontuacao-2">
+                <span class="placar-green-2">0</span>
+                <span class="separador-2">×</span>
+                <span class="placar-red-2">0</span>
             </div>
         </div>
+        
+    </div>
+</div>
 
         <!-- Widget de conteúdo principal -->
         <div class="widget-conteudo-principal-2">
@@ -5969,10 +6013,11 @@ console.log('🔧 Para testar: Clique em qualquer card de mentor');
                       <strong>📌 Como funciona:</strong>
                       <ul>
                         <li><strong>Valor da banca (depósito inicial):</strong>R$ 1.000,00</li>
+                        <li><strong>Quantidade de unidade:</strong>2</li>
                         <li><strong>Porcentagem diária definida:</strong>1%</li>
-                        <li><strong>Meta diária:</strong>R$ 1.000 × 1% = R$ 10,00</li>
-                        <li><strong>Meta mensal (30 dias):</strong>R$ 10,00 × 30 = R$ 300,00</li>
-                        <li><strong>Meta anual (365 dias):</strong>R$ 10,00 × 365 = R$ 3.650,00</li>
+                        <li><strong>Meta diária:</strong>R$ 1.000,00 × 1% = R$ 10,00 x 2 = R$ 20,00</li>
+                        <li><strong>Meta mensal (30 dias):</strong>R$ 20,00 × 30 = R$ 600,00</li>
+                        <li><strong>Meta anual (365 dias):</strong>R$ 20,00 × 365 = R$ 7.300,00</li>
                       </ul>
                     </div>
                     
@@ -5995,18 +6040,18 @@ console.log('🔧 Para testar: Clique em qualquer card de mentor');
                   <button type="button" class="btn-fechar-tooltip">×</button>
                   <div class="tooltip-header">🚀 Meta Turbo — Entenda o Conceito</div>
                   <div class="tooltip-content">
-                    <p>A <strong>Meta Turbo</strong> recalcula a meta diária com base no <strong>saldo atual da banca</strong>. Cada green aumenta o valor da próxima meta, acelerando o crescimento.</p>
+                    <p>A <strong>Meta Turbo</strong> recalcula a meta diária com base no <strong>saldo atual da banca</strong>. Cada ganho do dia aumenta o valor da próxima meta, acelerando o crescimento.</p>
                     
                     <div class="tooltip-exemplo">
                       <strong>📌 Como funciona:</strong>
                       <ul>
-                        <li><strong>Valor da banca inicial:</strong>R$ 1.000</li>
+                        <li><strong>Valor da banca inicial:</strong>R$ 1.000,00</li>
+                        <li><strong>Quantidade de unidade:</strong>2</li>
                         <li><strong>Porcentagem diária definida:</strong>1%</li>
-                        <li><strong>Meta do 1º dia:</strong>R$ 1.000 × 1% = R$ 10,00</li>
-                        <li><strong>Novo saldo após lucro:</strong>R$ 1.000 + R$ 10 = R$ 1.010</li>
-                        <li><strong>Meta do 2º dia:</strong>R$ 1.010 × 1% = R$ 10,10</li>
-                        <li><strong>Meta mensal (estimada):</strong>R$ 347,85 (crescimento composto)</li>
-                        <li><strong>Meta anual (estimada):</strong>R$ 36.783,66 (crescimento composto)</li>
+                        <li><strong>Meta do 1º dia:</strong>R$ 1.000,00 × 1% = R$ 10,00 x 2 = R$ 20,00</li>
+                        <li><strong>Meta do 2º dia:</strong>R$ 1.020,00 × 1% = R$ 10,20 x 2 = R$ 20,40</li>
+                        <li><strong>Meta do 3º dia:</strong>R$ 1.040,40 × 1% = R$ 10,40 x 2 = R$ 20,80</li>
+                        <li><strong>Meta do 4º dia:</strong>R$ 1.061,20 × 1% = R$ 10,61 x 2 = R$ 21,22</li>
                       </ul>
                     </div>
                     
