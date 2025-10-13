@@ -365,25 +365,30 @@ const MetaMensalManager = {
         statusClass = "sem-banca";
         console.log(`📊 RESULTADO MENSAL: Sem banca`);
       }
-      // ✅ CORREÇÃO: META BATIDA OU SUPERADA - COM VERIFICAÇÃO PRECISA
+      // ✅ CORREÇÃO: META BATIDA OU SUPERADA - VERIFICAÇÃO ULTRA PRECISA
       else if (saldoMes > 0 && metaCalculada > 0 && saldoMes >= metaCalculada) {
         valorExtra = saldoMes - metaCalculada;
         mostrarTachado = true;
         metaFinal = metaCalculada;
 
-        // ✅ VERIFICAÇÃO PRECISA: Diferença menor que 1 centavo = meta exata
-        if (Math.abs(valorExtra) < 0.01) {
+        // ✅ Arredondar para 2 casas decimais para comparação
+        const valorExtraArredondado = Math.round(valorExtra * 100) / 100;
+
+        if (valorExtraArredondado === 0) {
+          // Meta exatamente batida
           rotulo = `Meta do Mês Batida! <i class='fa-solid fa-trophy'></i>`;
           statusClass = "meta-batida";
-          valorExtra = 0; // Zerar diferenças mínimas
+          valorExtra = 0;
           console.log(`🎯 META MENSAL EXATA`);
-        } else if (valorExtra > 0.01) {
+        } else if (valorExtraArredondado > 0) {
+          // Meta superada - QUALQUER valor positivo após arredondamento
           rotulo = `Meta do Mês Superada! <i class='fa-solid fa-trophy'></i>`;
           statusClass = "meta-superada";
           console.log(
             `🏆 META MENSAL SUPERADA: Extra de R$ ${valorExtra.toFixed(2)}`
           );
         } else {
+          // Fallback (não deveria chegar aqui)
           rotulo = `Meta do Mês Batida! <i class='fa-solid fa-trophy'></i>`;
           statusClass = "meta-batida";
           valorExtra = 0;
