@@ -435,7 +435,31 @@ try {
 }
 
 // 🔹 Cálculo da meta mensal
-$meta_mensal = ($soma_depositos * ($ultima_diaria / 100)) * ($diasNoMes / 2);
+$primeiro_deposito_data = null;
+try {
+    $sql_primeiro = "SELECT MIN(DATE(data_criacao)) AS primeiro_deposito FROM valor_mentores WHERE id_usuario = ? AND MONTH(data_criacao) = ? AND YEAR(data_criacao) = ?";
+    $stmt_primeiro = $conexao->prepare($sql_primeiro);
+    $stmt_primeiro->bind_param("iii", $id_usuario_logado, $mes, $ano);
+    $stmt_primeiro->execute();
+    $result_primeiro = $stmt_primeiro->get_result();
+    if ($row_primeiro = $result_primeiro->fetch_assoc()) {
+        $primeiro_deposito_data = $row_primeiro['primeiro_deposito'];
+    }
+} catch (Exception $e) {
+    $primeiro_deposito_data = null;
+}
+
+$dias_restantes_mes = 0;
+if ($primeiro_deposito_data) {
+    $data_inicio = new DateTime($primeiro_deposito_data);
+    $data_fim = new DateTime($ano . '-' . $mes . '-' . $diasNoMes);
+    $intervalo = $data_inicio->diff($data_fim);
+    $dias_restantes_mes = $intervalo->days + 1; // inclui o dia do primeiro depósito
+} else {
+    $dias_restantes_mes = $diasNoMes; // fallback: mês inteiro
+}
+
+$meta_mensal = ($soma_depositos * ($ultima_diaria / 100)) * ($dias_restantes_mes / 2);
 $saldo_mentores_atual = $valor_green - $valor_red;
 
 $porcentagem_meta = $meta_mensal > 0 ? ($saldo_mentores_atual / $meta_mensal) * 100 : 0;
@@ -1519,24 +1543,30 @@ document.addEventListener('DOMContentLoaded', function() {
         
         <!-- ===== CABEÇALHO DO ANO ===== -->
         <div class="bloco-meta-simples-3 fixo-topo-3">
-            <div class="campo-armazena-data-placar-3">
-                
-                <!-- Título do ano atual -->
-                <h2 class="titulo-bloco-3">
-                    <i class="fas fa-calendar-alt"></i> 
-                    <span id="tituloAno"></span>
-                </h2>
-
-                <!-- Placar anual -->
-                <div class="area-central-3">
-                    <div class="pontuacao-3" id="pontuacao-3">
-                        <span class="placar-green-3"></span>
-                        <span class="separador-3">×</span>
-                        <span class="placar-red-3"></span>
-                    </div>
-                </div>
-                
-            </div>
+<div class="campo-armazena-data-placar-3">
+    
+    <!-- Título do ano atual -->
+    <h2 class="titulo-bloco-3">
+        <i class="fas fa-calendar-alt"></i> 
+        <span id="tituloAno"></span>
+    </h2>
+    
+    <!-- Placar anual -->
+    <div class="area-central-3">
+        <div class="pontuacao-3" id="pontuacao-3">
+            <span class="placar-green-3"></span>
+            <span class="separador-3">×</span>
+            <span class="placar-red-3"></span>
+        </div>
+    </div>
+    
+    <!-- ✅ CONTADOR DE DIAS RESTANTES DO ANO - NOVO -->
+    <div class="dias-restantes-ano-3" id="dias-restantes-ano-3">
+        <div class="dias-label-3">DIAS</div>
+        <div class="dias-numero-3" id="dias-numero-ano-3">--</div>
+    </div>
+    
+</div>
         </div>
 
         <!-- ===== WIDGET DE CONTEÚDO PRINCIPAL ===== -->
@@ -6112,27 +6142,27 @@ console.log('🔧 Para testar: Clique em qualquer card de mentor');
           
           <div class="resultado-item">
             <span class="resultado-label">Unidade de Entrada: </span>
-            <span class="resultado-valor" id="resultadoUnidadeEntrada">R$ 20,00</span>
+            <span class="resultado-valor" id="resultadoUnidadeEntrada">R$ 0,00</span>
           </div>
           
           <div class="resultado-item">
             <span class="resultado-label">Meta do Dia:</span>
-            <span class="resultado-valor" id="resultadoMetaDia">R$ 60,00</span>
+            <span class="resultado-valor" id="resultadoMetaDia">R$ 0,00</span>
           </div>
           
           <div class="resultado-item">
             <span class="resultado-label" id="labelMetaMes">Meta do Mês:</span>
-            <span class="resultado-valor" id="resultadoMetaMes">R$ 1.800,00</span>
+            <span class="resultado-valor" id="resultadoMetaMes">R$ 0,00</span>
           </div>
           
           <div class="resultado-item">
             <span class="resultado-label" id="labelMetaAno">Meta do Ano:</span>
-            <span class="resultado-valor" id="resultadoMetaAno">R$ 21.600,00</span>
+            <span class="resultado-valor" id="resultadoMetaAno">R$ 0,00</span>
           </div>
           
           <div class="resultado-item">
             <span class="resultado-label">Para Bater a Meta do Dia Fazer:</span>
-            <span class="resultado-valor" id="resultadoEntradas">5 Entradas Positivas</span>
+            <span class="resultado-valor" id="resultadoEntradas">0 Entradas Positivas</span>
           </div>
         </div>
 

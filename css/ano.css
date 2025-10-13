@@ -85,6 +85,224 @@
   /* --------------------------------------------------
  PADDING - PADDING - PADDING - PADDING - PADDING
   -------------------------------------------------- */
+  /**/
+  /**/
+  /**/
+  /**/
+  /**/
+  /* ===================================================================
+   CONTADOR DE DIAS DO ANO - CONTADOR DE DIAS DO ANO - CONTADOR DE DIAS
+   =================================================================== */
+  /* --------------------------------------------------
+     POSICIONAMENTO E DIMENSÕES
+     -------------------------------------------------- */
+  --dias-ano-top: 6px; /* Distância do topo */
+  --dias-ano-right: -1px; /* Distância da direita */
+  --dias-ano-width: 50px; /* Largura do container */
+  --dias-ano-height: auto; /* Altura automática */
+  --dias-ano-gap: 2px; /* Espaço entre label e número */
+
+  /* --------------------------------------------------
+     TIPOGRAFIA - LABEL "DIAS"
+     -------------------------------------------------- */
+  --dias-ano-label-font-size: 8px; /* Tamanho da fonte do label */
+  --dias-ano-label-font-weight: 600; /* Peso da fonte do label */
+  --dias-ano-label-color: #6a0dad; /* Cor do label (igual ao título) */
+  --dias-ano-label-letter-spacing: 0.5px; /* Espaçamento entre letras */
+  --dias-ano-label-line-height: 1; /* Altura da linha */
+
+  /* --------------------------------------------------
+     TIPOGRAFIA - NÚMERO DE DIAS
+     -------------------------------------------------- */
+  --dias-ano-numero-font-size: 15px; /* Tamanho da fonte do número */
+  --dias-ano-numero-font-weight: 600; /* Peso da fonte do número */
+  --dias-ano-numero-color: #6a0dad; /* Cor do número */
+  --dias-ano-numero-line-height: 1; /* Altura da linha */
+
+  /* --------------------------------------------------
+     VISUAL E EFEITOS
+     -------------------------------------------------- */
+  --dias-ano-bg-color: transparent; /* Fundo transparente */
+  --dias-ano-border-radius: 6px; /* Borda arredondada */
+  --dias-ano-padding: 4px 6px; /* Espaçamento interno */
+  --dias-ano-text-align: center; /* Alinhamento centralizado */
+  --dias-ano-transition: all 0.3s ease; /* Transição suave */
+
+  /* --------------------------------------------------
+     Z-INDEX E VISIBILIDADE
+     -------------------------------------------------- */
+  --dias-ano-z-index: 7; /* Acima do placar e título */
+  --dias-ano-opacity: 1; /* Opacidade total */
+
+  /* --------------------------------------------------
+     RESPONSIVIDADE - MOBILE
+     -------------------------------------------------- */
+
+  --dias-ano-mobile-top: 6px;
+  --dias-ano-mobile-right: 8px;
+  --dias-ano-mobile-label-font-size: 8px;
+  --dias-ano-mobile-numero-font-size: 16px;
+  /* ===================================================================
+   CONTADOR DE DIAS DO ANO - CONTADOR DE DIAS DO ANO - CONTADOR DE DIAS
+   =================================================================== */
+}
+
+.dias-restantes-ano-3 {
+  position: absolute !important;
+  top: var(--dias-ano-top) !important;
+  right: var(--dias-ano-right) !important;
+
+  display: flex !important;
+  flex-direction: column !important;
+  align-items: center !important;
+  justify-content: center !important;
+  gap: var(--dias-ano-gap) !important;
+
+  width: var(--dias-ano-width) !important;
+  height: var(--dias-ano-height) !important;
+
+  background: var(--dias-ano-bg-color) !important;
+  border-radius: var(--dias-ano-border-radius) !important;
+  padding: var(--dias-ano-padding) !important;
+
+  z-index: var(--dias-ano-z-index) !important;
+  opacity: var(--dias-ano-opacity) !important;
+
+  text-align: var(--dias-ano-text-align) !important;
+  transition: var(--dias-ano-transition) !important;
+
+  pointer-events: none !important;
+  user-select: none !important;
+}
+
+/* Label "DIAS" */
+.dias-label-3 {
+  font-family: "Rajdhani", sans-serif !important;
+  font-size: var(--dias-ano-label-font-size) !important;
+  font-weight: var(--dias-ano-label-font-weight) !important;
+  color: var(--dias-ano-label-color) !important;
+  letter-spacing: var(--dias-ano-label-letter-spacing) !important;
+  line-height: var(--dias-ano-label-line-height) !important;
+  text-transform: uppercase !important;
+  margin: 0 !important;
+  padding: 0 !important;
+}
+
+/* Número de dias */
+.dias-numero-3 {
+  font-family: "Rajdhani", sans-serif !important;
+  font-size: var(--dias-ano-numero-font-size) !important;
+  font-weight: var(--dias-ano-numero-font-weight) !important;
+  color: var(--dias-ano-numero-color) !important;
+  line-height: var(--dias-ano-numero-line-height) !important;
+  margin: 0 !important;
+  padding: 0 !important;
+}
+
+/* ===================================================================
+   RESPONSIVIDADE - MOBILE
+   =================================================================== */
+
+@media (max-width: 768px) {
+  .dias-restantes-ano-3 {
+    top: var(--dias-ano-mobile-top) !important;
+    right: var(--dias-ano-mobile-right) !important;
+  }
+
+  .dias-label-3 {
+    font-size: var(--dias-ano-mobile-label-font-size) !important;
+  }
+
+  .dias-numero-3 {
+    font-size: var(--dias-ano-mobile-numero-font-size) !important;
+  }
+}
+
+@media (max-width: 480px) {
+  .dias-restantes-ano-3 {
+    top: 5px !important;
+    right: 6px !important;
+  }
+
+  .dias-label-3 {
+    font-size: 7px !important;
+  }
+
+  .dias-numero-3 {
+    font-size: 14px !important;
+  }
+}
+
+/* ===================================================================
+   ESTADOS E ANIMAÇÕES
+   =================================================================== */
+
+/* Animação de entrada */
+.dias-restantes-ano-3.fade-in {
+  animation: fadeInDiasAno 0.5s ease-in-out;
+}
+
+@keyframes fadeInDiasAno {
+  from {
+    opacity: 0;
+    transform: translateY(-5px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+/* Hover (apenas visual, sem interação) */
+.campo-armazena-data-placar-3:hover .dias-restantes-ano-3 {
+  opacity: 1 !important;
+}
+
+/* Estado de destaque quando faltam poucos dias */
+.dias-restantes-ano-3.poucos-dias .dias-numero-3 {
+  color: #f59e0b !important;
+  animation: pulseUrgente 2s ease-in-out infinite;
+}
+
+@keyframes pulseUrgente {
+  0%,
+  100% {
+    transform: scale(1);
+    opacity: 1;
+  }
+  50% {
+    transform: scale(1.05);
+    opacity: 0.9;
+  }
+}
+
+/* Estado de alerta (menos de 10 dias) */
+.dias-restantes-ano-3.alerta-final .dias-numero-3 {
+  color: #dc2626 !important;
+  font-weight: 800 !important;
+}
+
+/* ===================================================================
+   GARANTIR VISIBILIDADE E POSICIONAMENTO
+   =================================================================== */
+
+/* Garantir que o container pai permita posicionamento absoluto */
+.campo-armazena-data-placar-3 {
+  position: relative !important;
+}
+
+/* Garantir que não sobreponha outros elementos */
+.dias-restantes-ano-3 {
+  will-change: transform !important;
+  backface-visibility: hidden !important;
+  transform: translateZ(0) !important;
+}
+
+/* Forçar visibilidade sempre */
+#dias-restantes-ano-3 {
+  display: flex !important;
+  visibility: visible !important;
+  opacity: 1 !important;
 }
 
 /* ===================================================================

@@ -2690,11 +2690,207 @@ window.ListaMesesSimples = ListaMesesSimples;
 //
 //
 /* ===================================================================
-   - GRAFICO - GRAFICO - GRAFICO - GRAFICO - GRAFICO - GRAFICO -
+   CONTADOR DE DIAS DO ANO - CONTADOR DE DIAS DO ANO - CONTADOR DE DIAS
    =================================================================== */
 
+const ContadorDiasAno = {
+  elementoNumero: null,
+  elementoContainer: null,
+  intervalo: null,
+
+  // Inicializar contador
+  inicializar() {
+    console.log("📅 Inicializando contador de dias do ano...");
+
+    this.elementoNumero = document.getElementById("dias-numero-ano-3");
+    this.elementoContainer = document.getElementById("dias-restantes-ano-3");
+
+    if (!this.elementoNumero || !this.elementoContainer) {
+      console.warn("⚠️ Elementos do contador de dias do ano não encontrados");
+      return false;
+    }
+
+    // Primeira atualização
+    this.atualizarDias();
+
+    // Atualizar a cada hora (3600000 ms)
+    this.intervalo = setInterval(() => {
+      this.atualizarDias();
+    }, 3600000);
+
+    // Atualizar à meia-noite
+    this.agendarAtualizacaoMeiaNoite();
+
+    // Animação de entrada
+    this.elementoContainer.classList.add("fade-in");
+
+    console.log("✅ Contador de dias do ano inicializado");
+    return true;
+  },
+
+  // Calcular dias restantes do ano
+  calcularDiasRestantes() {
+    const hoje = new Date();
+    const fimDoAno = new Date(hoje.getFullYear(), 11, 31, 23, 59, 59);
+
+    // Diferença em milissegundos
+    const diferencaMs = fimDoAno - hoje;
+
+    // Converter para dias (incluindo o dia de hoje)
+    const diasRestantes = Math.ceil(diferencaMs / (1000 * 60 * 60 * 24));
+
+    return diasRestantes;
+  },
+
+  // Atualizar display dos dias
+  atualizarDias() {
+    try {
+      const diasRestantes = this.calcularDiasRestantes();
+
+      if (this.elementoNumero) {
+        this.elementoNumero.textContent = diasRestantes;
+
+        // Estados especiais baseado nos dias restantes
+        this.aplicarEstadoVisual(diasRestantes);
+      }
+
+      console.log(`📅 Dias restantes no ano: ${diasRestantes}`);
+
+      return diasRestantes;
+    } catch (error) {
+      console.error("❌ Erro ao atualizar dias:", error);
+      if (this.elementoNumero) {
+        this.elementoNumero.textContent = "--";
+      }
+      return 0;
+    }
+  },
+
+  // Aplicar estado visual baseado nos dias restantes
+  aplicarEstadoVisual(dias) {
+    if (!this.elementoContainer) return;
+
+    // Remover classes anteriores
+    this.elementoContainer.classList.remove("poucos-dias", "alerta-final");
+
+    // Aplicar nova classe baseada nos dias
+    if (dias <= 10) {
+      this.elementoContainer.classList.add("alerta-final");
+      console.log("🚨 ALERTA: Menos de 10 dias para acabar o ano!");
+    } else if (dias <= 30) {
+      this.elementoContainer.classList.add("poucos-dias");
+      console.log("⚡ Menos de 30 dias para acabar o ano");
+    }
+  },
+
+  // Agendar atualização à meia-noite
+  agendarAtualizacaoMeiaNoite() {
+    const agora = new Date();
+    const meiaNoite = new Date();
+    meiaNoite.setHours(24, 0, 0, 0);
+
+    const msAteMeiaNoite = meiaNoite - agora;
+
+    setTimeout(() => {
+      this.atualizarDias();
+
+      // Reagendar para próxima meia-noite
+      this.agendarAtualizacaoMeiaNoite();
+
+      console.log("🌙 Atualização de meia-noite executada");
+    }, msAteMeiaNoite);
+  },
+
+  // Forçar atualização
+  forcarAtualizacao() {
+    console.log("🔄 Forçando atualização do contador de dias...");
+    return this.atualizarDias();
+  },
+
+  // Parar contador
+  parar() {
+    if (this.intervalo) {
+      clearInterval(this.intervalo);
+      this.intervalo = null;
+      console.log("🛑 Contador de dias parado");
+    }
+  },
+
+  // Status do contador
+  status() {
+    return {
+      ativo: !!this.intervalo,
+      diasRestantes: this.elementoNumero?.textContent || "--",
+      elementoEncontrado: !!(this.elementoNumero && this.elementoContainer),
+      ultimaAtualizacao: new Date().toLocaleTimeString(),
+    };
+  },
+};
+
+// ========================================
+// COMANDOS GLOBAIS
+// ========================================
+
+window.ContadorDiasAno = {
+  iniciar: () => ContadorDiasAno.inicializar(),
+  atualizar: () => ContadorDiasAno.forcarAtualizacao(),
+  parar: () => ContadorDiasAno.parar(),
+  status: () => ContadorDiasAno.status(),
+  info: () => {
+    const status = ContadorDiasAno.status();
+    console.log("📊 Status Contador Dias Ano:", status);
+    return status;
+  },
+};
+
+// ========================================
+// INICIALIZAÇÃO AUTOMÁTICA
+// ========================================
+
+function inicializarContadorDiasAno() {
+  try {
+    console.log("🚀 Inicializando sistema de contador de dias do ano...");
+
+    // Aguardar elemento estar disponível
+    const verificarElemento = () => {
+      const elemento = document.getElementById("dias-numero-ano-3");
+
+      if (elemento) {
+        ContadorDiasAno.inicializar();
+        console.log("✅ Sistema de contador de dias do ano inicializado!");
+      } else {
+        console.log("⏳ Aguardando elemento #dias-numero-ano-3...");
+        setTimeout(verificarElemento, 500);
+      }
+    };
+
+    verificarElemento();
+  } catch (error) {
+    console.error("❌ Erro na inicialização do contador de dias:", error);
+  }
+}
+
+// Aguardar DOM
+if (document.readyState === "loading") {
+  document.addEventListener("DOMContentLoaded", () => {
+    setTimeout(inicializarContadorDiasAno, 1000);
+  });
+} else {
+  setTimeout(inicializarContadorDiasAno, 500);
+}
+
+// Export para uso externo
+window.ContadorDiasAnoManager = ContadorDiasAno;
+
+console.log("📅 Sistema de Contador de Dias do Ano carregado!");
+console.log("🔧 Comandos disponíveis:");
+console.log("  ContadorDiasAno.iniciar() - Iniciar contador");
+console.log("  ContadorDiasAno.atualizar() - Forçar atualização");
+console.log("  ContadorDiasAno.status() - Ver status");
+console.log("  ContadorDiasAno.info() - Ver informações detalhadas");
+
 /* ===================================================================
-   - GRAFICO - GRAFICO - GRAFICO - GRAFICO - GRAFICO - GRAFICO -
+   CONTADOR DE DIAS DO ANO - CONTADOR DE DIAS DO ANO - CONTADOR DE DIAS
    =================================================================== */
 //
 //

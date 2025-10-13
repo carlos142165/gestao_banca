@@ -245,7 +245,7 @@
 
   /* ===== TIPOGRAFIA - VALOR (Número) ===== */
   --contador-dias-valor-size: 15px; /* ✅ REDUZIDO: 18px → 20px (mas mais compacto) */
-  --contador-dias-valor-weight: 800;
+  --contador-dias-valor-weight: 600;
   --contador-dias-valor-color: #6a0dad; /* ✅ ROXO (mesma cor da data) */
   --contador-dias-valor-line-height: 1;
 

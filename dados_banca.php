@@ -1,5 +1,5 @@
 <?php
-// ✅ ARQUIVO DADOS_BANCA.PHP - CORRIGIDO PARA VALORES DECIMAIS
+// ✅ ARQUIVO DADOS_BANCA.PHP - CORRIGIDO PARA VALORES DECIMAIS E CÁLCULO CORRETO DE DIAS
 
 require_once 'config.php';
 require_once 'carregar_sessao.php';
@@ -78,12 +78,13 @@ function detectarTipoMetaPorBanco($conexao, $id_usuario) {
 
 // ✅ BUSCAR PRIMEIRO DEPÓSITO
 function getPrimeiroDeposito($conexao, $id_usuario) {
+    // Agora busca a data do primeiro valor cadastrado do mentor
     try {
         $stmt = $conexao->prepare("
-            SELECT DATE(data_registro) as primeira_data
-            FROM controle 
-            WHERE id_usuario = ? AND deposito > 0 
-            ORDER BY data_registro ASC 
+            SELECT DATE(data_criacao) as primeira_data
+            FROM valor_mentores
+            WHERE id_usuario = ?
+            ORDER BY data_criacao ASC
             LIMIT 1
         ");
         $stmt->bind_param("i", $id_usuario);
@@ -91,10 +92,9 @@ function getPrimeiroDeposito($conexao, $id_usuario) {
         $stmt->bind_result($primeira_data);
         $stmt->fetch();
         $stmt->close();
-        
         return $primeira_data;
     } catch (Exception $e) {
-        error_log("Erro ao buscar primeiro depósito: " . $e->getMessage());
+        error_log("Erro ao buscar primeiro valor do mentor: " . $e->getMessage());
         return null;
     }
 }
@@ -145,7 +145,6 @@ function calcularLucro($conexao, $id_usuario) {
 }
 
 // ✅ CORRIGIDA: CALCULAR META DIÁRIA COM DECIMAL
-// ✅ NOVA FUNÇÃO: Calcular Meta Turbo com Banca Congelada Diária
 function calcularMetaDiariaComTipo($conexao, $id_usuario, $total_deposito, $total_saque, $lucro_total, $tipo_meta = 'turbo') {
     try {
         // Buscar porcentagem e unidade mais recentes
@@ -223,8 +222,8 @@ function calcularMetaDiariaComTipo($conexao, $id_usuario, $total_deposito, $tota
             'unidade_usada' => $unidade,
             'banca_inicial' => $banca_inicial,
             'banca_atual' => $banca_atual,
-            'banca_inicio_dia' => $banca_inicio_dia, // ✅ NOVA: banca congelada do início do dia
-            'lucro_ate_ontem' => $lucro_ate_ontem, // ✅ NOVO: lucro acumulado até ontem
+            'banca_inicio_dia' => $banca_inicio_dia,
+            'lucro_ate_ontem' => $lucro_ate_ontem,
             'base_calculo' => $base_calculo,
             'tipo_meta' => $tipo_meta,
             'descricao_calculo' => $descricao_calculo,
@@ -274,7 +273,7 @@ function calcularMetaDiariaComTipo($conexao, $id_usuario, $total_deposito, $tota
 function calcularAreaDireita($conexao, $id_usuario, $total_deposito, $total_saque, $lucro_total, $tipo_meta = 'turbo') {
     try {
         $ultima_diaria = getUltimoCampo($conexao, 'diaria', $id_usuario);
-        $diaria = $ultima_diaria !== null ? $ultima_diaria : 2.00; // Já vem com decimal
+        $diaria = $ultima_diaria !== null ? $ultima_diaria : 2.00;
         
         $banca_inicial = $total_deposito - $total_saque;
         $banca_atual = $banca_inicial + $lucro_total;
@@ -295,11 +294,10 @@ function calcularAreaDireita($conexao, $id_usuario, $total_deposito, $total_saqu
             }
         }
         
-        // ✅ Usar diária decimal no cálculo
         $unidade_entrada = $base_calculo_und * ($diaria / 100);
         
         return [
-            'diaria_porcentagem' => $diaria, // ✅ Com decimal
+            'diaria_porcentagem' => $diaria,
             'banca_usada' => $banca_atual,
             'banca_inicial' => $banca_inicial,
             'lucro_atual' => $lucro_total,
@@ -307,7 +305,7 @@ function calcularAreaDireita($conexao, $id_usuario, $total_deposito, $total_saqu
             'unidade_entrada' => $unidade_entrada,
             'tipo_meta_info' => $tipo_meta,
             'regra_aplicada' => $regra_aplicada,
-            'diaria_formatada' => number_format($diaria, 2, ',', '') . '%', // ✅ Exibe decimal
+            'diaria_formatada' => number_format($diaria, 2, ',', '') . '%',
             'unidade_entrada_formatada' => 'R$ ' . number_format($unidade_entrada, 2, ',', '.')
         ];
         
@@ -328,13 +326,14 @@ function calcularAreaDireita($conexao, $id_usuario, $total_deposito, $total_saqu
     }
 }
 
-// ✅ CALCULAR DIAS RESTANTES
+// ✅ CALCULAR DIAS RESTANTES - CORRIGIDO
 function calcularDiasRestantes($conexao, $id_usuario) {
     $hoje = new DateTime();
     
     $primeira_data_deposito = getPrimeiroDeposito($conexao, $id_usuario);
     
     if (!$primeira_data_deposito) {
+        // Sem depósito: usar data atual
         $data_primeiro_deposito = $hoje;
         $usar_data_atual = true;
     } else {
@@ -346,7 +345,9 @@ function calcularDiasRestantes($conexao, $id_usuario) {
     $ano_atual = (int)$hoje->format('Y');
     $ultimo_dia_mes = (int)$hoje->format('t');
     
+    // ✅ CORREÇÃO PRINCIPAL: Calcular dias do mês SEMPRE a partir do primeiro depósito
     if ($usar_data_atual) {
+        // Sem depósito: usar data atual
         $dia_atual = (int)$hoje->format('d');
         $dias_meta_mensal = $ultimo_dia_mes - $dia_atual + 1;
         $explicacao_mensal = "Sem depósito: {$dias_meta_mensal} dias restantes do mês {$mes_atual}";
@@ -355,32 +356,38 @@ function calcularDiasRestantes($conexao, $id_usuario) {
         $ano_primeiro_deposito = (int)$data_primeiro_deposito->format('Y');
         
         if ($ano_primeiro_deposito === $ano_atual && $mes_primeiro_deposito === $mes_atual) {
+            // ✅ CORREÇÃO: Calcular do dia do depósito ATÉ O FIM DO MÊS (não até hoje)
             $dia_deposito = (int)$data_primeiro_deposito->format('d');
             $dias_meta_mensal = $ultimo_dia_mes - $dia_deposito + 1;
-            $explicacao_mensal = "Primeiro mês: Do dia {$dia_deposito} até dia {$ultimo_dia_mes} = {$dias_meta_mensal} dias";
+            $explicacao_mensal = "Primeiro depósito em {$dia_deposito}/{$mes_atual}: Do dia {$dia_deposito} até dia {$ultimo_dia_mes} = {$dias_meta_mensal} dias";
         } else {
+            // ✅ CORREÇÃO: Se o depósito foi em mês anterior, contar MÊS COMPLETO
             $dias_meta_mensal = $ultimo_dia_mes;
-            $explicacao_mensal = "Mês completo: Do dia 1 até dia {$ultimo_dia_mes} = {$dias_meta_mensal} dias";
+            $explicacao_mensal = "Depósito em mês anterior: Mês completo de {$mes_atual} = {$dias_meta_mensal} dias (dia 1 até {$ultimo_dia_mes})";
         }
     }
     
+    // ✅ CORREÇÃO: Calcular dias do ano SEMPRE do primeiro depósito até 31/12
     if ($usar_data_atual) {
+        // Sem depósito: usar data atual até fim do ano
         $fim_ano = new DateTime($ano_atual . '-12-31 23:59:59');
         $diferenca = $hoje->diff($fim_ano);
         $dias_meta_anual = $diferenca->days + 1;
         $explicacao_anual = "Sem depósito: {$dias_meta_anual} dias restantes do ano {$ano_atual}";
     } else {
         if ($data_primeiro_deposito->format('Y') === (string)$ano_atual) {
+            // ✅ CORREÇÃO: Do primeiro depósito até 31/12 (não até hoje)
             $fim_ano = new DateTime($ano_atual . '-12-31 23:59:59');
             $diferenca = $data_primeiro_deposito->diff($fim_ano);
             $dias_meta_anual = $diferenca->days + 1;
             $explicacao_anual = "Do primeiro depósito ({$data_primeiro_deposito->format('d/m/Y')}) até 31/12/{$ano_atual} = {$dias_meta_anual} dias";
         } else {
+            // ✅ CORREÇÃO: Se depósito foi em ano anterior, contar ANO COMPLETO
             $dias_meta_anual = 365;
             if (date('L', mktime(0, 0, 0, 1, 1, $ano_atual))) {
-                $dias_meta_anual = 366;
+                $dias_meta_anual = 366; // Ano bissexto
             }
-            $explicacao_anual = "Ano completo {$ano_atual}: {$dias_meta_anual} dias";
+            $explicacao_anual = "Depósito em ano anterior: Ano completo {$ano_atual} = {$dias_meta_anual} dias (01/01 até 31/12)";
         }
     }
     
@@ -413,7 +420,7 @@ function calcularDiasRestantes($conexao, $id_usuario) {
                     ($data_primeiro_deposito->format('Y-m') === $hoje->format('Y-m')),
                 'tipo_calculo_mensal' => !$usar_data_atual && 
                     ($data_primeiro_deposito->format('Y-m') === $hoje->format('Y-m')) 
-                    ? 'primeiro_mes' : 'mes_completo',
+                    ? 'do_deposito_ate_fim_mes' : 'mes_completo',
                 'tipo_calculo_anual' => 'do_primeiro_deposito_ate_fim_ano'
             ]
         ]
@@ -589,11 +596,11 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             'tipo_meta_origem' => 'banco',
             'meta_diaria' => $meta_resultado['meta_diaria'],
             'meta_diaria_formatada' => 'R$ ' . number_format($meta_resultado['meta_diaria'], 2, ',', '.'),
-            'diaria_atual' => $meta_resultado['diaria_usada'], // ✅ Com decimal
+            'diaria_atual' => $meta_resultado['diaria_usada'],
             'unidade_atual' => $meta_resultado['unidade_usada'],
-            'diaria_formatada' => $area_direita['diaria_formatada'], // ✅ Com decimal
+            'diaria_formatada' => $area_direita['diaria_formatada'],
             'unidade_entrada_formatada' => $area_direita['unidade_entrada_formatada'],
-            'diaria_raw' => $area_direita['diaria_porcentagem'], // ✅ Valor numérico decimal
+            'diaria_raw' => $area_direita['diaria_porcentagem'],
             'meta_mensal' => $metas_periodo['meta_mensal'],
             'meta_anual' => $metas_periodo['meta_anual'],
             'dias_restantes_mes' => $metas_periodo['dias_restantes_mes'],
@@ -658,13 +665,13 @@ try {
         'tipo_meta' => $tipo_meta,
         'tipo_meta_texto' => $tipo_meta === 'fixa' ? 'Meta Fixa' : 'Meta Turbo',
         'tipo_meta_origem' => 'banco',
-        'diaria' => $ultima_diaria ?? 2.00, // ✅ Com decimal
+        'diaria' => $ultima_diaria ?? 2.00,
         'unidade' => $ultima_unidade ?? 2,
         'odds' => $ultima_odds ?? 1.5,
         'meta_diaria' => $meta_resultado['meta_diaria'],
         'meta_diaria_formatada' => 'R$ ' . number_format($meta_resultado['meta_diaria'], 2, ',', '.'),
         'meta_diaria_brl' => 'R$ ' . number_format($meta_resultado['meta_diaria'], 2, ',', '.'),
-        'diaria_usada' => $meta_resultado['diaria_usada'], // ✅ Com decimal
+        'diaria_usada' => $meta_resultado['diaria_usada'],
         'unidade_usada' => $meta_resultado['unidade_usada'],
         'banca_inicial' => $meta_resultado['banca_inicial'],
         'banca_atual' => $meta_resultado['banca_atual'],
@@ -674,9 +681,9 @@ try {
         'meta_display' => $meta_resultado['meta_diaria'],
         'meta_display_formatada' => 'R$ ' . number_format($meta_resultado['meta_diaria'], 2, ',', '.'),
         'rotulo_periodo' => $periodo_ativo === 'mes' ? 'Meta do Mês' : ($periodo_ativo === 'ano' ? 'Meta do Ano' : 'Meta do Dia'),
-        'diaria_formatada' => $area_direita['diaria_formatada'], // ✅ Com decimal (ex: 2,50%)
+        'diaria_formatada' => $area_direita['diaria_formatada'],
         'unidade_entrada_formatada' => $area_direita['unidade_entrada_formatada'],
-        'diaria_raw' => $area_direita['diaria_porcentagem'], // ✅ Valor numérico decimal (ex: 2.5)
+        'diaria_raw' => $area_direita['diaria_porcentagem'],
         'saldo_banca_total' => $area_direita['banca_usada'],
         'unidade_entrada_raw' => $area_direita['unidade_entrada'],
         'metas_periodo' => $metas_periodo,
@@ -700,7 +707,7 @@ try {
             'lucro_filtrado' => $lucro_filtrado,
             'lucro_total' => $lucro_total,
             'periodo_aplicado' => $periodo_ativo,
-            'diaria_percentual' => $meta_resultado['diaria_usada'], // ✅ Com decimal
+            'diaria_percentual' => $meta_resultado['diaria_usada'],
             'unidade_multiplicador' => $meta_resultado['unidade_usada'],
             'descricao_calculo' => $meta_resultado['descricao_calculo'],
             'formula_detalhada_completa' => $meta_resultado['formula_detalhada'],
@@ -741,7 +748,7 @@ try {
             ],
             'depositos_total' => $total_deposito,
             'saques_total' => $total_saque,
-            'diaria_aplicada' => $area_direita['diaria_porcentagem'], // ✅ Valor decimal
+            'diaria_aplicada' => $area_direita['diaria_porcentagem'],
             'resultado_unidade' => $area_direita['unidade_entrada']
         ]
     ]);

@@ -18,6 +18,18 @@ document.addEventListener("DOMContentLoaded", function () {
 
     criarInput("user_time_zone", timeZone);
     criarInput("data_local", dataLocal);
+
+    // Adiciona trigger para atualizar meta mensal após cadastro
+    form.addEventListener("submit", function (e) {
+      setTimeout(function () {
+        if (
+          window.MetaMensalManager &&
+          typeof window.MetaMensalManager.atualizarMetaMensal === "function"
+        ) {
+          window.MetaMensalManager.atualizarMetaMensal();
+        }
+      }, 1200); // Aguarda 1.2s para garantir que o backend já processou
+    });
   } else {
     console.warn("❌ Formulário #form-mentor não encontrado.");
   }
@@ -297,12 +309,21 @@ const MetaMensalManager = {
   // Processar dados especificamente para mensal
   processarDadosMensais(data) {
     try {
+      // Garantir que meta mensal e dias restantes venham do backend
       const metaRaw = data.meta_mensal;
+      const diasRestantes = data.dias_restantes_mes;
       const metaFinal = isFinite(Number(metaRaw))
         ? Number(metaRaw)
         : parseFloat(metaRaw) || 0;
       const rotuloFinal = "Meta do Mês";
       const lucroMensal = parseFloat(data.lucro) || 0;
+
+      // Exibir no console para debug
+      console.log(
+        `Meta Mensal recebida do backend: R$ ${metaFinal.toFixed(
+          2
+        )} | Dias restantes do backend: ${diasRestantes}`
+      );
 
       return {
         ...data,
@@ -316,6 +337,7 @@ const MetaMensalManager = {
         rotulo_periodo: rotuloFinal,
         periodo_ativo: "mes",
         lucro_periodo: lucroMensal,
+        dias_restantes_mes: diasRestantes,
       };
     } catch (error) {
       console.error("Erro ao processar dados mensais:", error);
