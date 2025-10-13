@@ -888,6 +888,32 @@ document.addEventListener("DOMContentLoaded", () => {
   //          🚀 FUNÇÃO PRINCIPAL - ATUALIZAR CÁLCULOS EM TEMPO REAL
   // ========================================================================================================================
 
+  // ========================================================================================================================
+  //          🔧 FUNÇÕES AUXILIARES PARA ARREDONDAMENTO CORRETO
+  // ========================================================================================================================
+
+  function arredondarParaDuasCasas(valor) {
+    // Use toFixed(2) para garantir arredondamento correto (evita imprecisões de ponto-flutuante)
+    // Converter para Number novamente para manter o tipo numérico
+    if (isNaN(valor) || valor === null) return 0;
+    return Number(Number(valor).toFixed(2));
+  }
+
+  function formatarMoeda(valor) {
+    // Arredonda corretamente antes de formatar
+    const valorArredondado = arredondarParaDuasCasas(valor);
+    return valorArredondado.toLocaleString("pt-BR", {
+      style: "currency",
+      currency: "BRL",
+      minimumFractionDigits: 2,
+      maximumFractionDigits: 2,
+    });
+  }
+
+  // ========================================================================================================================
+  //          🚀 FUNÇÃO PRINCIPAL - ATUALIZAR CÁLCULOS EM TEMPO REAL - VERSÃO FINAL CORRIGIDA
+  // ========================================================================================================================
+
   function atualizarUnidadeEntradaTempoReal() {
     console.log("🔄 [INIT] Iniciando atualização em tempo real...");
 
@@ -913,11 +939,6 @@ document.addEventListener("DOMContentLoaded", () => {
     // ✅ VALIDAÇÃO CRÍTICA
     if (!diaria || !unidade || !resultadoUnidadeEntrada) {
       console.error("❌ Elementos críticos não encontrados!");
-      console.log({
-        diaria: !!diaria,
-        unidade: !!unidade,
-        resultadoUnidadeEntrada: !!resultadoUnidadeEntrada,
-      });
       return;
     }
 
@@ -972,10 +993,14 @@ document.addEventListener("DOMContentLoaded", () => {
 
         // ✅ TIPO DE META
         var tipoMetaSelecionado = "turbo";
+        var isMetaFixa = false;
+
         if (metaFixaRadio && metaFixaRadio.checked) {
           tipoMetaSelecionado = "fixa";
+          isMetaFixa = true;
         } else if (metaTurboRadio && metaTurboRadio.checked) {
           tipoMetaSelecionado = "turbo";
+          isMetaFixa = false;
         }
 
         console.log("🎯 Tipo de meta:", tipoMetaSelecionado);
@@ -1002,32 +1027,29 @@ document.addEventListener("DOMContentLoaded", () => {
           unidade: unidadeInt,
           valorDigitado: valorDigitado,
           acao: tipoAcao,
+          isMetaFixa: isMetaFixa,
         });
 
-        // ✅ DIAS RESTANTES DO SERVIDOR (baseado no primeiro valor mentor)
+        // ✅ DIAS RESTANTES DO SERVIDOR
         var diasRestantesMes = parseInt(data.dias_restantes_mes) || 0;
         var diasRestantesAno = parseInt(data.dias_restantes_ano) || 0;
 
-        console.log("📅 Dias do servidor (primeiro valor mentor):", {
-          mes: diasRestantesMes,
-          ano: diasRestantesAno,
-          dataBase: data.data_primeiro_valor_mentor,
-          explicacaoMes: data.explicacao_mensal,
-          explicacaoAno: data.explicacao_anual,
-        });
-
-        // ✅ CÁLCULOS
+        // ✅ CÁLCULOS BASEADOS NO TIPO DE META
         var bancaParaCalculo;
         var unidadeEntrada;
         var metaDiaria;
         var metaMensal;
         var metaAnual;
 
-        if (tipoMetaSelecionado === "fixa") {
-          // ===== META FIXA =====
+        if (isMetaFixa) {
+          // ===== META FIXA CORRIGIDA COMPLETA =====
+          console.log("🔒 Calculando META FIXA...");
+
+          // Base: banca inicial SEM lucro acumulado
           var bancaPura = bancaInicioDia - lucroAteOntem;
           bancaParaCalculo = bancaPura;
 
+          // Ajustar se houver depósito/saque sendo simulado
           if (valorDigitado > 0) {
             if (tipoAcao === "add") {
               bancaParaCalculo = bancaPura + valorDigitado;
@@ -1036,80 +1058,151 @@ document.addEventListener("DOMContentLoaded", () => {
             }
           }
 
-          unidadeEntrada = bancaParaCalculo * (percentFinal / 100);
-          metaDiaria = unidadeEntrada * unidadeInt;
+          console.log(
+            `🔒 Base cálculo META FIXA: R$ ${bancaParaCalculo.toFixed(2)}`
+          );
 
-          var metaMensalBase = metaDiaria * diasRestantesMes;
-          var metaAnualBase = metaDiaria * diasRestantesAno;
+          // Calcular unidade e meta base
+          unidadeEntrada = arredondarParaDuasCasas(
+            bancaParaCalculo * (percentFinal / 100)
+          );
+          var metaDiariaBase = arredondarParaDuasCasas(
+            unidadeEntrada * unidadeInt
+          );
 
-          // ✅ SUBTRAIR LUCRO TOTAL
-          metaMensal = Math.max(0, metaMensalBase - lucroTotal);
-          metaAnual = Math.max(0, metaAnualBase - lucroTotal);
-        } else {
-          // ===== META TURBO CORRIGIDA =====
-          bancaParaCalculo = bancaInicioDia;
-
-          if (valorDigitado > 0) {
-            if (tipoAcao === "add") {
-              bancaParaCalculo = bancaInicioDia + valorDigitado;
-            } else if (tipoAcao === "sacar") {
-              bancaParaCalculo = Math.max(0, bancaInicioDia - valorDigitado);
-            }
-          }
-
-          unidadeEntrada = bancaParaCalculo * (percentFinal / 100);
-          var metaDiariaBase = unidadeEntrada * unidadeInt;
-
-          // ✅ AJUSTAR META DO DIA baseado no lucro de HOJE
+          // ✅ META DO DIA: ajustar com lucro de HOJE
           if (lucroHoje < 0) {
-            metaDiaria = metaDiariaBase + Math.abs(lucroHoje);
+            metaDiaria = arredondarParaDuasCasas(
+              metaDiariaBase + Math.abs(lucroHoje)
+            );
           } else if (lucroHoje > 0) {
-            metaDiaria = Math.max(0, metaDiariaBase - lucroHoje);
+            metaDiaria = arredondarParaDuasCasas(
+              Math.max(0, metaDiariaBase - lucroHoje)
+            );
           } else {
             metaDiaria = metaDiariaBase;
           }
 
-          // ✅ CORREÇÃO CRÍTICA: Meta Mensal e Anual usam LUCRO TOTAL
-          var metaMensalBruta = metaDiariaBase * diasRestantesMes;
-          var metaAnualBruta = metaDiariaBase * diasRestantesAno;
-
-          // ✅ SUBTRAIR LUCRO TOTAL (não apenas lucro de hoje)
+          // ✅ META MENSAL: base × dias - lucro TOTAL
+          var metaMensalBruta = arredondarParaDuasCasas(
+            metaDiariaBase * diasRestantesMes
+          );
           if (lucroTotal < 0) {
-            // Se lucro total é negativo, ADICIONAR o prejuízo
-            metaMensal = metaMensalBruta + Math.abs(lucroTotal);
-            metaAnual = metaAnualBruta + Math.abs(lucroTotal);
+            metaMensal = arredondarParaDuasCasas(
+              metaMensalBruta + Math.abs(lucroTotal)
+            );
           } else if (lucroTotal > 0) {
-            // Se lucro total é positivo, SUBTRAIR do total
-            metaMensal = Math.max(0, metaMensalBruta - lucroTotal);
-            metaAnual = Math.max(0, metaAnualBruta - lucroTotal);
+            metaMensal = arredondarParaDuasCasas(
+              Math.max(0, metaMensalBruta - lucroTotal)
+            );
           } else {
-            // Lucro zero
+            metaMensal = metaMensalBruta;
+          }
+
+          // ✅ META ANUAL: base × dias - lucro TOTAL
+          var metaAnualBruta = arredondarParaDuasCasas(
+            metaDiariaBase * diasRestantesAno
+          );
+          if (lucroTotal < 0) {
+            metaAnual = arredondarParaDuasCasas(
+              metaAnualBruta + Math.abs(lucroTotal)
+            );
+          } else if (lucroTotal > 0) {
+            metaAnual = arredondarParaDuasCasas(
+              Math.max(0, metaAnualBruta - lucroTotal)
+            );
+          } else {
+            metaAnual = metaAnualBruta;
+          }
+
+          console.log(`✅ META FIXA calculada (COMPLETA):
+          Unidade: R$ ${unidadeEntrada.toFixed(2)}
+          Meta Base: R$ ${metaDiariaBase.toFixed(2)}
+          Lucro Hoje: R$ ${lucroHoje.toFixed(2)}
+          Meta Dia Final: R$ ${metaDiaria.toFixed(2)}
+          Lucro Total: R$ ${lucroTotal.toFixed(2)}
+          Meta Mês: R$ ${metaMensal.toFixed(2)}
+          Meta Ano: R$ ${metaAnual.toFixed(2)}`);
+        } else {
+          // ===== META TURBO =====
+          console.log("🚀 Calculando META TURBO (congelada) ...");
+
+          // Para Meta Turbo usamos a banca do INÍCIO DO DIA (banca_inicio_dia)
+          // isso congela a meta para o dia inteiro e só será recalculada após 00:00
+          bancaParaCalculo = bancaInicioDia;
+
+          // Observação: não aplicamos aqui depósitos/saques temporários para não
+          // alterar a meta congelada durante o dia (mantemos consistência com
+          // atualizarMetasModalBancaSync que também usa banca_inicio_dia)
+
+          unidadeEntrada = arredondarParaDuasCasas(
+            bancaParaCalculo * (percentFinal / 100)
+          );
+          var metaDiariaBase = arredondarParaDuasCasas(
+            unidadeEntrada * unidadeInt
+          );
+
+          // ✅ AJUSTAR META DO DIA baseado no lucro de HOJE
+          if (lucroHoje < 0) {
+            metaDiaria = arredondarParaDuasCasas(
+              metaDiariaBase + Math.abs(lucroHoje)
+            );
+          } else if (lucroHoje > 0) {
+            metaDiaria = arredondarParaDuasCasas(
+              Math.max(0, metaDiariaBase - lucroHoje)
+            );
+          } else {
+            metaDiaria = metaDiariaBase;
+          }
+
+          // Metas mensais e anuais
+          var metaMensalBruta = arredondarParaDuasCasas(
+            metaDiariaBase * diasRestantesMes
+          );
+          var metaAnualBruta = arredondarParaDuasCasas(
+            metaDiariaBase * diasRestantesAno
+          );
+
+          if (lucroTotal < 0) {
+            metaMensal = arredondarParaDuasCasas(
+              metaMensalBruta + Math.abs(lucroTotal)
+            );
+            metaAnual = arredondarParaDuasCasas(
+              metaAnualBruta + Math.abs(lucroTotal)
+            );
+          } else if (lucroTotal > 0) {
+            metaMensal = arredondarParaDuasCasas(
+              Math.max(0, metaMensalBruta - lucroTotal)
+            );
+            metaAnual = arredondarParaDuasCasas(
+              Math.max(0, metaAnualBruta - lucroTotal)
+            );
+          } else {
             metaMensal = metaMensalBruta;
             metaAnual = metaAnualBruta;
           }
+
+          console.log(`✅ META TURBO calculada:
+          Unidade: R$ ${unidadeEntrada.toFixed(2)}
+          Meta Base: R$ ${metaDiariaBase.toFixed(2)}
+          Lucro Hoje: R$ ${lucroHoje.toFixed(2)}
+          Meta Dia Final: R$ ${metaDiaria.toFixed(2)}
+          Meta Mês: R$ ${metaMensal.toFixed(2)}
+          Meta Ano: R$ ${metaAnual.toFixed(2)}`);
         }
 
-        console.log("🧮 Resultados calculados (CORRIGIDO):", {
+        console.log("🧮 Resultados finais:", {
           tipoMeta: tipoMetaSelecionado,
           unidadeEntrada: unidadeEntrada,
           metaDiaria: metaDiaria,
           metaMensal: metaMensal,
           metaAnual: metaAnual,
-          lucroTotal: lucroTotal,
           lucroHoje: lucroHoje,
-          diasUsadosMes: diasRestantesMes,
-          diasUsadosAno: diasRestantesAno,
         });
 
-        // ✅ ATUALIZAR DISPLAYS
+        // ✅ ATUALIZAR DISPLAYS COM ARREDONDAMENTO CORRETO
         if (resultadoUnidadeEntrada) {
-          resultadoUnidadeEntrada.textContent = unidadeEntrada.toLocaleString(
-            "pt-BR",
-            {
-              style: "currency",
-              currency: "BRL",
-            }
-          );
+          resultadoUnidadeEntrada.textContent = formatarMoeda(unidadeEntrada);
           console.log(
             "✅ UND atualizada:",
             resultadoUnidadeEntrada.textContent
@@ -1117,26 +1210,21 @@ document.addEventListener("DOMContentLoaded", () => {
         }
 
         if (resultadoMetaDia) {
-          var metaDiariaBase = unidadeEntrada * unidadeInt;
-          var lucroParaComparacao = lucroHoje;
+          var metaDiariaBase = arredondarParaDuasCasas(
+            unidadeEntrada * unidadeInt
+          );
 
-          if (lucroParaComparacao >= metaDiariaBase && metaDiariaBase > 0) {
-            var valorRiscado = metaDiariaBase.toLocaleString("pt-BR", {
-              style: "currency",
-              currency: "BRL",
-            });
+          if (lucroHoje >= metaDiariaBase && metaDiariaBase > 0) {
+            var valorRiscado = formatarMoeda(metaDiariaBase);
 
-            if (Math.abs(lucroParaComparacao - metaDiariaBase) < 0.01) {
+            if (Math.abs(lucroHoje - metaDiariaBase) < 0.01) {
               resultadoMetaDia.innerHTML =
                 '<span style="text-decoration: line-through;">' +
                 valorRiscado +
                 '</span> Batida! <i class="fa-solid fa-trophy" style="color: #FFD700;"></i>';
             } else {
-              var valorExcedente = lucroParaComparacao - metaDiariaBase;
-              var excedenteFormatado = valorExcedente.toLocaleString("pt-BR", {
-                style: "currency",
-                currency: "BRL",
-              });
+              var valorExcedente = lucroHoje - metaDiariaBase;
+              var excedenteFormatado = formatarMoeda(valorExcedente);
               resultadoMetaDia.innerHTML =
                 '<span style="text-decoration: line-through;">' +
                 valorRiscado +
@@ -1145,41 +1233,35 @@ document.addEventListener("DOMContentLoaded", () => {
                 ' <i class="fa-solid fa-rocket" style="color: #FF6B6B;"></i>';
             }
           } else {
-            resultadoMetaDia.textContent = metaDiaria.toLocaleString("pt-BR", {
-              style: "currency",
-              currency: "BRL",
-            });
+            resultadoMetaDia.textContent = formatarMoeda(metaDiaria);
           }
           console.log("✅ Meta Dia atualizada:", resultadoMetaDia.textContent);
         }
 
         if (resultadoMetaMes) {
-          resultadoMetaMes.textContent = metaMensal.toLocaleString("pt-BR", {
-            style: "currency",
-            currency: "BRL",
-          });
+          resultadoMetaMes.textContent = formatarMoeda(metaMensal);
           console.log("✅ Meta Mês atualizada:", resultadoMetaMes.textContent);
         }
 
         if (resultadoMetaAno) {
-          resultadoMetaAno.textContent = metaAnual.toLocaleString("pt-BR", {
-            style: "currency",
-            currency: "BRL",
-          });
+          resultadoMetaAno.textContent = formatarMoeda(metaAnual);
           console.log("✅ Meta Ano atualizada:", resultadoMetaAno.textContent);
         }
 
-        // ✅ CÁLCULO DE ENTRADAS
+        // ✅ CÁLCULO DE ENTRADAS COM ARREDONDAMENTO CORRETO
         if (oddsMeta && resultadoEntradas) {
           var oddsValor = parseFloat(oddsMeta.value.replace(",", ".")) || 1.5;
-          var metaDiariaBase = unidadeEntrada * unidadeInt;
-          var lucroParaComparacao = lucroHoje;
+          var metaDiariaBase = arredondarParaDuasCasas(
+            unidadeEntrada * unidadeInt
+          );
 
-          if (lucroParaComparacao >= metaDiariaBase && metaDiariaBase > 0) {
+          if (lucroHoje >= metaDiariaBase && metaDiariaBase > 0) {
             resultadoEntradas.innerHTML =
               'Meta Batida! <i class="fa-solid fa-trophy" style="color: #FFD700;"></i>';
           } else if (unidadeEntrada > 0 && metaDiaria > 0) {
-            var lucroPorEntrada = unidadeEntrada * (oddsValor - 1);
+            var lucroPorEntrada = arredondarParaDuasCasas(
+              unidadeEntrada * (oddsValor - 1)
+            );
             var entradasNecessarias =
               lucroPorEntrada > 0 ? Math.ceil(metaDiaria / lucroPorEntrada) : 0;
             resultadoEntradas.textContent =
@@ -1188,7 +1270,9 @@ document.addEventListener("DOMContentLoaded", () => {
           console.log("✅ Entradas atualizada:", resultadoEntradas.textContent);
         }
 
-        console.log("🎉 ATUALIZAÇÃO COMPLETA COM CORREÇÃO DE META TURBO!");
+        console.log(
+          "🎉 ATUALIZAÇÃO COMPLETA - META FIXA E TURBO 100% CORRIGIDAS!"
+        );
       })
       .catch(function (error) {
         console.error("❌ Erro ao buscar dados:", error);
@@ -1196,8 +1280,40 @@ document.addEventListener("DOMContentLoaded", () => {
   }
 
   console.log(
-    "✅ Função atualizarUnidadeEntradaTempoReal() CORRIGIDA E COMPLETA carregada!"
+    "✅ Função atualizarUnidadeEntradaTempoReal() VERSÃO FINAL carregada!"
   );
+
+  // ===== EVENTOS DE MUDANÇA DE TIPO DE META - FORÇAR RECÁLCULO =====
+  document.addEventListener("DOMContentLoaded", function () {
+    setTimeout(function () {
+      var metaFixaRadio = document.getElementById("metaFixa");
+      var metaTurboRadio = document.getElementById("metaTurbo");
+
+      if (metaFixaRadio) {
+        metaFixaRadio.addEventListener("change", function () {
+          if (this.checked) {
+            console.log("🔒 META FIXA selecionada - recalculando...");
+            setTimeout(function () {
+              atualizarUnidadeEntradaTempoReal();
+            }, 100);
+          }
+        });
+      }
+
+      if (metaTurboRadio) {
+        metaTurboRadio.addEventListener("change", function () {
+          if (this.checked) {
+            console.log("🚀 META TURBO selecionada - recalculando...");
+            setTimeout(function () {
+              atualizarUnidadeEntradaTempoReal();
+            }, 100);
+          }
+        });
+      }
+
+      console.log("✅ Eventos de mudança de tipo de meta configurados!");
+    }, 1000);
+  });
 
   console.log(
     "✅ Função atualizarUnidadeEntradaTempoReal() CORRIGIDA carregada!"
@@ -2889,6 +3005,8 @@ function calcularDiasRestantesAnoModal() {
 }
 
 // ✅ FUNÇÃO PRINCIPAL PARA ATUALIZAR METAS DO MODAL - COM BANCA CONGELADA
+// ✅ FUNÇÃO PRINCIPAL PARA ATUALIZAR METAS DOMODAL - CORRIGIDA PARA META FIXA
+// ✅ FUNÇÃO PRINCIPAL PARA ATUALIZAR METAS DO MODAL - VERSÃO FINAL COM ARREDONDAMENTO
 function atualizarMetasModalBancaSync() {
   try {
     // Obter elementos
@@ -2918,6 +3036,10 @@ function atualizarMetasModalBancaSync() {
       lucroTotal = parseFloat(lucroTexto) || 0;
     }
 
+    // ✅ DETECTAR TIPO DE META SELECIONADO
+    const isMetaFixa = metaFixaRadio && metaFixaRadio.checked;
+    const isMetaTurbo = metaTurboRadio && metaTurboRadio.checked;
+
     // ✅ BUSCAR DADOS DO SERVIDOR (incluindo banca congelada)
     fetch("ajax_deposito.php")
       .then((response) => response.json())
@@ -2929,11 +3051,10 @@ function atualizarMetasModalBancaSync() {
         const bancaInicioDia = parseFloat(data.banca_inicio_dia) || bancaAtual;
         const lucroAteOntem = parseFloat(data.lucro_ate_ontem) || 0;
 
-        console.log(`📊 Dados recebidos do servidor:
+        console.log(`📊 atualizarMetasModalBancaSync:
         Banca Atual: R$ ${bancaAtual.toFixed(2)}
-        Banca Início Dia: R$ ${bancaInicioDia.toFixed(2)} (CONGELADA)
-        Lucro Até Ontem: R$ ${lucroAteOntem.toFixed(2)}
-        Lucro Total: R$ ${lucroTotal.toFixed(2)}`);
+        Banca Início Dia: R$ ${bancaInicioDia.toFixed(2)}
+        Tipo Meta: ${isMetaFixa ? "FIXA" : "TURBO"}`);
 
         // ✅ Extrair porcentagem
         let percentualRaw = diaria.value
@@ -2945,95 +3066,88 @@ function atualizarMetasModalBancaSync() {
         // ✅ Extrair unidade
         const unidadeInt = parseInt(unidade.value) || 1;
 
-        // ✅ Calcular UND com BANCA DO INÍCIO DO DIA (congelada)
-        const unidadeEntrada = bancaInicioDia * (percentFinal / 100);
+        // ✅ CÁLCULO DA BASE DEPENDE DO TIPO DE META
+        let baseCalculo;
 
-        // ✅ Meta Base do Dia (sem ajuste de lucro)
-        const metaDiariaBase = unidadeEntrada * unidadeInt;
+        if (isMetaFixa) {
+          // META FIXA: usa banca inicial (sem lucro acumulado)
+          baseCalculo = bancaInicioDia - lucroAteOntem;
+        } else {
+          // META TURBO: usa banca do início do dia (com lucro de ontem)
+          baseCalculo = bancaInicioDia;
+        }
+
+        // ✅ CALCULAR UND COM ARREDONDAMENTO CORRETO
+        const unidadeEntrada = arredondarParaDuasCasas(
+          baseCalculo * (percentFinal / 100)
+        );
+
+        // ✅ Meta Base do Dia
+        const metaDiariaBase = arredondarParaDuasCasas(
+          unidadeEntrada * unidadeInt
+        );
 
         // ✅ Calcular dias restantes
         const diasRestantesMes = calcularDiasRestantesMesModal();
         const diasRestantesAno = calcularDiasRestantesAnoModal();
 
-        // ✅ Metas Mensais e Anuais (baseadas na meta diária)
-        const metaMensal = metaDiariaBase * diasRestantesMes;
-        const metaAnual = metaDiariaBase * diasRestantesAno;
+        // ✅ Metas Mensais e Anuais
+        const metaMensal = arredondarParaDuasCasas(
+          metaDiariaBase * diasRestantesMes
+        );
+        const metaAnual = arredondarParaDuasCasas(
+          metaDiariaBase * diasRestantesAno
+        );
 
-        // ✅ Ajustar meta do DIA baseado no lucro total
+        // ✅ AJUSTAR META DO DIA BASEADO NO LUCRO DE HOJE
+        const lucroHoje = lucroTotal - lucroAteOntem;
         let metaDiaFinal = metaDiariaBase;
-        if (lucroTotal < 0) {
-          // PREJUÍZO: soma à meta
-          metaDiaFinal = metaDiariaBase + Math.abs(lucroTotal);
-        } else if (lucroTotal > 0) {
-          // LUCRO: subtrai da meta (mas não negativa)
-          metaDiaFinal = Math.max(0, metaDiariaBase - lucroTotal);
-        }
 
-        // ✅ Atualizar displays
-        if (resultadoUnidadeEntrada) {
-          resultadoUnidadeEntrada.textContent = unidadeEntrada.toLocaleString(
-            "pt-BR",
-            {
-              style: "currency",
-              currency: "BRL",
-            }
+        if (lucroHoje < 0) {
+          metaDiaFinal = arredondarParaDuasCasas(
+            metaDiariaBase + Math.abs(lucroHoje)
+          );
+        } else if (lucroHoje > 0) {
+          metaDiaFinal = arredondarParaDuasCasas(
+            Math.max(0, metaDiariaBase - lucroHoje)
           );
         }
 
-        if (resultadoMetaDia) {
-          if (lucroTotal >= metaDiariaBase && metaDiariaBase > 0) {
-            // Meta batida/superada
-            const valorRiscado = metaDiariaBase.toLocaleString("pt-BR", {
-              style: "currency",
-              currency: "BRL",
-            });
+        // ✅ ATUALIZAR DISPLAYS COM FORMATAÇÃO CORRETA
+        if (resultadoUnidadeEntrada) {
+          resultadoUnidadeEntrada.textContent = formatarMoeda(unidadeEntrada);
+          console.log("✅ UND (Sync):", resultadoUnidadeEntrada.textContent);
+        }
 
-            if (Math.abs(lucroTotal - metaDiariaBase) < 0.01) {
+        if (resultadoMetaDia) {
+          if (lucroHoje >= metaDiariaBase && metaDiariaBase > 0) {
+            const valorRiscado = formatarMoeda(metaDiariaBase);
+
+            if (Math.abs(lucroHoje - metaDiariaBase) < 0.01) {
               resultadoMetaDia.innerHTML = `<span style="text-decoration: line-through;">${valorRiscado}</span> Batida! <i class="fa-solid fa-trophy" style="color: #FFD700;"></i>`;
             } else {
-              const valorExcedente = lucroTotal - metaDiariaBase;
-              const excedenteFormatado = valorExcedente.toLocaleString(
-                "pt-BR",
-                {
-                  style: "currency",
-                  currency: "BRL",
-                }
-              );
+              const valorExcedente = lucroHoje - metaDiariaBase;
+              const excedenteFormatado = formatarMoeda(valorExcedente);
               resultadoMetaDia.innerHTML = `<span style="text-decoration: line-through;">${valorRiscado}</span> Superada! +${excedenteFormatado} <i class="fa-solid fa-rocket" style="color: #FF6B6B;"></i>`;
             }
           } else {
-            resultadoMetaDia.textContent = metaDiaFinal.toLocaleString(
-              "pt-BR",
-              {
-                style: "currency",
-                currency: "BRL",
-              }
-            );
+            resultadoMetaDia.textContent = formatarMoeda(metaDiaFinal);
           }
         }
 
         if (resultadoMetaMes) {
-          resultadoMetaMes.textContent = metaMensal.toLocaleString("pt-BR", {
-            style: "currency",
-            currency: "BRL",
-          });
+          resultadoMetaMes.textContent = formatarMoeda(metaMensal);
         }
 
         if (resultadoMetaAno) {
-          resultadoMetaAno.textContent = metaAnual.toLocaleString("pt-BR", {
-            style: "currency",
-            currency: "BRL",
-          });
+          resultadoMetaAno.textContent = formatarMoeda(metaAnual);
         }
 
-        console.log(`✅ Metas atualizadas (CORRIGIDO):
-        UND (${percentFinal}% de R$ ${bancaInicioDia.toFixed(
-          2
-        )}): R$ ${unidadeEntrada.toFixed(2)}
-        Meta Dia Base: R$ ${metaDiariaBase.toFixed(2)}
-        Meta Dia Final: R$ ${metaDiaFinal.toFixed(2)}
-        Meta Mês: R$ ${metaMensal.toFixed(2)}
-        Meta Ano: R$ ${metaAnual.toFixed(2)}`);
+        console.log(
+          `✅ Sync - UND: R$ ${unidadeEntrada.toFixed(
+            2
+          )} (${percentFinal}% de R$ ${baseCalculo.toFixed(2)})`
+        );
       })
       .catch((error) => {
         console.error("❌ Erro ao buscar dados do servidor:", error);
