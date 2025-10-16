@@ -6180,9 +6180,226 @@ console.log('🔧 Para testar: Clique em qualquer card de mentor');
       </form>
     </div>
   </div>
+  <!-- Modal de Aviso Meta Turbo -->
+<div id="modalAvisoMetaTurbo" class="modal-aviso-turbo" style="display: none;">
+  <div class="modal-aviso-content">
+    <button type="button" class="btn-fechar-aviso">×</button>
+    <div class="aviso-icone">
+      <i class="fa-solid fa-triangle-exclamation"></i>
+    </div>
+    <div class="aviso-titulo">Meta Turbo Indisponível</div>
+    <div class="aviso-mensagem">
+      A opção <strong>"Meta Turbo"</strong> só pode ser selecionada quando houver <strong>saldo positivo</strong> na banca.
+    </div>
+    <div class="aviso-info">
+      <i class="fa-solid fa-info-circle"></i>
+      O sistema automaticamente utilizará a <strong>Meta Fixa</strong> para preservar sua banca.
+    </div>
+    <button type="button" class="btn-entendi" id="btnEntendiFecha">Entendi</button>
+  </div>
+</div>
 </div>
 
 <script>
+// ===== BLOQUEIO IMEDIATO META TURBO - INLINE =====
+(function() {
+  'use strict';
+  
+  console.log('🔒 Iniciando bloqueio META TURBO inline...');
+  
+  // ✅ FUNÇÃO IMEDIATA para verificar lucro
+  function verificarLucroPositivo() {
+    const lucroLabel = document.getElementById('valorLucroLabel');
+    if (!lucroLabel) return false;
+    
+    const texto = lucroLabel.textContent || 'R$ 0,00';
+    const valor = parseFloat(texto.replace(/[^\d,.-]/g, '').replace(',', '.')) || 0;
+    
+    console.log(`💰 Lucro: ${valor.toFixed(2)}`);
+    return valor > 0;
+  }
+  
+  // ✅ FUNÇÃO para forçar Meta Fixa
+  function forcarMetaFixa() {
+    const metaFixa = document.getElementById('metaFixa');
+    const metaTurbo = document.getElementById('metaTurbo');
+    
+    if (metaFixa && metaTurbo) {
+      console.log('🔒 Forçando Meta Fixa');
+      metaTurbo.checked = false;
+      metaFixa.checked = true;
+    }
+  }
+  
+  // ✅ FUNÇÃO para exibir modal de aviso
+  function exibirModalAviso() {
+    const modal = document.getElementById('modalAvisoMetaTurbo');
+    if (modal) {
+      modal.style.display = 'flex';
+      modal.classList.add('ativo');
+      document.body.style.overflow = 'hidden';
+    }
+  }
+  
+  // ✅ BLOQUEAR IMEDIATAMENTE quando página carregar
+  function iniciarBloqueio() {
+    const metaTurbo = document.getElementById('metaTurbo');
+    const metaFixa = document.getElementById('metaFixa');
+    
+    if (!metaTurbo || !metaFixa) {
+      console.warn('⚠️ Elementos não encontrados');
+      return;
+    }
+    
+    // ✅ 1. BLOQUEAR CLICK NO CONTAINER
+    const container = metaTurbo.closest('.opcao-meta');
+    if (container) {
+      container.addEventListener('click', function(e) {
+        // Permitir apenas botão de info
+        if (e.target.closest('.info-btn')) return;
+        
+        if (!verificarLucroPositivo()) {
+          console.log('🚫 BLOQUEADO - Click no container');
+          e.preventDefault();
+          e.stopPropagation();
+          e.stopImmediatePropagation();
+          exibirModalAviso();
+          forcarMetaFixa();
+          return false;
+        }
+      }, true);
+    }
+    
+    // ✅ 2. BLOQUEAR CLICK NO RADIO
+    metaTurbo.addEventListener('click', function(e) {
+      if (!verificarLucroPositivo()) {
+        console.log('🚫 BLOQUEADO - Click no radio');
+        e.preventDefault();
+        e.stopPropagation();
+        e.stopImmediatePropagation();
+        exibirModalAviso();
+        forcarMetaFixa();
+        return false;
+      }
+    }, true);
+    
+    // ✅ 3. BLOQUEAR CHANGE
+    metaTurbo.addEventListener('change', function(e) {
+      if (!verificarLucroPositivo()) {
+        console.log('🚫 BLOQUEADO - Change no radio');
+        e.preventDefault();
+        e.stopPropagation();
+        e.stopImmediatePropagation();
+        exibirModalAviso();
+        forcarMetaFixa();
+        return false;
+      }
+    });
+    
+    // ✅ 4. BLOQUEAR MOUSEDOWN
+    metaTurbo.addEventListener('mousedown', function(e) {
+      if (!verificarLucroPositivo()) {
+        console.log('🚫 BLOQUEADO - Mousedown');
+        e.preventDefault();
+        e.stopPropagation();
+        e.stopImmediatePropagation();
+        return false;
+      }
+    }, true);
+    
+    // ✅ 5. BLOQUEAR LABEL
+    const label = container?.querySelector('label[for="metaTurbo"]');
+    if (label) {
+      label.addEventListener('click', function(e) {
+        if (!verificarLucroPositivo()) {
+          console.log('🚫 BLOQUEADO - Click no label');
+          e.preventDefault();
+          e.stopPropagation();
+          e.stopImmediatePropagation();
+          exibirModalAviso();
+          forcarMetaFixa();
+          return false;
+        }
+      }, true);
+    }
+    
+    // ✅ 6. VERIFICAÇÃO PERIÓDICA
+    setInterval(function() {
+      if (metaTurbo.checked && !verificarLucroPositivo()) {
+        console.log('⏰ Verificação periódica: corrigindo');
+        forcarMetaFixa();
+      }
+    }, 300);
+    
+    // ✅ 7. VERIFICAR ESTADO INICIAL
+    if (metaTurbo.checked && !verificarLucroPositivo()) {
+      console.log('🚨 Estado inicial inválido');
+      forcarMetaFixa();
+    }
+    
+    console.log('✅ Bloqueio configurado!');
+  }
+  
+  // ✅ CONFIGURAR MODAL DE AVISO
+  function configurarModalAviso() {
+    const modal = document.getElementById('modalAvisoMetaTurbo');
+    if (!modal) return;
+    
+    // Botão X
+    const btnFechar = modal.querySelector('.btn-fechar-aviso');
+    if (btnFechar) {
+      btnFechar.addEventListener('click', function() {
+        modal.style.display = 'none';
+        modal.classList.remove('ativo');
+        document.body.style.overflow = '';
+      });
+    }
+    
+    // Botão Entendi
+    const btnEntendi = document.getElementById('btnEntendiFecha');
+    if (btnEntendi) {
+      btnEntendi.addEventListener('click', function() {
+        modal.style.display = 'none';
+        modal.classList.remove('ativo');
+        document.body.style.overflow = '';
+      });
+    }
+    
+    // Fechar ao clicar fora
+    modal.addEventListener('click', function(e) {
+      if (e.target === modal) {
+        modal.style.display = 'none';
+        modal.classList.remove('ativo');
+        document.body.style.overflow = '';
+      }
+    });
+    
+    // ESC
+    document.addEventListener('keydown', function(e) {
+      if (e.key === 'Escape' && modal.style.display === 'flex') {
+        modal.style.display = 'none';
+        modal.classList.remove('ativo');
+        document.body.style.overflow = '';
+      }
+    });
+  }
+  
+  // ✅ EXECUTAR ASSIM QUE DOM ESTIVER PRONTO
+  if (document.readyState === 'loading') {
+    document.addEventListener('DOMContentLoaded', function() {
+      setTimeout(function() {
+        iniciarBloqueio();
+        configurarModalAviso();
+      }, 100);
+    });
+  } else {
+    setTimeout(function() {
+      iniciarBloqueio();
+      configurarModalAviso();
+    }, 100);
+  }
+})();
+
 // ===== CONTROLE DOS MODAIS DE INFORMAÇÃO - SÓ ABRE AO CLICAR =====
 document.addEventListener('DOMContentLoaded', function() {
   const infoButtons = document.querySelectorAll('.info-btn[data-modal="modalFixa"], .info-btn[data-modal="modalTurbo"]');
@@ -6190,31 +6407,23 @@ document.addEventListener('DOMContentLoaded', function() {
   infoButtons.forEach(button => {
     const tooltip = button.nextElementSibling;
     
-    // APENAS CLICK - sem hover
     button.addEventListener('click', function(e) {
       e.preventDefault();
       e.stopPropagation();
       
-      // Fecha outros tooltips
       document.querySelectorAll('.tooltip-info').forEach(t => {
-        if (t !== tooltip) {
-          t.classList.remove('ativo');
-        }
+        if (t !== tooltip) t.classList.remove('ativo');
       });
       
       document.querySelectorAll('.info-btn').forEach(btn => {
-        if (btn !== button) {
-          btn.classList.remove('ativo');
-        }
+        if (btn !== button) btn.classList.remove('ativo');
       });
       
-      // Toggle do tooltip atual
       tooltip.classList.toggle('ativo');
       button.classList.toggle('ativo');
     });
   });
   
-  // Fechar ao clicar no botão X
   document.querySelectorAll('.btn-fechar-tooltip').forEach(btnFechar => {
     btnFechar.addEventListener('click', function(e) {
       e.stopPropagation();
@@ -6228,7 +6437,6 @@ document.addEventListener('DOMContentLoaded', function() {
     });
   });
   
-  // Fechar ao clicar fora
   document.addEventListener('click', function(e) {
     if (!e.target.closest('.opcao-meta')) {
       document.querySelectorAll('.tooltip-info').forEach(tooltip => {
@@ -6240,7 +6448,6 @@ document.addEventListener('DOMContentLoaded', function() {
     }
   });
   
-  // Prevenir que cliques dentro do tooltip o fechem
   document.querySelectorAll('.tooltip-info').forEach(tooltip => {
     tooltip.addEventListener('click', function(e) {
       e.stopPropagation();
@@ -6248,6 +6455,7 @@ document.addEventListener('DOMContentLoaded', function() {
   });
 });
 </script>
+
 
 
 <!-- ==================================================================================================================================== --> 

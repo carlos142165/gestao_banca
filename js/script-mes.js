@@ -355,8 +355,8 @@ const MetaMensalManager = {
         mostrarTachado = false;
 
       console.log(`🔍 DEBUG CALCULAR META MENSAL COM EXTRA:`);
-      console.log(`   Saldo Mês: R$ ${saldoMes.toFixed(2)}`);
-      console.log(`   Meta Mês: R$ ${metaCalculada.toFixed(2)}`);
+      console.log(`   Saldo do Mês: R$ ${saldoMes.toFixed(2)}`);
+      console.log(`   Meta do Mês: R$ ${metaCalculada.toFixed(2)}`);
       console.log(`   Banca: R$ ${bancaTotal.toFixed(2)}`);
 
       if (bancaTotal <= 0) {
@@ -703,7 +703,7 @@ const MetaMensalManager = {
         iconeClass = "fa-solid fa-arrow-trend-down"; // GRÁFICO DESCENDO
         classeEstado = "saldo-negativo-2";
       } else {
-        textoSaldo = "Saldo Mês";
+        textoSaldo = "Saldo do Mês";
         iconeClass = "fa-solid fa-wallet"; // CARTEIRA
         classeEstado = "saldo-zero-2";
       }

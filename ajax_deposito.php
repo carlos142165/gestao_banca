@@ -11,7 +11,7 @@ if (!isset($_SESSION['usuario_id'])) {
 
 $id_usuario = intval($_SESSION['usuario_id']);
 
-// ✅ FUNÇÃO CORRIGIDA: Buscar data do PRIMEIRO VALOR CADASTRADO DO MENTOR
+// ✅ FUNÇÃO: Buscar data do PRIMEIRO VALOR CADASTRADO DO MENTOR
 function getPrimeiroValorMentor($conexao, $id_usuario) {
     try {
         $stmt = $conexao->prepare("
@@ -33,32 +33,85 @@ function getPrimeiroValorMentor($conexao, $id_usuario) {
     }
 }
 
-// ✅ MANTER FUNÇÃO ORIGINAL (para compatibilidade com outros sistemas)
-function getDataPrimeiroDeposito($conexao, $id_usuario) {
-    $stmt = $conexao->prepare("
-        SELECT DATE(data_registro) as data_primeiro
-        FROM controle
-        WHERE id_usuario = ? AND deposito > 0
-        ORDER BY data_registro ASC
-        LIMIT 1
-    ");
-    $stmt->bind_param("i", $id_usuario);
-    $stmt->execute();
-    $stmt->bind_result($data_primeiro);
-    $stmt->fetch();
-    $stmt->close();
-    return $data_primeiro;
+// ✅ FUNÇÃO: Calcular lucro do MÊS ATUAL
+function calcularLucroMesAtual($conexao, $id_usuario) {
+    try {
+        $stmt = $conexao->prepare("
+            SELECT 
+                COALESCE(SUM(valor_green), 0) as total_green_mes,
+                COALESCE(SUM(valor_red), 0) as total_red_mes
+            FROM valor_mentores
+            WHERE id_usuario = ? 
+            AND MONTH(data_criacao) = MONTH(CURDATE())
+            AND YEAR(data_criacao) = YEAR(CURDATE())
+        ");
+        $stmt->bind_param("i", $id_usuario);
+        $stmt->execute();
+        $stmt->bind_result($total_green_mes, $total_red_mes);
+        $stmt->fetch();
+        $stmt->close();
+        
+        return $total_green_mes - $total_red_mes;
+    } catch (Exception $e) {
+        error_log("Erro ao calcular lucro do mês: " . $e->getMessage());
+        return 0;
+    }
 }
 
-// ✅ FUNÇÃO CORRIGIDA: Calcular dias restantes baseado no PRIMEIRO VALOR DO MENTOR
+// ✅ FUNÇÃO: Calcular lucro do ANO ATUAL
+function calcularLucroAnoAtual($conexao, $id_usuario) {
+    try {
+        $stmt = $conexao->prepare("
+            SELECT 
+                COALESCE(SUM(valor_green), 0) as total_green_ano,
+                COALESCE(SUM(valor_red), 0) as total_red_ano
+            FROM valor_mentores
+            WHERE id_usuario = ? 
+            AND YEAR(data_criacao) = YEAR(CURDATE())
+        ");
+        $stmt->bind_param("i", $id_usuario);
+        $stmt->execute();
+        $stmt->bind_result($total_green_ano, $total_red_ano);
+        $stmt->fetch();
+        $stmt->close();
+        
+        return $total_green_ano - $total_red_ano;
+    } catch (Exception $e) {
+        error_log("Erro ao calcular lucro do ano: " . $e->getMessage());
+        return 0;
+    }
+}
+
+// ✅ FUNÇÃO: Calcular lucro até ONTEM
+function calcularLucroAteOntem($conexao, $id_usuario) {
+    try {
+        $stmt = $conexao->prepare("
+            SELECT 
+                COALESCE(SUM(valor_green), 0) as total_green_ontem,
+                COALESCE(SUM(valor_red), 0) as total_red_ontem
+            FROM valor_mentores
+            WHERE id_usuario = ? AND DATE(data_criacao) < CURDATE()
+        ");
+        $stmt->bind_param("i", $id_usuario);
+        $stmt->execute();
+        $stmt->bind_result($total_green_ontem, $total_red_ontem);
+        $stmt->fetch();
+        $stmt->close();
+        
+        return $total_green_ontem - $total_red_ontem;
+    } catch (Exception $e) {
+        error_log("Erro ao calcular lucro até ontem: " . $e->getMessage());
+        return 0;
+    }
+}
+
+// ✅ FUNÇÃO: Calcular dias restantes baseado no PRIMEIRO VALOR DO MENTOR
 function calcularDiasRestantes($conexao, $id_usuario) {
     $hoje = new DateTime();
     
-    // ✅ BUSCAR PRIMEIRO VALOR DO MENTOR (não primeiro depósito)
     $primeira_data_valor = getPrimeiroValorMentor($conexao, $id_usuario);
     
     if (!$primeira_data_valor) {
-        // Sem valor cadastrado: usar data atual
         $data_primeiro_valor = $hoje;
         $usar_data_atual = true;
     } else {
@@ -70,7 +123,7 @@ function calcularDiasRestantes($conexao, $id_usuario) {
     $ano_atual = (int)$hoje->format('Y');
     $ultimo_dia_mes = (int)$hoje->format('t');
     
-    // ✅ CÁLCULO MENSAL CORRIGIDO
+    // ✅ CÁLCULO MENSAL
     if ($usar_data_atual) {
         $dia_atual = (int)$hoje->format('d');
         $dias_meta_mensal = $ultimo_dia_mes - $dia_atual + 1;
@@ -80,18 +133,16 @@ function calcularDiasRestantes($conexao, $id_usuario) {
         $ano_primeiro_valor = (int)$data_primeiro_valor->format('Y');
         
         if ($ano_primeiro_valor === $ano_atual && $mes_primeiro_valor === $mes_atual) {
-            // ✅ CORREÇÃO: Do dia do primeiro valor até fim do mês
             $dia_valor = (int)$data_primeiro_valor->format('d');
             $dias_meta_mensal = $ultimo_dia_mes - $dia_valor + 1;
             $explicacao_mensal = "Primeiro valor em {$dia_valor}/{$mes_atual}: Do dia {$dia_valor} até dia {$ultimo_dia_mes} = {$dias_meta_mensal} dias";
         } else {
-            // ✅ CORREÇÃO: Mês completo
             $dias_meta_mensal = $ultimo_dia_mes;
             $explicacao_mensal = "Valor em mês anterior: Mês completo de {$mes_atual} = {$dias_meta_mensal} dias (dia 1 até {$ultimo_dia_mes})";
         }
     }
     
-    // ✅ CÁLCULO ANUAL CORRIGIDO
+    // ✅ CÁLCULO ANUAL
     if ($usar_data_atual) {
         $fim_ano = new DateTime($ano_atual . '-12-31 23:59:59');
         $diferenca = $hoje->diff($fim_ano);
@@ -99,16 +150,14 @@ function calcularDiasRestantes($conexao, $id_usuario) {
         $explicacao_anual = "Sem valor cadastrado: {$dias_meta_anual} dias restantes do ano {$ano_atual}";
     } else {
         if ($data_primeiro_valor->format('Y') === (string)$ano_atual) {
-            // ✅ CORREÇÃO: Do primeiro valor até 31/12
             $fim_ano = new DateTime($ano_atual . '-12-31 23:59:59');
             $diferenca = $data_primeiro_valor->diff($fim_ano);
             $dias_meta_anual = $diferenca->days + 1;
             $explicacao_anual = "Do primeiro valor ({$data_primeiro_valor->format('d/m/Y')}) até 31/12/{$ano_atual} = {$dias_meta_anual} dias";
         } else {
-            // ✅ CORREÇÃO: Ano completo
             $dias_meta_anual = 365;
             if (date('L', mktime(0, 0, 0, 1, 1, $ano_atual))) {
-                $dias_meta_anual = 366; // Ano bissexto
+                $dias_meta_anual = 366;
             }
             $explicacao_anual = "Valor em ano anterior: Ano completo {$ano_atual} = {$dias_meta_anual} dias (01/01 até 31/12)";
         }
@@ -120,12 +169,11 @@ function calcularDiasRestantes($conexao, $id_usuario) {
         'explicacao_mensal' => $explicacao_mensal,
         'explicacao_anual' => $explicacao_anual,
         'data_primeiro_valor_mentor' => $primeira_data_valor,
-        'primeiro_deposito' => getDataPrimeiroDeposito($conexao, $id_usuario), // Mantém compatibilidade
         'usando_data_atual' => $usar_data_atual
     ];
 }
 
-// ✅ DETECTAR TIPO DE META
+// ✅ FUNÇÃO: Detectar tipo de meta
 function detectarTipoMeta($conexao, $id_usuario) {
     try {
         $stmt = $conexao->prepare("
@@ -139,17 +187,12 @@ function detectarTipoMeta($conexao, $id_usuario) {
         $stmt->fetch();
         $stmt->close();
         
-        if (!$ultimaMeta) {
-            return 'Meta Turbo';
-        }
+        if (!$ultimaMeta) return 'Meta Turbo';
         
         $metaLower = strtolower(trim($ultimaMeta));
         
-        if (strpos($metaLower, 'fixa') !== false) {
-            return 'Meta Fixa';
-        } else if (strpos($metaLower, 'turbo') !== false) {
-            return 'Meta Turbo';
-        }
+        if (strpos($metaLower, 'fixa') !== false) return 'Meta Fixa';
+        if (strpos($metaLower, 'turbo') !== false) return 'Meta Turbo';
         
         return 'Meta Turbo';
         
@@ -159,10 +202,9 @@ function detectarTipoMeta($conexao, $id_usuario) {
     }
 }
 
-// ✅ CALCULAR META DIÁRIA COM TIPO
+// ✅ FUNÇÃO: Calcular meta diária com tipo
 function calcularMetaDiariaComTipo($conexao, $id_usuario, $total_deposito, $total_saque, $lucro_total, $tipo_meta = 'Meta Turbo') {
     try {
-        // Buscar diária e unidade
         $stmt = $conexao->prepare("
             SELECT diaria, unidade 
             FROM controle 
@@ -182,25 +224,9 @@ function calcularMetaDiariaComTipo($conexao, $id_usuario, $total_deposito, $tota
         if ($unidade === null) $unidade = 1;
         
         $banca_inicial = $total_deposito - $total_saque;
-        
-        // Calcular lucro até ontem
-        $stmt_lucro_ontem = $conexao->prepare("
-            SELECT 
-                COALESCE(SUM(valor_green), 0) as total_green_ontem,
-                COALESCE(SUM(valor_red), 0) as total_red_ontem
-            FROM valor_mentores
-            WHERE id_usuario = ? AND DATE(data_criacao) < CURDATE()
-        ");
-        $stmt_lucro_ontem->bind_param("i", $id_usuario);
-        $stmt_lucro_ontem->execute();
-        $stmt_lucro_ontem->bind_result($total_green_ontem, $total_red_ontem);
-        $stmt_lucro_ontem->fetch();
-        $stmt_lucro_ontem->close();
-        
-        $lucro_ate_ontem = $total_green_ontem - $total_red_ontem;
+        $lucro_ate_ontem = calcularLucroAteOntem($conexao, $id_usuario);
         $banca_inicio_dia = $banca_inicial + $lucro_ate_ontem;
         
-        // Cálculo da meta
         $porcentagem_decimal = $diaria / 100;
         $meta_diaria = 0;
         $base_calculo = 0;
@@ -248,17 +274,46 @@ function calcularMetaDiariaComTipo($conexao, $id_usuario, $total_deposito, $tota
     }
 }
 
-// ✅ CALCULAR METAS POR PERÍODO
+// ✅ FUNÇÃO CORRIGIDA: Calcular metas por período (MENSAL e ANUAL)
 function calcularMetasPorPeriodo($meta_diaria, $conexao, $id_usuario) {
     $diasCalculados = calcularDiasRestantes($conexao, $id_usuario);
     
-    $meta_mensal = $meta_diaria * $diasCalculados['mes'];
-    $meta_anual = $meta_diaria * $diasCalculados['ano'];
+    // ✅ CALCULAR LUCRO DO MÊS E DO ANO ATUAL
+    $lucro_mes_atual = calcularLucroMesAtual($conexao, $id_usuario);
+    $lucro_ano_atual = calcularLucroAnoAtual($conexao, $id_usuario);
+    
+    // ✅ META MENSAL: Meta base - Lucro do mês atual
+    $meta_mensal_base = $meta_diaria * $diasCalculados['mes'];
+    $meta_mensal = $meta_mensal_base;
+    
+    if ($lucro_mes_atual < 0) {
+        // Se tiver prejuízo, adiciona à meta
+        $meta_mensal = $meta_mensal_base + abs($lucro_mes_atual);
+    } else if ($lucro_mes_atual > 0) {
+        // Se tiver lucro, subtrai da meta
+        $meta_mensal = max(0, $meta_mensal_base - $lucro_mes_atual);
+    }
+    
+    // ✅ META ANUAL: Meta base - Lucro do ano atual
+    $meta_anual_base = $meta_diaria * $diasCalculados['ano'];
+    $meta_anual = $meta_anual_base;
+    
+    if ($lucro_ano_atual < 0) {
+        // Se tiver prejuízo, adiciona à meta
+        $meta_anual = $meta_anual_base + abs($lucro_ano_atual);
+    } else if ($lucro_ano_atual > 0) {
+        // Se tiver lucro, subtrai da meta
+        $meta_anual = max(0, $meta_anual_base - $lucro_ano_atual);
+    }
     
     return [
         'meta_diaria' => $meta_diaria,
         'meta_mensal' => $meta_mensal,
         'meta_anual' => $meta_anual,
+        'meta_mensal_base' => $meta_mensal_base,
+        'meta_anual_base' => $meta_anual_base,
+        'lucro_mes_atual' => $lucro_mes_atual,
+        'lucro_ano_atual' => $lucro_ano_atual,
         'dias_restantes_mes' => $diasCalculados['mes'],
         'dias_restantes_ano' => $diasCalculados['ano'],
         'meta_diaria_formatada' => 'R$ ' . number_format($meta_diaria, 2, ',', '.'),
@@ -266,12 +321,11 @@ function calcularMetasPorPeriodo($meta_diaria, $conexao, $id_usuario) {
         'meta_anual_formatada' => 'R$ ' . number_format($meta_anual, 2, ',', '.'),
         'explicacao_mensal' => $diasCalculados['explicacao_mensal'],
         'explicacao_anual' => $diasCalculados['explicacao_anual'],
-        'data_primeiro_valor_mentor' => $diasCalculados['data_primeiro_valor_mentor'],
-        'primeiro_deposito' => $diasCalculados['primeiro_deposito']
+        'data_primeiro_valor_mentor' => $diasCalculados['data_primeiro_valor_mentor']
     ];
 }
 
-// ✅ FUNÇÃO PARA CALCULAR DADOS DA ÁREA DIREITA
+// ✅ FUNÇÃO: Calcular dados da área direita
 function calcularAreaDireita($conexao, $id_usuario, $saldo_banca_total) {
     try {
         $stmt = $conexao->prepare("
@@ -287,23 +341,8 @@ function calcularAreaDireita($conexao, $id_usuario, $saldo_banca_total) {
         
         $diaria = $ultima_diaria !== null ? round(floatval($ultima_diaria), 2) : 1.00;
         
-        // Calcular lucro até ontem
-        $stmt_lucro_ontem = $conexao->prepare("
-            SELECT 
-                COALESCE(SUM(valor_green), 0) as total_green_ontem,
-                COALESCE(SUM(valor_red), 0) as total_red_ontem
-            FROM valor_mentores
-            WHERE id_usuario = ? AND DATE(data_criacao) < CURDATE()
-        ");
-        $stmt_lucro_ontem->bind_param("i", $id_usuario);
-        $stmt_lucro_ontem->execute();
-        $stmt_lucro_ontem->bind_result($total_green_ontem, $total_red_ontem);
-        $stmt_lucro_ontem->fetch();
-        $stmt_lucro_ontem->close();
+        $lucro_ate_ontem = calcularLucroAteOntem($conexao, $id_usuario);
         
-        $lucro_ate_ontem = $total_green_ontem - $total_red_ontem;
-        
-        // Obter depósitos e saques
         $stmt_dep = $conexao->prepare("SELECT SUM(deposito) FROM controle WHERE id_usuario = ? AND deposito > 0");
         $stmt_dep->bind_param("i", $id_usuario);
         $stmt_dep->execute();
@@ -414,12 +453,7 @@ function calcularLucro($conexao, $id_usuario) {
 
 function validarTipoMeta($tipoMeta) {
     $tipos_validos = ['Meta Fixa', 'Meta Turbo'];
-    
-    if (!in_array($tipoMeta, $tipos_validos)) {
-        return 'Meta Fixa';
-    }
-    
-    return $tipoMeta;
+    return in_array($tipoMeta, $tipos_validos) ? $tipoMeta : 'Meta Fixa';
 }
 
 // ✅ PROCESSAR REQUISIÇÕES POST
@@ -436,7 +470,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     $odds = isset($data['odds']) ? floatval(str_replace(',', '.', $data['odds'])) : 1.5;
     $tipoMeta = validarTipoMeta($data['tipoMeta'] ?? 'Meta Fixa');
 
-    // ✅ OPERAÇÃO DE RESET
+    // RESET
     if ($acao === 'resetar') {
         try {
             $conexao->begin_transaction();
@@ -466,15 +500,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                 'unidade_entrada_formatada' => 'R$ 0,00',
                 'meta_diaria_formatada' => 'R$ 0,00',
                 'meta_mensal_formatada' => 'R$ 0,00',
-                'meta_anual_formatada' => 'R$ 0,00',
-                'banca_formatada' => 'R$ 0,00',
-                'lucro_formatado' => 'R$ 0,00',
-                'banca_inicio_dia' => 0,
-                'lucro_ate_ontem' => 0,
-                'dias_restantes_mes' => 0,
-                'dias_restantes_ano' => 0,
-                'data_primeiro_deposito' => null,
-                'data_primeiro_valor_mentor' => null
+                'meta_anual_formatada' => 'R$ 0,00'
             ]);
             
         } catch (Exception $e) {
@@ -484,7 +510,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         exit();
     }
 
-    // ✅ OPERAÇÃO DE ALTERAÇÃO
+    // ALTERAR
     if ($acao === 'alterar') {
         try {
             $stmt_check = $conexao->prepare("SELECT id FROM controle WHERE id_usuario = ? ORDER BY id DESC LIMIT 1");
@@ -538,16 +564,8 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                     'meta_anual_formatada' => $metas_periodo['meta_anual_formatada'],
                     'dias_restantes_mes' => $metas_periodo['dias_restantes_mes'],
                     'dias_restantes_ano' => $metas_periodo['dias_restantes_ano'],
-                    'diaria_formatada' => $area_direita['diaria_formatada'],
-                    'unidade_entrada_formatada' => $area_direita['unidade_entrada_formatada'],
-                    'banca_formatada' => 'R$ ' . number_format($saldo_banca_total, 2, ',', '.'),
-                    'lucro_formatado' => 'R$ ' . number_format($lucro, 2, ',', '.'),
-                    'banca_inicio_dia' => $area_direita['banca_inicio_dia'],
-                    'lucro_ate_ontem' => $area_direita['lucro_ate_ontem'],
-                    'data_primeiro_deposito' => $metas_periodo['primeiro_deposito'],
-                    'data_primeiro_valor_mentor' => $metas_periodo['data_primeiro_valor_mentor'],
-                    'explicacao_mensal' => $metas_periodo['explicacao_mensal'],
-                    'explicacao_anual' => $metas_periodo['explicacao_anual']
+                    'lucro_mes_atual' => $metas_periodo['lucro_mes_atual'],
+                    'lucro_ano_atual' => $metas_periodo['lucro_ano_atual']
                 ]);
             } else {
                 echo json_encode(['success' => false, 'message' => 'Erro ao alterar dados']);
@@ -560,13 +578,12 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         exit();
     }
 
-    // ✅ VALIDAÇÃO PARA DEPÓSITO E SAQUE
+    // DEPÓSITO/SAQUE
     if ($valor <= 0 || !in_array($acao, ['deposito', 'saque', 'cadastrar'])) {
         echo json_encode(['success' => false, 'message' => 'Dados inválidos']);
         exit();
     }
 
-    // ✅ OPERAÇÕES DE DEPÓSITO/SAQUE
     try {
         $query = "";
         if ($acao === 'deposito' || $acao === 'cadastrar') {
@@ -605,16 +622,10 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                 'meta_anual_formatada' => $metas_periodo['meta_anual_formatada'],
                 'dias_restantes_mes' => $metas_periodo['dias_restantes_mes'],
                 'dias_restantes_ano' => $metas_periodo['dias_restantes_ano'],
+                'lucro_mes_atual' => $metas_periodo['lucro_mes_atual'],
+                'lucro_ano_atual' => $metas_periodo['lucro_ano_atual'],
                 'diaria_formatada' => $area_direita['diaria_formatada'],
-                'unidade_entrada_formatada' => $area_direita['unidade_entrada_formatada'],
-                'banca_formatada' => 'R$ ' . number_format($saldo_banca_total, 2, ',', '.'),
-                'lucro_formatado' => 'R$ ' . number_format($lucro, 2, ',', '.'),
-                'banca_inicio_dia' => $area_direita['banca_inicio_dia'],
-                'lucro_ate_ontem' => $area_direita['lucro_ate_ontem'],
-                'data_primeiro_deposito' => $metas_periodo['primeiro_deposito'],
-                'data_primeiro_valor_mentor' => $metas_periodo['data_primeiro_valor_mentor'],
-                'explicacao_mensal' => $metas_periodo['explicacao_mensal'],
-                'explicacao_anual' => $metas_periodo['explicacao_anual']
+                'unidade_entrada_formatada' => $area_direita['unidade_entrada_formatada']
             ]);
             
         } else {
@@ -641,7 +652,6 @@ try {
     $ultima_odds = getUltimoCampo($conexao, 'odds', $id_usuario) ?? 1.5;
     $ultima_meta = getUltimaMeta($conexao, $id_usuario);
 
-    // ✅ CALCULAR METAS COM DIAS CORRETOS (baseado no primeiro valor mentor)
     $tipo_meta_detectado = detectarTipoMeta($conexao, $id_usuario);
     $meta_resultado = calcularMetaDiariaComTipo($conexao, $id_usuario, $total_deposito, $total_saque, $lucro, $tipo_meta_detectado);
     $metas_periodo = calcularMetasPorPeriodo($meta_resultado['meta_diaria'], $conexao, $id_usuario);
@@ -657,23 +667,28 @@ try {
         'meta' => $ultima_meta,
         'tipo_meta' => $tipo_meta_detectado,
         
-        // ✅ METAS CALCULADAS COM DIAS CORRETOS (baseado no primeiro valor mentor)
+        // ✅ METAS CORRIGIDAS (usando lucro do mês e ano ATUAL)
         'meta_diaria' => $meta_resultado['meta_diaria'],
         'meta_mensal' => $metas_periodo['meta_mensal'],
         'meta_anual' => $metas_periodo['meta_anual'],
+        'meta_mensal_base' => $metas_periodo['meta_mensal_base'],
+        'meta_anual_base' => $metas_periodo['meta_anual_base'],
         'meta_diaria_formatada' => $metas_periodo['meta_diaria_formatada'],
         'meta_mensal_formatada' => $metas_periodo['meta_mensal_formatada'],
         'meta_anual_formatada' => $metas_periodo['meta_anual_formatada'],
         
-        // ✅ DIAS RESTANTES CORRETOS (do primeiro valor mentor até fim do período)
+        // ✅ LUCRO SEGMENTADO POR PERÍODO
+        'lucro_mes_atual' => $metas_periodo['lucro_mes_atual'],
+        'lucro_ano_atual' => $metas_periodo['lucro_ano_atual'],
+        
+        // ✅ DIAS RESTANTES
         'dias_restantes_mes' => $metas_periodo['dias_restantes_mes'],
         'dias_restantes_ano' => $metas_periodo['dias_restantes_ano'],
         
-        // ✅ EXPLICAÇÕES DETALHADAS
+        // ✅ EXPLICAÇÕES
         'explicacao_mensal' => $metas_periodo['explicacao_mensal'],
         'explicacao_anual' => $metas_periodo['explicacao_anual'],
         'data_primeiro_valor_mentor' => $metas_periodo['data_primeiro_valor_mentor'],
-        'primeiro_deposito' => $metas_periodo['primeiro_deposito'],
         
         // ✅ ÁREA DIREITA
         'diaria_formatada' => $area_direita['diaria_formatada'],
@@ -682,25 +697,24 @@ try {
         'lucro_formatado' => 'R$ ' . number_format($lucro, 2, ',', '.'),
         'banca_inicio_dia' => $area_direita['banca_inicio_dia'],
         'lucro_ate_ontem' => $area_direita['lucro_ate_ontem'],
-        'data_primeiro_deposito' => $metas_periodo['primeiro_deposito'],
         
-        // ✅ INFORMAÇÕES ADICIONAIS DE DEBUG
+        // ✅ DEBUG
         'calculo_detalhado' => [
             'tipo_meta' => $tipo_meta_detectado,
             'banca_inicial' => $meta_resultado['banca_inicial'],
             'banca_atual' => $meta_resultado['banca_atual'],
             'banca_inicio_dia' => $meta_resultado['banca_inicio_dia'],
             'lucro_ate_ontem' => $meta_resultado['lucro_ate_ontem'],
+            'lucro_mes_atual' => $metas_periodo['lucro_mes_atual'],
+            'lucro_ano_atual' => $metas_periodo['lucro_ano_atual'],
             'base_calculo' => $meta_resultado['base_calculo'],
-            'diaria_percentual' => $meta_resultado['diaria_usada'],
-            'unidade_multiplicador' => $meta_resultado['unidade_usada'],
             'meta_diaria_calculada' => $meta_resultado['meta_diaria'],
+            'meta_mensal_base' => $metas_periodo['meta_mensal_base'],
+            'meta_mensal_ajustada' => $metas_periodo['meta_mensal'],
+            'meta_anual_base' => $metas_periodo['meta_anual_base'],
+            'meta_anual_ajustada' => $metas_periodo['meta_anual'],
             'dias_meta_mensal' => $metas_periodo['dias_restantes_mes'],
-            'dias_meta_anual' => $metas_periodo['dias_restantes_ano'],
-            'formula_mensal' => "Meta Diária × {$metas_periodo['dias_restantes_mes']} dias = Meta Mensal",
-            'formula_anual' => "Meta Diária × {$metas_periodo['dias_restantes_ano']} dias = Meta Anual",
-            'origem_calculo_dias' => 'primeiro_valor_mentor',
-            'data_base_calculo' => $metas_periodo['data_primeiro_valor_mentor']
+            'dias_meta_anual' => $metas_periodo['dias_restantes_ano']
         ]
     ]);
     

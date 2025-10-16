@@ -1208,7 +1208,206 @@
 .tooltip-info.ativo {
   animation: tooltipFadeIn 0.3s ease forwards;
 }
+/* ========================================
+   MODAL DE AVISO META TURBO
+======================================== */
 
+.modal-aviso-turbo {
+  display: none;
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: rgba(0, 0, 0, 0.75);
+  z-index: 10000;
+  justify-content: center;
+  align-items: center;
+  animation: fadeIn 0.3s ease;
+}
+
+.modal-aviso-turbo.ativo {
+  display: flex;
+}
+
+.modal-aviso-content {
+  background: linear-gradient(135deg, #2c3e50 0%, #34495e 100%);
+  border-radius: 20px;
+  padding: 40px 35px;
+  max-width: 480px;
+  width: 90%;
+  position: relative;
+  box-shadow: 0 20px 60px rgba(0, 0, 0, 0.5);
+  animation: slideInDown 0.4s ease;
+  border: 2px solid rgba(255, 193, 7, 0.3);
+}
+
+.btn-fechar-aviso {
+  position: absolute;
+  top: 15px;
+  right: 15px;
+  background: rgba(255, 255, 255, 0.1);
+  border: none;
+  color: #fff;
+  font-size: 28px;
+  width: 40px;
+  height: 40px;
+  border-radius: 50%;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  line-height: 1;
+}
+
+.btn-fechar-aviso:hover {
+  background: rgba(231, 76, 60, 0.8);
+  transform: rotate(90deg);
+}
+
+.aviso-icone {
+  text-align: center;
+  margin-bottom: 20px;
+}
+
+.aviso-icone i {
+  font-size: 70px;
+  color: #ffc107;
+  animation: pulse 2s infinite;
+}
+
+.aviso-titulo {
+  text-align: center;
+  font-size: 26px;
+  font-weight: 700;
+  color: #ffc107;
+  margin-bottom: 20px;
+  text-transform: uppercase;
+  letter-spacing: 1px;
+}
+
+.aviso-mensagem {
+  text-align: center;
+  font-size: 17px;
+  color: #ecf0f1;
+  line-height: 1.6;
+  margin-bottom: 25px;
+  padding: 0 10px;
+}
+
+.aviso-mensagem strong {
+  color: #ffc107;
+  font-weight: 600;
+}
+
+.aviso-info {
+  background: rgba(52, 152, 219, 0.15);
+  border-left: 4px solid #3498db;
+  padding: 15px 20px;
+  border-radius: 8px;
+  margin-bottom: 30px;
+  display: flex;
+  align-items: flex-start;
+  gap: 12px;
+}
+
+.aviso-info i {
+  color: #3498db;
+  font-size: 22px;
+  margin-top: 2px;
+  flex-shrink: 0;
+}
+
+.aviso-info strong {
+  color: #3498db;
+  font-weight: 600;
+}
+
+.btn-entendi {
+  width: 100%;
+  padding: 16px;
+  background: linear-gradient(135deg, #27ae60 0%, #229954 100%);
+  color: white;
+  border: none;
+  border-radius: 12px;
+  font-size: 18px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  text-transform: uppercase;
+  letter-spacing: 1px;
+  box-shadow: 0 4px 15px rgba(39, 174, 96, 0.3);
+}
+
+.btn-entendi:hover {
+  background: linear-gradient(135deg, #229954 0%, #1e8449 100%);
+  transform: translateY(-2px);
+  box-shadow: 0 6px 20px rgba(39, 174, 96, 0.4);
+}
+
+.btn-entendi:active {
+  transform: translateY(0);
+}
+
+/* Animações */
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
+}
+
+@keyframes slideInDown {
+  from {
+    transform: translateY(-50px);
+    opacity: 0;
+  }
+  to {
+    transform: translateY(0);
+    opacity: 1;
+  }
+}
+
+@keyframes pulse {
+  0%,
+  100% {
+    transform: scale(1);
+  }
+  50% {
+    transform: scale(1.1);
+  }
+}
+
+/* Responsividade */
+@media (max-width: 768px) {
+  .modal-aviso-content {
+    padding: 30px 25px;
+    max-width: 95%;
+  }
+
+  .aviso-icone i {
+    font-size: 60px;
+  }
+
+  .aviso-titulo {
+    font-size: 22px;
+  }
+
+  .aviso-mensagem {
+    font-size: 16px;
+  }
+
+  .btn-entendi {
+    font-size: 16px;
+    padding: 14px;
+  }
+}
+/* ========================================
+    FIM MODAL DE AVISO META TURBO
+======================================== */
 /**/
 /**/
 /**/

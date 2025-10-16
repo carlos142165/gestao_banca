@@ -587,8 +587,8 @@ const MetaAnualManager = {
         mostrarTachado = false;
 
       console.log(`🔍 DEBUG CALCULAR META ANUAL COM EXTRA:`);
-      console.log(`   Saldo Ano: R$ ${saldoAno.toFixed(2)}`);
-      console.log(`   Meta Ano: R$ ${metaCalculada.toFixed(2)}`);
+      console.log(`   Saldo do Ano: R$ ${saldoAno.toFixed(2)}`);
+      console.log(`   Meta do Ano: R$ ${metaCalculada.toFixed(2)}`);
       console.log(`   Banca: R$ ${bancaTotal.toFixed(2)}`);
 
       if (bancaTotal <= 0) {
@@ -864,7 +864,7 @@ const MetaAnualManager = {
         iconeClass = "fa-solid fa-arrow-trend-down";
         classeEstado = "saldo-negativo-3";
       } else {
-        textoSaldo = "Saldo Ano";
+        textoSaldo = "Saldo do Ano";
         iconeClass = "fa-solid fa-wallet";
         classeEstado = "saldo-zero-3";
       }

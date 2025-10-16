@@ -294,6 +294,19 @@ document.addEventListener("DOMContentLoaded", () => {
     }
   }
 
+  // ✅ NOVO: ATUALIZAR LUCRO NO MODAL SE ESTIVER ABERTO
+  setTimeout(() => {
+    if (typeof atualizarLucroNoModalAberto === "function") {
+      atualizarLucroNoModalAberto();
+    }
+  }, 200);
+
+  setTimeout(() => {
+    if (typeof atualizarLucroNoModalAberto === "function") {
+      atualizarLucroNoModalAberto();
+    }
+  }, 500);
+
   // ✅ EVENTOS DO FORMULÁRIO MENTOR
   if (formMentor) {
     // ✅ MÁSCARA DE DINHEIRO PARA O CAMPO VALOR
@@ -561,6 +574,19 @@ document.addEventListener("DOMContentLoaded", () => {
           "🚀 Atualizando área direita IMEDIATAMENTE após exclusão..."
         );
         executarAtualizacaoImediata("exclusao_manual", resultado);
+
+        // ✅ NOVO: ATUALIZAR LUCRO NO MODAL SE ESTIVER ABERTO
+        setTimeout(() => {
+          if (typeof atualizarLucroNoModalAberto === "function") {
+            atualizarLucroNoModalAberto();
+          }
+        }, 200);
+
+        setTimeout(() => {
+          if (typeof atualizarLucroNoModalAberto === "function") {
+            atualizarLucroNoModalAberto();
+          }
+        }, 500);
 
         // ✅ REMOVER ELEMENTO DO DOM SE AINDA EXISTIR
         const elemento = document.querySelector(
@@ -914,6 +940,10 @@ document.addEventListener("DOMContentLoaded", () => {
   //          🚀 FUNÇÃO PRINCIPAL - ATUALIZAR CÁLCULOS EM TEMPO REAL - VERSÃO FINAL CORRIGIDA
   // ========================================================================================================================
 
+  // ========================================================================================================================
+  //          🚀 FUNÇÃO CORRIGIDA - CALCULAR COM LUCRO DO MÊS/ANO ATUAL
+  // ========================================================================================================================
+
   function atualizarUnidadeEntradaTempoReal() {
     console.log("🔄 [INIT] Iniciando atualização em tempo real...");
 
@@ -965,13 +995,22 @@ document.addEventListener("DOMContentLoaded", () => {
         var bancaInicioDia = parseFloat(data.banca_inicio_dia) || bancaAtual;
         var lucroAteOntem = parseFloat(data.lucro_ate_ontem) || 0;
 
+        // ✅ NOVO: LUCRO DO MÊS E ANO ATUAL (do servidor)
+        var lucroMesAtual = parseFloat(data.lucro_mes_atual) || 0;
+        var lucroAnoAtual = parseFloat(data.lucro_ano_atual) || 0;
+
         console.log("💰 Bancas:", {
           atual: bancaAtual,
           inicioDia: bancaInicioDia,
           lucroOntem: lucroAteOntem,
         });
 
-        // ✅ LUCRO TOTAL
+        console.log("📊 Lucros Segmentados:", {
+          lucroMesAtual: lucroMesAtual,
+          lucroAnoAtual: lucroAnoAtual,
+        });
+
+        // ✅ LUCRO TOTAL (para outros cálculos)
         var lucroTotal = 0;
         if (lucroTotalLabel && lucroTotalLabel.textContent) {
           var lucroTexto = lucroTotalLabel.textContent
@@ -989,6 +1028,8 @@ document.addEventListener("DOMContentLoaded", () => {
           total: lucroTotal,
           ateOntem: lucroAteOntem,
           hoje: lucroHoje,
+          mesAtual: lucroMesAtual,
+          anoAtual: lucroAnoAtual,
         });
 
         // ✅ TIPO DE META
@@ -1074,37 +1115,39 @@ document.addEventListener("DOMContentLoaded", () => {
             metaDiaria = metaDiariaBase;
           }
 
+          // ✅ CORRIGIDO: Meta Mensal com lucro do MÊS ATUAL
           var metaMensalBruta = arredondarParaDuasCasas(
             metaDiariaBase * diasRestantesMes
           );
-          if (lucroTotal < 0) {
+          if (lucroMesAtual < 0) {
             metaMensal = arredondarParaDuasCasas(
-              metaMensalBruta + Math.abs(lucroTotal)
+              metaMensalBruta + Math.abs(lucroMesAtual)
             );
-          } else if (lucroTotal > 0) {
+          } else if (lucroMesAtual > 0) {
             metaMensal = arredondarParaDuasCasas(
-              Math.max(0, metaMensalBruta - lucroTotal)
+              Math.max(0, metaMensalBruta - lucroMesAtual)
             );
           } else {
             metaMensal = metaMensalBruta;
           }
 
+          // ✅ CORRIGIDO: Meta Anual com lucro do ANO ATUAL
           var metaAnualBruta = arredondarParaDuasCasas(
             metaDiariaBase * diasRestantesAno
           );
-          if (lucroTotal < 0) {
+          if (lucroAnoAtual < 0) {
             metaAnual = arredondarParaDuasCasas(
-              metaAnualBruta + Math.abs(lucroTotal)
+              metaAnualBruta + Math.abs(lucroAnoAtual)
             );
-          } else if (lucroTotal > 0) {
+          } else if (lucroAnoAtual > 0) {
             metaAnual = arredondarParaDuasCasas(
-              Math.max(0, metaAnualBruta - lucroTotal)
+              Math.max(0, metaAnualBruta - lucroAnoAtual)
             );
           } else {
             metaAnual = metaAnualBruta;
           }
 
-          console.log(`✅ META FIXA calculada`);
+          console.log(`✅ META FIXA calculada com lucro mensal/anual`);
         } else {
           // ===== META TURBO =====
           console.log("🚀 Calculando META TURBO...");
@@ -1128,34 +1171,50 @@ document.addEventListener("DOMContentLoaded", () => {
             metaDiaria = metaDiariaBase;
           }
 
+          // ✅ CORRIGIDO: Meta Mensal com lucro do MÊS ATUAL
           var metaMensalBruta = arredondarParaDuasCasas(
             metaDiariaBase * diasRestantesMes
           );
-          var metaAnualBruta = arredondarParaDuasCasas(
-            metaDiariaBase * diasRestantesAno
-          );
-
-          if (lucroTotal < 0) {
+          if (lucroMesAtual < 0) {
             metaMensal = arredondarParaDuasCasas(
-              metaMensalBruta + Math.abs(lucroTotal)
+              metaMensalBruta + Math.abs(lucroMesAtual)
             );
-            metaAnual = arredondarParaDuasCasas(
-              metaAnualBruta + Math.abs(lucroTotal)
-            );
-          } else if (lucroTotal > 0) {
+          } else if (lucroMesAtual > 0) {
             metaMensal = arredondarParaDuasCasas(
-              Math.max(0, metaMensalBruta - lucroTotal)
-            );
-            metaAnual = arredondarParaDuasCasas(
-              Math.max(0, metaAnualBruta - lucroTotal)
+              Math.max(0, metaMensalBruta - lucroMesAtual)
             );
           } else {
             metaMensal = metaMensalBruta;
+          }
+
+          // ✅ CORRIGIDO: Meta Anual com lucro do ANO ATUAL
+          var metaAnualBruta = arredondarParaDuasCasas(
+            metaDiariaBase * diasRestantesAno
+          );
+          if (lucroAnoAtual < 0) {
+            metaAnual = arredondarParaDuasCasas(
+              metaAnualBruta + Math.abs(lucroAnoAtual)
+            );
+          } else if (lucroAnoAtual > 0) {
+            metaAnual = arredondarParaDuasCasas(
+              Math.max(0, metaAnualBruta - lucroAnoAtual)
+            );
+          } else {
             metaAnual = metaAnualBruta;
           }
 
-          console.log(`✅ META TURBO calculada`);
+          console.log(`✅ META TURBO calculada com lucro mensal/anual`);
         }
+
+        // ✅ LOG DE VERIFICAÇÃO
+        console.log(`📊 Metas Calculadas:
+        Meta Diária Base: R$ ${metaDiariaBase.toFixed(2)}
+        Meta Mensal Bruta: R$ ${(metaDiariaBase * diasRestantesMes).toFixed(2)}
+        Lucro Mês Atual: R$ ${lucroMesAtual.toFixed(2)}
+        Meta Mensal Final: R$ ${metaMensal.toFixed(2)}
+        Meta Anual Bruta: R$ ${(metaDiariaBase * diasRestantesAno).toFixed(2)}
+        Lucro Ano Atual: R$ ${lucroAnoAtual.toFixed(2)}
+        Meta Anual Final: R$ ${metaAnual.toFixed(2)}`);
 
         // ✅ ATUALIZAR UNIDADE DE ENTRADA
         if (resultadoUnidadeEntrada) {
@@ -1166,48 +1225,50 @@ document.addEventListener("DOMContentLoaded", () => {
           );
         }
 
-        // ========================================================================================================================
-        //          🎯 DISPLAY DA META DO DIA - VERSÃO FINAL CORRIGIDA
-        // ========================================================================================================================
+        // ✅ ATUALIZAR META DO DIA
         if (resultadoMetaDia) {
-          console.log(`🎯 Verificando Meta do Dia:
-          Meta Base: R$ ${metaDiariaBase.toFixed(2)}
-          Lucro Hoje: R$ ${lucroHoje.toFixed(2)}
-          Meta Restante: R$ ${metaDiaria.toFixed(2)}`);
+          if (
+            lucroHoje > 0 &&
+            metaDiariaBase > 0 &&
+            lucroHoje >= metaDiariaBase
+          ) {
+            var valorExtraDia = lucroHoje - metaDiariaBase;
+            var valorExtraDiaArredondado =
+              Math.round(valorExtraDia * 100) / 100;
+            var metaRiscadaDia = formatarMoeda(metaDiariaBase);
 
-          // ⭐ CASO 1: Meta batida exatamente (valor restante R$ 0,00)
-          if (metaDiaria <= 0.01) {
+            if (valorExtraDiaArredondado > 0) {
+              var excedenteFormatadoDia = formatarMoeda(
+                valorExtraDiaArredondado
+              );
+              resultadoMetaDia.innerHTML =
+                '<span style="text-decoration: line-through; color: #7f8c8d;">' +
+                metaRiscadaDia +
+                '</span> Superada! <span style="color: #FFD700;">+' +
+                excedenteFormatadoDia +
+                '</span> <i class="fa-solid fa-rocket" style="color: #FF6B6B;"></i>';
+              console.log(`🚀 META DIA SUPERADA! +${excedenteFormatadoDia}`);
+            } else {
+              resultadoMetaDia.innerHTML =
+                '<span style="text-decoration: line-through; color: #7f8c8d;">' +
+                metaRiscadaDia +
+                '</span> Meta Batida! <i class="fa-solid fa-trophy" style="color: #FFD700;"></i>';
+              console.log("🏆 META DIA EXATA!");
+            }
+          } else if (metaDiaria <= 0 && lucroHoje > 0) {
+            var metaRiscadaDia = formatarMoeda(metaDiariaBase);
             resultadoMetaDia.innerHTML =
-              'Meta Batida! <i class="fa-solid fa-trophy" style="color: #FFD700;"></i>';
-            console.log("🏆 META BATIDA!");
-          }
-          // ⭐ CASO 2: Meta superada (lucro ultrapassou a meta - QUALQUER VALOR)
-          else if (lucroHoje > metaDiariaBase && metaDiariaBase > 0) {
-            var valorExcedente = arredondarParaDuasCasas(
-              lucroHoje - metaDiariaBase
-            );
-            var excedenteFormatado = formatarMoeda(valorExcedente);
-            var metaRiscada = formatarMoeda(metaDiariaBase);
-
-            resultadoMetaDia.innerHTML =
-              '<span style="text-decoration: line-through;">' +
-              metaRiscada +
-              "</span> " +
-              "Superada! +" +
-              excedenteFormatado +
-              ' <i class="fa-solid fa-rocket" style="color: #FF6B6B;"></i>';
-            console.log(`🚀 META SUPERADA! +${excedenteFormatado}`);
-          }
-          // ⭐ CASO 3: Meta ainda não batida (mostrar valor restante)
-          else {
+              '<span style="text-decoration: line-through; color: #7f8c8d;">' +
+              metaRiscadaDia +
+              '</span> Meta Batida! <i class="fa-solid fa-trophy" style="color: #FFD700;"></i>';
+            console.log("🏆 META DIA BATIDA (metaDiaria <= 0)");
+          } else {
             resultadoMetaDia.textContent = formatarMoeda(metaDiaria);
-            console.log(`📊 Faltam: ${formatarMoeda(metaDiaria)}`);
+            console.log(`📊 Faltam (Dia): ${formatarMoeda(metaDiaria)}`);
           }
         }
 
-        // ========================================================================================================================
-        //          📅 DISPLAY DA META DO MÊS - VERSÃO FINAL CORRIGIDA
-        // ========================================================================================================================
+        // ✅ ATUALIZAR META DO MÊS
         if (resultadoMetaMes) {
           var metaMensalBase = arredondarParaDuasCasas(
             metaDiariaBase * diasRestantesMes
@@ -1215,42 +1276,47 @@ document.addEventListener("DOMContentLoaded", () => {
 
           console.log(`📅 Verificando Meta do Mês:
           Meta Base: R$ ${metaMensalBase.toFixed(2)}
-          Lucro Total: R$ ${lucroTotal.toFixed(2)}
+          Lucro Mês Atual: R$ ${lucroMesAtual.toFixed(2)}
           Meta Restante: R$ ${metaMensal.toFixed(2)}`);
 
-          // ⭐ CASO 1: Meta batida exatamente
-          if (metaMensal <= 0.01) {
-            resultadoMetaMes.innerHTML =
-              'Meta Batida! <i class="fa-solid fa-trophy" style="color: #FFD700;"></i>';
-            console.log("🏆 META MENSAL BATIDA!");
-          }
-          // ⭐ CASO 2: Meta superada (lucro ultrapassou a meta - QUALQUER VALOR)
-          else if (lucroTotal > metaMensalBase && metaMensalBase > 0) {
-            var valorExcedenteMes = arredondarParaDuasCasas(
-              lucroTotal - metaMensalBase
-            );
-            var excedenteFormatadoMes = formatarMoeda(valorExcedenteMes);
+          if (
+            lucroMesAtual > 0 &&
+            metaMensalBase > 0 &&
+            lucroMesAtual >= metaMensalBase
+          ) {
+            var valorExtraMes = lucroMesAtual - metaMensalBase;
+            var valorExtraMesArredondado =
+              Math.round(valorExtraMes * 100) / 100;
             var metaRiscadaMes = formatarMoeda(metaMensalBase);
 
-            resultadoMetaMes.innerHTML =
-              '<span style="text-decoration: line-through;">' +
-              metaRiscadaMes +
-              "</span> " +
-              "Superada! +" +
-              excedenteFormatadoMes +
-              ' <i class="fa-solid fa-rocket" style="color: #FF6B6B;"></i>';
-            console.log(`🚀 META MENSAL SUPERADA! +${excedenteFormatadoMes}`);
-          }
-          // ⭐ CASO 3: Meta ainda não batida
-          else {
+            if (valorExtraMesArredondado === 0) {
+              resultadoMetaMes.innerHTML =
+                '<span style="text-decoration: line-through; color: #7f8c8d;">' +
+                metaRiscadaMes +
+                '</span> Meta Batida! <i class="fa-solid fa-trophy" style="color: #FFD700;"></i>';
+              console.log("🏆 META MENSAL EXATA!");
+            } else if (valorExtraMesArredondado > 0) {
+              var excedenteFormatadoMes = formatarMoeda(
+                valorExtraMesArredondado
+              );
+              resultadoMetaMes.innerHTML =
+                '<span style="text-decoration: line-through; color: #7f8c8d;">' +
+                metaRiscadaMes +
+                '</span> Superada! <span style="color: #FFD700;">+' +
+                excedenteFormatadoMes +
+                '</span> <i class="fa-solid fa-rocket" style="color: #FF6B6B;"></i>';
+              console.log(`🚀 META MENSAL SUPERADA! +${excedenteFormatadoMes}`);
+            } else {
+              resultadoMetaMes.textContent = formatarMoeda(metaMensal);
+              console.log(`📊 Faltam (Mensal): ${formatarMoeda(metaMensal)}`);
+            }
+          } else {
             resultadoMetaMes.textContent = formatarMoeda(metaMensal);
             console.log(`📊 Faltam (Mensal): ${formatarMoeda(metaMensal)}`);
           }
         }
 
-        // ========================================================================================================================
-        //          📆 DISPLAY DA META DO ANO - VERSÃO FINAL CORRIGIDA
-        // ========================================================================================================================
+        // ✅ ATUALIZAR META DO ANO
         if (resultadoMetaAno) {
           var metaAnualBase = arredondarParaDuasCasas(
             metaDiariaBase * diasRestantesAno
@@ -1258,82 +1324,148 @@ document.addEventListener("DOMContentLoaded", () => {
 
           console.log(`📆 Verificando Meta do Ano:
           Meta Base: R$ ${metaAnualBase.toFixed(2)}
-          Lucro Total: R$ ${lucroTotal.toFixed(2)}
+          Lucro Ano Atual: R$ ${lucroAnoAtual.toFixed(2)}
           Meta Restante: R$ ${metaAnual.toFixed(2)}`);
 
-          // ⭐ CASO 1: Meta batida exatamente
-          if (metaAnual <= 0.01) {
-            resultadoMetaAno.innerHTML =
-              'Meta Batida! <i class="fa-solid fa-trophy" style="color: #FFD700;"></i>';
-            console.log("🏆 META ANUAL BATIDA!");
-          }
-          // ⭐ CASO 2: Meta superada (lucro ultrapassou a meta - QUALQUER VALOR)
-          else if (lucroTotal > metaAnualBase && metaAnualBase > 0) {
-            var valorExcedenteAno = arredondarParaDuasCasas(
-              lucroTotal - metaAnualBase
-            );
-            var excedenteFormatadoAno = formatarMoeda(valorExcedenteAno);
+          if (
+            lucroAnoAtual > 0 &&
+            metaAnualBase > 0 &&
+            lucroAnoAtual >= metaAnualBase
+          ) {
+            var valorExtraAno = lucroAnoAtual - metaAnualBase;
+            var valorExtraAnoArredondado =
+              Math.round(valorExtraAno * 100) / 100;
             var metaRiscadaAno = formatarMoeda(metaAnualBase);
 
-            resultadoMetaAno.innerHTML =
-              '<span style="text-decoration: line-through;">' +
-              metaRiscadaAno +
-              "</span> " +
-              "Superada! +" +
-              excedenteFormatadoAno +
-              ' <i class="fa-solid fa-rocket" style="color: #FF6B6B;"></i>';
-            console.log(`🚀 META ANUAL SUPERADA! +${excedenteFormatadoAno}`);
-          }
-          // ⭐ CASO 3: Meta ainda não batida
-          else {
+            if (valorExtraAnoArredondado === 0) {
+              resultadoMetaAno.innerHTML =
+                '<span style="text-decoration: line-through; color: #7f8c8d;">' +
+                metaRiscadaAno +
+                '</span> Meta Batida! <i class="fa-solid fa-trophy" style="color: #FFD700;"></i>';
+              console.log("🏆 META ANUAL EXATA!");
+            } else if (valorExtraAnoArredondado > 0) {
+              var excedenteFormatadoAno = formatarMoeda(
+                valorExtraAnoArredondado
+              );
+              resultadoMetaAno.innerHTML =
+                '<span style="text-decoration: line-through; color: #7f8c8d;">' +
+                metaRiscadaAno +
+                '</span> Superada! <span style="color: #FFD700;">+' +
+                excedenteFormatadoAno +
+                '</span> <i class="fa-solid fa-rocket" style="color: #FF6B6B;"></i>';
+              console.log(`🚀 META ANUAL SUPERADA! +${excedenteFormatadoAno}`);
+            } else {
+              resultadoMetaAno.textContent = formatarMoeda(metaAnual);
+              console.log(`📊 Faltam (Anual): ${formatarMoeda(metaAnual)}`);
+            }
+          } else {
             resultadoMetaAno.textContent = formatarMoeda(metaAnual);
             console.log(`📊 Faltam (Anual): ${formatarMoeda(metaAnual)}`);
           }
         }
 
-        // ========================================================================================================================
-        //          🎯 CÁLCULO DE ENTRADAS NECESSÁRIAS - VERSÃO FINAL
-        // ========================================================================================================================
+        // ✅ CÁLCULO DE ENTRADAS NECESSÁRIAS - COM MENSAGENS PERSONALIZADAS
         if (oddsMeta && resultadoEntradas) {
           var oddsValor = parseFloat(oddsMeta.value.replace(",", ".")) || 1.5;
+          var metaDiariaArredondada = Math.round(metaDiaria * 100) / 100;
 
-          console.log(`🎲 Calculando entradas:
-          Odds: ${oddsValor}
-          Meta Restante: R$ ${metaDiaria.toFixed(2)}`);
+          // ✅ Pegar o label para personalizar também
+          var labelEntradas =
+            document.querySelector("#resultadoEntradas").previousElementSibling;
 
-          // ⭐ Meta já batida
-          if (metaDiaria <= 0.01) {
-            resultadoEntradas.innerHTML =
-              'Meta Batida! <i class="fa-solid fa-trophy" style="color: #FFD700;"></i>';
-            console.log("🏆 Entradas: Meta já batida!");
-          }
-          // ⭐ Calcular entradas necessárias
-          else if (unidadeEntrada > 0 && metaDiaria > 0) {
-            var lucroPorEntrada = arredondarParaDuasCasas(
-              unidadeEntrada * (oddsValor - 1)
-            );
+          // ✅ VERIFICAR SE META FOI BATIDA OU SUPERADA
+          if (
+            lucroHoje > 0 &&
+            metaDiariaBase > 0 &&
+            lucroHoje >= metaDiariaBase
+          ) {
+            var valorExtraDia = lucroHoje - metaDiariaBase;
+            var valorExtraDiaArredondado =
+              Math.round(valorExtraDia * 100) / 100;
 
-            if (lucroPorEntrada > 0) {
-              var entradasNecessarias = Math.ceil(metaDiaria / lucroPorEntrada);
-              resultadoEntradas.textContent =
-                entradasNecessarias + " Entradas Positivas";
-              console.log(`📊 Entradas necessárias: ${entradasNecessarias}`);
+            if (valorExtraDiaArredondado > 0) {
+              // META SUPERADA
+              if (labelEntradas) {
+                labelEntradas.innerHTML =
+                  '<span style="color: #FFD700;">🎉 Parabéns!</span>';
+              }
+              resultadoEntradas.innerHTML =
+                '<span style="color: #FFD700;">Meta Superada!</span> <i class="fa-solid fa-rocket" style="color: #FF6B6B;"></i>';
+              console.log("🚀 META SUPERADA - Mensagem especial exibida!");
             } else {
-              resultadoEntradas.textContent = "Ajuste as odds";
-              console.log("⚠️ Odds muito baixas");
+              // META EXATAMENTE BATIDA
+              if (labelEntradas) {
+                labelEntradas.innerHTML =
+                  '<span style="color: #FFD700;">🎉 Parabéns!</span>';
+              }
+              resultadoEntradas.innerHTML =
+                '<span style="color: #FFD700;">Meta Batida!</span> <i class="fa-solid fa-trophy" style="color: #FFD700;"></i>';
+              console.log("🏆 META BATIDA - Mensagem especial exibida!");
             }
+          } else if (metaDiariaArredondada <= 0 && lucroHoje > 0) {
+            // META JÁ BATIDA (restante é zero ou negativo)
+            if (labelEntradas) {
+              labelEntradas.innerHTML =
+                '<span style="color: #FFD700;">🎉 Parabéns!</span>';
+            }
+            resultadoEntradas.innerHTML =
+              '<span style="color: #FFD700;">Meta Batida!</span> <i class="fa-solid fa-trophy" style="color: #FFD700;"></i>';
+            console.log("🏆 META BATIDA - Mensagem especial exibida!");
           } else {
-            resultadoEntradas.textContent = "Configure os valores";
-            console.log("⚠️ Valores insuficientes");
+            // META AINDA NÃO BATIDA - CALCULAR ENTRADAS
+            if (labelEntradas) {
+              labelEntradas.textContent = "Para Bater a Meta do Dia Fazer:";
+            }
+
+            if (unidadeEntrada > 0 && metaDiaria > 0) {
+              var lucroPorEntrada = arredondarParaDuasCasas(
+                unidadeEntrada * (oddsValor - 1)
+              );
+
+              if (lucroPorEntrada > 0) {
+                var entradasNecessarias = Math.ceil(
+                  metaDiaria / lucroPorEntrada
+                );
+                resultadoEntradas.textContent =
+                  entradasNecessarias + " Entradas Positivas";
+                console.log(`📊 Entradas necessárias: ${entradasNecessarias}`);
+              } else {
+                resultadoEntradas.textContent = "Ajuste as odds";
+                console.log("⚠️ Odds muito baixas");
+              }
+            } else {
+              resultadoEntradas.textContent = "Configure os valores";
+              console.log("⚠️ Valores insuficientes");
+            }
           }
         }
 
-        console.log("🎉 ATUALIZAÇÃO COMPLETA!");
+        console.log("🎉 ATUALIZAÇÃO COMPLETA COM LUCRO MENSAL/ANUAL!");
       })
       .catch(function (error) {
         console.error("❌ Erro ao buscar dados:", error);
       });
   }
+
+  // ✅ FUNÇÕES AUXILIARES (manter as existentes)
+  function arredondarParaDuasCasas(valor) {
+    if (isNaN(valor) || valor === null) return 0;
+    return Number(Number(valor).toFixed(2));
+  }
+
+  function formatarMoeda(valor) {
+    const valorArredondado = arredondarParaDuasCasas(valor);
+    return valorArredondado.toLocaleString("pt-BR", {
+      style: "currency",
+      currency: "BRL",
+      minimumFractionDigits: 2,
+      maximumFractionDigits: 2,
+    });
+  }
+
+  console.log(
+    "✅ Função atualizarUnidadeEntradaTempoReal() CORRIGIDA com lucro mensal/anual!"
+  );
 
   console.log(
     "✅ Função atualizarUnidadeEntradaTempoReal() VERSÃO FINAL carregada!"
@@ -1534,7 +1666,7 @@ document.addEventListener("DOMContentLoaded", () => {
         : numeroInicialOdds.toFixed(2);
     }
 
-    // ✅ CARREGAMENTO INICIAL
+    // ✅ CARREGAMENTO INICIAL - VERSÃO CORRIGIDA COM SINCRONIZAÇÃO
     fetch("ajax_deposito.php")
       .then((response) => response.json())
       .then((data) => {
@@ -1593,18 +1725,50 @@ document.addEventListener("DOMContentLoaded", () => {
           destacarMetaSelecionada("fixa");
         }
 
-        // ✅ MÚLTIPLAS CHAMADAS PARA GARANTIR ATUALIZAÇÃO
-        setTimeout(() => {
-          atualizarUnidadeEntradaTempoReal();
-        }, 100);
+        // ✅ SISTEMA CORRIGIDO: AGUARDAR LUCRO ESTAR NO DOM ANTES DE CALCULAR
+        console.log("⏳ Aguardando lucro ser renderizado...");
 
-        setTimeout(() => {
-          atualizarUnidadeEntradaTempoReal();
-        }, 300);
+        const aguardarLucroECalcular = () => {
+          const lucroLabel = document.getElementById("valorLucroLabel");
+          const lucroNoDOM = lucroLabel?.textContent || "";
 
-        setTimeout(() => {
-          atualizarUnidadeEntradaTempoReal();
-        }, 600);
+          console.log(`🔍 Verificando lucro no DOM: "${lucroNoDOM}"`);
+
+          // ✅ Só calcula se o lucro já estiver visível
+          if (lucroNoDOM.includes("R$") && lucroNoDOM !== "R$ 0,00") {
+            console.log("✅ Lucro carregado! Iniciando cálculos...");
+
+            setTimeout(() => {
+              console.log("🔄 Primeira atualização (dados prontos)");
+              if (typeof atualizarUnidadeEntradaTempoReal === "function") {
+                atualizarUnidadeEntradaTempoReal();
+              }
+            }, 200);
+
+            setTimeout(() => {
+              console.log("🔄 Segunda atualização (sincronização)");
+              if (typeof atualizarUnidadeEntradaTempoReal === "function") {
+                atualizarUnidadeEntradaTempoReal();
+              }
+            }, 500);
+
+            setTimeout(() => {
+              console.log("🔄 Terceira atualização (verificação final)");
+              if (typeof atualizarUnidadeEntradaTempoReal === "function") {
+                atualizarUnidadeEntradaTempoReal();
+              }
+            }, 800);
+          } else {
+            // ✅ Se ainda não estiver pronto, tenta novamente em 100ms
+            console.log(
+              "⏳ Lucro ainda não renderizado, tentando novamente..."
+            );
+            setTimeout(aguardarLucroECalcular, 100);
+          }
+        };
+
+        // ✅ Inicia verificação após pequeno delay
+        setTimeout(aguardarLucroECalcular, 100);
 
         // ✅ ATUALIZAR RÓTULOS COM DIAS RESTANTES
         atualizarRotulosComDias();
@@ -2045,20 +2209,143 @@ document.addEventListener("DOMContentLoaded", () => {
 
     console.log("✅ Modal inicializado com sucesso!");
 
-    // ✅ FORÇAR ATUALIZAÇÃO FINAL DOS CÁLCULOS APÓS TUDO ESTAR PRONTO
+    // ✅ ATUALIZAÇÃO FINAL DE SEGURANÇA (após tudo estar pronto)
     setTimeout(() => {
-      console.log("🔄 Forçando atualização final dos cálculos...");
-      if (typeof atualizarUnidadeEntradaTempoReal === "function") {
-        atualizarUnidadeEntradaTempoReal();
-      }
-    }, 800);
-
-    setTimeout(() => {
+      console.log("🔄 Forçando atualização final de segurança (1200ms)...");
       if (typeof atualizarUnidadeEntradaTempoReal === "function") {
         atualizarUnidadeEntradaTempoReal();
       }
     }, 1200);
+
+    setTimeout(() => {
+      console.log("🔄 Forçando atualização de backup (1500ms)...");
+      if (typeof atualizarUnidadeEntradaTempoReal === "function") {
+        atualizarUnidadeEntradaTempoReal();
+      }
+    }, 1500);
   }
+
+  // ========================================================================================================================
+  //          🗑️ SISTEMA DE ATUALIZAÇÃO DO MODAL DURANTE EXCLUSÕES
+  // ========================================================================================================================
+
+  // ✅ Função para atualizar APENAS o lucro no modal sem fechar
+  function atualizarLucroNoModalAberto() {
+    const modalAberto = document.getElementById("modalDeposito");
+
+    if (!modalAberto || modalAberto.style.display !== "flex") {
+      return; // Modal não está aberto
+    }
+
+    console.log("💰 Atualizando lucro no modal aberto após exclusão...");
+
+    fetch("ajax_deposito.php?_=" + Date.now())
+      .then((response) => response.json())
+      .then((data) => {
+        if (!data.success) {
+          console.warn("⚠️ Erro ao buscar dados para atualizar lucro");
+          return;
+        }
+
+        const lucroTotalLabel = document.getElementById("valorLucroLabel");
+        const lucro = parseFloat(data.lucro) || 0;
+
+        if (lucroTotalLabel) {
+          const lucroFormatado = lucro.toLocaleString("pt-BR", {
+            style: "currency",
+            currency: "BRL",
+          });
+
+          console.log(`✅ Lucro atualizado no modal: ${lucroFormatado}`);
+
+          lucroTotalLabel.textContent = lucroFormatado;
+
+          // ✅ Atualizar sistema de lucro dinâmico
+          if (window.SistemaLucroDinamico?.atualizarLucro) {
+            window.SistemaLucroDinamico.atualizarLucro(lucro);
+          }
+
+          // ✅ FORÇAR RECÁLCULO DAS METAS
+          setTimeout(() => {
+            if (typeof atualizarUnidadeEntradaTempoReal === "function") {
+              console.log("🔄 Recalculando metas após atualização do lucro...");
+              atualizarUnidadeEntradaTempoReal();
+            }
+          }, 100);
+        }
+      })
+      .catch((error) => {
+        console.error("❌ Erro ao atualizar lucro no modal:", error);
+      });
+  }
+
+  // ✅ Integrar com eventos de exclusão existentes
+  document.addEventListener("areaAtualizacao", (event) => {
+    const tipo = event.detail?.tipo || "";
+
+    // ✅ Se foi uma exclusão, atualiza o lucro no modal
+    if (
+      tipo.includes("exclusao") ||
+      tipo === "exclusao_manual" ||
+      tipo === "exclusao_dom" ||
+      tipo === "confirmacao_exclusao"
+    ) {
+      console.log(`📢 Evento de exclusão detectado: ${tipo}`);
+
+      // ✅ Aguardar um pouco para o servidor processar
+      setTimeout(() => {
+        atualizarLucroNoModalAberto();
+      }, 200);
+
+      setTimeout(() => {
+        atualizarLucroNoModalAberto();
+      }, 500);
+    }
+  });
+
+  // ✅ Também escutar evento específico de exclusão
+  document.addEventListener("mentorExcluido", () => {
+    console.log("📢 Evento mentorExcluido - atualizando lucro no modal");
+    setTimeout(() => {
+      atualizarLucroNoModalAberto();
+    }, 300);
+  });
+
+  console.log("✅ Sistema de atualização de lucro no modal configurado!");
+
+  // ✅ Integrar com eventos de exclusão existentes
+  document.addEventListener("areaAtualizacao", (event) => {
+    const tipo = event.detail?.tipo || "";
+
+    // ✅ Se foi uma exclusão, atualiza o lucro no modal
+    if (
+      tipo.includes("exclusao") ||
+      tipo === "exclusao_manual" ||
+      tipo === "exclusao_dom" ||
+      tipo === "confirmacao_exclusao"
+    ) {
+      console.log(`📢 Evento de exclusão detectado: ${tipo}`);
+
+      // ✅ Aguardar um pouco para o servidor processar
+      setTimeout(() => {
+        atualizarLucroNoModalAberto();
+      }, 200);
+
+      setTimeout(() => {
+        atualizarLucroNoModalAberto();
+      }, 500);
+    }
+  });
+
+  // ✅ Também escutar evento específico de exclusão
+  document.addEventListener("mentorExcluido", () => {
+    console.log("📢 Evento mentorExcluido - atualizando lucro no modal");
+    setTimeout(() => {
+      atualizarLucroNoModalAberto();
+    }, 300);
+  });
+
+  console.log("✅ Sistema de atualização de lucro no modal configurado!");
 
   // ✅ ADICIONAR ESTAS FUNÇÕES APÓS A FUNÇÃO inicializarModalDeposito():
 
@@ -3455,4 +3742,406 @@ console.log("✅ Sistema de monitoramento de lucro configurado!");
 
 // ========================================================================================================================
 //                    FIM: INTEGRAÇÃO CORRIGIDA
+// ========================================================================================================================
+// ========================================================================================================================
+//          🚫 SISTEMA DE VALIDAÇÃO META TURBO - VERSÃO DEFINITIVA E COMPLETA
+// ========================================================================================================================
+
+const SistemaValidacaoMetaTurbo = {
+  modalAviso: null,
+  metaFixaRadio: null,
+  metaTurboRadio: null,
+  eventosConfigurados: false,
+  bloqueioAtivo: false,
+
+  inicializar() {
+    console.log("🔒 Inicializando Sistema de Validação Meta Turbo...");
+
+    this.modalAviso = document.getElementById("modalAvisoMetaTurbo");
+    this.metaFixaRadio = document.getElementById("metaFixa");
+    this.metaTurboRadio = document.getElementById("metaTurbo");
+
+    if (!this.modalAviso || !this.metaFixaRadio || !this.metaTurboRadio) {
+      console.warn("⚠️ Elementos necessários não encontrados");
+      return;
+    }
+
+    if (!this.eventosConfigurados) {
+      this.bloquearMetaTurbo();
+      this.configurarModal();
+      this.eventosConfigurados = true;
+    }
+
+    console.log("✅ Sistema de Validação Meta Turbo ativo!");
+  },
+
+  bloquearMetaTurbo() {
+    const opcaoMetaTurbo = this.metaTurboRadio.closest(".opcao-meta");
+
+    if (!opcaoMetaTurbo) {
+      console.error("❌ Container .opcao-meta não encontrado!");
+      return;
+    }
+
+    // ✅ BLOQUEAR NO DOCUMENT LEVEL (mais abrangente)
+    document.addEventListener(
+      "click",
+      (e) => {
+        // ✅ Se clicar no botão de info, permitir
+        if (e.target.closest('.info-btn[data-modal="modalTurbo"]')) {
+          return;
+        }
+
+        // ✅ Se clicar no tooltip, permitir
+        if (e.target.closest("#tooltipTurbo")) {
+          return;
+        }
+
+        // ✅ Se clicar no container Meta Turbo (exceto info)
+        const clickNoMetaTurbo =
+          e.target.closest(".opcao-meta") === opcaoMetaTurbo;
+
+        if (clickNoMetaTurbo) {
+          console.log("🎯 Click detectado no Meta Turbo");
+
+          if (!this.verificarSaldoPositivo()) {
+            console.log("🚫 BLOQUEADO - Exibindo modal");
+            e.preventDefault();
+            e.stopPropagation();
+            e.stopImmediatePropagation();
+
+            this.bloqueioAtivo = true;
+            this.exibirModalAviso();
+            this.forcarMetaFixa();
+
+            setTimeout(() => {
+              this.bloqueioAtivo = false;
+            }, 1000);
+
+            return false;
+          }
+        }
+      },
+      true
+    );
+
+    // ✅ BLOQUEAR DIRETAMENTE NO RADIO
+    this.metaTurboRadio.addEventListener("change", (e) => {
+      console.log("🔄 Change detectado no radio Meta Turbo");
+
+      if (!this.verificarSaldoPositivo()) {
+        console.log("🚫 Change bloqueado");
+        e.preventDefault();
+        e.stopPropagation();
+        e.stopImmediatePropagation();
+
+        this.exibirModalAviso();
+        this.forcarMetaFixa();
+        return false;
+      }
+    });
+
+    // ✅ BLOQUEAR TENTATIVAS DE MARCAR VIA CÓDIGO
+    Object.defineProperty(this.metaTurboRadio, "checked", {
+      get() {
+        return this._checked || false;
+      },
+      set(value) {
+        if (
+          value === true &&
+          !SistemaValidacaoMetaTurbo.verificarSaldoPositivo()
+        ) {
+          console.log("🚫 Tentativa de marcar Meta Turbo via código bloqueada");
+          SistemaValidacaoMetaTurbo.exibirModalAviso();
+          SistemaValidacaoMetaTurbo.forcarMetaFixa();
+          return;
+        }
+        this._checked = value;
+        if (value) {
+          this.setAttribute("checked", "");
+        } else {
+          this.removeAttribute("checked");
+        }
+      },
+      configurable: true,
+    });
+
+    // ✅ VERIFICAÇÃO PERIÓDICA AGRESSIVA
+    setInterval(() => {
+      if (
+        !this.bloqueioAtivo &&
+        this.metaTurboRadio &&
+        this.metaTurboRadio.checked
+      ) {
+        if (!this.verificarSaldoPositivo()) {
+          console.log("⏰ Verificação periódica: Meta Turbo inválida");
+          this.forcarMetaFixa();
+        }
+      }
+    }, 200);
+
+    console.log("✅ Bloqueios configurados");
+  },
+
+  configurarModal() {
+    const btnFechar = this.modalAviso.querySelector(".btn-fechar-aviso");
+    if (btnFechar) {
+      btnFechar.addEventListener("click", () => this.fecharModal());
+    }
+
+    const btnEntendi = document.getElementById("btnEntendiFecha");
+    if (btnEntendi) {
+      btnEntendi.addEventListener("click", () => this.fecharModal());
+    }
+
+    this.modalAviso.addEventListener("click", (e) => {
+      if (e.target === this.modalAviso) {
+        this.fecharModal();
+      }
+    });
+
+    document.addEventListener("keydown", (e) => {
+      if (e.key === "Escape" && this.modalAviso.style.display === "flex") {
+        this.fecharModal();
+      }
+    });
+  },
+
+  verificarSaldoPositivo() {
+    const lucroLabel = document.getElementById("valorLucroLabel");
+
+    if (!lucroLabel) {
+      console.log("⚠️ Label de lucro não encontrado - BLOQUEANDO");
+      return false;
+    }
+
+    const lucroTexto = lucroLabel.textContent || "R$ 0,00";
+    const lucroNumerico = this.extrairValorNumerico(lucroTexto);
+
+    console.log(
+      `💰 Verificando Lucro: "${lucroTexto}" = R$ ${lucroNumerico.toFixed(2)}`
+    );
+
+    // ✅ REGRA: Lucro deve ser MAIOR que zero (não pode ser zero nem negativo)
+    const liberado = lucroNumerico > 0;
+
+    if (!liberado) {
+      console.log(
+        `❌ BLOQUEADO - Lucro = ${lucroNumerico.toFixed(2)} (precisa ser > 0)`
+      );
+    } else {
+      console.log("✅ LIBERADO - Lucro positivo");
+    }
+
+    return liberado;
+  },
+
+  extrairValorNumerico(texto) {
+    if (typeof texto === "number") return texto;
+
+    // Remove tudo exceto números, vírgula, ponto e sinal de menos
+    let valorLimpo = texto.replace(/[^\d,.-]/g, "");
+
+    // Detecta se é negativo
+    const ehNegativo = valorLimpo.includes("-");
+
+    // Remove caracteres não numéricos
+    valorLimpo = valorLimpo.replace(/[^0-9.]/g, "");
+
+    // Converte para número
+    let valor = parseFloat(valorLimpo) || 0;
+
+    // Aplica sinal negativo se necessário
+    if (ehNegativo) {
+      valor = -Math.abs(valor);
+    }
+
+    return valor;
+  },
+
+  exibirModalAviso() {
+    console.log("⚠️ Exibindo modal de aviso Meta Turbo");
+
+    if (this.modalAviso) {
+      this.modalAviso.style.display = "flex";
+      this.modalAviso.classList.add("ativo");
+      document.body.style.overflow = "hidden";
+
+      // ✅ Garantir que Meta Fixa está marcada
+      setTimeout(() => {
+        this.forcarMetaFixa();
+      }, 50);
+    }
+  },
+
+  fecharModal() {
+    console.log("✅ Fechando modal de aviso");
+
+    if (this.modalAviso) {
+      this.modalAviso.style.display = "none";
+      this.modalAviso.classList.remove("ativo");
+      document.body.style.overflow = "";
+    }
+  },
+
+  forcarMetaFixa() {
+    if (this.metaFixaRadio && this.metaTurboRadio) {
+      console.log("🔒 Forçando Meta Fixa");
+
+      // ✅ Desmarcar Turbo primeiro
+      this.metaTurboRadio._checked = false;
+      this.metaTurboRadio.checked = false;
+      this.metaTurboRadio.removeAttribute("checked");
+
+      // ✅ Marcar Fixa
+      this.metaFixaRadio._checked = true;
+      this.metaFixaRadio.checked = true;
+      this.metaFixaRadio.setAttribute("checked", "");
+
+      // ✅ Atualizar visual
+      if (typeof destacarMetaSelecionada === "function") {
+        destacarMetaSelecionada("fixa");
+      }
+
+      // ✅ Atualizar cálculos
+      setTimeout(() => {
+        if (typeof atualizarUnidadeEntradaTempoReal === "function") {
+          atualizarUnidadeEntradaTempoReal();
+        }
+      }, 50);
+    }
+  },
+};
+
+// ✅ INICIALIZAR UMA VEZ
+let sistemaInicializado = false;
+
+document.addEventListener("DOMContentLoaded", function () {
+  if (!sistemaInicializado) {
+    setTimeout(() => {
+      SistemaValidacaoMetaTurbo.inicializar();
+      sistemaInicializado = true;
+
+      // ✅ Verificar estado inicial
+      setTimeout(() => {
+        const metaTurbo = document.getElementById("metaTurbo");
+        if (metaTurbo && metaTurbo.checked) {
+          if (!SistemaValidacaoMetaTurbo.verificarSaldoPositivo()) {
+            console.log("🚨 Estado inicial inválido - corrigindo");
+            SistemaValidacaoMetaTurbo.exibirModalAviso();
+          }
+        }
+      }, 500);
+    }, 1500);
+  }
+});
+
+// ✅ VERIFICAR quando modal de banca abrir
+document.addEventListener("DOMContentLoaded", function () {
+  setTimeout(() => {
+    const modalDeposito = document.getElementById("modalDeposito");
+
+    if (modalDeposito) {
+      const observer = new MutationObserver((mutations) => {
+        mutations.forEach((mutation) => {
+          if (mutation.attributeName === "style") {
+            if (
+              modalDeposito.style.display === "flex" ||
+              modalDeposito.style.display === "block"
+            ) {
+              setTimeout(() => {
+                const metaTurbo = document.getElementById("metaTurbo");
+
+                if (metaTurbo && metaTurbo.checked) {
+                  if (!SistemaValidacaoMetaTurbo.verificarSaldoPositivo()) {
+                    console.log("⚠️ Modal aberto com Meta Turbo inválida");
+                    SistemaValidacaoMetaTurbo.exibirModalAviso();
+                  }
+                }
+              }, 200);
+            }
+          }
+        });
+      });
+
+      observer.observe(modalDeposito, {
+        attributes: true,
+        attributeFilter: ["style"],
+      });
+    }
+  }, 2000);
+});
+
+// ✅ VERIFICAR quando banca/lucro atualizar
+document.addEventListener("bancaAtualizada", () => {
+  setTimeout(() => {
+    const metaTurbo = document.getElementById("metaTurbo");
+    if (metaTurbo && metaTurbo.checked) {
+      if (!SistemaValidacaoMetaTurbo.verificarSaldoPositivo()) {
+        console.log("📢 Banca atualizada: lucro inválido para Meta Turbo");
+        SistemaValidacaoMetaTurbo.exibirModalAviso();
+      }
+    }
+  }, 200);
+});
+
+// ✅ COMANDOS DE DEBUG
+window.testarValidacaoMetaTurbo = function () {
+  const metaTurbo = document.getElementById("metaTurbo");
+  console.log("🧪 Estado antes:", metaTurbo?.checked);
+
+  const opcaoMeta = metaTurbo?.closest(".opcao-meta");
+  if (opcaoMeta) {
+    const label = opcaoMeta.querySelector('label[for="metaTurbo"]');
+    if (label) label.click();
+  }
+
+  setTimeout(() => {
+    console.log("🧪 Estado depois:", metaTurbo?.checked);
+  }, 100);
+};
+
+window.verificarEstadoMetaTurbo = function () {
+  const lucroLabel = document.getElementById("valorLucroLabel");
+  const metaTurbo = document.getElementById("metaTurbo");
+
+  console.log("📊 DIAGNÓSTICO COMPLETO:");
+  console.log("━".repeat(60));
+  console.log("Lucro (texto):", lucroLabel?.textContent || "N/A");
+  console.log(
+    "Lucro (número):",
+    SistemaValidacaoMetaTurbo.extrairValorNumerico(
+      lucroLabel?.textContent || "0"
+    ).toFixed(2)
+  );
+  console.log(
+    "Saldo positivo?",
+    SistemaValidacaoMetaTurbo.verificarSaldoPositivo()
+  );
+  console.log("Meta Turbo marcada?", metaTurbo?.checked);
+  console.log("Meta Turbo _checked?", metaTurbo?._checked);
+  console.log("━".repeat(60));
+};
+
+window.forcarTesteMetaTurbo = function () {
+  const metaTurbo = document.getElementById("metaTurbo");
+  console.log("🧪 Forçando teste...");
+
+  // Tentar marcar direto
+  metaTurbo.checked = true;
+  console.log("Após marcar:", metaTurbo.checked);
+
+  // Tentar via click
+  metaTurbo.click();
+  console.log("Após click:", metaTurbo.checked);
+};
+
+console.log("✅ Sistema de Validação Meta Turbo DEFINITIVO carregado!");
+console.log("🧪 Comandos disponíveis:");
+console.log("   verificarEstadoMetaTurbo() - Diagnóstico completo");
+console.log("   testarValidacaoMetaTurbo() - Testar bloqueio");
+console.log("   forcarTesteMetaTurbo() - Teste forçado");
+
+// ========================================================================================================================
+//          FIM: SISTEMA DE VALIDAÇÃO META TURBO
 // ========================================================================================================================

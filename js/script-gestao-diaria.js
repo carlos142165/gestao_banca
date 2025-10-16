@@ -2464,7 +2464,7 @@ const MetaDiariaManager = {
         mostrarTachado = false;
 
       console.log(`🔍 DEBUG CALCULAR META COM EXTRA:`);
-      console.log(`   Saldo: R$ ${saldoDia.toFixed(2)}`);
+      console.log(`   Saldo do Dia: R$ ${saldoDia.toFixed(2)}`);
       console.log(`   Meta: R$ ${metaCalculada.toFixed(2)}`);
       console.log(`   Banca: R$ ${bancaTotal.toFixed(2)}`);
 
@@ -2983,7 +2983,7 @@ const MetaDiariaManager = {
       ) {
         classeCor = "barra-meta-batida";
         console.log(
-          `✅ BARRA META BATIDA/SUPERADA - Saldo: R$ ${saldoDia.toFixed(
+          `✅ BARRA META BATIDA/SUPERADA - Saldo do Dia: R$ ${saldoDia.toFixed(
             2
           )}, Meta: R$ ${metaCalculada.toFixed(2)}`
         );
@@ -2992,7 +2992,7 @@ const MetaDiariaManager = {
         console.log(
           `✅ BARRA NORMAL - Status: ${
             resultado.statusClass
-          }, Saldo: R$ ${saldoDia.toFixed(2)}`
+          }, Saldo do Dia: R$ ${saldoDia.toFixed(2)}`
         );
       }
 
@@ -3027,7 +3027,7 @@ const MetaDiariaManager = {
           currency: "BRL",
         });
 
-        let textoSaldo = "Saldo";
+        let textoSaldo = "Saldo do Dia";
         let iconeClass = "fa-solid fa-wallet";
 
         if (saldoDia > 0) {
@@ -3037,7 +3037,7 @@ const MetaDiariaManager = {
           textoSaldo = "Negativo";
           iconeClass = "fa-solid fa-arrow-trend-down";
         } else {
-          textoSaldo = "Saldo";
+          textoSaldo = "Saldo do Dia";
           iconeClass = "fa-solid fa-wallet";
         }
 
@@ -6434,3 +6434,899 @@ if (document.readyState === "loading") {
 //
 //
 //
+// ========================================================================================================================
+//                     🎯 SISTEMA DE ALTERNÂNCIA AUTOMÁTICA: META FIXA ↔️ META TURBO
+// ========================================================================================================================
+//
+// ========================================================================================================================
+//                     🎯 CORREÇÃO: VERIFICAÇÃO DE LUCRO TOTAL PARA META TURBO
+// ========================================================================================================================
+//
+// PROBLEMA IDENTIFICADO:
+// - Sistema estava verificando lucro do período filtrado (dia/mês/ano)
+// - CORRETO: Verificar lucro total histórico da banca
+//
+// NOVA REGRA:
+// ✅ Meta Turbo disponível quando lucro_total_historico > 0
+// ❌ Meta Turbo bloqueada quando lucro_total_historico ≤ 0
+//
+// ========================================================================================================================
+
+(function () {
+  "use strict";
+
+  console.log(
+    "🔧 Aplicando correção: Verificação de Lucro Total para Meta Turbo..."
+  );
+
+  // ==========================================
+  // CONFIGURAÇÃO ATUALIZADA
+  // ==========================================
+
+  const CONFIG_META_CORRIGIDO = {
+    TIPOS: {
+      FIXA: "fixa",
+      TURBO: "turbo",
+    },
+
+    ESTADOS_LUCRO: {
+      POSITIVO: "positivo",
+      NEUTRO: "neutro",
+      NEGATIVO: "negativo",
+    },
+
+    TEXTOS: {
+      fixa: "META FIXA",
+      turbo: "META TURBO",
+    },
+
+    // 🆕 NOVO: Usar lucro total da banca
+    USAR_LUCRO_TOTAL: true,
+
+    NOTIFICAR_MUDANCA: true,
+    DELAY_VERIFICACAO: 200,
+    DEBUG_MODE: true,
+  };
+
+  // ==========================================
+  // GERENCIADOR DE ESTADO CORRIGIDO
+  // ==========================================
+
+  const GerenciadorEstadoMetaCorrigido = {
+    tipoAtual: "turbo",
+    lucroTotal: 0, // 🆕 Lucro total histórico
+    lucroPeriodo: 0, // Lucro do período filtrado
+    estadoLucroTotal: "neutro",
+    ultimaAlternancia: null,
+    bloqueioTemporario: false,
+    historico: [],
+
+    /**
+     * 🆕 CORRIGIDO: Determina estado baseado no LUCRO TOTAL
+     */
+    determinarEstadoLucro(valorLucroTotal) {
+      const valor = parseFloat(valorLucroTotal) || 0;
+
+      if (valor > 0) {
+        return CONFIG_META_CORRIGIDO.ESTADOS_LUCRO.POSITIVO;
+      } else if (valor < 0) {
+        return CONFIG_META_CORRIGIDO.ESTADOS_LUCRO.NEGATIVO;
+      } else {
+        return CONFIG_META_CORRIGIDO.ESTADOS_LUCRO.NEUTRO;
+      }
+    },
+
+    /**
+     * 🆕 CORRIGIDO: Verifica Meta Turbo baseado no LUCRO TOTAL
+     */
+    podeUsarMetaTurbo(valorLucroTotal) {
+      const estado = this.determinarEstadoLucro(valorLucroTotal);
+      const pode = estado === CONFIG_META_CORRIGIDO.ESTADOS_LUCRO.POSITIVO;
+
+      if (CONFIG_META_CORRIGIDO.DEBUG_MODE) {
+        console.log("🔍 Verificação Meta Turbo (LUCRO TOTAL):", {
+          lucroTotal: valorLucroTotal,
+          estado: estado,
+          podeUsarTurbo: pode,
+        });
+      }
+
+      return pode;
+    },
+
+    /**
+     * 🆕 CORRIGIDO: Atualiza estado com lucro total e período
+     */
+    atualizarEstado(dadosBanca) {
+      const estadoAnterior = {
+        tipo: this.tipoAtual,
+        lucroTotal: this.lucroTotal,
+        estadoLucro: this.estadoLucroTotal,
+      };
+
+      // 🆕 Atualizar ambos os lucros
+      this.lucroTotal =
+        parseFloat(dadosBanca.lucro_total_historico) ||
+        parseFloat(dadosBanca.lucro_total_display) ||
+        parseFloat(dadosBanca.lucro_total) ||
+        0;
+
+      this.lucroPeriodo = parseFloat(dadosBanca.lucro) || 0;
+
+      // 🆕 Estado baseado no LUCRO TOTAL
+      this.estadoLucroTotal = this.determinarEstadoLucro(this.lucroTotal);
+
+      this.tipoAtual = dadosBanca.tipo_meta || this.tipoAtual;
+
+      // Registrar no histórico se houve mudança
+      if (
+        estadoAnterior.tipo !== this.tipoAtual ||
+        estadoAnterior.estadoLucro !== this.estadoLucroTotal
+      ) {
+        this.historico.push({
+          timestamp: new Date(),
+          antes: estadoAnterior,
+          depois: {
+            tipo: this.tipoAtual,
+            lucroTotal: this.lucroTotal,
+            lucroPeriodo: this.lucroPeriodo,
+            estadoLucro: this.estadoLucroTotal,
+          },
+        });
+
+        if (this.historico.length > 10) {
+          this.historico.shift();
+        }
+      }
+
+      if (CONFIG_META_CORRIGIDO.DEBUG_MODE) {
+        console.log("📊 Estado Atualizado (CORRIGIDO):", {
+          lucroTotal: this.lucroTotal,
+          lucroPeriodo: this.lucroPeriodo,
+          estadoLucroTotal: this.estadoLucroTotal,
+          tipoMeta: this.tipoAtual,
+          podeUsarTurbo: this.podeUsarMetaTurbo(this.lucroTotal),
+        });
+      }
+    },
+
+    registrarAlternancia(motivo, de, para) {
+      this.ultimaAlternancia = {
+        timestamp: new Date(),
+        motivo: motivo,
+        de: de,
+        para: para,
+        lucroTotal: this.lucroTotal,
+        lucroPeriodo: this.lucroPeriodo,
+      };
+
+      console.log("🔄 ALTERNÂNCIA AUTOMÁTICA:", this.ultimaAlternancia);
+    },
+  };
+
+  // ==========================================
+  // VALIDADOR CORRIGIDO
+  // ==========================================
+
+  const ValidadorMetaCorrigido = {
+    /**
+     * 🆕 CORRIGIDO: Valida baseado no LUCRO TOTAL
+     */
+    async validarECorrigirMeta(dadosBanca) {
+      try {
+        // 🆕 Extrair lucro total
+        const lucroTotal =
+          parseFloat(dadosBanca.lucro_total_historico) ||
+          parseFloat(dadosBanca.lucro_total_display) ||
+          parseFloat(dadosBanca.lucro_total) ||
+          0;
+
+        const lucroPeriodo = parseFloat(dadosBanca.lucro) || 0;
+        const tipoMetaAtual = dadosBanca.tipo_meta || "turbo";
+
+        console.log("🔍 Validação de Meta:", {
+          lucroTotal: lucroTotal,
+          lucroPeriodo: lucroPeriodo,
+          tipoAtual: tipoMetaAtual,
+          periodoFiltrado: dadosBanca.periodo_ativo || "dia",
+        });
+
+        // 🆕 USAR LUCRO TOTAL para decisão
+        const podeUsarTurbo =
+          GerenciadorEstadoMetaCorrigido.podeUsarMetaTurbo(lucroTotal);
+
+        // Se está em Meta Turbo mas lucro total não é positivo
+        if (
+          tipoMetaAtual === CONFIG_META_CORRIGIDO.TIPOS.TURBO &&
+          !podeUsarTurbo
+        ) {
+          console.log(
+            "⚠️ Meta Turbo não permitida - Lucro total não é positivo"
+          );
+          console.log(`💰 Lucro Total: R$ ${lucroTotal.toFixed(2)}`);
+
+          const resultado = await this.alternarParaMetaFixa(
+            lucroTotal,
+            `Lucro total da banca não é positivo (R$ ${lucroTotal.toFixed(2)})`
+          );
+
+          return resultado;
+        }
+
+        // Se está em Meta Fixa e lucro total é positivo
+        if (
+          tipoMetaAtual === CONFIG_META_CORRIGIDO.TIPOS.FIXA &&
+          podeUsarTurbo
+        ) {
+          console.log("ℹ️ Lucro total positivo - Meta Turbo disponível");
+          console.log(`💰 Lucro Total: R$ ${lucroTotal.toFixed(2)}`);
+
+          if (CONFIG_META_CORRIGIDO.NOTIFICAR_MUDANCA) {
+            this.notificarDisponibilidadeTurbo(lucroTotal);
+          }
+        }
+
+        return {
+          valido: true,
+          tipoCorreto: tipoMetaAtual,
+          alternanciaAutomatica: false,
+          lucroTotal: lucroTotal,
+          lucroPeriodo: lucroPeriodo,
+        };
+      } catch (error) {
+        console.error("❌ Erro na validação de meta:", error);
+        return {
+          valido: false,
+          erro: error.message,
+        };
+      }
+    },
+
+    /**
+     * Alterna para Meta Fixa
+     */
+    async alternarParaMetaFixa(lucroTotal, motivo) {
+      try {
+        GerenciadorEstadoMetaCorrigido.bloqueioTemporario = true;
+
+        GerenciadorEstadoMetaCorrigido.registrarAlternancia(
+          motivo,
+          CONFIG_META_CORRIGIDO.TIPOS.TURBO,
+          CONFIG_META_CORRIGIDO.TIPOS.FIXA
+        );
+
+        const sucesso = await this.atualizarTipoMetaNoBanco(
+          CONFIG_META_CORRIGIDO.TIPOS.FIXA
+        );
+
+        if (sucesso) {
+          this.atualizarInterfaceVisual(CONFIG_META_CORRIGIDO.TIPOS.FIXA);
+
+          if (CONFIG_META_CORRIGIDO.NOTIFICAR_MUDANCA) {
+            this.notificarAlternanciaAutomatica(
+              CONFIG_META_CORRIGIDO.TIPOS.TURBO,
+              CONFIG_META_CORRIGIDO.TIPOS.FIXA,
+              motivo,
+              lucroTotal
+            );
+          }
+
+          if (typeof MetaDiariaManager !== "undefined") {
+            setTimeout(() => {
+              MetaDiariaManager.atualizarMetaDiaria(true);
+            }, 100);
+          }
+
+          GerenciadorEstadoMetaCorrigido.bloqueioTemporario = false;
+
+          return {
+            sucesso: true,
+            tipoCorreto: CONFIG_META_CORRIGIDO.TIPOS.FIXA,
+            alternanciaAutomatica: true,
+            motivo: motivo,
+          };
+        } else {
+          throw new Error("Falha ao atualizar tipo de meta no banco");
+        }
+      } catch (error) {
+        console.error("❌ Erro ao alternar para Meta Fixa:", error);
+        GerenciadorEstadoMetaCorrigido.bloqueioTemporario = false;
+
+        return {
+          sucesso: false,
+          erro: error.message,
+        };
+      }
+    },
+
+    /**
+     * Atualiza tipo de meta no banco
+     */
+    async atualizarTipoMetaNoBanco(tipoMeta) {
+      try {
+        const tipoTexto =
+          tipoMeta === CONFIG_META_CORRIGIDO.TIPOS.FIXA
+            ? "Meta Fixa"
+            : "Meta Turbo";
+
+        // 🆕 Buscar valores atuais primeiro
+        const dadosResponse = await fetch("dados_banca.php", {
+          method: "GET",
+          headers: {
+            "Cache-Control": "no-cache",
+            "X-Requested-With": "XMLHttpRequest",
+          },
+        });
+
+        let valoresAtuais = { diaria: 1, unidade: 1, odds: 1.5 };
+
+        if (dadosResponse.ok) {
+          const dadosAtuais = await dadosResponse.json();
+          if (dadosAtuais.success) {
+            valoresAtuais = {
+              diaria: parseFloat(dadosAtuais.diaria) || 1,
+              unidade: parseFloat(dadosAtuais.unidade_entrada) || 1,
+              odds: parseFloat(dadosAtuais.odds) || 1.5,
+            };
+          }
+        }
+
+        const response = await fetch("dados_banca.php", {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify({
+            acao: "alterar",
+            meta: tipoTexto,
+            diaria: valoresAtuais.diaria,
+            unidade: valoresAtuais.unidade,
+            odds: valoresAtuais.odds,
+          }),
+        });
+
+        if (!response.ok) {
+          throw new Error(`HTTP ${response.status}`);
+        }
+
+        const data = await response.json();
+
+        if (data.success) {
+          console.log(`✅ Tipo de meta atualizado no banco: ${tipoTexto}`);
+          console.log(`✅ Valores preservados:`, valoresAtuais);
+          return true;
+        } else {
+          throw new Error(data.message || "Erro ao atualizar meta");
+        }
+      } catch (error) {
+        console.error("❌ Erro ao atualizar meta no banco:", error);
+        return false;
+      }
+    },
+
+    /**
+     * Atualiza interface visual
+     */
+    atualizarInterfaceVisual(tipoMeta) {
+      try {
+        const textoMeta = CONFIG_META_CORRIGIDO.TEXTOS[tipoMeta];
+
+        if (
+          typeof MetaDiariaManager !== "undefined" &&
+          MetaDiariaManager.atualizarBadgeTipoMeta
+        ) {
+          MetaDiariaManager.atualizarBadgeTipoMeta(textoMeta, tipoMeta);
+        }
+
+        const metaTextElement = document.getElementById("meta-text-unico");
+        if (metaTextElement) {
+          metaTextElement.textContent = textoMeta;
+        }
+
+        console.log(`🎨 Interface atualizada: ${textoMeta}`);
+      } catch (error) {
+        console.error("❌ Erro ao atualizar interface:", error);
+      }
+    },
+
+    /**
+     * 🆕 CORRIGIDO: Notifica com valor do lucro total
+     */
+    notificarAlternanciaAutomatica(de, para, motivo, lucroTotal) {
+      const textoDe = CONFIG_META_CORRIGIDO.TEXTOS[de];
+      const textoPara = CONFIG_META_CORRIGIDO.TEXTOS[para];
+
+      const mensagem = `🔄 Alternância: ${textoDe} → ${textoPara}`;
+
+      if (typeof ToastManager !== "undefined") {
+        ToastManager.mostrar(mensagem, "aviso");
+      }
+
+      setTimeout(() => {
+        const explicacao = `💰 Lucro Total: R$ ${lucroTotal.toFixed(
+          2
+        )} - Meta Turbo requer lucro positivo`;
+
+        if (typeof ToastManager !== "undefined") {
+          ToastManager.mostrar(explicacao, "aviso");
+        }
+      }, 2000);
+    },
+
+    /**
+     * 🆕 CORRIGIDO: Notifica disponibilidade com lucro total
+     */
+    notificarDisponibilidadeTurbo(lucroTotal) {
+      const mensagem = `✅ Lucro Total: R$ ${lucroTotal.toFixed(
+        2
+      )} - Meta Turbo disponível!`;
+
+      if (typeof ToastManager !== "undefined") {
+        ToastManager.mostrar(mensagem, "sucesso");
+      }
+    },
+  };
+
+  // ==========================================
+  // MONITOR CORRIGIDO
+  // ==========================================
+
+  const MonitorLucroCorrigido = {
+    ultimoLucroTotal: null,
+    verificandoAtualmente: false,
+
+    iniciar() {
+      console.log("👁️ Monitor de Lucro CORRIGIDO iniciado");
+      this.verificarEstadoAtual();
+      this.configurarInterceptacao();
+    },
+
+    async verificarEstadoAtual() {
+      if (this.verificandoAtualmente) return;
+
+      try {
+        this.verificandoAtualmente = true;
+
+        const response = await fetch("dados_banca.php", {
+          method: "GET",
+          headers: {
+            "Cache-Control": "no-cache",
+            "X-Requested-With": "XMLHttpRequest",
+          },
+        });
+
+        if (!response.ok) throw new Error(`HTTP ${response.status}`);
+
+        const data = await response.json();
+
+        if (data.success) {
+          await this.processarDados(data);
+        }
+      } catch (error) {
+        console.error("❌ Erro ao verificar estado:", error);
+      } finally {
+        this.verificandoAtualmente = false;
+      }
+    },
+
+    /**
+     * 🆕 CORRIGIDO: Processa usando lucro total
+     */
+    async processarDados(data) {
+      // 🆕 Extrair lucro total
+      const lucroTotal =
+        parseFloat(data.lucro_total_historico) ||
+        parseFloat(data.lucro_total_display) ||
+        parseFloat(data.lucro_total) ||
+        0;
+
+      const houveMudanca =
+        this.ultimoLucroTotal !== null && this.ultimoLucroTotal !== lucroTotal;
+
+      if (houveMudanca && CONFIG_META_CORRIGIDO.DEBUG_MODE) {
+        console.log("💰 Mudança no lucro total detectada:", {
+          anterior: this.ultimoLucroTotal,
+          atual: lucroTotal,
+          diferenca: lucroTotal - this.ultimoLucroTotal,
+        });
+      }
+
+      this.ultimoLucroTotal = lucroTotal;
+
+      // Atualizar estado
+      GerenciadorEstadoMetaCorrigido.atualizarEstado(data);
+
+      // Validar e corrigir meta
+      const resultado = await ValidadorMetaCorrigido.validarECorrigirMeta(data);
+
+      if (resultado.alternanciaAutomatica) {
+        console.log("✅ Alternância automática executada");
+      }
+    },
+
+    configurarInterceptacao() {
+      const originalFetch = window.fetch;
+
+      window.fetch = async function (...args) {
+        const response = await originalFetch.apply(this, arguments);
+
+        if (
+          args[0] &&
+          typeof args[0] === "string" &&
+          (args[0].includes("dados_banca.php") ||
+            args[0].includes("cadastrar-valor.php")) &&
+          response.ok
+        ) {
+          setTimeout(() => {
+            MonitorLucroCorrigido.verificarEstadoAtual();
+          }, CONFIG_META_CORRIGIDO.DELAY_VERIFICACAO);
+        }
+
+        return response;
+      };
+
+      console.log("🔌 Interceptação configurada (CORRIGIDA)");
+    },
+  };
+
+  // ==========================================
+  // SOBRESCREVER FUNÇÃO GLOBAL
+  // ==========================================
+
+  /**
+   * 🆕 VERSÃO CORRIGIDA - Verifica lucro total
+   */
+  window.alterarTipoMeta = async (tipo) => {
+    try {
+      if (!["fixa", "turbo"].includes(tipo)) {
+        console.error('❌ Tipo de meta inválido. Use "fixa" ou "turbo"');
+        return false;
+      }
+
+      // 🆕 Buscar dados atuais (incluindo lucro total)
+      const dadosResponse = await fetch("dados_banca.php", {
+        method: "GET",
+        headers: {
+          "Cache-Control": "no-cache",
+          "X-Requested-With": "XMLHttpRequest",
+        },
+      });
+
+      if (!dadosResponse.ok) {
+        throw new Error("Erro ao buscar dados da banca");
+      }
+
+      const dadosAtuais = await dadosResponse.json();
+
+      if (!dadosAtuais.success) {
+        throw new Error("Dados da banca inválidos");
+      }
+
+      // 🆕 Extrair lucro total
+      const lucroTotal =
+        parseFloat(dadosAtuais.lucro_total_historico) ||
+        parseFloat(dadosAtuais.lucro_total_display) ||
+        parseFloat(dadosAtuais.lucro_total) ||
+        0;
+
+      console.log("🔍 Verificação para alteração manual:", {
+        tipoDesejado: tipo,
+        lucroTotal: lucroTotal,
+        lucroPeriodo: parseFloat(dadosAtuais.lucro) || 0,
+        periodoAtivo: dadosAtuais.periodo_ativo || "dia",
+      });
+
+      // 🆕 VERIFICAR LUCRO TOTAL para Meta Turbo
+      if (tipo === "turbo") {
+        const podeUsarTurbo =
+          GerenciadorEstadoMetaCorrigido.podeUsarMetaTurbo(lucroTotal);
+
+        if (!podeUsarTurbo) {
+          console.log("⚠️ Meta Turbo não disponível");
+          console.log(`💰 Lucro Total atual: R$ ${lucroTotal.toFixed(2)}`);
+
+          if (typeof ToastManager !== "undefined") {
+            ToastManager.mostrar(
+              `❌ Meta Turbo indisponível - Lucro total: R$ ${lucroTotal.toFixed(
+                2
+              )}`,
+              "erro"
+            );
+
+            setTimeout(() => {
+              ToastManager.mostrar(
+                "ℹ️ Meta Turbo requer lucro total positivo",
+                "aviso"
+              );
+            }, 2000);
+          }
+
+          return false;
+        }
+
+        console.log("✅ Meta Turbo disponível");
+        console.log(`💰 Lucro Total: R$ ${lucroTotal.toFixed(2)}`);
+      }
+
+      // Preservar valores atuais
+      const valoresAtuais = {
+        diaria: parseFloat(dadosAtuais.diaria) || 1,
+        unidade: parseFloat(dadosAtuais.unidade_entrada) || 1,
+        odds: parseFloat(dadosAtuais.odds) || 1.5,
+      };
+
+      const tipoTexto = tipo === "fixa" ? "Meta Fixa" : "Meta Turbo";
+
+      console.log(`🔄 Alterando para: ${tipoTexto}`);
+
+      const response = await fetch("dados_banca.php", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({
+          acao: "alterar",
+          meta: tipoTexto,
+          diaria: valoresAtuais.diaria,
+          unidade: valoresAtuais.unidade,
+          odds: valoresAtuais.odds,
+        }),
+      });
+
+      const data = await response.json();
+
+      if (data.success) {
+        console.log(`✅ Tipo de meta alterado: ${data.tipo_meta_texto}`);
+        console.log("✅ Valores preservados:", valoresAtuais);
+
+        // Atualizar interface
+        if (
+          typeof MetaDiariaManager !== "undefined" &&
+          MetaDiariaManager.atualizarBadgeTipoMeta
+        ) {
+          MetaDiariaManager.atualizarBadgeTipoMeta(data.tipo_meta_texto, tipo);
+        }
+
+        const metaTextElement = document.getElementById("meta-text-unico");
+        if (metaTextElement) {
+          metaTextElement.textContent = data.tipo_meta_texto.toUpperCase();
+        }
+
+        if (typeof ToastManager !== "undefined") {
+          ToastManager.mostrar(
+            `✅ ${tipoTexto} ativada! (Lucro Total: R$ ${lucroTotal.toFixed(
+              2
+            )})`,
+            "sucesso"
+          );
+        }
+
+        return true;
+      } else {
+        throw new Error(data.message || "Erro ao alterar tipo");
+      }
+    } catch (error) {
+      console.error("❌ Erro ao alterar tipo de meta:", error);
+
+      if (typeof ToastManager !== "undefined") {
+        ToastManager.mostrar(`❌ Erro: ${error.message}`, "erro");
+      }
+
+      return false;
+    }
+  };
+
+  // ==========================================
+  // INTEGRAÇÃO COM SISTEMAS EXISTENTES
+  // ==========================================
+
+  if (typeof MetaDiariaManager !== "undefined") {
+    const originalAtualizarMeta = MetaDiariaManager.atualizarMetaDiaria;
+
+    MetaDiariaManager.atualizarMetaDiaria = async function (
+      aguardarDados = false
+    ) {
+      if (!GerenciadorEstadoMetaCorrigido.bloqueioTemporario) {
+        await MonitorLucroCorrigido.verificarEstadoAtual();
+      }
+
+      return await originalAtualizarMeta.call(this, aguardarDados);
+    };
+
+    console.log("✅ MetaDiariaManager integrado (CORRIGIDO)");
+  }
+
+  // ==========================================
+  // FUNÇÕES GLOBAIS ATUALIZADAS
+  // ==========================================
+
+  window.verificarEstadoMeta = async function () {
+    console.log("🔍 Forçando verificação (LUCRO TOTAL)...");
+    await MonitorLucroCorrigido.verificarEstadoAtual();
+  };
+
+  window.infoEstadoMeta = function () {
+    const info = {
+      tipoAtual: GerenciadorEstadoMetaCorrigido.tipoAtual,
+      lucroTotal: GerenciadorEstadoMetaCorrigido.lucroTotal,
+      lucroPeriodo: GerenciadorEstadoMetaCorrigido.lucroPeriodo,
+      estadoLucroTotal: GerenciadorEstadoMetaCorrigido.estadoLucroTotal,
+      podeUsarTurbo: GerenciadorEstadoMetaCorrigido.podeUsarMetaTurbo(
+        GerenciadorEstadoMetaCorrigido.lucroTotal
+      ),
+      ultimaAlternancia: GerenciadorEstadoMetaCorrigido.ultimaAlternancia,
+      historico: GerenciadorEstadoMetaCorrigido.historico.slice(-5),
+    };
+
+    console.log("📊 Estado Atual (CORRIGIDO):", info);
+    return info;
+  };
+
+  window.$meta = {
+    info: () => window.infoEstadoMeta(),
+    verificar: () => window.verificarEstadoMeta(),
+    historico: () => GerenciadorEstadoMetaCorrigido.historico,
+    estado: () => ({
+      tipo: GerenciadorEstadoMetaCorrigido.tipoAtual,
+      lucroTotal: GerenciadorEstadoMetaCorrigido.lucroTotal,
+      lucroPeriodo: GerenciadorEstadoMetaCorrigido.lucroPeriodo,
+      podeUsarTurbo: GerenciadorEstadoMetaCorrigido.podeUsarMetaTurbo(
+        GerenciadorEstadoMetaCorrigido.lucroTotal
+      ),
+    }),
+  };
+
+  // ==========================================
+  // INICIALIZAÇÃO
+  // ==========================================
+
+  function inicializarSistemaCorrigido() {
+    console.log("🚀 Iniciando Sistema CORRIGIDO de Alternância...");
+    console.log("");
+    console.log("📋 NOVA REGRA:");
+    console.log("✅ Meta Turbo: Verifica LUCRO TOTAL da banca");
+    console.log("❌ Ignora: Lucro do período filtrado (dia/mês/ano)");
+    console.log("");
+
+    MonitorLucroCorrigido.iniciar();
+
+    console.log("✅ Sistema CORRIGIDO ATIVO!");
+    console.log("📝 Comandos:");
+    console.log("  - $meta.estado() - Estado atual");
+    console.log("  - $meta.info() - Info completa");
+    console.log('  - alterarTipoMeta("turbo") - Testar');
+  }
+
+  if (document.readyState === "loading") {
+    document.addEventListener("DOMContentLoaded", inicializarSistemaCorrigido);
+  } else {
+    setTimeout(inicializarSistemaCorrigido, 500);
+  }
+
+  window.SistemaAlternanciaMetaCorrigido = {
+    Gerenciador: GerenciadorEstadoMetaCorrigido,
+    Validador: ValidadorMetaCorrigido,
+    Monitor: MonitorLucroCorrigido,
+    CONFIG: CONFIG_META_CORRIGIDO,
+  };
+
+  console.log("✅ CORREÇÃO APLICADA: Sistema agora usa LUCRO TOTAL!");
+})();
+
+// ==========================================
+// 🔍 FUNÇÃO DE DEBUG COMPLETA
+// ==========================================
+
+window.debugMetaTurbo = async function () {
+  console.log("🔍 ===== DEBUG META TURBO =====");
+
+  try {
+    const response = await fetch("dados_banca.php", {
+      method: "GET",
+      headers: {
+        "Cache-Control": "no-cache",
+        "X-Requested-With": "XMLHttpRequest",
+      },
+    });
+
+    const data = await response.json();
+
+    if (data.success) {
+      const lucroTotal =
+        parseFloat(data.lucro_total_historico) ||
+        parseFloat(data.lucro_total_display) ||
+        parseFloat(data.lucro_total) ||
+        0;
+
+      const lucroPeriodo = parseFloat(data.lucro) || 0;
+      const periodoAtivo = data.periodo_ativo || "dia";
+      const tipoMetaAtual = data.tipo_meta || "turbo";
+
+      console.log("📊 DADOS DA BANCA:");
+      console.log(`   Período Ativo: ${periodoAtivo}`);
+      console.log(`   Tipo Meta Atual: ${tipoMetaAtual}`);
+      console.log("");
+      console.log("💰 LUCROS:");
+      console.log(`   Lucro TOTAL (histórico): R$ ${lucroTotal.toFixed(2)}`);
+      console.log(`   Lucro do ${periodoAtivo}: R$ ${lucroPeriodo.toFixed(2)}`);
+      console.log("");
+      console.log("✅ DECISÃO:");
+      console.log(`   Usando para verificação: Lucro TOTAL`);
+      console.log(`   Valor usado: R$ ${lucroTotal.toFixed(2)}`);
+      console.log(
+        `   Estado: ${
+          lucroTotal > 0
+            ? "POSITIVO ✅"
+            : lucroTotal < 0
+            ? "NEGATIVO ❌"
+            : "ZERO ⚠️"
+        }`
+      );
+      console.log(
+        `   Meta Turbo disponível: ${lucroTotal > 0 ? "SIM ✅" : "NÃO ❌"}`
+      );
+      console.log("");
+      console.log("🔄 COMPORTAMENTO:");
+
+      if (tipoMetaAtual === "turbo" && lucroTotal <= 0) {
+        console.log(
+          "   ⚠️ ALERTA: Meta Turbo está ativa mas lucro total não é positivo!"
+        );
+        console.log(
+          "   🔄 Sistema irá alternar automaticamente para Meta Fixa"
+        );
+      } else if (tipoMetaAtual === "fixa" && lucroTotal > 0) {
+        console.log("   ℹ️ Meta Fixa está ativa mas lucro total é positivo");
+        console.log("   ✅ Meta Turbo está disponível para ativação manual");
+      } else if (tipoMetaAtual === "turbo" && lucroTotal > 0) {
+        console.log(
+          "   ✅ Tudo certo! Meta Turbo ativa e lucro total positivo"
+        );
+      } else {
+        console.log(
+          "   ✅ Tudo certo! Meta Fixa ativa e lucro total não-positivo"
+        );
+      }
+
+      console.log("");
+      console.log("📋 DADOS COMPLETOS:");
+      console.table({
+        "Lucro Total Histórico": data.lucro_total_historico || "N/A",
+        "Lucro Total Display": data.lucro_total_display || "N/A",
+        "Lucro Período": data.lucro || "N/A",
+        "Período Ativo": data.periodo_ativo || "N/A",
+        "Tipo Meta": data.tipo_meta || "N/A",
+      });
+
+      return {
+        lucroTotal,
+        lucroPeriodo,
+        periodoAtivo,
+        tipoMetaAtual,
+        podeUsarTurbo: lucroTotal > 0,
+        decisaoCorreta:
+          (tipoMetaAtual === "turbo" && lucroTotal > 0) ||
+          (tipoMetaAtual === "fixa" && lucroTotal <= 0),
+      };
+    } else {
+      console.error("❌ Erro ao buscar dados:", data.message);
+      return null;
+    }
+  } catch (error) {
+    console.error("❌ Erro no debug:", error);
+    return null;
+  }
+};
+
+// Atalho rápido
+window.$debug = {
+  meta: () => debugMetaTurbo(),
+  estado: () => $meta.estado(),
+  completo: () => $meta.info(),
+};
+
+console.log("🔍 Debug function loaded! Use: debugMetaTurbo() or $debug.meta()");
+
+// ========================================================================================================================
+//                          ✅ FIM SISTEMA DE ALTERNÂNCIA AUTOMÁTICA META FIXA/TURBO
+// ========================================================================================================================
