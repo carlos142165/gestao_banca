@@ -275,6 +275,7 @@ function calcularMetaDiariaComTipo($conexao, $id_usuario, $total_deposito, $tota
 }
 
 // ✅ FUNÇÃO CORRIGIDA: Calcular metas por período (MENSAL e ANUAL)
+// ✅ FUNÇÃO CORRIGIDA: Calcular metas por período com REGRA DE NEGATIVO
 function calcularMetasPorPeriodo($meta_diaria, $conexao, $id_usuario) {
     $diasCalculados = calcularDiasRestantes($conexao, $id_usuario);
     
@@ -282,28 +283,32 @@ function calcularMetasPorPeriodo($meta_diaria, $conexao, $id_usuario) {
     $lucro_mes_atual = calcularLucroMesAtual($conexao, $id_usuario);
     $lucro_ano_atual = calcularLucroAnoAtual($conexao, $id_usuario);
     
-    // ✅ META MENSAL: Meta base - Lucro do mês atual
+    // ✅ META MENSAL
     $meta_mensal_base = $meta_diaria * $diasCalculados['mes'];
-    $meta_mensal = $meta_mensal_base;
     
     if ($lucro_mes_atual < 0) {
-        // Se tiver prejuízo, adiciona à meta
+        // ❌ NEGATIVO: Meta Base + Valor Perdido
         $meta_mensal = $meta_mensal_base + abs($lucro_mes_atual);
     } else if ($lucro_mes_atual > 0) {
-        // Se tiver lucro, subtrai da meta
+        // ✅ POSITIVO: Meta Base - Lucro
         $meta_mensal = max(0, $meta_mensal_base - $lucro_mes_atual);
+    } else {
+        // ⚪ ZERO: Mantém meta base
+        $meta_mensal = $meta_mensal_base;
     }
     
-    // ✅ META ANUAL: Meta base - Lucro do ano atual
+    // ✅ META ANUAL
     $meta_anual_base = $meta_diaria * $diasCalculados['ano'];
-    $meta_anual = $meta_anual_base;
     
     if ($lucro_ano_atual < 0) {
-        // Se tiver prejuízo, adiciona à meta
+        // ❌ NEGATIVO: Meta Base + Valor Perdido
         $meta_anual = $meta_anual_base + abs($lucro_ano_atual);
     } else if ($lucro_ano_atual > 0) {
-        // Se tiver lucro, subtrai da meta
+        // ✅ POSITIVO: Meta Base - Lucro
         $meta_anual = max(0, $meta_anual_base - $lucro_ano_atual);
+    } else {
+        // ⚪ ZERO: Mantém meta base
+        $meta_anual = $meta_anual_base;
     }
     
     return [
@@ -325,7 +330,7 @@ function calcularMetasPorPeriodo($meta_diaria, $conexao, $id_usuario) {
     ];
 }
 
-// ✅ FUNÇÃO: Calcular dados da área direita
+// ✅ FUNÇÃO CORRIGIDA: Calcular dados da área direita COM BANCA INICIAL SEMPRE
 function calcularAreaDireita($conexao, $id_usuario, $saldo_banca_total) {
     try {
         $stmt = $conexao->prepare("
@@ -341,6 +346,7 @@ function calcularAreaDireita($conexao, $id_usuario, $saldo_banca_total) {
         
         $diaria = $ultima_diaria !== null ? round(floatval($ultima_diaria), 2) : 1.00;
         
+        $lucro_total = calcularLucro($conexao, $id_usuario)['lucro'];
         $lucro_ate_ontem = calcularLucroAteOntem($conexao, $id_usuario);
         
         $stmt_dep = $conexao->prepare("SELECT SUM(deposito) FROM controle WHERE id_usuario = ? AND deposito > 0");
@@ -359,12 +365,17 @@ function calcularAreaDireita($conexao, $id_usuario, $saldo_banca_total) {
         
         $banca_inicial = ($total_deposito ?? 0) - ($total_saque ?? 0);
         $banca_inicio_dia = $banca_inicial + $lucro_ate_ontem;
-        $unidade_entrada = $banca_inicio_dia * ($diaria / 100);
+        
+        // ✅ CORRIGIDO: UNIDADE SEMPRE USA BANCA ATUAL (BANCA + LUCRO TOTAL)
+        $banca_atual = $banca_inicial + $lucro_total;
+        $unidade_entrada = $banca_atual * ($diaria / 100);
         
         return [
             'diaria_porcentagem' => $diaria,
             'saldo_banca_total' => $saldo_banca_total,
             'banca_inicio_dia' => $banca_inicio_dia,
+            'banca_atual' => $banca_atual,
+            'lucro_total' => $lucro_total,
             'lucro_ate_ontem' => $lucro_ate_ontem,
             'unidade_entrada' => $unidade_entrada,
             'diaria_formatada' => number_format($diaria, 2, ',', '') . '%',
@@ -378,6 +389,8 @@ function calcularAreaDireita($conexao, $id_usuario, $saldo_banca_total) {
             'diaria_porcentagem' => 1.00,
             'saldo_banca_total' => 0,
             'banca_inicio_dia' => 0,
+            'banca_atual' => 0,
+            'lucro_total' => 0,
             'lucro_ate_ontem' => 0,
             'unidade_entrada' => 0,
             'diaria_formatada' => '1,00%',

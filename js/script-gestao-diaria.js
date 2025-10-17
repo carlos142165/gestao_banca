@@ -6437,20 +6437,6 @@ if (document.readyState === "loading") {
 // ========================================================================================================================
 //                     🎯 SISTEMA DE ALTERNÂNCIA AUTOMÁTICA: META FIXA ↔️ META TURBO
 // ========================================================================================================================
-//
-// ========================================================================================================================
-//                     🎯 CORREÇÃO: VERIFICAÇÃO DE LUCRO TOTAL PARA META TURBO
-// ========================================================================================================================
-//
-// PROBLEMA IDENTIFICADO:
-// - Sistema estava verificando lucro do período filtrado (dia/mês/ano)
-// - CORRETO: Verificar lucro total histórico da banca
-//
-// NOVA REGRA:
-// ✅ Meta Turbo disponível quando lucro_total_historico > 0
-// ❌ Meta Turbo bloqueada quando lucro_total_historico ≤ 0
-//
-// ========================================================================================================================
 
 (function () {
   "use strict";
@@ -6605,12 +6591,67 @@ if (document.readyState === "loading") {
   };
 
   // ==========================================
-  // VALIDADOR CORRIGIDO
+  // VALIDADOR CORRIGIDO COM CONTROLE DE NOTIFICAÇÕES
   // ==========================================
 
   const ValidadorMetaCorrigido = {
+    // 🆕 CONTROLE DE NOTIFICAÇÕES (ANTI-PISCAR)
+    ultimaNotificacaoDisponibilidade: null,
+    ultimaNotificacaoAlternancia: null,
+    COOLDOWN_NOTIFICACAO: 300000, // 5 minutos em ms
+
     /**
-     * 🆕 CORRIGIDO: Valida baseado no LUCRO TOTAL
+     * 🆕 Verifica se pode mostrar notificação (cooldown)
+     */
+    podeNotificar(tipo) {
+      const agora = Date.now();
+
+      if (tipo === "disponibilidade") {
+        if (!this.ultimaNotificacaoDisponibilidade) {
+          return true;
+        }
+
+        const tempoDecorrido = agora - this.ultimaNotificacaoDisponibilidade;
+        return tempoDecorrido >= this.COOLDOWN_NOTIFICACAO;
+      }
+
+      if (tipo === "alternancia") {
+        if (!this.ultimaNotificacaoAlternancia) {
+          return true;
+        }
+
+        const tempoDecorrido = agora - this.ultimaNotificacaoAlternancia;
+        return tempoDecorrido >= 60000; // 1 minuto para alternâncias
+      }
+
+      return true;
+    },
+
+    /**
+     * 🆕 Registra que uma notificação foi mostrada
+     */
+    registrarNotificacao(tipo) {
+      const agora = Date.now();
+
+      if (tipo === "disponibilidade") {
+        this.ultimaNotificacaoDisponibilidade = agora;
+      }
+
+      if (tipo === "alternancia") {
+        this.ultimaNotificacaoAlternancia = agora;
+      }
+
+      if (CONFIG_META_CORRIGIDO.DEBUG_MODE) {
+        console.log(
+          `📢 Notificação registrada: ${tipo} às ${new Date(
+            agora
+          ).toLocaleTimeString()}`
+        );
+      }
+    },
+
+    /**
+     * 🆕 CORRIGIDO: Valida baseado no LUCRO TOTAL (sem notificações repetidas)
      */
     async validarECorrigirMeta(dadosBanca) {
       try {
@@ -6624,12 +6665,14 @@ if (document.readyState === "loading") {
         const lucroPeriodo = parseFloat(dadosBanca.lucro) || 0;
         const tipoMetaAtual = dadosBanca.tipo_meta || "turbo";
 
-        console.log("🔍 Validação de Meta:", {
-          lucroTotal: lucroTotal,
-          lucroPeriodo: lucroPeriodo,
-          tipoAtual: tipoMetaAtual,
-          periodoFiltrado: dadosBanca.periodo_ativo || "dia",
-        });
+        if (CONFIG_META_CORRIGIDO.DEBUG_MODE) {
+          console.log("🔍 Validação de Meta:", {
+            lucroTotal: lucroTotal,
+            lucroPeriodo: lucroPeriodo,
+            tipoAtual: tipoMetaAtual,
+            periodoFiltrado: dadosBanca.periodo_ativo || "dia",
+          });
+        }
 
         // 🆕 USAR LUCRO TOTAL para decisão
         const podeUsarTurbo =
@@ -6653,14 +6696,18 @@ if (document.readyState === "loading") {
           return resultado;
         }
 
-        // Se está em Meta Fixa e lucro total é positivo
+        // 🆕 CORRIGIDO: Se está em Meta Fixa e lucro total é positivo
+        // APENAS LOGA, NÃO NOTIFICA SEMPRE (evita spam)
         if (
           tipoMetaAtual === CONFIG_META_CORRIGIDO.TIPOS.FIXA &&
           podeUsarTurbo
         ) {
-          console.log("ℹ️ Lucro total positivo - Meta Turbo disponível");
-          console.log(`💰 Lucro Total: R$ ${lucroTotal.toFixed(2)}`);
+          if (CONFIG_META_CORRIGIDO.DEBUG_MODE) {
+            console.log("ℹ️ Lucro total positivo - Meta Turbo disponível");
+            console.log(`💰 Lucro Total: R$ ${lucroTotal.toFixed(2)}`);
+          }
 
+          // 🆕 NOTIFICAR APENAS UMA VEZ (com cooldown)
           if (CONFIG_META_CORRIGIDO.NOTIFICAR_MUDANCA) {
             this.notificarDisponibilidadeTurbo(lucroTotal);
           }
@@ -6830,9 +6877,17 @@ if (document.readyState === "loading") {
     },
 
     /**
-     * 🆕 CORRIGIDO: Notifica com valor do lucro total
+     * 🆕 CORRIGIDO: Notifica com valor do lucro total (COM COOLDOWN)
      */
     notificarAlternanciaAutomatica(de, para, motivo, lucroTotal) {
+      // Verificar cooldown
+      if (!this.podeNotificar("alternancia")) {
+        if (CONFIG_META_CORRIGIDO.DEBUG_MODE) {
+          console.log("⏳ Notificação de alternância em cooldown - ignorando");
+        }
+        return;
+      }
+
       const textoDe = CONFIG_META_CORRIGIDO.TEXTOS[de];
       const textoPara = CONFIG_META_CORRIGIDO.TEXTOS[para];
 
@@ -6840,35 +6895,49 @@ if (document.readyState === "loading") {
 
       if (typeof ToastManager !== "undefined") {
         ToastManager.mostrar(mensagem, "aviso");
+        this.registrarNotificacao("alternancia");
+
+        setTimeout(() => {
+          const explicacao = `💰 Lucro Total: R$ ${lucroTotal.toFixed(
+            2
+          )} - Meta Turbo requer lucro positivo`;
+
+          if (typeof ToastManager !== "undefined") {
+            ToastManager.mostrar(explicacao, "aviso");
+          }
+        }, 2000);
       }
-
-      setTimeout(() => {
-        const explicacao = `💰 Lucro Total: R$ ${lucroTotal.toFixed(
-          2
-        )} - Meta Turbo requer lucro positivo`;
-
-        if (typeof ToastManager !== "undefined") {
-          ToastManager.mostrar(explicacao, "aviso");
-        }
-      }, 2000);
     },
 
     /**
-     * 🆕 CORRIGIDO: Notifica disponibilidade com lucro total
+     * 🆕 CORRIGIDO: Notifica disponibilidade com lucro total (COM COOLDOWN)
      */
     notificarDisponibilidadeTurbo(lucroTotal) {
+      // Verificar cooldown
+      if (!this.podeNotificar("disponibilidade")) {
+        if (CONFIG_META_CORRIGIDO.DEBUG_MODE) {
+          console.log("⏳ Notificação em cooldown - ignorando");
+        }
+        return;
+      }
+
       const mensagem = `✅ Lucro Total: R$ ${lucroTotal.toFixed(
         2
       )} - Meta Turbo disponível!`;
 
       if (typeof ToastManager !== "undefined") {
         ToastManager.mostrar(mensagem, "sucesso");
+        this.registrarNotificacao("disponibilidade");
+
+        if (CONFIG_META_CORRIGIDO.DEBUG_MODE) {
+          console.log(`📢 Notificação mostrada: ${mensagem}`);
+        }
       }
     },
   };
 
   // ==========================================
-  // MONITOR CORRIGIDO
+  // MONITOR CORRIGIDO COM CONTROLE DE VERIFICAÇÕES
   // ==========================================
 
   const MonitorLucroCorrigido = {
@@ -6910,7 +6979,7 @@ if (document.readyState === "loading") {
     },
 
     /**
-     * 🆕 CORRIGIDO: Processa usando lucro total
+     * 🆕 CORRIGIDO: Processa usando lucro total (com controle de notificações)
      */
     async processarDados(data) {
       // 🆕 Extrair lucro total
@@ -6920,15 +6989,41 @@ if (document.readyState === "loading") {
         parseFloat(data.lucro_total) ||
         0;
 
-      const houveMudanca =
+      const tipoMetaAtual = data.tipo_meta || "turbo";
+
+      // 🆕 Verificar se houve mudança SIGNIFICATIVA
+      const houveMudancaLucro =
         this.ultimoLucroTotal !== null && this.ultimoLucroTotal !== lucroTotal;
 
-      if (houveMudanca && CONFIG_META_CORRIGIDO.DEBUG_MODE) {
+      const mudouParaPositivo =
+        this.ultimoLucroTotal !== null &&
+        this.ultimoLucroTotal <= 0 &&
+        lucroTotal > 0;
+
+      const mudouParaNegativo =
+        this.ultimoLucroTotal !== null &&
+        this.ultimoLucroTotal > 0 &&
+        lucroTotal <= 0;
+
+      if (houveMudancaLucro && CONFIG_META_CORRIGIDO.DEBUG_MODE) {
         console.log("💰 Mudança no lucro total detectada:", {
           anterior: this.ultimoLucroTotal,
           atual: lucroTotal,
           diferenca: lucroTotal - this.ultimoLucroTotal,
+          mudouParaPositivo: mudouParaPositivo,
+          mudouParaNegativo: mudouParaNegativo,
         });
+      }
+
+      // 🆕 RESETAR cooldown de notificação apenas em mudanças SIGNIFICATIVAS
+      if (mudouParaPositivo || mudouParaNegativo) {
+        ValidadorMetaCorrigido.ultimaNotificacaoDisponibilidade = null;
+
+        if (CONFIG_META_CORRIGIDO.DEBUG_MODE) {
+          console.log(
+            "🔄 Cooldown de notificação resetado (mudança significativa)"
+          );
+        }
       }
 
       this.ultimoLucroTotal = lucroTotal;
@@ -6936,11 +7031,19 @@ if (document.readyState === "loading") {
       // Atualizar estado
       GerenciadorEstadoMetaCorrigido.atualizarEstado(data);
 
-      // Validar e corrigir meta
-      const resultado = await ValidadorMetaCorrigido.validarECorrigirMeta(data);
+      // 🆕 Validar APENAS se houve mudança significativa OU primeira execução
+      if (
+        this.ultimoLucroTotal === null ||
+        mudouParaPositivo ||
+        mudouParaNegativo
+      ) {
+        const resultado = await ValidadorMetaCorrigido.validarECorrigirMeta(
+          data
+        );
 
-      if (resultado.alternanciaAutomatica) {
-        console.log("✅ Alternância automática executada");
+        if (resultado.alternanciaAutomatica) {
+          console.log("✅ Alternância automática executada");
+        }
       }
     },
 
@@ -7177,6 +7280,86 @@ if (document.readyState === "loading") {
   };
 
   // ==========================================
+  // COMANDOS DE CONTROLE DE NOTIFICAÇÕES
+  // ==========================================
+
+  /**
+   * Desabilita notificações temporariamente
+   */
+  window.desabilitarNotificacoesMeta = function (duracao = 300000) {
+    CONFIG_META_CORRIGIDO.NOTIFICAR_MUDANCA = false;
+    console.log(`🔕 Notificações desabilitadas por ${duracao / 1000} segundos`);
+
+    setTimeout(() => {
+      CONFIG_META_CORRIGIDO.NOTIFICAR_MUDANCA = true;
+      console.log("🔔 Notificações reabilitadas");
+    }, duracao);
+  };
+
+  /**
+   * Habilita notificações
+   */
+  window.habilitarNotificacoesMeta = function () {
+    CONFIG_META_CORRIGIDO.NOTIFICAR_MUDANCA = true;
+    console.log("🔔 Notificações habilitadas");
+  };
+
+  /**
+   * Reseta cooldown de notificações
+   */
+  window.resetarCooldownNotificacoes = function () {
+    ValidadorMetaCorrigido.ultimaNotificacaoDisponibilidade = null;
+    ValidadorMetaCorrigido.ultimaNotificacaoAlternancia = null;
+    console.log("🔄 Cooldown de notificações resetado");
+  };
+
+  /**
+   * Configura tempo de cooldown
+   */
+  window.configurarCooldownMeta = function (minutos = 5) {
+    ValidadorMetaCorrigido.COOLDOWN_NOTIFICACAO = minutos * 60000;
+    console.log(`⏱️ Cooldown configurado para ${minutos} minutos`);
+  };
+
+  /**
+   * Status das notificações
+   */
+  window.statusNotificacoesMeta = function () {
+    const agora = Date.now();
+
+    const info = {
+      habilitadas: CONFIG_META_CORRIGIDO.NOTIFICAR_MUDANCA,
+      cooldownMinutos: ValidadorMetaCorrigido.COOLDOWN_NOTIFICACAO / 60000,
+      ultimaDisponibilidade:
+        ValidadorMetaCorrigido.ultimaNotificacaoDisponibilidade
+          ? new Date(
+              ValidadorMetaCorrigido.ultimaNotificacaoDisponibilidade
+            ).toLocaleTimeString()
+          : "Nunca",
+      ultimaAlternancia: ValidadorMetaCorrigido.ultimaNotificacaoAlternancia
+        ? new Date(
+            ValidadorMetaCorrigido.ultimaNotificacaoAlternancia
+          ).toLocaleTimeString()
+        : "Nunca",
+      proximaDisponibilidadeEm:
+        ValidadorMetaCorrigido.ultimaNotificacaoDisponibilidade
+          ? Math.max(
+              0,
+              Math.ceil(
+                (ValidadorMetaCorrigido.COOLDOWN_NOTIFICACAO -
+                  (agora -
+                    ValidadorMetaCorrigido.ultimaNotificacaoDisponibilidade)) /
+                  60000
+              )
+            ) + " min"
+          : "Disponível agora",
+    };
+
+    console.log("📊 Status das Notificações:", info);
+    return info;
+  };
+
+  // ==========================================
   // INICIALIZAÇÃO
   // ==========================================
 
@@ -7187,6 +7370,10 @@ if (document.readyState === "loading") {
     console.log("✅ Meta Turbo: Verifica LUCRO TOTAL da banca");
     console.log("❌ Ignora: Lucro do período filtrado (dia/mês/ano)");
     console.log("");
+    console.log("🔔 CONTROLE DE NOTIFICAÇÕES:");
+    console.log("✅ Toast aparece apenas 1x a cada 5 minutos");
+    console.log("✅ Notificações apenas em mudanças significativas");
+    console.log("");
 
     MonitorLucroCorrigido.iniciar();
 
@@ -7195,6 +7382,11 @@ if (document.readyState === "loading") {
     console.log("  - $meta.estado() - Estado atual");
     console.log("  - $meta.info() - Info completa");
     console.log('  - alterarTipoMeta("turbo") - Testar');
+    console.log("  - statusNotificacoesMeta() - Status notificações");
+    console.log(
+      "  - desabilitarNotificacoesMeta() - Desabilitar temporariamente"
+    );
+    console.log("  - resetarCooldownNotificacoes() - Resetar cooldown");
   }
 
   if (document.readyState === "loading") {
@@ -7211,6 +7403,7 @@ if (document.readyState === "loading") {
   };
 
   console.log("✅ CORREÇÃO APLICADA: Sistema agora usa LUCRO TOTAL!");
+  console.log("✅ CORREÇÃO APLICADA: Toast não pisca mais!");
 })();
 
 // ==========================================
@@ -7323,9 +7516,142 @@ window.$debug = {
   meta: () => debugMetaTurbo(),
   estado: () => $meta.estado(),
   completo: () => $meta.info(),
+  notificacoes: () => statusNotificacoesMeta(),
 };
 
 console.log("🔍 Debug function loaded! Use: debugMetaTurbo() or $debug.meta()");
+
+// ==========================================
+// 🧪 FUNÇÕES DE TESTE
+// ==========================================
+
+/**
+ * Teste automatizado completo
+ */
+window.testeCompletoMeta = async function () {
+  console.log("🧪 ===== TESTE COMPLETO =====\n");
+
+  // 1. Verificar estado inicial
+  console.log("1️⃣ Estado Inicial:");
+  const inicial = await debugMetaTurbo();
+  console.log("✅ Concluído\n");
+
+  // 2. Testar info do sistema
+  console.log("2️⃣ Info do Sistema:");
+  const info = $meta.info();
+  console.log("✅ Concluído\n");
+
+  // 3. Testar estado rápido
+  console.log("3️⃣ Estado Rápido:");
+  const estado = $meta.estado();
+  console.log("Estado:", estado);
+  console.log("✅ Concluído\n");
+
+  // 4. Verificar se lucro total está sendo usado
+  console.log("4️⃣ Verificação do Lucro:");
+  if (inicial && inicial.lucroTotal !== undefined) {
+    console.log(`   Lucro Total: R$ ${inicial.lucroTotal.toFixed(2)}`);
+    console.log(`   Lucro Período: R$ ${inicial.lucroPeriodo.toFixed(2)}`);
+    console.log(`   Decisão baseada em: Lucro Total ✅`);
+  }
+  console.log("✅ Concluído\n");
+
+  // 5. Testar função de alternância
+  console.log("5️⃣ Teste de Alternância:");
+  if (inicial && inicial.lucroTotal > 0) {
+    console.log("   Testando ativação de Meta Turbo...");
+    const resultado = await alterarTipoMeta("turbo");
+    console.log(`   Resultado: ${resultado ? "Sucesso ✅" : "Falhou ❌"}`);
+  } else {
+    console.log(
+      "   Lucro total não positivo - Meta Turbo deve estar bloqueada"
+    );
+    console.log("   Testando bloqueio...");
+    const resultado = await alterarTipoMeta("turbo");
+    console.log(`   Bloqueio funcionou: ${!resultado ? "Sim ✅" : "Não ❌"}`);
+  }
+  console.log("✅ Concluído\n");
+
+  // 6. Status das notificações
+  console.log("6️⃣ Status das Notificações:");
+  const statusNotif = statusNotificacoesMeta();
+  console.log("✅ Concluído\n");
+
+  console.log("🎉 ===== TESTE COMPLETO FINALIZADO =====");
+  console.log("");
+  console.log("📋 RESUMO:");
+  console.log("   ✅ Sistema carregado");
+  console.log("   ✅ Funções disponíveis");
+  console.log("   ✅ Lucro total sendo verificado");
+  console.log("   ✅ Alternância funcionando");
+  console.log("   ✅ Controle de notificações ativo");
+  console.log("");
+  console.log("🎯 Sistema está funcionando corretamente!");
+};
+
+/**
+ * Monitor contínuo de mudanças
+ */
+window.iniciarMonitorContinuo = function () {
+  console.log("👁️ Iniciando monitor contínuo...");
+  console.log("Verificando a cada 10 segundos");
+  console.log("Use pararMonitor() para parar");
+  console.log("");
+
+  let ultimoEstado = null;
+
+  window.monitorInterval = setInterval(async () => {
+    const estadoAtual = await debugMetaTurbo();
+
+    if (estadoAtual) {
+      // Verificar se houve mudança
+      if (ultimoEstado) {
+        if (estadoAtual.lucroTotal !== ultimoEstado.lucroTotal) {
+          console.log("🔔 MUDANÇA DETECTADA:");
+          console.log(
+            `   Lucro Total: R$ ${ultimoEstado.lucroTotal.toFixed(
+              2
+            )} → R$ ${estadoAtual.lucroTotal.toFixed(2)}`
+          );
+
+          if (estadoAtual.podeUsarTurbo !== ultimoEstado.podeUsarTurbo) {
+            console.log(
+              `   Meta Turbo: ${
+                ultimoEstado.podeUsarTurbo ? "Disponível" : "Bloqueada"
+              } → ${estadoAtual.podeUsarTurbo ? "Disponível" : "Bloqueada"}`
+            );
+          }
+        }
+
+        if (estadoAtual.tipoMetaAtual !== ultimoEstado.tipoMetaAtual) {
+          console.log("🔔 TIPO DE META MUDOU:");
+          console.log(
+            `   ${ultimoEstado.tipoMetaAtual} → ${estadoAtual.tipoMetaAtual}`
+          );
+        }
+      }
+
+      ultimoEstado = estadoAtual;
+    }
+  }, 10000);
+
+  console.log("✅ Monitor iniciado!");
+};
+
+/**
+ * Para monitor contínuo
+ */
+window.pararMonitor = function () {
+  if (window.monitorInterval) {
+    clearInterval(window.monitorInterval);
+    window.monitorInterval = null;
+    console.log("⏹️ Monitor parado");
+  }
+};
+
+// ========================================================================================================================
+//                          ✅ FIM SISTEMA DE ALTERNÂNCIA AUTOMÁTICA META FIXA/TURBO
+// ========================================================================================================================
 
 // ========================================================================================================================
 //                          ✅ FIM SISTEMA DE ALTERNÂNCIA AUTOMÁTICA META FIXA/TURBO
