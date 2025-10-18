@@ -378,6 +378,15 @@
 }
 
 /* ===== BOTÃO PRINCIPAL ===== */
+.container-botao-acao {
+  width: 100%;
+  margin-top: -30px;
+  margin-bottom: 0;
+  padding: 0;
+  position: sticky;
+  bottom: 0;
+}
+
 .custom-button {
   width: 100%;
   padding: 14px;
@@ -389,11 +398,13 @@
   border-radius: 14px;
   cursor: pointer;
   transition: background 0.3s ease;
-  margin-top: 20px;
+  display: block;
+  box-shadow: 0 4px 12px rgba(39, 174, 96, 0.3);
 }
 
 .custom-button:hover {
-  background: linear-gradient(135deg, #0cc00c, #81ff70);
+  background: linear-gradient(135deg, #0cc00c, #1cc905);
+  box-shadow: 0 6px 16px rgba(39, 174, 96, 0.4);
 }
 
 /* ===== CONFIRMAÇÃO DE RESET ===== */
@@ -1405,6 +1416,68 @@
     padding: 14px;
   }
 }
+
+/* ===== BOTÃO PRINCIPAL COM VARIÁVEIS ===== */
+.container-botao-acao {
+  width: var(--botao-acao-width);
+  margin-top: var(--botao-acao-container-margin-top);
+  margin-bottom: var(--botao-acao-container-margin-bottom);
+  padding: var(--botao-acao-container-padding);
+  position: var(--botao-acao-container-position);
+  bottom: var(--botao-acao-container-bottom);
+}
+
+.custom-button {
+  width: var(--botao-acao-width);
+  padding: var(--botao-acao-padding);
+  background: var(--botao-acao-background);
+  color: var(--botao-acao-color);
+  font-size: var(--botao-acao-font-size);
+  font-weight: var(--botao-acao-font-weight);
+  font-family: var(--botao-acao-font-family);
+  text-transform: var(--botao-acao-text-transform);
+  letter-spacing: var(--botao-acao-letter-spacing);
+  border: var(--botao-acao-border);
+  border-color: var(--botao-acao-border-color);
+  border-radius: var(--botao-acao-border-radius);
+  cursor: var(--botao-acao-cursor);
+  transition: var(--botao-acao-transition);
+  display: block;
+  box-shadow: var(--botao-acao-box-shadow);
+}
+
+.custom-button:hover {
+  background: var(--botao-acao-background-hover);
+  box-shadow: var(--botao-acao-box-shadow-hover);
+  transform: var(--botao-acao-transform-hover);
+}
+
+.custom-button:active {
+  transform: translateY(0);
+}
+
+.custom-button:disabled {
+  opacity: var(--botao-acao-opacity-disabled);
+  cursor: not-allowed;
+}
+
+/* ===== RESPONSIVIDADE DO BOTÃO ===== */
+@media (max-width: 600px) {
+  :root {
+    --botao-acao-font-size: 15px;
+    --botao-acao-padding: 13px;
+    --botao-acao-border-radius: 12px;
+  }
+}
+
+@media (max-width: 400px) {
+  :root {
+    --botao-acao-font-size: 14px;
+    --botao-acao-padding: 12px;
+    --botao-acao-border-radius: 10px;
+  }
+}
+
 /* ========================================
     FIM MODAL DE AVISO META TURBO
 ======================================== */
@@ -1618,6 +1691,55 @@
   --tooltip-transition: 0.3s;
   /* --------------------------------------------------
     BOTÃO DE INFORMAÇÃO META-FIXA / META-TURBO 
+  -------------------------------------------------- */
+  /**/
+  /**/
+  /**/
+  /**/
+  /**/
+  /**/
+  /**/
+  /* --------------------------------------------------
+    BOTÃO DE AÇÃO - BOTÃO DE AÇÃO - BOTÃO DE AÇÃO
+  -------------------------------------------------- */
+  /* ===== CONTAINER ===== */
+  --botao-acao-container-margin-top: -30px;
+  --botao-acao-container-margin-bottom: 0;
+  --botao-acao-container-padding: 0;
+  --botao-acao-container-position: sticky;
+  --botao-acao-container-bottom: 0;
+
+  /* ===== BOTÃO - DIMENSÕES ===== */
+  --botao-acao-width: 100%;
+  --botao-acao-padding: 14px;
+  --botao-acao-border-radius: 14px;
+
+  /* ===== BOTÃO - TIPOGRAFIA ===== */
+  --botao-acao-font-size: 16px;
+  --botao-acao-font-weight: bold;
+  --botao-acao-font-family: "Poppins", sans-serif;
+  --botao-acao-color: #ffffff;
+  --botao-acao-text-transform: none; /* uppercase, lowercase, capitalize, none */
+  --botao-acao-letter-spacing: 0;
+
+  /* ===== BOTÃO - CORES E FUNDO ===== */
+  --botao-acao-background: linear-gradient(135deg, #329429, #26b104);
+  --botao-acao-background-hover: linear-gradient(135deg, #0cc00c, #1cc905);
+  --botao-acao-border: none;
+  --botao-acao-border-color: transparent;
+
+  /* ===== BOTÃO - SOMBRA ===== */
+  --botao-acao-box-shadow: 0 4px 12px rgba(39, 174, 96, 0.3);
+  --botao-acao-box-shadow-hover: 0 6px 16px rgba(39, 174, 96, 0.4);
+
+  /* ===== BOTÃO - EFEITOS ===== */
+  --botao-acao-cursor: pointer;
+  --botao-acao-transition: all 0.3s ease;
+  --botao-acao-transform-hover: translateY(-2px); /* none para desabilitar */
+  --botao-acao-opacity-disabled: 0.6;
+
+  /* --------------------------------------------------
+    BOTÃO DE AÇÃO - BOTÃO DE AÇÃO - BOTÃO DE AÇÃO
   -------------------------------------------------- */
   /**/
   /**/

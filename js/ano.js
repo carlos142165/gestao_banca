@@ -2731,13 +2731,15 @@ const ContadorDiasAno = {
   // Calcular dias restantes do ano
   calcularDiasRestantes() {
     const hoje = new Date();
+    hoje.setHours(0, 0, 0, 0); // Zerar horas para contar dia completo
+
     const fimDoAno = new Date(hoje.getFullYear(), 11, 31, 23, 59, 59);
 
     // Diferença em milissegundos
     const diferencaMs = fimDoAno - hoje;
 
-    // Converter para dias (incluindo o dia de hoje)
-    const diasRestantes = Math.ceil(diferencaMs / (1000 * 60 * 60 * 24));
+    // Converter para dias (incluindo o dia de hoje, mas contando corretamente)
+    const diasRestantes = Math.floor(diferencaMs / (1000 * 60 * 60 * 24)) + 1;
 
     return diasRestantes;
   },

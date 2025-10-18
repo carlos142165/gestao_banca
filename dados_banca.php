@@ -145,6 +145,7 @@ function calcularLucro($conexao, $id_usuario) {
 }
 
 // ✅ CORRIGIDA: CALCULAR META DIÁRIA COM DECIMAL
+// ✅ CORRIGIDA: CALCULAR META DIÁRIA - LÓGICA DEFINITIVA
 function calcularMetaDiariaComTipo($conexao, $id_usuario, $total_deposito, $total_saque, $lucro_total, $tipo_meta = 'turbo') {
     try {
         // Buscar porcentagem e unidade mais recentes
@@ -169,7 +170,7 @@ function calcularMetaDiariaComTipo($conexao, $id_usuario, $total_deposito, $tota
         
         $banca_inicial = $total_deposito - $total_saque;
         
-        // ✅ NOVO: Calcular lucro acumulado ATÉ ONTEM (excluindo hoje)
+        // ✅ CALCULAR LUCRO ACUMULADO ATÉ ONTEM (excluindo hoje)
         $stmt_lucro_ontem = $conexao->prepare("
             SELECT 
                 COALESCE(SUM(valor_green), 0) as total_green_ontem,
@@ -195,25 +196,27 @@ function calcularMetaDiariaComTipo($conexao, $id_usuario, $total_deposito, $tota
         $descricao_calculo = '';
         
         if ($tipo_meta === 'fixa') {
-            // Meta Fixa: sempre usa banca inicial
+            // ✅ META FIXA: SEMPRE usa apenas banca inicial (depósitos - saques)
             $base_calculo = $banca_inicial;
             $meta_diaria = $base_calculo * $porcentagem_decimal * $unidade;
-            $descricao_calculo = "Meta Fixa: Banca Inicial (R$ " . number_format($banca_inicial, 2, ',', '.') . ") × {$diaria}% × {$unidade}";
+            $descricao_calculo = "Meta Fixa: Apenas Banca (R$ " . number_format($banca_inicial, 2, ',', '.') . ") × {$diaria}% × {$unidade}";
+            
         } else {
-            // ✅ Meta Turbo: usa banca com lucro ATÉ ONTEM (congelada)
+            // ✅ META TURBO: usa banca + lucro ATÉ ONTEM (congelado até 00:00h)
             if ($lucro_ate_ontem > 0) {
+                // Lucro acumulado positivo: usar banca + lucro até ontem
                 $base_calculo = $banca_inicio_dia;
                 $meta_diaria = $base_calculo * $porcentagem_decimal * $unidade;
-                $descricao_calculo = "Meta Turbo: Banca Início Dia (R$ " . number_format($banca_inicio_dia, 2, ',', '.') . ") × {$diaria}% × {$unidade}";
+                $descricao_calculo = "Meta Turbo: Banca + Lucro até Ontem (R$ " . number_format($banca_inicio_dia, 2, ',', '.') . ") × {$diaria}% × {$unidade}";
             } else {
-                // Se lucro acumulado é negativo, usar banca inicial
+                // Lucro acumulado negativo ou zero: usar apenas banca inicial
                 $base_calculo = $banca_inicial;
                 $meta_diaria = $base_calculo * $porcentagem_decimal * $unidade;
-                $descricao_calculo = "Meta Turbo (Lucro -): Banca Inicial (R$ " . number_format($banca_inicial, 2, ',', '.') . ") × {$diaria}% × {$unidade}";
+                $descricao_calculo = "Meta Turbo (Lucro ≤ 0): Apenas Banca (R$ " . number_format($banca_inicial, 2, ',', '.') . ") × {$diaria}% × {$unidade}";
             }
         }
         
-        // Banca atual (com lucro de hoje incluído)
+        // Banca atual (com lucro de hoje incluído) - apenas para referência
         $banca_atual = $banca_inicial + $lucro_total;
         
         return [
@@ -240,12 +243,12 @@ function calcularMetaDiariaComTipo($conexao, $id_usuario, $total_deposito, $tota
                 'porcentagem' => $diaria,
                 'unidade' => $unidade,
                 'resultado' => $meta_diaria,
+                'logica_fixa' => $tipo_meta === 'fixa' ? 'sempre_usa_apenas_banca' : 'nao_aplicavel',
                 'logica_turbo' => $tipo_meta === 'turbo' ? 
-                    ($lucro_ate_ontem > 0 ? 'usa_banca_inicio_dia_com_lucro_ontem' : 'usa_banca_inicial') 
+                    ($lucro_ate_ontem > 0 ? 'usa_banca_mais_lucro_ate_ontem' : 'usa_apenas_banca') 
                     : 'nao_aplicavel',
-                'explicacao' => $tipo_meta === 'turbo' ? 
-                    'Meta calculada com banca do início do dia (lucro até ontem). Valor fixo até 00:00h.' 
-                    : 'Meta calculada com banca inicial (sempre fixa).'
+                'explicacao_fixa' => 'Meta Fixa: Sempre calcula com valor da banca (depósitos - saques)',
+                'explicacao_turbo' => 'Meta Turbo: Calcula com banca + lucro dos dias anteriores. Lucro de hoje não conta, só após 00:00h'
             ]
         ];
         
@@ -270,27 +273,52 @@ function calcularMetaDiariaComTipo($conexao, $id_usuario, $total_deposito, $tota
 }
 
 // ✅ CORRIGIDA: ÁREA DIREITA COM DECIMAL
+// ✅ CORRIGIDA: ÁREA DIREITA (UND) - MESMA LÓGICA DA META
 function calcularAreaDireita($conexao, $id_usuario, $total_deposito, $total_saque, $lucro_total, $tipo_meta = 'turbo') {
     try {
         $ultima_diaria = getUltimoCampo($conexao, 'diaria', $id_usuario);
         $diaria = $ultima_diaria !== null ? $ultima_diaria : 2.00;
         
         $banca_inicial = $total_deposito - $total_saque;
+        
+        // ✅ CALCULAR LUCRO ACUMULADO ATÉ ONTEM (excluindo hoje)
+        $stmt_lucro_ontem = $conexao->prepare("
+            SELECT 
+                COALESCE(SUM(valor_green), 0) as total_green_ontem,
+                COALESCE(SUM(valor_red), 0) as total_red_ontem
+            FROM valor_mentores
+            WHERE id_usuario = ? AND DATE(data_criacao) < CURDATE()
+        ");
+        $stmt_lucro_ontem->bind_param("i", $id_usuario);
+        $stmt_lucro_ontem->execute();
+        $stmt_lucro_ontem->bind_result($total_green_ontem, $total_red_ontem);
+        $stmt_lucro_ontem->fetch();
+        $stmt_lucro_ontem->close();
+        
+        $lucro_ate_ontem = $total_green_ontem - $total_red_ontem;
+        
+        // Banca com lucro até ontem (congelada para o dia de hoje)
+        $banca_inicio_dia = $banca_inicial + $lucro_ate_ontem;
+        
+        // Banca atual (com lucro de hoje incluído) - apenas para referência
         $banca_atual = $banca_inicial + $lucro_total;
         
         $base_calculo_und = 0;
         $regra_aplicada = '';
         
-        if ($lucro_total < 0) {
-            $base_calculo_und = $banca_atual;
-            $regra_aplicada = 'Saldo negativo: Banca + Lucro';
+        if ($tipo_meta === 'fixa') {
+            // ✅ META FIXA: SEMPRE usa apenas banca inicial
+            $base_calculo_und = $banca_inicial;
+            $regra_aplicada = 'Meta Fixa: Sempre usa apenas Banca';
+            
         } else {
-            if ($tipo_meta === 'fixa') {
-                $base_calculo_und = $banca_inicial;
-                $regra_aplicada = 'Meta Fixa: Apenas Banca';
+            // ✅ META TURBO: usa banca + lucro ATÉ ONTEM (congelado até 00:00h)
+            if ($lucro_ate_ontem > 0) {
+                $base_calculo_und = $banca_inicio_dia;
+                $regra_aplicada = 'Meta Turbo: Banca + Lucro até Ontem (congelado até 00:00h)';
             } else {
-                $base_calculo_und = $banca_atual;
-                $regra_aplicada = 'Meta Turbo: Banca + Lucro';
+                $base_calculo_und = $banca_inicial;
+                $regra_aplicada = 'Meta Turbo (Lucro ≤ 0): Apenas Banca';
             }
         }
         
@@ -298,15 +326,33 @@ function calcularAreaDireita($conexao, $id_usuario, $total_deposito, $total_saqu
         
         return [
             'diaria_porcentagem' => $diaria,
-            'banca_usada' => $banca_atual,
+            'banca_usada' => $banca_atual, // Banca atual (para exibição)
             'banca_inicial' => $banca_inicial,
+            'banca_inicio_dia' => $banca_inicio_dia,
             'lucro_atual' => $lucro_total,
+            'lucro_ate_ontem' => $lucro_ate_ontem,
             'base_calculo_und' => $base_calculo_und,
             'unidade_entrada' => $unidade_entrada,
             'tipo_meta_info' => $tipo_meta,
             'regra_aplicada' => $regra_aplicada,
             'diaria_formatada' => number_format($diaria, 2, ',', '') . '%',
-            'unidade_entrada_formatada' => 'R$ ' . number_format($unidade_entrada, 2, ',', '.')
+            'unidade_entrada_formatada' => 'R$ ' . number_format($unidade_entrada, 2, ',', '.'),
+            'formula_detalhada' => [
+                'banca_inicial' => $banca_inicial,
+                'lucro_ate_ontem' => $lucro_ate_ontem,
+                'banca_inicio_dia' => $banca_inicio_dia,
+                'lucro_total' => $lucro_total,
+                'banca_atual' => $banca_atual,
+                'base_usada_und' => $base_calculo_und,
+                'diaria_percentual' => $diaria,
+                'resultado_und' => $unidade_entrada,
+                'logica_fixa' => $tipo_meta === 'fixa' ? 'sempre_usa_apenas_banca' : 'nao_aplicavel',
+                'logica_turbo' => $tipo_meta === 'turbo' ? 
+                    ($lucro_ate_ontem > 0 ? 'usa_banca_mais_lucro_ate_ontem' : 'usa_apenas_banca') 
+                    : 'nao_aplicavel',
+                'explicacao' => $regra_aplicada,
+                'valor_congelado' => 'UND calculada com lucro até ontem. Valor fixo até 00:00h.'
+            ]
         ];
         
     } catch (Exception $e) {
@@ -315,13 +361,16 @@ function calcularAreaDireita($conexao, $id_usuario, $total_deposito, $total_saqu
             'diaria_porcentagem' => 2.00,
             'banca_usada' => 0,
             'banca_inicial' => 0,
+            'banca_inicio_dia' => 0,
             'lucro_atual' => 0,
+            'lucro_ate_ontem' => 0,
             'base_calculo_und' => 0,
             'unidade_entrada' => 0,
             'tipo_meta_info' => $tipo_meta,
             'regra_aplicada' => 'Erro no cálculo',
             'diaria_formatada' => '2,00%',
-            'unidade_entrada_formatada' => 'R$ 0,00'
+            'unidade_entrada_formatada' => 'R$ 0,00',
+            'formula_detalhada' => []
         ];
     }
 }

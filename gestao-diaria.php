@@ -5978,6 +5978,7 @@ console.log('🔧 Para testar: Clique em qualquer card de mentor');
   <div id="modalDeposito" class="modal-overlay">
     <div class="modal-content">
       <button type="button" class="btn-fechar" id="fecharModal">×</button>
+      
       <form method="POST" action="">
         <input type="hidden" name="controle_id" value="<?= isset($controle_id) ? htmlspecialchars($controle_id) : '' ?>">
         <input type="hidden" name="acaoBanca" id="acaoBanca">
@@ -6176,28 +6177,33 @@ console.log('🔧 Para testar: Clique em qualquer card de mentor');
         </div>
 
         <div id="toastModal"></div>
-        <input type="button" id="botaoAcao" value="Cadastrar Dados" class="custom-button">
       </form>
+      
+      <!-- ✅ BOTÃO FORA DO FORM -->
+      <div class="container-botao-acao">
+        <input type="button" id="botaoAcao" value="Cadastrar Dados" class="custom-button">
+      </div>
     </div>
   </div>
+  
   <!-- Modal de Aviso Meta Turbo -->
-<div id="modalAvisoMetaTurbo" class="modal-aviso-turbo" style="display: none;">
-  <div class="modal-aviso-content">
-    <button type="button" class="btn-fechar-aviso">×</button>
-    <div class="aviso-icone">
-      <i class="fa-solid fa-triangle-exclamation"></i>
+  <div id="modalAvisoMetaTurbo" class="modal-aviso-turbo" style="display: none;">
+    <div class="modal-aviso-content">
+      <button type="button" class="btn-fechar-aviso">×</button>
+      <div class="aviso-icone">
+        <i class="fa-solid fa-triangle-exclamation"></i>
+      </div>
+      <div class="aviso-titulo">Meta Turbo Indisponível</div>
+      <div class="aviso-mensagem">
+        A opção <strong>"Meta Turbo"</strong> só pode ser selecionada quando houver <strong>saldo positivo</strong> na banca.
+      </div>
+      <div class="aviso-info">
+        <i class="fa-solid fa-info-circle"></i>
+        O sistema automaticamente utilizará a <strong>Meta Fixa</strong> para preservar sua banca.
+      </div>
+      <button type="button" class="btn-entendi" id="btnEntendiFecha">Entendi</button>
     </div>
-    <div class="aviso-titulo">Meta Turbo Indisponível</div>
-    <div class="aviso-mensagem">
-      A opção <strong>"Meta Turbo"</strong> só pode ser selecionada quando houver <strong>saldo positivo</strong> na banca.
-    </div>
-    <div class="aviso-info">
-      <i class="fa-solid fa-info-circle"></i>
-      O sistema automaticamente utilizará a <strong>Meta Fixa</strong> para preservar sua banca.
-    </div>
-    <button type="button" class="btn-entendi" id="btnEntendiFecha">Entendi</button>
   </div>
-</div>
 </div>
 
 <script>
@@ -6454,6 +6460,7 @@ document.addEventListener('DOMContentLoaded', function() {
     });
   });
 });
+
 </script>
 
 

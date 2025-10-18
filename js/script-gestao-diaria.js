@@ -7654,5 +7654,328 @@ window.pararMonitor = function () {
 // ========================================================================================================================
 
 // ========================================================================================================================
-//                          ✅ FIM SISTEMA DE ALTERNÂNCIA AUTOMÁTICA META FIXA/TURBO
+//                          ✅ FORMATAÇÃO DIÁRIA - SOLUÇÃO DEFINITIVA (SEM PISCAR)
+// ========================================================================================================================
+
+(function () {
+  "use strict";
+
+  console.log("🎨 Sistema de formatação definitivo iniciado");
+
+  // ==========================================
+  // FORMATADOR PURO (SEM EFEITOS COLATERAIS)
+  // ==========================================
+
+  /**
+   * Formata porcentagem de forma inteligente
+   */
+  function formatarPorcentagem(valor) {
+    try {
+      // Extrair número
+      const numeroStr = String(valor)
+        .replace(/[^\d,.-]/g, "")
+        .replace(",", ".");
+      const numero = parseFloat(numeroStr);
+
+      if (isNaN(numero)) return valor;
+
+      // Verificar se tem decimais significativos
+      if (numero % 1 === 0) {
+        // Inteiro
+        return Math.round(numero) + "%";
+      } else {
+        // Com decimais - usar ponto
+        return numero.toFixed(2).replace(/\.?0+$/, "") + "%";
+      }
+    } catch (error) {
+      return valor;
+    }
+  }
+
+  // ==========================================
+  // INTERCEPTAÇÃO NA ORIGEM (DADOS_BANCA.PHP)
+  // ==========================================
+
+  /**
+   * Intercepta e formata ANTES de chegar no DOM
+   */
+  function interceptarDadosBanca() {
+    if (typeof DadosManager === "undefined") {
+      console.warn("⚠️ DadosManager não encontrado");
+      return;
+    }
+
+    // Salvar referência original
+    const originalAtualizarAreaDireita = DadosManager.atualizarAreaDireita;
+
+    // Sobrescrever
+    DadosManager.atualizarAreaDireita = function (data) {
+      // ✅ FORMATAR ANTES de passar para a função original
+      if (data && data.diaria_formatada) {
+        data.diaria_formatada = formatarPorcentagem(data.diaria_formatada);
+      }
+
+      // Chamar função original com dados já formatados
+      if (originalAtualizarAreaDireita) {
+        originalAtualizarAreaDireita.call(this, data);
+      }
+    };
+
+    console.log("✅ DadosManager interceptado na origem");
+  }
+
+  /**
+   * Intercepta MetaDiariaManager
+   */
+  function interceptarMetaDiariaManager() {
+    if (typeof MetaDiariaManager === "undefined") {
+      console.warn("⚠️ MetaDiariaManager não encontrado");
+      return;
+    }
+
+    // Salvar referência original
+    const originalAtualizarAreaDireita = MetaDiariaManager.atualizarAreaDireita;
+
+    // Sobrescrever
+    MetaDiariaManager.atualizarAreaDireita = function (data) {
+      // ✅ FORMATAR ANTES de passar para a função original
+      if (data && data.diaria_formatada) {
+        data.diaria_formatada = formatarPorcentagem(data.diaria_formatada);
+      }
+
+      // Chamar função original com dados já formatados
+      if (originalAtualizarAreaDireita) {
+        originalAtualizarAreaDireita.call(this, data);
+      }
+    };
+
+    console.log("✅ MetaDiariaManager interceptado na origem");
+  }
+
+  // ==========================================
+  // PROTEÇÃO DO ELEMENTO (BLOQUEIA ALTERAÇÕES)
+  // ==========================================
+
+  let ultimoValorDefinido = null;
+  let bloqueioAtivo = false;
+
+  /**
+   * Protege o elemento contra alterações não formatadas
+   */
+  function protegerElemento() {
+    const elemento = document.getElementById("porcentagem-diaria");
+
+    if (!elemento) {
+      console.warn("⚠️ Elemento não encontrado");
+      return;
+    }
+
+    // Observer que formata IMEDIATAMENTE ao detectar mudança
+    const observer = new MutationObserver((mutations) => {
+      if (bloqueioAtivo) return;
+
+      mutations.forEach((mutation) => {
+        const valorAtual = elemento.textContent.trim();
+
+        // Ignorar estados vazios
+        if (!valorAtual || valorAtual === "Carregando...") {
+          return;
+        }
+
+        // Verificar se precisa formatar
+        const valorFormatado = formatarPorcentagem(valorAtual);
+
+        if (
+          valorFormatado !== valorAtual &&
+          valorFormatado !== ultimoValorDefinido
+        ) {
+          // Bloquear temporariamente para evitar loop
+          bloqueioAtivo = true;
+
+          // Formatar IMEDIATAMENTE
+          elemento.textContent = valorFormatado;
+          ultimoValorDefinido = valorFormatado;
+
+          // Liberar após um ciclo
+          setTimeout(() => {
+            bloqueioAtivo = false;
+          }, 10);
+        }
+      });
+    });
+
+    // Observar mudanças
+    observer.observe(elemento, {
+      childList: true,
+      characterData: true,
+      subtree: true,
+    });
+
+    console.log("✅ Elemento protegido com observer imediato");
+  }
+
+  // ==========================================
+  // FORMATAÇÃO INICIAL
+  // ==========================================
+
+  function formatarValorInicial() {
+    const elemento = document.getElementById("porcentagem-diaria");
+
+    if (!elemento) return;
+
+    const valorAtual = elemento.textContent.trim();
+
+    if (valorAtual && valorAtual !== "Carregando...") {
+      const valorFormatado = formatarPorcentagem(valorAtual);
+
+      if (valorFormatado !== valorAtual) {
+        bloqueioAtivo = true;
+        elemento.textContent = valorFormatado;
+        ultimoValorDefinido = valorFormatado;
+
+        setTimeout(() => {
+          bloqueioAtivo = false;
+        }, 100);
+
+        console.log("✅ Valor inicial formatado:", valorFormatado);
+      }
+    }
+  }
+
+  // ==========================================
+  // GETTER/SETTER NO ELEMENTO (NÍVEL MAIS BAIXO)
+  // ==========================================
+
+  function interceptarTextContent() {
+    const elemento = document.getElementById("porcentagem-diaria");
+
+    if (!elemento) return;
+
+    // Salvar setter original
+    const originalDescriptor = Object.getOwnPropertyDescriptor(
+      Node.prototype,
+      "textContent"
+    );
+
+    if (!originalDescriptor) return;
+
+    // Criar novo descriptor que formata automaticamente
+    Object.defineProperty(elemento, "textContent", {
+      get: function () {
+        return originalDescriptor.get.call(this);
+      },
+      set: function (valor) {
+        // Se não for string ou estiver vazio, usar valor original
+        if (typeof valor !== "string" || !valor || valor === "Carregando...") {
+          return originalDescriptor.set.call(this, valor);
+        }
+
+        // ✅ FORMATAR AUTOMATICAMENTE antes de definir
+        const valorFormatado = formatarPorcentagem(valor);
+        ultimoValorDefinido = valorFormatado;
+
+        return originalDescriptor.set.call(this, valorFormatado);
+      },
+      configurable: true,
+      enumerable: true,
+    });
+
+    console.log("✅ textContent interceptado no elemento");
+  }
+
+  // ==========================================
+  // TESTES
+  // ==========================================
+
+  function testar() {
+    const testes = [
+      { entrada: "1,00%", esperado: "1%" },
+      { entrada: "1,03%", esperado: "1.03%" },
+      { entrada: "1,5%", esperado: "1.5%" },
+      { entrada: "2,00%", esperado: "2%" },
+      { entrada: "2,50%", esperado: "2.5%" },
+      { entrada: "10,25%", esperado: "10.25%" },
+    ];
+
+    console.log("🧪 Testes:");
+
+    testes.forEach((teste) => {
+      const resultado = formatarPorcentagem(teste.entrada);
+      const status = resultado === teste.esperado ? "✅" : "❌";
+      console.log(
+        `${status} ${teste.entrada} → ${resultado} (esperado: ${teste.esperado})`
+      );
+    });
+  }
+
+  // ==========================================
+  // INICIALIZAÇÃO
+  // ==========================================
+
+  function inicializar() {
+    console.log("🚀 Iniciando formatação definitiva...");
+
+    // Aguardar managers estarem prontos
+    setTimeout(() => {
+      // 1. Interceptar na origem (dados)
+      interceptarDadosBanca();
+      interceptarMetaDiariaManager();
+
+      // 2. Interceptar textContent (nível baixo)
+      interceptarTextContent();
+
+      // 3. Proteger com observer
+      protegerElemento();
+
+      // 4. Formatar valor inicial
+      formatarValorInicial();
+
+      console.log("✅ Sistema completamente carregado!");
+      console.log("📋 Camadas de proteção:");
+      console.log("   1. Interceptação de dados (origem)");
+      console.log("   2. Interceptação de textContent");
+      console.log("   3. Observer de proteção");
+      console.log("   4. Formatação inicial");
+    }, 1000);
+  }
+
+  // ==========================================
+  // FUNÇÕES GLOBAIS
+  // ==========================================
+
+  window.formatarPorcentagem = formatarPorcentagem;
+  window.testarFormatacaoPorcentagem = testar;
+
+  window.$diariaFix = {
+    formatar: formatarPorcentagem,
+    testar: testar,
+    status: () => {
+      console.log("📊 Status:", {
+        ultimoValor: ultimoValorDefinido,
+        bloqueioAtivo: bloqueioAtivo,
+        elemento: !!document.getElementById("porcentagem-diaria"),
+      });
+    },
+    forcar: () => {
+      bloqueioAtivo = false;
+      formatarValorInicial();
+    },
+  };
+
+  // ==========================================
+  // AUTO-INICIALIZAÇÃO
+  // ==========================================
+
+  if (document.readyState === "loading") {
+    document.addEventListener("DOMContentLoaded", inicializar);
+  } else {
+    inicializar();
+  }
+
+  console.log("🎯 Sistema de Formatação Definitivo carregado!");
+  console.log("💡 Use: $diariaFix.status() para verificar");
+})();
+
+// ========================================================================================================================
+//                          ✅ FIM FORMATAÇÃO DEFINITIVA
 // ========================================================================================================================
