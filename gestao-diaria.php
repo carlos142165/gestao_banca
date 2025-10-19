@@ -1911,18 +1911,17 @@ document.addEventListener('DOMContentLoaded', function() {
             let valor = 0;
             let cor = 'neutro';
             
+            // ✅ CORRIGIDO: Quando saldo é zero (neutro), manter cor='neutro' e valor=0
             if (saldo > 0) {
                 valor = Math.abs(saldo);
                 cor = 'verde';
             } else if (saldo < 0) {
                 valor = Math.abs(saldo);
                 cor = 'vermelho';
-            } else if (green > red) {
-                valor = green * 100;
-                cor = 'verde';
-            } else if (red > green) {
-                valor = red * 100;
-                cor = 'vermelho';
+            } else if (saldo === 0) {
+                // ✅ NEUTRO: Não colorir com base em green/red, deixar cinza
+                valor = 0;
+                cor = 'neutro';
             }
             
             dados[indice] = {
@@ -1983,7 +1982,7 @@ document.addEventListener('DOMContentLoaded', function() {
     function configurarAjax() {
         let ajaxMonitorado = false;
         
-        // Interceptar fetch com verificação ampla
+        // ✅ VERSÃO 1: Interceptar fetch com verificação ampla
         const fetchOriginal = window.fetch;
         window.fetch = function(...args) {
             return fetchOriginal.apply(this, arguments).then(response => {
@@ -1994,16 +1993,20 @@ document.addEventListener('DOMContentLoaded', function() {
                         url.includes('valor') || 
                         url.includes('excluir') ||
                         url.includes('gestao') ||
-                        url.includes('mentor')) {
+                        url.includes('mentor') ||
+                        url.includes('dados_banca')) {
                         
-                        console.log('AJAX fetch detectado:', args[0]);
+                        console.log('🔄 AJAX fetch detectado:', args[0]);
                         if (!ajaxMonitorado) {
                             ajaxMonitorado = true;
+                            // ✅ Delay reduzido de 1500ms para 600ms
                             setTimeout(() => {
-                                console.log('Atualizando gráfico após fetch');
-                                gerarGrafico();
+                                console.log('📊 Atualizando gráfico após fetch');
+                                if (typeof window.forcarAtualizacaoGrafico === 'function') {
+                                    window.forcarAtualizacaoGrafico();
+                                }
                                 ajaxMonitorado = false;
-                            }, 1500);
+                            }, 600);
                         }
                     }
                 }
@@ -2015,7 +2018,7 @@ document.addEventListener('DOMContentLoaded', function() {
             });
         };
         
-        // Interceptar XMLHttpRequest com verificação ampla
+        // ✅ VERSÃO 2: Interceptar XMLHttpRequest com verificação ampla
         const XHROriginal = window.XMLHttpRequest;
         window.XMLHttpRequest = function() {
             const xhr = new XHROriginal();
@@ -2037,16 +2040,19 @@ document.addEventListener('DOMContentLoaded', function() {
                          finalUrl.includes('valor') || 
                          finalUrl.includes('excluir') ||
                          finalUrl.includes('gestao') ||
-                         finalUrl.includes('mentor'))) {
+                         finalUrl.includes('mentor') ||
+                         finalUrl.includes('dados_banca'))) {
                         
-                        console.log('AJAX XHR detectado:', finalUrl);
+                        console.log('🔄 AJAX XHR detectado:', finalUrl);
                         if (!ajaxMonitorado) {
                             ajaxMonitorado = true;
                             setTimeout(() => {
-                                console.log('Atualizando gráfico após XHR');
-                                gerarGrafico();
+                                console.log('📊 Atualizando gráfico após XHR');
+                                if (typeof window.forcarAtualizacaoGrafico === 'function') {
+                                    window.forcarAtualizacaoGrafico();
+                                }
                                 ajaxMonitorado = false;
-                            }, 1500);
+                            }, 600);
                         }
                     }
                 });
@@ -2057,7 +2063,7 @@ document.addEventListener('DOMContentLoaded', function() {
             return xhr;
         };
         
-        // Interceptar jQuery AJAX se existir
+        // ✅ VERSÃO 3: Interceptar jQuery AJAX se existir
         if (window.jQuery && window.jQuery.ajaxSetup) {
             window.jQuery.ajaxSetup({
                 complete: function(xhr, status) {
@@ -2067,34 +2073,45 @@ document.addEventListener('DOMContentLoaded', function() {
                          url.includes('valor') || 
                          url.includes('excluir') ||
                          url.includes('gestao') ||
-                         url.includes('mentor'))) {
+                         url.includes('mentor') ||
+                         url.includes('dados_banca'))) {
                         
-                        console.log('AJAX jQuery detectado:', this.url);
+                        console.log('🔄 AJAX jQuery detectado:', this.url);
                         if (!ajaxMonitorado) {
                             ajaxMonitorado = true;
                             setTimeout(() => {
-                                console.log('Atualizando gráfico após jQuery');
-                                gerarGrafico();
+                                console.log('📊 Atualizando gráfico após jQuery');
+                                if (typeof window.forcarAtualizacaoGrafico === 'function') {
+                                    window.forcarAtualizacaoGrafico();
+                                }
                                 ajaxMonitorado = false;
-                            }, 1500);
+                            }, 600);
                         }
                     }
                 }
             });
         }
         
-        // Monitoramento adicional por eventos customizados
+        // ✅ VERSÃO 4: Monitoramento adicional por eventos customizados
         document.addEventListener('valorCadastrado', function() {
-            console.log('Evento valorCadastrado detectado');
-            setTimeout(gerarGrafico, 1000);
+            console.log('🎯 Evento valorCadastrado detectado');
+            setTimeout(() => {
+                if (typeof window.forcarAtualizacaoGrafico === 'function') {
+                    window.forcarAtualizacaoGrafico();
+                }
+            }, 300);
         });
         
         document.addEventListener('valorExcluido', function() {
-            console.log('Evento valorExcluido detectado');
-            setTimeout(gerarGrafico, 1000);
+            console.log('🎯 Evento valorExcluido detectado');
+            setTimeout(() => {
+                if (typeof window.forcarAtualizacaoGrafico === 'function') {
+                    window.forcarAtualizacaoGrafico();
+                }
+            }, 300);
         });
         
-        console.log('Sistema AJAX configurado - Monitorando fetch, XHR, jQuery e eventos');
+        console.log('✅ Sistema AJAX configurado - Monitorando fetch, XHR, jQuery e eventos');
     }
     
     // Funções públicas
@@ -4608,9 +4625,8 @@ const ModalExclusaoEntrada = {
     },
 
     async executarExclusao(idEntrada) {
-        if (typeof ExclusaoManager !== 'undefined' && ExclusaoManager.executarExclusaoEntrada) {
-            return await ExclusaoManager.executarExclusaoEntrada(idEntrada);
-        }
+        // ✅ CORRIGIDO: Não usar ExclusaoManager, sempre usar fetch direto
+        // para garantir que atualizarSistema() seja chamado após exclusão
 
         const response = await fetch('excluir-entrada.php', {
             method: 'POST',
@@ -4628,6 +4644,7 @@ const ModalExclusaoEntrada = {
             throw new Error(resultado || 'Erro desconhecido');
         }
 
+        // ✅ Garantir que atualizarSistema() seja SEMPRE chamado
         await this.atualizarSistema();
         return resultado;
     },
@@ -4647,6 +4664,14 @@ const ModalExclusaoEntrada = {
             }
 
             await Promise.all(atualizacoes);
+
+            // ✅ NOVO: Atualizar gráfico após exclusão
+            setTimeout(() => {
+                if (typeof window.forcarAtualizacaoGrafico === 'function') {
+                    console.log('📊 Atualizando gráfico após exclusão');
+                    window.forcarAtualizacaoGrafico();
+                }
+            }, 600);
 
             const telaEdicaoAberta = document.getElementById('tela-edicao')?.style.display === 'block';
             if (telaEdicaoAberta && typeof TelaEdicaoManager !== 'undefined' && typeof MentorManager !== 'undefined') {
@@ -5622,6 +5647,15 @@ const SistemaCadastroNovo = {
 
         try {
             await Promise.all(atualizacoes);
+            
+            // ✅ NOVO: Atualizar gráfico após os dados serem carregados
+            setTimeout(() => {
+                if (typeof window.forcarAtualizacaoGrafico === 'function') {
+                    console.log('Atualizando gráfico após AJAX...');
+                    window.forcarAtualizacaoGrafico();
+                }
+            }, 800);
+            
             console.log('Sistema atualizado');
         } catch (error) {
             console.warn('Erro ao atualizar:', error);
@@ -6038,7 +6072,7 @@ console.log('🔧 Para testar: Clique em qualquer card de mentor');
                   <button type="button" class="btn-fechar-tooltip">×</button>
                   <div class="tooltip-header">🎯 Meta Fixa — Entenda o Conceito</div>
                   <div class="tooltip-content">
-                    <p>A <strong>Meta Fixa</strong> é uma estratégia de gestão de banca onde o valor-alvo diário é calculado com base no <strong>valor depositado</strong>, sem considerar os lucros acumulados. Isso garante consistência e controle emocional ao longo do mês.</p>
+                    <p>A <strong>Meta Fixa</strong> é calculado com base no  <strong>valor depositado</strong>, sem considerar os lucros acumulados. Isso garante consistência e controle emocional ao longo do mês.</p>
                     
                     <div class="tooltip-exemplo">
                       <strong>📌 Como funciona:</strong>
@@ -6053,7 +6087,8 @@ console.log('🔧 Para testar: Clique em qualquer card de mentor');
                     </div>
                     
                     <p class="tooltip-obs">
-                      <strong>Obs.:</strong> Se o saldo for negativo, o cálculo é o mesmo para os dois tipos de meta, para assim preservar e proteger mais a sua banca. A meta mensal e anual vão se somando com o saldo negativo para que se alcance o saldo perdido e a meta.
+                      <strong>Obs.:</strong> Caso o saldo do dia seja <strong>negativo</strong>, o valor da perda será somado à <strong>meta diária</strong>. Exemplo: <strong>Meta: R$ 10,00</strong> e <strong>Perda: R$ 10,00</strong>, a nova meta será <strong>R$ 20,00</strong>. Essa perda é considerada apenas no dia atual; no dia seguinte, a meta volta ao valor fixo e a perda acumulada é direcionada para a <strong>Meta Mensal</strong>.
+
                     </p>
                   </div>
                 </div>
@@ -6071,7 +6106,7 @@ console.log('🔧 Para testar: Clique em qualquer card de mentor');
                   <button type="button" class="btn-fechar-tooltip">×</button>
                   <div class="tooltip-header">🚀 Meta Turbo — Entenda o Conceito</div>
                   <div class="tooltip-content">
-                    <p>A <strong>Meta Turbo</strong> recalcula a meta diária com base no <strong>saldo atual da banca</strong>. Cada ganho do dia aumenta o valor da próxima meta, acelerando o crescimento.</p>
+                    <p>A <strong>Meta Turbo</strong> é calculado <strong>banca + lucros acumulados</strong>. Cada ganho do dia aumenta o valor da próxima meta, acelerando o crescimento.</p>
                     
                     <div class="tooltip-exemplo">
                       <strong>📌 Como funciona:</strong>
@@ -6087,8 +6122,7 @@ console.log('🔧 Para testar: Clique em qualquer card de mentor');
                     </div>
                     
                     <p class="tooltip-obs">
-                      <strong>Obs.:</strong> Se o saldo for negativo, o cálculo é o mesmo para os dois tipos de meta, para assim preservar e proteger mais a sua banca. A meta mensal e anual vão se somando com o saldo negativo para que se alcance o saldo perdido e a meta.
-                    </p>
+                      <strong>Obs.:</strong> Caso o saldo da banca seja <strong>negativo</strong>, o sistema vai utilizar a <strong>meta fixa</strong> automaticamente para preservar a sua banca, quando o saldo voltar a ficar positivo poderá utilizar a <strong>meta turbo</strong> novamente.</p>
                   </div>
                 </div>
               </div>
@@ -6459,6 +6493,97 @@ document.addEventListener('DOMContentLoaded', function() {
       e.stopPropagation();
     });
   });
+});
+
+// ===== ATUALIZAR TÍTULO DOS CÁLCULOS CONFORME META SELECIONADA =====
+document.addEventListener('DOMContentLoaded', function() {
+  const metaFixa = document.getElementById('metaFixa');
+  const metaTurbo = document.getElementById('metaTurbo');
+  const tituloResultados = document.querySelector('.titulo-resultados');
+  const modalDeposito = document.getElementById('modalDeposito');
+  
+  if (!metaFixa || !metaTurbo || !tituloResultados) {
+    console.warn('⚠️ Elementos de meta ou título não encontrados');
+    return;
+  }
+  
+  let ultimoEstado = null;
+  
+  // Função para atualizar o título
+  function atualizarTituloMeta() {
+    // Ler o valor do radio selecionado
+    const metaTurboSelecionado = metaTurbo.checked;
+    
+    // Apenas atualizar se o estado mudou
+    if (ultimoEstado === metaTurboSelecionado) {
+      return;
+    }
+    
+    ultimoEstado = metaTurboSelecionado;
+    
+    if (metaTurboSelecionado) {
+      tituloResultados.textContent = '🚀 Resumo dos Cálculos - Meta Turbo';
+      console.log('✅ Título atualizado para Meta Turbo');
+    } else {
+      tituloResultados.textContent = '🎯 Resumo dos Cálculos - Meta Fixa';
+      console.log('✅ Título atualizado para Meta Fixa');
+    }
+  }
+  
+  // Adicionar listeners para mudanças
+  metaFixa.addEventListener('change', atualizarTituloMeta);
+  metaTurbo.addEventListener('change', atualizarTituloMeta);
+  
+  // Adicionar listener de input para capturar mudanças programáticas
+  metaFixa.addEventListener('input', atualizarTituloMeta);
+  metaTurbo.addEventListener('input', atualizarTituloMeta);
+  
+  // Adicionar listener de click direto nos radios
+  metaFixa.addEventListener('click', atualizarTituloMeta);
+  metaTurbo.addEventListener('click', atualizarTituloMeta);
+  
+  // Executar na inicialização
+  atualizarTituloMeta();
+  
+  // ===== VERIFICAÇÃO PERIÓDICA CONSTANTE =====
+  // Poll every 300ms to catch any state changes
+  setInterval(atualizarTituloMeta, 300);
+  
+  // ===== OBSERVAR MUDANÇAS NO MODAL =====
+  if (modalDeposito) {
+    const observer = new MutationObserver(function(mutations) {
+      mutations.forEach(function(mutation) {
+        // Verificar se o modal ficou visível
+        const isVisible = modalDeposito.style.display !== 'none' && 
+                         modalDeposito.style.visibility !== 'hidden' &&
+                         modalDeposito.offsetParent !== null;
+        
+        if (isVisible) {
+          console.log('📂 Modal aberto - Sincronizando título');
+          // Forçar atualização imediata
+          ultimoEstado = null;
+          atualizarTituloMeta();
+        }
+      });
+    });
+    
+    observer.observe(modalDeposito, {
+      attributes: true,
+      attributeFilter: ['style', 'class']
+    });
+  }
+  
+  // Adicionar listener de focus no container do modal para sincronizar quando recebe foco
+  const modalContent = modalDeposito?.querySelector('.modal-content');
+  if (modalContent) {
+    modalContent.addEventListener('focusin', function() {
+      console.log('📂 Modal recebeu foco - Sincronizando título');
+      ultimoEstado = null;
+      setTimeout(atualizarTituloMeta, 50);
+    });
+  }
+  
+  console.log('✅ Sistema de atualização de título de meta inicializado com verificação contínua');
 });
 
 </script>
