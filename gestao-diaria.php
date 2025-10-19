@@ -3649,7 +3649,8 @@ document.addEventListener('DOMContentLoaded', function() {
         transform var(--transition-smooth),
         background-color var(--transition-normal),
         border-color var(--transition-normal),
-        box-shadow var(--transition-normal);
+        box-shadow var(--transition-normal),
+        margin-bottom var(--transition-normal);
     display: flex !important;
     align-items: center;
     justify-content: center;
@@ -3671,6 +3672,7 @@ document.addEventListener('DOMContentLoaded', function() {
     border: 1px solid rgba(16, 185, 129, 0.2);
     border-left: 3px solid var(--success-color);
     box-shadow: var(--shadow-sm);
+    margin-bottom: 16px !important;
 }
 
 .mensagem-status-input.negativo {
@@ -3681,6 +3683,7 @@ document.addEventListener('DOMContentLoaded', function() {
     border: 1px solid rgba(239, 68, 68, 0.2);
     border-left: 3px solid var(--danger-color);
     box-shadow: var(--shadow-sm);
+    margin-bottom: 16px !important;
 }
 
 .mensagem-status-input.neutro {
@@ -3691,6 +3694,7 @@ document.addEventListener('DOMContentLoaded', function() {
     border: 1px solid var(--border-color);
     border-left: 3px solid var(--gray-400);
     box-shadow: var(--shadow-sm);
+    margin-bottom: 16px !important;
 }
 
 .mensagem-status-input.animar {
@@ -3715,6 +3719,7 @@ document.addEventListener('DOMContentLoaded', function() {
 .mensagem-status-input:empty {
     min-height: 20px;
     opacity: 0;
+    margin-bottom: 4px !important;
 }
 
 .mensagem-status-input:empty::after {
@@ -3770,6 +3775,16 @@ document.addEventListener('DOMContentLoaded', function() {
     margin-bottom: 16px;
     position: relative;
     min-height: auto;
+    transition: margin-bottom var(--transition-normal);
+}
+
+/* ✅ NOVO: Aumentar espaço quando mensagem de saldo aparecer */
+.input-unico-novo:has(> .mensagem-status-input.negativo) {
+    margin-bottom: 40px !important;
+}
+
+.campo-duplo-novo:has(> .mensagem-status-input.negativo) {
+    margin-bottom: 24px !important;
 }
 
 .campo-duplo-novo input.sucesso {
@@ -4839,13 +4854,30 @@ const SistemaCadastroNovo = {
         if (this.elementos.inputEntrada) {
             this.elementos.inputEntrada.addEventListener('input', () => {
                 this.atualizarCalculo();
+                // ✅ Verificar saldo APENAS no inputEntrada
+                this.verificarSaldoInput(this.elementos.inputEntrada);
+                
+                // ✅ Validação Green em tempo real ao digitar entrada
+                if (this.estado.tipoOperacao === 'green') {
+                    const entrada = this.converterParaFloat(this.elementos.inputEntrada?.value || '0');
+                    const total = this.converterParaFloat(this.elementos.inputTotal?.value || '0');
+                    this.validarGreenTempoReal(entrada, total);
+                }
             });
         }
 
         if (this.elementos.inputTotal) {
             this.elementos.inputTotal.addEventListener('input', () => {
                 this.atualizarCalculo();
-                this.verificarSaldoInput(this.elementos.inputTotal);
+                // ✅ NÃO verificar saldo no Total - apenas na Entrada
+                // Total pode ser qualquer valor (ganhos não têm limite)
+                
+                // ✅ Validação Green em tempo real
+                if (this.estado.tipoOperacao === 'green') {
+                    const entrada = this.converterParaFloat(this.elementos.inputEntrada?.value || '0');
+                    const total = this.converterParaFloat(this.elementos.inputTotal?.value || '0');
+                    this.validarGreenTempoReal(entrada, total);
+                }
             });
         }
 
@@ -4941,7 +4973,7 @@ const SistemaCadastroNovo = {
         this.estado.saldoInsuficiente = true;
         if (mensagemElement) {
         mensagemElement.textContent = `Saldo Insuficiente! Disponível: R$ ${(saldoCentavos/100).toLocaleString('pt-BR', {minimumFractionDigits:2})}`;
-          mensagemElement.classList.add('negativo');
+          mensagemElement.classList.add('negativo', 'animar');
           mensagemElement.classList.remove('positivo', 'neutro');
           mensagemElement.style.opacity = '1';
           mensagemElement.style.display = 'block';
@@ -5073,7 +5105,11 @@ const SistemaCadastroNovo = {
         } else {
           this.atualizarCalculo();
         }
-        this.verificarSaldoInput(el);
+        // ✅ CORRIGIDO: Verificar saldo APENAS no inputEntrada, não no inputTotal
+        // Total Green pode ser qualquer valor (ganhos não têm limite de saldo)
+        if (el === this.elementos.inputEntrada || el === this.elementos.inputRed) {
+          this.verificarSaldoInput(el);
+        }
       }, 60);
     }.bind(this));
 
@@ -5543,7 +5579,7 @@ const SistemaCadastroNovo = {
         return dados;
     },
 
-    // VALIDAÇÃO CORRIGIDA COM VERIFICAÇÃO DE SALDO
+    // VALIDAÇÃO CORRIGIDA COM VERIFICAÇÃO DE SALDO E GREEN
     validarFormulario() {
         if (!this.estado.tipoOperacao) {
             this.mostrarErro('Selecione o tipo de operação (Cash, Green ou Red)');
@@ -5573,6 +5609,15 @@ const SistemaCadastroNovo = {
                 this.mostrarErro('Informe um valor válido maior que zero para Total');
                 this.marcarCampoErro(this.elementos.inputTotal);
                 return false;
+            }
+
+            // ✅ NOVA VALIDAÇÃO: Se for GREEN, o Total deve ser maior que a Entrada
+            if (this.estado.tipoOperacao === 'green') {
+                if (this.estado.valorTotal <= this.estado.valorEntrada) {
+                    this.mostrarErro('Essa Opção é de ganhos portanto o valor do total tem que ser superior ao valor da entrada.');
+                    this.marcarCampoErro(this.elementos.inputTotal);
+                    return false;
+                }
             }
         }
 
@@ -5766,6 +5811,18 @@ const SistemaCadastroNovo = {
                 const textoLabel = tipo === 'cash' ? 'Total: Cash' : 'Total: Green';
                 this.elementos.labelTotal.textContent = textoLabel;
             }
+
+            // ✅ Limpar validação Green ao trocar de tipo
+            if (tipo !== 'green') {
+                const msgElement = this.elementos.inputTotal?.parentElement?.querySelector('.mensagem-status-input');
+                if (msgElement && msgElement.textContent.includes('ganhos')) {
+                    msgElement.textContent = '';
+                    msgElement.style.opacity = '0';
+                }
+                if (this.elementos.inputTotal) {
+                    this.elementos.inputTotal.classList.remove('erro');
+                }
+            }
         }
 
     // --- Stabilize modal size to avoid growth when showing/hiding internal sections ---
@@ -5798,6 +5855,52 @@ const SistemaCadastroNovo = {
 
         const resultado = total - entrada;
         this.atualizarStatus(resultado);
+
+        // ✅ VALIDAÇÃO TEMPO REAL: GREEN deve ter Total > Entrada
+        if (this.estado.tipoOperacao === 'green') {
+            this.validarGreenTempoReal(entrada, total);
+        }
+    },
+
+    // ✅ NOVA FUNÇÃO: Validação em Tempo Real para GREEN
+    validarGreenTempoReal(entrada, total) {
+        const msgElement = this.elementos.inputTotal?.parentElement?.querySelector('.mensagem-status-input');
+        
+        if (!msgElement) return;
+
+        // Se o total é menor ou igual à entrada
+        if (total > 0 && entrada > 0 && total <= entrada) {
+            msgElement.textContent = 'Essa Opção é de ganhos portanto o valor do total tem que ser superior ao valor da entrada.';
+            msgElement.classList.remove('positivo', 'neutro');
+            msgElement.classList.add('negativo', 'animar');
+            msgElement.style.opacity = '1';
+            msgElement.style.display = 'block';
+
+            // Desabilitar botão
+            if (this.elementos.btnEnviar) {
+                this.elementos.btnEnviar.disabled = true;
+                this.elementos.btnEnviar.classList.add('bloqueado');
+                this.elementos.btnEnviar.textContent = 'TOTAL DEVE SER MAIOR QUE A ENTRADA';
+            }
+
+            // Marcar campo como erro
+            this.elementos.inputTotal.classList.add('erro');
+        } else if (total > entrada && entrada > 0 && total > 0) {
+            // Válido: Limpar mensagem
+            msgElement.textContent = '';
+            msgElement.classList.remove('negativo', 'animar');
+            msgElement.style.opacity = '0';
+            msgElement.style.display = 'block';
+
+            // Reabilitar botão se não houver outros problemas
+            if (this.elementos.btnEnviar && !this.estado.saldoInsuficiente) {
+                this.elementos.btnEnviar.disabled = false;
+                this.elementos.btnEnviar.classList.remove('bloqueado');
+                this.elementos.btnEnviar.textContent = 'Cadastrar';
+            }
+
+            this.elementos.inputTotal.classList.remove('erro');
+        }
     },
 
     atualizarCalculoRed() {
@@ -5858,7 +5961,7 @@ const SistemaCadastroNovo = {
         this.atualizarStatus(0);
     },
 
-    // RESET FORMULÁRIO CORRIGIDO COM LIMPEZA DE SALDO
+    // RESET FORMULÁRIO CORRIGIDO COM LIMPEZA DE SALDO E GREEN
     resetarFormulario() {
         this.estado = {
             ...this.estado,
@@ -5907,9 +6010,11 @@ const SistemaCadastroNovo = {
             this.elementos.btnEnviar.textContent = 'Cadastrar';
         }
 
-        // Limpar todas as mensagens de saldo insuficiente
+        // Limpar todas as mensagens de saldo insuficiente e validação Green
         document.querySelectorAll('.mensagem-status-input').forEach(mensagem => {
-            if (mensagem.textContent.includes('Saldo Insuficiente')) {
+            if (mensagem.textContent.includes('Saldo Insuficiente') || 
+                mensagem.textContent.includes('ganhos') ||
+                mensagem.textContent.includes('Total deve ser maior')) {
                 mensagem.textContent = '';
                 mensagem.classList.remove('negativo');
                 mensagem.style.opacity = '0';
