@@ -49,9 +49,8 @@
   --saldo-info-margin-top: 10px !important; /* Saldo ( POSITIVO / NEGATIVO ) */
   --meta-badge-top: 12px !important; /* Meta Fixa / Meta Turbo */
   --btn-add-usuario-margin-top: 0px !important; /* Botão adicionar Mentor*/
-  --area-central-margin-top: 0px; /* Campo : ( PLACAR ) */
-  --area-direita-margin-top: 0px; /* Campo: ( PORCENTAGEM / UNIDADE) */
-  --area-direita-valor-unidade-wrapper-margin-top: -3px; /*( UNIDADE) */
+  --area-central-margin-top: -16px; /* Campo : ( PLACAR ) */
+
   --lista-mentores-margin-top: 18px; /* Campo: ( TODOS MENTORES ) */
   --mentor-img-margin-top: 1px !important; /* ( FOTO MENTOR ) */
   --mentor-nome-margin-top: 3px; /* ( NOME MENTOR ) */
@@ -81,11 +80,9 @@
   --meta-badge-right: 56px !important; /* Meta Fixa / Meta Turbo */
   --meta-badge-left: auto !important; /* Meta Fixa / Meta Turbo */
   --btn-add-usuario-margin-left: 10px; /* Botão adicionar Mentor*/
-  --area-central-margin-left: 20px; /* Campo: ( PLACAR ) */
+  --area-central-margin-left: 40px; /* Campo: ( PLACAR ) */
   --pontuacao-gap: clamp(8px, 2vw, 20px); /* Separar ( PLACAR ) */
-  --area-direita-margin-left: 250px; /* Campo: ( PORCENTAGEM / UNIDADE) */
-  --area-direita-porcentagem-margin-left: 0px; /*( PORCENTAGEM ) */
-  --area-direita-valor-unidade-margin-left: -2px; /*( UNIDADE) */
+
   --lista-mentores-margin-left: 16px; /* Campo: ( MENTORES ) */
   --mentor-wrapper-scrollbar-offset: 5px; /* barra de rolagem lateral */
   --mentor-img-margin-left: 0px; /* ( FOTO MENTOR ) */
@@ -269,8 +266,84 @@
   /* --------------------------------------------------
    DIAS DO MÊS - DIAS DO MÊS - DIAS DO MÊS -
   -------------------------------------------------- */
+  /**/
+  /**/
+  /**/
+  /**/
+  /**/
+  /* --------------------------------------------------
+   - AREA DIREITA - UNIDADE E PORCENTAGEM -
+  -------------------------------------------------- */
+  --area-direita-gap-horizontal: 10px; /* ✅ AJUSTADO: aproximar 1% de UND */
+  --area-direita-gap-interno: 1px; /* Espaçamento DENTRO de cada bloco */
+
+  /* Margens individuais para cada elemento */
+  --area-direita-icon-margin-top: 0px;
+  --area-direita-rotulo-unidade-margin-top: 0px;
+  --area-direita-porcentagem-margin-top: 0px;
+  --area-direita-valor-unidade-margin-top: 0px;
+  --area-direita-margin-top: 30px;
+  --area-direita-valor-unidade-wrapper-margin-top: 0px;
+
+  --area-direita-icon-margin-left: 0px;
+  --area-direita-valor-unidade-margin-left: 0px;
+  --area-direita-rotulo-unidade-margin-left: 0px;
+
+  /* ✅ CRÍTICO: mudar para auto para empurrar para direita */
+  --area-direita-margin-left: auto; /* Campo: ( PORCENTAGEM / UNIDADE) */
+  --area-direita-margin-right: -20px; /* ✅ Distância do canto direito */
+
+  --area-direita-porcentagem-margin-left: 0px;
+  --area-direita-z-index: 300;
+
+  /* ✅ Largura máxima para não entrar no bloco-1 */
+  --area-direita-max-width: 200px; /* ou 25% */
+  /* --------------------------------------------------
+   - AREA DIREITA - UNIDADE E PORCENTAGEM -
+  -------------------------------------------------- */
+  /**/
+  /**/
+  /**/
+  /**/
+  /**/
+  /* =======================================================================================================================================================
+     - ROOT PARA TELA CELULAR - ROOT PARA TELA CELULAR - ROOT PARA TELA CELULAR - ROOT PARA TELA CELULAR
+  =======================================================================================================================================================*/
+}
+@media (max-width: 1024px) {
+  :root {
+    --area-direita-max-width: 35%; /* Mais espaço em telas menores */
+    --area-direita-margin-right: 8px;
+  }
 }
 
+@media (max-width: 768px) {
+  :root {
+    --area-direita-max-width: 40%;
+    --area-direita-margin-right: 5px;
+    --area-direita-gap-horizontal: -10px;
+  }
+}
+
+@media (max-width: 480px) {
+  :root {
+    --area-direita-max-width: 45%;
+    --area-direita-margin-right: 3px;
+  }
+}
+/* =======================================================================================================================================================
+     - ROOT PARA TELA CELULAR - ROOT PARA TELA CELULAR - ROOT PARA TELA CELULAR - ROOT PARA TELA CELULAR
+  =======================================================================================================================================================*/
+/**/
+/**/
+/**/
+/**/
+/**/
+/**/
+/**/
+/**/
+/**/
+/**/
 /* ========================
    OVERRIDE: Aumentar altura dos itens de entrada no modal (tela de edição)
    Garante que cada entrada possa exibir todo o conteúdo sem corte.
@@ -2164,25 +2237,41 @@ body .mentor-item:not(.sem-valores) .mentor-rank-externo {
 /* AREA DIREITA TOPO FIXO */
 
 /* Container principal da área direita */
+/* Container principal da área direita */
+/* Container principal da área direita - FORÇA posicionamento direito */
 .barra-superior .area-direita {
-  display: flex;
-  flex-direction: column;
-  align-items: flex-start; /* ✅ MUDANÇA: flex-start para alinhar à esquerda */
-  justify-content: center;
-  gap: clamp(4px, 1vw, 6px);
-  justify-self: end;
-  flex-shrink: 0;
-  padding: clamp(4px, 1vw, 8px);
-  margin-left: var(--area-direita-margin-left) !important;
+  display: flex !important;
+  flex-direction: row !important;
+  align-items: center !important;
+  justify-content: flex-end !important;
+  gap: var(--area-direita-gap-horizontal) !important;
+
+  /* ✅ FORÇA empurrar para direita */
+  margin-left: auto !important;
+  margin-right: var(--area-direita-margin-right, 10px) !important;
   margin-top: var(--area-direita-margin-top) !important;
+
+  /* ✅ Controle de largura */
+  max-width: var(--area-direita-max-width, 200px) !important;
+  min-width: max-content !important;
+
+  flex-shrink: 1 !important;
+  padding: clamp(4px, 1vw, 8px) !important;
+  z-index: var(--area-direita-z-index) !important;
+  position: relative !important;
+
+  /* ✅ Permitir overflow visível */
+  overflow: visible !important;
+  white-space: nowrap !important;
 }
 
+/* Elementos de valor dinâmico APENAS dentro da .area-direita */
 /* Elementos de valor dinâmico APENAS dentro da .area-direita */
 .barra-superior .area-direita .valor-dinamico {
   display: flex;
   align-items: center;
-  justify-content: flex-start; /* ✅ MUDANÇA: flex-start para alinhar à esquerda */
-  gap: clamp(3px, 0.8vw, 5px);
+  justify-content: flex-start;
+  gap: var(--area-direita-gap-interno); /* ✅ NOVO: gap interno controlado */
   font-size: clamp(10px, 2vw, 12px);
   font-weight: 600;
   color: #576574;
@@ -2191,16 +2280,22 @@ body .mentor-item:not(.sem-valores) .mentor-rank-externo {
   padding: 0;
   border-radius: 0;
   transition: all 0.3s ease;
-  width: 100%; /* ✅ ADICIONADO: largura total para alinhamento */
+  width: auto; /* ✅ MUDADO: auto para não forçar largura */
+  white-space: nowrap !important;
+  overflow: visible !important;
+}
+.barra-superior .area-direita #porcentagem-diaria,
+.barra-superior .area-direita #valor-unidade {
+  white-space: nowrap !important;
+  overflow: visible !important;
 }
 
 .barra-superior .area-direita .valor-dinamico:hover {
   transform: scale(1.05);
 }
-
 /* ===== ÍCONE DO BANCO (DIÁRIA) - APENAS na .area-direita ===== */
 .barra-superior .area-direita .valor-diaria {
-  order: 1; /* Fica em cima */
+  order: 1;
 }
 
 .barra-superior .area-direita .valor-diaria .fas.fa-university {
@@ -2220,7 +2315,8 @@ body .mentor-item:not(.sem-valores) .mentor-rank-externo {
 
 /* ===== RÓTULO E VALOR DA UNIDADE - APENAS na .area-direita ===== */
 .barra-superior .area-direita .valor-unidade {
-  order: 2; /* Fica embaixo */
+  order: 2;
+  margin-top: var(--area-direita-valor-unidade-wrapper-margin-top);
 }
 
 .barra-superior .area-direita .valor-unidade {
@@ -2313,6 +2409,19 @@ body .mentor-item:not(.sem-valores) .mentor-rank-externo {
 .barra-superior .area-direita .valor-neutro {
   color: #7f8c8d !important;
   text-shadow: 0 1px 2px rgba(127, 140, 141, 0.4) !important;
+}
+/* Container principal da área direita */
+.barra-superior .area-direita {
+  display: flex;
+  flex-direction: row; /* ✅ MUDANÇA: row para lado a lado */
+  align-items: center; /* ✅ MUDANÇA: centralizar verticalmente */
+  justify-content: flex-end; /* ✅ MUDANÇA: alinhar à direita */
+  gap: clamp(8px, 2vw, 15px); /* ✅ AUMENTADO: espaçamento entre elementos */
+  justify-self: end;
+  flex-shrink: 0;
+  padding: clamp(4px, 1vw, 8px);
+  margin-left: var(--area-direita-margin-left) !important;
+  margin-top: var(--area-direita-margin-top) !important;
 }
 
 /* FIM AREA DIREITA TOPO FIXO */

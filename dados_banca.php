@@ -22,6 +22,7 @@ function getSoma($conexao, $campo, $id_usuario) {
 }
 
 // ✅ CORRIGIDA: Manter decimais para diária
+// ✅ CORRIGIDA: Manter decimais SEM arredondamento prematuro
 function getUltimoCampo($conexao, $campo, $id_usuario) {
     $stmt = $conexao->prepare("
         SELECT $campo FROM controle
@@ -34,9 +35,10 @@ function getUltimoCampo($conexao, $campo, $id_usuario) {
     $stmt->fetch();
     $stmt->close();
     
-    // ✅ CRÍTICO: Se for diária, forçar 2 casas decimais
-    if ($campo === 'diaria' && $valor !== null) {
-        return round(floatval($valor), 2);
+    // ✅ CRÍTICO: NÃO arredondar aqui - retornar valor bruto
+    // O arredondamento só deve acontecer na EXIBIÇÃO final
+    if ($valor !== null) {
+        return floatval($valor); // Sem round()
     }
     
     return $valor;
@@ -145,7 +147,8 @@ function calcularLucro($conexao, $id_usuario) {
 }
 
 // ✅ CORRIGIDA: CALCULAR META DIÁRIA COM DECIMAL
-// ✅ CORRIGIDA: CALCULAR META DIÁRIA - LÓGICA DEFINITIVA
+// ✅ CORRIGIDA: CALCULAR META DIÁRIA SEM ARREDONDAMENTO INTERMEDIÁRIO
+// ✅ CORRIGIDA: ARREDONDAR META DIÁRIA LOGO APÓS O CÁLCULO
 function calcularMetaDiariaComTipo($conexao, $id_usuario, $total_deposito, $total_saque, $lucro_total, $tipo_meta = 'turbo') {
     try {
         // Buscar porcentagem e unidade mais recentes
@@ -164,7 +167,7 @@ function calcularMetaDiariaComTipo($conexao, $id_usuario, $total_deposito, $tota
         
         // Valores padrão
         if ($diaria === null) $diaria = 2.00;
-        else $diaria = round(floatval($diaria), 2);
+        else $diaria = floatval($diaria);
         
         if ($unidade === null) $unidade = 2;
         
@@ -196,31 +199,39 @@ function calcularMetaDiariaComTipo($conexao, $id_usuario, $total_deposito, $tota
         $descricao_calculo = '';
         
         if ($tipo_meta === 'fixa') {
-            // ✅ META FIXA: SEMPRE usa apenas banca inicial (depósitos - saques)
             $base_calculo = $banca_inicial;
             $meta_diaria = $base_calculo * $porcentagem_decimal * $unidade;
             $descricao_calculo = "Meta Fixa: Apenas Banca (R$ " . number_format($banca_inicial, 2, ',', '.') . ") × {$diaria}% × {$unidade}";
             
         } else {
-            // ✅ META TURBO: usa banca + lucro ATÉ ONTEM (congelado até 00:00h)
+            // META TURBO
             if ($lucro_ate_ontem > 0) {
-                // Lucro acumulado positivo: usar banca + lucro até ontem
                 $base_calculo = $banca_inicio_dia;
                 $meta_diaria = $base_calculo * $porcentagem_decimal * $unidade;
                 $descricao_calculo = "Meta Turbo: Banca + Lucro até Ontem (R$ " . number_format($banca_inicio_dia, 2, ',', '.') . ") × {$diaria}% × {$unidade}";
             } else {
-                // Lucro acumulado negativo ou zero: usar apenas banca inicial
                 $base_calculo = $banca_inicial;
                 $meta_diaria = $base_calculo * $porcentagem_decimal * $unidade;
                 $descricao_calculo = "Meta Turbo (Lucro ≤ 0): Apenas Banca (R$ " . number_format($banca_inicial, 2, ',', '.') . ") × {$diaria}% × {$unidade}";
             }
         }
         
+        // ✅ CRÍTICO: ARREDONDAR AQUI PARA 2 CASAS DECIMAIS
+        // Este é o valor que será usado em TODOS os cálculos posteriores
+        $meta_diaria = round($meta_diaria, 2);
+        
         // Banca atual (com lucro de hoje incluído) - apenas para referência
         $banca_atual = $banca_inicial + $lucro_total;
         
+        // Log detalhado
+        error_log("META DIÁRIA CALCULADA:");
+        error_log("  Base: R$ " . number_format($base_calculo, 2, ',', '.'));
+        error_log("  Diária: {$diaria}%");
+        error_log("  Unidade: {$unidade}");
+        error_log("  Meta diária (arredondada): R$ " . number_format($meta_diaria, 2, ',', '.'));
+        
         return [
-            'meta_diaria' => $meta_diaria,
+            'meta_diaria' => $meta_diaria, // ✅ Valor já arredondado para 2 casas
             'diaria_usada' => $diaria,
             'unidade_usada' => $unidade,
             'banca_inicial' => $banca_inicial,
@@ -271,7 +282,6 @@ function calcularMetaDiariaComTipo($conexao, $id_usuario, $total_deposito, $tota
         ];
     }
 }
-
 // ✅ CORRIGIDA: ÁREA DIREITA COM DECIMAL
 // ✅ CORRIGIDA: ÁREA DIREITA (UND) - MESMA LÓGICA DA META
 function calcularAreaDireita($conexao, $id_usuario, $total_deposito, $total_saque, $lucro_total, $tipo_meta = 'turbo') {
@@ -477,22 +487,33 @@ function calcularDiasRestantes($conexao, $id_usuario) {
 }
 
 // ✅ CALCULAR METAS POR PERÍODO
+// ✅ CALCULAR METAS POR PERÍODO - USA O VALOR JÁ ARREDONDADO
 function calcularMetasPorPeriodo($meta_diaria, $tipo_meta = 'turbo', $conexao, $id_usuario) {
     $diasCalculados = calcularDiasRestantes($conexao, $id_usuario);
     
-    $meta_mensal = $meta_diaria * $diasCalculados['mes'];
-    $meta_anual = $meta_diaria * $diasCalculados['ano'];
+    // ✅ Valor já vem arredondado da função anterior
+    $meta_diaria_precisa = floatval($meta_diaria);
+    
+    // ✅ Multiplicar pelo número de dias (agora vai dar resultado correto)
+    $meta_mensal_precisa = $meta_diaria_precisa * floatval($diasCalculados['mes']);
+    $meta_anual_precisa = $meta_diaria_precisa * floatval($diasCalculados['ano']);
+    
+    // Log para debug
+    error_log("CÁLCULO META MENSAL:");
+    error_log("  Meta Diária: R$ " . number_format($meta_diaria_precisa, 2, ',', '.'));
+    error_log("  Dias no mês: " . $diasCalculados['mes']);
+    error_log("  Meta Mensal: R$ " . number_format($meta_mensal_precisa, 2, ',', '.'));
     
     return [
-        'meta_diaria' => $meta_diaria,
-        'meta_mensal' => $meta_mensal,
-        'meta_anual' => $meta_anual,
+        'meta_diaria' => $meta_diaria_precisa,
+        'meta_mensal' => $meta_mensal_precisa,
+        'meta_anual' => $meta_anual_precisa,
         'tipo_meta' => $tipo_meta,
         'dias_restantes_mes' => $diasCalculados['mes'],
         'dias_restantes_ano' => $diasCalculados['ano'],
-        'meta_diaria_formatada' => 'R$ ' . number_format($meta_diaria, 2, ',', '.'),
-        'meta_mensal_formatada' => 'R$ ' . number_format($meta_mensal, 2, ',', '.'),
-        'meta_anual_formatada' => 'R$ ' . number_format($meta_anual, 2, ',', '.'),
+        'meta_diaria_formatada' => 'R$ ' . number_format($meta_diaria_precisa, 2, ',', '.'),
+        'meta_mensal_formatada' => 'R$ ' . number_format($meta_mensal_precisa, 2, ',', '.'),
+        'meta_anual_formatada' => 'R$ ' . number_format($meta_anual_precisa, 2, ',', '.'),
         'periodo_info' => [
             'data_hoje' => $diasCalculados['info']['data_atual'],
             'primeiro_deposito' => $diasCalculados['info']['primeiro_deposito'],
@@ -501,9 +522,9 @@ function calcularMetasPorPeriodo($meta_diaria, $tipo_meta = 'turbo', $conexao, $
             'ultimo_dia_mes' => $diasCalculados['info']['ultimo_dia_mes'],
             'explicacao_mes' => $diasCalculados['info']['explicacao_mensal'],
             'explicacao_ano' => $diasCalculados['info']['explicacao_anual'],
-            'formula_diaria' => "Meta Diária ({$tipo_meta}): R$ " . number_format($meta_diaria, 2, ',', '.'),
-            'formula_mensal' => "Meta Mensal ({$tipo_meta}): R$ " . number_format($meta_diaria, 2, ',', '.') . " × {$diasCalculados['mes']} dias = R$ " . number_format($meta_mensal, 2, ',', '.'),
-            'formula_anual' => "Meta Anual ({$tipo_meta}): R$ " . number_format($meta_diaria, 2, ',', '.') . " × {$diasCalculados['ano']} dias = R$ " . number_format($meta_anual, 2, ',', '.'),
+            'formula_diaria' => "Meta Diária ({$tipo_meta}): R$ " . number_format($meta_diaria_precisa, 2, ',', '.'),
+            'formula_mensal' => "Meta Mensal ({$tipo_meta}): R$ " . number_format($meta_diaria_precisa, 2, ',', '.') . " × {$diasCalculados['mes']} dias = R$ " . number_format($meta_mensal_precisa, 2, ',', '.'),
+            'formula_anual' => "Meta Anual ({$tipo_meta}): R$ " . number_format($meta_diaria_precisa, 2, ',', '.') . " × {$diasCalculados['ano']} dias = R$ " . number_format($meta_anual_precisa, 2, ',', '.'),
             'debug_completo' => $diasCalculados['info']['debug_info'],
             'exemplo_usuario' => $diasCalculados['info']['exemplo_usuario']
         ]

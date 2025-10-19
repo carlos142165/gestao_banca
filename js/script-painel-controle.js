@@ -919,10 +919,10 @@ document.addEventListener("DOMContentLoaded", () => {
   // ========================================================================================================================
 
   function arredondarParaDuasCasas(valor) {
-    // Use toFixed(2) para garantir arredondamento correto (evita imprecisões de ponto-flutuante)
-    // Converter para Number novamente para manter o tipo numérico
+    // Usa Math.round para arredondamento correto (para cima quando >= 0.5)
+    // Multiplica por 100, arredonda, e divide por 100
     if (isNaN(valor) || valor === null) return 0;
-    return Number(Number(valor).toFixed(2));
+    return Math.round(valor * 100) / 100;
   }
 
   function formatarMoeda(valor) {
@@ -1506,8 +1506,10 @@ document.addEventListener("DOMContentLoaded", () => {
 
   // ✅ FUNÇÕES AUXILIARES
   function arredondarParaDuasCasas(valor) {
+    // Usa Math.round para arredondamento correto (para cima quando >= 0.5)
+    // Multiplica por 100, arredonda, e divide por 100
     if (isNaN(valor) || valor === null) return 0;
-    return Number(Number(valor).toFixed(2));
+    return Math.round(valor * 100) / 100;
   }
 
   function formatarMoeda(valor) {
@@ -1524,8 +1526,10 @@ document.addEventListener("DOMContentLoaded", () => {
 
   // ✅ FUNÇÕES AUXILIARES (manter as existentes)
   function arredondarParaDuasCasas(valor) {
+    // Usa Math.round para arredondamento correto (para cima quando >= 0.5)
+    // Multiplica por 100, arredonda, e divide por 100
     if (isNaN(valor) || valor === null) return 0;
-    return Number(Number(valor).toFixed(2));
+    return Math.round(valor * 100) / 100;
   }
 
   function formatarMoeda(valor) {

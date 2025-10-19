@@ -600,19 +600,23 @@ const MetaAnualManager = {
       // META BATIDA OU SUPERADA - COM VALOR EXTRA
       else if (saldoAno > 0 && metaCalculada > 0 && saldoAno >= metaCalculada) {
         valorExtra = saldoAno - metaCalculada;
+
+        // SEMPRE mostra tachado quando a meta é batida ou superada
         mostrarTachado = true;
-        metaFinal = metaCalculada; // Mostra o valor da meta original
+        metaFinal = metaCalculada; // Mostra o valor da meta original tachado
 
         if (valorExtra > 0) {
+          // Meta SUPERADA - mostra valor tachado + extra
           rotulo = `Meta do Ano Superada! <i class='fa-solid fa-trophy'></i>`;
           statusClass = "meta-superada";
           console.log(
             `🏆 META ANUAL SUPERADA: Extra de R$ ${valorExtra.toFixed(2)}`
           );
         } else {
+          // Meta batida EXATAMENTE - mostra valor tachado, sem extra
           rotulo = `Meta do Ano Batida! <i class='fa-solid fa-trophy'></i>`;
           statusClass = "meta-batida";
-          console.log(`🎯 META ANUAL EXATA`);
+          console.log(`🎯 META ANUAL BATIDA EXATAMENTE`);
         }
       }
       // CASO ESPECIAL: Meta é zero (já foi batida)
@@ -729,6 +733,8 @@ const MetaAnualManager = {
   },
 
   // Atualizar meta elemento anual com valor tachado e extra
+  // Atualizar meta elemento anual com valor tachado e extra
+  // Atualizar meta elemento anual com valor tachado e extra
   atualizarMetaElementoAnualComExtra(resultado) {
     try {
       const metaValor = document.getElementById("meta-valor-3");
@@ -745,21 +751,22 @@ const MetaAnualManager = {
 
       let htmlConteudo = "";
 
-      if (resultado.mostrarTachado && resultado.valorExtra >= 0) {
-        // META BATIDA/SUPERADA - MOSTRAR VALOR TACHADO + EXTRA
+      // Se deve mostrar tachado (meta batida ou superada)
+      if (resultado.mostrarTachado) {
+        // SEMPRE mostra valor tachado quando meta é batida ou superada
         htmlConteudo = `
-          <i class="fa-solid fa-coins"></i>
-          <div class="meta-valor-container-3">
-            <span class="valor-tachado-3">${
-              resultado.metaOriginalFormatada
-            }</span>
-            ${
-              resultado.valorExtra > 0
-                ? `<span class="valor-extra-3">+ ${resultado.valorExtraFormatado}</span>`
-                : ""
-            }
-          </div>
-        `;
+        <i class="fa-solid fa-coins"></i>
+        <div class="meta-valor-container-3">
+          <span class="valor-tachado-3">${
+            resultado.metaOriginalFormatada
+          }</span>
+          ${
+            resultado.valorExtra > 0
+              ? `<span class="valor-extra-3">+ ${resultado.valorExtraFormatado}</span>`
+              : ""
+          }
+        </div>
+      `;
 
         metaValor.classList.add("valor-meta-3", "meta-com-extra-3");
         console.log(
@@ -772,13 +779,13 @@ const MetaAnualManager = {
           );
         }
       } else {
-        // EXIBIÇÃO NORMAL
+        // EXIBIÇÃO NORMAL (meta não batida)
         htmlConteudo = `
-          <i class="fa-solid fa-coins"></i>
-          <div class="meta-valor-container-3">
-            <span class="valor-texto-3" id="valor-texto-meta-3">${resultado.metaFinalFormatada}</span>
-          </div>
-        `;
+        <i class="fa-solid fa-coins"></i>
+        <div class="meta-valor-container-3">
+          <span class="valor-texto-3" id="valor-texto-meta-3">${resultado.metaFinalFormatada}</span>
+        </div>
+      `;
 
         metaValor.classList.add("valor-meta-3", resultado.statusClass);
       }
@@ -788,7 +795,6 @@ const MetaAnualManager = {
       console.error("Erro ao atualizar meta elemento anual com extra:", error);
     }
   },
-
   // Garantir ícone da moeda anual
   garantirIconeMoeda() {
     try {

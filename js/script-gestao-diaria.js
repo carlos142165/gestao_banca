@@ -7652,6 +7652,18 @@ window.pararMonitor = function () {
 // ========================================================================================================================
 //                          ✅ FIM SISTEMA DE ALTERNÂNCIA AUTOMÁTICA META FIXA/TURBO
 // ========================================================================================================================
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
 
 // ========================================================================================================================
 //                          ✅ FORMATAÇÃO DIÁRIA - SOLUÇÃO DEFINITIVA (SEM PISCAR)
@@ -7978,4 +7990,376 @@ window.pararMonitor = function () {
 
 // ========================================================================================================================
 //                          ✅ FIM FORMATAÇÃO DEFINITIVA
+// ========================================================================================================================
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+// ========================================================================================================================
+//                    🔧 CORREÇÃO: CÁLCULO PRECISO DO LUCRO EXTRA (CENTAVOS EXATOS)
+// ========================================================================================================================
+
+(function () {
+  "use strict";
+
+  console.log("🔧 Aplicando correção de precisão decimal no lucro extra...");
+
+  // ==========================================
+  // UTILITÁRIO DE PRECISÃO DECIMAL
+  // ==========================================
+
+  const PrecisaoDecimal = {
+    /**
+     * Multiplica com precisão de centavos
+     */
+    multiplicar(valor1, valor2) {
+      const v1 = Math.round(valor1 * 100);
+      const v2 = Math.round(valor2 * 100);
+      return (v1 * v2) / 10000;
+    },
+
+    /**
+     * Subtrai com precisão de centavos
+     */
+    subtrair(valor1, valor2) {
+      const v1 = Math.round(valor1 * 100);
+      const v2 = Math.round(valor2 * 100);
+      return (v1 - v2) / 100;
+    },
+
+    /**
+     * Arredonda para 2 casas decimais (centavos)
+     */
+    arredondar(valor) {
+      return Math.round(valor * 100) / 100;
+    },
+
+    /**
+     * Formata para BRL
+     */
+    formatarBRL(valor) {
+      return valor.toLocaleString("pt-BR", {
+        style: "currency",
+        currency: "BRL",
+        minimumFractionDigits: 2,
+        maximumFractionDigits: 2,
+      });
+    },
+  };
+
+  // ==========================================
+  // SOBRESCREVER CÁLCULO NO MetaDiariaManager
+  // ==========================================
+
+  if (typeof MetaDiariaManager !== "undefined") {
+    // Backup da função original
+    const originalCalcularMetaFinal =
+      MetaDiariaManager.calcularMetaFinalComExtra;
+
+    // Sobrescrever com cálculo preciso
+    MetaDiariaManager.calcularMetaFinalComExtra = function (
+      saldoDia,
+      metaCalculada,
+      bancaTotal,
+      data
+    ) {
+      try {
+        let metaFinal,
+          rotulo,
+          statusClass,
+          valorExtra = 0,
+          mostrarTachado = false;
+
+        console.log(`🔍 DEBUG CÁLCULO PRECISO:`);
+        console.log(`   Saldo: ${saldoDia.toFixed(6)}`);
+        console.log(`   Meta: ${metaCalculada.toFixed(6)}`);
+        console.log(`   Banca: ${bancaTotal.toFixed(6)}`);
+
+        // Arredondar valores de entrada
+        const saldoArredondado = PrecisaoDecimal.arredondar(saldoDia);
+        const metaArredondada = PrecisaoDecimal.arredondar(metaCalculada);
+
+        console.log(`   Saldo arredondado: ${saldoArredondado.toFixed(2)}`);
+        console.log(`   Meta arredondada: ${metaArredondada.toFixed(2)}`);
+
+        // SEM BANCA
+        if (bancaTotal <= 0) {
+          metaFinal = bancaTotal;
+          rotulo = "Deposite p/ Começar";
+          statusClass = "sem-banca";
+          console.log(`📊 RESULTADO: Sem banca`);
+        }
+        // META BATIDA OU SUPERADA
+        else if (
+          saldoArredondado > 0 &&
+          metaArredondada > 0 &&
+          saldoArredondado >= metaArredondada
+        ) {
+          // 🎯 CÁLCULO PRECISO DO LUCRO EXTRA
+          valorExtra = PrecisaoDecimal.subtrair(
+            saldoArredondado,
+            metaArredondada
+          );
+
+          // Garantir que não há valores negativos por erro de precisão
+          if (valorExtra < 0) {
+            valorExtra = 0;
+          }
+
+          mostrarTachado = true;
+          metaFinal = metaArredondada;
+
+          if (valorExtra > 0) {
+            rotulo = `${
+              data.rotulo_periodo || "Meta"
+            } Superada! <i class='fa-solid fa-trophy'></i>`;
+            statusClass = "meta-superada";
+            console.log(`🏆 META SUPERADA`);
+          } else {
+            rotulo = `${
+              data.rotulo_periodo || "Meta"
+            } Batida! <i class='fa-solid fa-trophy'></i>`;
+            statusClass = "meta-batida";
+            console.log(`🎯 META EXATA`);
+          }
+
+          console.log(`💰 Valor Extra PRECISO: R$ ${valorExtra.toFixed(2)}`);
+          console.log(
+            `   Cálculo: ${saldoArredondado.toFixed(
+              2
+            )} - ${metaArredondada.toFixed(2)} = ${valorExtra.toFixed(2)}`
+          );
+        }
+        // META ZERO (já batida)
+        else if (metaArredondada === 0 && saldoArredondado > 0) {
+          metaFinal = 0;
+          valorExtra = saldoArredondado;
+          mostrarTachado = false;
+          rotulo = `${
+            data.rotulo_periodo || "Meta"
+          } Batida! <i class='fa-solid fa-trophy'></i>`;
+          statusClass = "meta-batida";
+          console.log(`🎯 META ZERO (já batida)`);
+        }
+        // SALDO NEGATIVO
+        else if (saldoArredondado < 0) {
+          metaFinal = PrecisaoDecimal.subtrair(
+            metaArredondada,
+            saldoArredondado
+          );
+          rotulo = `Restando p/ ${data.rotulo_periodo || "Meta"}`;
+          statusClass = "negativo";
+          console.log(`📊 RESULTADO: Negativo`);
+        }
+        // SALDO ZERO
+        else if (saldoArredondado === 0) {
+          metaFinal = metaArredondada;
+          rotulo = data.rotulo_periodo || "Meta do Dia";
+          statusClass = "neutro";
+          console.log(`📊 RESULTADO: Neutro`);
+        }
+        // LUCRO INSUFICIENTE
+        else {
+          metaFinal = PrecisaoDecimal.subtrair(
+            metaArredondada,
+            saldoArredondado
+          );
+          rotulo = `Restando p/ ${data.rotulo_periodo || "Meta"}`;
+          statusClass = "lucro";
+          console.log(`📊 RESULTADO: Lucro insuficiente`);
+        }
+
+        const resultado = {
+          metaFinal: PrecisaoDecimal.arredondar(metaFinal),
+          metaOriginal: metaArredondada,
+          valorExtra: PrecisaoDecimal.arredondar(valorExtra),
+          mostrarTachado,
+          metaFinalFormatada: PrecisaoDecimal.formatarBRL(metaFinal),
+          metaOriginalFormatada: PrecisaoDecimal.formatarBRL(metaArredondada),
+          valorExtraFormatado:
+            valorExtra > 0 ? PrecisaoDecimal.formatarBRL(valorExtra) : null,
+          rotulo,
+          statusClass,
+        };
+
+        console.log(`🏁 RESULTADO FINAL PRECISO:`);
+        console.log(`   Status: ${statusClass}`);
+        console.log(`   Meta Original: ${resultado.metaOriginalFormatada}`);
+        console.log(
+          `   Valor Extra: ${resultado.valorExtraFormatado || "R$ 0,00"}`
+        );
+        console.log(`   Mostrar Tachado: ${mostrarTachado}`);
+
+        return resultado;
+      } catch (error) {
+        console.error("❌ Erro no cálculo preciso:", error);
+
+        // Fallback para função original se houver erro
+        if (originalCalcularMetaFinal) {
+          return originalCalcularMetaFinal.call(
+            this,
+            saldoDia,
+            metaCalculada,
+            bancaTotal,
+            data
+          );
+        }
+
+        return {
+          metaFinal: 0,
+          metaOriginal: 0,
+          valorExtra: 0,
+          mostrarTachado: false,
+          metaFinalFormatada: "R$ 0,00",
+          metaOriginalFormatada: "R$ 0,00",
+          valorExtraFormatado: null,
+          rotulo: "Erro no cálculo",
+          statusClass: "erro",
+        };
+      }
+    };
+
+    console.log(
+      "✅ MetaDiariaManager.calcularMetaFinalComExtra sobrescrito com precisão decimal"
+    );
+
+    // ==========================================
+    // FORÇAR RECÁLCULO IMEDIATO
+    // ==========================================
+
+    setTimeout(() => {
+      console.log("🔄 Forçando recálculo com precisão...");
+
+      if (MetaDiariaManager.atualizarMetaDiaria) {
+        MetaDiariaManager.atualizarMetaDiaria(true);
+      }
+    }, 500);
+  }
+
+  // ==========================================
+  // FUNÇÕES DE TESTE
+  // ==========================================
+
+  window.testarPrecisaoDecimal = function () {
+    console.log("🧪 Testando precisão decimal:");
+    console.log("");
+
+    const testes = [
+      { banca: 1011, percentual: 0.5, saldo: 11.0 },
+      { banca: 1000, percentual: 0.5, saldo: 10.0 },
+      { banca: 1234.56, percentual: 0.75, saldo: 15.0 },
+    ];
+
+    testes.forEach((teste, index) => {
+      console.log(`Teste ${index + 1}:`);
+      console.log(`  Banca: R$ ${teste.banca.toFixed(2)}`);
+      console.log(`  Percentual: ${teste.percentual}%`);
+
+      // Calcular meta
+      const metaBruta = teste.banca * (teste.percentual / 100);
+      const meta = PrecisaoDecimal.arredondar(metaBruta);
+
+      console.log(`  Meta calculada: R$ ${meta.toFixed(2)}`);
+      console.log(`  Saldo do dia: R$ ${teste.saldo.toFixed(2)}`);
+
+      // Calcular lucro extra
+      const lucroExtra = PrecisaoDecimal.subtrair(teste.saldo, meta);
+
+      console.log(`  Lucro Extra PRECISO: R$ ${lucroExtra.toFixed(2)}`);
+      console.log(
+        `  Verificação: ${teste.saldo.toFixed(2)} - ${meta.toFixed(
+          2
+        )} = ${lucroExtra.toFixed(2)}`
+      );
+      console.log("");
+    });
+  };
+
+  window.verificarCalculoAtual = async function () {
+    try {
+      const response = await fetch("dados_banca.php", {
+        method: "GET",
+        headers: {
+          "Cache-Control": "no-cache",
+          "X-Requested-With": "XMLHttpRequest",
+        },
+      });
+
+      if (!response.ok) throw new Error(`HTTP ${response.status}`);
+
+      const data = await response.json();
+
+      if (data.success) {
+        const banca = parseFloat(data.banca) || 0;
+        const saldo = parseFloat(data.lucro) || 0;
+        const metaDisplay = parseFloat(data.meta_display) || 0;
+
+        console.log("📊 VERIFICAÇÃO DO CÁLCULO ATUAL:");
+        console.log(`   Banca: R$ ${banca.toFixed(2)}`);
+        console.log(`   Meta: R$ ${metaDisplay.toFixed(2)}`);
+        console.log(`   Saldo: R$ ${saldo.toFixed(2)}`);
+        console.log("");
+
+        if (saldo >= metaDisplay && metaDisplay > 0) {
+          const lucroExtra = PrecisaoDecimal.subtrair(saldo, metaDisplay);
+
+          console.log("🎯 META SUPERADA:");
+          console.log(`   Valor tachado: R$ ${metaDisplay.toFixed(2)}`);
+          console.log(`   Lucro Extra CORRETO: R$ ${lucroExtra.toFixed(2)}`);
+          console.log(
+            `   Cálculo: ${saldo.toFixed(2)} - ${metaDisplay.toFixed(
+              2
+            )} = ${lucroExtra.toFixed(2)}`
+          );
+        } else {
+          console.log("⏳ Meta ainda não batida");
+        }
+      }
+    } catch (error) {
+      console.error("❌ Erro ao verificar:", error);
+    }
+  };
+
+  // ==========================================
+  // COMANDOS GLOBAIS
+  // ==========================================
+
+  window.$precisao = {
+    testar: () => testarPrecisaoDecimal(),
+    verificar: () => verificarCalculoAtual(),
+    forcar: () => {
+      if (typeof MetaDiariaManager !== "undefined") {
+        MetaDiariaManager.atualizarMetaDiaria(true);
+      }
+    },
+    calcular: (valor1, operacao, valor2) => {
+      switch (operacao) {
+        case "-":
+          return PrecisaoDecimal.subtrair(valor1, valor2);
+        case "*":
+          return PrecisaoDecimal.multiplicar(valor1, valor2);
+        default:
+          return PrecisaoDecimal.arredondar(valor1);
+      }
+    },
+  };
+
+  console.log("✅ Correção de precisão decimal aplicada!");
+  console.log("💡 Comandos disponíveis:");
+  console.log("   $precisao.testar() - Testa cálculos");
+  console.log("   $precisao.verificar() - Verifica valor atual");
+  console.log("   $precisao.forcar() - Força recálculo");
+  console.log('   $precisao.calcular(11, "-", 5.06) - Calcula manualmente');
+})();
+
+// ========================================================================================================================
+//                    ✅ FIM CORREÇÃO DE PRECISÃO DECIMAL
 // ========================================================================================================================

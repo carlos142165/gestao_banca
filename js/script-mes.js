@@ -309,28 +309,27 @@ const MetaMensalManager = {
   // Processar dados especificamente para mensal
   processarDadosMensais(data) {
     try {
-      // Garantir que meta mensal e dias restantes venham do backend
-      const metaRaw = data.meta_mensal;
-      const diasRestantes = data.dias_restantes_mes;
-      const metaFinal = isFinite(Number(metaRaw))
-        ? Number(metaRaw)
-        : parseFloat(metaRaw) || 0;
+      // ✅ CRÍTICO: Usar EXATAMENTE os valores que vêm do PHP
+      // NÃO recalcular nada aqui!
+
+      const metaMensal = parseFloat(data.meta_mensal) || 0;
+      const diasRestantes = parseInt(data.dias_restantes_mes) || 0;
+      const metaDiaria = parseFloat(data.meta_diaria) || 0;
       const rotuloFinal = "Meta do Mês";
       const lucroMensal = parseFloat(data.lucro) || 0;
 
-      // Exibir no console para debug
-      console.log(
-        `Meta Mensal recebida do backend: R$ ${metaFinal.toFixed(
-          2
-        )} | Dias restantes do backend: ${diasRestantes}`
-      );
+      console.log("📊 DADOS DO PHP (SEM RECALCULAR):");
+      console.log(`   Meta Diária do PHP: R$ ${metaDiaria.toFixed(4)}`);
+      console.log(`   Meta Mensal do PHP: R$ ${metaMensal.toFixed(4)}`);
+      console.log(`   Dias Restantes do PHP: ${diasRestantes}`);
+      console.log(`   Lucro Mensal do PHP: R$ ${lucroMensal.toFixed(2)}`);
 
       return {
         ...data,
-        meta_display: metaFinal,
+        meta_display: metaMensal, // ✅ Usar meta mensal do PHP
         meta_display_formatada:
           "R$ " +
-          metaFinal.toLocaleString("pt-BR", {
+          metaMensal.toLocaleString("pt-BR", {
             minimumFractionDigits: 2,
             maximumFractionDigits: 2,
           }),
@@ -338,6 +337,7 @@ const MetaMensalManager = {
         periodo_ativo: "mes",
         lucro_periodo: lucroMensal,
         dias_restantes_mes: diasRestantes,
+        meta_diaria: metaDiaria, // ✅ Preservar meta diária original
       };
     } catch (error) {
       console.error("Erro ao processar dados mensais:", error);
@@ -345,91 +345,156 @@ const MetaMensalManager = {
     }
   },
 
-  // ✅ CALCULAR META FINAL MENSAL COM VALOR TACHADO E EXTRA - CORRIGIDO
+  // ✅ NOVA FUNÇÃO: Recalcular meta mensal com PRECISÃO TOTAL
+  calcularMetaMensalPrecisa(data) {
+    try {
+      // Valores base com MÁXIMA precisão
+      const metaDiaria = parseFloat(data.meta_diaria) || 0;
+      const diasRestantes = parseInt(data.dias_restantes_mes) || 0;
+      const saldoMes = parseFloat(data.lucro_periodo || data.lucro) || 0;
+
+      // ✅ CRÍTICO: Calcular meta mensal SEM arredondamento intermediário
+      const metaMensalPrecisa = metaDiaria * diasRestantes;
+
+      // ✅ Calcular restante com precisão total
+      const restantePreciso = metaMensalPrecisa - saldoMes;
+
+      console.log("🔍 CÁLCULO PRECISO META MENSAL:");
+      console.log(`   Meta Diária: R$ ${metaDiaria.toFixed(4)}`);
+      console.log(`   Dias Restantes: ${diasRestantes}`);
+      console.log(
+        `   Meta Mensal (${metaDiaria.toFixed(
+          4
+        )} × ${diasRestantes}): R$ ${metaMensalPrecisa.toFixed(4)}`
+      );
+      console.log(`   Saldo Mês: R$ ${saldoMes.toFixed(2)}`);
+      console.log(
+        `   Restante (${metaMensalPrecisa.toFixed(4)} - ${saldoMes.toFixed(
+          2
+        )}): R$ ${restantePreciso.toFixed(2)}`
+      );
+
+      return {
+        metaMensalPrecisa: metaMensalPrecisa,
+        restantePreciso: restantePreciso,
+        metaDiaria: metaDiaria,
+        diasRestantes: diasRestantes,
+        saldoMes: saldoMes,
+      };
+    } catch (error) {
+      console.error("Erro no cálculo preciso:", error);
+      return null;
+    }
+  },
+
+  // ✅ CALCULAR META FINAL MENSAL COM VALOR TACHADO E EXTRA - CORRIGIDO COM PRECISÃO
   calcularMetaFinalMensalComExtra(saldoMes, metaCalculada, bancaTotal, data) {
     try {
+      // ✅ MANTER PRECISÃO MÁXIMA - Não arredondar até a exibição final
       let metaFinal,
         rotulo,
         statusClass,
         valorExtra = 0,
         mostrarTachado = false;
 
-      console.log(`🔍 DEBUG CALCULAR META MENSAL COM EXTRA:`);
-      console.log(`   Saldo do Mês: R$ ${saldoMes.toFixed(2)}`);
-      console.log(`   Meta do Mês: R$ ${metaCalculada.toFixed(2)}`);
-      console.log(`   Banca: R$ ${bancaTotal.toFixed(2)}`);
+      // ✅ Converter para float mantendo precisão
+      const saldoMesPreciso = parseFloat(saldoMes);
+      const metaMensalPrecisa = parseFloat(metaCalculada);
+      const bancaTotalPrecisa = parseFloat(bancaTotal);
 
-      if (bancaTotal <= 0) {
-        metaFinal = metaCalculada;
+      console.log(`🔍 DEBUG CALCULAR META MENSAL (PRECISÃO MÁXIMA):`);
+      console.log(`   Saldo do Mês: R$ ${saldoMesPreciso.toFixed(10)}`);
+      console.log(
+        `   Meta do Mês (do PHP): R$ ${metaMensalPrecisa.toFixed(10)}`
+      );
+      console.log(`   Meta Exibição: R$ ${metaMensalPrecisa.toFixed(2)}`);
+      console.log(`   Banca: R$ ${bancaTotalPrecisa.toFixed(2)}`);
+
+      if (bancaTotalPrecisa <= 0) {
+        metaFinal = metaMensalPrecisa;
         rotulo = "Deposite p/ Começar";
         statusClass = "sem-banca";
         console.log(`📊 RESULTADO MENSAL: Sem banca`);
       }
-      // ✅ CORREÇÃO: META BATIDA OU SUPERADA - VERIFICAÇÃO ULTRA PRECISA
-      else if (saldoMes > 0 && metaCalculada > 0 && saldoMes >= metaCalculada) {
-        valorExtra = saldoMes - metaCalculada;
+      // ✅ META BATIDA OU SUPERADA
+      else if (
+        saldoMesPreciso > 0 &&
+        metaMensalPrecisa > 0 &&
+        saldoMesPreciso >= metaMensalPrecisa
+      ) {
+        valorExtra = saldoMesPreciso - metaMensalPrecisa;
         mostrarTachado = true;
-        metaFinal = metaCalculada;
+        metaFinal = metaMensalPrecisa;
 
-        // ✅ Arredondar para 2 casas decimais para comparação
         const valorExtraArredondado = Math.round(valorExtra * 100) / 100;
 
         if (valorExtraArredondado === 0) {
-          // Meta exatamente batida
           rotulo = `Meta do Mês Batida! <i class='fa-solid fa-trophy'></i>`;
           statusClass = "meta-batida";
           valorExtra = 0;
           console.log(`🎯 META MENSAL EXATA`);
         } else if (valorExtraArredondado > 0) {
-          // Meta superada - QUALQUER valor positivo após arredondamento
           rotulo = `Meta do Mês Superada! <i class='fa-solid fa-trophy'></i>`;
           statusClass = "meta-superada";
           console.log(
             `🏆 META MENSAL SUPERADA: Extra de R$ ${valorExtra.toFixed(2)}`
           );
         } else {
-          // Fallback (não deveria chegar aqui)
           rotulo = `Meta do Mês Batida! <i class='fa-solid fa-trophy'></i>`;
           statusClass = "meta-batida";
           valorExtra = 0;
         }
       }
-      // ✅ CASO ESPECIAL: Meta é zero (já foi batida)
-      else if (metaCalculada === 0 && saldoMes > 0) {
+      // ✅ CASO ESPECIAL: Meta é zero
+      else if (metaMensalPrecisa === 0 && saldoMesPreciso > 0) {
         metaFinal = 0;
-        valorExtra = saldoMes;
+        valorExtra = saldoMesPreciso;
         mostrarTachado = false;
         rotulo = `Meta do Mês Batida! <i class='fa-solid fa-trophy'></i>`;
         statusClass = "meta-batida";
         console.log(`🎯 META MENSAL ZERO (já batida)`);
-      } else if (saldoMes < 0) {
-        metaFinal = metaCalculada + Math.abs(saldoMes);
+      } else if (saldoMesPreciso < 0) {
+        // ✅ MANTENDO PRECISÃO: Soma com valor absoluto
+        metaFinal = metaMensalPrecisa + Math.abs(saldoMesPreciso);
         rotulo = `Restando p/ Meta do Mês`;
         statusClass = "negativo";
         console.log(`📊 RESULTADO MENSAL: Negativo`);
-      } else if (saldoMes === 0) {
-        metaFinal = metaCalculada;
+        console.log(
+          `   Cálculo: R$ ${metaMensalPrecisa.toFixed(
+            10
+          )} + |R$ ${saldoMesPreciso.toFixed(2)}| = R$ ${metaFinal.toFixed(10)}`
+        );
+      } else if (saldoMesPreciso === 0) {
+        metaFinal = metaMensalPrecisa;
         rotulo = "Meta do Mês";
         statusClass = "neutro";
         console.log(`📊 RESULTADO MENSAL: Neutro`);
       } else {
-        // Lucro positivo mas menor que a meta
-        metaFinal = metaCalculada - saldoMes;
+        // ✅ CRÍTICO: Subtração mantendo MÁXIMA PRECISÃO
+        metaFinal = metaMensalPrecisa - saldoMesPreciso;
         rotulo = `Restando p/ Meta do Mês`;
         statusClass = "lucro";
-        console.log(`📊 RESULTADO MENSAL: Lucro insuficiente`);
+
+        console.log(
+          `📊 RESULTADO MENSAL: Lucro insuficiente (PRECISÃO MÁXIMA)`
+        );
+        console.log(`   Meta (valor exato): ${metaMensalPrecisa.toFixed(10)}`);
+        console.log(`   Saldo (valor exato): ${saldoMesPreciso.toFixed(10)}`);
+        console.log(`   Restante (valor exato): ${metaFinal.toFixed(10)}`);
+        console.log(`   Restante (exibição): R$ ${metaFinal.toFixed(2)}`);
       }
 
+      // ✅ Resultado final - arredondamento APENAS na formatação
       const resultado = {
         metaFinal,
-        metaOriginal: metaCalculada,
+        metaOriginal: metaMensalPrecisa,
         valorExtra,
         mostrarTachado,
         metaFinalFormatada: metaFinal.toLocaleString("pt-BR", {
           style: "currency",
           currency: "BRL",
         }),
-        metaOriginalFormatada: metaCalculada.toLocaleString("pt-BR", {
+        metaOriginalFormatada: metaMensalPrecisa.toLocaleString("pt-BR", {
           style: "currency",
           currency: "BRL",
         }),
@@ -444,14 +509,15 @@ const MetaMensalManager = {
         statusClass,
       };
 
-      console.log(`🏁 RESULTADO FINAL MENSAL COM EXTRA:`);
+      console.log(`🏁 RESULTADO FINAL (PRECISÃO MANTIDA):`);
       console.log(`   Status: ${statusClass}`);
+      console.log(`   Meta Final (valor exato): ${metaFinal.toFixed(10)}`);
+      console.log(`   Meta Final (exibição): ${resultado.metaFinalFormatada}`);
       console.log(`   Valor Extra: R$ ${valorExtra.toFixed(2)}`);
-      console.log(`   Mostrar Tachado: ${mostrarTachado}`);
 
       return resultado;
     } catch (error) {
-      console.error("Erro ao calcular meta final mensal com extra:", error);
+      console.error("Erro ao calcular meta final mensal:", error);
       return {
         metaFinal: 0,
         metaOriginal: 0,
@@ -465,37 +531,42 @@ const MetaMensalManager = {
       };
     }
   },
-
   // Atualizar todos os elementos - versão para bloco 2 COM EXTRA
   atualizarTodosElementosMensais(data) {
     try {
       const saldoMes =
         parseFloat(data.lucro_periodo) || parseFloat(data.lucro) || 0;
-      const metaCalculada = parseFloat(data.meta_display) || 0;
+
+      // ✅ CRÍTICO: meta_display JÁ É a meta mensal calculada pelo PHP
+      const metaMensalDoPHP = parseFloat(data.meta_display) || 0;
       const bancaTotal = parseFloat(data.banca) || 0;
+
+      console.log("✅ USANDO VALORES DO PHP:");
+      console.log(`   Meta Mensal do PHP: R$ ${metaMensalDoPHP.toFixed(2)}`);
+      console.log(`   Saldo do Mês: R$ ${saldoMes.toFixed(2)}`);
 
       const dadosComplementados = {
         ...data,
-        meta_original: data.meta_original || metaCalculada,
+        meta_original: data.meta_original || metaMensalDoPHP,
       };
 
-      // ✅ USAR NOVA FUNÇÃO COM VALOR EXTRA
+      // ✅ Passar meta mensal do PHP (NÃO recalcular!)
       const resultado = this.calcularMetaFinalMensalComExtra(
         saldoMes,
-        metaCalculada,
+        metaMensalDoPHP, // ✅ Usar meta do PHP
         bancaTotal,
         dadosComplementados
       );
 
       // Atualizar elementos do bloco 2
       this.garantirIconeMoeda();
-      this.atualizarMetaElementoMensalComExtra(resultado); // ✅ NOVA FUNÇÃO
+      this.atualizarMetaElementoMensalComExtra(resultado);
       this.atualizarRotuloMensal(resultado.rotulo);
       this.atualizarBarraProgressoMensal(resultado, data);
 
-      console.log(`Meta MENSAL atualizada COM EXTRA`);
-      console.log(`Lucro do MÊS: R$ ${saldoMes.toFixed(2)}`);
-      console.log(`Meta MENSAL: R$ ${metaCalculada.toFixed(2)}`);
+      console.log(`✅ Meta MENSAL atualizada (VALOR DO PHP)`);
+      console.log(`   Lucro do MÊS: R$ ${saldoMes.toFixed(2)}`);
+      console.log(`   Meta MENSAL: R$ ${metaMensalDoPHP.toFixed(2)}`);
 
       if (resultado.valorExtra > 0) {
         console.log(
@@ -615,9 +686,6 @@ const MetaMensalManager = {
     }
   },
 
-  // Atualizar rótulo - bloco 2
-  // Atualizar rótulo - bloco 2 (VERSÃO CORRIGIDA COM MARGIN UNIFICADA)
-  // Atualizar rótulo - bloco 2 (VERSÃO CORRIGIDA COM MARGIN UNIFICADA + ESPAÇAMENTO PARA META SUPERADA)
   // Atualizar rótulo - bloco 2 (VERSÃO CORRIGIDA COM MARGIN UNIFICADA + ESPAÇAMENTO PARA META SUPERADA)
   atualizarRotuloMensal(rotulo) {
     try {
@@ -931,7 +999,9 @@ const MetaMensalManager = {
         }
       }
 
-      console.log(`Sistema Meta MENSAL COM VALOR TACHADO E EXTRA inicializado`);
+      console.log(
+        `Sistema Meta MENSAL COM VALOR TACHADO E EXTRA E PRECISÃO inicializado`
+      );
 
       // CORREÇÃO: Ativar monitor de saúde
       this.iniciarMonitorSaude();
@@ -4953,3 +5023,23 @@ document.head.appendChild(cssEstavel);
   console.log("Sistema de placar estável carregado");
   console.log("Comando disponível: PlacarEstavel.atualizarValores(green, red)");
 })();
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
