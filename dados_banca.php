@@ -498,11 +498,22 @@ function calcularMetasPorPeriodo($meta_diaria, $tipo_meta = 'turbo', $conexao, $
     $meta_mensal_precisa = $meta_diaria_precisa * floatval($diasCalculados['mes']);
     $meta_anual_precisa = $meta_diaria_precisa * floatval($diasCalculados['ano']);
     
+    // ✅ CRÍTICO: ARREDONDAR PARA 2 CASAS DECIMAIS (evita problemas com ponto flutuante)
+    $meta_mensal_precisa = round($meta_mensal_precisa, 2);
+    $meta_anual_precisa = round($meta_anual_precisa, 2);
+    
+    // Se a meta anual calculada for zero, mas existe uma meta diária e dias no ano, corrige para nunca retornar zero
+    if ($meta_anual_precisa <= 0 && $meta_diaria_precisa > 0 && $diasCalculados['ano'] > 0) {
+        $meta_anual_precisa = $meta_diaria_precisa * floatval($diasCalculados['ano']);
+        $meta_anual_precisa = round($meta_anual_precisa, 2);
+    }
+    
     // Log para debug
     error_log("CÁLCULO META MENSAL:");
     error_log("  Meta Diária: R$ " . number_format($meta_diaria_precisa, 2, ',', '.'));
     error_log("  Dias no mês: " . $diasCalculados['mes']);
-    error_log("  Meta Mensal: R$ " . number_format($meta_mensal_precisa, 2, ',', '.'));
+    error_log("  Meta Mensal (arredondada): R$ " . number_format($meta_mensal_precisa, 2, ',', '.'));
+    error_log("  Meta Anual (arredondada): R$ " . number_format($meta_anual_precisa, 2, ',', '.'));
     
     return [
         'meta_diaria' => $meta_diaria_precisa,

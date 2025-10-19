@@ -598,35 +598,37 @@ const MetaAnualManager = {
         console.log(`📊 RESULTADO ANUAL: Sem banca`);
       }
       // META BATIDA OU SUPERADA - COM VALOR EXTRA
-      else if (saldoAno > 0 && metaCalculada > 0 && saldoAno >= metaCalculada) {
+      // ✅ CORRIGIDA: Usar tolerância de 0.01 (1 centavo) para comparação de floats
+      else if (
+        saldoAno > 0 &&
+        metaCalculada > 0 &&
+        saldoAno >= metaCalculada - 0.01
+      ) {
         valorExtra = saldoAno - metaCalculada;
-
-        // SEMPRE mostra tachado quando a meta é batida ou superada
         mostrarTachado = true;
-        metaFinal = metaCalculada; // Mostra o valor da meta original tachado
+        metaFinal = metaCalculada; // Mostra o valor da meta original
 
-        if (valorExtra > 0) {
-          // Meta SUPERADA - mostra valor tachado + extra
+        // ✅ CORRIGIDA: Usar tolerância também para determinar se é superada
+        if (valorExtra > 0.01) {
           rotulo = `Meta do Ano Superada! <i class='fa-solid fa-trophy'></i>`;
           statusClass = "meta-superada";
           console.log(
             `🏆 META ANUAL SUPERADA: Extra de R$ ${valorExtra.toFixed(2)}`
           );
         } else {
-          // Meta batida EXATAMENTE - mostra valor tachado, sem extra
           rotulo = `Meta do Ano Batida! <i class='fa-solid fa-trophy'></i>`;
           statusClass = "meta-batida";
-          console.log(`🎯 META ANUAL BATIDA EXATAMENTE`);
+          console.log(`🎯 META ANUAL BATIDA (com tolerância de centavos)`);
         }
       }
       // CASO ESPECIAL: Meta é zero (já foi batida)
-      else if (metaCalculada === 0 && saldoAno > 0) {
+      else if (metaCalculada <= 0.01 && saldoAno > 0) {
         metaFinal = 0;
         valorExtra = saldoAno;
         mostrarTachado = false;
         rotulo = `Meta do Ano Batida! <i class='fa-solid fa-trophy'></i>`;
         statusClass = "meta-batida";
-        console.log(`🎯 META ANUAL ZERO (já batida)`);
+        console.log(`🎯 META ANUAL ZERO OU MÍNIMA (já batida)`);
       } else if (saldoAno < 0) {
         metaFinal = metaCalculada - saldoAno;
         rotulo = `Restando p/ Meta do Ano`;
@@ -733,8 +735,6 @@ const MetaAnualManager = {
   },
 
   // Atualizar meta elemento anual com valor tachado e extra
-  // Atualizar meta elemento anual com valor tachado e extra
-  // Atualizar meta elemento anual com valor tachado e extra
   atualizarMetaElementoAnualComExtra(resultado) {
     try {
       const metaValor = document.getElementById("meta-valor-3");
@@ -751,22 +751,21 @@ const MetaAnualManager = {
 
       let htmlConteudo = "";
 
-      // Se deve mostrar tachado (meta batida ou superada)
-      if (resultado.mostrarTachado) {
-        // SEMPRE mostra valor tachado quando meta é batida ou superada
+      if (resultado.mostrarTachado && resultado.valorExtra >= 0) {
+        // META BATIDA/SUPERADA - MOSTRAR VALOR TACHADO + EXTRA
         htmlConteudo = `
-        <i class="fa-solid fa-coins"></i>
-        <div class="meta-valor-container-3">
-          <span class="valor-tachado-3">${
-            resultado.metaOriginalFormatada
-          }</span>
-          ${
-            resultado.valorExtra > 0
-              ? `<span class="valor-extra-3">+ ${resultado.valorExtraFormatado}</span>`
-              : ""
-          }
-        </div>
-      `;
+          <i class="fa-solid fa-coins"></i>
+          <div class="meta-valor-container-3">
+            <span class="valor-tachado-3">${
+              resultado.metaOriginalFormatada
+            }</span>
+            ${
+              resultado.valorExtra > 0
+                ? `<span class="valor-extra-3">+ ${resultado.valorExtraFormatado}</span>`
+                : ""
+            }
+          </div>
+        `;
 
         metaValor.classList.add("valor-meta-3", "meta-com-extra-3");
         console.log(
@@ -779,13 +778,13 @@ const MetaAnualManager = {
           );
         }
       } else {
-        // EXIBIÇÃO NORMAL (meta não batida)
+        // EXIBIÇÃO NORMAL
         htmlConteudo = `
-        <i class="fa-solid fa-coins"></i>
-        <div class="meta-valor-container-3">
-          <span class="valor-texto-3" id="valor-texto-meta-3">${resultado.metaFinalFormatada}</span>
-        </div>
-      `;
+          <i class="fa-solid fa-coins"></i>
+          <div class="meta-valor-container-3">
+            <span class="valor-texto-3" id="valor-texto-meta-3">${resultado.metaFinalFormatada}</span>
+          </div>
+        `;
 
         metaValor.classList.add("valor-meta-3", resultado.statusClass);
       }
@@ -795,6 +794,7 @@ const MetaAnualManager = {
       console.error("Erro ao atualizar meta elemento anual com extra:", error);
     }
   },
+
   // Garantir ícone da moeda anual
   garantirIconeMoeda() {
     try {
@@ -1640,14 +1640,15 @@ const ListaMesesManagerAnual = {
         );
       }
 
-      // VERIFICAÇÃO RIGOROSA DE META MENSAL
+      // VERIFICAÇÃO DE META MENSAL COM TOLERÂNCIA DE CENTAVOS
       let metaMensalBatida = false;
 
       if (this.metaMensal > 0) {
-        metaMensalBatida = saldo_mes >= this.metaMensal;
+        // ✅ CORRIGIDA: Usar tolerância de 0.01 (1 centavo) para comparação de floats
+        metaMensalBatida = saldo_mes >= this.metaMensal - 0.01;
       } else {
         // Sem meta configurada: critério restritivo (R$ 500 por mês)
-        metaMensalBatida = saldo_mes >= 500;
+        metaMensalBatida = saldo_mes >= 500 - 0.01;
       }
 
       // Classes e estilos
@@ -2737,15 +2738,13 @@ const ContadorDiasAno = {
   // Calcular dias restantes do ano
   calcularDiasRestantes() {
     const hoje = new Date();
-    hoje.setHours(0, 0, 0, 0); // Zerar horas para contar dia completo
-
     const fimDoAno = new Date(hoje.getFullYear(), 11, 31, 23, 59, 59);
 
     // Diferença em milissegundos
     const diferencaMs = fimDoAno - hoje;
 
-    // Converter para dias (incluindo o dia de hoje, mas contando corretamente)
-    const diasRestantes = Math.floor(diferencaMs / (1000 * 60 * 60 * 24)) + 1;
+    // Converter para dias (incluindo o dia de hoje)
+    const diasRestantes = Math.ceil(diferencaMs / (1000 * 60 * 60 * 24));
 
     return diasRestantes;
   },
