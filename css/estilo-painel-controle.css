@@ -28,6 +28,7 @@
   max-width: 500px;
   max-height: 90vh;
   overflow-y: auto;
+  overflow-x: visible;
   box-shadow: 0 10px 30px rgba(0, 0, 0, 0.2);
   position: relative;
   animation: fadeIn 0.4s ease-in-out;
@@ -408,6 +409,11 @@
 }
 
 /* ===== CONFIRMAÇÃO DE RESET ===== */
+.modal-gerencia-banca form {
+  position: relative;
+  overflow: visible;
+}
+
 .mensagem-reset {
   background-color: #f8d7da;
   color: #721c24;
@@ -418,6 +424,16 @@
   text-align: center;
   margin-top: 15px;
   display: none;
+  position: absolute;
+  bottom: 60px;
+  left: 50%;
+  transform: translateX(-50%);
+  z-index: 9999;
+  background: linear-gradient(135deg, #f8d7da 0%, #f5c6cb 100%);
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+  min-width: 320px;
+  white-space: nowrap;
+  pointer-events: auto;
 }
 
 .botoes-reset {

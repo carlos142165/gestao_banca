@@ -5735,6 +5735,13 @@ const SistemaCadastroNovo = {
         this.mostrarCamposParaTipo(tipo);
         this.resetarValoresInputs();
 
+        // ✅ CORRIGIDO: Limpar bloqueio do botão ao trocar de tipo
+        if (this.elementos.btnEnviar) {
+            this.elementos.btnEnviar.disabled = false;
+            this.elementos.btnEnviar.classList.remove('bloqueado');
+            this.elementos.btnEnviar.textContent = 'Cadastrar';
+        }
+
         try {
             const mensagemInicial = document.getElementById('mensagem-inicial-gestao');
             const tempoAnim = (this.config && this.config.TIMEOUT_ANIMACAO) ? this.config.TIMEOUT_ANIMACAO : 300;
@@ -5773,6 +5780,28 @@ const SistemaCadastroNovo = {
             limparMensagens();
         } catch (err) {
             console.warn('Erro ao limpar mensagens de verificação:', err);
+        }
+
+        // ✅ CORRIGIDO: Limpar validação GREEN de campos quando trocar de tipo
+        if (tipo !== 'green') {
+            const msgElementEntrada = this.elementos.inputEntrada?.parentElement?.querySelector('.mensagem-status-input');
+            const msgElementTotal = this.elementos.inputTotal?.parentElement?.querySelector('.mensagem-status-input');
+            
+            if (msgElementEntrada) {
+                msgElementEntrada.textContent = '';
+                msgElementEntrada.style.opacity = '0';
+                msgElementEntrada.classList.remove('negativo', 'animar');
+            }
+            
+            if (msgElementTotal && msgElementTotal.textContent.includes('ganhos')) {
+                msgElementTotal.textContent = '';
+                msgElementTotal.style.opacity = '0';
+                msgElementTotal.classList.remove('negativo', 'animar');
+            }
+            
+            if (this.elementos.inputTotal) {
+                this.elementos.inputTotal.classList.remove('erro');
+            }
         }
 
         setTimeout(() => {
