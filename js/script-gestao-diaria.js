@@ -8361,5 +8361,558 @@ window.pararMonitor = function () {
 })();
 
 // ========================================================================================================================
+//                    ✅ MODAL DE CELEBRAÇÃO - META BATIDA DO DIA
+// ========================================================================================================================
+
+// Estado global para rastrear se o modal já foi mostrado
+let modalMetaBatidaMostrado = false;
+
+/**
+ * Gerenciador do Modal de Celebração
+ */
+const CelebracaoMetaManager = {
+  // Flag para evitar múltiplas exibições
+  jaMostradoHoje: false,
+  // Rastreia o status anterior da meta
+  metaEraMetaAnterior: false,
+
+  /**
+   * Inicializa o manager ao carregar
+   */
+  inicializar() {
+    this.carregarEstadoDoLocalStorage();
+  },
+
+  /**
+   * Carrega o estado do localStorage
+   */
+  carregarEstadoDoLocalStorage() {
+    try {
+      const dataAtual = new Date().toISOString().split("T")[0];
+      const dataSalva = localStorage.getItem("celebracao_data");
+      const metaEra = localStorage.getItem("celebracao_metaEra") === "true";
+
+      // Se é o mesmo dia, recupera o estado
+      if (dataSalva === dataAtual) {
+        this.metaEraMetaAnterior = metaEra;
+        console.log(`📅 Estado recuperado do localStorage: metaEra=${metaEra}`);
+      } else {
+        // Se é um novo dia, reseta
+        this.metaEraMetaAnterior = false;
+        this.salvarEstadoNoLocalStorage();
+        console.log("🔄 Novo dia detectado! Estado resetado.");
+      }
+    } catch (error) {
+      console.error("❌ Erro ao carregar estado:", error);
+    }
+  },
+
+  /**
+   * Salva o estado no localStorage
+   */
+  salvarEstadoNoLocalStorage() {
+    try {
+      const dataAtual = new Date().toISOString().split("T")[0];
+      localStorage.setItem("celebracao_data", dataAtual);
+      localStorage.setItem(
+        "celebracao_jaMostrado",
+        this.jaMostradoHoje.toString()
+      );
+      localStorage.setItem(
+        "celebracao_metaEra",
+        this.metaEraMetaAnterior.toString()
+      );
+      console.log(`💾 Estado salvo: metaEra=${this.metaEraMetaAnterior}`);
+    } catch (error) {
+      console.error("❌ Erro ao salvar estado:", error);
+    }
+  },
+
+  /**
+   * Verifica se a meta foi batida e mostra o modal
+   */
+  verificarEMostrarModal(data) {
+    try {
+      if (!data) {
+        return;
+      }
+
+      // Pega o período atual
+      const radioPeriodo = document.querySelector(
+        'input[name="periodo"]:checked'
+      );
+      const periodoAtual = radioPeriodo?.value || "dia";
+
+      // Se não for o período do dia, não mostra celebração
+      if (periodoAtual !== "dia") {
+        return;
+      }
+
+      // Pega os valores
+      const lucro = parseFloat(data.lucro) || 0;
+      let metaAtual = 0;
+
+      // Determina qual meta usar
+      if (data.meta_display) {
+        metaAtual = parseFloat(data.meta_display) || 0;
+      } else if (data.meta_diaria) {
+        metaAtual = parseFloat(data.meta_diaria) || 0;
+      }
+
+      // Verifica se está batendo a meta agora
+      const metaEstaBatidaAgora = lucro >= metaAtual && metaAtual > 0;
+
+      console.log(
+        `📊 Meta: ${metaAtual}, Lucro: ${lucro}, Batida: ${metaEstaBatidaAgora}, jaMostrado: ${this.jaMostradoHoje}, metaEra: ${this.metaEraMetaAnterior}`
+      );
+
+      // LÓGICA: Mostra modal apenas se:
+      // 1. A meta está batida AGORA
+      // 2. A meta NÃO estava batida antes (primeira vez que bate ou voltou a bater depois de deixar de bater)
+      if (metaEstaBatidaAgora && !this.metaEraMetaAnterior) {
+        this.mostrarModal(data, lucro, metaAtual);
+        this.metaEraMetaAnterior = true;
+        this.salvarEstadoNoLocalStorage();
+        console.log("🎉 Meta batida! Modal mostrado.");
+      }
+      // Se a meta deixou de ser batida, reseta metaEraMetaAnterior E jaMostradoHoje
+      // para permitir mostrar novamente quando a meta voltar a bater
+      else if (!metaEstaBatidaAgora && this.metaEraMetaAnterior) {
+        this.metaEraMetaAnterior = false;
+        this.jaMostradoHoje = false;
+        this.salvarEstadoNoLocalStorage();
+        console.log(
+          "❌ Meta deixou de ser batida. Será mostrado novamente quando bater de novo."
+        );
+      }
+    } catch (error) {
+      console.error("❌ Erro ao verificar meta:", error);
+    }
+  },
+
+  /**
+   * Mostra o modal de celebração
+   */
+  mostrarModal(data, lucro, metaAtual) {
+    try {
+      const modal = document.getElementById("modal-meta-batida");
+      if (!modal) return;
+
+      // Calcula lucro extra
+      const valorExtra = Math.max(0, lucro - metaAtual);
+
+      // Preenche os dados do modal
+      document.getElementById(
+        "valor-meta-modal"
+      ).textContent = `R$ ${metaAtual.toLocaleString("pt-BR", {
+        minimumFractionDigits: 2,
+        maximumFractionDigits: 2,
+      })}`;
+
+      document.getElementById(
+        "valor-lucro-modal"
+      ).textContent = `R$ ${lucro.toLocaleString("pt-BR", {
+        minimumFractionDigits: 2,
+        maximumFractionDigits: 2,
+      })}`;
+
+      document.getElementById(
+        "valor-extra-modal"
+      ).textContent = `R$ ${valorExtra.toLocaleString("pt-BR", {
+        minimumFractionDigits: 2,
+        maximumFractionDigits: 2,
+      })}`;
+
+      // Mostra o modal com animação
+      modal.style.display = "flex";
+      modal.style.animation = "aparecer-modal 0.4s ease-out";
+
+      // Toca som de celebração (opcional)
+      this.tocarSomCelebracao();
+
+      console.log("🎉 Meta do Dia Batida! Modal exibido.");
+    } catch (error) {
+      console.error("❌ Erro ao mostrar modal:", error);
+    }
+  },
+
+  /**
+   * Toca som de celebração (opcional)
+   */
+  tocarSomCelebracao() {
+    try {
+      // Usa a Web Audio API para criar um som simples
+      const audioContext = new (window.AudioContext ||
+        window.webkitAudioContext)();
+      const agora = audioContext.currentTime;
+
+      // Cria notas de celebração
+      const notas = [523.25, 659.25, 783.99]; // Dó, Mi, Sol
+
+      notas.forEach((frequencia, index) => {
+        const osc = audioContext.createOscillator();
+        const gain = audioContext.createGain();
+
+        osc.connect(gain);
+        gain.connect(audioContext.destination);
+
+        osc.frequency.value = frequencia;
+        osc.type = "sine";
+
+        gain.gain.setValueAtTime(0.3, agora + index * 0.1);
+        gain.gain.exponentialRampToValueAtTime(0.01, agora + index * 0.1 + 0.2);
+
+        osc.start(agora + index * 0.1);
+        osc.stop(agora + index * 0.1 + 0.2);
+      });
+    } catch (error) {
+      // Som opcional, não interrompe se falhar
+      console.log("⚠️ Som de celebração não disponível");
+    }
+  },
+
+  /**
+   * Reseta o estado diário
+   */
+  resetarDiariamente() {
+    // Verifica se mudou de dia
+    const dataAtual = new Date().toISOString().split("T")[0];
+    const dataSalva = localStorage.getItem("celebracao_data");
+
+    if (dataSalva !== dataAtual) {
+      this.jaMostradoHoje = false;
+      this.metaEraMetaAnterior = false;
+      this.salvarEstadoNoLocalStorage();
+      console.log("🔄 Novo dia! Estado resetado.");
+    }
+  },
+};
+
+/**
+ * Inicializa o CelebracaoMetaManager quando a página carrega
+ */
+document.addEventListener("DOMContentLoaded", function () {
+  CelebracaoMetaManager.inicializar();
+  console.log("✅ CelebracaoMetaManager inicializado!");
+});
+
+/**
+ * Função global para fechar o modal
+ */
+window.fecharModalMetaBatida = function () {
+  const modal = document.getElementById("modal-meta-batida");
+  if (modal) {
+    modal.style.display = "none";
+    console.log("✅ Modal de celebração fechado.");
+  }
+};
+
+/**
+ * Integra com o MetaDiariaManager
+ */
+if (typeof MetaDiariaManager !== "undefined") {
+  const originalatualizarTodosElementos =
+    MetaDiariaManager.atualizarTodosElementos;
+
+  MetaDiariaManager.atualizarTodosElementos = function (data) {
+    // Chama a função original
+    if (originalatualizarTodosElementos) {
+      originalatualizarTodosElementos.call(this, data);
+    }
+
+    // Verifica e mostra celebração
+    CelebracaoMetaManager.resetarDiariamente();
+    CelebracaoMetaManager.verificarEMostrarModal(data);
+  };
+}
+
+// Resetar flag ao carregar a página
+document.addEventListener("DOMContentLoaded", () => {
+  CelebracaoMetaManager.resetarDiariamente();
+  console.log("🎉 Sistema de Celebração de Meta carregado!");
+});
+
+// ========================================================================================================================
+//                    ✅ FIM MODAL DE CELEBRAÇÃO
+// ========================================================================================================================
+
+// ========================================================================================================================
+//                    🛑 MODAL STOP LOSS - PARE DE JOGAR
+// ========================================================================================================================
+
+/**
+ * StopLossManager - Controla o modal de alerta de Stop Loss
+ * Mostra quando as perdas (lucro negativo) atingem -4x a meta
+ */
+const StopLossManager = {
+  // Flag para evitar múltiplas exibições
+  jaMostradoHoje: false,
+  // Rastreia se o stop loss foi acionado
+  stopLossAtivado: false,
+
+  /**
+   * Inicializa o manager ao carregar
+   */
+  inicializar() {
+    this.carregarEstadoDoLocalStorage();
+  },
+
+  /**
+   * Carrega o estado do localStorage
+   */
+  carregarEstadoDoLocalStorage() {
+    try {
+      const dataAtual = new Date().toISOString().split("T")[0];
+      const dataSalva = localStorage.getItem("stopLoss_data");
+      const stopLossAtivado = localStorage.getItem("stopLoss_ativado") === "true";
+
+      // Se é o mesmo dia, recupera o estado
+      if (dataSalva === dataAtual) {
+        this.stopLossAtivado = stopLossAtivado;
+        this.jaMostradoHoje = localStorage.getItem("stopLoss_jaMostrado") === "true";
+        console.log(`📅 Stop Loss Estado recuperado: ativado=${stopLossAtivado}`);
+      } else {
+        // Se é um novo dia, reseta
+        this.stopLossAtivado = false;
+        this.jaMostradoHoje = false;
+        this.salvarEstadoNoLocalStorage();
+        console.log("🔄 Novo dia! Stop Loss resetado.");
+      }
+    } catch (error) {
+      console.error("❌ Erro ao carregar estado Stop Loss:", error);
+    }
+  },
+
+  /**
+   * Salva o estado no localStorage
+   */
+  salvarEstadoNoLocalStorage() {
+    try {
+      const dataAtual = new Date().toISOString().split("T")[0];
+      localStorage.setItem("stopLoss_data", dataAtual);
+      localStorage.setItem("stopLoss_ativado", this.stopLossAtivado.toString());
+      localStorage.setItem("stopLoss_jaMostrado", this.jaMostradoHoje.toString());
+      console.log(`💾 Stop Loss salvo: ativado=${this.stopLossAtivado}`);
+    } catch (error) {
+      console.error("❌ Erro ao salvar estado Stop Loss:", error);
+    }
+  },
+
+  /**
+   * Verifica se o stop loss foi acionado e mostra o modal
+   * Trigger: lucro <= -4 * meta
+   */
+  verificarEMostrarModal(data) {
+    try {
+      if (!data) {
+        return;
+      }
+
+      // Pega o período atual
+      const radioPeriodo = document.querySelector(
+        'input[name="periodo"]:checked'
+      );
+      const periodoAtual = radioPeriodo?.value || "dia";
+
+      // Se não for o período do dia, não mostra stop loss
+      if (periodoAtual !== "dia") {
+        return;
+      }
+
+      // Pega os valores
+      const lucro = parseFloat(data.lucro) || 0;
+      let metaAtual = 0;
+
+      // Determina qual meta usar
+      if (data.meta_display) {
+        metaAtual = parseFloat(data.meta_display) || 0;
+      } else if (data.meta_diaria) {
+        metaAtual = parseFloat(data.meta_diaria) || 0;
+      }
+
+      // Calcula o limite de stop loss (-4x a meta)
+      const limitStop = -(metaAtual * 4);
+
+      // Verifica se acionou o stop loss
+      const stopLossAcionadoAgora = lucro <= limitStop && metaAtual > 0;
+
+      console.log(
+        `🛑 Stop Loss Check - Meta: ${metaAtual}, Lucro: ${lucro}, Limite: ${limitStop}, Acionado: ${stopLossAcionadoAgora}, jaMostrado: ${this.jaMostradoHoje}`
+      );
+
+      // LÓGICA: Mostra modal apenas se:
+      // 1. O stop loss está acionado AGORA
+      // 2. Ainda NÃO foi mostrado hoje
+      if (stopLossAcionadoAgora && !this.jaMostradoHoje) {
+        this.mostrarModal(data, lucro, metaAtual, limitStop);
+        this.stopLossAtivado = true;
+        this.jaMostradoHoje = true;
+        this.salvarEstadoNoLocalStorage();
+        console.log("🛑 STOP LOSS ACIONADO! Modal mostrado.");
+      }
+      // Se o lucro voltar acima do limite, reseta o stop loss
+      else if (stopLossAcionadoAgora === false && this.stopLossAtivado) {
+        this.stopLossAtivado = false;
+        this.jaMostradoHoje = false;
+        this.salvarEstadoNoLocalStorage();
+        console.log(
+          "✅ Stop Loss desativado. Será mostrado novamente se as perdas voltarem a -4x da meta."
+        );
+      }
+    } catch (error) {
+      console.error("❌ Erro ao verificar stop loss:", error);
+    }
+  },
+
+  /**
+   * Mostra o modal de stop loss
+   */
+  mostrarModal(data, lucro, metaAtual, limitStop) {
+    try {
+      const modal = document.getElementById("modal-stop-loss");
+      if (!modal) {
+        console.error("❌ Modal stop loss não encontrada no DOM");
+        return;
+      }
+
+      // Calcula o valor perdido (valor absoluto)
+      const valorPerdido = Math.abs(lucro);
+
+      // Preenche os dados do modal
+      document.getElementById(
+        "valor-perdido-modal"
+      ).textContent = `R$ ${valorPerdido.toLocaleString("pt-BR", {
+        minimumFractionDigits: 2,
+        maximumFractionDigits: 2,
+      })}`;
+
+      document.getElementById(
+        "valor-meta-stop"
+      ).textContent = `R$ ${metaAtual.toLocaleString("pt-BR", {
+        minimumFractionDigits: 2,
+        maximumFractionDigits: 2,
+      })}`;
+
+      document.getElementById(
+        "valor-limite-stop"
+      ).textContent = `R$ ${Math.abs(limitStop).toLocaleString("pt-BR", {
+        minimumFractionDigits: 2,
+        maximumFractionDigits: 2,
+      })}`;
+
+      // Mostra o modal com animação
+      modal.style.display = "flex";
+      modal.style.animation = "aparecer-modal 0.4s ease-out";
+
+      // Toca som de alerta (opcional)
+      this.tocarSomAlerta();
+
+      console.log("🛑 Stop Loss modal exibido com valores atualizados.");
+    } catch (error) {
+      console.error("❌ Erro ao mostrar modal stop loss:", error);
+    }
+  },
+
+  /**
+   * Toca som de alerta (opcional)
+   */
+  tocarSomAlerta() {
+    try {
+      // Usa a Web Audio API para criar um som de alerta
+      const audioContext = new (window.AudioContext ||
+        window.webkitAudioContext)();
+      const agora = audioContext.currentTime;
+
+      // Cria som de alerta em frequência baixa (mais dramático)
+      const notas = [293.66, 329.63, 293.66, 329.63]; // Ré, Mi (som de alerta)
+
+      notas.forEach((frequencia, index) => {
+        const osc = audioContext.createOscillator();
+        const gain = audioContext.createGain();
+
+        osc.connect(gain);
+        gain.connect(audioContext.destination);
+
+        osc.frequency.value = frequencia;
+        osc.type = "sine";
+
+        gain.gain.setValueAtTime(0.4, agora + index * 0.08);
+        gain.gain.exponentialRampToValueAtTime(0.01, agora + index * 0.08 + 0.15);
+
+        osc.start(agora + index * 0.08);
+        osc.stop(agora + index * 0.08 + 0.15);
+      });
+    } catch (error) {
+      // Som opcional, não interrompe se falhar
+      console.log("⚠️ Som de alerta não disponível");
+    }
+  },
+
+  /**
+   * Reseta o estado diário
+   */
+  resetarDiariamente() {
+    // Verifica se mudou de dia
+    const dataAtual = new Date().toISOString().split("T")[0];
+    const dataSalva = localStorage.getItem("stopLoss_data");
+
+    if (dataSalva !== dataAtual) {
+      this.jaMostradoHoje = false;
+      this.stopLossAtivado = false;
+      this.salvarEstadoNoLocalStorage();
+      console.log("🔄 Novo dia! Stop Loss resetado.");
+    }
+  },
+};
+
+/**
+ * Inicializa o StopLossManager quando a página carrega
+ */
+document.addEventListener("DOMContentLoaded", function () {
+  StopLossManager.inicializar();
+  console.log("✅ StopLossManager inicializado!");
+});
+
+/**
+ * Função global para fechar o modal Stop Loss
+ */
+window.fecharModalStopLoss = function () {
+  const modal = document.getElementById("modal-stop-loss");
+  if (modal) {
+    modal.style.display = "none";
+    console.log("✅ Modal Stop Loss fechado.");
+  }
+};
+
+/**
+ * Integra com o MetaDiariaManager
+ */
+if (typeof MetaDiariaManager !== "undefined") {
+  const originalAtualizarTodosElementos =
+    MetaDiariaManager.atualizarTodosElementos;
+
+  MetaDiariaManager.atualizarTodosElementos = function (data) {
+    // Chama a função original
+    if (originalAtualizarTodosElementos) {
+      originalAtualizarTodosElementos.call(this, data);
+    }
+
+    // Verifica e mostra stop loss
+    StopLossManager.resetarDiariamente();
+    StopLossManager.verificarEMostrarModal(data);
+  };
+}
+
+// Resetar flag ao carregar a página
+document.addEventListener("DOMContentLoaded", () => {
+  StopLossManager.resetarDiariamente();
+  console.log("🛑 Sistema de Stop Loss carregado!");
+});
+
+// ========================================================================================================================
+//                    ✅ FIM MODAL STOP LOSS
+// ========================================================================================================================
+
+// ========================================================================================================================
 //                    ✅ FIM CORREÇÃO DE PRECISÃO DECIMAL
 // ========================================================================================================================

@@ -571,6 +571,8 @@ ob_end_flush();
 <!--                                                 💼  LINK DOS CSS                    
  ====================================================================================================================================== -->
 <link rel="stylesheet" href="css/estilo-gestao-diaria-novo.css">
+<link rel="stylesheet" href="css/modal-celebracao.css">
+<link rel="stylesheet" href="css/modal-stop-loss.css">
 <link rel="stylesheet" href="css/estilo-campo-mes.css">
 <link rel="stylesheet" href="css/menu-topo.css">
 <link rel="stylesheet" href="css/modais.css">
@@ -601,6 +603,7 @@ ob_end_flush();
 <script src="js/script-mes.js" defer></script>
 <script src="js/exclusao-manager-fix.js" defer></script>
 <script src="js/ano.js" defer></script>
+<script src="js/teste-modal-celebracao.js" defer></script>
 <!-- -->
 <!-- -->
 <!-- -->
@@ -872,6 +875,7 @@ ob_end_flush();
             </div>
         </div>
     </div>
+
 <!-- ==================================================================================================================== -->
 <!-- ========================== BLOCO 1 - BLOCO 1 - BLOCO 1 - BLOCO 1 - BLOCO 1 ======================== -->
 <!-- ==================================================================================================================== -->
@@ -7011,7 +7015,111 @@ window.excluirMentorDireto = function() {
     <script src="js/modal-confirmacao.js"></script>
     <script src="js/override-root-styles.js" defer></script>
    
+    <!-- ✅ MODAL DE CELEBRAÇÃO META BATIDA -->
+    <div id="modal-meta-batida" class="modal-meta-batida" style="display: none;">
+        <div class="overlay-meta-batida"></div>
+        <div class="container-meta-batida">
+            <div class="confetti-container">
+                <div class="confetti"></div>
+                <div class="confetti"></div>
+                <div class="confetti"></div>
+                <div class="confetti"></div>
+                <div class="confetti"></div>
+            </div>
+            
+            <div class="conteudo-celebracao">
+                <div class="icone-trofeu">
+                    <i class="fas fa-trophy"></i>
+                </div>
+                
+                <h1 class="titulo-celebracao">Parabéns!</h1>
+                
+                <div class="texto-principal">
+                    <p class="meta-batida-texto">Meta do Dia Batida</p>
+                    <p class="emoji-stop">Stop Green</p>
+                </div>
+                
+                <div class="linha-separadora"></div>
+                
+                <div class="mensagem-controle">
+                    <p class="obs-texto"><strong>⚠️ Pare de jogar</strong></p>
+                    <p class="obs-texto">Tenha Controle Emocional</p>
+                    <p class="obs-texto">Você já Garantiu Sua Meta do Dia</p>
+                </div>
+                
+                <div class="dados-meta">
+                    <div class="dado-info">
+                        <span class="label-dado">Meta:</span>
+                        <span class="valor-dado" id="valor-meta-modal">R$ 0,00</span>
+                    </div>
+                    <div class="dado-info">
+                        <span class="label-dado">Lucro:</span>
+                        <span class="valor-dado" id="valor-lucro-modal">R$ 0,00</span>
+                    </div>
+                    <div class="dado-info">
+                        <span class="label-dado">Extra:</span>
+                        <span class="valor-dado" id="valor-extra-modal">R$ 0,00</span>
+                    </div>
+                </div>
+                
+                <button class="btn-fechar-celebracao" onclick="fecharModalMetaBatida()">
+                    Entendi, vou parar de jogar 💪
+                </button>
+            </div>
+        </div>
+    </div>
+
 </body>
 </html>
+
+    <!-- ✅ MODAL STOP LOSS - PARE DE JOGAR -->
+    <div id="modal-stop-loss" class="modal-stop-loss" style="display: none;">
+        <div class="overlay-stop-loss"></div>
+        <div class="container-stop-loss">
+            <div class="confetti-container-red">
+                <div class="confetti-red"></div>
+                <div class="confetti-red"></div>
+                <div class="confetti-red"></div>
+                <div class="confetti-red"></div>
+                <div class="confetti-red"></div>
+            </div>
+            
+            <div class="conteudo-stop-loss">
+                <div class="icone-alerta">
+                    <i class="fas fa-exclamation-triangle"></i>
+                </div>
+                
+                <h1 class="titulo-stop-loss">PARE DE JOGAR!</h1>
+                
+                <div class="texto-alerta">
+                    <p class="mensagem-stop-loss">Você Perdeu</p>
+                    <p class="valor-perdido" id="valor-perdido-modal">R$ 0,00</p>
+                </div>
+                
+                <div class="linha-separadora-red"></div>
+                
+                <div class="mensagem-aviso-red">
+                    <p class="texto-aviso"><strong>🚨 STOP LOSS ATIVADO!</strong></p>
+                    <p class="texto-aviso">Você ultrapassou o limite de perdas</p>
+                    <p class="texto-aviso">Feche a plataforma e descanse</p>
+                </div>
+                
+                <div class="dados-stop-loss">
+                    <div class="dado-stop">
+                        <span class="label-stop">Meta:</span>
+                        <span class="valor-stop" id="valor-meta-stop">R$ 0,00</span>
+                    </div>
+                    <div class="dado-stop">
+                        <span class="label-stop">Limite Stop Loss:</span>
+                        <span class="valor-stop" id="valor-limite-stop">R$ 0,00</span>
+                    </div>
+                </div>
+                
+                <button class="btn-fechar-stop-loss" onclick="fecharModalStopLoss()">
+                    Entendi, vou parar agora 🛑
+                </button>
+            </div>
+        </div>
+    </div>
 
 
