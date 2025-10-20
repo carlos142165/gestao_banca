@@ -1026,6 +1026,7 @@ input:hover ~ .tooltip-info:not(.ativo),
   margin-bottom: 15px;
   font-size: 16px;
   font-weight: 700;
+  text-align: center;
 }
 
 .tooltip-exemplo ul {
@@ -1035,22 +1036,25 @@ input:hover ~ .tooltip-info:not(.ativo),
 }
 
 .tooltip-exemplo li {
-  margin-bottom: 18px;
+  margin-bottom: 0;
   color: #34495e;
-  line-height: 1.6;
+  line-height: 1.8;
   font-size: 14px;
+  text-align: left;
+  margin-left: 0;
+  padding: 0;
 }
 
 /* NOVA FORMATAÇÃO - Título em cima, valor embaixo */
 .tooltip-exemplo li strong {
   color: #2c3e50;
   font-weight: 600;
-  display: block;
-  margin-bottom: 5px;
+  display: inline;
+  margin-bottom: 0;
   font-size: 14px;
 }
 
-/* Valor fica em uma nova linha, sem negrito */
+/* Valor fica na mesma linha, sem negrito */
 .tooltip-exemplo li {
   font-weight: normal;
 }

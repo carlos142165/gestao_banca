@@ -1,4 +1,30 @@
 document.addEventListener("DOMContentLoaded", () => {
+  // ✅ FUNÇÃO HELPER PARA OBTER CORES DO ROOT CSS
+  window.obterCorCSS = function (nomeCor) {
+    return (
+      getComputedStyle(document.documentElement)
+        .getPropertyValue(nomeCor)
+        .trim() || "#FFD700"
+    );
+  };
+
+  // ✅ CACHE DE CORES PARA PERFORMANCE
+  window.coresMetaModal = {
+    amarelo: null,
+    trofeu: null,
+    foguete: null,
+    parabens: null,
+    inicializar() {
+      this.amarelo = obterCorCSS("--valor-extra-cor-amarelo") || "#FFD700";
+      this.trofeu = obterCorCSS("--valor-extra-cor-trofeu") || "#FFD700";
+      this.foguete = obterCorCSS("--valor-extra-cor-foguete") || "#FF6B6B";
+      this.parabens = obterCorCSS("--valor-extra-cor-parabens") || "#FFD700";
+    },
+  };
+
+  // Inicializar cache de cores
+  window.coresMetaModal.inicializar();
+
   // ✅ INICIALIZAÇÃO BÁSICA
   if (typeof atualizarLucroEBancaViaAjax === "function") {
     atualizarLucroEBancaViaAjax();
@@ -1333,24 +1359,44 @@ document.addEventListener("DOMContentLoaded", () => {
               var excedenteFormatadoDia = formatarMoeda(
                 valorExtraDiaArredondado
               );
+              var corAmarelo = getComputedStyle(document.documentElement)
+                .getPropertyValue("--valor-extra-cor-amarelo")
+                .trim();
+              var corFoguete = getComputedStyle(document.documentElement)
+                .getPropertyValue("--valor-extra-cor-foguete")
+                .trim();
               resultadoMetaDia.innerHTML =
                 '<span style="text-decoration: line-through; color: #7f8c8d;">' +
                 metaRiscadaDia +
-                '</span> Superada! <span style="color: #FFD700;">+' +
+                '</span> Superada! <span style="color: ' +
+                corAmarelo +
+                ';">+' +
                 excedenteFormatadoDia +
-                '</span> <i class="fa-solid fa-rocket" style="color: #FF6B6B;"></i>';
+                '</span> <i class="fa-solid fa-rocket" style="color: ' +
+                corFoguete +
+                ';"></i>';
             } else {
+              var corTrofeu = getComputedStyle(document.documentElement)
+                .getPropertyValue("--valor-extra-cor-trofeu")
+                .trim();
               resultadoMetaDia.innerHTML =
                 '<span style="text-decoration: line-through; color: #7f8c8d;">' +
                 metaRiscadaDia +
-                '</span> Meta Batida! <i class="fa-solid fa-trophy" style="color: #FFD700;"></i>';
+                '</span> Meta Batida! <i class="fa-solid fa-trophy" style="color: ' +
+                corTrofeu +
+                ';"></i>';
             }
           } else if (metaDiaria <= 0 && lucroHoje > 0) {
             var metaRiscadaDia = formatarMoeda(metaDiariaBase);
+            var corTrofeu = getComputedStyle(document.documentElement)
+              .getPropertyValue("--valor-extra-cor-trofeu")
+              .trim();
             resultadoMetaDia.innerHTML =
               '<span style="text-decoration: line-through; color: #7f8c8d;">' +
               metaRiscadaDia +
-              '</span> Meta Batida! <i class="fa-solid fa-trophy" style="color: #FFD700;"></i>';
+              '</span> Meta Batida! <i class="fa-solid fa-trophy" style="color: ' +
+              corTrofeu +
+              ';"></i>';
           } else {
             resultadoMetaDia.textContent = formatarMoeda(metaDiaria);
           }
@@ -1373,20 +1419,35 @@ document.addEventListener("DOMContentLoaded", () => {
             var metaRiscadaMes = formatarMoeda(metaMensalBase);
 
             if (valorExtraMesArredondado === 0) {
+              var corTrofeu = getComputedStyle(document.documentElement)
+                .getPropertyValue("--valor-extra-cor-trofeu")
+                .trim();
               resultadoMetaMes.innerHTML =
                 '<span style="text-decoration: line-through; color: #7f8c8d;">' +
                 metaRiscadaMes +
-                '</span> Meta Batida! <i class="fa-solid fa-trophy" style="color: #FFD700;"></i>';
+                '</span> Meta Batida! <i class="fa-solid fa-trophy" style="color: ' +
+                corTrofeu +
+                ';"></i>';
             } else if (valorExtraMesArredondado > 0) {
               var excedenteFormatadoMes = formatarMoeda(
                 valorExtraMesArredondado
               );
+              var corAmarelo = getComputedStyle(document.documentElement)
+                .getPropertyValue("--valor-extra-cor-amarelo")
+                .trim();
+              var corFoguete = getComputedStyle(document.documentElement)
+                .getPropertyValue("--valor-extra-cor-foguete")
+                .trim();
               resultadoMetaMes.innerHTML =
                 '<span style="text-decoration: line-through; color: #7f8c8d;">' +
                 metaRiscadaMes +
-                '</span> Superada! <span style="color: #FFD700;">+' +
+                '</span> Superada! <span style="color: ' +
+                corAmarelo +
+                ';">+' +
                 excedenteFormatadoMes +
-                '</span> <i class="fa-solid fa-rocket" style="color: #FF6B6B;"></i>';
+                '</span> <i class="fa-solid fa-rocket" style="color: ' +
+                corFoguete +
+                ';"></i>';
             } else {
               resultadoMetaMes.textContent = formatarMoeda(metaMensal);
             }
@@ -1412,20 +1473,35 @@ document.addEventListener("DOMContentLoaded", () => {
             var metaRiscadaAno = formatarMoeda(metaAnualBase);
 
             if (valorExtraAnoArredondado === 0) {
+              var corTrofeu = getComputedStyle(document.documentElement)
+                .getPropertyValue("--valor-extra-cor-trofeu")
+                .trim();
               resultadoMetaAno.innerHTML =
                 '<span style="text-decoration: line-through; color: #7f8c8d;">' +
                 metaRiscadaAno +
-                '</span> Meta Batida! <i class="fa-solid fa-trophy" style="color: #FFD700;"></i>';
+                '</span> Meta Batida! <i class="fa-solid fa-trophy" style="color: ' +
+                corTrofeu +
+                ';"></i>';
             } else if (valorExtraAnoArredondado > 0) {
               var excedenteFormatadoAno = formatarMoeda(
                 valorExtraAnoArredondado
               );
+              var corAmarelo = getComputedStyle(document.documentElement)
+                .getPropertyValue("--valor-extra-cor-amarelo")
+                .trim();
+              var corFoguete = getComputedStyle(document.documentElement)
+                .getPropertyValue("--valor-extra-cor-foguete")
+                .trim();
               resultadoMetaAno.innerHTML =
                 '<span style="text-decoration: line-through; color: #7f8c8d;">' +
                 metaRiscadaAno +
-                '</span> Superada! <span style="color: #FFD700;">+' +
+                '</span> Superada! <span style="color: ' +
+                corAmarelo +
+                ';">+' +
                 excedenteFormatadoAno +
-                '</span> <i class="fa-solid fa-rocket" style="color: #FF6B6B;"></i>';
+                '</span> <i class="fa-solid fa-rocket" style="color: ' +
+                corFoguete +
+                ';"></i>';
             } else {
               resultadoMetaAno.textContent = formatarMoeda(metaAnual);
             }
@@ -1452,26 +1528,66 @@ document.addEventListener("DOMContentLoaded", () => {
 
             if (valorExtraDiaArredondado > 0) {
               if (labelEntradas) {
+                var corParabens = getComputedStyle(document.documentElement)
+                  .getPropertyValue("--valor-extra-cor-parabens")
+                  .trim();
                 labelEntradas.innerHTML =
-                  '<span style="color: #FFD700;">🎉 Parabéns!</span>';
+                  '<span style="color: ' +
+                  corParabens +
+                  ';">🎉 Parabéns!</span>';
               }
+              var corAmarelo = getComputedStyle(document.documentElement)
+                .getPropertyValue("--valor-extra-cor-amarelo")
+                .trim();
+              var corFoguete = getComputedStyle(document.documentElement)
+                .getPropertyValue("--valor-extra-cor-foguete")
+                .trim();
               resultadoEntradas.innerHTML =
-                '<span style="color: #FFD700;">Meta Superada!</span> <i class="fa-solid fa-rocket" style="color: #FF6B6B;"></i>';
+                '<span style="color: ' +
+                corAmarelo +
+                ';">Meta Superada!</span> <i class="fa-solid fa-rocket" style="color: ' +
+                corFoguete +
+                ';"></i>';
             } else {
               if (labelEntradas) {
+                var corParabens = getComputedStyle(document.documentElement)
+                  .getPropertyValue("--valor-extra-cor-parabens")
+                  .trim();
                 labelEntradas.innerHTML =
-                  '<span style="color: #FFD700;">🎉 Parabéns!</span>';
+                  '<span style="color: ' +
+                  corParabens +
+                  ';">🎉 Parabéns!</span>';
               }
+              var corTrofeu = getComputedStyle(document.documentElement)
+                .getPropertyValue("--valor-extra-cor-trofeu")
+                .trim();
               resultadoEntradas.innerHTML =
-                '<span style="color: #FFD700;">Meta Batida!</span> <i class="fa-solid fa-trophy" style="color: #FFD700;"></i>';
+                '<span style="color: ' +
+                corAmarelo +
+                ';">Meta Batida!</span> <i class="fa-solid fa-trophy" style="color: ' +
+                corTrofeu +
+                ';"></i>';
             }
           } else if (metaDiariaArredondada <= 0 && lucroHoje > 0) {
             if (labelEntradas) {
+              var corParabens = getComputedStyle(document.documentElement)
+                .getPropertyValue("--valor-extra-cor-parabens")
+                .trim();
               labelEntradas.innerHTML =
-                '<span style="color: #FFD700;">🎉 Parabéns!</span>';
+                '<span style="color: ' + corParabens + ';">🎉 Parabéns!</span>';
             }
+            var corAmarelo = getComputedStyle(document.documentElement)
+              .getPropertyValue("--valor-extra-cor-amarelo")
+              .trim();
+            var corTrofeu = getComputedStyle(document.documentElement)
+              .getPropertyValue("--valor-extra-cor-trofeu")
+              .trim();
             resultadoEntradas.innerHTML =
-              '<span style="color: #FFD700;">Meta Batida!</span> <i class="fa-solid fa-trophy" style="color: #FFD700;"></i>';
+              '<span style="color: ' +
+              corAmarelo +
+              ';">Meta Batida!</span> <i class="fa-solid fa-trophy" style="color: ' +
+              corTrofeu +
+              ';"></i>';
           } else {
             if (labelEntradas) {
               labelEntradas.textContent = "Para Bater a Meta do Dia Fazer:";
@@ -3546,11 +3662,20 @@ function atualizarMetasModalBancaSync() {
             const valorRiscado = formatarMoeda(metaDiariaBase);
 
             if (Math.abs(lucroHoje - metaDiariaBase) < 0.01) {
-              resultadoMetaDia.innerHTML = `<span style="text-decoration: line-through;">${valorRiscado}</span> Batida! <i class="fa-solid fa-trophy" style="color: #FFD700;"></i>`;
+              var corTrofeu = getComputedStyle(document.documentElement)
+                .getPropertyValue("--valor-extra-cor-trofeu")
+                .trim();
+              resultadoMetaDia.innerHTML = `<span style="text-decoration: line-through;">${valorRiscado}</span> Batida! <i class="fa-solid fa-trophy" style="color: ${corTrofeu};"></i>`;
             } else {
               const valorExcedente = lucroHoje - metaDiariaBase;
               const excedenteFormatado = formatarMoeda(valorExcedente);
-              resultadoMetaDia.innerHTML = `<span style="text-decoration: line-through;">${valorRiscado}</span> Superada! +${excedenteFormatado} <i class="fa-solid fa-rocket" style="color: #FF6B6B;"></i>`;
+              var corAmarelo = getComputedStyle(document.documentElement)
+                .getPropertyValue("--valor-extra-cor-amarelo")
+                .trim();
+              var corFoguete = getComputedStyle(document.documentElement)
+                .getPropertyValue("--valor-extra-cor-foguete")
+                .trim();
+              resultadoMetaDia.innerHTML = `<span style="text-decoration: line-through;">${valorRiscado}</span> Superada! +${excedenteFormatado} <i class="fa-solid fa-rocket" style="color: ${corFoguete};"></i>`;
             }
           } else {
             resultadoMetaDia.textContent = formatarMoeda(metaDiaFinal);

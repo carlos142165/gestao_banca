@@ -319,18 +319,18 @@
 .info-btn {
   background: none;
   border: none;
-  font-size: 14px;
+  font-size: var(--info-btn-campos-tamanho);
   cursor: pointer;
-  color: #245a04;
-  padding: 2px;
+  color: var(--info-btn-campos-cor);
+  padding: var(--info-btn-campos-padding);
   display: inline-flex;
   align-items: center;
-  transition: color 0.3s ease, transform 0.2s ease;
+  transition: var(--info-btn-campos-transition);
 }
 
 .info-btn:hover {
-  color: #14aa2d;
-  transform: scale(1.1);
+  color: var(--info-btn-campos-cor-hover);
+  transform: var(--info-btn-campos-transform-hover);
 }
 
 /* ===== CAMPO DE RESULTADOS ===== */
@@ -1169,6 +1169,38 @@
   cursor: pointer;
 }
 
+/* ===== ESTILOS ESPECÍFICOS PARA TOOLTIPS DE CAMPOS ===== */
+
+/* Tooltip Porcentagem */
+#tooltipPorcentagem .tooltip-header {
+  background: var(--tooltip-porcentagem-header-bg);
+  color: var(--tooltip-porcentagem-header-color);
+}
+
+#tooltipPorcentagem {
+  border-color: var(--tooltip-porcentagem-border-color);
+}
+
+/* Tooltip Unidade */
+#tooltipUnidade .tooltip-header {
+  background: var(--tooltip-unidade-header-bg);
+  color: var(--tooltip-unidade-header-color);
+}
+
+#tooltipUnidade {
+  border-color: var(--tooltip-unidade-border-color);
+}
+
+/* Tooltip Odds */
+#tooltipOdds .tooltip-header {
+  background: var(--tooltip-odds-header-bg);
+  color: var(--tooltip-odds-header-color);
+}
+
+#tooltipOdds {
+  border-color: var(--tooltip-odds-border-color);
+}
+
 /* ===== RESPONSIVIDADE DO TOOLTIP ===== */
 @media (max-width: 768px) {
   :root {
@@ -1467,6 +1499,10 @@
     --botao-acao-font-size: 15px;
     --botao-acao-padding: 13px;
     --botao-acao-border-radius: 12px;
+
+    /* ===== RESPONSIVIDADE - BOTÃO INFO CAMPOS ===== */
+    --info-btn-campos-tamanho: 13px;
+    --info-btn-campos-padding: 1px;
   }
 }
 
@@ -1475,6 +1511,10 @@
     --botao-acao-font-size: 14px;
     --botao-acao-padding: 12px;
     --botao-acao-border-radius: 10px;
+
+    /* ===== RESPONSIVIDADE - BOTÃO INFO CAMPOS ===== */
+    --info-btn-campos-tamanho: 12px;
+    --info-btn-campos-padding: 1px;
   }
 }
 
@@ -1700,6 +1740,55 @@
   /**/
   /**/
   /* --------------------------------------------------
+    BOTÃO DE INFORMAÇÃO - PORCENTAGEM / UNIDADE / ODDS
+  -------------------------------------------------- */
+
+  /* ===== BOTÃO INFO - DIMENSÕES ===== */
+  --info-btn-campos-tamanho: 14px;
+  --info-btn-campos-padding: 2px;
+
+  /* ===== BOTÃO INFO - CORES ===== */
+  --info-btn-campos-cor: #bdbdbd;
+  --info-btn-campos-cor-hover: #fac000;
+
+  /* ===== BOTÃO INFO - EFEITOS ===== */
+  --info-btn-campos-transition: color 0.3s ease, transform 0.2s ease;
+  --info-btn-campos-transform-hover: scale(1.1);
+
+  /* ===== TOOLTIP PORCENTAGEM ===== */
+  --tooltip-porcentagem-header-bg: linear-gradient(
+    135deg,
+    #667eea 0%,
+    #764ba2 100%
+  );
+  --tooltip-porcentagem-header-color: #ffffff;
+  --tooltip-porcentagem-border-color: #667eea;
+
+  /* ===== TOOLTIP UNIDADE ===== */
+  --tooltip-unidade-header-bg: linear-gradient(
+    135deg,
+    #667eea 0%,
+    #764ba2 100%
+  );
+  --tooltip-unidade-header-color: #ffffff;
+  --tooltip-unidade-border-color: #667eea;
+
+  /* ===== TOOLTIP ODDS ===== */
+  --tooltip-odds-header-bg: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  --tooltip-odds-header-color: #ffffff;
+  --tooltip-odds-border-color: #667eea;
+
+  /* --------------------------------------------------
+    BOTÃO DE INFORMAÇÃO - PORCENTAGEM / UNIDADE / ODDS
+  -------------------------------------------------- */
+  /**/
+  /**/
+  /**/
+  /**/
+  /**/
+  /**/
+  /**/
+  /* --------------------------------------------------
     BOTÃO DE AÇÃO - BOTÃO DE AÇÃO - BOTÃO DE AÇÃO
   -------------------------------------------------- */
   /* ===== CONTAINER ===== */
@@ -1748,10 +1837,107 @@
   /**/
   /**/
   /**/
+  /* --------------------------------------------------
+    VALORES EXTRAS (Meta Superada) - (Meta Superada)
+  -------------------------------------------------- */
+
+  /* ===== CORES DOS VALORES EXTRAS ===== */
+  /* Cor principal do amarelo (Meta Batida/Superada) */
+  --valor-extra-cor-amarelo: #f8a408;
+
+  /* Cor quando a meta é superada - Verde para ganho adicional */
+  --valor-extra-cor-positivo: #06a70e;
+
+  /* Cor secundária (alternativa) para destaque */
+  --valor-extra-cor-destaque: #20b84a;
+
+  /* Cor para animação/transição */
+  --valor-extra-cor-transicao: #14aa2d;
+
+  /* ===== CORES PARA ÍCONES ===== */
+  /* Cor do troféu (Meta Batida) */
+  --valor-extra-cor-trofeu: #f8a408;
+
+  /* Cor do foguete (Meta Superada) */
+  --valor-extra-cor-foguete: #ff6b6b;
+
+  /* Cor do parabéns/celebração */
+  --valor-extra-cor-parabens: #f8a408;
+
+  /* ===== TIPOGRAFIA DOS VALORES EXTRAS ===== */
+  --valor-extra-font-size: 14px;
+  --valor-extra-font-weight: 600;
+  --valor-extra-font-family: "Poppins", sans-serif;
+
+  /* ===== EFEITOS DOS VALORES EXTRAS ===== */
+  --valor-extra-transition: color 0.3s ease, text-shadow 0.3s ease;
+  --valor-extra-text-shadow: 0 2px 4px rgba(6, 167, 14, 0.2);
+
+  /* ===== ESPAÇAMENTO DOS VALORES EXTRAS ===== */
+  --valor-extra-margin: 8px 0;
+  --valor-extra-padding: 4px 8px;
+
+  /* ===== ANIMAÇÃO PARA DESTAQUE ===== */
+  --valor-extra-animation: none; /* Pode ser 'pulse' ou outra animação */
+
+  /* --------------------------------------------------
+    VALORES EXTRAS (Meta Superada) - (Meta Superada)
+  -------------------------------------------------- */
+  /**/
+  /**/
+  /**/
+  /**/
+  /**/
+  /**/
+  /**/
 }
 /* =======================================================================================================================================================
      - ROOT- ROOT - ROOT  - ROOT- ROOT - ROOT  - ROOT- ROOT - ROOT  - ROOT- ROOT - ROOT  - ROOT- ROOT - ROOT - ROOT- ROOT - ROOT
   =======================================================================================================================================================*/
+
+/* ===== APLICAÇÃO DE VARIÁVEIS NOS VALORES EXTRAS ===== */
+
+/* Classe para valores positivos extras (meta superada) */
+.resultado-valor.valor-extra,
+.resultado-valor.extra-positivo {
+  color: var(--valor-extra-cor-positivo) !important;
+  font-weight: var(--valor-extra-font-weight);
+  font-size: var(--valor-extra-font-size);
+  transition: var(--valor-extra-transition);
+  text-shadow: var(--valor-extra-text-shadow);
+  animation: var(--valor-extra-animation);
+  margin: var(--valor-extra-margin);
+  padding: var(--valor-extra-padding);
+}
+
+/* Classe para valores extras com destaque */
+.resultado-valor.valor-extra-destaque {
+  color: var(--valor-extra-cor-destaque) !important;
+  font-weight: var(--valor-extra-font-weight);
+  font-size: var(--valor-extra-font-size);
+  transition: var(--valor-extra-transition);
+  text-shadow: var(--valor-extra-text-shadow);
+  animation: var(--valor-extra-animation);
+}
+
+/* Animação pulse para valores extras */
+@keyframes valueExtraPulse {
+  0%,
+  100% {
+    transform: scale(1);
+    text-shadow: 0 2px 4px rgba(6, 167, 14, 0.2);
+  }
+  50% {
+    transform: scale(1.05);
+    text-shadow: 0 4px 8px rgba(6, 167, 14, 0.4);
+  }
+}
+
+/* Aplicar animação quando necessário */
+.resultado-valor.valor-extra.pulse {
+  animation: valueExtraPulse 0.6s ease-in-out;
+}
+
 /**/
 /**/
 /**/

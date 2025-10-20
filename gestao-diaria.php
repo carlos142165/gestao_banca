@@ -6192,7 +6192,7 @@ console.log('🔧 Para testar: Clique em qualquer card de mentor');
                     </div>
                     
                     <p class="tooltip-obs">
-                      <strong>Obs.:</strong> Caso o saldo do dia seja <strong>negativo</strong>, o valor da perda será somado à <strong>meta diária</strong>. Exemplo: <strong>Meta: R$ 10,00</strong> e <strong>Perda: R$ 10,00</strong>, a nova meta será <strong>R$ 20,00</strong>. Essa perda é considerada apenas no dia atual; no dia seguinte, a meta volta ao valor fixo e a perda acumulada é direcionada para a <strong>Meta Mensal</strong>.
+                      <strong>Obs.:</strong> Caso o saldo do dia esteja <strong>negativo</strong>, o valor da perda será somado à <strong>meta diária</strong>. Exemplo: <strong>Meta: R$ 10,00</strong> e <strong>Perda: R$ 10,00</strong>, a nova meta será <strong>R$ 20,00</strong>. Essa perda é considerada apenas no dia atual; no dia seguinte, a meta volta ao valor fixo e a perda acumulada é direcionada para a <strong>Meta Mensal</strong>.
 
                     </p>
                   </div>
@@ -6227,7 +6227,7 @@ console.log('🔧 Para testar: Clique em qualquer card de mentor');
                     </div>
                     
                     <p class="tooltip-obs">
-                      <strong>Obs.:</strong> Caso o saldo da banca seja <strong>negativo</strong>, o sistema vai utilizar a <strong>meta fixa</strong> automaticamente para preservar a sua banca, quando o saldo voltar a ficar positivo poderá utilizar a <strong>meta turbo</strong> novamente.</p>
+                      <strong>Obs.:</strong> Caso o saldo da banca esteja <strong>negativo</strong>, o sistema vai utilizar a <strong>meta fixa</strong> automaticamente para preservar a sua banca, quando o saldo voltar a ficar positivo poderá utilizar a <strong>meta turbo</strong> novamente.</p>
                   </div>
                 </div>
               </div>
@@ -6261,18 +6261,102 @@ console.log('🔧 Para testar: Clique em qualquer card de mentor');
             <button type="button" class="info-btn" data-modal="modalPorcentagem">
               <i class="fa-solid fa-circle-question"></i>
             </button>
+            
+            <!-- Tooltip Porcentagem -->
+            <div class="tooltip-info" id="tooltipPorcentagem">
+              <button type="button" class="btn-fechar-tooltip">×</button>
+              <div class="tooltip-header">📊 Porcentagem — Entenda o Conceito</div>
+              <div class="tooltip-content">
+                <p>Defina a <strong>porcentagem</strong> que será utilizada para calcular a unidade de entrada baseada no valor da sua Banca.</p>
+                
+                <div class="tooltip-exemplo">
+                  <strong>📌 Como funciona:</strong>
+                  <ul>
+                    <li><strong>Valor da Banca:</strong> R$ 1.000,00</li>
+                    <li><strong>Porcentagem definida:</strong> 1%</li>
+                    <li><strong>Cálculo:</strong> R$ 1.000,00 × 1% = <strong>R$ 10,00</strong></li>
+                    <li>Esse valor (R$ 10,00) é a sua <strong>Unidade de Entrada</strong></li>
+                  </ul>
+                </div>
+                
+                <p class="tooltip-obs">
+                  <strong>Exemplos práticos:</strong>
+                  <ul style="list-style-type: none; margin-top: 10px;">
+                    <li>✓ 0,5% com R$ 1.000 = R$ 5,00 por unidade</li>
+                    <li>✓ 1% com R$ 1.000 = R$ 10,00 por unidade</li>
+                    <li>✓ 2% com R$ 1.000 = R$ 20,00 por unidade</li>
+                  </ul>
+                </p>
+              </div>
+            </div>
           </div>
           <div class="label-com-explicacao">
             <label for="unidadeMeta">Qtd de Unidade</label>
             <button type="button" class="info-btn" data-modal="modalUnidade">
               <i class="fa-solid fa-circle-question"></i>
             </button>
+            
+            <!-- Tooltip Quantidade de Unidade -->
+            <div class="tooltip-info" id="tooltipUnidade">
+              <button type="button" class="btn-fechar-tooltip">×</button>
+              <div class="tooltip-header">🎯 Qnt.. de Unidade — Entenda o Conceito</div>
+              <div class="tooltip-content">
+                <p>A <strong>quantidade de unidades</strong> é multiplicada  para calcular e encontrar o valor da <strong>meta diária</strong>.</p>
+
+                
+                <div class="tooltip-exemplo">
+                  <strong>📌 Como funciona:</strong>
+                  <ul>
+                    <li><strong>Banca:</strong> R$ 1.000,00</li>
+                    <li><strong>Porcentagem:</strong> 1%</li>
+                    <li><strong>Unidade de Entrada:</strong> 1.000,00 × 1% = 10,00</li>
+                    <li><strong>Quantidade de Unidade:</strong> 2</li>
+                    <li><strong>Meta Diária:</strong> 2 × R$ 10,00 = <strong>R$ 20,00</strong></li>
+                  </ul>
+                </div>
+                
+                <p class="tooltip-obs">
+                  <strong>Obs.:</strong> Quanto <strong>maior</strong> a quantidade de unidades e o valor da porcentagem, <strong>maior</strong> será sua meta diária.
+                </p>
+              </div>
+            </div>
           </div>
           <div class="label-com-explicacao">
             <label for="oddsMeta">Odds Min.</label>
             <button type="button" class="info-btn" data-modal="modalOdds">
               <i class="fa-solid fa-circle-question"></i>
             </button>
+            
+            <!-- Tooltip Odds Mínima -->
+            <div class="tooltip-info" id="tooltipOdds">
+              <button type="button" class="btn-fechar-tooltip">×</button>
+              <div class="tooltip-header">📈 Odds Mínima — Entenda o Conceito</div>
+              <div class="tooltip-content">
+                <p>Defina a <strong>Odds mínima</strong> que você vai operar. Esse valor é utilizado para calcular <strong>quantas entradas positivas</strong> você precisa fazer para atingir a meta diária.</p>
+                
+                <div class="tooltip-exemplo">
+                  <strong>📌 Como funciona:</strong>
+                  <ul>
+                    <li><strong>Unidade de Entrada:</strong> R$ 10,00</li>
+                    <li><strong>Meta Diária:</strong> R$ 20,00</li>
+                    <li><strong>Odds Mínima:</strong> R$ 1,50</li>
+                    <li><strong>Cálculo:</strong> 10,00 * 1,5 = 15,00 - 10,00 = 5,00</li>
+                    <li><strong>Cada Entrada Positiva :</strong> Lucro de R$ 5,00</li>
+                    <li><strong>4 Entradas Positivas :</strong> 5,00 * 4 = 20,00</li>
+                  </ul>
+                </div>
+                
+                <p class="tooltip-obs">
+                  <strong>💡 Dica importante:</strong>
+                  <ul style="list-style-type: none; margin-top: 10px;">
+                    <li>✓ <strong>Odds 1,50:</strong> mais entradas para bater a meta</li>
+                    <li>✓ <strong>Odds 2,00:</strong> menos entradas para bater a meta</li>
+                   
+                  </ul>
+                  <strong>Quanto maior a Odds, menos entradas você precisa!</strong>
+                </p>
+              </div>
+            </div>
           </div>
         </div>
 
@@ -6547,7 +6631,7 @@ console.log('🔧 Para testar: Clique em qualquer card de mentor');
 
 // ===== CONTROLE DOS MODAIS DE INFORMAÇÃO - SÓ ABRE AO CLICAR =====
 document.addEventListener('DOMContentLoaded', function() {
-  const infoButtons = document.querySelectorAll('.info-btn[data-modal="modalFixa"], .info-btn[data-modal="modalTurbo"]');
+  const infoButtons = document.querySelectorAll('.info-btn[data-modal="modalFixa"], .info-btn[data-modal="modalTurbo"], .info-btn[data-modal="modalPorcentagem"], .info-btn[data-modal="modalUnidade"], .info-btn[data-modal="modalOdds"]');
   
   infoButtons.forEach(button => {
     const tooltip = button.nextElementSibling;
@@ -6583,7 +6667,7 @@ document.addEventListener('DOMContentLoaded', function() {
   });
   
   document.addEventListener('click', function(e) {
-    if (!e.target.closest('.opcao-meta')) {
+    if (!e.target.closest('.opcao-meta') && !e.target.closest('.label-com-explicacao')) {
       document.querySelectorAll('.tooltip-info').forEach(tooltip => {
         tooltip.classList.remove('ativo');
       });
