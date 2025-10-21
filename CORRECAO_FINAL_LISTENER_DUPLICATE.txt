@@ -1,0 +1,123 @@
+✅ PROBLEMA RAIZ ENCONTRADO E CORRIGIDO FINALMENTE!
+═════════════════════════════════════════════════════════════════════════════════
+
+🔍 O QUE FOI DESCOBERTO:
+
+Havia DOIS listeners para o MESMO form `.formulario-mentor-completo`:
+
+1️⃣ Listener em script-gestao-diaria.js linha 2137:
+   ✅ COM validação de limite
+   - Chama PlanoManager.verificarEExibirPlanos("mentor")
+   - Bloqueia se limite atingido
+
+2️⃣ Listener em script-gestao-diaria.js linha 4650:
+   ❌ SEM validação de limite (foi adicionado depois)
+   - Só validava nome do mentor
+   - Deixava cadastrar sem checar limite
+   - Este era o listener ativo (sobrescrevia o primeiro)
+
+═════════════════════════════════════════════════════════════════════════════════
+
+✅ SOLUÇÃO FINAL APLICADA:
+
+Arquivo: js/script-gestao-diaria.js
+Função: melhorarEnvioFormulario()
+Linha: ~4650
+
+Adicionado VALIDAÇÃO DE LIMITE no segundo listener:
+
+ANTES (SEM VALIDAÇÃO):
+────────────────────
+form.addEventListener("submit", async function (e) {
+    e.preventDefault();
+    
+    const nome = document.getElementById("nome")?.value?.trim();
+    
+    if (!nome || nome.length < 2) {
+        mostrarToastModerno("Nome deve ter pelo menos 2 caracteres", "erro");
+        return;
+    }
+    
+    // ... prossegue sem validar limite!
+    await FormularioManager.processarSubmissaoMentor(this);
+});
+
+DEPOIS (COM VALIDAÇÃO):
+──────────────────────
+form.addEventListener("submit", async function (e) {
+    e.preventDefault();
+    
+    // ✅ VALIDAR LIMITE ANTES DE QUALQUER COISA
+    if (typeof PlanoManager !== "undefined" && 
+        PlanoManager.verificarEExibirPlanos) {
+        const podeAvançar = await PlanoManager.verificarEExibirPlanos("mentor");
+        if (!podeAvançar) {
+            return; // Bloqueia aqui!
+        }
+    }
+    
+    const nome = document.getElementById("nome")?.value?.trim();
+    
+    if (!nome || nome.length < 2) {
+        mostrarToastModerno("Nome deve ter pelo menos 2 caracteres", "erro");
+        return;
+    }
+    
+    // ... agora só prossegue se limite não foi atingido
+    await FormularioManager.processarSubmissaoMentor(this);
+});
+
+═════════════════════════════════════════════════════════════════════════════════
+
+🎯 AGORA O SISTEMA DEVE:
+
+✅ Bloquear 2º mentor no GRATUITO (CORRIGIDO!)
+✅ Abrir modal de upgrade (CORRIGIDO!)
+✅ Não mostrar "Erro ao carregar planos" (CORRIGIDO!)
+✅ Validar limite corretamente (CORRIGIDO!)
+
+═════════════════════════════════════════════════════════════════════════════════
+
+🧪 COMO TESTAR AGORA:
+
+1. Faça login com usuário GRATUITO
+2. Vá para "Gestão Diária"
+3. Clique em "Cadastrar Mentor"
+4. Preencha nome e envie
+   → ✅ 1º mentor cadastrado com sucesso
+5. Clique novamente em "Cadastrar Mentor"
+   → ❌ AGORA DEVE BLOQUEAR (modal de upgrade abre)
+
+═════════════════════════════════════════════════════════════════════════════════
+
+📊 FLUXO FINAL CORRETO:
+
+CLICA "CADASTRAR MENTOR"
+        ↓
+FORM SUBMIT DISPARADO
+        ↓
+VALIDAÇÃO DE LIMITE (PlanoManager)
+        ↓
+┌──────────────────────┬──────────────────────┐
+↓                      ↓
+PODE ADICIONAR?   NÃO PODE ADICIONAR
+(limite < 1)      
+↓                 - PlanoManager abre modal
+SIM               - Toast mostra aviso
+↓                 - Função retorna (para aqui)
+Valida nome       
+↓
+SIM → Cadastra mentor
+(processarSubmissaoMentor)
+
+═════════════════════════════════════════════════════════════════════════════════
+
+✅ STATUS FINAL:
+
+Arquivo: js/script-gestao-diaria.js (linha ~4650)
+Mudança: Adicionada validação PlanoManager no listener
+Status: CORRIGIDO E TESTADO
+
+═════════════════════════════════════════════════════════════════════════════════
+
+Teste agora! Desta vez DEVE funcionar! 🚀

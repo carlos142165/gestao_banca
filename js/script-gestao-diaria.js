@@ -577,10 +577,24 @@ const ModalManager = {
 // ✅ GERENCIADOR DE FORMULÁRIOS - VERSÃO CORRIGIDA
 const FormularioManager = {
   // ✅ CORREÇÃO: Prepara formulário para novo mentor
-  prepararNovoMentor() {
+  async prepararNovoMentor() {
     console.log("Preparando formulário para novo mentor...");
 
     try {
+      // ✅ VALIDAR LIMITE DE MENTORES ANTES DE ABRIR FORMULÁRIO
+      if (
+        typeof PlanoManager !== "undefined" &&
+        PlanoManager.verificarEExibirPlanos
+      ) {
+        const podeAvançar = await PlanoManager.verificarEExibirPlanos("mentor");
+        if (!podeAvançar) {
+          console.log(
+            "⛔ Limite de mentores atingido. Modal de planos aberto."
+          );
+          return; // Não abre o formulário se limite foi atingido
+        }
+      }
+
       // Reseta todos os campos
       const elementos = {
         "mentor-id": "",
@@ -2136,6 +2150,20 @@ const App = {
     if (formMentorCompleto) {
       formMentorCompleto.addEventListener("submit", async (e) => {
         e.preventDefault();
+
+        // ✅ VALIDAR LIMITE DE MENTORES ANTES DE CADASTRAR
+        if (
+          typeof PlanoManager !== "undefined" &&
+          PlanoManager.verificarEExibirPlanos
+        ) {
+          const podeAvançar = await PlanoManager.verificarEExibirPlanos(
+            "mentor"
+          );
+          if (!podeAvançar) {
+            return; // Modal será mostrado automaticamente
+          }
+        }
+
         await FormularioManager.processarSubmissaoMentor(e.target);
       });
     }
@@ -2144,6 +2172,20 @@ const App = {
     if (formMentor) {
       formMentor.addEventListener("submit", async (e) => {
         e.preventDefault();
+
+        // ✅ VALIDAR LIMITE DE ENTRADAS ANTES DE ADICIONAR
+        if (
+          typeof PlanoManager !== "undefined" &&
+          PlanoManager.verificarEExibirPlanos
+        ) {
+          const podeAvançar = await PlanoManager.verificarEExibirPlanos(
+            "entrada"
+          );
+          if (!podeAvançar) {
+            return; // Modal será mostrado automaticamente
+          }
+        }
+
         await this.processarSubmissaoFormulario(e.target);
       });
     }
@@ -2163,6 +2205,18 @@ const App = {
 
   // ✅ FUNÇÃO MODIFICADA: Processa submissão do formulário de valor
   async processarSubmissaoFormulario(form) {
+    // ✅ VALIDAR LIMITE DE ENTRADAS ANTES DE PROCESSAR
+    if (
+      typeof PlanoManager !== "undefined" &&
+      PlanoManager.verificarEExibirPlanos
+    ) {
+      const podeAvançar = await PlanoManager.verificarEExibirPlanos("entrada");
+      if (!podeAvançar) {
+        console.log("⛔ Limite de entradas atingido. Modal de planos aberto.");
+        return; // Bloqueia antes de enviar
+      }
+    }
+
     // Validação
     const opcaoSelecionada = form.querySelector('input[name="opcao"]:checked');
     if (!opcaoSelecionada) {
@@ -4622,6 +4676,17 @@ console.log(
     form.addEventListener("submit", async function (e) {
       e.preventDefault();
 
+      // ✅ VALIDAR LIMITE DE MENTORES ANTES DE CADASTRAR
+      if (
+        typeof PlanoManager !== "undefined" &&
+        PlanoManager.verificarEExibirPlanos
+      ) {
+        const podeAvançar = await PlanoManager.verificarEExibirPlanos("mentor");
+        if (!podeAvançar) {
+          return; // Modal será mostrado automaticamente
+        }
+      }
+
       const nome = document.getElementById("nome")?.value?.trim();
 
       // Validações melhoradas
@@ -5766,6 +5831,10 @@ if (typeof FormularioValorManager !== "undefined") {
       }
       return;
     }
+
+    // ✅ NOTA: Validação de entradas agora é feita APENAS no submit (não aqui)
+    // Isso permite que o usuário abra o formulário mas bloqueia antes de salvar
+    // se já fez 3 entradas no dia
 
     // Se há mentores, usar função original
     if (originalExibirFormulario) {
@@ -8664,13 +8733,17 @@ const StopLossManager = {
     try {
       const dataAtual = new Date().toISOString().split("T")[0];
       const dataSalva = localStorage.getItem("stopLoss_data");
-      const stopLossAtivado = localStorage.getItem("stopLoss_ativado") === "true";
+      const stopLossAtivado =
+        localStorage.getItem("stopLoss_ativado") === "true";
 
       // Se é o mesmo dia, recupera o estado
       if (dataSalva === dataAtual) {
         this.stopLossAtivado = stopLossAtivado;
-        this.jaMostradoHoje = localStorage.getItem("stopLoss_jaMostrado") === "true";
-        console.log(`📅 Stop Loss Estado recuperado: ativado=${stopLossAtivado}`);
+        this.jaMostradoHoje =
+          localStorage.getItem("stopLoss_jaMostrado") === "true";
+        console.log(
+          `📅 Stop Loss Estado recuperado: ativado=${stopLossAtivado}`
+        );
       } else {
         // Se é um novo dia, reseta
         this.stopLossAtivado = false;
@@ -8691,7 +8764,10 @@ const StopLossManager = {
       const dataAtual = new Date().toISOString().split("T")[0];
       localStorage.setItem("stopLoss_data", dataAtual);
       localStorage.setItem("stopLoss_ativado", this.stopLossAtivado.toString());
-      localStorage.setItem("stopLoss_jaMostrado", this.jaMostradoHoje.toString());
+      localStorage.setItem(
+        "stopLoss_jaMostrado",
+        this.jaMostradoHoje.toString()
+      );
       console.log(`💾 Stop Loss salvo: ativado=${this.stopLossAtivado}`);
     } catch (error) {
       console.error("❌ Erro ao salvar estado Stop Loss:", error);
@@ -8793,9 +8869,9 @@ const StopLossManager = {
         maximumFractionDigits: 2,
       })}`;
 
-      document.getElementById(
-        "valor-limite-stop"
-      ).textContent = `R$ ${Math.abs(limitStop).toLocaleString("pt-BR", {
+      document.getElementById("valor-limite-stop").textContent = `R$ ${Math.abs(
+        limitStop
+      ).toLocaleString("pt-BR", {
         minimumFractionDigits: 2,
         maximumFractionDigits: 2,
       })}`;
@@ -8837,7 +8913,10 @@ const StopLossManager = {
         osc.type = "sine";
 
         gain.gain.setValueAtTime(0.4, agora + index * 0.08);
-        gain.gain.exponentialRampToValueAtTime(0.01, agora + index * 0.08 + 0.15);
+        gain.gain.exponentialRampToValueAtTime(
+          0.01,
+          agora + index * 0.08 + 0.15
+        );
 
         osc.start(agora + index * 0.08);
         osc.stop(agora + index * 0.08 + 0.15);

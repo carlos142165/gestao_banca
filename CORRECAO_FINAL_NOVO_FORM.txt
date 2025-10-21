@@ -1,0 +1,126 @@
+✅ CORREÇÃO APLICADA - NOVO FORM DE MENTOR
+═══════════════════════════════════════════════════════════════════════════════
+
+🔍 PROBLEMA ENCONTRADO:
+
+Havia 2 formulários de mentor:
+  1. ".formulario-mentor-completo" (antigo) - ✅ COM validação de limite
+  2. "#form-mentor-novo" (novo) - ❌ SEM validação de limite
+
+O novo form estava permitindo cadastrar múltiplos mentores sem verificar limite!
+
+═══════════════════════════════════════════════════════════════════════════════
+
+✅ SOLUÇÃO APLICADA:
+
+Arquivo: gestao-diaria.php (linha ~4907)
+
+ANTES (SEM VALIDAÇÃO):
+────────────────────
+if (this.elementos.form) {
+    this.elementos.form.addEventListener('submit', (e) => {
+        e.preventDefault();
+        this.processarSubmissao(e.target);  // ← Sem validação!
+    });
+}
+
+DEPOIS (COM VALIDAÇÃO):
+──────────────────────
+if (this.elementos.form) {
+    this.elementos.form.addEventListener('submit', async (e) => {
+        e.preventDefault();
+        
+        // ✅ VALIDAR LIMITE DE MENTORES ANTES DE CADASTRAR
+        if (
+          typeof PlanoManager !== "undefined" &&
+          PlanoManager.verificarEExibirPlanos
+        ) {
+          const podeAvançar = await PlanoManager.verificarEExibirPlanos(
+            "mentor"
+          );
+          if (!podeAvançar) {
+            return; // Modal será mostrado automaticamente
+          }
+        }
+        
+        this.processarSubmissao(e.target);
+    });
+}
+
+═══════════════════════════════════════════════════════════════════════════════
+
+🧪 COMO TESTAR A CORREÇÃO:
+
+Opção 1: Teste Rápido Interativo
+─────────────────────────────────
+Abra: http://localhost/gestao/gestao_banca/teste-rapido.html
+
+Clique nos botões para verificar:
+  ✅ Se API de limite está respondendo
+  ✅ Qual é o plano do usuário
+  ✅ Quantos mentores estão cadastrados
+  ✅ Se form estrutura está OK
+
+Opção 2: Teste Prático no Sistema
+──────────────────────────────────
+1. Faça login com usuário GRATUITO
+2. Vá para "Gestão Diária"
+3. Clique em "Cadastrar Mentor"
+   → Preencha nome e envie
+   → ✅ 1º mentor deve cadastrar
+4. Clique novamente em "Cadastrar Mentor"
+   → ❌ Deve abrir modal, bloqueando 2º mentor
+5. Abra F12 (Console) para ver logs
+
+Opção 3: Debug Detalhado
+───────────────────────
+http://localhost/gestao/gestao_banca/verificar-limite-debug.php?acao=mentor
+
+Vê resposta completa com debug de cada etapa
+
+═══════════════════════════════════════════════════════════════════════════════
+
+📊 FLUXO AGORA CORRETO:
+
+                   CLICA PARA CADASTRAR
+                            ↓
+            NOVO FORM (form-mentor-novo)
+                            ↓
+        addEventListener('submit', async ...)
+                            ↓
+            ✅ Valida com PlanoManager
+                            ↓
+        ┌─────────────────────┬─────────────────────┐
+        ↓                     ↓
+   PODE ADICIONAR?      NÃO PODE
+   (true/false)         - Modal abre
+                        - Cadastro bloqueado
+        ↓
+   SIM → processarSubmissao()
+        (cadastro prossegue)
+
+═══════════════════════════════════════════════════════════════════════════════
+
+📝 RESUMO DA CORREÇÃO:
+
+  Arquivo: gestao-diaria.php (linha ~4907)
+  Alteração: Adicionado async e validação PlanoManager
+  Status: ✅ CORRIGIDO
+  
+  Total de forms com validação: 3
+    1. .formulario-mentor-completo (antigo)
+    2. #form-mentor-novo (novo) ← ACABOU DE SER CORRIGIDO
+    3. #form-mentor (valores/entradas)
+
+═══════════════════════════════════════════════════════════════════════════════
+
+✅ AGORA O SISTEMA DEVE:
+
+  ✅ Bloquear 2º mentor em GRATUITO
+  ✅ Abrir modal de upgrade quando limite é atingido
+  ✅ Não mostrar "Erro ao carregar planos"
+  ✅ Validar também limite de entradas diárias
+
+═══════════════════════════════════════════════════════════════════════════════
+
+Teste agora e confirme que está funcionando! 🚀

@@ -1,0 +1,137 @@
+/**
+ * BADGE DE EXIBIÇÃO DO PLANO DO USUÁRIO
+ * =====================================
+ */
+
+#exibicao-plano-usuario {
+  width: 100%;
+  padding: 15px 20px;
+  background: linear-gradient(135deg, #f5f7fa 0%, #c3cfe2 100%);
+  border-bottom: 2px solid #ddd;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  box-sizing: border-box;
+  animation: slideInDown 0.4s ease-out;
+  z-index: 999;
+  position: relative;
+}
+
+.plano-badge {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 30px;
+  background: white;
+  padding: 12px 20px;
+  border-radius: 8px;
+  border-left: 5px solid #333;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+  max-width: 900px;
+  width: 100%;
+}
+
+.plano-info {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.plano-info i {
+  font-size: 24px;
+  min-width: 24px;
+}
+
+.plano-texto {
+  font-size: 14px;
+  color: #666;
+}
+
+.plano-texto strong {
+  color: #333;
+  font-weight: 600;
+}
+
+.plano-nome {
+  font-size: 16px;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+}
+
+.plano-detalhes {
+  display: flex;
+  gap: 20px;
+  align-items: center;
+  flex-wrap: wrap;
+}
+
+.plano-detalhes small {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  font-size: 13px;
+  color: #666;
+  white-space: nowrap;
+}
+
+.plano-detalhes i {
+  font-size: 14px;
+}
+
+/* Animação de entrada */
+@keyframes slideInDown {
+  from {
+    opacity: 0;
+    transform: translateY(-20px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+/* Responsivo para mobile */
+@media (max-width: 768px) {
+  #exibicao-plano-usuario {
+    padding: 10px 10px;
+  }
+
+  .plano-badge {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 10px;
+    padding: 10px 15px;
+  }
+
+  .plano-detalhes {
+    width: 100%;
+    gap: 10px;
+  }
+
+  .plano-info {
+    width: 100%;
+  }
+}
+
+/* Tema escuro */
+@media (prefers-color-scheme: dark) {
+  #exibicao-plano-usuario {
+    background: linear-gradient(135deg, #2c3e50 0%, #34495e 100%);
+  }
+
+  .plano-badge {
+    background: #1e1e1e;
+    color: #ecf0f1;
+  }
+
+  .plano-texto,
+  .plano-detalhes small {
+    color: #bdc3c7;
+  }
+
+  .plano-texto strong,
+  .plano-nome {
+    color: #ecf0f1;
+  }
+}

@@ -581,6 +581,7 @@ ob_end_flush();
 <link rel="stylesheet" href="css/toast-modal-gerencia.css">
 <link rel="stylesheet" href="css/blocos.css">
 <link rel="stylesheet" href="css/ano.css">
+<link rel="stylesheet" href="css/plano-usuario-badge.css">
 
 
 
@@ -664,6 +665,20 @@ ob_end_flush();
             </a>
           <?php endif; ?>
         </div>
+
+        <!-- BADGE DO PLANO DO USUÁRIO -->
+        <div id="badge-plano-usuario" style="
+          display: none;
+          margin-left: 20px;
+          padding: 6px 12px;
+          background: white;
+          border-radius: 6px;
+          border-left: 4px solid #95a5a6;
+          box-shadow: 0 2px 4px rgba(0, 0, 0, 0.08);
+          font-size: 12px;
+          white-space: nowrap;
+        "></div>
+        <!-- FIM BADGE DO PLANO -->
 
         <!-- Área do saldo da banca (canto direito) -->
         <div id="lista-mentores">
@@ -4893,8 +4908,12 @@ const SistemaCadastroNovo = {
         }
 
         if (this.elementos.form) {
-            this.elementos.form.addEventListener('submit', (e) => {
+            this.elementos.form.addEventListener('submit', async (e) => {
                 e.preventDefault();
+                
+                // ✅ NOTA: Validação de limite é feita no arquivo script-gestao-diaria.js
+                // Aqui apenas processar submissão sem duplicar validações
+                
                 this.processarSubmissao(e.target);
             });
         }
@@ -7068,6 +7087,15 @@ window.excluirMentorDireto = function() {
             </div>
         </div>
     </div>
+
+    <!-- ✅ MODAL DE PLANOS E PAGAMENTO -->
+    <?php include 'modal-planos-pagamento.html'; ?>
+    <script src="js/plano-manager.js"></script>
+    <!-- ✅ FIM DO MODAL DE PLANOS -->
+
+    <!-- ✅ EXIBIÇÃO DO PLANO DO USUÁRIO -->
+    <script src="js/mostrar-plano.js"></script>
+    <!-- ✅ FIM DA EXIBIÇÃO DO PLANO -->
 
 </body>
 </html>
