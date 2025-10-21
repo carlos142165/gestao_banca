@@ -40,16 +40,28 @@ const PlanoManager = {
    */
   async carregarPlanos() {
     try {
+      console.log("🔄 Carregando planos...");
       const response = await fetch("obter-planos.php");
-      if (!response.ok) throw new Error(`HTTP ${response.status}`);
+
+      if (!response.ok) {
+        throw new Error(`HTTP ${response.status} - ${response.statusText}`);
+      }
 
       const data = await response.json();
-      if (!data.success) throw new Error(data.message);
 
-      this.planos = data.planos;
-      console.log("✅ Planos carregados:", this.planos);
+      if (!data.success) {
+        throw new Error(data.message || "Erro desconhecido ao carregar planos");
+      }
+
+      this.planos = data.planos || [];
+      console.log("✅ Planos carregados com sucesso:", this.planos);
+
+      if (this.planos.length === 0) {
+        console.warn("⚠️ Nenhum plano retornado do servidor");
+      }
     } catch (error) {
       console.error("❌ Erro ao carregar planos:", error);
+      this.planos = [];
       throw error;
     }
   },
@@ -77,16 +89,39 @@ const PlanoManager = {
    */
   renderizarPlanos() {
     const container = document.getElementById("planosGrid");
-    if (!container) return;
+    if (!container) {
+      console.error("❌ Container planosGrid não encontrado!");
+      return;
+    }
+
+    console.log("📊 Renderizando", this.planos.length, "planos");
+
+    if (!this.planos || this.planos.length === 0) {
+      console.warn("⚠️ Nenhum plano disponível para renderizar");
+      container.innerHTML =
+        '<p style="grid-column: 1/-1; text-align: center; padding: 40px;">Erro ao carregar planos</p>';
+      return;
+    }
 
     container.innerHTML = "";
 
     this.planos.forEach((plano) => {
-      const preco =
-        this.periodoAtual === "anual" ? plano.preco_ano : plano.preco_mes;
+      // ✅ CONVERTER PARA NÚMEROS (dados do backend vêm como string)
+      const precoMes = parseFloat(plano.preco_mes) || 0;
+      const precoAno = parseFloat(plano.preco_ano) || 0;
+      const mentoresLimite = parseInt(plano.mentores_limite) || 0;
+      const entradasDiarias = parseInt(plano.entradas_diarias) || 0;
+
+      console.log(
+        `✅ Plano: ${plano.nome} | Mês: R$ ${precoMes.toFixed(
+          2
+        )} | Ano: R$ ${precoAno.toFixed(2)}`
+      );
+
+      const preco = this.periodoAtual === "anual" ? precoAno : precoMes;
       const economiza =
         this.periodoAtual === "anual"
-          ? (plano.preco_mes * 12 - plano.preco_ano).toFixed(2)
+          ? (precoMes * 12 - precoAno).toFixed(2)
           : "0.00";
 
       const card = document.createElement("div");
@@ -122,17 +157,17 @@ const PlanoManager = {
                     <div class="plano-feature">
                         <i class="fas fa-user-tie"></i>
                         <span>${
-                          plano.mentores_limite >= 999
+                          mentoresLimite >= 999
                             ? "Mentores ilimitados"
-                            : plano.mentores_limite + " Mentor(es)"
+                            : mentoresLimite + " Mentor(es)"
                         }</span>
                     </div>
                     <div class="plano-feature">
                         <i class="fas fa-chart-line"></i>
                         <span>${
-                          plano.entradas_diarias >= 999
+                          entradasDiarias >= 999
                             ? "Entradas ilimitadas"
-                            : plano.entradas_diarias + " Entrada(s)/dia"
+                            : entradasDiarias + " Entrada(s)/dia"
                         }</span>
                     </div>
                     <div class="plano-feature">
@@ -192,32 +227,76 @@ const PlanoManager = {
   },
 
   /**
-   * SELECIONAR PLANO E ABRIR MODAL DE PAGAMENTO
+   * SELECIONAR PLANO E IR DIRETO PARA MERCADO PAGO
    */
   selecionarPlano(idPlano, nomePlano, preco) {
+    // ✅ GARANTIR QUE PRECO É NÚMERO
+    const precoNumerico = parseFloat(preco) || 0;
+
+    console.log(
+      `📋 Selecionado: ${nomePlano} - R$ ${precoNumerico.toFixed(2)} - ${
+        this.periodoAtual
+      }`
+    );
+
     this.planoSelecionado = {
       id: idPlano,
       nome: nomePlano,
-      preco: preco,
+      preco: precoNumerico,
       periodo: this.periodoAtual,
     };
 
-    // Atualizar info do plano no modal de pagamento
-    document.getElementById("nomePlanoSelecionado").textContent = nomePlano;
-    document.getElementById("valorPlanoSelecionado").textContent = `R$ ${preco
-      .toFixed(2)
-      .replace(".", ",")} ${
-      this.periodoAtual === "anual" ? "(anual)" : "(mensal)"
-    }`;
-
-    // Abrir modal de pagamento
-    this.abrirModalPagamento();
+    // ✅ IR DIRETO PARA MERCADO PAGO (não abrir modal local)
+    this.processarPagamentoMercadoPago();
   },
 
   /**
-   * ABRIR MODAL DE PLANOS
+   * PROCESSAR PAGAMENTO DIRETO COM MERCADO PAGO
    */
-  abrirModalPlanos() {
+  async processarPagamentoMercadoPago() {
+    try {
+      console.log("💳 Enviando ao Mercado Pago...");
+
+      const dados = {
+        id_plano: this.planoSelecionado.id,
+        periodo: this.planoSelecionado.periodo,
+      };
+
+      const response = await fetch("processar-pagamento.php", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+          "X-Requested-With": "XMLHttpRequest",
+        },
+        body: JSON.stringify(dados),
+      });
+
+      if (!response.ok) throw new Error(`HTTP ${response.status}`);
+
+      const result = await response.json();
+
+      if (result.success && result.preference_url) {
+        console.log(
+          "✅ Redirecionando para Mercado Pago:",
+          result.preference_url
+        );
+        // ✅ REDIRECIONAR PARA MERCADO PAGO
+        window.location.href = result.preference_url;
+      } else {
+        throw new Error(result.message || "Erro ao processar pagamento");
+      }
+    } catch (error) {
+      console.error("❌ Erro ao processar pagamento:", error);
+      if (typeof ToastManager !== "undefined") {
+        ToastManager.mostrar(`Erro: ${error.message}`, "erro");
+      } else {
+        alert(`Erro: ${error.message}`);
+      }
+    }
+  },
+  /**
+   * ABRIR MODAL DE PLANOS
+   */ abrirModalPlanos() {
     const modal = document.getElementById("modal-planos");
     if (modal) {
       modal.style.display = "flex";
@@ -557,13 +636,20 @@ const PlanoManager = {
    */
   async verificarEExibirPlanos(acao = "mentor") {
     try {
+      // ✅ GARANTIR QUE PLANOS ESTÃO RENDERIZADOS ANTES DE ABRIR MODAL
+      if (!this.planos || this.planos.length === 0) {
+        console.log("⏳ Planos não carregados ainda, aguardando...");
+        await this.carregarPlanos();
+        this.renderizarPlanos();
+      }
+
       const response = await fetch(`verificar-limite.php?acao=${acao}`);
       if (!response.ok) throw new Error(`HTTP ${response.status}`);
 
       const data = await response.json();
 
       if (!data.pode_prosseguir) {
-        // Mostrar modal de planos
+        // ✅ MODAL ABRE COM PLANOS JÁ RENDERIZADOS
         this.abrirModalPlanos();
 
         if (data.mensagem) {

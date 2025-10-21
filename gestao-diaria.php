@@ -7100,7 +7100,7 @@ window.excluirMentorDireto = function() {
 
     <!-- ✅ MODAL DE PLANOS E PAGAMENTO -->
     <?php include 'modal-planos-pagamento.html'; ?>
-    <script src="js/plano-manager.js"></script>
+    <script src="js/plano-manager.js" defer></script>
     <!-- ✅ FIM DO MODAL DE PLANOS -->
 
     <!-- ✅ EXIBIÇÃO DO PLANO DO USUÁRIO -->
