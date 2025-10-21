@@ -2205,16 +2205,24 @@ const App = {
 
   // ✅ FUNÇÃO MODIFICADA: Processa submissão do formulário de valor
   async processarSubmissaoFormulario(form) {
+    console.log("📝 processarSubmissaoFormulario chamado");
+
     // ✅ VALIDAR LIMITE DE ENTRADAS ANTES DE PROCESSAR
     if (
       typeof PlanoManager !== "undefined" &&
       PlanoManager.verificarEExibirPlanos
     ) {
+      console.log("🔍 Chamando PlanoManager.verificarEExibirPlanos('entrada')");
       const podeAvançar = await PlanoManager.verificarEExibirPlanos("entrada");
+      console.log("✅ Resultado:", podeAvançar);
       if (!podeAvançar) {
         console.log("⛔ Limite de entradas atingido. Modal de planos aberto.");
         return; // Bloqueia antes de enviar
       }
+    } else {
+      console.warn(
+        "⚠️ PlanoManager não definido ou verificarEExibirPlanos não existe"
+      );
     }
 
     // Validação

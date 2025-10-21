@@ -5525,6 +5525,16 @@ const SistemaCadastroNovo = {
             return;
         }
 
+        // ✅ VALIDAÇÃO DE LIMITE DE ENTRADAS DIÁRIAS
+        if (typeof PlanoManager !== 'undefined' && PlanoManager.verificarEExibirPlanos) {
+            console.log('Verificando limite de entradas...');
+            const podeAvançar = await PlanoManager.verificarEExibirPlanos('entrada');
+            if (!podeAvançar) {
+                console.log('Usuário atingiu limite de entradas diárias');
+                return; // Bloqueia a submissão
+            }
+        }
+
         if (!this.validarFormulario()) {
             return;
         }
