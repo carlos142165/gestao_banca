@@ -5,12 +5,19 @@
  * Este arquivo contém as configurações e funções auxiliares para integração com Mercado Pago
  */
 
+// ✅ Suprimir erros/warnings para não contaminar JSON
+error_reporting(0);
+ini_set('display_errors', 0);
+
+// ✅ Incluir configuração do banco de dados
+require_once 'config.php';
+
 // ✅ CREDENCIAIS MERCADO PAGO (Configure com suas chaves)
-define('MP_ACCESS_TOKEN', 'APP_USR-3237573864728549-102019-04e2fd4b60492785833312c31e0dffd8-1565964651'); // Substitua com seu token
-define('MP_PUBLIC_KEY', 'APP_USR-ca9ca659-4278-49a6-a7cc-bed2041ac437');     // Substitua com sua chave pública
+define('MP_ACCESS_TOKEN', 'APP_USR-3237573864728549-102019-04e2fd4b60492785833312c31e0dffd8-1565964651'); // Sua chave do painel
+define('MP_PUBLIC_KEY', 'APP_USR-ca9ca659-4278-49a6-a7cc-bed2041ac437');     // Sua chave pública
 
 // ✅ URLS DE CALLBACK
-$base_url = (isset($_SERVER['HTTPS']) && $_SERVER['HTTPS'] === 'on' ? "https" : "http") . "://$_SERVER[HTTP_HOST]";
+$base_url = (isset($_SERVER['HTTPS']) && $_SERVER['HTTPS'] === 'on' ? "https" : "http") . "://" . (isset($_SERVER['HTTP_HOST']) ? $_SERVER['HTTP_HOST'] : 'localhost');
 define('MP_SUCCESS_URL', $base_url . '/gestao_banca/webhook.php?status=success');
 define('MP_FAILURE_URL', $base_url . '/gestao_banca/webhook.php?status=failure');
 define('MP_PENDING_URL', $base_url . '/gestao_banca/webhook.php?status=pending');
@@ -43,9 +50,8 @@ class MercadoPagoManager {
         // Buscar dados do plano e usuário
         $stmt = $conexao->prepare("
             SELECT p.*, u.nome, u.email 
-            FROM planos p
-            JOIN usuarios u ON u.id = ?
-            WHERE p.id = ?
+            FROM planos p, usuarios u
+            WHERE u.id = ? AND p.id = ?
         ");
         $stmt->bind_param("ii", $id_usuario, $id_plano);
         $stmt->execute();
@@ -61,6 +67,14 @@ class MercadoPagoManager {
         // Determinar valor baseado no ciclo
         $preco = ($tipo_ciclo === 'anual') ? $data['preco_ano'] : $data['preco_mes'];
         $descricao = "Plano {$data['nome']} - " . ucfirst($tipo_ciclo);
+        
+        // ✅ DEBUG: Registrar no error_log
+        error_log("🔍 MERCADO PAGO - Criando preferência:");
+        error_log("   ID Usuário: " . $id_usuario);
+        error_log("   ID Plano: " . $id_plano);
+        error_log("   Tipo Ciclo: " . $tipo_ciclo);
+        error_log("   Preço: " . $preco);
+        error_log("   Access Token: " . (defined('MP_ACCESS_TOKEN') ? "✅ Definido" : "❌ NÃO DEFINIDO"));
         
         // Montar dados da preferência
         $preference_data = [
@@ -83,16 +97,15 @@ class MercadoPagoManager {
                 "installments" => 1
             ],
             "back_urls" => [
-                "success" => MP_SUCCESS_URL . "&usuario=" . urlencode($id_usuario),
+                "success" => MP_SUCCESS_URL,
                 "failure" => MP_FAILURE_URL,
                 "pending" => MP_PENDING_URL
             ],
-            "auto_return" => "approved",
             "notification_url" => MP_NOTIFICATION_URL,
             "external_reference" => "user_{$id_usuario}_plan_{$id_plano}_{$tipo_ciclo}",
             "expires" => true,
             "expiration_date_from" => date('Y-m-d\TH:i:s\Z'),
-            "expiration_date_to" => date('Y-m-d\TH:i:s\Z', strtotime('+1 hour')),
+            "expiration_date_to" => date('Y-m-d\TH:i:s\Z', strtotime('+24 hours')), // ✅ Aumentado para 24 horas
             "metadata" => [
                 "id_usuario" => $id_usuario,
                 "id_plano" => $id_plano,
@@ -100,6 +113,9 @@ class MercadoPagoManager {
                 "modo_pagamento" => $modo_pagamento
             ]
         ];
+        
+        // ✅ DEBUG: Registrar dados enviados
+        error_log("📤 Dados enviados ao MP: " . json_encode($preference_data, JSON_UNESCAPED_SLASHES));
         
         // Se for pagamento com PIX, adicionar método
         if ($modo_pagamento === 'pix') {
@@ -119,7 +135,12 @@ class MercadoPagoManager {
         }
         
         // Enviar para Mercado Pago
-        return self::enviarRequisicao('preferences', $preference_data, 'POST');
+        $resultado = self::enviarRequisicao('preferences', $preference_data, 'POST');
+        
+        // ✅ DEBUG: Registrar resposta
+        error_log("📥 Resposta do MP: " . json_encode($resultado, JSON_UNESCAPED_SLASHES));
+        
+        return $resultado;
     }
     
     /**
@@ -130,11 +151,15 @@ class MercadoPagoManager {
      * @return array
      */
     public static function enviarRequisicao($endpoint, $data = [], $method = 'GET') {
-        $url = "https://api.mercadopago.com/checkout/preferences";
+        $url = "https://api.mercadopago.com/v1/checkout/preferences";
         
         if ($endpoint !== 'preferences') {
-            $url = "https://api.mercadopago.com/" . $endpoint;
+            $url = "https://api.mercadopago.com/v1/" . $endpoint;
         }
+        
+        // ✅ DEBUG
+        error_log("🌐 Enviando requisição para: " . $url);
+        error_log("   Método: " . $method);
         
         $headers = [
             "Authorization: Bearer " . MP_ACCESS_TOKEN,
@@ -147,6 +172,8 @@ class MercadoPagoManager {
         curl_setopt($ch, CURLOPT_HTTPHEADER, $headers);
         curl_setopt($ch, CURLOPT_TIMEOUT, MP_TIMEOUT);
         curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
+        curl_setopt($ch, CURLOPT_SSL_VERIFYPEER, false);
+        curl_setopt($ch, CURLOPT_SSL_VERIFYHOST, false);
         
         if ($method === 'POST') {
             curl_setopt($ch, CURLOPT_POST, true);
@@ -161,7 +188,12 @@ class MercadoPagoManager {
         $curl_error = curl_error($ch);
         curl_close($ch);
         
+        // ✅ DEBUG
+        error_log("   HTTP Code: " . $http_code);
+        error_log("   Response: " . substr($response, 0, 500));
+        
         if ($curl_error) {
+            error_log("❌ CURL Error: " . $curl_error);
             return [
                 'success' => false,
                 'message' => 'Erro na requisição: ' . $curl_error,
@@ -178,6 +210,7 @@ class MercadoPagoManager {
                 'http_code' => $http_code
             ];
         } else {
+            error_log("❌ Erro no Mercado Pago: " . ($response_data['message'] ?? 'Desconhecido'));
             return [
                 'success' => false,
                 'message' => $response_data['message'] ?? 'Erro na API',

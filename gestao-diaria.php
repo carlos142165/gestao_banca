@@ -576,12 +576,13 @@ ob_end_flush();
 <link rel="stylesheet" href="css/estilo-campo-mes.css">
 <link rel="stylesheet" href="css/menu-topo.css">
 <link rel="stylesheet" href="css/modais.css">
+<link rel="stylesheet" href="css/modal-minha-conta.css">
 <link rel="stylesheet" href="css/estilo-painel-controle.css">
 <link rel="stylesheet" href="css/toast.css">
 <link rel="stylesheet" href="css/toast-modal-gerencia.css">
 <link rel="stylesheet" href="css/blocos.css">
 <link rel="stylesheet" href="css/ano.css">
-<link rel="stylesheet" href="css/plano-usuario-badge.css">
+<link rel="stylesheet" href="css/minhaconta.css"> <!-- CSS consolidado do modal Minha Conta -->
 
 
 
@@ -660,14 +661,17 @@ ob_end_flush();
           </a>
 
           <?php if (isset($_SESSION['usuario_id'])): ?>
+            <a href="#" id="abrirMinhaContaModal">
+              <i class="fas fa-user-circle menu-icon"></i><span>Minha Conta</span>
+            </a>
             <a href="logout.php">
               <i class="fas fa-sign-out-alt menu-icon"></i><span>Sair</span>
             </a>
           <?php endif; ?>
         </div>
 
-        <!-- BADGE DO PLANO DO USUÁRIO -->
-        <div id="badge-plano-usuario" style="
+        <!-- BADGE DO PLANO DO USUÁRIO - REMOVIDO -->
+        <!-- <div id="badge-plano-usuario" style="
           display: none;
           margin-left: 20px;
           padding: 6px 12px;
@@ -677,7 +681,7 @@ ob_end_flush();
           box-shadow: 0 2px 4px rgba(0, 0, 0, 0.08);
           font-size: 12px;
           white-space: nowrap;
-        "></div>
+        "></div> -->
         <!-- FIM BADGE DO PLANO -->
 
         <!-- Área do saldo da banca (canto direito) -->
@@ -7103,12 +7107,176 @@ window.excluirMentorDireto = function() {
     <script src="js/plano-manager.js" defer></script>
     <!-- ✅ FIM DO MODAL DE PLANOS -->
 
-    <!-- ✅ EXIBIÇÃO DO PLANO DO USUÁRIO -->
-    <script src="js/mostrar-plano.js"></script>
-    <!-- ✅ FIM DA EXIBIÇÃO DO PLANO -->
+    <!-- ✅ GERENCIADOR DO MODAL MINHA CONTA (Consolidado) -->
+    <script src="js/minhaconta.js" defer></script>
+    <!-- ✅ FIM DO GERENCIADOR -->
 
-</body>
-</html>
+    <!-- ===== MODAL MINHA CONTA ===== -->
+    <!-- Modal Principal Minha Conta -->
+    <div id="modal-minha-conta" class="modal-minha-conta-container">
+        <div class="modal-minha-conta-conteudo">
+            <div class="modal-minha-conta-header">
+                <h2>Minha Conta</h2>
+                <p id="email-usuario-header">email@example.com</p>
+                <button class="btn-fechar-minha-conta">
+                    <i class="fas fa-times"></i>
+                </button>
+            </div>
+
+            <div class="modal-minha-conta-body">
+                <!-- Seção Plano -->
+                <div class="secao-plano">
+                    <div class="secao-plano-titulo">Tipo de Plano</div>
+                    <div class="secao-plano-conteudo">
+                        <div class="secao-plano-valor" id="valor-plano">Gratuito</div>
+                        <button class="btn-alterar-plano" id="btn-alterar-plano">
+                            <i class="fas fa-exchange-alt"></i> Alterar
+                        </button>
+                    </div>
+                </div>
+
+                <!-- Seção Dados Pessoais -->
+                <div class="secao-campo">
+                    <div class="secao-campo-label">Dados Pessoais</div>
+                    
+                    <!-- Nome -->
+                    <div class="secao-campo-item">
+                        <i class="fas fa-user secao-campo-icone"></i>
+                        <div class="secao-campo-info">
+                            <div class="secao-campo-rotulo">Nome</div>
+                            <div class="secao-campo-valor" id="valor-nome">Carregando...</div>
+                        </div>
+                        <button class="secao-campo-botao" id="btn-editar-nome" title="Editar nome">
+                            <i class="fas fa-edit"></i>
+                        </button>
+                    </div>
+
+                    <!-- Email -->
+                    <div class="secao-campo-item">
+                        <i class="fas fa-envelope secao-campo-icone"></i>
+                        <div class="secao-campo-info">
+                            <div class="secao-campo-rotulo">Email</div>
+                            <div class="secao-campo-valor" id="valor-email">Carregando...</div>
+                        </div>
+                        <button class="secao-campo-botao" id="btn-editar-email" title="Editar email">
+                            <i class="fas fa-edit"></i>
+                        </button>
+                    </div>
+
+                    <!-- Telefone -->
+                    <div class="secao-campo-item">
+                        <i class="fas fa-phone secao-campo-icone"></i>
+                        <div class="secao-campo-info">
+                            <div class="secao-campo-rotulo">Telefone</div>
+                            <div class="secao-campo-valor" id="valor-telefone">Não informado</div>
+                        </div>
+                        <button class="secao-campo-botao" id="btn-editar-telefone" title="Editar telefone">
+                            <i class="fas fa-edit"></i>
+                        </button>
+                    </div>
+                </div>
+
+                <!-- Seção Segurança -->
+                <div class="secao-senha">
+                    <div class="secao-senha-titulo">Alterar Senha</div>
+                    
+                    <div class="secao-senha-item">
+                        <label for="input-senha-atual" style="font-weight: 600; color: #2c3e50; margin-bottom: 5px;">Senha Atual</label>
+                        <input type="password" id="input-senha-atual" class="input-senha" placeholder="Senha atual" />
+                    </div>
+
+                    <div class="secao-senha-item">
+                        <label for="input-senha-nova" style="font-weight: 600; color: #2c3e50; margin-bottom: 5px;">Nova Senha</label>
+                        <input type="password" id="input-senha-nova" class="input-senha" placeholder="Mínimo 6 caracteres" />
+                    </div>
+
+                    <div class="secao-senha-item">
+                        <label for="input-senha-confirma" style="font-weight: 600; color: #2c3e50; margin-bottom: 5px;">Confirmar Senha</label>
+                        <input type="password" id="input-senha-confirma" class="input-senha" placeholder="Confirme a nova senha" />
+                    </div>
+
+                    <button class="btn-atualizar-senha" id="btn-atualizar-senha">
+                        <i class="fas fa-key"></i> Atualizar Senha
+                    </button>
+                </div>
+
+                <!-- Seção Excluir Conta -->
+                <div class="botao-excluir-conta-container">
+                    <button class="btn-excluir-conta">
+                        <i class="fas fa-trash"></i> Excluir Minha Conta
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Modal Editar Campo -->
+    <div id="modal-editar-campo">
+        <div class="modal-editar-campo-conteudo">
+            <div class="modal-editar-campo-header">
+                <h3>Editar Campo</h3>
+                <button class="btn-fechar-editar-campo">
+                    <i class="fas fa-times"></i>
+                </button>
+            </div>
+
+            <div class="modal-editar-campo-body">
+                <div class="formulario-editar-campo">
+                    <input type="text" id="input-editar-campo" class="campo-editar-input" placeholder="Digite o novo valor">
+                    
+                    <div class="botoes-editar-campo">
+                        <button class="btn-cancelar-editar" id="btn-cancelar-editar-campo">
+                            Cancelar
+                        </button>
+                        <button class="btn-salvar-editar" id="btn-salvar-editar-campo">
+                            <i class="fas fa-save"></i> Salvar
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Modal Confirmação de Exclusão de Conta -->
+    <div id="modal-confirmar-exclusao-conta">
+        <div class="modal-confirmar-exclusao-conteudo">
+            <div class="modal-confirmar-exclusao-header">
+                <h3>
+                    <i class="fas fa-exclamation-triangle"></i>
+                    Excluir Conta
+                </h3>
+            </div>
+
+            <div class="modal-confirmar-exclusao-body">
+                <div class="modal-confirmar-exclusao-texto">
+                    <strong>Atenção!</strong> Esta ação é <strong>irreversível</strong>. Todos os seus dados serão deletados permanentemente.
+                </div>
+
+                <div class="modal-confirmar-exclusao-aviso">
+                    <strong>⚠️ Aviso:</strong> Após confirmar, você não poderá recuperar nenhuma informação.
+                </div>
+
+                <div class="modal-confirmar-exclusao-texto">
+                    Para confirmar, digite <strong>SIM</strong> no campo abaixo:
+                </div>
+
+                <input type="text" id="input-confirmacao-exclusao" class="modal-confirmar-exclusao-input" placeholder="Digite SIM para confirmar" />
+
+                <div class="botoes-confirmar-exclusao">
+                    <button class="btn-cancelar-exclusao" id="btn-cancelar-confirmacao-exclusao">
+                        Cancelar
+                    </button>
+                    <button class="btn-confirmar-exclusao" id="btn-confirmar-exclusao-conta" disabled>
+                        <i class="fas fa-trash"></i> Confirmar Exclusão
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Script do gerenciador Minha Conta -->
+    <script src="js/gerenciador-minha-conta.js" defer></script>
+    <!-- ===== FIM MODAL MINHA CONTA ===== -->
 
     <!-- ✅ MODAL STOP LOSS - PARE DE JOGAR -->
     <div id="modal-stop-loss" class="modal-stop-loss" style="display: none;">
@@ -7160,4 +7328,6 @@ window.excluirMentorDireto = function() {
         </div>
     </div>
 
+</body>
+</html>
 

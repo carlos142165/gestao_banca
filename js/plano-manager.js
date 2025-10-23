@@ -256,37 +256,73 @@ const PlanoManager = {
   async processarPagamentoMercadoPago() {
     try {
       console.log("💳 Enviando ao Mercado Pago...");
+      console.log("📋 Plano Selecionado:", this.planoSelecionado);
 
       const dados = {
         id_plano: this.planoSelecionado.id,
-        periodo: this.planoSelecionado.periodo,
+        tipo_ciclo: this.periodoAtual === "ano" ? "anual" : "mensal",
+        modo_pagamento: this.modoPagementoSelecionado || "cartao",
       };
 
-      const response = await fetch("processar-pagamento.php", {
+      console.log("📤 Enviando dados:", dados);
+
+      const response = await fetch("processar-pagamento-final.php", {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
           "X-Requested-With": "XMLHttpRequest",
         },
+        credentials: "include",
         body: JSON.stringify(dados),
       });
 
-      if (!response.ok) throw new Error(`HTTP ${response.status}`);
+      console.log("📬 Status HTTP:", response.status);
+
+      if (!response.ok) {
+        const text = await response.text();
+        console.error("❌ Resposta não-OK:", text);
+        throw new Error(`HTTP ${response.status}: ${text.substring(0, 100)}`);
+      }
+
+      // ✅ VERIFICAR CONTENT-TYPE
+      const contentType = response.headers.get("content-type");
+      console.log("📋 Content-Type:", contentType);
+
+      if (!contentType || !contentType.includes("application/json")) {
+        const text = await response.text();
+        console.error("❌ Resposta não é JSON:", text.substring(0, 200));
+        throw new Error("Servidor retornou resposta inválida (não é JSON)");
+      }
 
       const result = await response.json();
 
-      if (result.success && result.preference_url) {
+      console.log("✅ Resposta JSON:", result);
+
+      if (result.success) {
+        console.log("✅ Sucesso ao processar pagamento!");
+        console.log("   Método:", result.metodo || "api");
         console.log(
-          "✅ Redirecionando para Mercado Pago:",
-          result.preference_url
+          "   URL:",
+          result.preference_url || result.redirect_to || "N/A"
         );
+
         // ✅ REDIRECIONAR PARA MERCADO PAGO
-        window.location.href = result.preference_url;
+        if (result.preference_url) {
+          console.log("🔀 Redirecionando para init_point...");
+          window.location.href = result.preference_url;
+        } else if (result.redirect_to) {
+          console.log("🔀 Redirecionando para checkout manual...");
+          window.location.href = result.redirect_to;
+        } else {
+          throw new Error("Nenhuma URL de redirecionamento recebida");
+        }
       } else {
         throw new Error(result.message || "Erro ao processar pagamento");
       }
     } catch (error) {
       console.error("❌ Erro ao processar pagamento:", error);
+      console.error("📋 Stack:", error.stack);
+
       if (typeof ToastManager !== "undefined") {
         ToastManager.mostrar(`Erro: ${error.message}`, "erro");
       } else {
@@ -417,6 +453,7 @@ const PlanoManager = {
           "Content-Type": "application/json",
           "X-Requested-With": "XMLHttpRequest",
         },
+        credentials: "include",
         body: JSON.stringify(dados),
       });
 
@@ -458,6 +495,7 @@ const PlanoManager = {
           "Content-Type": "application/json",
           "X-Requested-With": "XMLHttpRequest",
         },
+        credentials: "include",
         body: JSON.stringify(dados),
       });
 
@@ -572,6 +610,7 @@ const PlanoManager = {
           "Content-Type": "application/json",
           "X-Requested-With": "XMLHttpRequest",
         },
+        credentials: "include",
         body: JSON.stringify(dados),
       });
 

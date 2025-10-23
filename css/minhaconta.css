@@ -1,0 +1,814 @@
+/**
+ * ============================================
+ * ESTILOS DO MODAL "MINHA CONTA"
+ * ============================================
+ * 
+ * Arquivo centralizado com todos os estilos
+ * do sistema de gerenciamento de conta
+ * 
+ * Componentes:
+ * - Modal Principal (#modal-minha-conta)
+ * - Modal de Edição (#modal-editar-campo)
+ * - Modal de Confirmação (#modal-confirmar-exclusao-conta)
+ * - Toast de Notificações
+ * 
+ * Font: Poppins
+ * Cores: #667eea (primária), #764ba2 (secundária)
+ */
+
+/* ============================================
+   CONTAINER GERAL - Fonte e Família
+   ============================================ */
+.modal-minha-conta-container {
+  font-family: "Poppins", sans-serif;
+}
+
+/* ============================================
+   MODAL PRINCIPAL - "MINHA CONTA"
+   ============================================ */
+
+/* Modal Principal - Overlay com blur */
+#modal-minha-conta {
+  display: none;
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background-color: rgba(0, 0, 0, 0.7);
+  z-index: 1000000;
+  justify-content: center;
+  align-items: center;
+  opacity: 0;
+  transition: opacity 0.3s ease-in-out;
+  backdrop-filter: blur(5px);
+}
+
+#modal-minha-conta.show {
+  display: flex;
+  opacity: 1;
+}
+
+/* Conteúdo do Modal - Card branco centralizado */
+.modal-minha-conta-conteudo {
+  position: relative;
+  background-color: #ffffff;
+  border-radius: 24px;
+  overflow: hidden;
+  max-width: 500px;
+  width: 90%;
+  max-height: 90vh;
+  overflow-y: auto;
+  box-shadow: 0 10px 40px rgba(0, 0, 0, 0.3);
+  animation: modalSlideInMinhaConta 0.4s ease-out;
+  z-index: 1000001;
+}
+
+/* Animação de entrada do modal */
+@keyframes modalSlideInMinhaConta {
+  from {
+    opacity: 0;
+    transform: translateY(-60px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+/* Header com Gradient - Parte superior do modal */
+.modal-minha-conta-header {
+  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  color: white;
+  padding: 15px 20px;
+  text-align: center;
+  position: relative;
+}
+
+.modal-minha-conta-header h2 {
+  margin: 0;
+  font-size: 18px;
+  font-weight: 600;
+}
+
+.modal-minha-conta-header p {
+  margin: 2px 0 0 0;
+  font-size: 12px;
+  opacity: 0.9;
+}
+
+/* Botão Fechar - Canto superior direito */
+.btn-fechar-minha-conta {
+  position: absolute;
+  top: 15px;
+  right: 15px;
+  background: rgba(255, 255, 255, 0.2);
+  border: none;
+  color: white;
+  font-size: 24px;
+  cursor: pointer;
+  width: 40px;
+  height: 40px;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: all 0.3s ease;
+  z-index: 10;
+}
+
+.btn-fechar-minha-conta:hover {
+  background: rgba(255, 255, 255, 0.3);
+  transform: rotate(90deg);
+}
+
+/* Corpo do Modal - Conteúdo principal */
+.modal-minha-conta-body {
+  padding: 15px 15px;
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+/* ============================================
+   SEÇÃO DE PLANO - Exibição do plano atual
+   ============================================ */
+.secao-plano {
+  background: linear-gradient(
+    135deg,
+    rgba(102, 126, 234, 0.1) 0%,
+    rgba(118, 75, 162, 0.1) 100%
+  );
+  padding: 12px 12px;
+  border-radius: 12px;
+  border-left: 4px solid #667eea;
+}
+
+.secao-plano-titulo {
+  font-size: 12px;
+  font-weight: 600;
+  color: #667eea;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  margin-bottom: 6px;
+}
+
+.secao-plano-conteudo {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.secao-plano-valor {
+  font-size: 16px;
+  font-weight: 700;
+  color: #2c3e50;
+}
+
+/* Botão Alterar Plano */
+.btn-alterar-plano {
+  background: #667eea;
+  color: white;
+  border: none;
+  padding: 6px 12px;
+  border-radius: 6px;
+  cursor: pointer;
+  font-size: 11px;
+  font-weight: 600;
+  transition: all 0.3s ease;
+}
+
+.btn-alterar-plano:hover {
+  background: #764ba2;
+  transform: translateY(-2px);
+  box-shadow: 0 4px 12px rgba(102, 126, 234, 0.3);
+}
+
+/* ============================================
+   SEÇÃO DE CAMPOS - Nome, Email, Telefone
+   ============================================ */
+.secao-campo {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.secao-campo-label {
+  font-size: 11px;
+  font-weight: 700;
+  color: #667eea;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+}
+
+/* Item individual de campo */
+.secao-campo-item {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 8px 10px;
+  background: #f8f9fa;
+  border-radius: 10px;
+  border: 1px solid #e8eef4;
+  transition: all 0.3s ease;
+}
+
+.secao-campo-item:hover {
+  background: #fff;
+  border-color: #667eea;
+}
+
+.secao-campo-icone {
+  font-size: 16px;
+  color: #667eea;
+  min-width: 16px;
+}
+
+.secao-campo-info {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  gap: 1px;
+}
+
+.secao-campo-rotulo {
+  font-size: 10px;
+  font-weight: 600;
+  color: #94a3b8;
+  text-transform: uppercase;
+}
+
+.secao-campo-valor {
+  font-size: 13px;
+  color: #2c3e50;
+  word-break: break-word;
+}
+
+/* Botão editar campo (lápis) */
+.secao-campo-botao {
+  background: transparent;
+  border: none;
+  color: #667eea;
+  cursor: pointer;
+  font-size: 14px;
+  transition: all 0.3s ease;
+  padding: 2px 6px;
+  border-radius: 4px;
+}
+
+.secao-campo-botao:hover {
+  background: rgba(102, 126, 234, 0.1);
+  transform: scale(1.1);
+}
+
+/* ============================================
+   SEÇÃO DE SENHA - Alterar senha
+   ============================================ */
+.secao-senha {
+  background: linear-gradient(
+    135deg,
+    rgba(102, 126, 234, 0.05) 0%,
+    rgba(118, 75, 162, 0.05) 100%
+  );
+  padding: 12px 12px;
+  border-radius: 12px;
+  border-left: 4px solid #667eea;
+}
+
+.secao-senha-titulo {
+  font-size: 12px;
+  font-weight: 600;
+  color: #667eea;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  margin-bottom: 6px;
+}
+
+/* Item de campo de senha */
+.secao-senha-item {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  padding: 8px;
+  background: #fff;
+  border-radius: 8px;
+  border: 1px solid #e8eef4;
+  margin-bottom: 6px;
+}
+
+.secao-senha-item:last-child {
+  margin-bottom: 0;
+}
+
+/* Input de senha */
+.input-senha {
+  width: 100%;
+  padding: 6px 8px;
+  border: 1px solid #ddd;
+  border-radius: 6px;
+  font-size: 12px;
+  box-sizing: border-box;
+  transition: all 0.3s ease;
+}
+
+.input-senha:focus {
+  outline: none;
+  border-color: #667eea;
+  box-shadow: 0 0 0 2px rgba(102, 126, 234, 0.1);
+}
+
+/* Botão Atualizar Senha */
+.btn-atualizar-senha {
+  background: #667eea;
+  color: white;
+  border: none;
+  padding: 8px 12px;
+  border-radius: 6px;
+  cursor: pointer;
+  font-size: 12px;
+  font-weight: 600;
+  transition: all 0.3s ease;
+  width: 100%;
+}
+
+.btn-atualizar-senha:hover {
+  background: #764ba2;
+  transform: translateY(-2px);
+}
+
+.btn-atualizar-senha:active {
+  transform: translateY(0);
+}
+
+/* ============================================
+   SEÇÃO EXCLUSÃO - Deletar conta
+   ============================================ */
+.botao-excluir-conta-container {
+  padding-top: 10px;
+  border-top: 2px solid #f0f2f5;
+}
+
+/* Botão Excluir Conta - Vermelho destaque */
+.btn-excluir-conta {
+  width: 100%;
+  padding: 8px 10px;
+  background: #e74c3c;
+  color: white;
+  border: none;
+  border-radius: 6px;
+  cursor: pointer;
+  font-size: 12px;
+  font-weight: 600;
+  transition: all 0.3s ease;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 6px;
+}
+
+.btn-excluir-conta:hover {
+  background: #c0392b;
+  transform: translateY(-2px);
+  box-shadow: 0 6px 16px rgba(231, 76, 60, 0.3);
+}
+
+.btn-excluir-conta:active {
+  transform: translateY(0);
+}
+
+/* ============================================
+   MODAL DE EDIÇÃO DE CAMPO
+   ============================================ */
+
+#modal-editar-campo {
+  display: none;
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background-color: rgba(0, 0, 0, 0.7);
+  z-index: 1000001;
+  justify-content: center;
+  align-items: center;
+  opacity: 0;
+  transition: opacity 0.3s ease-in-out;
+  backdrop-filter: blur(5px);
+}
+
+#modal-editar-campo.show {
+  display: flex;
+  opacity: 1;
+}
+
+.modal-editar-campo-conteudo {
+  position: relative;
+  background-color: #ffffff;
+  border-radius: 24px;
+  overflow: hidden;
+  max-width: 450px;
+  width: 90%;
+  box-shadow: 0 10px 40px rgba(0, 0, 0, 0.3);
+  animation: modalSlideInMinhaConta 0.4s ease-out;
+  z-index: 1000002;
+}
+
+.modal-editar-campo-header {
+  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  color: white;
+  padding: 25px;
+  text-align: center;
+  position: relative;
+}
+
+.modal-editar-campo-header h3 {
+  margin: 0;
+  font-size: 20px;
+  font-weight: 600;
+}
+
+.btn-fechar-editar-campo {
+  position: absolute;
+  top: 15px;
+  right: 15px;
+  background: rgba(255, 255, 255, 0.2);
+  border: none;
+  color: white;
+  font-size: 24px;
+  cursor: pointer;
+  width: 40px;
+  height: 40px;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: all 0.3s ease;
+}
+
+.btn-fechar-editar-campo:hover {
+  background: rgba(255, 255, 255, 0.3);
+  transform: rotate(90deg);
+}
+
+.modal-editar-campo-body {
+  padding: 25px;
+}
+
+.formulario-editar-campo {
+  display: flex;
+  flex-direction: column;
+  gap: 15px;
+}
+
+.campo-editar-input {
+  width: 100%;
+  padding: 12px;
+  border: 2px solid #e0e0e0;
+  border-radius: 12px;
+  font-size: 14px;
+  box-sizing: border-box;
+  transition: all 0.3s ease;
+}
+
+.campo-editar-input:focus {
+  outline: none;
+  border-color: #667eea;
+  box-shadow: 0 0 0 4px rgba(102, 126, 234, 0.1);
+}
+
+.botoes-editar-campo {
+  display: flex;
+  gap: 10px;
+  margin-top: 10px;
+}
+
+.btn-cancelar-editar {
+  flex: 1;
+  padding: 10px;
+  background: #e0e0e0;
+  color: #333;
+  border: none;
+  border-radius: 8px;
+  cursor: pointer;
+  font-weight: 600;
+  transition: all 0.3s ease;
+}
+
+.btn-cancelar-editar:hover {
+  background: #d0d0d0;
+}
+
+.btn-salvar-editar {
+  flex: 1;
+  padding: 10px;
+  background: #667eea;
+  color: white;
+  border: none;
+  border-radius: 8px;
+  cursor: pointer;
+  font-weight: 600;
+  transition: all 0.3s ease;
+}
+
+.btn-salvar-editar:hover {
+  background: #764ba2;
+}
+
+.btn-salvar-editar:disabled {
+  background: #bbb;
+  cursor: not-allowed;
+}
+
+/* ============================================
+   MODAL DE CONFIRMAÇÃO DE EXCLUSÃO
+   ============================================ */
+
+#modal-confirmar-exclusao-conta {
+  display: none;
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background-color: rgba(0, 0, 0, 0.8);
+  z-index: 1000002;
+  justify-content: center;
+  align-items: center;
+  opacity: 0;
+  transition: opacity 0.3s ease-in-out;
+}
+
+#modal-confirmar-exclusao-conta.show {
+  display: flex;
+  opacity: 1;
+}
+
+.modal-confirmar-exclusao-conteudo {
+  position: relative;
+  background-color: #ffffff;
+  border-radius: 24px;
+  overflow: hidden;
+  max-width: 450px;
+  width: 90%;
+  box-shadow: 0 10px 40px rgba(0, 0, 0, 0.4);
+  animation: modalSlideInMinhaConta 0.4s ease-out;
+  z-index: 1000003;
+}
+
+.modal-confirmar-exclusao-header {
+  background: linear-gradient(135deg, #e74c3c 0%, #c0392b 100%);
+  color: white;
+  padding: 30px 25px;
+  text-align: center;
+}
+
+.modal-confirmar-exclusao-header h3 {
+  margin: 0;
+  font-size: 22px;
+  font-weight: 600;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 10px;
+}
+
+.modal-confirmar-exclusao-body {
+  padding: 25px;
+}
+
+.modal-confirmar-exclusao-texto {
+  font-size: 14px;
+  color: #2c3e50;
+  line-height: 1.6;
+  margin-bottom: 15px;
+}
+
+.modal-confirmar-exclusao-aviso {
+  background: #fff3cd;
+  border-left: 4px solid #ffc107;
+  padding: 12px;
+  border-radius: 8px;
+  font-size: 13px;
+  color: #856404;
+  margin-bottom: 20px;
+}
+
+.modal-confirmar-exclusao-input {
+  width: 100%;
+  padding: 10px;
+  border: 2px solid #e0e0e0;
+  border-radius: 8px;
+  font-size: 14px;
+  box-sizing: border-box;
+  margin-bottom: 15px;
+  transition: all 0.3s ease;
+}
+
+.modal-confirmar-exclusao-input:focus {
+  outline: none;
+  border-color: #e74c3c;
+}
+
+.modal-confirmar-exclusao-input::placeholder {
+  color: #aaa;
+}
+
+.botoes-confirmar-exclusao {
+  display: flex;
+  gap: 10px;
+}
+
+.btn-cancelar-exclusao {
+  flex: 1;
+  padding: 10px;
+  background: #e0e0e0;
+  color: #333;
+  border: none;
+  border-radius: 8px;
+  cursor: pointer;
+  font-weight: 600;
+  transition: all 0.3s ease;
+}
+
+.btn-cancelar-exclusao:hover {
+  background: #d0d0d0;
+}
+
+.btn-confirmar-exclusao {
+  flex: 1;
+  padding: 10px;
+  background: #e74c3c;
+  color: white;
+  border: none;
+  border-radius: 8px;
+  cursor: pointer;
+  font-weight: 600;
+  transition: all 0.3s ease;
+}
+
+.btn-confirmar-exclusao:hover:not(:disabled) {
+  background: #c0392b;
+}
+
+.btn-confirmar-exclusao:disabled {
+  background: #bbb;
+  cursor: not-allowed;
+}
+
+/* ============================================
+   RESPONSIVIDADE - Tablets e Celulares
+   ============================================ */
+
+@media (max-width: 768px) {
+  .modal-minha-conta-conteudo {
+    width: 95%;
+    max-height: 95vh;
+  }
+
+  .modal-minha-conta-body {
+    padding: 20px 15px;
+    gap: 20px;
+  }
+
+  .modal-minha-conta-header {
+    padding: 25px 20px;
+  }
+
+  .modal-minha-conta-header h2 {
+    font-size: 20px;
+  }
+
+  .modal-editar-campo-conteudo {
+    width: 95%;
+  }
+
+  .modal-confirmar-exclusao-conteudo {
+    width: 95%;
+  }
+}
+
+@media (max-width: 480px) {
+  .modal-minha-conta-conteudo {
+    width: 98%;
+    border-radius: 16px;
+  }
+
+  .modal-minha-conta-body {
+    padding: 15px 12px;
+    gap: 15px;
+  }
+
+  .modal-minha-conta-header {
+    padding: 20px 15px;
+  }
+
+  .modal-minha-conta-header h2 {
+    font-size: 18px;
+  }
+
+  .secao-campo-item {
+    padding: 10px;
+  }
+
+  .secao-campo-valor {
+    font-size: 13px;
+  }
+
+  .btn-alterar-plano {
+    padding: 6px 12px;
+    font-size: 11px;
+  }
+
+  .modal-editar-campo-conteudo {
+    width: 98%;
+  }
+
+  .modal-editar-campo-header h3 {
+    font-size: 18px;
+  }
+
+  .botoes-editar-campo {
+    gap: 8px;
+  }
+
+  .btn-cancelar-editar,
+  .btn-salvar-editar {
+    padding: 8px;
+  }
+
+  .modal-confirmar-exclusao-conteudo {
+    width: 98%;
+  }
+
+  .modal-confirmar-exclusao-header h3 {
+    font-size: 18px;
+  }
+
+  .botoes-confirmar-exclusao {
+    gap: 8px;
+  }
+
+  .btn-cancelar-exclusao,
+  .btn-confirmar-exclusao {
+    padding: 8px;
+    font-size: 13px;
+  }
+}
+
+/* ============================================
+   ANIMAÇÕES E EFEITOS
+   ============================================ */
+
+/* Spinner de Carregamento */
+.spinner {
+  display: inline-block;
+  width: 14px;
+  height: 14px;
+  border: 2px solid #f3f3f3;
+  border-top: 2px solid #667eea;
+  border-radius: 50%;
+  animation: spin 1s linear infinite;
+  margin-right: 6px;
+}
+
+@keyframes spin {
+  0% {
+    transform: rotate(0deg);
+  }
+  100% {
+    transform: rotate(360deg);
+  }
+}
+
+/* Toast de Notificação */
+.toast-notificacao {
+  position: fixed;
+  bottom: 20px;
+  right: 20px;
+  background: #667eea;
+  color: white;
+  padding: 15px 20px;
+  border-radius: 8px;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
+  z-index: 1000010;
+  animation: toastSlideIn 0.3s ease-out;
+}
+
+.toast-notificacao.erro {
+  background: #e74c3c;
+}
+
+.toast-notificacao.sucesso {
+  background: #27ae60;
+}
+
+@keyframes toastSlideIn {
+  from {
+    transform: translateX(400px);
+    opacity: 0;
+  }
+  to {
+    transform: translateX(0);
+    opacity: 1;
+  }
+}
