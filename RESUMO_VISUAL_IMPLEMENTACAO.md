@@ -3,6 +3,7 @@
 ## 📸 Antes vs Depois
 
 ### ANTES ❌
+
 ```
 Menu Topo:
 ┌─────────────────────────────────────┐
@@ -17,6 +18,7 @@ Problemas:
 ```
 
 ### DEPOIS ✅
+
 ```
 Menu Topo:
 ┌─────────────────────────────────────┐
@@ -37,6 +39,7 @@ Melhorias:
 ## 🎨 Paleta de Cores
 
 ### Estado Positivo (Lucro > 0)
+
 ```
 Cor: #9fe870 (Verde Claro)
 RGB: rgb(159, 232, 112)
@@ -45,6 +48,7 @@ Classe: .saldo-positivo
 ```
 
 ### Estado Negativo (Lucro < 0)
+
 ```
 Cor: #e57373 (Vermelho)
 RGB: rgb(229, 115, 115)
@@ -53,6 +57,7 @@ Classe: .saldo-negativo
 ```
 
 ### Estado Neutro (Lucro = 0)
+
 ```
 Cor: #cfd8dc (Cinza)
 RGB: rgb(207, 216, 220)
@@ -97,13 +102,13 @@ Classe: .saldo-neutro
 ## 📊 Estrutura HTML
 
 ### Antes
+
 ```html
-<span class="valor-bold-menu" id="lucro_valor_entrada">
-  R$ 0,00
-</span>
+<span class="valor-bold-menu" id="lucro_valor_entrada"> R$ 0,00 </span>
 ```
 
 ### Depois
+
 ```html
 <span class="valor-bold-menu saldo-positivo" id="lucro_valor_entrada">
   R$ 1.234,56
@@ -116,6 +121,7 @@ Classe: .saldo-neutro
 ## 🎯 Áreas Modificadas
 
 ### 1. CSS (`css/menu-topo.css`)
+
 ```diff
   /* ===== CLASSES DE ESTADO ===== */
   .menu-topo-container .saldo-positivo {
@@ -142,13 +148,13 @@ Classe: .saldo-neutro
 +   font-weight: bold;
 +   transition: color 0.3s ease;
 + }
-+ 
++
 + .saldo-negativo {
 +   color: #e57373 !important;
 +   font-weight: bold;
 +   transition: color 0.3s ease;
 + }
-+ 
++
 + .saldo-neutro {
 +   color: #cfd8dc !important;
 +   font-weight: bold;
@@ -159,30 +165,36 @@ Classe: .saldo-neutro
 ### 2. JavaScript (`home.php`)
 
 #### Nova Função: `obterEstiloLucro()`
+
 ```javascript
 function obterEstiloLucro(lucro) {
   if (lucro > 0) {
-    return { cor: '#9fe870', rotulo: 'Lucro Positivo' };
+    return { cor: "#9fe870", rotulo: "Lucro Positivo" };
   } else if (lucro < 0) {
-    return { cor: '#e57373', rotulo: 'Negativo' };
+    return { cor: "#e57373", rotulo: "Negativo" };
   } else {
-    return { cor: '#cfd8dc', rotulo: 'Neutro' };
+    return { cor: "#cfd8dc", rotulo: "Neutro" };
   }
 }
 ```
 
 #### Melhorada: `carregarDadosBancaELucro()`
+
 ```javascript
 // Remover classes antigas
-lucroValorEntrada.classList.remove('saldo-positivo', 'saldo-negativo', 'saldo-neutro');
+lucroValorEntrada.classList.remove(
+  "saldo-positivo",
+  "saldo-negativo",
+  "saldo-neutro"
+);
 
 // Aplicar classe nova
 if (lucroFloat > 0) {
-  lucroValorEntrada.classList.add('saldo-positivo');
+  lucroValorEntrada.classList.add("saldo-positivo");
 } else if (lucroFloat < 0) {
-  lucroValorEntrada.classList.add('saldo-negativo');
+  lucroValorEntrada.classList.add("saldo-negativo");
 } else {
-  lucroValorEntrada.classList.add('saldo-neutro');
+  lucroValorEntrada.classList.add("saldo-neutro");
 }
 
 // Atualizar ícone
@@ -190,22 +202,27 @@ atualizarIconeLucroDinamico(lucroFloat);
 ```
 
 #### Melhorada: `atualizarIconeLucroDinamico()`
+
 ```javascript
 // Obter cor
 const { cor } = obterEstiloLucro(lucro);
 
 // Remover ícones antigos
-iconeLucro.classList.remove('fa-arrow-trend-up', 'fa-arrow-trend-down', 'fa-minus');
+iconeLucro.classList.remove(
+  "fa-arrow-trend-up",
+  "fa-arrow-trend-down",
+  "fa-minus"
+);
 
 // Adicionar ícone novo
 if (lucro > 0) {
-  iconeLucro.classList.add('fa-arrow-trend-up');
+  iconeLucro.classList.add("fa-arrow-trend-up");
   iconeLucro.style.color = cor;
 } else if (lucro < 0) {
-  iconeLucro.classList.add('fa-arrow-trend-down');
+  iconeLucro.classList.add("fa-arrow-trend-down");
   iconeLucro.style.color = cor;
 } else {
-  iconeLucro.classList.add('fa-minus');
+  iconeLucro.classList.add("fa-minus");
   iconeLucro.style.color = cor;
 }
 ```
@@ -215,6 +232,7 @@ if (lucro > 0) {
 ## 📈 Exemplos de Transformação
 
 ### Exemplo 1: Lucro Positivo
+
 ```
 Valor recebido: 1234.56
 
@@ -233,6 +251,7 @@ Valor recebido: 1234.56
 ```
 
 ### Exemplo 2: Lucro Negativo
+
 ```
 Valor recebido: -500.00
 
@@ -251,6 +270,7 @@ Valor recebido: -500.00
 ```
 
 ### Exemplo 3: Lucro Zero
+
 ```
 Valor recebido: 0.00
 
@@ -272,14 +292,14 @@ Valor recebido: 0.00
 
 ## ⚙️ Parâmetros Técnicos
 
-| Parâmetro | Valor | Observação |
-|-----------|-------|-----------|
-| **Cores** | RGB | Cores de boa legibilidade |
-| **Transição** | 0.3s ease | Suave e responsivo |
-| **Font-weight** | bold | Melhor destaque |
-| **Atualização** | 30s | A cada 30 segundos |
-| **Inicial** | 1s | Aguarda CSS carregar |
-| **Z-index** | 1001 | Acima de outros elementos |
+| Parâmetro       | Valor           | Observação                    |
+| --------------- | --------------- | ----------------------------- |
+| **Cores**       | RGB             | Cores de boa legibilidade     |
+| **Transição**   | 0.3s ease       | Suave e responsivo            |
+| **Font-weight** | bold            | Melhor destaque               |
+| **Atualização** | 30s             | A cada 30 segundos            |
+| **Inicial**     | 1s              | Aguarda CSS carregar          |
+| **Z-index**     | 1001            | Acima de outros elementos     |
 | **Data source** | dados_banca.php | Mesma fonte gestao-diaria.php |
 
 ---
@@ -287,11 +307,13 @@ Valor recebido: 0.00
 ## 🧪 Teste Rápido (3 passos)
 
 1. **Abra home.php no navegador**
+
    ```
    http://localhost/gestao/gestao_banca/home.php
    ```
 
 2. **Faça login**
+
    ```
    Usuário: seu_email@exemplo.com
    Senha: sua_senha
@@ -313,22 +335,22 @@ Valor recebido: 0.00
 // Abra DevTools (F12) e cole no Console:
 
 // 1. Forçar atualização imediata
-carregarDadosBancaELucro()
+carregarDadosBancaELucro();
 
 // 2. Ver logs
-console.log('Veja os logs acima com ✅ ou ❌')
+console.log("Veja os logs acima com ✅ ou ❌");
 
 // 3. Verificar elemento
-document.getElementById('lucro_valor_entrada').className
+document.getElementById("lucro_valor_entrada").className;
 
 // 4. Testar ícone positivo
-atualizarIconeLucroDinamico(1000)
+atualizarIconeLucroDinamico(1000);
 
 // 5. Testar ícone negativo
-atualizarIconeLucroDinamico(-500)
+atualizarIconeLucroDinamico(-500);
 
 // 6. Testar ícone neutro
-atualizarIconeLucroDinamico(0)
+atualizarIconeLucroDinamico(0);
 ```
 
 ---
@@ -351,12 +373,12 @@ atualizarIconeLucroDinamico(0)
 
 ## ✨ Recursos Adicionados
 
-| Recurso | Tipo | Local |
-|---------|------|-------|
-| Teste Visual | HTML | `teste-visual-css-dinamico.html` |
-| Documentação | MD | `ATUALIZACOES_HOME_CSS_DINAMICO.md` |
-| Guia de Teste | MD | `GUIA_TESTE_HOME_CSS_DINAMICO.md` |
-| Commit | Git | `[main 8aff23a]` |
+| Recurso       | Tipo | Local                               |
+| ------------- | ---- | ----------------------------------- |
+| Teste Visual  | HTML | `teste-visual-css-dinamico.html`    |
+| Documentação  | MD   | `ATUALIZACOES_HOME_CSS_DINAMICO.md` |
+| Guia de Teste | MD   | `GUIA_TESTE_HOME_CSS_DINAMICO.md`   |
+| Commit        | Git  | `[main 8aff23a]`                    |
 
 ---
 

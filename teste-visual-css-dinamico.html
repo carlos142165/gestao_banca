@@ -1,378 +1,408 @@
 <!-- TESTE VISUAL - CÓPIA DOS ELEMENTOS PARA VERIFICAR COMPORTAMENTO -->
 <!DOCTYPE html>
 <html lang="pt-br">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>Teste Visual - CSS Dinâmico</title>
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
-    <link rel="stylesheet" href="css/menu-topo.css">
+    <link
+      rel="stylesheet"
+      href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css"
+    />
+    <link rel="stylesheet" href="css/menu-topo.css" />
     <style>
-        body {
-            font-family: Arial, sans-serif;
-            background-color: #f5f5f5;
-            padding: 20px;
-        }
-        
-        .test-container {
-            background-color: white;
-            border-radius: 8px;
-            padding: 20px;
-            margin-bottom: 20px;
-            box-shadow: 0 2px 8px rgba(0,0,0,0.1);
-        }
-        
-        .test-title {
-            font-size: 18px;
-            font-weight: bold;
-            margin-bottom: 15px;
-            color: #333;
-        }
-        
-        .test-item {
-            display: flex;
-            align-items: center;
-            gap: 20px;
-            padding: 10px;
-            border-left: 4px solid #ddd;
-            margin-bottom: 10px;
-        }
-        
-        .test-item.positive {
-            border-left-color: #9fe870;
-            background-color: #f0f9f0;
-        }
-        
-        .test-item.negative {
-            border-left-color: #e57373;
-            background-color: #fef0f0;
-        }
-        
-        .test-item.neutral {
-            border-left-color: #cfd8dc;
-            background-color: #f5f5f5;
-        }
-        
-        .test-buttons {
-            display: flex;
-            gap: 10px;
-            margin-top: 20px;
-            flex-wrap: wrap;
-        }
-        
-        button {
-            padding: 10px 20px;
-            border: none;
-            border-radius: 6px;
-            cursor: pointer;
-            font-weight: bold;
-            transition: all 0.3s ease;
-        }
-        
-        .btn-positive {
-            background-color: #9fe870;
-            color: #000;
-        }
-        
-        .btn-positive:hover {
-            background-color: #8fee5a;
-            transform: translateY(-2px);
-        }
-        
-        .btn-negative {
-            background-color: #e57373;
-            color: white;
-        }
-        
-        .btn-negative:hover {
-            background-color: #ef5350;
-            transform: translateY(-2px);
-        }
-        
-        .btn-neutral {
-            background-color: #cfd8dc;
-            color: #000;
-        }
-        
-        .btn-neutral:hover {
-            background-color: #b0bec5;
-            transform: translateY(-2px);
-        }
-        
-        .console-log {
-            background-color: #1e1e1e;
-            color: #0f0;
-            padding: 15px;
-            border-radius: 6px;
-            font-family: 'Courier New', monospace;
-            font-size: 12px;
-            max-height: 300px;
-            overflow-y: auto;
-            margin-top: 15px;
-            line-height: 1.5;
-        }
-        
-        .log-entry {
-            margin-bottom: 5px;
-        }
-        
-        .log-entry.info {
-            color: #87ceeb;
-        }
-        
-        .log-entry.success {
-            color: #9fe870;
-        }
-        
-        .log-entry.error {
-            color: #e57373;
-        }
-        
-        .log-entry.warn {
-            color: #ffd93d;
-        }
-        
-        .info-box {
-            background-color: #e3f2fd;
-            border-left: 4px solid #2196f3;
-            padding: 15px;
-            margin-top: 15px;
-            border-radius: 4px;
-            font-size: 14px;
-            color: #1565c0;
-        }
-        
-        .menu-topo-container {
-            background-color: #113647;
-            padding: 15px;
-            border-radius: 8px;
-            margin-top: 15px;
-        }
+      body {
+        font-family: Arial, sans-serif;
+        background-color: #f5f5f5;
+        padding: 20px;
+      }
+
+      .test-container {
+        background-color: white;
+        border-radius: 8px;
+        padding: 20px;
+        margin-bottom: 20px;
+        box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+      }
+
+      .test-title {
+        font-size: 18px;
+        font-weight: bold;
+        margin-bottom: 15px;
+        color: #333;
+      }
+
+      .test-item {
+        display: flex;
+        align-items: center;
+        gap: 20px;
+        padding: 10px;
+        border-left: 4px solid #ddd;
+        margin-bottom: 10px;
+      }
+
+      .test-item.positive {
+        border-left-color: #9fe870;
+        background-color: #f0f9f0;
+      }
+
+      .test-item.negative {
+        border-left-color: #e57373;
+        background-color: #fef0f0;
+      }
+
+      .test-item.neutral {
+        border-left-color: #cfd8dc;
+        background-color: #f5f5f5;
+      }
+
+      .test-buttons {
+        display: flex;
+        gap: 10px;
+        margin-top: 20px;
+        flex-wrap: wrap;
+      }
+
+      button {
+        padding: 10px 20px;
+        border: none;
+        border-radius: 6px;
+        cursor: pointer;
+        font-weight: bold;
+        transition: all 0.3s ease;
+      }
+
+      .btn-positive {
+        background-color: #9fe870;
+        color: #000;
+      }
+
+      .btn-positive:hover {
+        background-color: #8fee5a;
+        transform: translateY(-2px);
+      }
+
+      .btn-negative {
+        background-color: #e57373;
+        color: white;
+      }
+
+      .btn-negative:hover {
+        background-color: #ef5350;
+        transform: translateY(-2px);
+      }
+
+      .btn-neutral {
+        background-color: #cfd8dc;
+        color: #000;
+      }
+
+      .btn-neutral:hover {
+        background-color: #b0bec5;
+        transform: translateY(-2px);
+      }
+
+      .console-log {
+        background-color: #1e1e1e;
+        color: #0f0;
+        padding: 15px;
+        border-radius: 6px;
+        font-family: "Courier New", monospace;
+        font-size: 12px;
+        max-height: 300px;
+        overflow-y: auto;
+        margin-top: 15px;
+        line-height: 1.5;
+      }
+
+      .log-entry {
+        margin-bottom: 5px;
+      }
+
+      .log-entry.info {
+        color: #87ceeb;
+      }
+
+      .log-entry.success {
+        color: #9fe870;
+      }
+
+      .log-entry.error {
+        color: #e57373;
+      }
+
+      .log-entry.warn {
+        color: #ffd93d;
+      }
+
+      .info-box {
+        background-color: #e3f2fd;
+        border-left: 4px solid #2196f3;
+        padding: 15px;
+        margin-top: 15px;
+        border-radius: 4px;
+        font-size: 14px;
+        color: #1565c0;
+      }
+
+      .menu-topo-container {
+        background-color: #113647;
+        padding: 15px;
+        border-radius: 8px;
+        margin-top: 15px;
+      }
     </style>
-</head>
-<body>
+  </head>
+  <body>
     <h1>🧪 Teste Visual - CSS Dinâmico para Lucro</h1>
-    
+
     <!-- TESTE 1: POSITIVO -->
     <div class="test-container">
-        <div class="test-title">✅ Teste 1: Lucro Positivo</div>
-        
-        <div class="menu-topo-container">
-            <div class="valor-item-menu saldo-topo-ajustado">
-                <div class="valor-info-wrapper">
-                    <div class="valor-label-linha">
-                        <i class="fa-solid fa-building-columns valor-icone-tema"></i>
-                        <span class="valor-label">Banca:</span>
-                        <span class="valor-bold-menu">R$ 5.000,00</span>
-                    </div>
-                    <div class="valor-label-linha">
-                        <i class="fa-solid fa-arrow-trend-up valor-icone-tema" style="color: #9fe870;"></i>
-                        <span class="valor-label">Lucro:</span>
-                        <span class="valor-bold-menu saldo-positivo">R$ 1.234,56</span>
-                    </div>
-                </div>
+      <div class="test-title">✅ Teste 1: Lucro Positivo</div>
+
+      <div class="menu-topo-container">
+        <div class="valor-item-menu saldo-topo-ajustado">
+          <div class="valor-info-wrapper">
+            <div class="valor-label-linha">
+              <i class="fa-solid fa-building-columns valor-icone-tema"></i>
+              <span class="valor-label">Banca:</span>
+              <span class="valor-bold-menu">R$ 5.000,00</span>
             </div>
+            <div class="valor-label-linha">
+              <i
+                class="fa-solid fa-arrow-trend-up valor-icone-tema"
+                style="color: #9fe870"
+              ></i>
+              <span class="valor-label">Lucro:</span>
+              <span class="valor-bold-menu saldo-positivo">R$ 1.234,56</span>
+            </div>
+          </div>
         </div>
-        
-        <div class="info-box">
-            <strong>Comportamento Esperado:</strong><br>
-            • Valor do lucro em verde (#9fe870)<br>
-            • Ícone de seta para cima (fa-arrow-trend-up) em verde<br>
-            • Classe CSS: <code>saldo-positivo</code>
-        </div>
+      </div>
+
+      <div class="info-box">
+        <strong>Comportamento Esperado:</strong><br />
+        • Valor do lucro em verde (#9fe870)<br />
+        • Ícone de seta para cima (fa-arrow-trend-up) em verde<br />
+        • Classe CSS: <code>saldo-positivo</code>
+      </div>
     </div>
-    
+
     <!-- TESTE 2: NEGATIVO -->
     <div class="test-container">
-        <div class="test-title">❌ Teste 2: Lucro Negativo</div>
-        
-        <div class="menu-topo-container">
-            <div class="valor-item-menu saldo-topo-ajustado">
-                <div class="valor-info-wrapper">
-                    <div class="valor-label-linha">
-                        <i class="fa-solid fa-building-columns valor-icone-tema"></i>
-                        <span class="valor-label">Banca:</span>
-                        <span class="valor-bold-menu">R$ 3.000,00</span>
-                    </div>
-                    <div class="valor-label-linha">
-                        <i class="fa-solid fa-arrow-trend-down valor-icone-tema" style="color: #e57373;"></i>
-                        <span class="valor-label">Lucro:</span>
-                        <span class="valor-bold-menu saldo-negativo">R$ -500,00</span>
-                    </div>
-                </div>
+      <div class="test-title">❌ Teste 2: Lucro Negativo</div>
+
+      <div class="menu-topo-container">
+        <div class="valor-item-menu saldo-topo-ajustado">
+          <div class="valor-info-wrapper">
+            <div class="valor-label-linha">
+              <i class="fa-solid fa-building-columns valor-icone-tema"></i>
+              <span class="valor-label">Banca:</span>
+              <span class="valor-bold-menu">R$ 3.000,00</span>
             </div>
+            <div class="valor-label-linha">
+              <i
+                class="fa-solid fa-arrow-trend-down valor-icone-tema"
+                style="color: #e57373"
+              ></i>
+              <span class="valor-label">Lucro:</span>
+              <span class="valor-bold-menu saldo-negativo">R$ -500,00</span>
+            </div>
+          </div>
         </div>
-        
-        <div class="info-box">
-            <strong>Comportamento Esperado:</strong><br>
-            • Valor do lucro em vermelho (#e57373)<br>
-            • Ícone de seta para baixo (fa-arrow-trend-down) em vermelho<br>
-            • Classe CSS: <code>saldo-negativo</code>
-        </div>
+      </div>
+
+      <div class="info-box">
+        <strong>Comportamento Esperado:</strong><br />
+        • Valor do lucro em vermelho (#e57373)<br />
+        • Ícone de seta para baixo (fa-arrow-trend-down) em vermelho<br />
+        • Classe CSS: <code>saldo-negativo</code>
+      </div>
     </div>
-    
+
     <!-- TESTE 3: NEUTRO -->
     <div class="test-container">
-        <div class="test-title">➖ Teste 3: Lucro Neutro (Zero)</div>
-        
-        <div class="menu-topo-container">
-            <div class="valor-item-menu saldo-topo-ajustado">
-                <div class="valor-info-wrapper">
-                    <div class="valor-label-linha">
-                        <i class="fa-solid fa-building-columns valor-icone-tema"></i>
-                        <span class="valor-label">Banca:</span>
-                        <span class="valor-bold-menu">R$ 4.000,00</span>
-                    </div>
-                    <div class="valor-label-linha">
-                        <i class="fa-solid fa-minus valor-icone-tema" style="color: #cfd8dc;"></i>
-                        <span class="valor-label">Lucro:</span>
-                        <span class="valor-bold-menu saldo-neutro">R$ 0,00</span>
-                    </div>
-                </div>
+      <div class="test-title">➖ Teste 3: Lucro Neutro (Zero)</div>
+
+      <div class="menu-topo-container">
+        <div class="valor-item-menu saldo-topo-ajustado">
+          <div class="valor-info-wrapper">
+            <div class="valor-label-linha">
+              <i class="fa-solid fa-building-columns valor-icone-tema"></i>
+              <span class="valor-label">Banca:</span>
+              <span class="valor-bold-menu">R$ 4.000,00</span>
             </div>
+            <div class="valor-label-linha">
+              <i
+                class="fa-solid fa-minus valor-icone-tema"
+                style="color: #cfd8dc"
+              ></i>
+              <span class="valor-label">Lucro:</span>
+              <span class="valor-bold-menu saldo-neutro">R$ 0,00</span>
+            </div>
+          </div>
         </div>
-        
-        <div class="info-box">
-            <strong>Comportamento Esperado:</strong><br>
-            • Valor do lucro em cinza (#cfd8dc)<br>
-            • Ícone de linha (fa-minus) em cinza<br>
-            • Classe CSS: <code>saldo-neutro</code>
-        </div>
+      </div>
+
+      <div class="info-box">
+        <strong>Comportamento Esperado:</strong><br />
+        • Valor do lucro em cinza (#cfd8dc)<br />
+        • Ícone de linha (fa-minus) em cinza<br />
+        • Classe CSS: <code>saldo-neutro</code>
+      </div>
     </div>
-    
+
     <!-- TESTE 4: TESTES INTERATIVOS -->
     <div class="test-container">
-        <div class="test-title">🎯 Teste 4: Teste Interativo</div>
-        
-        <div id="interactive-test">
-            <div class="menu-topo-container" style="margin-bottom: 20px;">
-                <div class="valor-item-menu saldo-topo-ajustado">
-                    <div class="valor-info-wrapper">
-                        <div class="valor-label-linha">
-                            <i class="fa-solid fa-building-columns valor-icone-tema"></i>
-                            <span class="valor-label">Banca:</span>
-                            <span class="valor-bold-menu" id="testBanca">R$ 2.000,00</span>
-                        </div>
-                        <div class="valor-label-linha">
-                            <i class="fa-solid fa-arrow-trend-up valor-icone-tema" id="testIcon" style="color: #cfd8dc;"></i>
-                            <span class="valor-label">Lucro:</span>
-                            <span class="valor-bold-menu saldo-neutro" id="testLucro">R$ 0,00</span>
-                        </div>
-                    </div>
-                </div>
+      <div class="test-title">🎯 Teste 4: Teste Interativo</div>
+
+      <div id="interactive-test">
+        <div class="menu-topo-container" style="margin-bottom: 20px">
+          <div class="valor-item-menu saldo-topo-ajustado">
+            <div class="valor-info-wrapper">
+              <div class="valor-label-linha">
+                <i class="fa-solid fa-building-columns valor-icone-tema"></i>
+                <span class="valor-label">Banca:</span>
+                <span class="valor-bold-menu" id="testBanca">R$ 2.000,00</span>
+              </div>
+              <div class="valor-label-linha">
+                <i
+                  class="fa-solid fa-arrow-trend-up valor-icone-tema"
+                  id="testIcon"
+                  style="color: #cfd8dc"
+                ></i>
+                <span class="valor-label">Lucro:</span>
+                <span class="valor-bold-menu saldo-neutro" id="testLucro"
+                  >R$ 0,00</span
+                >
+              </div>
             </div>
-            
-            <div class="test-buttons">
-                <button class="btn-positive" onclick="testPositivo()">Teste Positivo</button>
-                <button class="btn-negative" onclick="testNegativo()">Teste Negativo</button>
-                <button class="btn-neutral" onclick="testNeutro()">Teste Neutro</button>
-                <button onclick="clearLog()" style="background-color: #999;">Limpar Log</button>
-            </div>
+          </div>
         </div>
-        
-        <div class="console-log" id="console">
-            <div class="log-entry info">> Sistema pronto para testes...</div>
+
+        <div class="test-buttons">
+          <button class="btn-positive" onclick="testPositivo()">
+            Teste Positivo
+          </button>
+          <button class="btn-negative" onclick="testNegativo()">
+            Teste Negativo
+          </button>
+          <button class="btn-neutral" onclick="testNeutro()">
+            Teste Neutro
+          </button>
+          <button onclick="clearLog()" style="background-color: #999">
+            Limpar Log
+          </button>
         </div>
+      </div>
+
+      <div class="console-log" id="console">
+        <div class="log-entry info">> Sistema pronto para testes...</div>
+      </div>
     </div>
-    
+
     <!-- CHECKLIST -->
     <div class="test-container">
-        <div class="test-title">✅ Checklist de Implementação</div>
-        
-        <div style="line-height: 2;">
-            <p>✅ CSS com classes de estado (.saldo-positivo, .saldo-negativo, .saldo-neutro)</p>
-            <p>✅ Cores corretas:</p>
-            <ul style="margin: 5px 0 5px 20px;">
-                <li>Positivo: #9fe870 (verde)</li>
-                <li>Negativo: #e57373 (vermelho)</li>
-                <li>Neutro: #cfd8dc (cinza)</li>
-            </ul>
-            <p>✅ Ícones dinâmicos:</p>
-            <ul style="margin: 5px 0 5px 20px;">
-                <li>Positivo: fa-arrow-trend-up ⬆️</li>
-                <li>Negativo: fa-arrow-trend-down ⬇️</li>
-                <li>Neutro: fa-minus ➖</li>
-            </ul>
-            <p>✅ Transições suaves (0.3s)</p>
-            <p>✅ Font-weight bold para melhor legibilidade</p>
-            <p>✅ Atualização automática a cada 30 segundos em home.php</p>
-            <p>✅ Console logs informativos para debug</p>
-            <p>✅ Compatibilidade com gestao-diaria.php</p>
-        </div>
+      <div class="test-title">✅ Checklist de Implementação</div>
+
+      <div style="line-height: 2">
+        <p>
+          ✅ CSS com classes de estado (.saldo-positivo, .saldo-negativo,
+          .saldo-neutro)
+        </p>
+        <p>✅ Cores corretas:</p>
+        <ul style="margin: 5px 0 5px 20px">
+          <li>Positivo: #9fe870 (verde)</li>
+          <li>Negativo: #e57373 (vermelho)</li>
+          <li>Neutro: #cfd8dc (cinza)</li>
+        </ul>
+        <p>✅ Ícones dinâmicos:</p>
+        <ul style="margin: 5px 0 5px 20px">
+          <li>Positivo: fa-arrow-trend-up ⬆️</li>
+          <li>Negativo: fa-arrow-trend-down ⬇️</li>
+          <li>Neutro: fa-minus ➖</li>
+        </ul>
+        <p>✅ Transições suaves (0.3s)</p>
+        <p>✅ Font-weight bold para melhor legibilidade</p>
+        <p>✅ Atualização automática a cada 30 segundos em home.php</p>
+        <p>✅ Console logs informativos para debug</p>
+        <p>✅ Compatibilidade com gestao-diaria.php</p>
+      </div>
     </div>
-    
+
     <script>
-        function addLog(message, type = 'info') {
-            const console_elem = document.getElementById('console');
-            const entry = document.createElement('div');
-            entry.className = `log-entry ${type}`;
-            entry.textContent = `> ${message}`;
-            console_elem.appendChild(entry);
-            console_elem.scrollTop = console_elem.scrollHeight;
-        }
-        
-        function clearLog() {
-            document.getElementById('console').innerHTML = '<div class="log-entry info">> Log limpo</div>';
-        }
-        
-        function testPositivo() {
-            const lucro = document.getElementById('testLucro');
-            const icon = document.getElementById('testIcon');
-            
-            lucro.textContent = 'R$ 1.234,56';
-            lucro.classList.remove('saldo-negativo', 'saldo-neutro');
-            lucro.classList.add('saldo-positivo');
-            
-            icon.classList.remove('fa-arrow-trend-down', 'fa-minus');
-            icon.classList.add('fa-arrow-trend-up');
-            icon.style.color = '#9fe870';
-            
-            addLog('✅ Teste Positivo aplicado - Valor: R$ 1.234,56', 'success');
-            addLog('📍 Classe adicionada: saldo-positivo', 'info');
-            addLog('🎨 Cor do ícone: #9fe870 (verde)', 'success');
-            addLog('📊 Ícone: fa-arrow-trend-up ⬆️', 'info');
-        }
-        
-        function testNegativo() {
-            const lucro = document.getElementById('testLucro');
-            const icon = document.getElementById('testIcon');
-            
-            lucro.textContent = 'R$ -500,00';
-            lucro.classList.remove('saldo-positivo', 'saldo-neutro');
-            lucro.classList.add('saldo-negativo');
-            
-            icon.classList.remove('fa-arrow-trend-up', 'fa-minus');
-            icon.classList.add('fa-arrow-trend-down');
-            icon.style.color = '#e57373';
-            
-            addLog('❌ Teste Negativo aplicado - Valor: R$ -500,00', 'error');
-            addLog('📍 Classe adicionada: saldo-negativo', 'info');
-            addLog('🎨 Cor do ícone: #e57373 (vermelho)', 'error');
-            addLog('📊 Ícone: fa-arrow-trend-down ⬇️', 'info');
-        }
-        
-        function testNeutro() {
-            const lucro = document.getElementById('testLucro');
-            const icon = document.getElementById('testIcon');
-            
-            lucro.textContent = 'R$ 0,00';
-            lucro.classList.remove('saldo-positivo', 'saldo-negativo');
-            lucro.classList.add('saldo-neutro');
-            
-            icon.classList.remove('fa-arrow-trend-up', 'fa-arrow-trend-down');
-            icon.classList.add('fa-minus');
-            icon.style.color = '#cfd8dc';
-            
-            addLog('➖ Teste Neutro aplicado - Valor: R$ 0,00', 'warn');
-            addLog('📍 Classe adicionada: saldo-neutro', 'info');
-            addLog('🎨 Cor do ícone: #cfd8dc (cinza)', 'warn');
-            addLog('📊 Ícone: fa-minus ➖', 'info');
-        }
-        
-        window.addEventListener('load', function() {
-            addLog('✅ Página carregada', 'success');
-            addLog('🎯 Clique em um dos botões para testar', 'info');
-        });
+      function addLog(message, type = "info") {
+        const console_elem = document.getElementById("console");
+        const entry = document.createElement("div");
+        entry.className = `log-entry ${type}`;
+        entry.textContent = `> ${message}`;
+        console_elem.appendChild(entry);
+        console_elem.scrollTop = console_elem.scrollHeight;
+      }
+
+      function clearLog() {
+        document.getElementById("console").innerHTML =
+          '<div class="log-entry info">> Log limpo</div>';
+      }
+
+      function testPositivo() {
+        const lucro = document.getElementById("testLucro");
+        const icon = document.getElementById("testIcon");
+
+        lucro.textContent = "R$ 1.234,56";
+        lucro.classList.remove("saldo-negativo", "saldo-neutro");
+        lucro.classList.add("saldo-positivo");
+
+        icon.classList.remove("fa-arrow-trend-down", "fa-minus");
+        icon.classList.add("fa-arrow-trend-up");
+        icon.style.color = "#9fe870";
+
+        addLog("✅ Teste Positivo aplicado - Valor: R$ 1.234,56", "success");
+        addLog("📍 Classe adicionada: saldo-positivo", "info");
+        addLog("🎨 Cor do ícone: #9fe870 (verde)", "success");
+        addLog("📊 Ícone: fa-arrow-trend-up ⬆️", "info");
+      }
+
+      function testNegativo() {
+        const lucro = document.getElementById("testLucro");
+        const icon = document.getElementById("testIcon");
+
+        lucro.textContent = "R$ -500,00";
+        lucro.classList.remove("saldo-positivo", "saldo-neutro");
+        lucro.classList.add("saldo-negativo");
+
+        icon.classList.remove("fa-arrow-trend-up", "fa-minus");
+        icon.classList.add("fa-arrow-trend-down");
+        icon.style.color = "#e57373";
+
+        addLog("❌ Teste Negativo aplicado - Valor: R$ -500,00", "error");
+        addLog("📍 Classe adicionada: saldo-negativo", "info");
+        addLog("🎨 Cor do ícone: #e57373 (vermelho)", "error");
+        addLog("📊 Ícone: fa-arrow-trend-down ⬇️", "info");
+      }
+
+      function testNeutro() {
+        const lucro = document.getElementById("testLucro");
+        const icon = document.getElementById("testIcon");
+
+        lucro.textContent = "R$ 0,00";
+        lucro.classList.remove("saldo-positivo", "saldo-negativo");
+        lucro.classList.add("saldo-neutro");
+
+        icon.classList.remove("fa-arrow-trend-up", "fa-arrow-trend-down");
+        icon.classList.add("fa-minus");
+        icon.style.color = "#cfd8dc";
+
+        addLog("➖ Teste Neutro aplicado - Valor: R$ 0,00", "warn");
+        addLog("📍 Classe adicionada: saldo-neutro", "info");
+        addLog("🎨 Cor do ícone: #cfd8dc (cinza)", "warn");
+        addLog("📊 Ícone: fa-minus ➖", "info");
+      }
+
+      window.addEventListener("load", function () {
+        addLog("✅ Página carregada", "success");
+        addLog("🎯 Clique em um dos botões para testar", "info");
+      });
     </script>
-</body>
+  </body>
 </html>
