@@ -781,8 +781,8 @@ if (!isset($_SESSION['usuario_id']) || empty($_SESSION['usuario_id'])) {
                                     </div>
                                     <!-- Lucro dos mentores -->
                                     <div class="valor-label-linha">
-                                        <i class="fa-solid fa-money-bill-trend-up valor-icone-tema"></i>
-                                        <span class="valor-label" id="lucro_entradas_rotulo">Lucro:</span>
+                                        <i class="fa-solid fa-arrow-trend-up valor-icone-tema" id="icone-lucro-dinamico"></i>
+                                        <span class="valor-label">Lucro:</span>
                                         <span class="valor-bold-menu" id="lucro_valor_entrada">R$ 0,00</span>
                                     </div>
                                 </div>
@@ -1306,6 +1306,80 @@ if (!isset($_SESSION['usuario_id']) || empty($_SESSION['usuario_id'])) {
                 erroDiv.style.display = "block";
             });
         }
+    </script>
+
+    <!-- ✅ SCRIPT PARA CARREGAR DADOS DINÂMICOS -->
+    <script>
+    // ✅ FUNÇÃO PARA CARREGAR DADOS DINÂMICOS
+    function carregarDadosBancaELucro() {
+      // Só carregar se o usuário estiver autenticado
+      const usuarioAutenticado = <?php echo json_encode(isset($_SESSION['usuario_id']) && !empty($_SESSION['usuario_id'])); ?>;
+      
+      if (!usuarioAutenticado) return;
+
+      fetch('dados_banca.php')
+        .then(response => response.json())
+        .then(data => {
+          if (data.success) {
+            // Atualizar Banca
+            const valorBancaLabel = document.getElementById('valorTotalBancaLabel');
+            if (valorBancaLabel) {
+              valorBancaLabel.textContent = data.banca_formatada;
+            }
+
+            // Atualizar Lucro
+            const lucroValorEntrada = document.getElementById('lucro_valor_entrada');
+            if (lucroValorEntrada) {
+              lucroValorEntrada.textContent = data.lucro_total_formatado || 'R$ 0,00';
+              
+              // Atualizar classe de cor baseada no valor
+              const lucroFloat = parseFloat(data.lucro_total || 0);
+              lucroValorEntrada.classList.remove('saldo-positivo', 'saldo-negativo', 'saldo-neutro');
+              
+              if (lucroFloat > 0) {
+                lucroValorEntrada.classList.add('saldo-positivo');
+              } else if (lucroFloat < 0) {
+                lucroValorEntrada.classList.add('saldo-negativo');
+              } else {
+                lucroValorEntrada.classList.add('saldo-neutro');
+              }
+
+              // Atualizar ícone dinamicamente
+              atualizarIconeLucroDinamico(lucroFloat);
+            }
+          }
+        })
+        .catch(error => console.error('Erro ao carregar dados:', error));
+    }
+
+    // ✅ FUNÇÃO PARA ATUALIZAR ÍCONE DINAMICAMENTE
+    function atualizarIconeLucroDinamico(lucro) {
+      const iconeLucro = document.getElementById('icone-lucro-dinamico');
+      if (!iconeLucro) return;
+
+      // Remover classes anteriores
+      iconeLucro.classList.remove('fa-arrow-trend-up', 'fa-arrow-trend-down', 'fa-minus');
+      iconeLucro.style.transform = 'none';
+
+      if (lucro > 0) {
+        iconeLucro.classList.add('fa-arrow-trend-up');
+        iconeLucro.style.color = '#9fe870';
+      } else if (lucro < 0) {
+        iconeLucro.classList.add('fa-arrow-trend-down');
+        iconeLucro.style.color = '#e57373';
+      } else {
+        iconeLucro.classList.add('fa-minus');
+        iconeLucro.style.color = '#cfd8dc';
+      }
+    }
+
+    // ✅ Carregar ao abrir página
+    window.addEventListener('load', function() {
+      carregarDadosBancaELucro();
+      
+      // ✅ ATUALIZAR A CADA 30 SEGUNDOS
+      setInterval(carregarDadosBancaELucro, 30000);
+    });
     </script>
     <?php endif; ?>
 </body>
