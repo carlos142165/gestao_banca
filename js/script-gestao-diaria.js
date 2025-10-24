@@ -1060,18 +1060,18 @@ const DadosManager = {
   atualizarElementosLucro(data) {
     // Garantir que o lucro seja um número válido
     let lucro = 0;
-    
-    if (data.lucro !== undefined && data.lucro !== null && data.lucro !== '') {
-      lucro = parseFloat(data.lucro.toString().replace(/[^0-9.-]/g, ''));
+
+    if (data.lucro !== undefined && data.lucro !== null && data.lucro !== "") {
+      lucro = parseFloat(data.lucro.toString().replace(/[^0-9.-]/g, ""));
     }
-    
+
     // Fallback se o parseFloat falhar
     if (isNaN(lucro)) {
       lucro = 0;
     }
-    
-    console.log('Lucro atualizado:', lucro, 'data.lucro:', data.lucro);
-    
+
+    console.log("Lucro atualizado:", lucro, "data.lucro:", data.lucro);
+
     const lucroFormatado = Utils.formatarBRL(lucro);
 
     const { cor, rotulo } = this.obterEstiloLucro(lucro);
@@ -1112,7 +1112,7 @@ const DadosManager = {
     }
 
     // Atualiza o ícone dinamicamente baseado no lucro
-    console.log('Atualizando ícone com lucro:', lucro);
+    console.log("Atualizando ícone com lucro:", lucro);
     this.atualizarIconeLucro(lucro);
 
     if (lucroEntradasRotulo) {
@@ -1148,24 +1148,32 @@ const DadosManager = {
     const iconeLucro = document.getElementById("icone-lucro-dinamico");
     if (!iconeLucro) return;
 
+    // Obter as cores do estilo de lucro
+    const { cor } = this.obterEstiloLucro(lucro);
+
     // Remove todas as classes de ícone anteriores
-    iconeLucro.classList.remove("fa-chart-line", "fa-arrow-trend-up", "fa-arrow-trend-down", "fa-minus");
+    iconeLucro.classList.remove(
+      "fa-chart-line",
+      "fa-arrow-trend-up",
+      "fa-arrow-trend-down",
+      "fa-minus"
+    );
     iconeLucro.style.transform = "none";
 
     if (lucro > 0) {
       // Gráfico para cima (positivo)
       iconeLucro.classList.add("fa-arrow-trend-up");
-      iconeLucro.style.color = "#10b981";
+      iconeLucro.style.color = cor; // Usa a cor definida em obterEstiloLucro
       iconeLucro.style.transform = "none";
     } else if (lucro < 0) {
       // Gráfico para baixo (negativo)
       iconeLucro.classList.add("fa-arrow-trend-down");
-      iconeLucro.style.color = "#ef4444";
+      iconeLucro.style.color = cor; // Usa a cor definida em obterEstiloLucro
       iconeLucro.style.transform = "none";
     } else {
       // Linha neutra (zero)
       iconeLucro.classList.add("fa-minus");
-      iconeLucro.style.color = "#7f8c8d";
+      iconeLucro.style.color = cor; // Usa a cor definida em obterEstiloLucro
       iconeLucro.style.transform = "none";
     }
   },
@@ -1261,7 +1269,10 @@ const MentorManager = {
       this.atualizarDashboard(container);
 
       // ✅ CORREÇÃO: Atualiza dados de lucro e banca via AJAX
-      if (typeof DadosManager !== "undefined" && DadosManager.atualizarLucroEBancaViaAjax) {
+      if (
+        typeof DadosManager !== "undefined" &&
+        DadosManager.atualizarLucroEBancaViaAjax
+      ) {
         await DadosManager.atualizarLucroEBancaViaAjax();
       }
 
