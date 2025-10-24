@@ -15,6 +15,9 @@ if (!isset($_SESSION['usuario_id']) || empty($_SESSION['usuario_id'])) {
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Estrutura Responsiva</title>
+    <!-- ✅ Carregar CSS ANTES dos estilos inline -->
+    <link rel="stylesheet" href="css/menu-topo.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <style>
         * {
             margin: 0;
@@ -732,7 +735,6 @@ if (!isset($_SESSION['usuario_id']) || empty($_SESSION['usuario_id'])) {
           font-size: 14px;
         }
     </style>
-    <link rel="stylesheet" href="css/menu-topo.css">
 </head>
 <body>
     <header class="header">
@@ -1023,9 +1025,6 @@ if (!isset($_SESSION['usuario_id']) || empty($_SESSION['usuario_id'])) {
     
     <footer class="footer"></footer>
 
-    <!-- Script para carregar Font Awesome -->
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
-
     <!-- ✅ VERIFICAÇÃO DE AUTENTICAÇÃO PARA "GERENCIAR BANCA" -->
     <script>
         document.addEventListener('DOMContentLoaded', function() {
@@ -1310,6 +1309,17 @@ if (!isset($_SESSION['usuario_id']) || empty($_SESSION['usuario_id'])) {
 
     <!-- ✅ SCRIPT PARA CARREGAR DADOS DINÂMICOS -->
     <script>
+    // ✅ FUNÇÃO PARA OBTER ESTILO DE LUCRO
+    function obterEstiloLucro(lucro) {
+      if (lucro > 0) {
+        return { cor: '#9fe870', rotulo: 'Lucro Positivo' };
+      } else if (lucro < 0) {
+        return { cor: '#e57373', rotulo: 'Negativo' };
+      } else {
+        return { cor: '#cfd8dc', rotulo: 'Neutro' };
+      }
+    }
+
     // ✅ FUNÇÃO PARA CARREGAR DADOS DINÂMICOS
     function carregarDadosBancaELucro() {
       // Só carregar se o usuário estiver autenticado
@@ -1320,11 +1330,14 @@ if (!isset($_SESSION['usuario_id']) || empty($_SESSION['usuario_id'])) {
       fetch('dados_banca.php')
         .then(response => response.json())
         .then(data => {
+          console.log('✅ Dados recebidos:', data);
+          
           if (data.success) {
             // Atualizar Banca
             const valorBancaLabel = document.getElementById('valorTotalBancaLabel');
             if (valorBancaLabel) {
               valorBancaLabel.textContent = data.banca_formatada;
+              console.log('💰 Banca atualizada:', data.banca_formatada);
             }
 
             // Atualizar Lucro
@@ -1332,10 +1345,21 @@ if (!isset($_SESSION['usuario_id']) || empty($_SESSION['usuario_id'])) {
             if (lucroValorEntrada) {
               lucroValorEntrada.textContent = data.lucro_total_formatado || 'R$ 0,00';
               
-              // Atualizar classe de cor baseada no valor
+              // Atualizar valor numérico
               const lucroFloat = parseFloat(data.lucro_total || 0);
+              console.log('📊 Lucro valor:', lucroFloat);
+              
+              // Obter estilo de cor baseado no valor
+              const { cor } = obterEstiloLucro(lucroFloat);
+              
+              // Remover classes antigas
               lucroValorEntrada.classList.remove('saldo-positivo', 'saldo-negativo', 'saldo-neutro');
               
+              // Aplicar cor diretamente no elemento com !important para sobrescrever CSS
+              lucroValorEntrada.setAttribute('style', `color: ${cor} !important;`);
+              console.log('🎨 Cor aplicada ao valor:', cor);
+              
+              // Aplicar classe também (para compatibilidade)
               if (lucroFloat > 0) {
                 lucroValorEntrada.classList.add('saldo-positivo');
               } else if (lucroFloat < 0) {
@@ -1349,33 +1373,52 @@ if (!isset($_SESSION['usuario_id']) || empty($_SESSION['usuario_id'])) {
             }
           }
         })
-        .catch(error => console.error('Erro ao carregar dados:', error));
+        .catch(error => console.error('❌ Erro ao carregar dados:', error));
     }
 
     // ✅ FUNÇÃO PARA ATUALIZAR ÍCONE DINAMICAMENTE
     function atualizarIconeLucroDinamico(lucro) {
+      console.log('🔄 Atualizando ícone para lucro:', lucro);
+      
       const iconeLucro = document.getElementById('icone-lucro-dinamico');
-      if (!iconeLucro) return;
+      if (!iconeLucro) {
+        console.error('❌ Ícone não encontrado!');
+        return;
+      }
 
-      // Remover classes anteriores
+      console.log('✅ Ícone encontrado');
+
+      // Obter cor do estilo
+      const { cor } = obterEstiloLucro(lucro);
+
+      // Remover todas as classes de ícone
       iconeLucro.classList.remove('fa-arrow-trend-up', 'fa-arrow-trend-down', 'fa-minus');
-      iconeLucro.style.transform = 'none';
+      console.log('🧹 Classes antigas removidas');
 
       if (lucro > 0) {
+        console.log('⬆️ Adicionando fa-arrow-trend-up (verde)');
         iconeLucro.classList.add('fa-arrow-trend-up');
-        iconeLucro.style.color = '#9fe870';
+        iconeLucro.setAttribute('style', `color: ${cor} !important; transition: transform 0.3s ease, color 0.3s ease;`);
       } else if (lucro < 0) {
+        console.log('⬇️ Adicionando fa-arrow-trend-down (vermelho)');
         iconeLucro.classList.add('fa-arrow-trend-down');
-        iconeLucro.style.color = '#e57373';
+        iconeLucro.setAttribute('style', `color: ${cor} !important; transition: transform 0.3s ease, color 0.3s ease;`);
       } else {
+        console.log('➖ Adicionando fa-minus (cinza)');
         iconeLucro.classList.add('fa-minus');
-        iconeLucro.style.color = '#cfd8dc';
+        iconeLucro.setAttribute('style', `color: ${cor} !important; transition: transform 0.3s ease, color 0.3s ease;`);
       }
+      
+      console.log('🎨 Cor do ícone:', cor);
     }
 
     // ✅ Carregar ao abrir página
     window.addEventListener('load', function() {
-      carregarDadosBancaELucro();
+      // ✅ AGUARDAR 1 SEGUNDO para garantir que o CSS foi carregado
+      setTimeout(function() {
+        console.log('📡 Iniciando carregamento de dados...');
+        carregarDadosBancaELucro();
+      }, 1000);
       
       // ✅ ATUALIZAR A CADA 30 SEGUNDOS
       setInterval(carregarDadosBancaELucro, 30000);

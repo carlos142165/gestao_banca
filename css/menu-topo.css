@@ -174,14 +174,39 @@
 /* ===== CLASSES DE ESTADO ===== */
 .menu-topo-container .saldo-positivo {
   color: #9fe870 !important;
+  font-weight: bold;
+  transition: color 0.3s ease;
 }
 
 .menu-topo-container .saldo-negativo {
   color: #e57373 !important;
+  font-weight: bold;
+  transition: color 0.3s ease;
 }
 
 .menu-topo-container .saldo-neutro {
   color: #cfd8dc !important;
+  font-weight: bold;
+  transition: color 0.3s ease;
+}
+
+/* Classes de estado globais (fora do container também) */
+.saldo-positivo {
+  color: #9fe870 !important;
+  font-weight: bold;
+  transition: color 0.3s ease;
+}
+
+.saldo-negativo {
+  color: #e57373 !important;
+  font-weight: bold;
+  transition: color 0.3s ease;
+}
+
+.saldo-neutro {
+  color: #cfd8dc !important;
+  font-weight: bold;
+  transition: color 0.3s ease;
 }
 
 /* ===== POSICIONAMENTO RESPONSIVO ===== */
