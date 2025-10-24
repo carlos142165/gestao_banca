@@ -1058,7 +1058,20 @@ const DadosManager = {
 
   // Atualiza elementos relacionados ao lucro
   atualizarElementosLucro(data) {
-    const lucro = parseFloat(data.lucro) || 0;
+    // Garantir que o lucro seja um número válido
+    let lucro = 0;
+    
+    if (data.lucro !== undefined && data.lucro !== null && data.lucro !== '') {
+      lucro = parseFloat(data.lucro.toString().replace(/[^0-9.-]/g, ''));
+    }
+    
+    // Fallback se o parseFloat falhar
+    if (isNaN(lucro)) {
+      lucro = 0;
+    }
+    
+    console.log('Lucro atualizado:', lucro, 'data.lucro:', data.lucro);
+    
     const lucroFormatado = Utils.formatarBRL(lucro);
 
     const { cor, rotulo } = this.obterEstiloLucro(lucro);
@@ -1098,6 +1111,10 @@ const DadosManager = {
       lucroValorEntrada.textContent = lucroFormatado;
     }
 
+    // Atualiza o ícone dinamicamente baseado no lucro
+    console.log('Atualizando ícone com lucro:', lucro);
+    this.atualizarIconeLucro(lucro);
+
     if (lucroEntradasRotulo) {
       lucroEntradasRotulo.textContent = rotulo;
     }
@@ -1123,6 +1140,33 @@ const DadosManager = {
       return { cor: "#e92a15ff", rotulo: "Negativo" };
     } else {
       return { cor: "#7f8c8d", rotulo: "Neutro" };
+    }
+  },
+
+  // Atualiza o ícone de lucro dinamicamente
+  atualizarIconeLucro(lucro) {
+    const iconeLucro = document.getElementById("icone-lucro-dinamico");
+    if (!iconeLucro) return;
+
+    // Remove todas as classes de ícone anteriores
+    iconeLucro.classList.remove("fa-chart-line", "fa-arrow-trend-up", "fa-arrow-trend-down", "fa-minus");
+    iconeLucro.style.transform = "none";
+
+    if (lucro > 0) {
+      // Gráfico para cima (positivo)
+      iconeLucro.classList.add("fa-arrow-trend-up");
+      iconeLucro.style.color = "#10b981";
+      iconeLucro.style.transform = "none";
+    } else if (lucro < 0) {
+      // Gráfico para baixo (negativo)
+      iconeLucro.classList.add("fa-arrow-trend-down");
+      iconeLucro.style.color = "#ef4444";
+      iconeLucro.style.transform = "none";
+    } else {
+      // Linha neutra (zero)
+      iconeLucro.classList.add("fa-minus");
+      iconeLucro.style.color = "#7f8c8d";
+      iconeLucro.style.transform = "none";
     }
   },
 
@@ -1215,6 +1259,11 @@ const MentorManager = {
       // ✅ CORREÇÃO: Reaplica eventos e estilos após recarregar
       this.aplicarEstilosCorretos();
       this.atualizarDashboard(container);
+
+      // ✅ CORREÇÃO: Atualiza dados de lucro e banca via AJAX
+      if (typeof DadosManager !== "undefined" && DadosManager.atualizarLucroEBancaViaAjax) {
+        await DadosManager.atualizarLucroEBancaViaAjax();
+      }
 
       // ✅ CORREÇÃO: Restaura estado dos formulários se necessário
       if (formularioAberto && !telaEdicaoAberta) {
@@ -2979,6 +3028,9 @@ const MetaDiariaManager = {
           lucroEntradasRotulo.textContent = "Neutro:";
         }
       }
+
+      // Atualizar o ícone dinâmico do menu topo
+      DadosManager.atualizarIconeLucro(lucroValorTotal);
     } catch (error) {
       console.error("❌ Erro ao atualizar modal:", error);
     }

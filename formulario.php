@@ -1,6 +1,6 @@
 <?php
 
-     if (isset($_POST['submit'])) 
+     if (isset($_POST['submit']) || (isset($_POST['nome']) && isset($_POST['email']))) 
      
     {
         
@@ -20,10 +20,7 @@
         mysqli_stmt_store_result($checkEmail);
 
         if (mysqli_stmt_num_rows($checkEmail) > 0) {
-        echo "<script>
-        alert('Este e-mail já está cadastrado!');
-        window.location.href = 'formulario.php';
-        </script>";
+        echo "Este e-mail já está cadastrado!";
         exit;
        }
 
@@ -31,16 +28,9 @@
         mysqli_stmt_bind_param($stmt, "sssss", $nome, $email, $password, $Telefone, $sexo);
         mysqli_stmt_execute($stmt);
 
-
-        echo "<script>
-        alert('Cadastro efetuado com sucesso!');
-        window.location.href = 'login.php';
-        </script>";
+        echo "Cadastro efetuado com sucesso!";
         exit;
-
-
     }
-
 
 ?>
 

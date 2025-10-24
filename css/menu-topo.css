@@ -32,6 +32,7 @@
   background: none;
   color: #eff1f1;
   border: none;
+  outline: none;
   font-size: 25px;
   cursor: pointer;
   padding: 5px;
@@ -44,16 +45,22 @@
   color: #ffffff;
 }
 
+.menu-topo-container .menu-button:focus {
+  outline: none;
+  border: none;
+  box-shadow: none;
+}
+
 /* ===== MENU DROPDOWN ===== */
 .menu-topo-container #menu {
   display: none;
   position: absolute;
   top: 60px;
-  left: 20px;
+  left: 0px;
   background-color: #eff1f1;
   box-shadow: 0 8px 16px rgba(0, 0, 0, 0.2);
   z-index: 1000021; /* high z-index so dropdown is above other layered elements */
-  padding-left: -3px;
+  padding-left: 0px;
   width: 180px;
   border-radius: 8px;
   overflow: hidden;
@@ -359,8 +366,33 @@
 
 /* ===== ACESSIBILIDADE ===== */
 .menu-topo-container .menu-button:focus {
-  outline: 2px solid #ffffff;
-  outline-offset: 2px;
+  outline: none;
+  border: none;
+  box-shadow: none;
+}
+
+/* ===== ÍCONE DE LUCRO DINÂMICO ===== */
+#icone-lucro-dinamico {
+  transition: transform 0.3s ease, color 0.3s ease;
+  display: inline-block;
+}
+
+/* Quando lucro é positivo - seta para cima */
+#icone-lucro-dinamico.fa-arrow-trend-up {
+  color: #10b981;
+  transform: rotate(0deg);
+}
+
+/* Quando lucro é negativo - seta para baixo */
+#icone-lucro-dinamico.fa-arrow-trend-down {
+  color: #ef4444;
+  transform: rotate(0deg);
+}
+
+/* Quando lucro é neutro - linha */
+#icone-lucro-dinamico.fa-minus {
+  color: #7f8c8d;
+  transform: rotate(0deg);
 }
 
 .menu-topo-container .menu-content a:focus {

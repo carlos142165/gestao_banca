@@ -6,15 +6,17 @@ mysqli_report(MYSQLI_REPORT_ERROR | MYSQLI_REPORT_STRICT);
 
 // Verifica se o usuário está autenticado
 $id_usuario = $_SESSION['usuario_id'] ?? null;
+
+// ✅ Se não autenticado, não processa nenhuma query
 if (!$id_usuario) {
-  echo "<div class='mentor-card card-neutro'>Usuário não autenticado.</div>";
-  exit;
-}
+  // Apenas marca a sessão vazia, sem fazer exit
+  // O gestao-diaria.php renderizará o modal de login
+} else {
+  // Só processa dados se o usuário está autenticado
+  // Permite forçar atualização com ?atualizar=1
+  $forcar_atualizacao = isset($_GET['atualizar']) && $_GET['atualizar'] == 1;
 
-// Permite forçar atualização com ?atualizar=1
-$forcar_atualizacao = isset($_GET['atualizar']) && $_GET['atualizar'] == 1;
-
-if (!isset($_SESSION['saldo_banca']) || $forcar_atualizacao) {
+  if (!isset($_SESSION['saldo_banca']) || $forcar_atualizacao) {
   // Última diária
   $stmt = $conexao->prepare("
     SELECT diaria FROM controle
@@ -89,6 +91,7 @@ if (!isset($_SESSION['saldo_banca']) || $forcar_atualizacao) {
   $_SESSION['resultado_entrada']   = $resultado_entrada;
   $_SESSION['meta_meia_unidade']   = $meia_unidade;
   $_SESSION['porcentagem_entrada'] = $ultima_diaria;
+  }
 }
 ?>
 
