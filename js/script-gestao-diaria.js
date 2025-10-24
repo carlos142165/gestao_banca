@@ -1135,11 +1135,11 @@ const DadosManager = {
   // Obtém estilo baseado no valor do lucro
   obterEstiloLucro(lucro) {
     if (lucro > 0) {
-      return { cor: "#009e42ff", rotulo: "Lucro" };
+      return { cor: "#9fe870", rotulo: "Lucro" };
     } else if (lucro < 0) {
-      return { cor: "#e92a15ff", rotulo: "Negativo" };
+      return { cor: "#e57373", rotulo: "Negativo" };
     } else {
-      return { cor: "#7f8c8d", rotulo: "Neutro" };
+      return { cor: "#cfd8dc", rotulo: "Neutro" };
     }
   },
 

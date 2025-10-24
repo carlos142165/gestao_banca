@@ -377,21 +377,21 @@
   display: inline-block;
 }
 
-/* Quando lucro é positivo - seta para cima (verde) */
+/* Quando lucro é positivo - seta para cima (verde claro) */
 #icone-lucro-dinamico.fa-arrow-trend-up {
-  color: #009e42ff; /* Mesma cor do texto "Lucro" positivo */
+  color: #9fe870; /* Mesma cor do texto "Lucro" positivo */
   transform: rotate(0deg);
 }
 
 /* Quando lucro é negativo - seta para baixo (vermelho) */
 #icone-lucro-dinamico.fa-arrow-trend-down {
-  color: #e92a15ff; /* Mesma cor do texto "Negativo" */
+  color: #e57373; /* Mesma cor do texto "Negativo" */
   transform: rotate(0deg);
 }
 
 /* Quando lucro é neutro - linha (cinza) */
 #icone-lucro-dinamico.fa-minus {
-  color: #7f8c8d; /* Mesma cor do texto "Neutro" */
+  color: #cfd8dc; /* Mesma cor do texto "Neutro" */
   transform: rotate(0deg);
 }
 
