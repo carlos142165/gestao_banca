@@ -170,8 +170,9 @@ const PlanoManager = {
                         }</span>
                     </div>
                     <div class="plano-feature">
-                        <i class="fas fa-bot"></i>
+                        <i class="fas fa-robot"></i>
                         <span>Bot ao vivo</span>
+                        <span class="ao-vivo-icon"><i class="fas fa-circle"></i></span>
                     </div>
                 </div>
                 
