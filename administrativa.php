@@ -38,6 +38,16 @@ function obterEstatisticas() {
         'assinaturas_anuais' => 0,
         'assinaturas_mensais' => 0,
         'usuarios_ativos_24h' => 0,
+        'assinaturas_anuais_breakdown' => [
+            'prata' => 0,
+            'ouro' => 0,
+            'diamante' => 0
+        ],
+        'assinaturas_mensais_breakdown' => [
+            'prata' => 0,
+            'ouro' => 0,
+            'diamante' => 0
+        ],
     ];
     
     try {
@@ -86,6 +96,50 @@ function obterEstatisticas() {
             AND tipo_ciclo = 'anual'
         ");
         $stats['assinaturas_anuais'] = $result->fetch_assoc()['count'] ?? 0;
+        
+        // 📊 BREAKDOWN DE PLANOS POR CICLO - MENSAIS
+        $result = $conexao->query("
+            SELECT p.nome, COUNT(u.id) as count 
+            FROM usuarios u
+            JOIN planos p ON u.id_plano = p.id
+            WHERE u.data_fim_assinatura IS NOT NULL 
+            AND u.id_plano IS NOT NULL
+            AND u.tipo_ciclo = 'mensal'
+            GROUP BY u.id_plano
+        ");
+        
+        while ($row = $result->fetch_assoc()) {
+            $plano = strtolower($row['nome'] ?? '');
+            if (strpos($plano, 'prata') !== false) {
+                $stats['assinaturas_mensais_breakdown']['prata'] = $row['count'];
+            } elseif (strpos($plano, 'ouro') !== false) {
+                $stats['assinaturas_mensais_breakdown']['ouro'] = $row['count'];
+            } elseif (strpos($plano, 'diamante') !== false) {
+                $stats['assinaturas_mensais_breakdown']['diamante'] = $row['count'];
+            }
+        }
+        
+        // 📊 BREAKDOWN DE PLANOS POR CICLO - ANUAIS
+        $result = $conexao->query("
+            SELECT p.nome, COUNT(u.id) as count 
+            FROM usuarios u
+            JOIN planos p ON u.id_plano = p.id
+            WHERE u.data_fim_assinatura IS NOT NULL 
+            AND u.id_plano IS NOT NULL
+            AND u.tipo_ciclo = 'anual'
+            GROUP BY u.id_plano
+        ");
+        
+        while ($row = $result->fetch_assoc()) {
+            $plano = strtolower($row['nome'] ?? '');
+            if (strpos($plano, 'prata') !== false) {
+                $stats['assinaturas_anuais_breakdown']['prata'] = $row['count'];
+            } elseif (strpos($plano, 'ouro') !== false) {
+                $stats['assinaturas_anuais_breakdown']['ouro'] = $row['count'];
+            } elseif (strpos($plano, 'diamante') !== false) {
+                $stats['assinaturas_anuais_breakdown']['diamante'] = $row['count'];
+            }
+        }
         
         // Usuários ativos nas últimas 24h
         $result = $conexao->query("
@@ -315,6 +369,15 @@ $stats = obterEstatisticas();
         .card-stat-subtext {
             font-size: 12px;
             color: var(--cor-texto-claro);
+        }
+        
+        .card-stat-breakdown {
+            font-size: 10px;
+            color: var(--cor-texto-claro);
+            opacity: 0.85;
+            margin-top: 8px;
+            padding-top: 8px;
+            border-top: 1px solid rgba(255, 255, 255, 0.2);
         }
         
         /* ==================================================================================================================== */
@@ -984,6 +1047,13 @@ $stats = obterEstatisticas();
                 </div>
                 <div class="card-stat-valor"><?php echo $stats['assinaturas_anuais']; ?></div>
                 <div class="card-stat-subtext">Planos de 12 meses</div>
+                <div class="card-stat-breakdown">
+                    <small>
+                        OURO: <?php echo $stats['assinaturas_anuais_breakdown']['ouro']; ?> 
+                        / PRATA: <?php echo $stats['assinaturas_anuais_breakdown']['prata']; ?> 
+                        / DIAMANTE: <?php echo $stats['assinaturas_anuais_breakdown']['diamante']; ?>
+                    </small>
+                </div>
             </div>
         </div>
         
@@ -996,6 +1066,13 @@ $stats = obterEstatisticas();
                 </div>
                 <div class="card-stat-valor"><?php echo $stats['assinaturas_mensais']; ?></div>
                 <div class="card-stat-subtext">Planos de 1 mês</div>
+                <div class="card-stat-breakdown">
+                    <small>
+                        OURO: <?php echo $stats['assinaturas_mensais_breakdown']['ouro']; ?> 
+                        / PRATA: <?php echo $stats['assinaturas_mensais_breakdown']['prata']; ?> 
+                        / DIAMANTE: <?php echo $stats['assinaturas_mensais_breakdown']['diamante']; ?>
+                    </small>
+                </div>
             </div>
         </div>
         
