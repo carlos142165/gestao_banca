@@ -14,7 +14,7 @@ if (!isset($_SESSION['usuario_id']) || empty($_SESSION['usuario_id'])) {
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Estrutura Responsiva</title>
+    <title>Bot ao Vivo</title>
     <!-- ✅ Carregar CSS ANTES dos estilos inline -->
     <link rel="stylesheet" href="css/menu-topo.css">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
@@ -784,7 +784,7 @@ if (!isset($_SESSION['usuario_id']) || empty($_SESSION['usuario_id'])) {
                                     <!-- Lucro dos mentores -->
                                     <div class="valor-label-linha">
                                         <i class="fa-solid fa-arrow-trend-up valor-icone-tema" id="icone-lucro-dinamico"></i>
-                                        <span class="valor-label">Lucro:</span>
+                                        <span class="valor-label" id="rotulo-lucro-dinamico">CARREGANDO..:</span>
                                         <span class="valor-bold-menu" id="lucro_valor_entrada">R$ 0,00</span>
                                     </div>
                                 </div>
@@ -808,217 +808,97 @@ if (!isset($_SESSION['usuario_id']) || empty($_SESSION['usuario_id'])) {
     
     <main class="main-content">
         <div class="container">
+           
+<!-- -->
+<!-- -->
+<!-- -->
+<!-- -->
+<!-- -->
+<!-- -->
+<!-- -->
+<!-- -->
+<!-- -->
+<!-- -->
+<!-- -->
+<!-- -->
             
+            <!-- ==================================================================================================================== -->
+            <!-- ========================== BLOCO 1 - BLOCO 1 - BLOCO 1 - BLOCO 1 - BLOCO 1 ======================== -->
+            <!-- ==================================================================================================================== -->
             <!-- BLOCO 1 -->
             <div class="bloco bloco-1">
-                <div class="container-resumos">
-                    <!-- Widget Meta com seu código PHP integrado -->
-                    <div class="widget-meta-container">
-                        <div class="widget-meta-row">
-                            <div class="widget-meta-item" id="widget-meta">
-                                
-                                <!-- Header com data e placar integrados -->
-                              <div class="data-header-integrada" id="data-header">
-                                 <div class="data-texto-compacto">
-                                 <i class="fa-solid fa-calendar-days"></i>
-                                 <span class="data-principal-integrada" id="data-atual"></span>
-                              </div>
-                                    
-                                    <!-- Caixas de seleção de período -->
-                                    <div class="periodo-selecao-container">
-                                        <div class="periodo-opcao">
-                                            <label class="periodo-label">
-                                                <input type="radio" name="periodo" value="dia" class="periodo-radio" checked>
-                                                <span class="periodo-texto">DIA</span>
-                                            </label>
-                                        </div>
-                                        <div class="periodo-opcao">
-                                            <label class="periodo-label">
-                                                <input type="radio" name="periodo" value="mes" class="periodo-radio">
-                                                <span class="periodo-texto">MÊS</span>
-                                            </label>
-                                        </div>
-                                        <div class="periodo-opcao">
-                                            <label class="periodo-label">
-                                                <input type="radio" name="periodo" value="ano" class="periodo-radio">
-                                                <span class="periodo-texto">ANO</span>
-                                            </label>
-                                        </div>
-                                    </div>
-                                    
-                                    <!-- Espaço para equilíbrio -->
-                                    <div class="espaco-equilibrio"></div>
-                                    
-                                    <div class="data-separador-mini"></div>
-                                    
-                                    <div class="status-periodo-mini" id="status-periodo">
-                                        <!-- Status período será preenchido via JS -->
-                                    </div>
-                                </div>
 
-                        <!-- Conteúdo principal do widget -->
-                        <div class="widget-conteudo-principal">
-                          <div class="conteudo-left">
-                             <!-- Valor da Meta -->
-                        <div class="widget-meta-valor" id="meta-valor">
-                            <i class="fa-solid fa-coins"></i>
-                            <div class="meta-valor-container">
-                                <span class="valor-texto" id="valor-texto-meta">carregando..</span>
-                            </div>
-                        </div>
-                            
-                             <!-- Exibição do valor que ultrapassou a meta -->
-                             <div class="valor-ultrapassou" id="valor-ultrapassou" style="display: none;">
-                                <i class="fa-solid fa-trophy"></i>
-                                <span class="texto-ultrapassou">Lucro Extra: <span id="valor-extra">R$ 0,00</span></span>
-                             </div>
-                            
-                             <!-- RÓTULO -->
-                             <div class="widget-meta-rotulo" id="rotulo-meta">Meta do Dia</div>
-                            
-                             <!-- Container da Barra de Progresso -->
-                             <div class="widget-barra-container">
-                                <div class="widget-barra-progresso" id="barra-progresso"></div>
-                                <div class="porcentagem-barra" id="porcentagem-barra">0%</div>
-                             </div>
-                            
-                             <!-- Info de progresso com saldo -->
-                              <div class="widget-info-progresso">
-                              <span id="saldo-info" class="saldo-positivo">
-                             <i class="fa-solid fa-chart-line"></i>
-                             <span class="saldo-info-rotulo">Lucro:</span>
-                             <span class="saldo-info-valor">R$ 75,00</span>
-                             </span>
-                            </div>
-                            </div>
-                        </div>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-                        
-                        <!-- Campo Mentores -->
-                        <div class="campo_mentores">
-                            <!-- Barra superior -->
-                            <div class="barra-superior">
-                                <button class="btn-add-usuario" onclick="prepararFormularioNovoMentor()">
-                                    <i class="fas fa-user-plus"></i>
-                                </button>
-                                
-                                <div class="area-central">
-                                    <div class="pontuacao" id="pontuacao">
-                                        <span class="placar-green">0</span>
-                                        <span class="separador">x</span>
-                                        <span class="placar-red">0</span>
-                                    </div>
-                                </div>
-
-                                <div class="area-direita">
-                                    <div class="valor-dinamico valor-diaria">
-                                        <i class="fas fa-university"></i>
-                                        <span id="porcentagem-diaria">Carregando...</span>
-                                    </div>
-                                    <div class="valor-dinamico valor-unidade">
-                                        <span class="rotulo-und">UND:</span>
-                                        <span id="valor-unidade">Carregando...</span>
-                                    </div>
-                                </div>
-                            </div>
-
-                            <!-- Área dos mentores -->
-                            <div id="listaMentores" class="mentor-wrapper">
-                                <!-- Aqui será inserido o conteúdo PHP dos mentores -->
-                            </div>
-                        </div>
             </div>
+            
+            <!-- ==================================================================================================================== -->
+            <!-- ========================== BLOCO 1 - BLOCO 1 - BLOCO 1 - BLOCO 1 - BLOCO 1 ======================== -->
+            <!-- ==================================================================================================================== -->
+             <!-- -->
+<!-- -->
+<!-- -->
+<!-- -->
+<!-- -->
+<!-- -->
+<!-- -->
+<!-- -->
+<!-- -->
+<!-- -->
+<!-- -->
+<!-- -->
+<!-- -->
+            
+            <!-- ==================================================================================================================== -->
+            <!-- ========================== BLOCO 2 - BLOCO 2 - BLOCO 2 - BLOCO 2 - BLOCO 2 ======================== -->
+            <!-- ==================================================================================================================== -->
             
             <!-- BLOCO 2 -->
             <div class="bloco bloco-2">
-                <div class="resumo-mes">
-                    <!-- Cabeçalho fixo com metas mensais -->
-                    <div class="bloco-meta-simples fixo-topo">
-                      <div class="campo-armazena-data-placar">
-                       <!-- Título do mês atual -->
-                       <h2 class="titulo-bloco">
-                        <i class="fas fa-calendar-alt"></i> <span id="tituloMes"></span>
-                       </h2>
 
-                       <script>
-                        const meses = [
-                          "JANEIRO", "FEVEREIRO", "MARÇO", "ABRIL", "MAIO", "JUNHO",
-                          "JULHO", "AGOSTO", "SETEMBRO", "OUTUBRO", "NOVEMBRO", "DEZEMBRO"
-                        ];
-                        const hoje = new Date();
-                        const mesAtual = meses[hoje.getMonth()];
-                        const anoAtual = hoje.getFullYear();
-                        document.getElementById("tituloMes").textContent = `${mesAtual} ${anoAtual}`;
-                       </script>
-
-                        <div class="area-central-2">
-                            <div class="pontuacao-2" id="pontuacao-2">
-                                <span class="placar-green-2">0</span>
-                                <span class="separador-2">×</span>
-                                <span class="placar-red-2">0</span>
-                            </div>
-                        </div>          
-                       </div>
-
-                <!-- Conteúdo principal do widget 2 -->
-                <div class="widget-conteudo-principal-2">
-                  <div class="conteudo-left-2">
-                     <!-- Valor da Meta 2 -->
-                 <div class="widget-meta-valor-2" id="meta-valor-2">
-                    <i class="fa-solid-2 fa-coins-2"></i>
-                    <div class="meta-valor-container-2">
-                        <span class="valor-texto-2" id="valor-texto-meta-2">carregando..</span>
-                    </div>
-                 </div>
-                    
-                     <!-- Exibição do valor que ultrapassou a meta 2 -->
-                     <div class="valor-ultrapassou-2" id="valor-ultrapassou-2" style="display: none;">
-                        <i class="fa-solid-2 fa-trophy-2"></i>
-                        <span class="texto-ultrapassou-2">Lucro Extra: <span id="valor-extra-2">R$ 0,00</span></span>
-                     </div>
-                    
-                     <!-- RÓTULO 2 -->
-                     <div class="widget-meta-rotulo-2" id="rotulo-meta-2">Meta do Dia</div>
-                    
-                     <!-- Container da Barra de Progresso 2 -->
-                     <div class="widget-barra-container-2">
-                        <div class="widget-barra-progresso-2" id="barra-progresso-2"></div>
-                        <div class="porcentagem-barra-2" id="porcentagem-barra-2">0%</div>
-                     </div>
-                    
-                     <!-- Info de progresso com saldo 2 -->
-                      <div class="widget-info-progresso-2">
-                      <span id="saldo-info-2" class="saldo-positivo-2">
-                     <i class="fa-solid-2 fa-chart-line-2"></i>
-                     <span class="saldo-info-rotulo-2">Lucro:</span>
-                     <span class="saldo-info-valor-2">carregando..</span>
-                     </span>
-                    </div>
-                    </div>
-                </div>
-
-                    <!-- Lista de dias do mês -->
-                    <div class="lista-dias">
-                        <!-- Aqui será inserido o conteúdo PHP da lista de dias -->
-                        <div id="dados-mes-info" style="display: none;">
-                        </div>
-                    </div>
-                    </div>
-                </div>
                 
             </div>
             
+            <!-- ==================================================================================================================== -->
+            <!-- ========================== BLOCO 2 - BLOCO 2 - BLOCO 2 - BLOCO 2 - BLOCO 2 ======================== -->
+            <!-- ==================================================================================================================== -->
+            <!-- -->
+<!-- -->
+<!-- -->
+<!-- -->
+<!-- -->
+<!-- -->
+<!-- -->
+<!-- -->
+<!-- -->
+<!-- -->
+<!-- -->
+<!-- -->
+<!-- -->
+<!-- -->
+            <!-- ==================================================================================================================== -->
+            <!-- ========================== BLOCO 3 - BLOCO 3 - BLOCO 3 - BLOCO 3 - BLOCO 3 ======================== -->
+            <!-- ==================================================================================================================== -->
+            
             <!-- BLOCO 3 -->
             <div class="bloco bloco-3">
-                <h3>Bloco 3</h3>
-                <p>Este terceiro e último bloco completa a estrutura horizontal. Todos os blocos trabalham em conjunto para formar um layout coeso e funcional.</p>
-                <p>O design responsivo garante que a estrutura funcione perfeitamente em zoom de 90%, 100%, 125% e outras configurações, sempre mantendo todos os elementos visíveis na tela.</p>
-                <p>A altura fixa garante que mesmo com pouco conteúdo, o bloco ocupe todo o espaço vertical disponível.</p>
-                <p>Conteúdo adicional pode ser adicionado e será scrollável dentro do bloco, mantendo a estrutura geral intacta.</p>
+
             </div>
+            
+            <!-- ==================================================================================================================== -->
+            <!-- ========================== BLOCO 3 - BLOCO 3 - BLOCO 3 - BLOCO 3 - BLOCO 3 ======================== -->
+            <!-- ==================================================================================================================== -->
+             <!-- -->
+<!-- -->
+<!-- -->
+<!-- -->
+<!-- -->
+<!-- -->
+<!-- -->
+<!-- -->
+<!-- -->
+<!-- -->
+<!-- -->
+<!-- -->
+<!-- -->
             
         </div>
     </main>
@@ -1307,19 +1187,13 @@ if (!isset($_SESSION['usuario_id']) || empty($_SESSION['usuario_id'])) {
         }
     </script>
 
-    <!-- ✅ SCRIPT PARA CARREGAR DADOS DINÂMICOS -->
-    <script>
-    // ✅ FUNÇÃO PARA OBTER ESTILO DE LUCRO
-    function obterEstiloLucro(lucro) {
-      if (lucro > 0) {
-        return { cor: '#9fe870', rotulo: 'Lucro Positivo' };
-      } else if (lucro < 0) {
-        return { cor: '#e57373', rotulo: 'Negativo' };
-      } else {
-        return { cor: '#cfd8dc', rotulo: 'Neutro' };
-      }
-    }
+    <?php endif; ?>
 
+    <!-- ✅ Script para atualizar rótulo dinâmico do lucro - FORA DO ENDIF PARA FUNCIONAR COM USUÁRIOS AUTENTICADOS -->
+    <script src="js/rotulo-lucro-dinamico.js" defer></script>
+
+    <!-- ✅ SCRIPT PARA CARREGAR DADOS DINÂMICOS - CLONE DE HOME.PHP -->
+    <script>
     // ✅ FUNÇÃO PARA CARREGAR DADOS DINÂMICOS
     function carregarDadosBancaELucro() {
       // Só carregar se o usuário estiver autenticado
@@ -1333,83 +1207,75 @@ if (!isset($_SESSION['usuario_id']) || empty($_SESSION['usuario_id'])) {
           console.log('✅ Dados recebidos:', data);
           
           if (data.success) {
-            // Atualizar Banca
+            // ========== ATUALIZAR BANCA ==========
             const valorBancaLabel = document.getElementById('valorTotalBancaLabel');
             if (valorBancaLabel) {
-              valorBancaLabel.textContent = data.banca_formatada;
+              valorBancaLabel.textContent = data.banca_formatada || 'R$ 0,00';
               console.log('💰 Banca atualizada:', data.banca_formatada);
             }
 
-            // Atualizar Lucro
+            // ========== ATUALIZAR LUCRO E ÍCONE ==========
             const lucroValorEntrada = document.getElementById('lucro_valor_entrada');
-            if (lucroValorEntrada) {
-              lucroValorEntrada.textContent = data.lucro_total_formatado || 'R$ 0,00';
+            const iconeLucro = document.getElementById('icone-lucro-dinamico');
+            
+            if (lucroValorEntrada && iconeLucro) {
+              // Obter valor formatado e bruto
+              const lucroFormatado = data.lucro_total_formatado || 'R$ 0,00';
+              const lucroBruto = parseFloat(data.lucro_total_historico || 0);
               
-              // Atualizar valor numérico
-              const lucroFloat = parseFloat(data.lucro_total || 0);
-              console.log('📊 Lucro valor:', lucroFloat);
+              // Atualizar texto
+              lucroValorEntrada.textContent = lucroFormatado;
+              console.log('� Lucro atualizado:', lucroFormatado);
+              console.log('📊 Lucro bruto para cálculo:', lucroBruto);
               
-              // Obter estilo de cor baseado no valor
-              const { cor } = obterEstiloLucro(lucroFloat);
-              
-              // Remover classes antigas
+              // ========== REMOVER CLASSES ANTIGAS ==========
               lucroValorEntrada.classList.remove('saldo-positivo', 'saldo-negativo', 'saldo-neutro');
+              iconeLucro.classList.remove('fa-arrow-trend-up', 'fa-arrow-trend-down', 'fa-minus');
               
-              // Aplicar cor diretamente no elemento com !important para sobrescrever CSS
-              lucroValorEntrada.setAttribute('style', `color: ${cor} !important;`);
-              console.log('🎨 Cor aplicada ao valor:', cor);
-              
-              // Aplicar classe também (para compatibilidade)
-              if (lucroFloat > 0) {
+              // ========== APLICAR ESTILO BASEADO NO VALOR ==========
+              if (lucroBruto > 0) {
+                // POSITIVO
                 lucroValorEntrada.classList.add('saldo-positivo');
-              } else if (lucroFloat < 0) {
+                iconeLucro.classList.add('fa-arrow-trend-up');
+                iconeLucro.style.color = '#9fe870';
+                console.log('✅ Lucro POSITIVO - Verde (#9fe870)');
+                
+                // Animação sutil
+                iconeLucro.style.transform = 'translateY(-2px)';
+                setTimeout(() => { iconeLucro.style.transform = 'translateY(0)'; }, 300);
+                
+              } else if (lucroBruto < 0) {
+                // NEGATIVO
                 lucroValorEntrada.classList.add('saldo-negativo');
+                iconeLucro.classList.add('fa-arrow-trend-down');
+                iconeLucro.style.color = '#e57373';
+                console.log('✅ Lucro NEGATIVO - Vermelho (#e57373)');
+                
+                // Animação sutil
+                iconeLucro.style.transform = 'translateY(2px)';
+                setTimeout(() => { iconeLucro.style.transform = 'translateY(0)'; }, 300);
+                
               } else {
+                // NEUTRO (ZERO)
                 lucroValorEntrada.classList.add('saldo-neutro');
+                iconeLucro.classList.add('fa-minus');
+                iconeLucro.style.color = '#cfd8dc';
+                console.log('✅ Lucro NEUTRO - Cinza (#cfd8dc)');
+                iconeLucro.style.transform = 'translateY(0)';
               }
-
-              // Atualizar ícone dinamicamente
-              atualizarIconeLucroDinamico(lucroFloat);
+              
+              // ========== ATUALIZAR RÓTULO DINÂMICO ==========
+              // Chamar o sistema de rótulo dinâmico se disponível
+              if (typeof RotuloLucroDinamico !== 'undefined' && RotuloLucroDinamico.atualizarRotuloDinamico) {
+                RotuloLucroDinamico.atualizarRotuloDinamico(lucroBruto);
+                console.log('🏷️ Rótulo dinâmico atualizado');
+              }
+            } else {
+              console.error('❌ Elementos não encontrados!');
             }
           }
         })
         .catch(error => console.error('❌ Erro ao carregar dados:', error));
-    }
-
-    // ✅ FUNÇÃO PARA ATUALIZAR ÍCONE DINAMICAMENTE
-    function atualizarIconeLucroDinamico(lucro) {
-      console.log('🔄 Atualizando ícone para lucro:', lucro);
-      
-      const iconeLucro = document.getElementById('icone-lucro-dinamico');
-      if (!iconeLucro) {
-        console.error('❌ Ícone não encontrado!');
-        return;
-      }
-
-      console.log('✅ Ícone encontrado');
-
-      // Obter cor do estilo
-      const { cor } = obterEstiloLucro(lucro);
-
-      // Remover todas as classes de ícone
-      iconeLucro.classList.remove('fa-arrow-trend-up', 'fa-arrow-trend-down', 'fa-minus');
-      console.log('🧹 Classes antigas removidas');
-
-      if (lucro > 0) {
-        console.log('⬆️ Adicionando fa-arrow-trend-up (verde)');
-        iconeLucro.classList.add('fa-arrow-trend-up');
-        iconeLucro.setAttribute('style', `color: ${cor} !important; transition: transform 0.3s ease, color 0.3s ease;`);
-      } else if (lucro < 0) {
-        console.log('⬇️ Adicionando fa-arrow-trend-down (vermelho)');
-        iconeLucro.classList.add('fa-arrow-trend-down');
-        iconeLucro.setAttribute('style', `color: ${cor} !important; transition: transform 0.3s ease, color 0.3s ease;`);
-      } else {
-        console.log('➖ Adicionando fa-minus (cinza)');
-        iconeLucro.classList.add('fa-minus');
-        iconeLucro.setAttribute('style', `color: ${cor} !important; transition: transform 0.3s ease, color 0.3s ease;`);
-      }
-      
-      console.log('🎨 Cor do ícone:', cor);
     }
 
     // ✅ Carregar ao abrir página
@@ -1419,11 +1285,10 @@ if (!isset($_SESSION['usuario_id']) || empty($_SESSION['usuario_id'])) {
         console.log('📡 Iniciando carregamento de dados...');
         carregarDadosBancaELucro();
       }, 1000);
-      
-      // ✅ ATUALIZAR A CADA 30 SEGUNDOS
-      setInterval(carregarDadosBancaELucro, 30000);
     });
+
+    // ✅ ATUALIZAR A CADA 30 SEGUNDOS
+    setInterval(carregarDadosBancaELucro, 30000);
     </script>
-    <?php endif; ?>
 </body>
 </html>

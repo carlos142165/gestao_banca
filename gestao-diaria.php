@@ -543,7 +543,7 @@ ob_end_flush();
 <head>
 <meta charset="UTF-8" />
 <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-<title>Gestão do Dia</title>
+<title>Gestão de Banca</title>
 <!-- -->
 <!-- -->
 <!-- -->
@@ -640,6 +640,7 @@ ob_end_flush();
 <script src="js/exclusao-manager-fix.js" defer></script>
 <script src="js/ano.js" defer></script>
 <script src="js/teste-modal-celebracao.js" defer></script>
+<script src="js/rotulo-lucro-dinamico.js" defer></script>
 <?php endif; ?>
 <!-- -->
 <!-- -->
@@ -695,6 +696,13 @@ ob_end_flush();
             <i class="fas fa-robot menu-icon"></i><span>Bot ao Vivo</span><span class="ao-vivo-icon"><i class="fas fa-circle"></i></span>
           </a>
 
+          <!-- DEBUG: ID ATUAL = <?php echo $_SESSION['usuario_id'] ?? 'NÃO DEFINIDO'; ?> -->
+          <?php if (isset($_SESSION['usuario_id']) && $_SESSION['usuario_id'] === 23): ?>
+            <a href="administrativa.php" style="background-color: #fff3cd !important;">
+              <i class="fas fa-chart-line menu-icon"></i><span>📊 Área Administrativa</span>
+            </a>
+          <?php endif; ?>
+
           <?php if (isset($_SESSION['usuario_id'])): ?>
             <a href="conta.php" id="abrirMinhaContaModal">
               <i class="fas fa-user-circle menu-icon"></i><span>Minha Conta</span>
@@ -732,7 +740,7 @@ ob_end_flush();
               <!-- Lucro dos mentores -->
               <div class="valor-label-linha">
                 <i class="fa-solid fa-arrow-trend-up valor-icone-tema" id="icone-lucro-dinamico"></i>
-                <span class="valor-label">Lucro:</span>
+                <span class="valor-label" id="rotulo-lucro-dinamico">CARREGANDO..:</span>
                 <span class="valor-bold-menu" id="lucro_valor_entrada">R$ 0,00</span>
               </div>
             </div>

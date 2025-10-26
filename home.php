@@ -9,6 +9,7 @@ session_start();
     <title>Home</title>
     <!-- ✅ Carregar menu-topo.css ANTES dos estilos inline -->
     <link rel="stylesheet" href="css/menu-topo.css">
+    <link rel="stylesheet" href="css/home-propaganda.css">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <style>
         * {
@@ -33,18 +34,13 @@ session_start();
         }
 
         .footer {
-            background-color: #113647;
-            height: 80px;
-            width: 100%;
-            position: fixed;
-            bottom: 0;
-            z-index: 1000;
+            display: none;
         }
 
         .main-content {
             position: fixed;
             top: 80px;
-            bottom: 80px;
+            bottom: 0;
             left: 0;
             right: 0;
             padding: 20px;
@@ -55,13 +51,37 @@ session_start();
 
         .container {
             width: 100%;
-            max-width: 1320px;
             height: 100%;
             background-color: #f5f5f5;
             border-radius: 8px;
             padding: 20px;
             box-shadow: 0 2px 4px rgba(0,0,0,0.1);
             overflow-y: auto;
+        }
+
+        /* Barra de rolagem - fina e oculta por padrão */
+        .container::-webkit-scrollbar {
+            width: 6px;
+            opacity: 0;
+            transition: opacity 0.3s ease;
+        }
+
+        .container::-webkit-scrollbar-track {
+            background: transparent;
+        }
+
+        .container::-webkit-scrollbar-thumb {
+            background: rgba(30, 150, 200, 0.5);
+            border-radius: 3px;
+            transition: background 0.3s ease;
+        }
+
+        .container::-webkit-scrollbar-thumb:hover {
+            background: rgba(30, 150, 200, 0.8);
+        }
+
+        .container:hover::-webkit-scrollbar {
+            opacity: 1;
         }
 
         /* ===== ÍCONE AO VIVO PISCANDO ===== */
@@ -781,6 +801,47 @@ session_start();
           transform: translateY(-1px);
         }
 
+        /* ===== ESTILOS DINÂMICOS PARA LUCRO ===== */
+        .saldo-positivo {
+          color: #9fe870 !important;
+          font-weight: 600;
+        }
+
+        .saldo-negativo {
+          color: #e57373 !important;
+          font-weight: 600;
+        }
+
+        .saldo-neutro {
+          color: #cfd8dc !important;
+          font-weight: 600;
+        }
+
+        #icone-lucro-dinamico {
+          transition: color 0.3s ease, transform 0.3s ease;
+          font-size: 12px !important;
+          display: inline-block;
+          margin-right: 4px;
+        }
+
+        /* Quando lucro é positivo - seta para cima (verde claro) */
+        #icone-lucro-dinamico.fa-arrow-trend-up {
+          color: #9fe870 !important;
+          transform: rotate(0deg);
+        }
+
+        /* Quando lucro é negativo - seta para baixo (vermelho) */
+        #icone-lucro-dinamico.fa-arrow-trend-down {
+          color: #e57373 !important;
+          transform: rotate(0deg);
+        }
+
+        /* Quando lucro é neutro - sinal de menos (cinza) */
+        #icone-lucro-dinamico.fa-minus {
+          color: #cfd8dc !important;
+          transform: rotate(0deg);
+        }
+
         @media (max-width: 768px) {
           .modal-content-registro,
           .modal-content-login {
@@ -801,6 +862,7 @@ session_start();
             gap: 12px;
           }
         }
+    
     </style>
 </head>
 <body>
@@ -851,7 +913,7 @@ session_start();
                                     <!-- Lucro dos mentores -->
                                     <div class="valor-label-linha">
                                         <i class="fa-solid fa-arrow-trend-up valor-icone-tema" id="icone-lucro-dinamico"></i>
-                                        <span class="valor-label">Lucro:</span>
+                                        <span class="valor-label" id="rotulo-lucro-dinamico">CARREGANDO..:</span>
                                         <span class="valor-bold-menu" id="lucro_valor_entrada">R$ 0,00</span>
                                     </div>
                                 </div>
@@ -875,11 +937,375 @@ session_start();
     
     <main class="main-content">
         <div class="container">
-            <!-- CONTEÚDO VAZIO - A ADICIONAR -->
+            <!-- ==== SEÇÃO HERO ==== -->
+            <section class="hero-section">
+                <div class="hero-content">
+                    <h1 class="hero-title">
+                        <span class="title-icon">💰</span>
+                        Gestão de Banca Inteligente
+                    </h1>
+                    <p class="hero-subtitle">Controle total do seu negócio com análise em tempo real</p>
+                    <p class="hero-description">
+                        Acompanhe suas entradas, saques, mentores e lucros com uma interface intuitiva e poderosa
+                    </p>
+                    <?php if (isset($_SESSION['usuario_id']) && !empty($_SESSION['usuario_id'])): ?>
+                        <a href="gestao-diaria.php" class="btn btn-primary btn-lg">
+                            <i class="fas fa-chart-line"></i> Acessar Painel
+                        </a>
+                    <?php else: ?>
+                        <button onclick="abrirModalLogin()" class="btn btn-primary btn-lg">
+                            <i class="fas fa-sign-in-alt"></i> Entrar Agora
+                        </button>
+                    <?php endif; ?>
+                </div>
+                <div class="hero-visual">
+                    <!-- FUNDO DECORATIVO ROXO/PRETO -->
+                    <div class="background-glow"></div>
+                    
+                    <div class="phone-mockup">
+                        <div class="phone-screen">
+                            <!-- CARROSSEL DE IMAGENS -->
+                            <div class="carousel-container">
+                                <!-- SLIDE 1: TELA DIA -->
+                                <div class="screen-slide slide-1 active">
+                                    <div class="screen-image">
+                                        <svg viewBox="0 0 280 560" class="screen-svg">
+                                            <!-- Header -->
+                                            <rect width="280" height="60" fill="#e8f5e9"/>
+                                            <text x="15" y="25" font-size="12" font-weight="bold" fill="#2e7d32">Sábado - 25/10</text>
+                                            
+                                            <!-- Tabs -->
+                                            <rect x="160" y="12" width="100" height="36" fill="#4CAF50" rx="8"/>
+                                            <text x="210" y="35" font-size="11" font-weight="bold" fill="white" text-anchor="middle">DIA</text>
+                                            
+                                            <!-- Saldo Box -->
+                                            <rect x="15" y="75" width="250" height="50" fill="#4CAF50" rx="8"/>
+                                            <text x="25" y="95" font-size="14" font-weight="bold" fill="white">💰 R$ 20,00</text>
+                                            <text x="25" y="115" font-size="10" fill="rgba(255,255,255,0.9)">Restando p/ Meta do Dia</text>
+                                            
+                                            <!-- Progress Bar -->
+                                            <rect x="15" y="135" width="250" height="20" fill="rgba(0,0,0,0.1)" rx="4"/>
+                                            <text x="255" y="150" font-size="10" font-weight="bold" fill="#1a1a1a" text-anchor="end">-100%</text>
+                                            
+                                            <!-- Negativo -->
+                                            <rect x="15" y="165" width="250" height="40" fill="rgba(244,67,54,0.1)" rx="8"/>
+                                            <rect x="15" y="165" width="4" height="40" fill="#f44336" rx="2"/>
+                                            <text x="25" y="185" font-size="11" font-weight="bold" fill="#f44336">📉 Negativo: -R$10,00</text>
+                                            
+                                            <!-- Mentor Card -->
+                                            <rect x="15" y="215" width="250" height="50" fill="rgba(102,126,234,0.1)" stroke="#667eea" stroke-width="1.5" rx="8"/>
+                                            <circle cx="35" cy="235" r="15" fill="#f44336"/>
+                                            <text x="35" y="242" font-size="12" font-weight="bold" fill="white" text-anchor="middle">1ª</text>
+                                            <text x="60" y="238" font-size="11" font-weight="bold" fill="#1a1a1a">Mika</text>
+                                            <text x="150" y="238" font-size="10" fill="#667eea">0 × 1</text>
+                                            <text x="240" y="238" font-size="11" font-weight="bold" fill="#f44336" text-anchor="end">R$ -10,00</text>
+                                        </svg>
+                                    </div>
+                                </div>
+
+                                <!-- SLIDE 2: TELA MÊS -->
+                                <div class="screen-slide slide-2">
+                                    <div class="screen-image">
+                                        <svg viewBox="0 0 280 560" class="screen-svg">
+                                            <!-- Header -->
+                                            <rect width="280" height="60" fill="#fff3e0"/>
+                                            <text x="15" y="25" font-size="12" font-weight="bold" fill="#e65100">📅 Outubro 2025</text>
+                                            <text x="270" y="25" font-size="11" font-weight="bold" fill="#e65100" text-anchor="end">DIAS 7</text>
+                                            
+                                            <!-- Tabs -->
+                                            <rect x="160" y="12" width="100" height="36" fill="#ff9800" rx="8"/>
+                                            <text x="210" y="35" font-size="11" font-weight="bold" fill="white" text-anchor="middle">MÊS</text>
+                                            
+                                            <!-- Saldo Box -->
+                                            <rect x="15" y="75" width="250" height="50" fill="#ff9800" rx="8"/>
+                                            <text x="25" y="95" font-size="14" font-weight="bold" fill="white">💰 R$ 147,90</text>
+                                            <text x="25" y="115" font-size="10" fill="rgba(255,255,255,0.9)">Restando p/ Meta do Mês</text>
+                                            
+                                            <!-- Progress Bar -->
+                                            <rect x="15" y="135" width="250" height="20" fill="rgba(0,0,0,0.1)" rx="4"/>
+                                            <rect x="15" y="135" width="45" height="20" fill="#ff9800" rx="4"/>
+                                            <text x="165" y="150" font-size="10" font-weight="bold" fill="#1a1a1a">18%</text>
+                                            
+                                            <!-- Lucro -->
+                                            <rect x="15" y="165" width="250" height="35" fill="#c8e6c9" rx="8"/>
+                                            <text x="25" y="185" font-size="11" font-weight="bold" fill="#2e7d32">📈 Lucro Mês: R$ 32,10</text>
+                                            
+                                            <!-- Entries -->
+                                            <rect x="15" y="210" width="250" height="15" fill="rgba(0,0,0,0.05)" rx="4"/>
+                                            <text x="22" y="220" font-size="8" fill="#666">14/10 · 1×0 · R$ 5,00 ✓</text>
+                                            
+                                            <rect x="15" y="230" width="250" height="15" fill="rgba(0,0,0,0.05)" rx="4"/>
+                                            <text x="22" y="240" font-size="8" fill="#666">16/10 · 1×0 · R$ 10,00 🏆</text>
+                                            
+                                            <rect x="15" y="250" width="250" height="15" fill="rgba(76,175,80,0.15)" rx="4"/>
+                                            <rect x="15" y="250" width="3" height="15" fill="#4CAF50"/>
+                                            <text x="22" y="260" font-size="8" fill="#2e7d32" font-weight="bold">25/10 · 0×1 · -R$10,00 ✓</text>
+                                        </svg>
+                                    </div>
+                                </div>
+
+                                <!-- SLIDE 3: TELA ANO -->
+                                <div class="screen-slide slide-3">
+                                    <div class="screen-image">
+                                        <svg viewBox="0 0 280 560" class="screen-svg">
+                                            <!-- Header -->
+                                            <rect width="280" height="60" fill="#f3e5f5"/>
+                                            <text x="15" y="25" font-size="12" font-weight="bold" fill="#6a1b9a">📆 2025</text>
+                                            <text x="270" y="25" font-size="11" font-weight="bold" fill="#6a1b9a" text-anchor="end">DIAS 68</text>
+                                            
+                                            <!-- Tabs -->
+                                            <rect x="160" y="12" width="100" height="36" fill="#9c27b0" rx="8"/>
+                                            <text x="210" y="35" font-size="11" font-weight="bold" fill="white" text-anchor="middle">ANO</text>
+                                            
+                                            <!-- Saldo Box -->
+                                            <rect x="15" y="75" width="250" height="50" fill="#9c27b0" rx="8"/>
+                                            <text x="25" y="95" font-size="14" font-weight="bold" fill="white">💰 R$ 757,90</text>
+                                            <text x="25" y="115" font-size="10" fill="rgba(255,255,255,0.9)">Restando p/ Meta do Ano</text>
+                                            
+                                            <!-- Progress Bar -->
+                                            <rect x="15" y="135" width="250" height="20" fill="rgba(0,0,0,0.1)" rx="4"/>
+                                            <rect x="15" y="135" width="10" height="20" fill="#9c27b0" rx="4"/>
+                                            <text x="165" y="150" font-size="10" font-weight="bold" fill="#1a1a1a">4%</text>
+                                            
+                                            <!-- Lucro -->
+                                            <rect x="15" y="165" width="250" height="35" fill="#c8e6c9" rx="8"/>
+                                            <text x="25" y="185" font-size="11" font-weight="bold" fill="#2e7d32">📈 Lucro Ano: R$ 32,10</text>
+                                            
+                                            <!-- Chart Grid (Meses) -->
+                                            <g id="chart">
+                                                <!-- Jan -->
+                                                <rect x="20" y="230" width="12" height="5" fill="rgba(102,126,234,0.3)" rx="1"/>
+                                                <!-- Fev -->
+                                                <rect x="36" y="230" width="12" height="5" fill="rgba(102,126,234,0.3)" rx="1"/>
+                                                <!-- Mar -->
+                                                <rect x="52" y="230" width="12" height="5" fill="rgba(102,126,234,0.3)" rx="1"/>
+                                                <!-- Abr -->
+                                                <rect x="68" y="230" width="12" height="5" fill="rgba(102,126,234,0.3)" rx="1"/>
+                                                <!-- Mai -->
+                                                <rect x="84" y="230" width="12" height="5" fill="rgba(102,126,234,0.3)" rx="1"/>
+                                                <!-- Jun -->
+                                                <rect x="100" y="230" width="12" height="5" fill="rgba(102,126,234,0.3)" rx="1"/>
+                                                <!-- Jul -->
+                                                <rect x="116" y="230" width="12" height="5" fill="rgba(102,126,234,0.3)" rx="1"/>
+                                                <!-- Ago -->
+                                                <rect x="132" y="230" width="12" height="5" fill="rgba(102,126,234,0.3)" rx="1"/>
+                                                <!-- Set -->
+                                                <rect x="148" y="230" width="12" height="5" fill="rgba(102,126,234,0.3)" rx="1"/>
+                                                <!-- Out (ATUAL) -->
+                                                <rect x="164" y="210" width="12" height="25" fill="#4CAF50" rx="2"/>
+                                                <text x="170" y="242" font-size="7" fill="#333" text-anchor="middle">OUT</text>
+                                                <!-- Nov -->
+                                                <rect x="180" y="230" width="12" height="5" fill="rgba(102,126,234,0.3)" rx="1"/>
+                                                <!-- Dez -->
+                                                <rect x="196" y="230" width="12" height="5" fill="rgba(102,126,234,0.3)" rx="1"/>
+                                            </g>
+                                        </svg>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <!-- INDICADORES DE SLIDE -->
+                            <div class="carousel-dots">
+                                <span class="dot active" onclick="goToSlide(0)"></span>
+                                <span class="dot" onclick="goToSlide(1)"></span>
+                                <span class="dot" onclick="goToSlide(2)"></span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- ==== SEÇÃO FUNCIONALIDADES ==== -->
+            <section class="funcionalidades-section">
+                <h2 class="section-title">✨ Tudo que Você Precisa</h2>
+                
+                <div class="funcionalidades-grid">
+                    <!-- Funcionalidade 1 -->
+                    <div class="feature-card">
+                        <div class="feature-icon">
+                            <i class="fas fa-chart-pie"></i>
+                        </div>
+                        <h3 class="feature-title">Gestão de Entradas</h3>
+                        <p class="feature-description">
+                            Registre todas as suas entradas com data, valor e categoria. Acompanhe o histórico completo e organize por período.
+                        </p>
+                        <div class="feature-preview">
+                            <span class="tag">📅 Data</span>
+                            <span class="tag">💵 Valor</span>
+                            <span class="tag">📊 Categoria</span>
+                        </div>
+                    </div>
+
+                    <!-- Funcionalidade 2 -->
+                    <div class="feature-card">
+                        <div class="feature-icon">
+                            <i class="fas fa-users"></i>
+                        </div>
+                        <h3 class="feature-title">Gestão de Mentores</h3>
+                        <p class="feature-description">
+                            Cadastre, edite e gerencie múltiplos mentores. Acompanhe o saldo individual de cada um e seus resultados.
+                        </p>
+                        <div class="feature-preview">
+                            <span class="tag">👤 Nome</span>
+                            <span class="tag">💰 Saldo</span>
+                            <span class="tag">📈 Resultados</span>
+                        </div>
+                    </div>
+
+                    <!-- Funcionalidade 3 -->
+                    <div class="feature-card">
+                        <div class="feature-icon">
+                            <i class="fas fa-arrow-down"></i>
+                        </div>
+                        <h3 class="feature-title">Controle de Saques</h3>
+                        <p class="feature-description">
+                            Registre e controle todos os saques realizados. Mantenha o histórico e valide o saldo disponível.
+                        </p>
+                        <div class="feature-preview">
+                            <span class="tag">💳 Valor</span>
+                            <span class="tag">📆 Data</span>
+                            <span class="tag">✅ Status</span>
+                        </div>
+                    </div>
+
+                    <!-- Funcionalidade 4 -->
+                    <div class="feature-card">
+                        <div class="feature-icon">
+                            <i class="fas fa-chart-line"></i>
+                        </div>
+                        <h3 class="feature-title">Dashboard em Tempo Real</h3>
+                        <p class="feature-description">
+                            Visualize seus dados com gráficos interativos. Acompanhe ganhos e perdas por período com atualização instantânea.
+                        </p>
+                        <div class="feature-preview">
+                            <span class="tag">📊 Gráficos</span>
+                            <span class="tag">⏱️ Real-time</span>
+                            <span class="tag">📈 Análise</span>
+                        </div>
+                    </div>
+
+                    <!-- Funcionalidade 5 -->
+                    <div class="feature-card">
+                        <div class="feature-icon">
+                            <i class="fas fa-target"></i>
+                        </div>
+                        <h3 class="feature-title">Metas e Placar</h3>
+                        <p class="feature-description">
+                            Defina metas diárias, mensais e anuais. Acompanhe o progresso com placar visual e celebrações de conquistas.
+                        </p>
+                        <div class="feature-preview">
+                            <span class="tag">🎯 Metas</span>
+                            <span class="tag">🏆 Placar</span>
+                            <span class="tag">📊 Progresso</span>
+                        </div>
+                    </div>
+
+                    <!-- Funcionalidade 6 -->
+                    <div class="feature-card">
+                        <div class="feature-icon">
+                            <i class="fas fa-calendar-alt"></i>
+                        </div>
+                        <h3 class="feature-title">Análise Anual Completa</h3>
+                        <p class="feature-description">
+                            Visualize todos os 12 meses do ano com comparativos de lucros e perdas. Identifique tendências e padrões.
+                        </p>
+                        <div class="feature-preview">
+                            <span class="tag">📅 12 Meses</span>
+                            <span class="tag">📈 Comparativo</span>
+                            <span class="tag">📊 Tendências</span>
+                        </div>
+                    </div>
+
+                    <!-- Funcionalidade 7 -->
+                    <div class="feature-card">
+                        <div class="feature-icon">
+                            <i class="fas fa-wallet"></i>
+                        </div>
+                        <h3 class="feature-title">Saldo em Tempo Real</h3>
+                        <p class="feature-description">
+                            Acompanhe o saldo total da banca, saldo dos mentores e diferença diária com precisão de centavos.
+                        </p>
+                        <div class="feature-preview">
+                            <span class="tag">💰 Saldo</span>
+                            <span class="tag">🔄 Atualizado</span>
+                            <span class="tag">💵 Precisão</span>
+                        </div>
+                    </div>
+
+                    <!-- Funcionalidade 8 -->
+                    <div class="feature-card">
+                        <div class="feature-icon">
+                            <i class="fas fa-mobile-alt"></i>
+                        </div>
+                        <h3 class="feature-title">Totalmente Responsivo</h3>
+                        <p class="feature-description">
+                            Acesse de qualquer dispositivo. Interface adaptável para celular, tablet e desktop com sincronização em nuvem.
+                        </p>
+                        <div class="feature-preview">
+                            <span class="tag">📱 Mobile</span>
+                            <span class="tag">💻 Desktop</span>
+                            <span class="tag">☁️ Nuvem</span>
+                        </div>
+                    </div>
+
+                    <!-- Funcionalidade 9 -->
+                    <div class="feature-card">
+                        <div class="feature-icon">
+                            <i class="fas fa-shield-alt"></i>
+                        </div>
+                        <h3 class="feature-title">Segurança Total</h3>
+                        <p class="feature-description">
+                            Seus dados são protegidos com criptografia. Autenticação segura e backups automáticos garantem a proteção.
+                        </p>
+                        <div class="feature-preview">
+                            <span class="tag">🔒 Criptografia</span>
+                            <span class="tag">🔐 Autenticação</span>
+                            <span class="tag">💾 Backup</span>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- ==== SEÇÃO STATS ==== -->
+            <section class="stats-section">
+                <div class="stats-grid">
+                    <div class="stat-box">
+                        <div class="stat-number">1000+</div>
+                        <div class="stat-text">Usuários Ativos</div>
+                    </div>
+                    <div class="stat-box">
+                        <div class="stat-number">R$ 50M+</div>
+                        <div class="stat-text">Gerenciados</div>
+                    </div>
+                    <div class="stat-box">
+                        <div class="stat-number">99.9%</div>
+                        <div class="stat-text">Disponibilidade</div>
+                    </div>
+                    <div class="stat-box">
+                        <div class="stat-number">24/7</div>
+                        <div class="stat-text">Suporte Online</div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- ==== SEÇÃO CTA ==== -->
+            <section class="cta-section">
+                <div class="cta-content">
+                    <h2 class="cta-title">Pronto para Controlar sua Banca?</h2>
+                    <p class="cta-description">Comece agora e veja a diferença em seus resultados</p>
+                    <?php if (isset($_SESSION['usuario_id']) && !empty($_SESSION['usuario_id'])): ?>
+                        <a href="gestao-diaria.php" class="btn btn-lg btn-gradient">
+                            <i class="fas fa-rocket"></i> Acessar Painel Agora
+                        </a>
+                    <?php else: ?>
+                        <button onclick="abrirModalRegistro()" class="btn btn-lg btn-gradient">
+                            <i class="fas fa-user-plus"></i> Criar Conta Grátis
+                        </button>
+                    <?php endif; ?>
+                </div>
+            </section>
         </div>
     </main>
-    
-    <footer class="footer"></footer>
 
     <!-- MODAL DE REGISTRO -->
     <div id="modalRegistro" class="modal-registro">
@@ -1276,17 +1702,6 @@ session_start();
       }, 1000);
     });
 
-    // ✅ FUNÇÃO PARA OBTER ESTILO DE LUCRO
-    function obterEstiloLucro(lucro) {
-      if (lucro > 0) {
-        return { cor: '#9fe870', rotulo: 'Lucro Positivo' };
-      } else if (lucro < 0) {
-        return { cor: '#e57373', rotulo: 'Negativo' };
-      } else {
-        return { cor: '#cfd8dc', rotulo: 'Neutro' };
-      }
-    }
-
     // ✅ FUNÇÃO PARA CARREGAR DADOS DINÂMICOS
     function carregarDadosBancaELucro() {
       // Só carregar se o usuário estiver autenticado
@@ -1300,87 +1715,137 @@ session_start();
           console.log('✅ Dados recebidos:', data);
           
           if (data.success) {
-            // Atualizar Banca
+            // ========== ATUALIZAR BANCA ==========
             const valorBancaLabel = document.getElementById('valorTotalBancaLabel');
             if (valorBancaLabel) {
-              valorBancaLabel.textContent = data.banca_formatada;
+              valorBancaLabel.textContent = data.banca_formatada || 'R$ 0,00';
               console.log('💰 Banca atualizada:', data.banca_formatada);
             }
 
-            // Atualizar Lucro
+            // ========== ATUALIZAR LUCRO E ÍCONE ==========
             const lucroValorEntrada = document.getElementById('lucro_valor_entrada');
-            if (lucroValorEntrada) {
-              lucroValorEntrada.textContent = data.lucro_total_formatado || 'R$ 0,00';
+            const iconeLucro = document.getElementById('icone-lucro-dinamico');
+            
+            if (lucroValorEntrada && iconeLucro) {
+              // Obter valor formatado e bruto
+              const lucroFormatado = data.lucro_total_formatado || 'R$ 0,00';
+              const lucroBruto = parseFloat(data.lucro_total_historico || 0);
               
-              // Atualizar valor numérico
-              const lucroFloat = parseFloat(data.lucro_total || 0);
-              console.log('📊 Lucro valor:', lucroFloat);
+              // Atualizar texto
+              lucroValorEntrada.textContent = lucroFormatado;
+              console.log('💵 Lucro atualizado:', lucroFormatado);
+              console.log('📊 Lucro bruto para cálculo:', lucroBruto);
               
-              // Remover classes antigas
+              // ========== REMOVER CLASSES ANTIGAS ==========
               lucroValorEntrada.classList.remove('saldo-positivo', 'saldo-negativo', 'saldo-neutro');
+              iconeLucro.classList.remove('fa-arrow-trend-up', 'fa-arrow-trend-down', 'fa-minus');
               
-              // Aplicar classe baseada no valor (será estilizada pelo CSS)
-              if (lucroFloat > 0) {
+              // ========== APLICAR ESTILO BASEADO NO VALOR ==========
+              if (lucroBruto > 0) {
+                // POSITIVO
                 lucroValorEntrada.classList.add('saldo-positivo');
-                console.log('✅ Classe saldo-positivo aplicada');
-              } else if (lucroFloat < 0) {
+                iconeLucro.classList.add('fa-arrow-trend-up');
+                iconeLucro.style.color = '#9fe870';
+                console.log('✅ Lucro POSITIVO - Verde (#9fe870)');
+                
+                // Animação sutil
+                iconeLucro.style.transform = 'translateY(-2px)';
+                setTimeout(() => { iconeLucro.style.transform = 'translateY(0)'; }, 300);
+                
+              } else if (lucroBruto < 0) {
+                // NEGATIVO
                 lucroValorEntrada.classList.add('saldo-negativo');
-                console.log('✅ Classe saldo-negativo aplicada');
+                iconeLucro.classList.add('fa-arrow-trend-down');
+                iconeLucro.style.color = '#e57373';
+                console.log('✅ Lucro NEGATIVO - Vermelho (#e57373)');
+                
+                // Animação sutil
+                iconeLucro.style.transform = 'translateY(2px)';
+                setTimeout(() => { iconeLucro.style.transform = 'translateY(0)'; }, 300);
+                
               } else {
+                // NEUTRO (ZERO)
                 lucroValorEntrada.classList.add('saldo-neutro');
-                console.log('✅ Classe saldo-neutro aplicada');
+                iconeLucro.classList.add('fa-minus');
+                iconeLucro.style.color = '#cfd8dc';
+                console.log('✅ Lucro NEUTRO - Cinza (#cfd8dc)');
+                iconeLucro.style.transform = 'translateY(0)';
               }
-
-              // Atualizar ícone dinamicamente
-              atualizarIconeLucroDinamico(lucroFloat);
+            } else {
+              console.error('❌ Elementos não encontrados!');
             }
           }
         })
         .catch(error => console.error('❌ Erro ao carregar dados:', error));
     }
 
-    // ✅ FUNÇÃO PARA ATUALIZAR ÍCONE DINAMICAMENTE
-    function atualizarIconeLucroDinamico(lucro) {
-      console.log('🔄 Atualizando ícone para lucro:', lucro);
-      
-      const iconeLucro = document.getElementById('icone-lucro-dinamico');
-      
-      if (!iconeLucro) {
-        console.error('❌ Ícone não encontrado!');
-        return;
-      }
-
-      console.log('✅ Ícone encontrado');
-
-      // Obter cor do estilo
-      const { cor } = obterEstiloLucro(lucro);
-
-      // Remover todas as classes de ícone
-      iconeLucro.classList.remove('fa-arrow-trend-up', 'fa-arrow-trend-down', 'fa-minus');
-      console.log('🧹 Classes antigas removidas');
-
-      if (lucro > 0) {
-        console.log('⬆️ Adicionando fa-arrow-trend-up (verde)');
-        iconeLucro.classList.add('fa-arrow-trend-up');
-        iconeLucro.style.color = cor;
-        iconeLucro.style.transition = 'transform 0.3s ease, color 0.3s ease';
-      } else if (lucro < 0) {
-        console.log('⬇️ Adicionando fa-arrow-trend-down (vermelho)');
-        iconeLucro.classList.add('fa-arrow-trend-down');
-        iconeLucro.style.color = cor;
-        iconeLucro.style.transition = 'transform 0.3s ease, color 0.3s ease';
-      } else {
-        console.log('➖ Adicionando fa-minus (cinza)');
-        iconeLucro.classList.add('fa-minus');
-        iconeLucro.style.color = cor;
-        iconeLucro.style.transition = 'transform 0.3s ease, color 0.3s ease';
-      }
-      
-      console.log('🎨 Cor do ícone:', cor);
-    }
-
     // ✅ ATUALIZAR A CADA 30 SEGUNDOS
     setInterval(carregarDadosBancaELucro, 30000);
     </script>
+
+    <!-- Script para atualizar rótulo dinâmico do lucro -->
+    <script src="js/rotulo-lucro-dinamico.js" defer></script>
+
+    <!-- Script do carrossel do mockup -->
+    <script>
+    let currentSlide = 0;
+    const totalSlides = 3;
+    let autoSlideInterval;
+
+    function goToSlide(index) {
+        currentSlide = index;
+        updateCarousel();
+        resetAutoSlide();
+    }
+
+    function nextSlide() {
+        currentSlide = (currentSlide + 1) % totalSlides;
+        updateCarousel();
+    }
+
+    function updateCarousel() {
+        // Atualizar slides
+        document.querySelectorAll('.screen-slide').forEach((slide, index) => {
+            slide.classList.remove('active');
+            if (index === currentSlide) {
+                slide.classList.add('active');
+            }
+        });
+
+        // Atualizar dots
+        document.querySelectorAll('.carousel-dots .dot').forEach((dot, index) => {
+            dot.classList.remove('active');
+            if (index === currentSlide) {
+                dot.classList.add('active');
+            }
+        });
+    }
+
+    function resetAutoSlide() {
+        clearInterval(autoSlideInterval);
+        startAutoSlide();
+    }
+
+    function startAutoSlide() {
+        autoSlideInterval = setInterval(nextSlide, 5000);
+    }
+
+    // Iniciar carrossel automático quando a página carregar
+    document.addEventListener('DOMContentLoaded', function() {
+        startAutoSlide();
+    });
+
+    // Pausar ao passar o mouse
+    const phoneContainer = document.querySelector('.hero-visual');
+    if (phoneContainer) {
+        phoneContainer.addEventListener('mouseenter', function() {
+            clearInterval(autoSlideInterval);
+        });
+        phoneContainer.addEventListener('mouseleave', function() {
+            startAutoSlide();
+        });
+    }
+    </script>
 </body>
 </html>
+

@@ -3,11 +3,32 @@
  * VERIFICAR LIMITE - verificar-limite.php
  * =======================================
  * Verifica se o usuário pode cadastrar mais mentores ou entradas
+ * 
+ * ⚠️ IMPORTANTE: Desabilita limitações se o usuário é admin
  */
 
 require_once 'config.php';
 require_once 'carregar_sessao.php';
 require_once 'config_mercadopago.php';
+
+// ==================================================================================================================== 
+// ========================== CONFIGURAÇÃO DE ADMINS ==========================
+// ==================================================================================================================== 
+// ⭐ LISTA DE IDs COM ACESSO ILIMITADO (PODE ADICIONAR QUANTOS QUISER)
+// 
+// Adicione os IDs dos usuários que terão acesso total ao site
+// Exemplo: define('ADMIN_USER_IDS', [23, 15, 8, 45]);
+// 
+// Se quiser apenas um admin: define('ADMIN_USER_IDS', [23]);
+// 
+// ⚠️ IMPORTANTE: A ORDEM NÃO IMPORTA, APENAS ADICIONE OS IDs NO ARRAY
+
+define('ADMIN_USER_IDS', [
+    23,    // 👈 usuario : CARLOS
+    42,  // 👈 usuario : ALANNES
+    // 8,   // 👈 Descomente para adicionar outro usuário com acesso ilimitado
+    // 45,  // 👈 Adicione quantos IDs quiser neste formato
+]);
 
 header('Content-Type: application/json');
 
@@ -19,6 +40,22 @@ if (!$id_usuario) {
         'success' => false,
         'pode_prosseguir' => false,
         'mensagem' => 'Você precisa estar logado'
+    ]);
+    exit;
+}
+
+// ==================================================================================================================== 
+// ========================== VERIFICAR SE É ADMIN ==========================
+// ==================================================================================================================== 
+// Se o usuário está na lista de admins (IDs ilimitados), permitir TUDO sem restrições
+if (in_array($id_usuario, ADMIN_USER_IDS)) {
+    echo json_encode([
+        'success' => true,
+        'pode_prosseguir' => true,
+        'plano_atual' => 'ADMIN - Ilimitado',
+        'mensagem' => '',
+        'admin_mode' => true,
+        'user_id' => $id_usuario
     ]);
     exit;
 }

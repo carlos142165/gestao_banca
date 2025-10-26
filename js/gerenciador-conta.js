@@ -327,6 +327,7 @@ class GerenciadorContaPagina {
 
       const formData = new FormData();
       formData.append("acao", "excluir_conta");
+      formData.append("confirmacao", "SIM");
 
       const resposta = await fetch("minha-conta.php", {
         method: "POST",
