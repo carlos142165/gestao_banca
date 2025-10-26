@@ -119,12 +119,10 @@ const PlanoManager = {
       );
 
       const preco = this.periodoAtual === "ano" ? precoAno : precoMes;
-      
-      // Calcular economia anual
+
+      // Calcular economia anual (valor total economizado em 12 meses)
       const economiaAnual = (precoMes * 12 - precoAno).toFixed(2);
-      // Calcular economia mensal (economia anual dividida por 12)
-      const economiaMensal = (economiaAnual / 12).toFixed(2);
-      
+
       const card = document.createElement("div");
       card.className = `plano-card ${plano.id === 3 ? "popular" : ""}`;
       card.style.setProperty("--cor-plano", this.obterCorPlano(plano.nome));
@@ -148,7 +146,7 @@ const PlanoManager = {
                   economiaAnual > 0 && this.periodoAtual === "ano"
                     ? `
                     <div style="color: #27ae60; font-size: 12px; font-weight: 600; margin-bottom: 10px;">
-                        💰 Economize R$ ${economiaMensal.replace(".", ",")}
+                        💰 Economize R$ ${economiaAnual.replace(".", ",")}
                     </div>
                 `
                     : ""
