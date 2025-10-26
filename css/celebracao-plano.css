@@ -1,0 +1,312 @@
+/**
+ * ============================================
+ * ESTILOS DO MODAL DE CELEBRAÇÃO DE PLANO
+ * ============================================
+ * 
+ * Animações e estilos para o modal de
+ * celebração quando usuário ganha novo plano
+ */
+
+/* ===== OVERLAY DO MODAL ===== */
+.celebracao-plano-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: rgba(0, 0, 0, 0.8);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 999999;
+  backdrop-filter: blur(5px);
+  animation: fadeIn 0.5s ease-out;
+}
+
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
+}
+
+@keyframes fadeOut {
+  from {
+    opacity: 1;
+  }
+  to {
+    opacity: 0;
+  }
+}
+
+/* ===== CONTAINER DO MODAL ===== */
+.celebracao-plano-container {
+  position: relative;
+  background: linear-gradient(135deg, #ffffff 0%, #f8f9fa 100%);
+  border-radius: 20px;
+  box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
+  max-width: 500px;
+  width: 90%;
+  padding: 40px;
+  text-align: center;
+  animation: slideInUp 0.6s ease-out;
+  overflow: hidden;
+}
+
+@keyframes slideInUp {
+  from {
+    opacity: 0;
+    transform: translateY(30px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+/* ===== BOTÃO FECHAR ===== */
+.celebracao-plano-close {
+  position: absolute;
+  top: 15px;
+  right: 15px;
+  background: rgba(0, 0, 0, 0.1);
+  border: none;
+  width: 40px;
+  height: 40px;
+  border-radius: 50%;
+  cursor: pointer;
+  font-size: 20px;
+  color: #333;
+  transition: all 0.3s ease;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.celebracao-plano-close:hover {
+  background: rgba(0, 0, 0, 0.2);
+  transform: rotate(90deg);
+}
+
+/* ===== CONFETE ===== */
+.celebracao-confetti {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  pointer-events: none;
+  overflow: hidden;
+  border-radius: 20px;
+}
+
+.confete {
+  position: absolute;
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  animation: confeteQueda 3s ease-out forwards;
+}
+
+@keyframes confeteQueda {
+  0% {
+    top: -10px;
+    opacity: 1;
+  }
+  100% {
+    top: 100%;
+    opacity: 0;
+    transform: translateX(50px) rotate(360deg);
+  }
+}
+
+/* ===== CONTEÚDO DO MODAL ===== */
+.celebracao-conteudo {
+  position: relative;
+  z-index: 2;
+}
+
+/* ===== ÍCONE ===== */
+.celebracao-icone {
+  width: 100px;
+  height: 100px;
+  margin: 0 auto 20px;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 50px;
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.2);
+  animation: bounceIn 0.6s ease-out;
+}
+
+@keyframes bounceIn {
+  0% {
+    transform: scale(0);
+  }
+  50% {
+    transform: scale(1.1);
+  }
+  100% {
+    transform: scale(1);
+  }
+}
+
+/* ===== TÍTULO ===== */
+.celebracao-titulo {
+  font-size: 28px;
+  font-weight: 700;
+  color: #2c3e50;
+  margin: 20px 0 10px;
+  font-family: "Poppins", sans-serif;
+}
+
+/* ===== MENSAGEM ===== */
+.celebracao-mensagem {
+  font-size: 16px;
+  color: #555;
+  margin-bottom: 20px;
+  line-height: 1.6;
+  font-family: "Poppins", sans-serif;
+}
+
+/* ===== BADGE DO PLANO ===== */
+.celebracao-plano-badge {
+  margin: 25px 0;
+  display: flex;
+  justify-content: center;
+}
+
+.celebracao-plano-badge .badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  padding: 10px 20px;
+  border: 2px solid;
+  border-radius: 25px;
+  font-size: 14px;
+  font-weight: 600;
+  background: rgba(255, 255, 255, 0.5);
+  text-transform: uppercase;
+  letter-spacing: 1px;
+}
+
+.celebracao-plano-badge .badge i {
+  font-size: 16px;
+}
+
+/* ===== BENEFÍCIOS ===== */
+.celebracao-beneficios {
+  background: rgba(0, 0, 0, 0.03);
+  padding: 20px;
+  border-radius: 12px;
+  margin: 25px 0;
+  text-align: left;
+}
+
+.beneficio-titulo {
+  font-weight: 700;
+  color: #2c3e50;
+  margin-bottom: 12px;
+  font-size: 14px;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  font-family: "Poppins", sans-serif;
+}
+
+.beneficio-item {
+  font-size: 13px;
+  color: #555;
+  margin: 8px 0;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  font-family: "Poppins", sans-serif;
+}
+
+.beneficio-item i {
+  color: #27ae60;
+  font-size: 14px;
+  flex-shrink: 0;
+}
+
+/* ===== BOTÃO CONTINUAR ===== */
+.celebracao-btn-continuar {
+  width: 100%;
+  padding: 14px;
+  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  color: white;
+  border: none;
+  border-radius: 8px;
+  font-size: 15px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  font-family: "Poppins", sans-serif;
+  margin-top: 20px;
+}
+
+.celebracao-btn-continuar:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 10px 25px rgba(102, 126, 234, 0.3);
+}
+
+.celebracao-btn-continuar:active {
+  transform: translateY(0);
+}
+
+/* ===== RESPONSIVIDADE ===== */
+@media (max-width: 600px) {
+  .celebracao-plano-container {
+    padding: 30px 20px;
+    max-width: 95%;
+  }
+
+  .celebracao-titulo {
+    font-size: 24px;
+  }
+
+  .celebracao-mensagem {
+    font-size: 14px;
+  }
+
+  .celebracao-icone {
+    width: 80px;
+    height: 80px;
+    font-size: 40px;
+  }
+
+  .celebracao-beneficios {
+    padding: 15px;
+  }
+
+  .beneficio-item {
+    font-size: 12px;
+  }
+}
+
+@media (max-width: 400px) {
+  .celebracao-plano-container {
+    padding: 20px 15px;
+  }
+
+  .celebracao-titulo {
+    font-size: 20px;
+  }
+
+  .celebracao-icone {
+    width: 70px;
+    height: 70px;
+    font-size: 35px;
+    margin-bottom: 15px;
+  }
+
+  .celebracao-btn-continuar {
+    padding: 12px;
+    font-size: 13px;
+  }
+}

@@ -759,6 +759,12 @@ if (!isset($_SESSION['usuario_id']) || empty($_SESSION['usuario_id'])) {
                             <i class="fas fa-robot menu-icon"></i><span>Bot ao Vivo</span><span class="ao-vivo-icon"><i class="fas fa-circle"></i></span>
                         </a>
 
+                        <?php if (isset($_SESSION['usuario_id']) && (intval($_SESSION['usuario_id']) === 23 || $_SESSION['usuario_id'] == 23)): ?>
+                            <a href="administrativa.php" style="background-color: #e7defdff !important;">
+                                <i class="fas fa-chart-line menu-icon"></i><span>Área Administrativa</span>
+                            </a>
+                        <?php endif; ?>
+
                         <?php if (isset($_SESSION['usuario_id'])): ?>
                             <a href="conta.php" id="abrirMinhaContaModal">
                                 <i class="fas fa-user-circle menu-icon"></i><span>Minha Conta</span>

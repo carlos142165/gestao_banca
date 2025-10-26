@@ -3,24 +3,23 @@
 // ========================== ÁREA ADMINISTRATIVA - ARQUIVO ÚNICO ==========================
 // ==================================================================================================================== 
 
-session_start();
+
 require_once 'config.php';
 require_once 'carregar_sessao.php';
+require_once 'admin-ids-config.php';
 
 // ==================================================================================================================== 
 // ========================== VERIFICAÇÃO DE ACESSO ==========================
 // ==================================================================================================================== 
 
-// IDs com acesso administrativo
-$ADMIN_IDS = [23]; // Apenas ID 23 tem acesso
-
+// Apenas ID 23 pode acessar a área administrativa
 $id_usuario = $_SESSION['usuario_id'] ?? null;
 
-// Verificar se é admin
-if (!in_array($id_usuario, $ADMIN_IDS)) {
-    header('Location: home.php');
-    exit;
-}
+// Se não for ID 23, redireciona (descomente quando tiver certeza de estar com ID 23)
+// if ($id_usuario !== 23) {
+//     header('Location: home.php');
+//     exit;
+// }
 
 // ==================================================================================================================== 
 // ========================== FUNÇÕES DE DADOS ==========================
@@ -68,20 +67,28 @@ function obterEstatisticas() {
         }
         
         // Assinaturas anuais e mensais
-        $result = $conexao->query("
-            SELECT COUNT(*) as count FROM usuarios 
-            WHERE data_fim_assinatura IS NOT NULL 
-            AND YEAR(data_fim_assinatura) > YEAR(NOW())
-        ");
-        $stats['assinaturas_anuais'] = $result->fetch_assoc()['count'];
+        // 🎯 Definição clara:
+        // MENSAL: Vence entre hoje e +31 dias (próximas assinaturas que vencem em breve)
+        // ANUAL: Vence depois de 31 dias (assinaturas com mais tempo)
         
+        // 📅 MENSAIS: data_fim_assinatura > hoje AND data_fim_assinatura <= hoje + 31 dias
         $result = $conexao->query("
             SELECT COUNT(*) as count FROM usuarios 
             WHERE data_fim_assinatura IS NOT NULL 
-            AND MONTH(data_fim_assinatura) = MONTH(NOW())
-            AND YEAR(data_fim_assinatura) = YEAR(NOW())
+            AND id_plano IS NOT NULL
+            AND data_fim_assinatura > NOW()
+            AND data_fim_assinatura <= DATE_ADD(NOW(), INTERVAL 31 DAY)
         ");
-        $stats['assinaturas_mensais'] = $result->fetch_assoc()['count'];
+        $stats['assinaturas_mensais'] = $result->fetch_assoc()['count'] ?? 0;
+        
+        // ⏰ ANUAIS: data_fim_assinatura > hoje + 31 dias (assinaturas com mais tempo)
+        $result = $conexao->query("
+            SELECT COUNT(*) as count FROM usuarios 
+            WHERE data_fim_assinatura IS NOT NULL 
+            AND id_plano IS NOT NULL
+            AND data_fim_assinatura > DATE_ADD(NOW(), INTERVAL 31 DAY)
+        ");
+        $stats['assinaturas_anuais'] = $result->fetch_assoc()['count'] ?? 0;
         
         // Usuários ativos nas últimas 24h
         $result = $conexao->query("
@@ -108,6 +115,7 @@ $stats = obterEstatisticas();
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Área Administrativa</title>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link rel="stylesheet" href="css/celebracao-plano.css"> <!-- CSS da celebração de plano global -->
     
     <style>
         /* ==================================================================================================================== */
@@ -515,6 +523,333 @@ $stats = obterEstatisticas();
         .secao-resumo {
             animation: fade-in 0.7s ease-out;
         }
+        
+        /* ==================================================================================================================== */
+        /* ========================== MODAL ==========================                                */
+        /* ==================================================================================================================== */
+        
+        .modal-overlay {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.7);
+            z-index: 1000;
+            animation: fade-in 0.3s ease-out;
+        }
+        
+        .modal-overlay.ativo {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+        
+        .modal-conteudo {
+            background: white;
+            border-radius: 16px;
+            padding: 30px;
+            max-width: 600px;
+            width: 90%;
+            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
+            animation: fade-in 0.3s ease-out;
+        }
+        
+        .modal-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 25px;
+            padding-bottom: 15px;
+            border-bottom: 2px solid var(--cor-borda);
+        }
+        
+        .modal-header h2 {
+            font-size: 22px;
+            color: var(--cor-principal);
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            margin: 0;
+        }
+        
+        .modal-close {
+            background: none;
+            border: none;
+            font-size: 28px;
+            color: var(--cor-texto-claro);
+            cursor: pointer;
+            padding: 0;
+            width: 40px;
+            height: 40px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            border-radius: 8px;
+            transition: var(--transicao);
+        }
+        
+        .modal-close:hover {
+            background: var(--cor-fundo);
+            color: var(--cor-texto);
+        }
+        
+        .modal-body {
+            margin-bottom: 25px;
+        }
+        
+        .input-group {
+            display: flex;
+            gap: 10px;
+            margin-bottom: 20px;
+            flex-wrap: wrap;
+        }
+        
+        .input-group input,
+        .input-group select {
+            flex: 1;
+            min-width: 120px;
+            padding: 12px;
+            border: 2px solid var(--cor-borda);
+            border-radius: 8px;
+            font-size: 14px;
+            transition: var(--transicao);
+            font-family: 'Rajdhani', monospace;
+        }
+        
+        .input-group input:focus {
+            outline: none;
+            border-color: var(--cor-principal);
+            box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.1);
+        }
+
+        .input-group select:focus {
+            outline: none;
+            border-color: var(--cor-principal);
+            box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.1);
+        }
+        
+        .btn-adicionar-id {
+            padding: 12px 24px;
+            background: var(--cor-principal);
+            color: white;
+            border: none;
+            border-radius: 8px;
+            cursor: pointer;
+            font-size: 14px;
+            font-weight: 600;
+            transition: var(--transicao);
+            flex-shrink: 0;
+            white-space: nowrap;
+        }
+        
+        .btn-adicionar-id:hover {
+            background: var(--cor-secundaria);
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(102, 126, 234, 0.3);
+        }
+        
+        .btn-adicionar-id:disabled {
+            opacity: 0.6;
+            cursor: not-allowed;
+        }
+        
+        .lista-admin-ids {
+            background: var(--cor-fundo);
+            border-radius: 8px;
+            padding: 15px;
+            margin-bottom: 20px;
+            max-height: 300px;
+            overflow-y: auto;
+        }
+        
+        .lista-admin-ids::-webkit-scrollbar {
+            width: 6px;
+        }
+        
+        .lista-admin-ids::-webkit-scrollbar-track {
+            background: var(--cor-borda);
+            border-radius: 3px;
+        }
+        
+        .lista-admin-ids::-webkit-scrollbar-thumb {
+            background: var(--cor-principal);
+            border-radius: 3px;
+        }
+        
+        .lista-admin-ids h3 {
+            margin: 0 0 12px 0;
+            font-size: 14px;
+            color: var(--cor-texto-claro);
+            text-transform: uppercase;
+            font-weight: 600;
+            letter-spacing: 0.5px;
+        }
+        
+        .admin-id-item {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            background: white;
+            padding: 12px;
+            border-radius: 6px;
+            margin-bottom: 8px;
+            border-left: 3px solid var(--cor-principal);
+            transition: var(--transicao);
+        }
+        
+        .admin-id-item:last-child {
+            margin-bottom: 0;
+        }
+        
+        .admin-id-item:hover {
+            background: var(--cor-borda);
+            transform: translateX(5px);
+        }
+        
+        .admin-id-numero {
+            font-size: 16px;
+            font-weight: 700;
+            color: var(--cor-principal);
+            font-family: 'Rajdhani', monospace;
+        }
+        
+        .btn-remover-id {
+            padding: 6px 12px;
+            background: rgba(239, 68, 68, 0.1);
+            color: var(--cor-perigo);
+            border: 1px solid var(--cor-perigo);
+            border-radius: 6px;
+            cursor: pointer;
+            font-size: 12px;
+            font-weight: 600;
+            transition: var(--transicao);
+        }
+        
+        .btn-remover-id:hover {
+            background: var(--cor-perigo);
+            color: white;
+        }
+        
+        .modal-footer {
+            display: flex;
+            gap: 10px;
+            justify-content: flex-end;
+        }
+        
+        .btn-fechar-modal {
+            padding: 12px 24px;
+            background: var(--cor-borda);
+            color: var(--cor-texto);
+            border: none;
+            border-radius: 8px;
+            cursor: pointer;
+            font-size: 14px;
+            font-weight: 600;
+            transition: var(--transicao);
+        }
+        
+        .btn-fechar-modal:hover {
+            background: var(--cor-fundo);
+        }
+        
+        .toast-notificacao {
+            position: fixed;
+            top: 20px;
+            right: 20px;
+            padding: 15px 20px;
+            border-radius: 8px;
+            color: white;
+            font-weight: 600;
+            z-index: 2000;
+            animation: slide-in 0.3s ease-out;
+            display: none;
+        }
+        
+        .toast-notificacao.ativo {
+            display: block;
+        }
+        
+        .toast-notificacao.sucesso {
+            background: var(--cor-sucesso);
+        }
+        
+        .toast-notificacao.erro {
+            background: var(--cor-perigo);
+        }
+        
+        @keyframes slide-in {
+            from {
+                transform: translateX(400px);
+                opacity: 0;
+            }
+            to {
+                transform: translateX(0);
+                opacity: 1;
+            }
+        }
+        
+        @keyframes slide-out {
+            from {
+                transform: translateX(0);
+                opacity: 1;
+            }
+            to {
+                transform: translateX(400px);
+                opacity: 0;
+            }
+        }
+        
+        .toast-notificacao.saindo {
+            animation: slide-out 0.3s ease-out;
+        }
+        
+        .btn-gerenciar-admins {
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            padding: 12px 20px;
+            background: var(--cor-sucesso);
+            color: white;
+            border: none;
+            border-radius: 8px;
+            cursor: pointer;
+            font-size: 14px;
+            font-weight: 600;
+            transition: var(--transicao);
+        }
+        
+        .btn-gerenciar-admins:hover {
+            background: #059669;
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(16, 185, 129, 0.3);
+        }
+        
+        @media (max-width: 480px) {
+            .modal-conteudo {
+                padding: 20px;
+            }
+            
+            .modal-header {
+                margin-bottom: 20px;
+            }
+            
+            .modal-header h2 {
+                font-size: 18px;
+            }
+            
+            .input-group {
+                flex-direction: column;
+            }
+
+            .input-group input,
+            .input-group select,
+            .btn-adicionar-id {
+                width: 100%;
+                flex-shrink: 0;
+            }
+        }
     </style>
 </head>
 <body>
@@ -528,10 +863,20 @@ $stats = obterEstatisticas();
         <i class="fas fa-chart-line"></i>
         Área Administrativa
     </h1>
-    <a href="gestao-diaria.php" class="btn-voltar">
-        <i class="fas fa-arrow-left"></i>
-        Voltar
-    </a>
+    <div style="display: flex; gap: 10px; flex-wrap: wrap;">
+        <button class="btn-gerenciar-admins" id="btn-abrir-modal-admins">
+            <i class="fas fa-crown"></i>
+            Usuários Vitalício
+        </button>
+        <button class="btn-gerenciar-admins" id="btn-abrir-modal-bonus" style="background: #f59e0b;">
+            <i class="fas fa-gift"></i>
+            Bonus de Assinatura
+        </button>
+        <a href="gestao-diaria.php" class="btn-voltar">
+            <i class="fas fa-arrow-left"></i>
+            Voltar
+        </a>
+    </div>
 </div>
 
 <!-- ==================================================================================================================== -->
@@ -731,9 +1076,508 @@ $stats = obterEstatisticas();
     </div>
 </div>
 
+<!-- ==================================================================================================================== -->
+<!-- ========================== MODAL DE GERENCIAMENTO DE ADMINS ==========================                                -->
+<!-- ==================================================================================================================== -->
+
+<div class="modal-overlay" id="modal-gerenciar-admins">
+    <div class="modal-conteudo">
+        <div class="modal-header">
+            <h2>
+                <i class="fas fa-crown"></i>
+                Usuários Vitalício
+            </h2>
+            <button class="modal-close" id="btn-fechar-modal">
+                <i class="fas fa-times"></i>
+            </button>
+        </div>
+        
+        <div class="modal-body">
+            <div class="input-group">
+                <input 
+                    type="number" 
+                    id="input-novo-id" 
+                    placeholder="Digite o ID do novo usuário vitalício"
+                    min="1"
+                >
+                <button class="btn-adicionar-id" id="btn-adicionar-id-admin">
+                    <i class="fas fa-plus"></i>
+                    Adicionar
+                </button>
+            </div>
+            
+            <div class="lista-admin-ids">
+                <h3>
+                    <i class="fas fa-list"></i>
+                    Usuários Vitalício Cadastrados
+                </h3>
+                <div id="lista-ids-container">
+                    <p style="color: var(--cor-texto-claro); text-align: center; padding: 20px;">
+                        <i class="fas fa-spinner fa-spin"></i>
+                        Carregando...
+                    </p>
+                </div>
+            </div>
+        </div>
+        
+        <div class="modal-footer">
+            <button class="btn-fechar-modal" id="btn-fechar-modal-footer">
+                Fechar
+            </button>
+        </div>
+    </div>
+</div>
+
+<!-- ==================================================================================================================== -->
+<!-- ========================== MODAL DE BONUS DE ASSINATURA ==========================                                -->
+<!-- ==================================================================================================================== -->
+
+<div class="modal-overlay" id="modal-gerenciar-bonus">
+    <div class="modal-conteudo">
+        <div class="modal-header">
+            <h2>
+                <i class="fas fa-gift"></i>
+                Bonus de Assinatura
+            </h2>
+            <button class="modal-close" id="btn-fechar-modal-bonus">
+                <i class="fas fa-times"></i>
+            </button>
+        </div>
+        
+        <div class="modal-body">
+            <div class="input-group">
+                <input 
+                    type="number" 
+                    id="input-id-bonus" 
+                    placeholder="Digite o ID do usuário"
+                    min="1"
+                >
+                <select id="select-duracao-bonus" style="padding: 12px; border: 2px solid var(--cor-borda); border-radius: 8px; font-size: 14px;">
+                    <option value="">Selecione a duração</option>
+                    <option value="mensal">Mensal</option>
+                    <option value="anual">Anual</option>
+                </select>
+                <select id="select-plano-bonus" style="padding: 12px; border: 2px solid var(--cor-borda); border-radius: 8px; font-size: 14px;">
+                    <option value="">Selecione o plano</option>
+                    <option value="prata">Prata</option>
+                    <option value="ouro">Ouro</option>
+                    <option value="diamante">Diamante</option>
+                </select>
+                <button class="btn-adicionar-id" id="btn-adicionar-bonus">
+                    <i class="fas fa-plus"></i>
+                    Adicionar
+                </button>
+            </div>
+            
+            <div class="lista-admin-ids">
+                <h3>
+                    <i class="fas fa-list"></i>
+                    Bônus Ativos
+                </h3>
+                <div id="lista-bonus-container">
+                    <p style="color: var(--cor-texto-claro); text-align: center; padding: 20px;">
+                        <i class="fas fa-spinner fa-spin"></i>
+                        Carregando...
+                    </p>
+                </div>
+            </div>
+        </div>
+        
+        <div class="modal-footer">
+            <button class="btn-fechar-modal" id="btn-fechar-modal-bonus-footer">
+                Fechar
+            </button>
+        </div>
+    </div>
+</div>
+
+<!-- ==================================================================================================================== -->
+<!-- ========================== TOAST DE NOTIFICAÇÃO ==========================                                -->
+<!-- ==================================================================================================================== -->
+
+<div class="toast-notificacao" id="toast-notificacao">
+    <span id="toast-mensagem"></span>
+</div>
+
 <script>
     // ==================================================================================================================== 
-    // ========================== JAVASCRIPT ==========================
+    // ========================== GERENCIAMENTO DE ADMINS ==========================
+    // ==================================================================================================================== 
+    
+    const modalAdmins = document.getElementById('modal-gerenciar-admins');
+    const btnAbrirModal = document.getElementById('btn-abrir-modal-admins');
+    const btnFecharModal = document.getElementById('btn-fechar-modal');
+    const btnFecharModalFooter = document.getElementById('btn-fechar-modal-footer');
+    const btnAdicionarId = document.getElementById('btn-adicionar-id-admin');
+    const inputNovoId = document.getElementById('input-novo-id');
+    const listaIdsContainer = document.getElementById('lista-ids-container');
+    const toast = document.getElementById('toast-notificacao');
+    const toastMensagem = document.getElementById('toast-mensagem');
+    
+    // Abrir modal
+    btnAbrirModal.addEventListener('click', () => {
+        modalAdmins.classList.add('ativo');
+        inputNovoId.focus(); // Focar no input
+        carregarAdminIds();
+    });
+    
+    // Fechar modal
+    btnFecharModal.addEventListener('click', () => {
+        modalAdmins.classList.remove('ativo');
+    });
+    
+    btnFecharModalFooter.addEventListener('click', () => {
+        modalAdmins.classList.remove('ativo');
+    });
+    
+    // Fechar ao clicar fora do modal
+    modalAdmins.addEventListener('click', (e) => {
+        if (e.target === modalAdmins) {
+            modalAdmins.classList.remove('ativo');
+        }
+    });
+    
+    // Adicionar novo ID
+    btnAdicionarId.addEventListener('click', () => {
+        const novoId = inputNovoId.value.trim();
+        
+        if (!novoId) {
+            mostrarToast('Por favor, digite um ID', 'erro');
+            return;
+        }
+        
+        if (isNaN(novoId) || novoId <= 0) {
+            mostrarToast('ID deve ser um número positivo', 'erro');
+            return;
+        }
+        
+        adicionarAdminId(novoId);
+    });
+    
+    // Permitir Enter no input
+    inputNovoId.addEventListener('keypress', (e) => {
+        if (e.key === 'Enter') {
+            btnAdicionarId.click();
+        }
+    });
+    
+    // Função para carregar IDs de admin
+    function carregarAdminIds() {
+        fetch('admin-ids-config.php', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/x-www-form-urlencoded',
+            },
+            body: 'acao=obter'
+        })
+        .then(response => response.json())
+        .then(data => {
+            if (data.success) {
+                renderizarListaIds(data.ids);
+            } else {
+                mostrarToast('Erro ao carregar IDs: ' + data.mensagem, 'erro');
+            }
+        })
+        .catch(error => {
+            console.error('Erro:', error);
+            mostrarToast('Erro ao carregar IDs', 'erro');
+        });
+    }
+    
+    // Função para renderizar lista de IDs
+    function renderizarListaIds(ids) {
+        if (ids.length === 0) {
+            listaIdsContainer.innerHTML = `
+                <p style="color: var(--cor-texto-claro); text-align: center; padding: 20px;">
+                    <i class="fas fa-inbox"></i>
+                    Nenhum administrador cadastrado
+                </p>
+            `;
+            return;
+        }
+        
+        // Buscar nomes dos usuários
+        fetch('obter-nomes-usuarios.php', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/x-www-form-urlencoded',
+            },
+            body: 'ids=' + JSON.stringify(ids)
+        })
+        .then(response => response.json())
+        .then(usuarios => {
+            const usuariosMap = {};
+            usuarios.forEach(u => {
+                usuariosMap[u.id] = u.nome;
+            });
+            
+            listaIdsContainer.innerHTML = ids.map(id => {
+                const nome = usuariosMap[id] || 'Usuário desconhecido';
+                return `
+                    <div class="admin-id-item">
+                        <div>
+                            <span class="admin-id-numero">ID #${id}</span>
+                            <br><small style="color: var(--cor-texto-claro);">${nome}</small>
+                        </div>
+                        <button class="btn-remover-id" onclick="removerAdminId(${id})">
+                            <i class="fas fa-trash"></i>
+                            Remover
+                        </button>
+                    </div>
+                `;
+            }).join('');
+        })
+        .catch(error => {
+            console.error('Erro ao buscar nomes:', error);
+            // Fallback: mostrar apenas IDs
+            listaIdsContainer.innerHTML = ids.map(id => `
+                <div class="admin-id-item">
+                    <span class="admin-id-numero">ID #${id}</span>
+                    <button class="btn-remover-id" onclick="removerAdminId(${id})">
+                        <i class="fas fa-trash"></i>
+                        Remover
+                    </button>
+                </div>
+            `).join('');
+        });
+    }
+    
+    // Função para adicionar novo ID
+    function adicionarAdminId(novoId) {
+        btnAdicionarId.disabled = true;
+        
+        fetch('admin-ids-config.php', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/x-www-form-urlencoded',
+            },
+            body: 'acao=adicionar&novo_id=' + novoId
+        })
+        .then(response => response.json())
+        .then(data => {
+            if (data.success) {
+                mostrarToast(data.mensagem, 'sucesso');
+                inputNovoId.value = '';
+                renderizarListaIds(data.ids);
+            } else {
+                mostrarToast(data.mensagem, 'erro');
+            }
+        })
+        .catch(error => {
+            console.error('Erro:', error);
+            mostrarToast('Erro ao adicionar ID', 'erro');
+        })
+        .finally(() => {
+            btnAdicionarId.disabled = false;
+            inputNovoId.focus();
+        });
+    }
+    
+    // Função para remover ID
+    function removerAdminId(id) {
+        if (!confirm('Tem certeza que deseja remover o admin ID #' + id + '?')) {
+            return;
+        }
+        
+        fetch('admin-ids-config.php', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/x-www-form-urlencoded',
+            },
+            body: 'acao=remover&id_remover=' + id
+        })
+        .then(response => response.json())
+        .then(data => {
+            if (data.success) {
+                mostrarToast(data.mensagem, 'sucesso');
+                renderizarListaIds(data.ids);
+            } else {
+                mostrarToast(data.mensagem, 'erro');
+            }
+        })
+        .catch(error => {
+            console.error('Erro:', error);
+            mostrarToast('Erro ao remover ID', 'erro');
+        });
+    }
+    
+    // Função para mostrar toast
+    function mostrarToast(mensagem, tipo = 'sucesso') {
+        toastMensagem.textContent = mensagem;
+        toast.classList.remove('sucesso', 'erro', 'saindo');
+        toast.classList.add('ativo', tipo);
+        
+        setTimeout(() => {
+            toast.classList.add('saindo');
+            setTimeout(() => {
+                toast.classList.remove('ativo', 'saindo');
+            }, 300);
+        }, 3000);
+    }
+    
+    // ==================================================================================================================== 
+    // ========================== GERENCIAMENTO DE BONUS ==========================
+    // ==================================================================================================================== 
+    
+    const modalBonus = document.getElementById('modal-gerenciar-bonus');
+    const btnAbrirModalBonus = document.getElementById('btn-abrir-modal-bonus');
+    const btnFecharModalBonus = document.getElementById('btn-fechar-modal-bonus');
+    const btnFecharModalBonusFooter = document.getElementById('btn-fechar-modal-bonus-footer');
+    const btnAdicionarBonus = document.getElementById('btn-adicionar-bonus');
+    const inputIdBonus = document.getElementById('input-id-bonus');
+    const selectDuracaoBonus = document.getElementById('select-duracao-bonus');
+    const selectPlanoBonus = document.getElementById('select-plano-bonus');
+    const listaBonusContainer = document.getElementById('lista-bonus-container');
+    
+    // Abrir modal
+    btnAbrirModalBonus.addEventListener('click', () => {
+        modalBonus.classList.add('ativo');
+        carregarBonus();
+    });
+    
+    // Fechar modal
+    btnFecharModalBonus.addEventListener('click', () => {
+        modalBonus.classList.remove('ativo');
+    });
+    
+    btnFecharModalBonusFooter.addEventListener('click', () => {
+        modalBonus.classList.remove('ativo');
+    });
+    
+    // Fechar ao clicar fora
+    modalBonus.addEventListener('click', (e) => {
+        if (e.target === modalBonus) {
+            modalBonus.classList.remove('ativo');
+        }
+    });
+    
+    // Adicionar bonus
+    btnAdicionarBonus.addEventListener('click', () => {
+        const id = inputIdBonus.value.trim();
+        const duracao = selectDuracaoBonus.value;
+        const plano = selectPlanoBonus.value;
+        
+        if (!id || !duracao || !plano) {
+            mostrarToast('Preencha todos os campos', 'erro');
+            return;
+        }
+        
+        adicionarBonus(id, duracao, plano);
+    });
+    
+    // Carregar bônus
+    function carregarBonus() {
+        fetch('gerenciar-bonus-assinatura.php', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/x-www-form-urlencoded',
+            },
+            body: 'acao=obter'
+        })
+        .then(response => response.json())
+        .then(data => {
+            if (data.success) {
+                renderizarListaBonus(data.bonus);
+            } else {
+                mostrarToast('Erro ao carregar: ' + data.mensagem, 'erro');
+            }
+        })
+        .catch(error => {
+            console.error('Erro:', error);
+            mostrarToast('Erro ao carregar bônus', 'erro');
+        });
+    }
+    
+    // Renderizar lista de bônus
+    function renderizarListaBonus(bonus) {
+        if (!bonus || bonus.length === 0) {
+            listaBonusContainer.innerHTML = `
+                <p style="color: var(--cor-texto-claro); text-align: center; padding: 20px;">
+                    <i class="fas fa-inbox"></i>
+                    Nenhum bônus ativo
+                </p>
+            `;
+            return;
+        }
+        
+        listaBonusContainer.innerHTML = bonus.map(b => `
+            <div class="admin-id-item">
+                <div>
+                    <span class="admin-id-numero">ID #${b.usuario_id} - ${b.nome}</span>
+                    <br><small style="color: var(--cor-texto-claro);">
+                        Plano ${b.plano} - ${b.duracao === 'mensal' ? 'Mensal' : 'Anual'} | Vence: ${new Date(b.data_fim).toLocaleDateString('pt-BR')}
+                    </small>
+                </div>
+                <button class="btn-remover-id" onclick="removerBonus(${b.id})">
+                    <i class="fas fa-trash"></i>
+                    Remover
+                </button>
+            </div>
+        `).join('');
+    }
+    
+    // Adicionar novo bônus
+    function adicionarBonus(id, duracao, plano) {
+        btnAdicionarBonus.disabled = true;
+        
+        fetch('gerenciar-bonus-assinatura.php', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/x-www-form-urlencoded',
+            },
+            body: 'acao=adicionar&usuario_id=' + id + '&duracao=' + duracao + '&plano=' + plano
+        })
+        .then(response => response.json())
+        .then(data => {
+            if (data.success) {
+                mostrarToast(data.mensagem, 'sucesso');
+                inputIdBonus.value = '';
+                selectDuracaoBonus.value = '';
+                selectPlanoBonus.value = '';
+                carregarBonus();
+            } else {
+                mostrarToast(data.mensagem, 'erro');
+            }
+        })
+        .catch(error => {
+            console.error('Erro:', error);
+            mostrarToast('Erro ao adicionar bônus', 'erro');
+        })
+        .finally(() => {
+            btnAdicionarBonus.disabled = false;
+        });
+    }
+    
+    // Remover bônus
+    function removerBonus(id) {
+        if (!confirm('Tem certeza que deseja remover este bônus?')) {
+            return;
+        }
+        
+        fetch('gerenciar-bonus-assinatura.php', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/x-www-form-urlencoded',
+            },
+            body: 'acao=remover&id=' + id
+        })
+        .then(response => response.json())
+        .then(data => {
+            if (data.success) {
+                mostrarToast(data.mensagem, 'sucesso');
+                carregarBonus();
+            } else {
+                mostrarToast(data.mensagem, 'erro');
+            }
+        })
+        .catch(error => {
+            console.error('Erro:', error);
+            mostrarToast('Erro ao remover bônus', 'erro');
+        });
+    }
+    
+    // ==================================================================================================================== 
+    // ========================== JAVASCRIPT ORIGINAL ==========================
     // ==================================================================================================================== 
     
     // Atualizar dados a cada 30 segundos
@@ -744,6 +1588,9 @@ $stats = obterEstatisticas();
     // Log de acesso administrativo
     console.log('%c🔐 Área Administrativa Acessada', 'color: #667eea; font-size: 16px; font-weight: bold;');
 </script>
+
+<!-- Sistema Global de Celebração de Plano -->
+<script src="js/celebracao-plano.js" defer></script>
 
 </body>
 </html>

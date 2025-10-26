@@ -46,12 +46,20 @@ $acao = $_GET['acao'] ?? $_POST['acao'] ?? null;
 // Uso: GET minhaconta.php?acao=obter_dados
 if ($acao === 'obter_dados') {
     try {
-        $check = $conexao->query("SHOW COLUMNS FROM usuarios LIKE 'plano'");
-        $tem_plano = $check && $check->num_rows > 0;
-        
-        $sql = $tem_plano 
-            ? "SELECT id, nome, email, telefone, plano FROM usuarios WHERE id = ?"
-            : "SELECT id, nome, email, telefone, 'Gratuito' as plano FROM usuarios WHERE id = ?";
+        // Buscar dados do usuário com plano e data de expiração
+        $sql = "
+            SELECT 
+                u.id, 
+                u.nome, 
+                u.email, 
+                u.telefone,
+                u.id_plano,
+                u.data_fim_assinatura,
+                COALESCE(p.nome, 'Gratuito') as plano
+            FROM usuarios u
+            LEFT JOIN planos p ON u.id_plano = p.id
+            WHERE u.id = ?
+        ";
         
         $stmt = $conexao->prepare($sql);
         if (!$stmt) {
@@ -67,6 +75,25 @@ if ($acao === 'obter_dados') {
         
         if ($resultado->num_rows > 0) {
             $usuario = $resultado->fetch_assoc();
+            
+            // Verificar se o bônus ainda está ativo
+            if ($usuario['data_fim_assinatura']) {
+                $data_fim = new DateTime($usuario['data_fim_assinatura']);
+                $data_agora = new DateTime();
+                
+                if ($data_agora > $data_fim) {
+                    // Bônus expirou, reverter para gratuito
+                    $conexao->query("
+                        UPDATE usuarios 
+                        SET id_plano = (SELECT id FROM planos WHERE nome = 'gratuito' LIMIT 1),
+                            data_fim_assinatura = NULL
+                        WHERE id = $id_usuario
+                    ");
+                    $usuario['plano'] = 'Gratuito';
+                    $usuario['data_fim_assinatura'] = null;
+                }
+            }
+            
             http_response_code(200);
             echo json_encode(['success' => true, 'usuario' => $usuario]);
         } else {

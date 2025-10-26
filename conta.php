@@ -174,6 +174,52 @@ if (!isset($_SESSION['usuario_id']) || empty($_SESSION['usuario_id'])) {
             font-size: 16px;
             font-weight: 700;
             color: #2c3e50;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .badge-plano {
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+            padding: 3px 8px;
+            border-radius: 20px;
+            font-size: 11px;
+            font-weight: 600;
+            background-color: rgba(255, 255, 255, 0.7);
+            border: 1px solid;
+        }
+
+        .badge-plano i {
+            font-size: 12px;
+        }
+
+        .badge-plano-gratuito {
+            border-color: #95a5a6;
+            color: #95a5a6;
+        }
+
+        .badge-plano-prata {
+            border-color: #c0392b;
+            color: #c0392b;
+        }
+
+        .badge-plano-ouro {
+            border-color: #f39c12;
+            color: #f39c12;
+        }
+
+        .badge-plano-diamante {
+            border-color: #2980b9;
+            color: #2980b9;
+        }
+
+        .plano-data-expiracao {
+            font-size: 10px;
+            color: #7f8c8d;
+            margin-top: 4px;
+            display: block;
         }
 
         .btn-alterar-plano {
@@ -1423,6 +1469,7 @@ if (!isset($_SESSION['usuario_id']) || empty($_SESSION['usuario_id'])) {
     </style>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700&display=swap">
+    <link rel="stylesheet" href="css/celebracao-plano.css">
 </head>
 <body>
     <div class="container-conta">
@@ -1430,6 +1477,7 @@ if (!isset($_SESSION['usuario_id']) || empty($_SESSION['usuario_id'])) {
             <div>
                 <h1>Minha Conta</h1>
                 <p id="email-usuario-header">email@example.com</p>
+                <p id="id-usuario-header" style="font-size: 11px; opacity: 0.8; margin-top: 4px;">ID: -</p>
             </div>
             <a href="home.php" class="btn-voltar">
                 <i class="fas fa-arrow-left"></i> Voltar
@@ -1442,7 +1490,12 @@ if (!isset($_SESSION['usuario_id']) || empty($_SESSION['usuario_id'])) {
                 <div class="secao-plano">
                 <div class="secao-plano-titulo">Tipo de Plano</div>
                 <div class="secao-plano-conteudo">
-                    <div class="secao-plano-valor" id="valor-plano">Gratuito</div>
+                    <div class="secao-plano-valor" id="valor-plano">
+                        <span class="badge-plano badge-plano-gratuito">
+                            <i class="fas fa-gift"></i>
+                            <span>Gratuito</span>
+                        </span>
+                    </div>
                     <button class="btn-alterar-plano" id="btn-alterar-plano">
                         <i class="fas fa-exchange-alt"></i> Alterar
                     </button>
@@ -1743,5 +1796,7 @@ if (!isset($_SESSION['usuario_id']) || empty($_SESSION['usuario_id'])) {
 
     <!-- Script gerenciador de conta -->
     <script src="js/gerenciador-conta.js" defer></script>
+    <!-- Script de celebração de plano -->
+    <script src="js/celebracao-plano.js" defer></script>
 </body>
 </html>

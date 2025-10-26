@@ -1,0 +1,158 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Teste Rápido - Carregar IDs</title>
+    <style>
+      body {
+        font-family: monospace;
+        background: #1e293b;
+        color: #e2e8f0;
+        padding: 40px;
+      }
+      .container {
+        max-width: 900px;
+        margin: 0 auto;
+        background: #0f172a;
+        border: 1px solid #667eea;
+        border-radius: 8px;
+        padding: 20px;
+      }
+      button {
+        padding: 10px 20px;
+        background: #667eea;
+        color: white;
+        border: none;
+        border-radius: 6px;
+        cursor: pointer;
+        margin: 10px 5px 10px 0;
+      }
+      button:hover {
+        background: #764ba2;
+      }
+      #output {
+        background: #000;
+        border: 1px solid #667eea;
+        padding: 15px;
+        margin-top: 20px;
+        border-radius: 6px;
+        min-height: 300px;
+        overflow-y: auto;
+      }
+      .ok {
+        color: #10b981;
+      }
+      .erro {
+        color: #ef4444;
+      }
+      .info {
+        color: #64748b;
+      }
+    </style>
+  </head>
+  <body>
+    <div class="container">
+      <h1>🔧 Teste Rápido - Carregar IDs</h1>
+
+      <button onclick="testarCarregarIds()">▶ Testar Carregar IDs</button>
+      <button onclick="testarAdicionar()">▶ Testar Adicionar ID</button>
+      <button onclick="limpar()">🗑️ Limpar</button>
+
+      <div id="output">Clique em um botão para começar...</div>
+    </div>
+
+    <script>
+      const output = document.getElementById("output");
+
+      function print(msg, type = "info") {
+        const line = document.createElement("div");
+        line.className = type;
+        line.textContent = msg;
+        output.appendChild(line);
+        output.scrollTop = output.scrollHeight;
+      }
+
+      function limpar() {
+        output.innerHTML = "";
+      }
+
+      async function testarCarregarIds() {
+        limpar();
+        print("=== TESTE: Carregar IDs ===", "info");
+        print("Endpoint: admin-ids-config.php", "info");
+        print("Método: POST", "info");
+        print("Dados: acao=obter", "info");
+        print("", "info");
+
+        try {
+          print("Iniciando requisição...", "info");
+
+          const response = await fetch("admin-ids-config.php", {
+            method: "POST",
+            headers: {
+              "Content-Type": "application/x-www-form-urlencoded",
+            },
+            body: "acao=obter",
+          });
+
+          print(`Status HTTP: ${response.status}`, response.ok ? "ok" : "erro");
+
+          if (!response.ok) {
+            print("❌ Erro HTTP!", "erro");
+            return;
+          }
+
+          const data = await response.json();
+
+          print("", "info");
+          print("--- Resposta JSON ---", "info");
+          print("Success: " + data.success, data.success ? "ok" : "erro");
+
+          if (data.success) {
+            print("✅ Sucesso!", "ok");
+            print("IDs: " + JSON.stringify(data.ids), "ok");
+            print("Total: " + data.total, "ok");
+          } else {
+            print("❌ Erro na resposta", "erro");
+            print("Mensagem: " + data.mensagem, "erro");
+          }
+        } catch (error) {
+          print("❌ Erro na requisição: " + error.message, "erro");
+        }
+      }
+
+      async function testarAdicionar() {
+        limpar();
+        print("=== TESTE: Adicionar ID ===", "info");
+
+        const novoId = prompt("Digite um ID para adicionar (ex: 100):");
+        if (!novoId) return;
+
+        try {
+          print("Enviando ID: " + novoId, "info");
+
+          const response = await fetch("admin-ids-config.php", {
+            method: "POST",
+            headers: {
+              "Content-Type": "application/x-www-form-urlencoded",
+            },
+            body: "acao=adicionar&novo_id=" + novoId,
+          });
+
+          const data = await response.json();
+
+          if (data.success) {
+            print("✅ ID adicionado!", "ok");
+            print("Nova lista: " + JSON.stringify(data.ids), "ok");
+          } else {
+            print("❌ Erro ao adicionar", "erro");
+            print("Mensagem: " + data.mensagem, "erro");
+          }
+        } catch (error) {
+          print("❌ Erro: " + error.message, "erro");
+        }
+      }
+    </script>
+  </body>
+</html>

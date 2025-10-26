@@ -63,20 +63,57 @@ class GerenciadorContaPagina {
         // Atualizar elementos
         document.getElementById("email-usuario-header").textContent =
           this.usuarioAtual.email || "email@example.com";
+        document.getElementById("id-usuario-header").textContent = `ID: ${
+          this.usuarioAtual.id || this.usuarioAtual.usuario_id || "-"
+        }`;
         document.getElementById("valor-nome").textContent =
           this.usuarioAtual.nome || "Carregando...";
         document.getElementById("valor-email").textContent =
           this.usuarioAtual.email || "Carregando...";
         document.getElementById("valor-telefone").textContent =
           this.usuarioAtual.telefone || "Não informado";
-        document.getElementById("valor-plano").textContent =
-          this.usuarioAtual.plano || "Gratuito";
+
+        // Exibir plano com data de expiração se houver
+        this.renderizarBadgePlano();
       } else {
         console.error("❌ Erro ao obter dados:", dados.message);
       }
     } catch (error) {
       console.error("❌ Erro ao carregar dados do usuário:", error);
     }
+  }
+
+  renderizarBadgePlano() {
+    const plano = this.usuarioAtual.plano || "Gratuito";
+    const dataFim = this.usuarioAtual.data_fim_assinatura;
+
+    // Mapear cores e ícones
+    const planosConfig = {
+      GRATUITO: { cor: "#95a5a6", icone: "fas fa-gift" },
+      PRATA: { cor: "#c0392b", icone: "fas fa-coins" },
+      OURO: { cor: "#f39c12", icone: "fas fa-star" },
+      DIAMANTE: { cor: "#2980b9", icone: "fas fa-gem" },
+    };
+
+    const config = planosConfig[plano.toUpperCase()] || planosConfig.GRATUITO;
+    const containerPlano = document.getElementById("valor-plano");
+
+    // Criar estrutura do badge
+    let html = `
+      <span class="badge-plano badge-plano-${plano.toLowerCase()}">
+        <i class="${config.icone}"></i>
+        <span>${plano}</span>
+      </span>
+    `;
+
+    // Adicionar data de expiração se houver
+    if (dataFim) {
+      const dataFimObj = new Date(dataFim);
+      const dataFormatada = dataFimObj.toLocaleDateString("pt-BR");
+      html += `<span class="plano-data-expiracao">Vence em ${dataFormatada}</span>`;
+    }
+
+    containerPlano.innerHTML = html;
   }
 
   configurarBotoesEditar() {

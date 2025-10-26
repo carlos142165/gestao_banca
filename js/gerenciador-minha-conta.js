@@ -150,10 +150,47 @@ class GerenciadorMinhaContaModal {
     if (elemTelefone)
       elemTelefone.textContent = this.usuarioAtual.telefone || "Não informado";
 
-    // Preencher plano
-    const elemPlano = document.getElementById("valor-plano");
-    if (elemPlano)
-      elemPlano.textContent = this.usuarioAtual.plano || "Gratuito";
+    // Preencher plano com badge colorido
+    this.renderizarBadgePlano();
+  }
+
+  renderizarBadgePlano() {
+    const plano = this.usuarioAtual.plano || "Gratuito";
+    const dataFim = this.usuarioAtual.data_fim_assinatura;
+
+    // Mapear cores e ícones
+    const planosConfig = {
+      GRATUITO: { cor: "#95a5a6", icone: "fas fa-gift" },
+      PRATA: { cor: "#c0392b", icone: "fas fa-coins" },
+      OURO: { cor: "#f39c12", icone: "fas fa-star" },
+      DIAMANTE: { cor: "#2980b9", icone: "fas fa-gem" },
+    };
+
+    const config = planosConfig[plano.toUpperCase()] || planosConfig.GRATUITO;
+    const containerPlano = document.getElementById("valor-plano");
+
+    if (!containerPlano) {
+      console.warn("⚠️ Container valor-plano não encontrado");
+      return;
+    }
+
+    // Criar estrutura do badge
+    let html = `
+      <span class="badge-plano badge-plano-${plano.toLowerCase()}">
+        <i class="${config.icone}"></i>
+        <span>${plano}</span>
+      </span>
+    `;
+
+    // Adicionar data de expiração se houver
+    if (dataFim) {
+      const dataFimObj = new Date(dataFim);
+      const dataFormatada = dataFimObj.toLocaleDateString("pt-BR");
+      html += `<span class="plano-data-expiracao">Vence em ${dataFormatada}</span>`;
+    }
+
+    console.log("🎨 Renderizando badge:", plano, html);
+    containerPlano.innerHTML = html;
   }
 
   configurarBotoesEditar() {

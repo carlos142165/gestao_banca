@@ -1,0 +1,284 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Teste - Sistema de Admin IDs</title>
+    <style>
+      * {
+        margin: 0;
+        padding: 0;
+        box-sizing: border-box;
+      }
+      body {
+        font-family: "Rajdhani", -apple-system, BlinkMacSystemFont, "Segoe UI",
+          sans-serif;
+        background: #f8fafc;
+        padding: 40px 20px;
+      }
+      .container {
+        max-width: 800px;
+        margin: 0 auto;
+      }
+      .card {
+        background: white;
+        border-radius: 12px;
+        padding: 30px;
+        margin-bottom: 20px;
+        box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+      }
+      h1 {
+        color: #667eea;
+        margin-bottom: 30px;
+      }
+      .test-item {
+        padding: 15px;
+        margin-bottom: 10px;
+        border-radius: 8px;
+        display: flex;
+        align-items: center;
+        gap: 10px;
+      }
+      .test-item.ok {
+        background: #d1fae5;
+        color: #065f46;
+        border: 1px solid #6ee7b7;
+      }
+      .test-item.erro {
+        background: #fee2e2;
+        color: #7f1d1d;
+        border: 1px solid #fca5a5;
+      }
+      .test-item.info {
+        background: #dbeafe;
+        color: #0c2d6b;
+        border: 1px solid #93c5fd;
+      }
+      code {
+        background: #e2e8f0;
+        padding: 4px 8px;
+        border-radius: 4px;
+        font-family: "Courier New", monospace;
+      }
+      .info-box {
+        background: #f0f9ff;
+        border-left: 4px solid #0284c7;
+        padding: 15px;
+        margin: 20px 0;
+        border-radius: 4px;
+      }
+      button {
+        padding: 10px 20px;
+        background: #667eea;
+        color: white;
+        border: none;
+        border-radius: 8px;
+        cursor: pointer;
+        font-weight: 600;
+        transition: all 0.3s;
+      }
+      button:hover {
+        background: #764ba2;
+        transform: translateY(-2px);
+      }
+      button:disabled {
+        opacity: 0.5;
+        cursor: not-allowed;
+      }
+      .output {
+        background: #1e293b;
+        color: #e2e8f0;
+        padding: 15px;
+        border-radius: 8px;
+        font-family: "Courier New", monospace;
+        font-size: 13px;
+        margin-top: 15px;
+        min-height: 100px;
+        white-space: pre-wrap;
+        word-wrap: break-word;
+        max-height: 300px;
+        overflow-y: auto;
+      }
+    </style>
+  </head>
+  <body>
+    <div class="container">
+      <div class="card">
+        <h1>🧪 Teste - Sistema de Gerenciamento de Admin IDs</h1>
+
+        <div class="info-box">
+          <strong
+            >ℹ️ Esta página testa se o sistema foi instalado
+            corretamente.</strong
+          ><br />
+          Clique nos botões abaixo para executar os testes.
+        </div>
+
+        <div id="testes"></div>
+
+        <h2 style="margin-top: 30px; color: #667eea">Testes Disponíveis</h2>
+
+        <button onclick="testarArquivos()">✓ Testar Arquivos</button>
+        <button onclick="testarAPI()">✓ Testar API</button>
+        <button onclick="testarTodos()">✓ Testar Tudo</button>
+
+        <div id="resultado" class="output" style="display: none">
+          <strong>Resultado do Teste:</strong><br />
+          <span id="resultado-texto"></span>
+        </div>
+      </div>
+
+      <div class="card">
+        <h2 style="color: #667eea">📋 Checklist de Instalação</h2>
+
+        <div id="checklist"></div>
+      </div>
+    </div>
+
+    <script>
+      // Função para adicionar linha ao resultado
+      function adicionarResultado(mensagem, tipo = "info") {
+        const resultado = document.getElementById("resultado");
+        const texto = document.getElementById("resultado-texto");
+
+        resultado.style.display = "block";
+        texto.innerHTML += `[${tipo.toUpperCase()}] ${mensagem}\n`;
+        resultado.scrollTop = resultado.scrollHeight;
+      }
+
+      // Limpar resultados
+      function limparResultados() {
+        document.getElementById("resultado-texto").innerHTML = "";
+      }
+
+      // Testar arquivos
+      async function testarArquivos() {
+        limparResultados();
+        adicionarResultado("Iniciando teste de arquivos...", "info");
+
+        const arquivos = [
+          "admin-ids-config.php",
+          "dados/admin_ids.json",
+          "administrativa.php",
+          "verificar-limite.php",
+        ];
+
+        for (const arquivo of arquivos) {
+          try {
+            const response = await fetch(arquivo, { method: "HEAD" });
+            if (response.ok) {
+              adicionarResultado(`✓ Arquivo encontrado: ${arquivo}`, "ok");
+            } else {
+              adicionarResultado(
+                `✗ Arquivo não encontrado: ${arquivo}`,
+                "erro"
+              );
+            }
+          } catch (error) {
+            adicionarResultado(
+              `✗ Erro ao acessar ${arquivo}: ${error.message}`,
+              "erro"
+            );
+          }
+        }
+
+        adicionarResultado("Teste de arquivos concluído!", "info");
+      }
+
+      // Testar API
+      async function testarAPI() {
+        limparResultados();
+        adicionarResultado("Iniciando teste de API...", "info");
+
+        try {
+          adicionarResultado(
+            "Testando rota: admin-ids-config.php?acao=obter",
+            "info"
+          );
+
+          const response = await fetch("admin-ids-config.php", {
+            method: "POST",
+            headers: {
+              "Content-Type": "application/x-www-form-urlencoded",
+            },
+            body: "acao=obter",
+          });
+
+          const data = await response.json();
+
+          if (data.success) {
+            adicionarResultado(`✓ API respondeu com sucesso`, "ok");
+            adicionarResultado(
+              `IDs carregados: ${JSON.stringify(data.ids)}`,
+              "ok"
+            );
+            adicionarResultado(`Total de admins: ${data.total}`, "ok");
+          } else {
+            adicionarResultado(
+              `✗ Erro na resposta da API: ${data.mensagem}`,
+              "erro"
+            );
+          }
+        } catch (error) {
+          adicionarResultado(`✗ Erro ao chamar API: ${error.message}`, "erro");
+        }
+
+        adicionarResultado("Teste de API concluído!", "info");
+      }
+
+      // Testar tudo
+      async function testarTodos() {
+        await testarArquivos();
+        adicionarResultado("---", "info");
+        await testarAPI();
+      }
+
+      // Função para gerar checklist
+      function gerarChecklist() {
+        const itens = [
+          {
+            nome: "Arquivo admin-ids-config.php",
+            descricao: "Gerencia os IDs de admin",
+          },
+          {
+            nome: "Arquivo dados/admin_ids.json",
+            descricao: "Armazena os IDs",
+          },
+          {
+            nome: "Modal na administrativa.php",
+            descricao: "Interface de gerenciamento",
+          },
+          {
+            nome: "Atualizado verificar-limite.php",
+            descricao: "Usa novo sistema",
+          },
+          { nome: "Styles CSS adicionados", descricao: "Interface responsiva" },
+          {
+            nome: "JavaScript funcionando",
+            descricao: "Interatividade com modal",
+          },
+        ];
+
+        const checklist = document.getElementById("checklist");
+        checklist.innerHTML = itens
+          .map(
+            (item, index) => `
+            <div class="test-item ok">
+                <span>✓</span>
+                <div>
+                    <strong>${item.nome}</strong><br>
+                    <small>${item.descricao}</small>
+                </div>
+            </div>
+        `
+          )
+          .join("");
+      }
+
+      // Executar ao carregar
+      window.addEventListener("load", () => {
+        gerarChecklist();
+      });
+    </script>
+  </body>
+</html>

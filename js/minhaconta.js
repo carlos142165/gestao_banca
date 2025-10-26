@@ -183,6 +183,20 @@ class GerenciadorMinhaContaModal {
           (campo === "plano" ? "Gratuito" : "Não informado");
       }
     });
+
+    // Atualizar email no header
+    const emailHeader = document.getElementById("email-usuario-header");
+    if (emailHeader) {
+      emailHeader.textContent = this.usuarioAtual.email || "email@example.com";
+    }
+
+    // Atualizar ID no header
+    const idHeader = document.getElementById("id-usuario-header");
+    if (idHeader) {
+      idHeader.textContent = `ID: ${
+        this.usuarioAtual.id || this.usuarioAtual.usuario_id || "-"
+      }`;
+    }
   }
 
   // ============================================

@@ -64,13 +64,15 @@
 .modal-minha-conta-header h2 {
   margin: 0;
   font-size: 18px;
-  font-weight: 600;
+  font-weight: 700;
+  color: white;
 }
 
 .modal-minha-conta-header p {
   margin: 2px 0 0 0;
   font-size: 12px;
-  opacity: 0.9;
+  opacity: 0.7;
+  color: #d3d3d3;
 }
 
 /* Botão Fechar */

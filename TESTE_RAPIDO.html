@@ -1,0 +1,181 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Teste Rápido - Admin IDs</title>
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body {
+            font-family: 'Rajdhani', monospace;
+            background: #1e293b;
+            color: #e2e8f0;
+            padding: 40px 20px;
+        }
+        .container {
+            max-width: 900px;
+            margin: 0 auto;
+        }
+        h1 { margin-bottom: 30px; color: #667eea; }
+        .btn-group {
+            display: flex;
+            gap: 10px;
+            flex-wrap: wrap;
+            margin-bottom: 20px;
+        }
+        button {
+            padding: 10px 15px;
+            background: #667eea;
+            color: white;
+            border: none;
+            border-radius: 6px;
+            cursor: pointer;
+            font-family: monospace;
+        }
+        button:hover { background: #764ba2; }
+        #output {
+            background: #0f172a;
+            border: 1px solid #667eea;
+            border-radius: 6px;
+            padding: 20px;
+            min-height: 300px;
+            max-height: 600px;
+            overflow-y: auto;
+            white-space: pre-wrap;
+            word-wrap: break-word;
+            font-size: 12px;
+            line-height: 1.5;
+        }
+        .ok { color: #10b981; }
+        .erro { color: #ef4444; }
+        .info { color: #64748b; }
+        .warn { color: #f59e0b; }
+    </style>
+</head>
+<body>
+
+<div class="container">
+    <h1>🔧 Teste Rápido - Sistema de Admin IDs</h1>
+    
+    <div class="btn-group">
+        <button onclick="testar('sessao')">🔍 Verificar Sessão</button>
+        <button onclick="testar('api')">📡 Testar API</button>
+        <button onclick="testar('json')">📄 Testar JSON</button>
+        <button onclick="testar('tudo')">⚡ Testar Tudo</button>
+        <button onclick="limpar()">🗑️ Limpar</button>
+    </div>
+    
+    <div id="output">Clique em um botão para começar...</div>
+</div>
+
+<script>
+    const output = document.getElementById('output');
+    
+    function print(msg, type = 'info') {
+        const span = document.createElement('div');
+        span.className = type;
+        span.textContent = msg;
+        output.appendChild(span);
+        output.scrollTop = output.scrollHeight;
+    }
+    
+    function limpar() {
+        output.innerHTML = 'Logs limpos.';
+    }
+    
+    async function testar(tipo) {
+        limpar();
+        
+        if (tipo === 'sessao' || tipo === 'tudo') {
+            await verificarSessao();
+        }
+        
+        if (tipo === 'json' || tipo === 'tudo') {
+            await testarJSON();
+        }
+        
+        if (tipo === 'api' || tipo === 'tudo') {
+            await testarAPI();
+        }
+    }
+    
+    async function verificarSessao() {
+        print('═══════════════════════════════════', 'info');
+        print('VERIFICANDO SESSÃO', 'info');
+        print('═══════════════════════════════════\n', 'info');
+        
+        try {
+            const response = await fetch('debug-sessao-simple.php');
+            const data = await response.json();
+            
+            print('Status da Sessão: ' + data.session_status, data.session_status === 'Ativa' ? 'ok' : 'erro');
+            print('ID da Sessão: ' + data.session_id, 'info');
+            print('Usuario ID: ' + data.usuario_id, data.usuario_id !== 'NÃO DEFINIDO' ? 'ok' : 'erro');
+            print('PHP Version: ' + data.servidor.php_version, 'info');
+            print('\nDados da Sessão:', 'info');
+            print(JSON.stringify(data.session_data, null, 2), 'info');
+        } catch (e) {
+            print('ERRO: ' + e.message, 'erro');
+        }
+    }
+    
+    async function testarJSON() {
+        print('\n═══════════════════════════════════', 'info');
+        print('VERIFICANDO ARQUIVO JSON', 'info');
+        print('═══════════════════════════════════\n', 'info');
+        
+        try {
+            const response = await fetch('dados/admin_ids.json');
+            if (!response.ok) {
+                print('ERRO: Arquivo não encontrado (status ' + response.status + ')', 'erro');
+                return;
+            }
+            
+            const data = await response.json();
+            print('✓ Arquivo encontrado', 'ok');
+            print('Conteúdo: ' + JSON.stringify(data), 'info');
+            print('Total de IDs: ' + data.length, 'ok');
+        } catch (e) {
+            print('ERRO: ' + e.message, 'erro');
+        }
+    }
+    
+    async function testarAPI() {
+        print('\n═══════════════════════════════════', 'info');
+        print('TESTANDO API (obter IDs)', 'info');
+        print('═══════════════════════════════════\n', 'info');
+        
+        try {
+            const response = await fetch('admin-ids-config.php', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/x-www-form-urlencoded',
+                },
+                body: 'acao=obter'
+            });
+            
+            print('Status HTTP: ' + response.status, response.ok ? 'ok' : 'erro');
+            
+            const data = await response.json();
+            
+            if (data.success) {
+                print('✓ Requisição bem-sucedida', 'ok');
+                print('IDs carregados: ' + JSON.stringify(data.ids), 'ok');
+                print('Total: ' + data.total, 'info');
+            } else {
+                print('✗ Erro na API', 'erro');
+                print('Mensagem: ' + data.mensagem, 'erro');
+            }
+        } catch (e) {
+            print('ERRO: ' + e.message, 'erro');
+        }
+    }
+    
+    // Teste ao carregar
+    window.addEventListener('load', () => {
+        print('Página pronta. Selecione um teste acima.', 'ok');
+    });
+</script>
+
+</body>
+</html>

@@ -10,25 +10,16 @@
 require_once 'config.php';
 require_once 'carregar_sessao.php';
 require_once 'config_mercadopago.php';
+require_once 'admin-ids-config.php';
 
 // ==================================================================================================================== 
-// ========================== CONFIGURAÇÃO DE ADMINS ==========================
+// ========================== CONFIGURAÇÃO DE USUÁRIOS VITALÍCIO ==========================
 // ==================================================================================================================== 
-// ⭐ LISTA DE IDs COM ACESSO ILIMITADO (PODE ADICIONAR QUANTOS QUISER)
+// 🎯 Os IDs de usuários vitalício são carregados automaticamente do arquivo de configuração
+// Use a página administrativa (ID 23) para gerenciar os IDs sem precisar editar este arquivo
 // 
-// Adicione os IDs dos usuários que terão acesso total ao site
-// Exemplo: define('ADMIN_USER_IDS', [23, 15, 8, 45]);
-// 
-// Se quiser apenas um admin: define('ADMIN_USER_IDS', [23]);
-// 
-// ⚠️ IMPORTANTE: A ORDEM NÃO IMPORTA, APENAS ADICIONE OS IDs NO ARRAY
-
-define('ADMIN_USER_IDS', [
-    23,    // 👈 usuario : CARLOS
-    42,  // 👈 usuario : ALANNES
-    // 8,   // 👈 Descomente para adicionar outro usuário com acesso ilimitado
-    // 45,  // 👈 Adicione quantos IDs quiser neste formato
-]);
+// Usuários Vitalício: Têm acesso ilimitado ao site
+// Super Admin (ID 23): Pode gerenciar e acessar a área administrativa
 
 header('Content-Type: application/json');
 
@@ -45,16 +36,16 @@ if (!$id_usuario) {
 }
 
 // ==================================================================================================================== 
-// ========================== VERIFICAR SE É ADMIN ==========================
+// ========================== VERIFICAR SE É USUÁRIO VITALÍCIO ==========================
 // ==================================================================================================================== 
-// Se o usuário está na lista de admins (IDs ilimitados), permitir TUDO sem restrições
-if (in_array($id_usuario, ADMIN_USER_IDS)) {
+// Se o usuário está na lista de vitalício, permitir TUDO sem restrições
+if (AdminIdManager::ehAdmin($id_usuario)) {
     echo json_encode([
         'success' => true,
         'pode_prosseguir' => true,
-        'plano_atual' => 'ADMIN - Ilimitado',
+        'plano_atual' => 'Usuário Vitalício - Ilimitado',
         'mensagem' => '',
-        'admin_mode' => true,
+        'vitalicio' => true,
         'user_id' => $id_usuario
     ]);
     exit;

@@ -163,6 +163,52 @@
   font-size: 16px;
   font-weight: 700;
   color: #2c3e50;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.badge-plano {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 3px 8px;
+  border-radius: 20px;
+  font-size: 11px;
+  font-weight: 600;
+  background-color: rgba(255, 255, 255, 0.7);
+  border: 1px solid;
+}
+
+.badge-plano i {
+  font-size: 12px;
+}
+
+.badge-plano-gratuito {
+  border-color: #95a5a6;
+  color: #95a5a6;
+}
+
+.badge-plano-prata {
+  border-color: #c0392b;
+  color: #c0392b;
+}
+
+.badge-plano-ouro {
+  border-color: #f39c12;
+  color: #f39c12;
+}
+
+.badge-plano-diamante {
+  border-color: #2980b9;
+  color: #2980b9;
+}
+
+.plano-data-expiracao {
+  font-size: 10px;
+  color: #7f8c8d;
+  margin-top: 4px;
+  display: block;
 }
 
 /* Botão Alterar Plano */
