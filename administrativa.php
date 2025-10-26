@@ -67,26 +67,23 @@ function obterEstatisticas() {
         }
         
         // Assinaturas anuais e mensais
-        // 🎯 Definição clara:
-        // MENSAL: Vence entre hoje e +31 dias (próximas assinaturas que vencem em breve)
-        // ANUAL: Vence depois de 31 dias (assinaturas com mais tempo)
+        // 🎯 Usar a coluna tipo_ciclo diretamente para contar
         
-        // 📅 MENSAIS: data_fim_assinatura > hoje AND data_fim_assinatura <= hoje + 31 dias
+        // 📅 MENSAIS: tipo_ciclo = 'mensal'
         $result = $conexao->query("
             SELECT COUNT(*) as count FROM usuarios 
             WHERE data_fim_assinatura IS NOT NULL 
             AND id_plano IS NOT NULL
-            AND data_fim_assinatura > NOW()
-            AND data_fim_assinatura <= DATE_ADD(NOW(), INTERVAL 31 DAY)
+            AND tipo_ciclo = 'mensal'
         ");
         $stats['assinaturas_mensais'] = $result->fetch_assoc()['count'] ?? 0;
         
-        // ⏰ ANUAIS: data_fim_assinatura > hoje + 31 dias (assinaturas com mais tempo)
+        // ⏰ ANUAIS: tipo_ciclo = 'anual'
         $result = $conexao->query("
             SELECT COUNT(*) as count FROM usuarios 
             WHERE data_fim_assinatura IS NOT NULL 
             AND id_plano IS NOT NULL
-            AND data_fim_assinatura > DATE_ADD(NOW(), INTERVAL 31 DAY)
+            AND tipo_ciclo = 'anual'
         ");
         $stats['assinaturas_anuais'] = $result->fetch_assoc()['count'] ?? 0;
         
