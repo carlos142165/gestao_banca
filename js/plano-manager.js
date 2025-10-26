@@ -119,11 +119,12 @@ const PlanoManager = {
       );
 
       const preco = this.periodoAtual === "ano" ? precoAno : precoMes;
-      const economiza =
-        this.periodoAtual === "ano"
-          ? (precoMes * 12 - precoAno).toFixed(2)
-          : "0.00";
-
+      
+      // Calcular economia anual
+      const economiaAnual = (precoMes * 12 - precoAno).toFixed(2);
+      // Calcular economia mensal (economia anual dividida por 12)
+      const economiaMensal = (economiaAnual / 12).toFixed(2);
+      
       const card = document.createElement("div");
       card.className = `plano-card ${plano.id === 3 ? "popular" : ""}`;
       card.style.setProperty("--cor-plano", this.obterCorPlano(plano.nome));
@@ -140,14 +141,14 @@ const PlanoManager = {
                 </div>
                 
                 <div class="plano-ciclo">
-                    ${this.periodoAtual === "ano" ? "por ano" : "por mês"}
+                    ${this.periodoAtual === "ano" ? "por mês" : "por mês"}
                 </div>
                 
                 ${
-                  economiza > 0 && this.periodoAtual === "ano"
+                  economiaAnual > 0 && this.periodoAtual === "ano"
                     ? `
                     <div style="color: #27ae60; font-size: 12px; font-weight: 600; margin-bottom: 10px;">
-                        💰 Economize R$ ${economiza.replace(".", ",")}
+                        💰 Economize R$ ${economiaMensal.replace(".", ",")}
                     </div>
                 `
                     : ""
