@@ -118,9 +118,9 @@ const PlanoManager = {
         )} | Ano: R$ ${precoAno.toFixed(2)}`
       );
 
-      const preco = this.periodoAtual === "anual" ? precoAno : precoMes;
+      const preco = this.periodoAtual === "ano" ? precoAno : precoMes;
       const economiza =
-        this.periodoAtual === "anual"
+        this.periodoAtual === "ano"
           ? (precoMes * 12 - precoAno).toFixed(2)
           : "0.00";
 
@@ -140,11 +140,11 @@ const PlanoManager = {
                 </div>
                 
                 <div class="plano-ciclo">
-                    ${this.periodoAtual === "anual" ? "por ano" : "por mês"}
+                    ${this.periodoAtual === "ano" ? "por ano" : "por mês"}
                 </div>
                 
                 ${
-                  economiza > 0 && this.periodoAtual === "anual"
+                  economiza > 0 && this.periodoAtual === "ano"
                     ? `
                     <div style="color: #27ae60; font-size: 12px; font-weight: 600; margin-bottom: 10px;">
                         💰 Economize R$ ${economiza.replace(".", ",")}
