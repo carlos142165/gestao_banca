@@ -205,7 +205,8 @@ function obterEstatisticas() {
         while ($row = $result->fetch_assoc()) {
             $plano = strtolower($row['nome'] ?? '');
             $valor_unitario = floatval($row['preco_ano'] ?? 0);
-            $valor_total = $valor_unitario * intval($row['count']);
+            // Multiplicar por 12 meses
+            $valor_total = $valor_unitario * 12 * intval($row['count']);
             
             if (strpos($plano, 'prata') !== false) {
                 $stats['valor_assinaturas_anuais']['prata'] = $valor_total;
