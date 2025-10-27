@@ -86,12 +86,13 @@ try {
             ? date('Y-m-d', strtotime('+1 month'))
             : date('Y-m-d', strtotime('+1 year'));
         
-        // Atualizar plano do usuário e tipo de ciclo
+        // Atualizar plano do usuário, tipo de ciclo e marcar como bônus
         $conexao->query("
             UPDATE usuarios 
             SET id_plano = (SELECT id FROM planos WHERE nome = '$plano' LIMIT 1),
                 data_fim_assinatura = '$data_expiracao',
-                tipo_ciclo = '$duracao'
+                tipo_ciclo = '$duracao',
+                tipo_pagamento = 'bonus'
             WHERE id = $usuario_id
         ");
         

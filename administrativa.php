@@ -89,27 +89,29 @@ function obterEstatisticas() {
         }
         
         // Assinaturas anuais e mensais
-        // 🎯 Usar a coluna tipo_ciclo diretamente para contar
+        // 🎯 Usar a coluna tipo_ciclo diretamente para contar (APENAS PAGOS)
         
-        // 📅 MENSAIS: tipo_ciclo = 'mensal'
+        // 📅 MENSAIS: tipo_ciclo = 'mensal' E tipo_pagamento = 'pago'
         $result = $conexao->query("
             SELECT COUNT(*) as count FROM usuarios 
             WHERE data_fim_assinatura IS NOT NULL 
             AND id_plano IS NOT NULL
             AND tipo_ciclo = 'mensal'
+            AND tipo_pagamento = 'pago'
         ");
         $stats['assinaturas_mensais'] = $result->fetch_assoc()['count'] ?? 0;
         
-        // ⏰ ANUAIS: tipo_ciclo = 'anual'
+        // ⏰ ANUAIS: tipo_ciclo = 'anual' E tipo_pagamento = 'pago'
         $result = $conexao->query("
             SELECT COUNT(*) as count FROM usuarios 
             WHERE data_fim_assinatura IS NOT NULL 
             AND id_plano IS NOT NULL
             AND tipo_ciclo = 'anual'
+            AND tipo_pagamento = 'pago'
         ");
         $stats['assinaturas_anuais'] = $result->fetch_assoc()['count'] ?? 0;
         
-        // 📊 BREAKDOWN DE PLANOS POR CICLO - MENSAIS
+        // 📊 BREAKDOWN DE PLANOS POR CICLO - MENSAIS (APENAS PAGOS)
         $result = $conexao->query("
             SELECT p.nome, COUNT(u.id) as count 
             FROM usuarios u
@@ -117,6 +119,7 @@ function obterEstatisticas() {
             WHERE u.data_fim_assinatura IS NOT NULL 
             AND u.id_plano IS NOT NULL
             AND u.tipo_ciclo = 'mensal'
+            AND u.tipo_pagamento = 'pago'
             GROUP BY u.id_plano
         ");
         
@@ -131,7 +134,7 @@ function obterEstatisticas() {
             }
         }
         
-        // 📊 BREAKDOWN DE PLANOS POR CICLO - ANUAIS
+        // 📊 BREAKDOWN DE PLANOS POR CICLO - ANUAIS (APENAS PAGOS)
         $result = $conexao->query("
             SELECT p.nome, COUNT(u.id) as count 
             FROM usuarios u
@@ -139,6 +142,7 @@ function obterEstatisticas() {
             WHERE u.data_fim_assinatura IS NOT NULL 
             AND u.id_plano IS NOT NULL
             AND u.tipo_ciclo = 'anual'
+            AND u.tipo_pagamento = 'pago'
             GROUP BY u.id_plano
         ");
         
@@ -160,7 +164,7 @@ function obterEstatisticas() {
         ");
         $stats['usuarios_ativos_24h'] = $result->fetch_assoc()['count'] ?? 0;
         
-        // 💰 CALCULAR VALORES DAS ASSINATURAS MENSAIS
+        // 💰 CALCULAR VALORES DAS ASSINATURAS MENSAIS (APENAS PAGOS)
         $result = $conexao->query("
             SELECT p.nome, p.preco_mes, COUNT(u.id) as count 
             FROM usuarios u
@@ -168,6 +172,7 @@ function obterEstatisticas() {
             WHERE u.data_fim_assinatura IS NOT NULL 
             AND u.id_plano IS NOT NULL
             AND u.tipo_ciclo = 'mensal'
+            AND u.tipo_pagamento = 'pago'
             GROUP BY u.id_plano
         ");
         
@@ -191,7 +196,7 @@ function obterEstatisticas() {
             $stats['valor_assinaturas_mensais']['ouro'] + 
             $stats['valor_assinaturas_mensais']['diamante'];
         
-        // 💰 CALCULAR VALORES DAS ASSINATURAS ANUAIS
+        // 💰 CALCULAR VALORES DAS ASSINATURAS ANUAIS (APENAS PAGOS)
         $result = $conexao->query("
             SELECT p.nome, p.preco_ano, COUNT(u.id) as count 
             FROM usuarios u
@@ -199,6 +204,7 @@ function obterEstatisticas() {
             WHERE u.data_fim_assinatura IS NOT NULL 
             AND u.id_plano IS NOT NULL
             AND u.tipo_ciclo = 'anual'
+            AND u.tipo_pagamento = 'pago'
             GROUP BY u.id_plano
         ");
         
@@ -1324,7 +1330,7 @@ $stats = obterEstatisticas();
         <!-- VALORES MENSAIS -->
         <div class="bloco-valores">
             <div class="valores-header">
-                <h3><i class="fas fa-calendar-alt"></i> MÊS</h3>
+                <h3><i class="fas fa-calendar-alt"></i> PLANO MENSAL</h3>
                 <div class="breakdown-badges">
                     <span class="badge prata">PRATA: <?php echo $stats['assinaturas_mensais_breakdown']['prata']; ?></span>
                     <span class="badge ouro">OURO: <?php echo $stats['assinaturas_mensais_breakdown']['ouro']; ?></span>
@@ -1355,7 +1361,7 @@ $stats = obterEstatisticas();
         <!-- VALORES ANUAIS -->
         <div class="bloco-valores">
             <div class="valores-header">
-                <h3><i class="fas fa-calendar-days"></i> ANO</h3>
+                <h3><i class="fas fa-calendar-days"></i> PLANO ANUAL</h3>
                 <div class="breakdown-badges">
                     <span class="badge prata">PRATA: <?php echo $stats['assinaturas_anuais_breakdown']['prata']; ?></span>
                     <span class="badge ouro">OURO: <?php echo $stats['assinaturas_anuais_breakdown']['ouro']; ?></span>
