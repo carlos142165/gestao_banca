@@ -38,6 +38,12 @@ function obterEstatisticas() {
         'assinaturas_anuais' => 0,
         'assinaturas_mensais' => 0,
         'usuarios_ativos_24h' => 0,
+        'bonus_total' => 0,
+        'bonus_breakdown' => [
+            'prata' => 0,
+            'ouro' => 0,
+            'diamante' => 0
+        ],
         'assinaturas_anuais_breakdown' => [
             'prata' => 0,
             'ouro' => 0,
@@ -67,26 +73,45 @@ function obterEstatisticas() {
         $result = $conexao->query("SELECT COUNT(*) as count FROM usuarios");
         $stats['total_usuarios'] = $result->fetch_assoc()['count'];
         
-        // Usuários por plano
+        // Usuários em PLANO GRATUITO (id_plano = gratuito)
+        $result = $conexao->query("
+            SELECT COUNT(u.id) as count 
+            FROM usuarios u
+            JOIN planos p ON u.id_plano = p.id
+            WHERE LOWER(p.nome) = 'gratuito'
+        ");
+        $stats['usuarios_plano_gratuito'] = $result->fetch_assoc()['count'] ?? 0;
+        
+        // 👑 CONTAR APENAS ASSINANTES PAGOS (não inclui gratuitos nem bônus para os cards)
         $result = $conexao->query("
             SELECT p.nome, COUNT(u.id) as count 
             FROM usuarios u
             LEFT JOIN planos p ON u.id_plano = p.id
+            WHERE u.tipo_pagamento = 'pago'
+            AND u.data_fim_assinatura IS NOT NULL
             GROUP BY u.id_plano
         ");
         
+        // Resetar contadores para reatribuição com filtro de PAGOS
+        $usuarios_plano_prata_pago = 0;
+        $usuarios_plano_ouro_pago = 0;
+        $usuarios_plano_diamante_pago = 0;
+        
         while ($row = $result->fetch_assoc()) {
             $plano = strtolower($row['nome'] ?? '');
-            if (strpos($plano, 'gratuito') !== false) {
-                $stats['usuarios_plano_gratuito'] = $row['count'];
-            } elseif (strpos($plano, 'prata') !== false) {
-                $stats['usuarios_plano_prata'] = $row['count'];
+            if (strpos($plano, 'prata') !== false) {
+                $usuarios_plano_prata_pago = $row['count'];
             } elseif (strpos($plano, 'ouro') !== false) {
-                $stats['usuarios_plano_ouro'] = $row['count'];
+                $usuarios_plano_ouro_pago = $row['count'];
             } elseif (strpos($plano, 'diamante') !== false) {
-                $stats['usuarios_plano_diamante'] = $row['count'];
+                $usuarios_plano_diamante_pago = $row['count'];
             }
         }
+        
+        // Usar contadores de pagos para os cards
+        $stats['usuarios_plano_prata'] = $usuarios_plano_prata_pago;
+        $stats['usuarios_plano_ouro'] = $usuarios_plano_ouro_pago;
+        $stats['usuarios_plano_diamante'] = $usuarios_plano_diamante_pago;
         
         // Assinaturas anuais e mensais
         // 🎯 Usar a coluna tipo_ciclo diretamente para contar (APENAS PAGOS)
@@ -228,6 +253,37 @@ function obterEstatisticas() {
             $stats['valor_assinaturas_anuais']['prata'] + 
             $stats['valor_assinaturas_anuais']['ouro'] + 
             $stats['valor_assinaturas_anuais']['diamante'];
+        
+        // 🎁 CALCULAR TOTAIS DE BÔNUS
+        $result = $conexao->query("
+            SELECT COUNT(*) as count FROM usuarios 
+            WHERE tipo_pagamento = 'bonus'
+            AND data_fim_assinatura IS NOT NULL 
+            AND id_plano IS NOT NULL
+        ");
+        $stats['bonus_total'] = $result->fetch_assoc()['count'] ?? 0;
+        
+        // 🎁 BREAKDOWN DE BÔNUS POR PLANO
+        $result = $conexao->query("
+            SELECT p.nome, COUNT(u.id) as count 
+            FROM usuarios u
+            JOIN planos p ON u.id_plano = p.id
+            WHERE u.tipo_pagamento = 'bonus'
+            AND u.data_fim_assinatura IS NOT NULL 
+            AND u.id_plano IS NOT NULL
+            GROUP BY u.id_plano
+        ");
+        
+        while ($row = $result->fetch_assoc()) {
+            $plano = strtolower($row['nome'] ?? '');
+            if (strpos($plano, 'prata') !== false) {
+                $stats['bonus_breakdown']['prata'] = $row['count'];
+            } elseif (strpos($plano, 'ouro') !== false) {
+                $stats['bonus_breakdown']['ouro'] = $row['count'];
+            } elseif (strpos($plano, 'diamante') !== false) {
+                $stats['bonus_breakdown']['diamante'] = $row['count'];
+            }
+        }
         
     } catch (Exception $e) {
         error_log("Erro ao obter estatísticas: " . $e->getMessage());
@@ -405,6 +461,10 @@ $stats = obterEstatisticas();
         
         .card-stat.ativo {
             --cor-principal: #06b6d4;
+        }
+        
+        .card-stat.bonus-card {
+            --cor-principal: #f59e0b;
         }
         
         .card-stat::before {
@@ -1317,6 +1377,25 @@ $stats = obterEstatisticas();
                     <span class="badge badge-diamante">
                         <?php echo round(($stats['usuarios_plano_diamante'] / max($stats['total_usuarios'], 1)) * 100); ?>%
                     </span>
+                </div>
+            </div>
+        </div>
+        
+        <!-- Bônus de Assinatura -->
+        <div class="card-stat bonus-card">
+            <div class="card-stat-content">
+                <div class="card-stat-label">
+                    <i class="fas fa-gift"></i>
+                    Bônus de Assinatura
+                </div>
+                <div class="card-stat-valor"><?php echo $stats['bonus_total']; ?></div>
+                <div class="card-stat-subtext">Usuários com Bônus</div>
+                <div class="card-stat-breakdown">
+                    <span class="breakdown-item prata">PRATA: <?php echo $stats['bonus_breakdown']['prata']; ?></span>
+                    <span class="breakdown-separator">-</span>
+                    <span class="breakdown-item ouro">OURO: <?php echo $stats['bonus_breakdown']['ouro']; ?></span>
+                    <span class="breakdown-separator">-</span>
+                    <span class="breakdown-item diamante">DIAMANTE: <?php echo $stats['bonus_breakdown']['diamante']; ?></span>
                 </div>
             </div>
         </div>
