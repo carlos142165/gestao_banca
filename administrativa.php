@@ -372,12 +372,44 @@ $stats = obterEstatisticas();
         }
         
         .card-stat-breakdown {
-            font-size: 10px;
-            color: var(--cor-texto-claro);
-            opacity: 0.85;
-            margin-top: 8px;
-            padding-top: 8px;
+            font-size: 13px;
+            font-weight: 600;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            gap: 12px;
+            margin-top: 12px;
+            padding-top: 12px;
+            padding-bottom: 8px;
             border-top: 1px solid rgba(255, 255, 255, 0.2);
+            flex-wrap: wrap;
+        }
+        
+        .breakdown-item {
+            display: inline-block;
+            padding: 4px 8px;
+            border-radius: 4px;
+            white-space: nowrap;
+        }
+        
+        .breakdown-item.prata {
+            color: #fff;
+            background-color: rgba(192, 57, 43, 0.3);
+        }
+        
+        .breakdown-item.ouro {
+            color: #fff;
+            background-color: rgba(243, 156, 18, 0.3);
+        }
+        
+        .breakdown-item.diamante {
+            color: #fff;
+            background-color: rgba(41, 128, 185, 0.3);
+        }
+        
+        .breakdown-separator {
+            color: rgba(255, 255, 255, 0.7);
+            font-weight: 300;
         }
         
         /* ==================================================================================================================== */
@@ -1048,11 +1080,11 @@ $stats = obterEstatisticas();
                 <div class="card-stat-valor"><?php echo $stats['assinaturas_anuais']; ?></div>
                 <div class="card-stat-subtext">Planos de 12 meses</div>
                 <div class="card-stat-breakdown">
-                    <small>
-                        OURO: <?php echo $stats['assinaturas_anuais_breakdown']['ouro']; ?> 
-                        / PRATA: <?php echo $stats['assinaturas_anuais_breakdown']['prata']; ?> 
-                        / DIAMANTE: <?php echo $stats['assinaturas_anuais_breakdown']['diamante']; ?>
-                    </small>
+                    <span class="breakdown-item prata">PRATA: <?php echo $stats['assinaturas_anuais_breakdown']['prata']; ?></span>
+                    <span class="breakdown-separator">-</span>
+                    <span class="breakdown-item ouro">OURO: <?php echo $stats['assinaturas_anuais_breakdown']['ouro']; ?></span>
+                    <span class="breakdown-separator">-</span>
+                    <span class="breakdown-item diamante">DIAMANTE: <?php echo $stats['assinaturas_anuais_breakdown']['diamante']; ?></span>
                 </div>
             </div>
         </div>
@@ -1067,11 +1099,11 @@ $stats = obterEstatisticas();
                 <div class="card-stat-valor"><?php echo $stats['assinaturas_mensais']; ?></div>
                 <div class="card-stat-subtext">Planos de 1 mês</div>
                 <div class="card-stat-breakdown">
-                    <small>
-                        OURO: <?php echo $stats['assinaturas_mensais_breakdown']['ouro']; ?> 
-                        / PRATA: <?php echo $stats['assinaturas_mensais_breakdown']['prata']; ?> 
-                        / DIAMANTE: <?php echo $stats['assinaturas_mensais_breakdown']['diamante']; ?>
-                    </small>
+                    <span class="breakdown-item prata">PRATA: <?php echo $stats['assinaturas_mensais_breakdown']['prata']; ?></span>
+                    <span class="breakdown-separator">-</span>
+                    <span class="breakdown-item ouro">OURO: <?php echo $stats['assinaturas_mensais_breakdown']['ouro']; ?></span>
+                    <span class="breakdown-separator">-</span>
+                    <span class="breakdown-item diamante">DIAMANTE: <?php echo $stats['assinaturas_mensais_breakdown']['diamante']; ?></span>
                 </div>
             </div>
         </div>
