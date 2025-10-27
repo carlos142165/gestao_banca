@@ -378,9 +378,9 @@ $stats = obterEstatisticas();
             justify-content: center;
             align-items: center;
             gap: 6px;
-            margin-top: 16px;
-            padding-top: 8px;
-            padding-bottom: 4px;
+            margin-top: 10px;
+            padding-top: 6px;
+            padding-bottom: 2px;
             border-top: 1px solid rgba(255, 255, 255, 0.2);
             flex-wrap: wrap;
         }
