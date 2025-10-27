@@ -1,14 +1,10 @@
 <?php
 session_start();
 
-// 1. Conexão com o banco de dados
-$dbHost = 'localhost';
-$dbUsername = 'root';
-$dbPassword = '';
-$dbname = 'formulario-carlos';
+// Incluir configurações centralizadas do banco de dados
+require_once __DIR__ . '/config.php';
 
-$conexao = new mysqli($dbHost, $dbUsername, $dbPassword, $dbname);
-
+// A variável $conexao já está disponível via config.php
 if ($conexao->connect_error) {
     die("Erro na conexão: " . $conexao->connect_error);
 }

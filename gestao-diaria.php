@@ -585,6 +585,7 @@ ob_end_flush();
 <link rel="stylesheet" href="css/ano.css">
 <link rel="stylesheet" href="css/minhaconta.css"> <!-- CSS consolidado do modal Minha Conta -->
 <link rel="stylesheet" href="css/celebracao-plano.css"> <!-- CSS da celebração de plano global -->
+<link rel="stylesheet" href="css/swiper-mobile.css"> <!-- CSS do Swiper mobile carousel -->
 
 <style>
 /* ===== ÍCONE AO VIVO PISCANDO ===== */
@@ -755,23 +756,6 @@ ob_end_flush();
     
     <main class="main-content">
         <div class="container">
-<!-- ==================================================================================================================== -->
-<!-- ========================== MENU TOPO - MENU TOPO - MENU TOPO - MENU TOPO - MENU TOPO ======================== -->
-<!-- ==================================================================================================================== -->
-<!-- -->
-<!-- -->
-<!-- -->
-<!-- -->
-<!-- -->
-<!-- -->
-<!-- -->
-<!-- -->
-<!-- -->
-<!-- -->
-<!-- -->
-<!-- -->
-<!-- -->
-<!-- -->
 <!-- ==================================================================================================================== -->
 <!-- ========================== BLOCO 1 - BLOCO 1 - BLOCO 1 - BLOCO 1 - BLOCO 1 ======================== -->
 <!-- ==================================================================================================================== -->
@@ -2459,7 +2443,12 @@ document.addEventListener('DOMContentLoaded', function() {
     </div>
     </div>
 </div>
- 
+  
+</div>
+<!-- fim swiper container -->
+
+        </div>
+    </main>
     </div>
 </div>
     </main>

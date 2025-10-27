@@ -2,8 +2,11 @@
 session_start();
 header('Content-Type: application/json');
 
-// Conecta ao banco de dados
-$conn = new mysqli("localhost", "root", "", "formulario-carlos");
+// Incluir configurações centralizadas do banco de dados
+require_once __DIR__ . '/config.php';
+
+// Usar a conexão global do config.php
+$conn = $conexao;
 
 if ($conn->connect_error) {
     echo json_encode(["erro" => "Falha na conexão"]);

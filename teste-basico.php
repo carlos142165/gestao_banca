@@ -8,7 +8,7 @@ require_once 'config.php';
 
 echo "<h2>1. Conexão com Banco</h2>";
 if ($conexao) {
-    echo "✅ Conectado ao banco: <strong>" . $conexao->select_db("formulario-carlos") . "</strong><br>";
+    echo "✅ Conectado ao banco: <strong>" . DB_NAME . "</strong><br>";
     echo "✅ Banco selecionado<br>";
 } else {
     echo "❌ Erro de conexão: " . $conexao->connect_error . "<br>";

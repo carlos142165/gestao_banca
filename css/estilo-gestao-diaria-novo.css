@@ -6696,3 +6696,86 @@ html body .main-content .container .bloco.bloco-1 .data-header-integrada,
 /* =======================================================================================================================================================
                                           💼  FIM CONTADOR DE DIAS RESTANTES DO MÊS - CONTROLE TOTAL VIA ROOT
    ==========================================================================================================================================================*/
+
+/* ========================================================================================
+   🚀 OTIMIZAÇÕES DE PERFORMANCE PARA MOBILE
+   ======================================================================================== */
+
+/* Desabilitar animações custosas em mobile */
+@media (max-width: 1024px) {
+  * {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+  }
+
+  /* Manter apenas transições críticas */
+  .pontuacao,
+  .area-central,
+  .area-direita,
+  .valor-dinamico {
+    animation-duration: 0.2s !important;
+    transition-duration: 0.15s !important;
+  }
+
+  /* Otimizar scrolling */
+  .bloco,
+  .mentor-wrapper,
+  .lista-dias {
+    -webkit-overflow-scrolling: touch !important;
+    scroll-behavior: auto !important;
+  }
+
+  /* Reduzir reflow em elementos com scroll */
+  .mentor-item {
+    flex-basis: auto !important;
+    min-height: auto !important;
+  }
+
+  /* Desabilitar box-shadows custosas */
+  .bloco {
+    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.08) !important;
+  }
+
+  .mentor-card,
+  .widget-meta-item {
+    box-shadow: 0 1px 2px rgba(0, 0, 0, 0.05) !important;
+  }
+
+  /* Simplificar gradientes */
+  .widget-barra-progresso {
+    background: linear-gradient(90deg, #22c55e 0%, #16a34a 100%) !important;
+  }
+
+  /* GPU acceleration para scrolling */
+  .main-content,
+  .container,
+  .mentor-wrapper {
+    -webkit-transform: translateZ(0) !important;
+    transform: translateZ(0) !important;
+  }
+
+  /* Remover blur e filtros complexos */
+  .backdrop {
+    backdrop-filter: none !important;
+    background: rgba(0, 0, 0, 0.5) !important;
+  }
+
+  /* Otimizar fonts */
+  body {
+    -webkit-font-smoothing: antialiased !important;
+    -moz-osx-font-smoothing: grayscale !important;
+  }
+
+  /* Desabilitar hover states em touch devices */
+  @media (hover: none) {
+    .mentor-card:hover {
+      background-color: inherit !important;
+    }
+
+    .btn-add-usuario:hover,
+    .menu-toggle:hover {
+      opacity: 1 !important;
+    }
+  }
+}

@@ -1,8 +1,65 @@
 <?php
+// ============================================
+// CONFIGURAÇÃO CENTRALIZADA DO BANCO DE DADOS
+// ============================================
+// Este arquivo contém todas as configurações de conexão
+// Modifique aqui e TODOS os arquivos usarão as novas configurações
 
-$dbHost = 'localhost';
-$dbUsername = 'root';
-$dbPassword = ''; // Sem senha
-$dbname = 'formulario-carlos';
+// Configurações de conexão
+define('DB_HOST', 'localhost');
+define('DB_USERNAME', 'root');
+define('DB_PASSWORD', '');
+define('DB_NAME', 'formulario-carlos');
 
-$conexao = new mysqli($dbHost, $dbUsername, $dbPassword, $dbname);
+// Variáveis globais para compatibilidade com código existente
+$dbHost = DB_HOST;
+$dbUsername = DB_USERNAME;
+$dbPassword = DB_PASSWORD;
+$dbname = DB_NAME;
+
+// Criar conexão MySQLi global
+$conexao = new mysqli(DB_HOST, DB_USERNAME, DB_PASSWORD, DB_NAME);
+
+// Verificar erro na conexão
+if ($conexao->connect_error) {
+    error_log("Erro de conexão com banco de dados: " . $conexao->connect_error);
+    die("Erro na conexão com o banco de dados. Por favor, tente novamente mais tarde.");
+}
+
+// ============================================
+// FUNÇÕES AUXILIARES
+// ============================================
+
+/**
+ * Obter uma conexão PDO para uso com PDO
+ * @return PDO|null
+ */
+function getPDOConnection() {
+    try {
+        return new PDO(
+            "mysql:host=" . DB_HOST . ";dbname=" . DB_NAME,
+            DB_USERNAME,
+            DB_PASSWORD
+        );
+    } catch (PDOException $e) {
+        error_log("Erro ao conectar com PDO: " . $e->getMessage());
+        return null;
+    }
+}
+
+/**
+ * Obter uma conexão MySQLi
+ * @return mysqli|null
+ */
+function getMySQLiConnection() {
+    $conn = new mysqli(DB_HOST, DB_USERNAME, DB_PASSWORD, DB_NAME);
+    if ($conn->connect_error) {
+        error_log("Erro ao conectar com MySQLi: " . $conn->connect_error);
+        return null;
+    }
+    return $conn;
+}
+
+// Definir charset UTF-8 por padrão
+$conexao->set_charset("utf8mb4");
+

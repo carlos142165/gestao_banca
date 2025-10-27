@@ -62,7 +62,14 @@
 </head>
 <body>
 <?php
-$pdo = new PDO("mysql:host=localhost;dbname=formulario-carlos", "root", "");
+// Incluir configurações centralizadas do banco de dados
+require_once __DIR__ . '/config.php';
+
+// Usar a função auxiliar para obter conexão PDO
+$pdo = getPDOConnection();
+if (!$pdo) {
+    die("Erro ao conectar com o banco de dados. Por favor, tente novamente mais tarde.");
+}
 session_start();
 
 if ($_SERVER["REQUEST_METHOD"] === "POST" && isset($_POST["email"])) {
