@@ -372,24 +372,25 @@ $stats = obterEstatisticas();
         }
         
         .card-stat-breakdown {
-            font-size: 13px;
+            font-size: 11px;
             font-weight: 600;
             display: flex;
             justify-content: center;
             align-items: center;
-            gap: 12px;
-            margin-top: 12px;
-            padding-top: 12px;
-            padding-bottom: 8px;
+            gap: 6px;
+            margin-top: 8px;
+            padding-top: 8px;
+            padding-bottom: 4px;
             border-top: 1px solid rgba(255, 255, 255, 0.2);
             flex-wrap: wrap;
         }
         
         .breakdown-item {
             display: inline-block;
-            padding: 4px 8px;
-            border-radius: 4px;
+            padding: 3px 6px;
+            border-radius: 3px;
             white-space: nowrap;
+            font-size: 10px;
         }
         
         .breakdown-item.prata {
@@ -410,6 +411,7 @@ $stats = obterEstatisticas();
         .breakdown-separator {
             color: rgba(255, 255, 255, 0.7);
             font-weight: 300;
+            font-size: 10px;
         }
         
         /* ==================================================================================================================== */
