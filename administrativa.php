@@ -373,16 +373,16 @@ $stats = obterEstatisticas();
             --cor-principal: #6366f1;
         }
         
-        .card-stat.prata {
-            --cor-principal: #a78bfa;
+        .card-stat.prata-card {
+            --cor-principal: #c0392b;
         }
         
-        .card-stat.ouro {
-            --cor-principal: #fbbf24;
+        .card-stat.ouro-card {
+            --cor-principal: #f39c12;
         }
         
-        .card-stat.diamante {
-            --cor-principal: #ec4899;
+        .card-stat.diamante-card {
+            --cor-principal: #2980b9;
         }
         
         .card-stat.visitas {
@@ -554,6 +554,10 @@ $stats = obterEstatisticas();
             background-color: #2980b9;
         }
         
+        .breakdown-badges .badge.total {
+            background-color: #27ae60;
+        }
+        
         .valores-grid {
             display: flex;
             flex-direction: column;
@@ -703,6 +707,21 @@ $stats = obterEstatisticas();
         .badge-aviso {
             background: rgba(245, 158, 11, 0.1);
             color: var(--cor-aviso);
+        }
+        
+        .badge-prata {
+            background: rgba(192, 57, 43, 0.1);
+            color: #c0392b;
+        }
+        
+        .badge-ouro {
+            background: rgba(243, 156, 18, 0.1);
+            color: #f39c12;
+        }
+        
+        .badge-diamante {
+            background: rgba(41, 128, 185, 0.1);
+            color: #2980b9;
         }
         
         /* ==================================================================================================================== */
@@ -1218,55 +1237,7 @@ $stats = obterEstatisticas();
             </div>
         </div>
         
-        <!-- Plano Prata -->
-        <div class="card-stat prata">
-            <div class="card-stat-content">
-                <div class="card-stat-label">
-                    <i class="fas fa-star"></i>
-                    Plano Prata
-                </div>
-                <div class="card-stat-valor"><?php echo $stats['usuarios_plano_prata']; ?></div>
-                <div class="card-stat-subtext">
-                    <span class="badge badge-aviso">
-                        <?php echo round(($stats['usuarios_plano_prata'] / max($stats['total_usuarios'], 1)) * 100); ?>%
-                    </span>
-                </div>
-            </div>
-        </div>
-        
-        <!-- Plano Ouro -->
-        <div class="card-stat ouro">
-            <div class="card-stat-content">
-                <div class="card-stat-label">
-                    <i class="fas fa-crown"></i>
-                    Plano Ouro
-                </div>
-                <div class="card-stat-valor"><?php echo $stats['usuarios_plano_ouro']; ?></div>
-                <div class="card-stat-subtext">
-                    <span class="badge badge-sucesso">
-                        <?php echo round(($stats['usuarios_plano_ouro'] / max($stats['total_usuarios'], 1)) * 100); ?>%
-                    </span>
-                </div>
-            </div>
-        </div>
-        
-        <!-- Plano Diamante -->
-        <div class="card-stat diamante">
-            <div class="card-stat-content">
-                <div class="card-stat-label">
-                    <i class="fas fa-gem"></i>
-                    Plano Diamante
-                </div>
-                <div class="card-stat-valor"><?php echo $stats['usuarios_plano_diamante']; ?></div>
-                <div class="card-stat-subtext">
-                    <span class="badge badge-sucesso">
-                        <?php echo round(($stats['usuarios_plano_diamante'] / max($stats['total_usuarios'], 1)) * 100); ?>%
-                    </span>
-                </div>
-            </div>
-        </div>
-        
-        <!-- Visitas Ativas -->
+        <!-- Visitas Ativas / Usuários Online -->
         <div class="card-stat visitas">
             <div class="card-stat-content">
                 <div class="card-stat-label">
@@ -1278,45 +1249,7 @@ $stats = obterEstatisticas();
             </div>
         </div>
         
-        <!-- Assinaturas Anuais -->
-        <div class="card-stat anual">
-            <div class="card-stat-content">
-                <div class="card-stat-label">
-                    <i class="fas fa-calendar-days"></i>
-                    Assinaturas Anuais
-                </div>
-                <div class="card-stat-valor"><?php echo $stats['assinaturas_anuais']; ?></div>
-                <div class="card-stat-subtext">Planos de 12 meses</div>
-                <div class="card-stat-breakdown">
-                    <span class="breakdown-item prata">PRATA: <?php echo $stats['assinaturas_anuais_breakdown']['prata']; ?></span>
-                    <span class="breakdown-separator">-</span>
-                    <span class="breakdown-item ouro">OURO: <?php echo $stats['assinaturas_anuais_breakdown']['ouro']; ?></span>
-                    <span class="breakdown-separator">-</span>
-                    <span class="breakdown-item diamante">DIAMANTE: <?php echo $stats['assinaturas_anuais_breakdown']['diamante']; ?></span>
-                </div>
-            </div>
-        </div>
-        
-        <!-- Assinaturas Mensais -->
-        <div class="card-stat mensal">
-            <div class="card-stat-content">
-                <div class="card-stat-label">
-                    <i class="fas fa-calendar-alt"></i>
-                    Assinaturas Mensais
-                </div>
-                <div class="card-stat-valor"><?php echo $stats['assinaturas_mensais']; ?></div>
-                <div class="card-stat-subtext">Planos de 1 mês</div>
-                <div class="card-stat-breakdown">
-                    <span class="breakdown-item prata">PRATA: <?php echo $stats['assinaturas_mensais_breakdown']['prata']; ?></span>
-                    <span class="breakdown-separator">-</span>
-                    <span class="breakdown-item ouro">OURO: <?php echo $stats['assinaturas_mensais_breakdown']['ouro']; ?></span>
-                    <span class="breakdown-separator">-</span>
-                    <span class="breakdown-item diamante">DIAMANTE: <?php echo $stats['assinaturas_mensais_breakdown']['diamante']; ?></span>
-                </div>
-            </div>
-        </div>
-        
-        <!-- Receita Total -->
+        <!-- Taxa de Conversão -->
         <div class="card-stat ativo">
             <div class="card-stat-content">
                 <div class="card-stat-label">
@@ -1331,6 +1264,54 @@ $stats = obterEstatisticas();
                     ?>
                 </div>
                 <div class="card-stat-subtext">Usuários com pagamento</div>
+            </div>
+        </div>
+        
+        <!-- Plano Prata -->
+        <div class="card-stat prata-card">
+            <div class="card-stat-content">
+                <div class="card-stat-label">
+                    <i class="fas fa-star"></i>
+                    Plano Prata
+                </div>
+                <div class="card-stat-valor"><?php echo $stats['usuarios_plano_prata']; ?></div>
+                <div class="card-stat-subtext">
+                    <span class="badge badge-prata">
+                        <?php echo round(($stats['usuarios_plano_prata'] / max($stats['total_usuarios'], 1)) * 100); ?>%
+                    </span>
+                </div>
+            </div>
+        </div>
+        
+        <!-- Plano Ouro -->
+        <div class="card-stat ouro-card">
+            <div class="card-stat-content">
+                <div class="card-stat-label">
+                    <i class="fas fa-crown"></i>
+                    Plano Ouro
+                </div>
+                <div class="card-stat-valor"><?php echo $stats['usuarios_plano_ouro']; ?></div>
+                <div class="card-stat-subtext">
+                    <span class="badge badge-ouro">
+                        <?php echo round(($stats['usuarios_plano_ouro'] / max($stats['total_usuarios'], 1)) * 100); ?>%
+                    </span>
+                </div>
+            </div>
+        </div>
+        
+        <!-- Plano Diamante -->
+        <div class="card-stat diamante-card">
+            <div class="card-stat-content">
+                <div class="card-stat-label">
+                    <i class="fas fa-gem"></i>
+                    Plano Diamante
+                </div>
+                <div class="card-stat-valor"><?php echo $stats['usuarios_plano_diamante']; ?></div>
+                <div class="card-stat-subtext">
+                    <span class="badge badge-diamante">
+                        <?php echo round(($stats['usuarios_plano_diamante'] / max($stats['total_usuarios'], 1)) * 100); ?>%
+                    </span>
+                </div>
             </div>
         </div>
     </div>
@@ -1348,6 +1329,7 @@ $stats = obterEstatisticas();
                     <span class="badge prata">PRATA: <?php echo $stats['assinaturas_mensais_breakdown']['prata']; ?></span>
                     <span class="badge ouro">OURO: <?php echo $stats['assinaturas_mensais_breakdown']['ouro']; ?></span>
                     <span class="badge diamante">DIAMANTE: <?php echo $stats['assinaturas_mensais_breakdown']['diamante']; ?></span>
+                    <span class="badge total">TOTAL: <?php echo $stats['assinaturas_mensais']; ?></span>
                 </div>
             </div>
             <div class="valores-grid">
@@ -1378,6 +1360,7 @@ $stats = obterEstatisticas();
                     <span class="badge prata">PRATA: <?php echo $stats['assinaturas_anuais_breakdown']['prata']; ?></span>
                     <span class="badge ouro">OURO: <?php echo $stats['assinaturas_anuais_breakdown']['ouro']; ?></span>
                     <span class="badge diamante">DIAMANTE: <?php echo $stats['assinaturas_anuais_breakdown']['diamante']; ?></span>
+                    <span class="badge total">TOTAL: <?php echo $stats['assinaturas_anuais']; ?></span>
                 </div>
             </div>
             <div class="valores-grid">
