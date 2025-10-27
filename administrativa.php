@@ -513,76 +513,31 @@ $stats = obterEstatisticas();
             font-size: 16px;
             font-weight: 700;
             color: var(--cor-principal);
-            margin-bottom: 20px;
             display: flex;
             align-items: center;
             gap: 10px;
         }
         
-        .valores-grid {
-            display: flex;
-            flex-direction: column;
-            gap: 12px;
-        }
-        
-        .valor-item {
+        .valores-header {
             display: flex;
             justify-content: space-between;
             align-items: center;
-            padding: 12px;
-            border-radius: 8px;
-            background-color: rgba(0, 0, 0, 0.02);
-            border-left: 4px solid;
+            gap: 20px;
+            flex-wrap: wrap;
         }
         
-        .valor-item.prata {
-            border-left-color: #c0392b;
-        }
-        
-        .valor-item.ouro {
-            border-left-color: #f39c12;
-        }
-        
-        .valor-item.diamante {
-            border-left-color: #2980b9;
-        }
-        
-        .valor-item.total {
-            border-left-color: #27ae60;
-            font-weight: 700;
-            background-color: rgba(39, 174, 96, 0.08);
-        }
-        
-        .valor-label {
+        .breakdown-totals {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            flex-wrap: wrap;
+            font-size: 13px;
             font-weight: 600;
             color: #2c3e50;
-            font-size: 14px;
         }
         
-        .valor-preco {
-            font-weight: 700;
-            font-size: 16px;
-            color: #2c3e50;
-        }
-        
-        .valor-item.prata .valor-preco,
-        .valor-item.prata .valor-label {
-            color: #c0392b;
-        }
-        
-        .valor-item.ouro .valor-preco,
-        .valor-item.ouro .valor-label {
-            color: #f39c12;
-        }
-        
-        .valor-item.diamante .valor-preco,
-        .valor-item.diamante .valor-label {
-            color: #2980b9;
-        }
-        
-        .valor-item.total .valor-preco,
-        .valor-item.total .valor-label {
-            color: #27ae60;
+        .breakdown-totals span {
+            white-space: nowrap;
         }
         
         /* ==================================================================================================================== */
@@ -1307,46 +1262,32 @@ $stats = obterEstatisticas();
     <div class="secao-valores">
         <!-- VALORES MENSAIS -->
         <div class="bloco-valores">
-            <h3><i class="fas fa-calendar-alt"></i> VALOR DAS ASSINATURAS MENSAIS</h3>
-            <div class="valores-grid">
-                <div class="valor-item prata">
-                    <span class="valor-label">PRATA:</span>
-                    <span class="valor-preco">R$ <?php echo number_format($stats['valor_assinaturas_mensais']['prata'], 2, ',', '.'); ?></span>
-                </div>
-                <div class="valor-item ouro">
-                    <span class="valor-label">OURO:</span>
-                    <span class="valor-preco">R$ <?php echo number_format($stats['valor_assinaturas_mensais']['ouro'], 2, ',', '.'); ?></span>
-                </div>
-                <div class="valor-item diamante">
-                    <span class="valor-label">DIAMANTE:</span>
-                    <span class="valor-preco">R$ <?php echo number_format($stats['valor_assinaturas_mensais']['diamante'], 2, ',', '.'); ?></span>
-                </div>
-                <div class="valor-item total">
-                    <span class="valor-label">TOTAL:</span>
-                    <span class="valor-preco">R$ <?php echo number_format($stats['valor_assinaturas_mensais']['total'], 2, ',', '.'); ?></span>
+            <div class="valores-header">
+                <h3><i class="fas fa-calendar-alt"></i> (MÊS)</h3>
+                <div class="breakdown-totals">
+                    <span>[PRATA: <?php echo $stats['assinaturas_mensais_breakdown']['prata']; ?>]</span>
+                    <span> - </span>
+                    <span>[OURO: <?php echo $stats['assinaturas_mensais_breakdown']['ouro']; ?>]</span>
+                    <span> - </span>
+                    <span>[DIAMANTE: <?php echo $stats['assinaturas_mensais_breakdown']['diamante']; ?>]</span>
+                    <span> - </span>
+                    <span>(TOTAL: <?php echo $stats['assinaturas_mensais']; ?>)</span>
                 </div>
             </div>
         </div>
         
         <!-- VALORES ANUAIS -->
         <div class="bloco-valores">
-            <h3><i class="fas fa-calendar-days"></i> VALOR DAS ASSINATURAS ANUAIS</h3>
-            <div class="valores-grid">
-                <div class="valor-item prata">
-                    <span class="valor-label">PRATA:</span>
-                    <span class="valor-preco">R$ <?php echo number_format($stats['valor_assinaturas_anuais']['prata'], 2, ',', '.'); ?></span>
-                </div>
-                <div class="valor-item ouro">
-                    <span class="valor-label">OURO:</span>
-                    <span class="valor-preco">R$ <?php echo number_format($stats['valor_assinaturas_anuais']['ouro'], 2, ',', '.'); ?></span>
-                </div>
-                <div class="valor-item diamante">
-                    <span class="valor-label">DIAMANTE:</span>
-                    <span class="valor-preco">R$ <?php echo number_format($stats['valor_assinaturas_anuais']['diamante'], 2, ',', '.'); ?></span>
-                </div>
-                <div class="valor-item total">
-                    <span class="valor-label">TOTAL:</span>
-                    <span class="valor-preco">R$ <?php echo number_format($stats['valor_assinaturas_anuais']['total'], 2, ',', '.'); ?></span>
+            <div class="valores-header">
+                <h3><i class="fas fa-calendar-days"></i> (ANO)</h3>
+                <div class="breakdown-totals">
+                    <span>[PRATA: <?php echo $stats['assinaturas_anuais_breakdown']['prata']; ?>]</span>
+                    <span> - </span>
+                    <span>[OURO: <?php echo $stats['assinaturas_anuais_breakdown']['ouro']; ?>]</span>
+                    <span> - </span>
+                    <span>[DIAMANTE: <?php echo $stats['assinaturas_anuais_breakdown']['diamante']; ?>]</span>
+                    <span> - </span>
+                    <span>(TOTAL: <?php echo $stats['assinaturas_anuais']; ?>)</span>
                 </div>
             </div>
         </div>
