@@ -395,17 +395,17 @@ $stats = obterEstatisticas();
         
         .breakdown-item.prata {
             color: #fff;
-            background-color: rgba(192, 57, 43, 0.3);
+            background-color: rgba(192, 57, 43, 0.6);
         }
         
         .breakdown-item.ouro {
             color: #fff;
-            background-color: rgba(243, 156, 18, 0.3);
+            background-color: rgba(243, 156, 18, 0.6);
         }
         
         .breakdown-item.diamante {
             color: #fff;
-            background-color: rgba(41, 128, 185, 0.3);
+            background-color: rgba(41, 128, 185, 0.6);
         }
         
         .breakdown-separator {
