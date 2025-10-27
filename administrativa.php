@@ -1345,9 +1345,9 @@ $stats = obterEstatisticas();
             <div class="valores-header">
                 <h3><i class="fas fa-calendar-alt"></i> MÊS</h3>
                 <div class="breakdown-badges">
-                    <span class="badge prata">[PRATA: <?php echo $stats['assinaturas_mensais_breakdown']['prata']; ?>]</span>
-                    <span class="badge ouro">[OURO: <?php echo $stats['assinaturas_mensais_breakdown']['ouro']; ?>]</span>
-                    <span class="badge diamante">[DIAMANTE: <?php echo $stats['assinaturas_mensais_breakdown']['diamante']; ?>]</span>
+                    <span class="badge prata">PRATA: <?php echo $stats['assinaturas_mensais_breakdown']['prata']; ?></span>
+                    <span class="badge ouro">OURO: <?php echo $stats['assinaturas_mensais_breakdown']['ouro']; ?></span>
+                    <span class="badge diamante">DIAMANTE: <?php echo $stats['assinaturas_mensais_breakdown']['diamante']; ?></span>
                 </div>
             </div>
             <div class="valores-grid">
@@ -1375,9 +1375,9 @@ $stats = obterEstatisticas();
             <div class="valores-header">
                 <h3><i class="fas fa-calendar-days"></i> ANO</h3>
                 <div class="breakdown-badges">
-                    <span class="badge prata">[PRATA: <?php echo $stats['assinaturas_anuais_breakdown']['prata']; ?>]</span>
-                    <span class="badge ouro">[OURO: <?php echo $stats['assinaturas_anuais_breakdown']['ouro']; ?>]</span>
-                    <span class="badge diamante">[DIAMANTE: <?php echo $stats['assinaturas_anuais_breakdown']['diamante']; ?>]</span>
+                    <span class="badge prata">PRATA: <?php echo $stats['assinaturas_anuais_breakdown']['prata']; ?></span>
+                    <span class="badge ouro">OURO: <?php echo $stats['assinaturas_anuais_breakdown']['ouro']; ?></span>
+                    <span class="badge diamante">DIAMANTE: <?php echo $stats['assinaturas_anuais_breakdown']['diamante']; ?></span>
                 </div>
             </div>
             <div class="valores-grid">
