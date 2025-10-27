@@ -1343,7 +1343,7 @@ $stats = obterEstatisticas();
         <!-- VALORES MENSAIS -->
         <div class="bloco-valores">
             <div class="valores-header">
-                <h3><i class="fas fa-calendar-alt"></i> (MÊS)</h3>
+                <h3><i class="fas fa-calendar-alt"></i> MÊS</h3>
                 <div class="breakdown-badges">
                     <span class="badge prata">[PRATA: <?php echo $stats['assinaturas_mensais_breakdown']['prata']; ?>]</span>
                     <span class="badge ouro">[OURO: <?php echo $stats['assinaturas_mensais_breakdown']['ouro']; ?>]</span>
@@ -1373,7 +1373,7 @@ $stats = obterEstatisticas();
         <!-- VALORES ANUAIS -->
         <div class="bloco-valores">
             <div class="valores-header">
-                <h3><i class="fas fa-calendar-days"></i> (ANO)</h3>
+                <h3><i class="fas fa-calendar-days"></i> ANO</h3>
                 <div class="breakdown-badges">
                     <span class="badge prata">[PRATA: <?php echo $stats['assinaturas_anuais_breakdown']['prata']; ?>]</span>
                     <span class="badge ouro">[OURO: <?php echo $stats['assinaturas_anuais_breakdown']['ouro']; ?>]</span>
