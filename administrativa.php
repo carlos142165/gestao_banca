@@ -48,6 +48,18 @@ function obterEstatisticas() {
             'ouro' => 0,
             'diamante' => 0
         ],
+        'valor_assinaturas_mensais' => [
+            'prata' => 0,
+            'ouro' => 0,
+            'diamante' => 0,
+            'total' => 0
+        ],
+        'valor_assinaturas_anuais' => [
+            'prata' => 0,
+            'ouro' => 0,
+            'diamante' => 0,
+            'total' => 0
+        ],
     ];
     
     try {
@@ -147,6 +159,68 @@ function obterEstatisticas() {
             WHERE data_criacao >= DATE_SUB(NOW(), INTERVAL 24 HOUR)
         ");
         $stats['usuarios_ativos_24h'] = $result->fetch_assoc()['count'] ?? 0;
+        
+        // 💰 CALCULAR VALORES DAS ASSINATURAS MENSAIS
+        $result = $conexao->query("
+            SELECT p.nome, p.preco_mes, COUNT(u.id) as count 
+            FROM usuarios u
+            JOIN planos p ON u.id_plano = p.id
+            WHERE u.data_fim_assinatura IS NOT NULL 
+            AND u.id_plano IS NOT NULL
+            AND u.tipo_ciclo = 'mensal'
+            GROUP BY u.id_plano
+        ");
+        
+        while ($row = $result->fetch_assoc()) {
+            $plano = strtolower($row['nome'] ?? '');
+            $valor_unitario = floatval($row['preco_mes'] ?? 0);
+            $valor_total = $valor_unitario * intval($row['count']);
+            
+            if (strpos($plano, 'prata') !== false) {
+                $stats['valor_assinaturas_mensais']['prata'] = $valor_total;
+            } elseif (strpos($plano, 'ouro') !== false) {
+                $stats['valor_assinaturas_mensais']['ouro'] = $valor_total;
+            } elseif (strpos($plano, 'diamante') !== false) {
+                $stats['valor_assinaturas_mensais']['diamante'] = $valor_total;
+            }
+        }
+        
+        // Calcular total mensal
+        $stats['valor_assinaturas_mensais']['total'] = 
+            $stats['valor_assinaturas_mensais']['prata'] + 
+            $stats['valor_assinaturas_mensais']['ouro'] + 
+            $stats['valor_assinaturas_mensais']['diamante'];
+        
+        // 💰 CALCULAR VALORES DAS ASSINATURAS ANUAIS
+        $result = $conexao->query("
+            SELECT p.nome, p.preco_ano, COUNT(u.id) as count 
+            FROM usuarios u
+            JOIN planos p ON u.id_plano = p.id
+            WHERE u.data_fim_assinatura IS NOT NULL 
+            AND u.id_plano IS NOT NULL
+            AND u.tipo_ciclo = 'anual'
+            GROUP BY u.id_plano
+        ");
+        
+        while ($row = $result->fetch_assoc()) {
+            $plano = strtolower($row['nome'] ?? '');
+            $valor_unitario = floatval($row['preco_ano'] ?? 0);
+            $valor_total = $valor_unitario * intval($row['count']);
+            
+            if (strpos($plano, 'prata') !== false) {
+                $stats['valor_assinaturas_anuais']['prata'] = $valor_total;
+            } elseif (strpos($plano, 'ouro') !== false) {
+                $stats['valor_assinaturas_anuais']['ouro'] = $valor_total;
+            } elseif (strpos($plano, 'diamante') !== false) {
+                $stats['valor_assinaturas_anuais']['diamante'] = $valor_total;
+            }
+        }
+        
+        // Calcular total anual
+        $stats['valor_assinaturas_anuais']['total'] = 
+            $stats['valor_assinaturas_anuais']['prata'] + 
+            $stats['valor_assinaturas_anuais']['ouro'] + 
+            $stats['valor_assinaturas_anuais']['diamante'];
         
     } catch (Exception $e) {
         error_log("Erro ao obter estatísticas: " . $e->getMessage());
@@ -412,6 +486,102 @@ $stats = obterEstatisticas();
             color: rgba(255, 255, 255, 0.7);
             font-weight: 300;
             font-size: 10px;
+        }
+        
+        /* ==================================================================================================================== */
+        /* ========================== SEÇÃO DE RESUMO ==========================                                */
+        /* ==================================================================================================================== */
+        /* ========================== SEÇÃO DE VALORES ==========================                                */
+        /* ==================================================================================================================== */
+        
+        .secao-valores {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(350px, 1fr));
+            gap: 25px;
+            margin-bottom: 30px;
+        }
+        
+        .bloco-valores {
+            background: white;
+            border-radius: 12px;
+            padding: 25px;
+            box-shadow: var(--sombra-media);
+        }
+        
+        .bloco-valores h3 {
+            font-size: 16px;
+            font-weight: 700;
+            color: var(--cor-principal);
+            margin-bottom: 20px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+        
+        .valores-grid {
+            display: flex;
+            flex-direction: column;
+            gap: 12px;
+        }
+        
+        .valor-item {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 12px;
+            border-radius: 8px;
+            background-color: rgba(0, 0, 0, 0.02);
+            border-left: 4px solid;
+        }
+        
+        .valor-item.prata {
+            border-left-color: #c0392b;
+        }
+        
+        .valor-item.ouro {
+            border-left-color: #f39c12;
+        }
+        
+        .valor-item.diamante {
+            border-left-color: #2980b9;
+        }
+        
+        .valor-item.total {
+            border-left-color: #27ae60;
+            font-weight: 700;
+            background-color: rgba(39, 174, 96, 0.08);
+        }
+        
+        .valor-label {
+            font-weight: 600;
+            color: #2c3e50;
+            font-size: 14px;
+        }
+        
+        .valor-preco {
+            font-weight: 700;
+            font-size: 16px;
+            color: #2c3e50;
+        }
+        
+        .valor-item.prata .valor-preco,
+        .valor-item.prata .valor-label {
+            color: #c0392b;
+        }
+        
+        .valor-item.ouro .valor-preco,
+        .valor-item.ouro .valor-label {
+            color: #f39c12;
+        }
+        
+        .valor-item.diamante .valor-preco,
+        .valor-item.diamante .valor-label {
+            color: #2980b9;
+        }
+        
+        .valor-item.total .valor-preco,
+        .valor-item.total .valor-label {
+            color: #27ae60;
         }
         
         /* ==================================================================================================================== */
@@ -1125,6 +1295,58 @@ $stats = obterEstatisticas();
                     ?>
                 </div>
                 <div class="card-stat-subtext">Usuários com pagamento</div>
+            </div>
+        </div>
+    </div>
+    
+    <!-- ==================================================================================================================== -->
+    <!-- ========================== VALORES DAS ASSINATURAS ==========================                                -->
+    <!-- ==================================================================================================================== -->
+    
+    <div class="secao-valores">
+        <!-- VALORES MENSAIS -->
+        <div class="bloco-valores">
+            <h3><i class="fas fa-calendar-alt"></i> VALOR DAS ASSINATURAS MENSAIS</h3>
+            <div class="valores-grid">
+                <div class="valor-item prata">
+                    <span class="valor-label">PRATA:</span>
+                    <span class="valor-preco">R$ <?php echo number_format($stats['valor_assinaturas_mensais']['prata'], 2, ',', '.'); ?></span>
+                </div>
+                <div class="valor-item ouro">
+                    <span class="valor-label">OURO:</span>
+                    <span class="valor-preco">R$ <?php echo number_format($stats['valor_assinaturas_mensais']['ouro'], 2, ',', '.'); ?></span>
+                </div>
+                <div class="valor-item diamante">
+                    <span class="valor-label">DIAMANTE:</span>
+                    <span class="valor-preco">R$ <?php echo number_format($stats['valor_assinaturas_mensais']['diamante'], 2, ',', '.'); ?></span>
+                </div>
+                <div class="valor-item total">
+                    <span class="valor-label">TOTAL:</span>
+                    <span class="valor-preco">R$ <?php echo number_format($stats['valor_assinaturas_mensais']['total'], 2, ',', '.'); ?></span>
+                </div>
+            </div>
+        </div>
+        
+        <!-- VALORES ANUAIS -->
+        <div class="bloco-valores">
+            <h3><i class="fas fa-calendar-days"></i> VALOR DAS ASSINATURAS ANUAIS</h3>
+            <div class="valores-grid">
+                <div class="valor-item prata">
+                    <span class="valor-label">PRATA:</span>
+                    <span class="valor-preco">R$ <?php echo number_format($stats['valor_assinaturas_anuais']['prata'], 2, ',', '.'); ?></span>
+                </div>
+                <div class="valor-item ouro">
+                    <span class="valor-label">OURO:</span>
+                    <span class="valor-preco">R$ <?php echo number_format($stats['valor_assinaturas_anuais']['ouro'], 2, ',', '.'); ?></span>
+                </div>
+                <div class="valor-item diamante">
+                    <span class="valor-label">DIAMANTE:</span>
+                    <span class="valor-preco">R$ <?php echo number_format($stats['valor_assinaturas_anuais']['diamante'], 2, ',', '.'); ?></span>
+                </div>
+                <div class="valor-item total">
+                    <span class="valor-label">TOTAL:</span>
+                    <span class="valor-preco">R$ <?php echo number_format($stats['valor_assinaturas_anuais']['total'], 2, ',', '.'); ?></span>
+                </div>
             </div>
         </div>
     </div>
