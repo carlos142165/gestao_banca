@@ -378,7 +378,7 @@ $stats = obterEstatisticas();
             justify-content: center;
             align-items: center;
             gap: 6px;
-            margin-top: 8px;
+            margin-top: 16px;
             padding-top: 8px;
             padding-bottom: 4px;
             border-top: 1px solid rgba(255, 255, 255, 0.2);
