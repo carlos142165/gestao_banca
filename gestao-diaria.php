@@ -2527,7 +2527,6 @@ document.addEventListener('DOMContentLoaded', function() {
         <!-- Campo de entrada do nome -->
         <div class="input-group">
           <input type="text" name="nome" id="nome" class="input-text" placeholder="Digite o nome do mentor" required maxlength="100" style="text-align: center;">
-          <label for="nome" class="labelinput">Nome do Mentor</label>
         </div>
 
         <!-- Botões de ação -->
