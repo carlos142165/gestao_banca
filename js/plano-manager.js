@@ -139,7 +139,7 @@ const PlanoManager = {
                 </div>
                 
                 <div class="plano-ciclo">
-                    ${this.periodoAtual === "ano" ? "por mês" : "por mês"}
+                    ${this.periodoAtual === "ano" ? "por ano" : "por mês"}
                 </div>
                 
                 ${

@@ -1,6 +1,9 @@
 /* =======================================================================================================================================================
      - ROOT VARIABLES (CONSOLIDADO) - CONTROLE INDIVIDUAL DE CADA ELEMENTO
   =======================================================================================================================================================*/
+@import url("https://fonts.googleapis.com/css2?family=Rajdhani:wght@600&display=swap");
+@import url("https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap");
+
 :root {
   /**/
   /**/
@@ -2256,7 +2259,9 @@ body .mentor-item:not(.sem-valores) .mentor-rank-externo {
   min-width: max-content !important;
 
   flex-shrink: 1 !important;
-  padding: clamp(4px, 1vw, 8px) !important;
+  padding: 0 !important;
+  background: transparent !important;
+  border: none !important;
   z-index: var(--area-direita-z-index) !important;
   position: relative !important;
 
@@ -2271,18 +2276,19 @@ body .mentor-item:not(.sem-valores) .mentor-rank-externo {
   display: flex;
   align-items: center;
   justify-content: flex-start;
-  gap: var(--area-direita-gap-interno); /* ✅ NOVO: gap interno controlado */
-  font-size: clamp(10px, 2vw, 12px);
+  gap: 2px;
+  font-size: clamp(9px, 1.8vw, 11px);
   font-weight: 600;
   color: #576574;
-  background: transparent;
-  border: none;
-  padding: 0;
-  border-radius: 0;
+  background: transparent !important;
+  border: none !important;
+  padding: 0 !important;
+  border-radius: 0 !important;
   transition: all 0.3s ease;
-  width: auto; /* ✅ MUDADO: auto para não forçar largura */
+  width: auto;
   white-space: nowrap !important;
   overflow: visible !important;
+  margin: 0 !important;
 }
 .barra-superior .area-direita #porcentagem-diaria,
 .barra-superior .area-direita #valor-unidade {
@@ -2296,49 +2302,60 @@ body .mentor-item:not(.sem-valores) .mentor-rank-externo {
 /* ===== ÍCONE DO BANCO (DIÁRIA) - APENAS na .area-direita ===== */
 .barra-superior .area-direita .valor-diaria {
   order: 1;
+  background: transparent !important;
+  padding: 0 !important;
+  border: none !important;
+  display: flex;
+  align-items: center;
+  gap: 1px;
 }
 
 .barra-superior .area-direita .valor-diaria .fas.fa-university {
   color: #3498db;
-  font-size: clamp(10px, 2vw, 12px);
-  margin-right: var(--area-direita-icon-margin-left);
-  margin-top: var(--area-direita-icon-margin-top);
+  font-size: clamp(5px, 1vw, 6px);
+  margin: 0 !important;
+  padding: 0 !important;
+  line-height: 1;
 }
 
 .barra-superior .area-direita #porcentagem-diaria {
   color: #3498db;
   font-weight: 700;
   text-shadow: 0 1px 2px rgba(52, 152, 219, 0.3);
-  margin-left: var(--area-direita-porcentagem-margin-left);
-  margin-top: var(--area-direita-porcentagem-margin-top);
+  margin: 0 !important;
+  padding: 0 !important;
+  font-size: clamp(9px, 1.8vw, 11px);
 }
 
 /* ===== RÓTULO E VALOR DA UNIDADE - APENAS na .area-direita ===== */
 .barra-superior .area-direita .valor-unidade {
   order: 2;
-  margin-top: var(--area-direita-valor-unidade-wrapper-margin-top);
-}
-
-.barra-superior .area-direita .valor-unidade {
-  margin-top: var(--area-direita-valor-unidade-wrapper-margin-top);
+  margin-top: 0;
+  background: transparent !important;
+  padding: 0 !important;
+  border: none !important;
+  display: flex;
+  align-items: center;
+  gap: 2px;
 }
 
 .barra-superior .area-direita .rotulo-und {
   color: #8e44ad;
   font-weight: 700;
-  font-size: clamp(9px, 1.8vw, 10px);
+  font-size: clamp(8px, 1.6vw, 9px);
   text-transform: uppercase;
-  letter-spacing: 0.5px;
-  margin-left: var(--area-direita-rotulo-unidade-margin-left);
-  margin-top: var(--area-direita-rotulo-unidade-margin-top);
+  letter-spacing: 0;
+  margin: 0 !important;
+  padding: 0 !important;
 }
 
 .barra-superior .area-direita #valor-unidade {
   color: #28a745;
   font-weight: 700;
   text-shadow: 0 1px 2px rgba(39, 174, 96, 0.3);
-  margin-left: var(--area-direita-valor-unidade-margin-left);
-  margin-top: var(--area-direita-valor-unidade-margin-top);
+  margin: 0 !important;
+  padding: 0 !important;
+  font-size: clamp(9px, 1.8vw, 11px);
 }
 
 /* ===== ANIMAÇÕES DE ATUALIZAÇÃO - APENAS na .area-direita ===== */
@@ -2357,40 +2374,57 @@ body .mentor-item:not(.sem-valores) .mentor-rank-externo {
 /* ===== RESPONSIVIDADE - APENAS para .area-direita ===== */
 @media (max-width: 768px) {
   .barra-superior .area-direita {
-    gap: clamp(2px, 0.5vw, 4px);
-    padding: clamp(2px, 0.5vw, 4px);
+    gap: 1px;
+    padding: 0 !important;
   }
 
   .barra-superior .area-direita .valor-dinamico {
-    font-size: clamp(8px, 1.8vw, 10px);
-    gap: clamp(2px, 0.5vw, 3px);
+    font-size: clamp(7px, 1.4vw, 8px);
+    gap: 1px;
   }
 
   .barra-superior .area-direita .valor-diaria .fas.fa-university {
-    font-size: clamp(8px, 1.5vw, 10px);
+    font-size: clamp(5px, 0.9vw, 6px);
+  }
+
+  .barra-superior .area-direita #porcentagem-diaria {
+    font-size: clamp(7px, 1.4vw, 8px);
   }
 
   .barra-superior .area-direita .rotulo-und {
-    font-size: clamp(7px, 1.5vw, 8px);
+    font-size: clamp(6px, 1.2vw, 7px);
+  }
+
+  .barra-superior .area-direita #valor-unidade {
+    font-size: clamp(7px, 1.4vw, 8px);
   }
 }
 
 @media (max-width: 480px) {
   .barra-superior .area-direita {
     gap: 1px;
-    padding: 2px;
+    padding: 0 !important;
+    flex-wrap: wrap;
   }
 
   .barra-superior .area-direita .valor-dinamico {
-    font-size: clamp(7px, 1.5vw, 8px);
+    font-size: clamp(6px, 1.2vw, 7px);
     gap: 1px;
   }
 
   .barra-superior .area-direita .valor-diaria .fas.fa-university {
-    font-size: clamp(6px, 1.2vw, 8px);
+    font-size: clamp(4px, 0.8vw, 5px);
+  }
+
+  .barra-superior .area-direita #porcentagem-diaria {
+    font-size: clamp(6px, 1.2vw, 7px);
   }
 
   .barra-superior .area-direita .rotulo-und {
+    font-size: clamp(5px, 1vw, 6px);
+  }
+
+  .barra-superior .area-direita #valor-unidade {
     font-size: clamp(6px, 1.2vw, 7px);
   }
 }
@@ -3413,8 +3447,6 @@ p {
    ======================================== */
 
 /* Container principal do valor da meta - MAIOR */
-@import url("https://fonts.googleapis.com/css2?family=Rajdhani:wght@600&display=swap");
-
 .widget-meta-valor,
 #meta-valor {
   display: flex !important;
@@ -4185,9 +4217,6 @@ p {
                                           💼  FORMULARIO DE CADASTRO DO MENTOR + MODAL EXCLUSÃO DO MENTOR    
    ==========================================================================================================================================================*/
 /* ===== CSS MODERNO ADAPTADO AO SEU HTML EXISTENTE ===== */
-
-/* Import da fonte moderna */
-@import url("https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap");
 
 /* Container principal dos modais */
 .widget-barra-container {

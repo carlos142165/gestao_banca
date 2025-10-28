@@ -1,4 +1,5 @@
 /* Today-specific styles (dia atual) were removed from this file per request. */
+@import url("https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700&display=swap");
 
 /* Classes para substituir inline styles aplicados por scripts */
 .entrada-card {
@@ -725,7 +726,6 @@ body .mentor-item:not(.sem-valores) .mentor-rank-externo {
 /* =======================================================================================================================================================
   (DATA-PLACAR-SALDO) - CONTROLE DE ALTURA
    =======================================================================================================================================================*/
-@import url("https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700&display=swap");
 /**/
 /**/
 /**/
@@ -1558,8 +1558,6 @@ body .mentor-item:not(.sem-valores) .mentor-rank-externo {
   CODIGO DO CAMPO : widget-meta-valor-2 / widget-meta-rotulo-2 / widget-barra-container-2 / widget-info-progresso-2
   - Estilos do ICONE + VALOR DA META + ROTULO + BARRA DE PROGRESSO + SALDO do Bloco 2
   =======================================================================================================================================================*/
-
-@import url("https://fonts.googleapis.com/css2?family=Rajdhani:wght@600&display=swap");
 
 .widget-meta-valor-2,
 #meta-valor-2 {
@@ -2639,9 +2637,6 @@ html body .container .bloco.bloco-2 .resumo-mes,
 /* =======================================================================================================================================================
                                               CODIGO RESPONSAVEL PELO  CAMPO ( DIA - PLACAR - VALOR - ICONE )
   =======================================================================================================================================================*/
-
-@import url("https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap");
-@import url("https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css");
 
 /* Container principal da lista */
 .container .bloco.bloco-2 .resumo-mes .lista-dias {
@@ -4783,7 +4778,6 @@ html
 /* ========================================
    IMPORTAÇÃO DA FONTE (caso não esteja importada)
 ======================================== */
-@import url("https://fonts.googleapis.com/css2?family=Rajdhani:wght@300;400;500;600;700&display=swap");
 
 /* ========================================
    RESET COMPLETO DE FONTES

@@ -17,6 +17,12 @@
 // SISTEMA DE GESTÃO DE MENTORES - VERSÃO COMPLETA CORRIGIDA
 // ================================================
 
+// ⚙️ DEBUG MODE - Desabilitar para produção/mobile
+const DEBUG_MODE = false;
+
+// ✅ WRAPPER DE DEBUG - Comentar console.log automaticamente
+const debugLog = DEBUG_MODE ? console.log.bind(console) : () => {};
+
 // ✅ CONFIGURAÇÕES E CONSTANTES
 const CONFIG = {
   LIMITE_CARACTERES_NOME: 13,
@@ -578,23 +584,10 @@ const ModalManager = {
 const FormularioManager = {
   // ✅ CORREÇÃO: Prepara formulário para novo mentor
   async prepararNovoMentor() {
-    console.log("Preparando formulário para novo mentor...");
+    // debugLog("Preparando formulário para novo mentor...");
 
     try {
-      // ✅ VALIDAR LIMITE DE MENTORES ANTES DE ABRIR FORMULÁRIO
-      if (
-        typeof PlanoManager !== "undefined" &&
-        PlanoManager.verificarEExibirPlanos
-      ) {
-        const podeAvançar = await PlanoManager.verificarEExibirPlanos("mentor");
-        if (!podeAvançar) {
-          console.log(
-            "⛔ Limite de mentores atingido. Modal de planos aberto."
-          );
-          return; // Não abre o formulário se limite foi atingido
-        }
-      }
-
+      // 🚀 CRÍTICO: Abrir modal PRIMEIRO para responsividade imediata
       // Reseta todos os campos
       const elementos = {
         "mentor-id": "",
@@ -612,8 +605,6 @@ const FormularioManager = {
           } else {
             elemento.textContent = valor;
           }
-        } else {
-          console.warn(`Elemento não encontrado: ${id}`);
         }
       });
 
@@ -626,8 +617,27 @@ const FormularioManager = {
         inputFoto.value = "";
       }
 
+      // 🚀 Abrir modal IMEDIATAMENTE
       ModalManager.abrir("modal-form");
-      console.log("✅ Formulário preparado para novo mentor");
+
+      // ✅ DEPOIS validar limite de mentores em background (sem bloquear UI)
+      if (
+        typeof PlanoManager !== "undefined" &&
+        PlanoManager.verificarEExibirPlanos
+      ) {
+        // Validar limite SEM AWAIT para não bloquear
+        PlanoManager.verificarEExibirPlanos("mentor")
+          .then((podeAvançar) => {
+            if (!podeAvançar) {
+              // Fechar modal se limite foi atingido
+              ModalManager.fechar("modal-form");
+              // debugLog("⛔ Limite de mentores atingido. Modal de planos aberto.");
+            }
+          })
+          .catch((err) => console.error("Erro ao validar limite:", err));
+      }
+
+      // debugLog("✅ Formulário preparado para novo mentor");
     } catch (error) {
       console.error("Erro ao preparar novo mentor:", error);
       ToastManager.mostrar("❌ Erro ao abrir formulário", "erro");
@@ -670,7 +680,7 @@ const FormularioManager = {
 
   // ✅ CORREÇÃO MELHORADA: Prepara formulário para editar mentor
   prepararEdicaoMentor(id) {
-    console.log(`Preparando edição do mentor ID: ${id}`);
+    // debugLog(`Preparando edição do mentor ID: ${id}`);
 
     try {
       const card = document.querySelector(`[data-id='${id}']`);
@@ -1850,6 +1860,11 @@ const LoaderManager = {
 
 // ✅ GERENCIADOR DA TELA DE EDIÇÃO - VERSÃO INTEGRADA COM FILTRO
 const TelaEdicaoManager = {
+  // ✅ CACHE DE REQUISIÇÕES para evitar duplicatas e acelerar abertura
+  cacheEntradas: {},
+  requisicaoEmProgresso: null,
+  ultimaMentorId: null,
+
   // Abre tela de edição com efeito
   abrir() {
     const tela = document.getElementById("tela-edicao");
@@ -1941,16 +1956,44 @@ const TelaEdicaoManager = {
     const periodoAtual = this.obterPeriodoAtual();
     this.atualizarCabecalhoEdicao(periodoAtual);
 
+    // 🚀 CRÍTICO: Abrir modal PRIMEIRO para responsividade imediata
     this.abrir();
+
+    // 🔄 Depois carregar dados em background com loading visual
+    const container = document.getElementById("resultado-filtro");
+    if (container) {
+      container.innerHTML =
+        '<p style="color:#999;text-align:center;">⏳ Carregando...</p>';
+    }
+
+    // ✅ NOVO: Verificar cache PRIMEIRO
+    const cacheKey = `${idMentor}_${periodoAtual}`;
+    if (this.cacheEntradas[cacheKey]) {
+      this.mostrarResultados(this.cacheEntradas[cacheKey], periodoAtual);
+      return; // 🎯 Usar cache e retornar IMEDIATAMENTE
+    }
+
+    // ✅ NOVO: Se já há requisição em progresso, não fazer outra
+    if (this.requisicaoEmProgresso && this.ultimaMentorId === idMentor) {
+      return;
+    }
 
     try {
       // 🎯 MUDANÇA PRINCIPAL: Usar período dinâmico ao invés de "hoje"
-      const response = await fetch(
-        `filtrar-entradas.php?id=${idMentor}&tipo=${periodoAtual}`
+      this.requisicaoEmProgresso = fetch(
+        `filtrar-entradas.php?id=${idMentor}&tipo=${periodoAtual}&t=${Date.now()}`,
+        { signal: AbortSignal.timeout(3000) } // ⏱️ Reduzido para 3 segundos
       );
+
+      const response = await this.requisicaoEmProgresso;
       if (!response.ok) throw new Error(`HTTP ${response.status}`);
 
       const entradas = await response.json();
+
+      // ✅ NOVO: Armazenar em cache
+      this.cacheEntradas[cacheKey] = entradas;
+      this.ultimaMentorId = idMentor;
+
       this.mostrarResultados(entradas, periodoAtual);
     } catch (error) {
       console.error("Erro ao carregar histórico:", error);
@@ -1959,6 +2002,8 @@ const TelaEdicaoManager = {
         container.innerHTML =
           '<p style="color:red;">Erro ao carregar dados.</p>';
       }
+    } finally {
+      this.requisicaoEmProgresso = null;
     }
   },
 
@@ -1983,6 +2028,12 @@ const TelaEdicaoManager = {
     });
 
     container.appendChild(fragment);
+  },
+
+  // ✅ NOVA FUNÇÃO: Limpar cache após adicionar nova entrada
+  limparCache() {
+    this.cacheEntradas = {};
+    this.requisicaoEmProgresso = null;
   },
 
   // Cria card para uma entrada
@@ -2319,6 +2370,9 @@ const App = {
       if (resposta.tipo === "sucesso") {
         FormularioValorManager.resetarFormulario();
 
+        // ✅ NOVO: Limpar cache de entradas para atualizar quando abrir novamente
+        TelaEdicaoManager.limparCache();
+
         // ✅ ATUALIZAÇÃO SUPER RÁPIDA DA ÁREA DIREITA
         setTimeout(async () => {
           if (typeof atualizarAreaDireita === "function") {
@@ -2444,12 +2498,12 @@ window.addEventListener("beforeunload", () => {
 });
 
 // ✅ LOG DE INICIALIZAÇÃO
-console.log("🎯 Sistema com Filtro de Período Integrado!");
-console.log("📋 Funcionalidades adicionadas:");
-console.log("  - Exclusão de entradas por período (Dia/Mês/Ano)");
-console.log("  - Sincronização automática com filtros");
-console.log("  - Atualização dinâmica da tela de edição");
-console.log("✅ Sistema pronto para usar filtros de período!");
+// console.log("🎯 Sistema com Filtro de Período Integrado!");
+// console.log("📋 Funcionalidades adicionadas:");
+// console.log("  - Exclusão de entradas por período (Dia/Mês/Ano)");
+// console.log("  - Sincronização automática com filtros");
+// console.log("  - Atualização dinâmica da tela de edição");
+// console.log("✅ Sistema pronto para usar filtros de período!");
 // ========================================================================================================================
 //
 // ========================================================================================================================
@@ -2585,16 +2639,16 @@ const MetaDiariaManager = {
         valorExtra = 0,
         mostrarTachado = false;
 
-      console.log(`🔍 DEBUG CALCULAR META COM EXTRA:`);
-      console.log(`   Saldo do Dia: R$ ${saldoDia.toFixed(2)}`);
-      console.log(`   Meta: R$ ${metaCalculada.toFixed(2)}`);
-      console.log(`   Banca: R$ ${bancaTotal.toFixed(2)}`);
+      // debugLog(`🔍 DEBUG CALCULAR META COM EXTRA:`);
+      // debugLog(`   Saldo do Dia: R$ ${saldoDia.toFixed(2)}`);
+      // debugLog(`   Meta: R$ ${metaCalculada.toFixed(2)}`);
+      // debugLog(`   Banca: R$ ${bancaTotal.toFixed(2)}`);
 
       if (bancaTotal <= 0) {
         metaFinal = bancaTotal;
         rotulo = "Deposite p/ Começar";
         statusClass = "sem-banca";
-        console.log(`📊 RESULTADO: Sem banca`);
+        // debugLog(`📊 RESULTADO: Sem banca`);
       }
       // META BATIDA OU SUPERADA - COM VALOR EXTRA
       else if (saldoDia > 0 && metaCalculada > 0 && saldoDia >= metaCalculada) {
@@ -2607,13 +2661,13 @@ const MetaDiariaManager = {
             data.rotulo_periodo || "Meta"
           } Superada! <i class='fa-solid fa-trophy'></i>`;
           statusClass = "meta-superada";
-          console.log(`🏆 META SUPERADA: Extra de R$ ${valorExtra.toFixed(2)}`);
+          // debugLog(`🏆 META SUPERADA: Extra de R$ ${valorExtra.toFixed(2)}`);
         } else {
           rotulo = `${
             data.rotulo_periodo || "Meta"
           } Batida! <i class='fa-solid fa-trophy'></i>`;
           statusClass = "meta-batida";
-          console.log(`🎯 META EXATA`);
+          // debugLog(`🎯 META EXATA`);
         }
       }
       // CASO ESPECIAL: Meta é zero (já foi batida)
@@ -2625,23 +2679,23 @@ const MetaDiariaManager = {
           data.rotulo_periodo || "Meta"
         } Batida! <i class='fa-solid fa-trophy'></i>`;
         statusClass = "meta-batida";
-        console.log(`🎯 META ZERO (já batida)`);
+        // debugLog(`🎯 META ZERO (já batida)`);
       } else if (saldoDia < 0) {
         metaFinal = metaCalculada - saldoDia;
         rotulo = `Restando p/ ${data.rotulo_periodo || "Meta"}`;
         statusClass = "negativo";
-        console.log(`📊 RESULTADO: Negativo`);
+        // debugLog(`📊 RESULTADO: Negativo`);
       } else if (saldoDia === 0) {
         metaFinal = metaCalculada;
         rotulo = data.rotulo_periodo || "Meta do Dia";
         statusClass = "neutro";
-        console.log(`📊 RESULTADO: Neutro`);
+        // debugLog(`📊 RESULTADO: Neutro`);
       } else {
         // Lucro positivo mas menor que a meta
         metaFinal = metaCalculada - saldoDia;
         rotulo = `Restando p/ ${data.rotulo_periodo || "Meta"}`;
         statusClass = "lucro";
-        console.log(`📊 RESULTADO: Lucro insuficiente`);
+        // debugLog(`📊 RESULTADO: Lucro insuficiente`);
       }
 
       const resultado = {
@@ -2668,10 +2722,10 @@ const MetaDiariaManager = {
         statusClass,
       };
 
-      console.log(`🏁 RESULTADO FINAL COM EXTRA:`);
-      console.log(`   Status: ${statusClass}`);
-      console.log(`   Valor Extra: R$ ${valorExtra.toFixed(2)}`);
-      console.log(`   Mostrar Tachado: ${mostrarTachado}`);
+      // debugLog(`🏁 RESULTADO FINAL COM EXTRA:`);
+      // debugLog(`   Status: ${statusClass}`);
+      // debugLog(`   Valor Extra: R$ ${valorExtra.toFixed(2)}`);
+      // debugLog(`   Mostrar Tachado: ${mostrarTachado}`);
 
       return resultado;
     } catch (error) {
@@ -6004,8 +6058,8 @@ function inicializarSistemaMentorOculto() {
     // REMOVIDO: interceptarCadastroMentor() - estava causando delay
   }, 100);
 
-  // Verificação menos frequente
-  setInterval(verificarEstadoMentores, 15000);
+  // Verificação menos frequente (aumentado de 15s para 30s para otimizar mobile)
+  setInterval(verificarEstadoMentores, 30000);
 }
 
 // Auto-inicialização imediata
@@ -7747,33 +7801,33 @@ window.iniciarMonitorContinuo = function () {
       // Verificar se houve mudança
       if (ultimoEstado) {
         if (estadoAtual.lucroTotal !== ultimoEstado.lucroTotal) {
-          console.log("🔔 MUDANÇA DETECTADA:");
-          console.log(
-            `   Lucro Total: R$ ${ultimoEstado.lucroTotal.toFixed(
-              2
-            )} → R$ ${estadoAtual.lucroTotal.toFixed(2)}`
-          );
+          // console.log("🔔 MUDANÇA DETECTADA:");
+          // console.log(
+          //   `   Lucro Total: R$ ${ultimoEstado.lucroTotal.toFixed(
+          //     2
+          //   )} → R$ ${estadoAtual.lucroTotal.toFixed(2)}`
+          // );
 
           if (estadoAtual.podeUsarTurbo !== ultimoEstado.podeUsarTurbo) {
-            console.log(
-              `   Meta Turbo: ${
-                ultimoEstado.podeUsarTurbo ? "Disponível" : "Bloqueada"
-              } → ${estadoAtual.podeUsarTurbo ? "Disponível" : "Bloqueada"}`
-            );
+            // console.log(
+            //   `   Meta Turbo: ${
+            //     ultimoEstado.podeUsarTurbo ? "Disponível" : "Bloqueada"
+            //   } → ${estadoAtual.podeUsarTurbo ? "Disponível" : "Bloqueada"}`
+            // );
           }
         }
 
         if (estadoAtual.tipoMetaAtual !== ultimoEstado.tipoMetaAtual) {
-          console.log("🔔 TIPO DE META MUDOU:");
-          console.log(
-            `   ${ultimoEstado.tipoMetaAtual} → ${estadoAtual.tipoMetaAtual}`
-          );
+          // console.log("🔔 TIPO DE META MUDOU:");
+          // console.log(
+          //   `   ${ultimoEstado.tipoMetaAtual} → ${estadoAtual.tipoMetaAtual}`
+          // );
         }
       }
 
       ultimoEstado = estadoAtual;
     }
-  }, 10000);
+  }, 30000); // ⬅️ AUMENTADO: 10 segundos → 30 segundos
 
   console.log("✅ Monitor iniciado!");
 };

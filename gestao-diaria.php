@@ -544,6 +544,15 @@ ob_end_flush();
 <meta charset="UTF-8" />
 <meta name="viewport" content="width=device-width, initial-scale=1.0" />
 <title>Gestão de Banca</title>
+<!-- ✅ DESABILITAR CONSOLE.LOG GLOBALMENTE PARA PERFORMANCE -->
+<script>
+  if (!window.DEBUG_MODE) {
+    console.log = function() {};
+    console.warn = function() {};
+    console.error = function() {};
+    console.debug = function() {};
+  }
+</script>
 <!-- -->
 <!-- -->
 <!-- -->
@@ -638,7 +647,6 @@ ob_end_flush();
 <script src="js/script-gestao-diaria.js" defer></script>
 <script src="js/script-painel-controle.js" defer></script>
 <script src="js/script-mes.js" defer></script>
-<script src="js/exclusao-manager-fix.js" defer></script>
 <script src="js/ano.js" defer></script>
 <script src="js/teste-modal-celebracao.js" defer></script>
 <script src="js/rotulo-lucro-dinamico.js" defer></script>
@@ -6208,7 +6216,6 @@ console.log('🔧 Para testar: Clique em qualquer card de mentor');
  ====================================================================================================================================== -->
 
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
-<link rel="stylesheet" href="modal-banca.css">
 
 <!-- ✅ VERIFICAÇÃO DE AUTENTICAÇÃO PARA "GERENCIAR BANCA" -->
 <script>
@@ -7106,9 +7113,7 @@ window.excluirMentorDireto = function() {
 <!-- -->
 <!-- -->
 <!-- -->
-    <script src="js/modal-confirmacao.js"></script>
-    <script src="js/override-root-styles.js" defer></script>
-   
+
     <!-- ✅ MODAL DE CELEBRAÇÃO META BATIDA -->
     <div id="modal-meta-batida" class="modal-meta-batida" style="display: none;">
         <div class="overlay-meta-batida"></div>
