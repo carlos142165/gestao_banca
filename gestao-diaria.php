@@ -2508,7 +2508,6 @@ document.addEventListener('DOMContentLoaded', function() {
 
         <!-- Upload de foto -->
         <div class="input-group">
-          <label for="foto" class="label-form"></label>
           <label for="foto" class="label-arquivo">
             <i class="fas fa-image"></i> Selecionar Foto
           </label>
@@ -2527,8 +2526,8 @@ document.addEventListener('DOMContentLoaded', function() {
 
         <!-- Campo de entrada do nome -->
         <div class="input-group">
-          <label for="nome" class="label-form"></label>
           <input type="text" name="nome" id="nome" class="input-text" placeholder="Digite o nome do mentor" required maxlength="100" style="text-align: center;">
+          <label for="nome" class="labelinput">Nome do Mentor</label>
         </div>
 
         <!-- Botões de ação -->
@@ -6251,16 +6250,16 @@ console.log('🔧 Para testar: Clique em qualquer card de mentor');
         <div class="linha-banca-lucro">
           <div class="campo-banca">
             <div class="conteudo">
-              <label><i class="fa-solid fa-coins"></i> Banca</label>
+              <span class="label-text"><i class="fa-solid fa-coins"></i> Banca</span>
               <span id="valorBancaLabel">R$ 0,00</span>
             </div>
           </div>
           <div class="campo-lucro">
             <div class="conteudo">
-              <label class="label-lucro">
+              <span class="label-lucro">
                 <i class="fa-solid fa-money-bill-trend-up"></i>
                 <span></span>
-              </label>
+              </span>
               <span id="valorLucroLabel"></span>
             </div>
           </div>
