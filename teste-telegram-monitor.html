@@ -1,0 +1,490 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Teste - Monitor Telegram</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: Arial, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            padding: 20px;
+        }
+        
+        .container {
+            max-width: 900px;
+            margin: 0 auto;
+            background: white;
+            border-radius: 12px;
+            padding: 30px;
+            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
+        }
+        
+        h1 {
+            color: #113647;
+            margin-bottom: 30px;
+            text-align: center;
+        }
+        
+        .secao {
+            margin-bottom: 30px;
+            padding: 20px;
+            background: #f5f5f5;
+            border-radius: 8px;
+            border-left: 4px solid #2196F3;
+        }
+        
+        .secao h2 {
+            color: #113647;
+            font-size: 16px;
+            margin-bottom: 15px;
+        }
+        
+        .botao-group {
+            display: flex;
+            gap: 10px;
+            flex-wrap: wrap;
+            margin-bottom: 15px;
+        }
+        
+        button {
+            padding: 10px 20px;
+            border: none;
+            border-radius: 6px;
+            cursor: pointer;
+            font-weight: 600;
+            transition: all 0.3s ease;
+        }
+        
+        .btn-primary {
+            background: #2196F3;
+            color: white;
+        }
+        
+        .btn-primary:hover {
+            background: #1976D2;
+            transform: translateY(-2px);
+            box-shadow: 0 4px 8px rgba(33, 150, 243, 0.3);
+        }
+        
+        .btn-danger {
+            background: #e57373;
+            color: white;
+        }
+        
+        .btn-danger:hover {
+            background: #e53935;
+            transform: translateY(-2px);
+            box-shadow: 0 4px 8px rgba(229, 115, 115, 0.3);
+        }
+        
+        .btn-success {
+            background: #66bb6a;
+            color: white;
+        }
+        
+        .btn-success:hover {
+            background: #388e3c;
+            transform: translateY(-2px);
+            box-shadow: 0 4px 8px rgba(102, 187, 106, 0.3);
+        }
+        
+        .resultado {
+            background: white;
+            padding: 15px;
+            border-radius: 6px;
+            margin-top: 15px;
+            max-height: 300px;
+            overflow-y: auto;
+            border: 1px solid #ddd;
+            font-size: 13px;
+            font-family: monospace;
+            white-space: pre-wrap;
+            word-break: break-all;
+        }
+        
+        .resultado.sucesso {
+            border-left: 4px solid #66bb6a;
+            background: #f1f8f4;
+        }
+        
+        .resultado.erro {
+            border-left: 4px solid #e57373;
+            background: #fef5f5;
+        }
+        
+        .info-box {
+            background: #e3f2fd;
+            padding: 15px;
+            border-radius: 6px;
+            border-left: 4px solid #2196F3;
+            margin-bottom: 15px;
+            line-height: 1.6;
+        }
+        
+        .info-box code {
+            background: #fff;
+            padding: 2px 6px;
+            border-radius: 3px;
+            font-family: monospace;
+        }
+        
+        .loading {
+            display: inline-block;
+            opacity: 0.6;
+            cursor: not-allowed;
+        }
+        
+        .loading::after {
+            content: '...';
+            animation: dots 1s infinite;
+        }
+        
+        @keyframes dots {
+            0%, 20% { content: ''; }
+            40% { content: '.'; }
+            60% { content: '..'; }
+            80%, 100% { content: '...'; }
+        }
+        
+        .tabela {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 15px;
+        }
+        
+        .tabela th,
+        .tabela td {
+            padding: 12px;
+            text-align: left;
+            border-bottom: 1px solid #ddd;
+        }
+        
+        .tabela th {
+            background: #113647;
+            color: white;
+            font-weight: 600;
+        }
+        
+        .tabela tr:hover {
+            background: #f5f5f5;
+        }
+        
+        .badge {
+            display: inline-block;
+            padding: 4px 10px;
+            border-radius: 12px;
+            font-size: 12px;
+            font-weight: 600;
+        }
+        
+        .badge-green {
+            background: #c8e6c9;
+            color: #1b5e20;
+        }
+        
+        .badge-red {
+            background: #ffcdd2;
+            color: #b71c1c;
+        }
+        
+        .badge-reembolso {
+            background: #e0e0e0;
+            color: #424242;
+        }
+        
+        .badge-pendente {
+            background: #fff9c4;
+            color: #f57f17;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>🤖 Teste - Monitor Telegram</h1>
+        
+        <!-- SEÇÃO 1: INFORMAÇÕES -->
+        <div class="secao">
+            <h2>📋 Informações</h2>
+            <div class="info-box">
+                <strong>Token:</strong> 8549099161:AAFKDDdeaFpwz9I4CkaqIwCIFOCleQZMEr8<br>
+                <strong>Channel ID:</strong> -1002047004959<br>
+                <strong>Arquivo de dados:</strong> <code>dados_telegram.json</code><br>
+                <strong>Monitor:</strong> Sincroniza a cada 5 segundos<br>
+                <strong>Webhook:</strong> <code>telegram-webhook.php</code>
+            </div>
+        </div>
+        
+        <!-- SEÇÃO 2: SINCRONIZAÇÃO -->
+        <div class="secao">
+            <h2>🔄 Sincronização</h2>
+            <div class="botao-group">
+                <button class="btn-primary" onclick="sincronizar()">Sincronizar Agora</button>
+                <button class="btn-primary" onclick="carregarMensagens()">Carregar Mensagens</button>
+                <button class="btn-danger" onclick="limparDados()">Limpar Dados</button>
+            </div>
+            <div id="resultado-sincro" class="resultado" style="display: none;"></div>
+        </div>
+        
+        <!-- SEÇÃO 3: TESTES DE MENSAGENS -->
+        <div class="secao">
+            <h2>📨 Testar Adicionar Mensagens</h2>
+            <div class="botao-group">
+                <button class="btn-success" onclick="testarOportunidade()">Adicionar Oportunidade PENDENTE</button>
+                <button class="btn-success" onclick="testarGreen()">Adicionar Resultado GREEN</button>
+                <button class="btn-success" onclick="testarRed()">Adicionar Resultado RED</button>
+                <button class="btn-success" onclick="testarReembolso()">Adicionar Resultado REEMBOLSO</button>
+            </div>
+            <div id="resultado-teste" class="resultado" style="display: none;"></div>
+        </div>
+        
+        <!-- SEÇÃO 4: STATUS ATUAL -->
+        <div class="secao">
+            <h2>📊 Mensagens Armazenadas</h2>
+            <button class="btn-primary" onclick="atualizarTabela()">Atualizar</button>
+            <table class="tabela" id="tabela-mensagens" style="display: none;">
+                <thead>
+                    <tr>
+                        <th>ID</th>
+                        <th>Jogo</th>
+                        <th>Escanteios</th>
+                        <th>Stake</th>
+                        <th>Resultado</th>
+                        <th>Data Chegada</th>
+                    </tr>
+                </thead>
+                <tbody id="tbody-mensagens">
+                </tbody>
+            </table>
+            <div id="vazio-mensagens" class="info-box">
+                Nenhuma mensagem armazenada no momento
+            </div>
+        </div>
+    </div>
+
+    <script>
+        const BASE_URL = 'telegram-monitor.php';
+
+        /**
+         * Sincroniza com Telegram
+         */
+        async function sincronizar() {
+            const div = document.getElementById('resultado-sincro');
+            div.textContent = 'Sincronizando...';
+            div.className = 'resultado';
+            div.style.display = 'block';
+
+            try {
+                const response = await fetch(BASE_URL, {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/x-www-form-urlencoded',
+                    },
+                    body: 'acao=sincronizar',
+                });
+
+                const dados = await response.json();
+                div.textContent = JSON.stringify(dados, null, 2);
+                div.className = dados.sucesso ? 'resultado sucesso' : 'resultado erro';
+                
+                if (dados.sucesso) {
+                    setTimeout(atualizarTabela, 500);
+                }
+            } catch (erro) {
+                div.textContent = 'Erro: ' + erro.message;
+                div.className = 'resultado erro';
+            }
+        }
+
+        /**
+         * Carrega mensagens
+         */
+        async function carregarMensagens() {
+            const div = document.getElementById('resultado-sincro');
+            div.textContent = 'Carregando...';
+            div.className = 'resultado';
+            div.style.display = 'block';
+
+            try {
+                const response = await fetch(BASE_URL, {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/x-www-form-urlencoded',
+                    },
+                    body: 'acao=obter_mensagens',
+                });
+
+                const dados = await response.json();
+                div.textContent = JSON.stringify(dados, null, 2);
+                div.className = dados.sucesso ? 'resultado sucesso' : 'resultado erro';
+                
+                if (dados.sucesso) {
+                    setTimeout(atualizarTabela, 500);
+                }
+            } catch (erro) {
+                div.textContent = 'Erro: ' + erro.message;
+                div.className = 'resultado erro';
+            }
+        }
+
+        /**
+         * Limpa dados
+         */
+        async function limparDados() {
+            if (!confirm('Tem certeza que deseja limpar TODOS os dados?')) return;
+
+            const div = document.getElementById('resultado-sincro');
+            div.textContent = 'Limpando...';
+            div.className = 'resultado';
+            div.style.display = 'block';
+
+            try {
+                const response = await fetch(BASE_URL, {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/x-www-form-urlencoded',
+                    },
+                    body: 'acao=limpar_tudo',
+                });
+
+                const dados = await response.json();
+                div.textContent = JSON.stringify(dados, null, 2);
+                div.className = dados.sucesso ? 'resultado sucesso' : 'resultado erro';
+                
+                if (dados.sucesso) {
+                    setTimeout(atualizarTabela, 500);
+                }
+            } catch (erro) {
+                div.textContent = 'Erro: ' + erro.message;
+                div.className = 'resultado erro';
+            }
+        }
+
+        /**
+         * Simula uma oportunidade
+         */
+        async function testarOportunidade() {
+            const mensagem = `Oportunidade! 🚨
+📊 🚨 OVER ( +1⛳️ ASIÁTICO ) Underdog
+⚽️ Junior (H) x Independiente Santa Fe (A) (ao vivo)
+⏰ Tempo: 83'
+⛳️ Escanteios: 6 - 6
+Stake: 1%
+ODD: 1.5`;
+
+            adicionarMensagemSimulada(mensagem, 'oportunidade');
+        }
+
+        /**
+         * Simula resultado GREEN
+         */
+        async function testarGreen() {
+            const mensagem = `Resultado disponível!
+⚽️ Junior (H) x Independiente Santa Fe (A) (ao vivo)
+Escanteios over +1.0 - ODD: 1.504 - GREEN
+✅`;
+
+            adicionarMensagemSimulada(mensagem, 'green');
+        }
+
+        /**
+         * Simula resultado RED
+         */
+        async function testarRed() {
+            const mensagem = `Resultado disponível!
+⚽️ Junior (H) x Independiente Santa Fe (A) (ao vivo)
+Escanteios over +1.0 - ODD: 1.504 - RED
+❌`;
+
+            adicionarMensagemSimulada(mensagem, 'red');
+        }
+
+        /**
+         * Simula resultado REEMBOLSO
+         */
+        async function testarReembolso() {
+            const mensagem = `Resultado disponível!
+⚽️ Junior (H) x Independiente Santa Fe (A) (ao vivo)
+Escanteios over +1.0 - ODD: 1.504 - REEMBOLSO
+↩️`;
+
+            adicionarMensagemSimulada(mensagem, 'reembolso');
+        }
+
+        /**
+         * Adiciona mensagem simulada
+         */
+        function adicionarMensagemSimulada(texto, tipo) {
+            const div = document.getElementById('resultado-teste');
+            div.textContent = 'Simulando: ' + tipo + '\n\n' + texto;
+            div.className = 'resultado sucesso';
+            div.style.display = 'block';
+            
+            console.log('✅ Mensagem simulada adicionada (tipo: ' + tipo + ')');
+            console.log('Para testar realmente, copie a mensagem acima e envie no canal do Telegram');
+        }
+
+        /**
+         * Atualiza tabela de mensagens
+         */
+        async function atualizarTabela() {
+            try {
+                const response = await fetch(BASE_URL, {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/x-www-form-urlencoded',
+                    },
+                    body: 'acao=obter_mensagens',
+                });
+
+                const dados = await response.json();
+
+                if (dados.sucesso && dados.mensagens.length > 0) {
+                    const tbody = document.getElementById('tbody-mensagens');
+                    const tabela = document.getElementById('tabela-mensagens');
+                    const vazio = document.getElementById('vazio-mensagens');
+
+                    tbody.innerHTML = '';
+
+                    for (const msg of dados.mensagens) {
+                        const tr = document.createElement('tr');
+                        const resultadoClass = 'badge-' + msg.resultado.toLowerCase();
+                        const resultadoBadge = `<span class="badge ${resultadoClass}">${msg.resultado}</span>`;
+
+                        tr.innerHTML = `
+                            <td>${msg.id}</td>
+                            <td><strong>${msg.jogo || 'N/A'}</strong></td>
+                            <td>${msg.escanteis || 'N/A'}</td>
+                            <td>${msg.stake || 'N/A'}</td>
+                            <td>${resultadoBadge}</td>
+                            <td>${msg.data_chegada}</td>
+                        `;
+
+                        tbody.appendChild(tr);
+                    }
+
+                    tabela.style.display = 'table';
+                    vazio.style.display = 'none';
+                } else {
+                    document.getElementById('tabela-mensagens').style.display = 'none';
+                    document.getElementById('vazio-mensagens').style.display = 'block';
+                }
+            } catch (erro) {
+                console.error('Erro ao atualizar tabela:', erro);
+            }
+        }
+
+        // Atualizar ao carregar
+        document.addEventListener('DOMContentLoaded', function() {
+            atualizarTabela();
+        });
+    </script>
+</body>
+</html>

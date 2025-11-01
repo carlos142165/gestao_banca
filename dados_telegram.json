@@ -1,0 +1,50 @@
+{
+  "1698768645": {
+    "id": 1698768645,
+    "data_chegada": "2025-11-01 14:30:45",
+    "jogo": "Junior (H) x Independiente Santa Fe (A)",
+    "escanteis": "6 - 6",
+    "stake": "1%",
+    "odd": "1.5",
+    "tipo": "OVER",
+    "resultado": "GREEN",
+    "data_resultado": "2025-11-01 15:00:30",
+    "texto_original": "Oportunidade! 🚨\n📊 🚨 OVER ( +1⛳️ ASIÁTICO ) Underdog\n⚽️ Junior (H) x Independiente Santa Fe (A) (ao vivo)\n⏰ Tempo: 83'"
+  },
+  "1698768750": {
+    "id": 1698768750,
+    "data_chegada": "2025-11-01 14:45:50",
+    "jogo": "Flamengo x Vasco",
+    "escanteis": "8 - 5",
+    "stake": "2%",
+    "odd": "1.8",
+    "tipo": "OVER",
+    "resultado": "RED",
+    "data_resultado": "2025-11-01 15:15:20",
+    "texto_original": "Oportunidade! 🚨\n📊 🚨 OVER ( +2⛳️ )"
+  },
+  "1698768845": {
+    "id": 1698768845,
+    "data_chegada": "2025-11-01 15:00:45",
+    "jogo": "Palmeiras x Santos",
+    "escanteis": "9 - 7",
+    "stake": "1.5%",
+    "odd": "1.65",
+    "tipo": "UNDER",
+    "resultado": "REEMBOLSO",
+    "data_resultado": "2025-11-01 15:30:15",
+    "texto_original": "Oportunidade! 🚨\n📊 🚨 UNDER"
+  },
+  "1698769000": {
+    "id": 1698769000,
+    "data_chegada": "2025-11-01 15:15:00",
+    "jogo": "Corinthians x São Paulo",
+    "escanteis": "5 - 6",
+    "stake": "1%",
+    "odd": "1.55",
+    "tipo": "OVER",
+    "resultado": "PENDENTE",
+    "data_resultado": null,
+    "texto_original": "Oportunidade! 🚨\n📊 🚨 OVER"
+  }
+}

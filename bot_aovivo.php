@@ -17,6 +17,8 @@ if (!isset($_SESSION['usuario_id']) || empty($_SESSION['usuario_id'])) {
     <title>Bot ao Vivo</title>
     <!-- ✅ Carregar CSS ANTES dos estilos inline -->
     <link rel="stylesheet" href="css/menu-topo.css">
+    <link rel="stylesheet" href="css/telegram-mensagens.css">
+    <link rel="stylesheet" href="css/oportunidades-telegram.css">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <style>
         * {
@@ -1197,6 +1199,12 @@ if (!isset($_SESSION['usuario_id']) || empty($_SESSION['usuario_id'])) {
 
     <!-- ✅ Script para atualizar rótulo dinâmico do lucro - FORA DO ENDIF PARA FUNCIONAR COM USUÁRIOS AUTENTICADOS -->
     <script src="js/rotulo-lucro-dinamico.js" defer></script>
+
+    <!-- ✅ SCRIPT DO MONITOR DE TELEGRAM -->
+    <script src="js/monitor-telegram.js" defer></script>
+
+    <!-- ✅ SCRIPT PARA CARREGAR MENSAGENS DO TELEGRAM -->
+    <script src="js/telegram-mensagens.js" defer></script>
 
     <!-- ✅ SCRIPT PARA CARREGAR DADOS DINÂMICOS - CLONE DE HOME.PHP -->
     <script>
