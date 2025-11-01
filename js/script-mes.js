@@ -1,18 +1,6 @@
 document.addEventListener("DOMContentLoaded", function () {
   const form = document.getElementById("form-mentor");
 
-  // ✅ DEBUG MODE
-  const DEBUG_MODE = false;
-  const debugLog = (...args) => {
-    if (DEBUG_MODE) console.log(...args);
-  };
-  const debugWarn = (...args) => {
-    if (DEBUG_MODE) console.warn(...args);
-  };
-  const debugError = (...args) => {
-    if (DEBUG_MODE) console.error(...args);
-  };
-
   if (form) {
     const timeZone = Intl.DateTimeFormat().resolvedOptions().timeZone;
     const dataLocal = new Date().toISOString();
@@ -206,7 +194,7 @@ const MetaMensalManager = {
   _restoring: false,
 
   // CORREÇÕES ADICIONADAS
-  TIMEOUT_DESTRAVAMENTO: 20000, // 20 segundos
+  TIMEOUT_DESTRAVAMENTO: 10000, // 10 segundos
   ultimoInicioAtualizacao: null,
 
   // FUNÇÃO PRINCIPAL CORRIGIDA
@@ -238,8 +226,8 @@ const MetaMensalManager = {
           "X-Requested-With": "XMLHttpRequest",
           "X-Periodo-Filtro": "mes",
         },
-        // CORREÇÃO 2: Aumentar timeout para 20 segundos
-        signal: AbortSignal.timeout(20000),
+        // CORREÇÃO 2: Adicionar timeout na requisição
+        signal: AbortSignal.timeout(8000),
       });
 
       if (!response.ok) throw new Error(`HTTP ${response.status}`);

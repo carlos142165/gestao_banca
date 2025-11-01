@@ -12,7 +12,7 @@ const PlacarAnualManager = {
   // INICIALIZAR SISTEMA DE PLACAR ANUAL
   inicializar() {
     try {
-      // console.log("📊 Inicializando Sistema de Placar Anual...");
+      console.log("📊 Inicializando Sistema de Placar Anual...");
 
       // Verificar se existe o elemento
       const placar = document.getElementById("pontuacao-3");
@@ -24,15 +24,15 @@ const PlacarAnualManager = {
       // Primeira atualização
       this.atualizarPlacarAnual();
 
-      // Configurar intervalo de atualização (a cada 90 segundos para dados anuais em modo otimizado)
+      // Configurar intervalo de atualização (a cada 45 segundos para dados anuais)
       this.intervaloPlacar = setInterval(() => {
         this.atualizarPlacarAnual();
-      }, 90000);
+      }, 45000);
 
       // Interceptar mudanças no sistema principal
       this.configurarInterceptadores();
 
-      // console.log("✅ Sistema de Placar Anual inicializado");
+      console.log("✅ Sistema de Placar Anual inicializado");
       return true;
     } catch (error) {
       console.error("❌ Erro ao inicializar placar anual:", error);
@@ -43,14 +43,14 @@ const PlacarAnualManager = {
   // ATUALIZAR PLACAR ANUAL - PERÍODO COMPLETO DO ANO
   async atualizarPlacarAnual() {
     if (this.atualizandoAtualmente) {
-      // console.log("⏳ Placar anual já sendo atualizado...");
+      console.log("⏳ Placar anual já sendo atualizado...");
       return;
     }
 
     this.atualizandoAtualmente = true;
 
     try {
-      // console.log("📊 Buscando dados do placar anual (período: ano)...");
+      console.log("📊 Buscando dados do placar anual (período: ano)...");
 
       // Buscar dados anuais usando o endpoint específico
       const formData = new FormData();
@@ -77,13 +77,13 @@ const PlacarAnualManager = {
       if (placarData) {
         this.aplicarPlacarAnual(placarData);
         this.ultimaAtualizacao = new Date();
-        // console.log(
-        //   `✅ Placar anual atualizado: ${placarData.wins} × ${placarData.losses}`
-        // );
+        console.log(
+          `✅ Placar anual atualizado: ${placarData.wins} × ${placarData.losses}`
+        );
       } else {
         // Fallback: valores zerados
         this.aplicarPlacarAnual({ wins: 0, losses: 0 });
-        // console.log("⚠️ Nenhum dado anual encontrado, usando valores zero");
+        console.log("⚠️ Nenhum dado anual encontrado, usando valores zero");
       }
     } catch (error) {
       console.error("❌ Erro ao atualizar placar anual:", error);

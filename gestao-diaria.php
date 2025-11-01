@@ -544,15 +544,6 @@ ob_end_flush();
 <meta charset="UTF-8" />
 <meta name="viewport" content="width=device-width, initial-scale=1.0" />
 <title>Gestão de Banca</title>
-<!-- ✅ DESABILITAR CONSOLE.LOG GLOBALMENTE PARA PERFORMANCE -->
-<script>
-  if (!window.DEBUG_MODE) {
-    console.log = function() {};
-    console.warn = function() {};
-    console.error = function() {};
-    console.debug = function() {};
-  }
-</script>
 <!-- -->
 <!-- -->
 <!-- -->
@@ -647,6 +638,7 @@ ob_end_flush();
 <script src="js/script-gestao-diaria.js" defer></script>
 <script src="js/script-painel-controle.js" defer></script>
 <script src="js/script-mes.js" defer></script>
+<script src="js/exclusao-manager-fix.js" defer></script>
 <script src="js/ano.js" defer></script>
 <script src="js/teste-modal-celebracao.js" defer></script>
 <script src="js/rotulo-lucro-dinamico.js" defer></script>
@@ -2508,6 +2500,7 @@ document.addEventListener('DOMContentLoaded', function() {
 
         <!-- Upload de foto -->
         <div class="input-group">
+          <label for="foto" class="label-form"></label>
           <label for="foto" class="label-arquivo">
             <i class="fas fa-image"></i> Selecionar Foto
           </label>
@@ -2526,6 +2519,7 @@ document.addEventListener('DOMContentLoaded', function() {
 
         <!-- Campo de entrada do nome -->
         <div class="input-group">
+          <label for="nome" class="label-form"></label>
           <input type="text" name="nome" id="nome" class="input-text" placeholder="Digite o nome do mentor" required maxlength="100" style="text-align: center;">
         </div>
 
@@ -6214,6 +6208,7 @@ console.log('🔧 Para testar: Clique em qualquer card de mentor');
  ====================================================================================================================================== -->
 
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+<link rel="stylesheet" href="modal-banca.css">
 
 <!-- ✅ VERIFICAÇÃO DE AUTENTICAÇÃO PARA "GERENCIAR BANCA" -->
 <script>
@@ -6249,16 +6244,16 @@ console.log('🔧 Para testar: Clique em qualquer card de mentor');
         <div class="linha-banca-lucro">
           <div class="campo-banca">
             <div class="conteudo">
-              <span class="label-text"><i class="fa-solid fa-coins"></i> Banca</span>
+              <label><i class="fa-solid fa-coins"></i> Banca</label>
               <span id="valorBancaLabel">R$ 0,00</span>
             </div>
           </div>
           <div class="campo-lucro">
             <div class="conteudo">
-              <span class="label-lucro">
+              <label class="label-lucro">
                 <i class="fa-solid fa-money-bill-trend-up"></i>
                 <span></span>
-              </span>
+              </label>
               <span id="valorLucroLabel"></span>
             </div>
           </div>
@@ -7111,7 +7106,9 @@ window.excluirMentorDireto = function() {
 <!-- -->
 <!-- -->
 <!-- -->
-
+    <script src="js/modal-confirmacao.js"></script>
+    <script src="js/override-root-styles.js" defer></script>
+   
     <!-- ✅ MODAL DE CELEBRAÇÃO META BATIDA -->
     <div id="modal-meta-batida" class="modal-meta-batida" style="display: none;">
         <div class="overlay-meta-batida"></div>

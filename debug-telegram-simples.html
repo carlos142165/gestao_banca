@@ -1,0 +1,120 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="UTF-8" />
+    <title>Debug Telegram</title>
+    <style>
+      body {
+        font-family: Arial;
+        padding: 20px;
+      }
+      .test {
+        margin: 20px 0;
+        padding: 10px;
+        border: 1px solid #ccc;
+      }
+      button {
+        padding: 10px 20px;
+        background: #0088cc;
+        color: white;
+        border: none;
+        cursor: pointer;
+      }
+      pre {
+        background: #f5f5f5;
+        padding: 10px;
+        max-height: 300px;
+        overflow: auto;
+      }
+      .error {
+        color: red;
+      }
+      .success {
+        color: green;
+      }
+    </style>
+  </head>
+  <body>
+    <h1>🧪 Debug Telegram</h1>
+
+    <div class="test">
+      <h3>1. Testar API - Get Messages</h3>
+      <button onclick="testarGetMessages()">Testar</button>
+      <div id="resultado1"></div>
+    </div>
+
+    <div class="test">
+      <h3>2. Testar API - Poll</h3>
+      <button onclick="testarPoll()">Testar</button>
+      <div id="resultado2"></div>
+    </div>
+
+    <div class="test">
+      <h3>3. Verificar Cache</h3>
+      <button onclick="verificarCache()">Verificar</button>
+      <div id="resultado3"></div>
+    </div>
+
+    <script>
+      function testarGetMessages() {
+        const div = document.getElementById("resultado1");
+        div.innerHTML = "<p>Testando...</p>";
+
+        fetch("api/telegram-mensagens.php?action=get-messages&t=" + Date.now())
+          .then((r) => r.json())
+          .then((data) => {
+            if (data.success) {
+              div.innerHTML = `<p class="success">✅ OK! ${
+                data.messages.length
+              } mensagens</p><pre>${JSON.stringify(data, null, 2)}</pre>`;
+            } else {
+              div.innerHTML = `<p class="error">❌ Erro: ${
+                data.message
+              }</p><pre>${JSON.stringify(data, null, 2)}</pre>`;
+            }
+          })
+          .catch((e) => {
+            div.innerHTML = `<p class="error">❌ Erro: ${e.message}</p>`;
+          });
+      }
+
+      function testarPoll() {
+        const div = document.getElementById("resultado2");
+        div.innerHTML = "<p>Testando...</p>";
+
+        fetch(
+          "api/telegram-mensagens.php?action=poll&last_update=0&t=" + Date.now()
+        )
+          .then((r) => r.json())
+          .then((data) => {
+            if (data.success) {
+              div.innerHTML = `<p class="success">✅ OK! ${
+                data.messages.length
+              } mensagens</p><pre>${JSON.stringify(data, null, 2)}</pre>`;
+            } else {
+              div.innerHTML = `<p class="error">❌ Erro: ${
+                data.message
+              }</p><pre>${JSON.stringify(data, null, 2)}</pre>`;
+            }
+          })
+          .catch((e) => {
+            div.innerHTML = `<p class="error">❌ Erro: ${e.message}</p>`;
+          });
+      }
+
+      function verificarCache() {
+        const div = document.getElementById("resultado3");
+        div.innerHTML = "<p>Verificando...</p>";
+
+        fetch("verificar-cache.php")
+          .then((r) => r.text())
+          .then((data) => {
+            div.innerHTML = `<pre>${data}</pre>`;
+          })
+          .catch((e) => {
+            div.innerHTML = `<p class="error">❌ Erro: ${e.message}</p>`;
+          });
+      }
+    </script>
+  </body>
+</html>

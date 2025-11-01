@@ -18,8 +18,19 @@ if (!isset($_SESSION['usuario_id']) || empty($_SESSION['usuario_id'])) {
     <!-- ✅ Carregar CSS ANTES dos estilos inline -->
     <link rel="stylesheet" href="css/menu-topo.css">
     <link rel="stylesheet" href="css/telegram-mensagens.css">
-    <link rel="stylesheet" href="css/oportunidades-telegram.css">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        .telegram-container {
+            display: flex;
+            flex-direction: column;
+            height: 100%;
+            gap: 0;
+        }
+        
+        .telegram-messages-wrapper {
+            flex: 1;
+        }
+    </style>
     <style>
         * {
             margin: 0;
@@ -835,7 +846,22 @@ if (!isset($_SESSION['usuario_id']) || empty($_SESSION['usuario_id'])) {
             <!-- ==================================================================================================================== -->
             <!-- BLOCO 1 -->
             <div class="bloco bloco-1">
-
+                <div class="telegram-container">
+                    <div class="telegram-header">
+                        <i class="fab fa-telegram"></i>
+                        <h3>Mensagens Telegram</h3>
+                        <div class="telegram-status">
+                            <span class="telegram-status-dot"></span>
+                            <span>Ao vivo</span>
+                        </div>
+                    </div>
+                    <div class="telegram-messages-wrapper">
+                        <div class="telegram-loading">
+                            <div class="telegram-loading-spinner"></div>
+                            <p>Carregando mensagens...</p>
+                        </div>
+                    </div>
+                </div>
             </div>
             
             <!-- ==================================================================================================================== -->
@@ -967,241 +993,33 @@ if (!isset($_SESSION['usuario_id']) || empty($_SESSION['usuario_id'])) {
     </script>
 
     <!-- MODAL DE LOGIN PARA USUÁRIOS NÃO AUTENTICADOS -->
-    <?php if (!$usuario_autenticado): ?>
-    <div id="modalLoginBlockade" style="
-        position: fixed;
-        z-index: 9999;
-        left: 0;
-        top: 0;
-        width: 100%;
-        height: 100%;
-        background: rgba(0, 0, 0, 0.6);
-        backdrop-filter: blur(4px);
-        display: flex;
-        justify-content: center;
-        align-items: center;
-        animation: fadeIn 0.3s ease;
-    ">
-        <div style="
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-            padding: 0;
-            border-radius: 20px;
-            width: 90%;
-            max-width: 450px;
-            color: white;
-            animation: slideIn 0.4s cubic-bezier(0.34, 1.56, 0.64, 1);
-            box-shadow: 0 20px 60px rgba(102, 126, 234, 0.4);
-            position: relative;
-            border: 1px solid rgba(255, 255, 255, 0.2);
-            overflow: hidden;
-        ">
-            <div style="
-                text-align: center;
-                padding: 35px 30px 25px;
-                border-bottom: 2px solid rgba(255, 255, 255, 0.2);
-                position: relative;
-                z-index: 1;
-            ">
-                <h2 style="
-                    margin: 0;
-                    font-size: 26px;
-                    color: white;
-                    font-weight: 700;
-                    letter-spacing: 0.5px;
-                    display: flex;
-                    align-items: center;
-                    justify-content: center;
-                    gap: 12px;
-                ">
-                    <i class="fas fa-sign-in-alt"></i> Acesso Restrito
-                </h2>
-            </div>
-
-            <div style="
-                padding: 30px;
-                position: relative;
-                z-index: 1;
-            ">
-                <p style="
-                    color: rgba(255, 255, 255, 0.9);
-                    text-align: center;
-                    margin-bottom: 25px;
-                    font-size: 15px;
-                    line-height: 1.6;
-                ">
-                    Esta área é restrita a usuários autenticados. Por favor, faça login para continuar.
-                </p>
-
-                <form id="formLoginBlockade" onsubmit="enviarLoginBlockade(event)">
-                    <div style="position: relative; margin-bottom: 24px;">
-                        <input type="email" name="email" id="email-blockade" placeholder="Email" required style="
-                            background: rgba(255, 255, 255, 0.1);
-                            border: 2px solid rgba(255, 255, 255, 0.2);
-                            border-radius: 12px;
-                            width: 100%;
-                            outline: none;
-                            color: white;
-                            font-size: 15px;
-                            padding: 12px 16px;
-                            box-sizing: border-box;
-                            transition: all 0.3s ease;
-                        " />
-                    </div>
-                    <div style="position: relative; margin-bottom: 24px;">
-                        <input type="password" name="senha" id="senha-blockade" placeholder="Senha" required style="
-                            background: rgba(255, 255, 255, 0.1);
-                            border: 2px solid rgba(255, 255, 255, 0.2);
-                            border-radius: 12px;
-                            width: 100%;
-                            outline: none;
-                            color: white;
-                            font-size: 15px;
-                            padding: 12px 16px;
-                            box-sizing: border-box;
-                            transition: all 0.3s ease;
-                        " />
-                    </div>
-                    <div id="erro-blockade" style="
-                        color: #ffebee;
-                        font-size: 13px;
-                        margin-bottom: 15px;
-                        display: none;
-                        background: rgba(255, 59, 48, 0.2);
-                        padding: 10px 14px;
-                        border-radius: 8px;
-                        border-left: 3px solid #ff3b30;
-                    "></div>
-                    <button type="submit" style="
-                        background: linear-gradient(135deg, rgba(255, 255, 255, 0.25) 0%, rgba(255, 255, 255, 0.1) 100%);
-                        width: 100%;
-                        border: 2px solid rgba(255, 255, 255, 0.3);
-                        padding: 14px;
-                        border-radius: 12px;
-                        color: white;
-                        font-size: 16px;
-                        cursor: pointer;
-                        margin-top: 10px;
-                        font-weight: 700;
-                        text-transform: uppercase;
-                        transition: all 0.3s ease;
-                    ">
-                        Acessar
-                    </button>
-                </form>
-
-                <div style="
-                    text-align: center;
-                    margin-top: 20px;
-                    color: rgba(255, 255, 255, 0.8);
-                    font-size: 13px;
-                ">
-                    <p style="margin-bottom: 15px;">
-                        <a href="home.php" style="
-                            color: rgba(255, 255, 255, 0.95);
-                            font-weight: 600;
-                            text-decoration: underline;
-                            transition: all 0.3s ease;
-                            cursor: pointer;
-                        ">
-                            ← Voltar para Home
-                        </a>
-                    </p>
-                </div>
-            </div>
-        </div>
-    </div>
-
-    <style>
-        @keyframes fadeIn {
-            from { opacity: 0; }
-            to { opacity: 1; }
-        }
-        @keyframes slideIn {
-            from {
-                transform: translateY(-50px) scale(0.95);
-                opacity: 0;
-            }
-            to {
-                transform: translateY(0) scale(1);
-                opacity: 1;
-            }
-        }
-        input::placeholder {
-            color: rgba(255, 255, 255, 0.6) !important;
-        }
-        input:focus {
-            background: rgba(255, 255, 255, 0.15) !important;
-            border-color: rgba(255, 255, 255, 0.4) !important;
-            box-shadow: 0 0 20px rgba(255, 255, 255, 0.1), inset 0 0 20px rgba(255, 255, 255, 0.05) !important;
-            transform: translateY(-2px);
-        }
-    </style>
-
-    <script>
-        // Se não autenticado, mostrar bloqueio
-        function verificarAutenticacao() {
-            const usuario_autenticado = <?php echo json_encode($usuario_autenticado); ?>;
-            if (!usuario_autenticado) {
-                console.log('Usuário não autenticado - mostrando modal de bloqueio');
-                const modal = document.getElementById('modalLoginBlockade');
-                if (modal) {
-                    modal.style.display = 'flex';
-                }
-            }
-        }
-
-        window.addEventListener('load', function() {
-            verificarAutenticacao();
-        });
-
-        function enviarLoginBlockade(event) {
-            event.preventDefault();
-            const email = document.getElementById('email-blockade').value;
-            const senha = document.getElementById('senha-blockade').value;
-            const erroDiv = document.getElementById('erro-blockade');
-
-            const formData = new FormData();
-            formData.append('email', email);
-            formData.append('senha', senha);
-            formData.append('ajax', '1');
-
-            fetch('login-user.php', {
-                method: 'POST',
-                body: formData
-            })
-            .then(response => response.text())
-            .then(data => {
-                if (data.includes("sucesso") || data.trim() === "sucesso") {
-                    erroDiv.style.display = "none";
-                    setTimeout(() => {
-                        location.reload();
-                    }, 500);
-                } else if (data.includes("Senha Incorreta") || data.includes("incorreta")) {
-                    erroDiv.textContent = "E-mail ou senha incorretos!";
-                    erroDiv.style.display = "block";
-                } else if (data.includes("E-mail Não Cadastrado") || data.includes("não cadastrado")) {
-                    erroDiv.textContent = "E-mail não encontrado!";
-                    erroDiv.style.display = "block";
-                } else {
-                    erroDiv.textContent = "Erro ao fazer login. Tente novamente!";
-                    erroDiv.style.display = "block";
-                }
-            })
-            .catch(error => {
-                console.error('Erro:', error);
-                erroDiv.textContent = "Erro de conexão. Tente novamente!";
-                erroDiv.style.display = "block";
-            });
-        }
-    </script>
-
+    <?php if (false): ?>
+    <!-- Modal desativado - página pública -->
     <?php endif; ?>
+
+    <!-- ✅ VERIFICAÇÃO DE AUTENTICAÇÃO PARA "GERENCIAR BANCA" -->
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            const botaoGerencia = document.getElementById('abrirGerenciaBanca');
+            const usuarioAutenticado = <?php echo json_encode($usuario_autenticado); ?>;
+
+            if (botaoGerencia && !usuarioAutenticado) {
+                botaoGerencia.addEventListener('click', function(e) {
+                    e.preventDefault();
+                    e.stopPropagation();
+                    
+                    // Se não autenticado, mostra o modal de login
+                    const modal = document.getElementById('modalLoginBlockade');
+                    if (modal) {
+                        modal.style.display = 'flex';
+                    }
+                });
+            }
+        });
+    </script>
 
     <!-- ✅ Script para atualizar rótulo dinâmico do lucro - FORA DO ENDIF PARA FUNCIONAR COM USUÁRIOS AUTENTICADOS -->
     <script src="js/rotulo-lucro-dinamico.js" defer></script>
-
-    <!-- ✅ SCRIPT DO MONITOR DE TELEGRAM -->
-    <script src="js/monitor-telegram.js" defer></script>
 
     <!-- ✅ SCRIPT PARA CARREGAR MENSAGENS DO TELEGRAM -->
     <script src="js/telegram-mensagens.js" defer></script>

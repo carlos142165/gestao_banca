@@ -1722,23 +1722,23 @@ if (!isset($_SESSION['usuario_id']) || empty($_SESSION['usuario_id'])) {
                 <div class="tab-content active" id="tab-cartao">
                     <form id="formCartao" class="form-pagamento">
                         <div class="form-group">
-                            <label for="titular">Titular do Cartão</label>
+                            <label>Titular do Cartão</label>
                             <input type="text" id="titular" class="input-pagamento" placeholder="Nome conforme no cartão" required />
                         </div>
 
                         <div class="form-group">
-                            <label for="numeroCartao">Número do Cartão</label>
+                            <label>Número do Cartão</label>
                             <input type="text" id="numeroCartao" class="input-pagamento" placeholder="0000 0000 0000 0000" maxlength="19" required />
                         </div>
 
                         <div class="form-row">
                             <div class="form-group">
-                                <label for="dataValidade">Validade (MM/AA)</label>
+                                <label>Validade (MM/AA)</label>
                                 <input type="text" id="dataValidade" class="input-pagamento" placeholder="MM/AA" maxlength="5" required />
                             </div>
 
                             <div class="form-group">
-                                <label for="cvv">CVV</label>
+                                <label>CVV</label>
                                 <input type="text" id="cvv" class="input-pagamento" placeholder="***" maxlength="4" required />
                             </div>
                         </div>

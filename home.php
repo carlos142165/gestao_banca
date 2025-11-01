@@ -1353,7 +1353,7 @@ session_start();
 
                     <!-- Sexo/Gênero -->
                     <div class="modal-form-group">
-                        <span class="form-group-label">Qual é o seu gênero?</span>
+                        <label>Qual é o seu gênero?</label>
                         <div class="radio-group">
                             <label>
                                 <input type="radio" name="genero" value="feminino" required>
