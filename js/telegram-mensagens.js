@@ -3,8 +3,11 @@ const TelegramMessenger = {
   lastUpdateId: 0,
   isPolling: false,
   messagesSalvas: new Set(),
+  messagesCache: new Map(), // ✅ CACHE para detectar mudanças
   retryCount: 0,
   maxRetries: 3,
+  pollCount: 0, // ✅ Contador de verificações
+  reloadCount: 0, // ✅ Contador de reloads em background
 
   init() {
     this.container = document.querySelector(".telegram-messages-wrapper");
@@ -14,15 +17,20 @@ const TelegramMessenger = {
     }
 
     console.log("✅ Telegram Messenger inicializado");
+    console.log("⚡ Background reload: A cada 1 segundo (silencioso)");
+    console.log("📦 Cache: Sistema de detecção de mudanças ativo");
     this.loadMessages();
+    // ✅ POLLING REATIVADO PARA ATUALIZAÇÕES EM TEMPO REAL
     this.startPolling();
   },
 
   loadMessages() {
     if (!this.container) return;
 
-    // Mostrar loading
-    this.showLoading();
+    // Mostrar loading apenas na primeira vez
+    if (this.container.children.length === 0) {
+      this.showLoading();
+    }
 
     // ✅ CARREGAR DO BANCO DE DADOS (não do Telegram)
     fetch(
@@ -45,12 +53,33 @@ const TelegramMessenger = {
           } else {
             console.log("✅ Mensagens carregadas:", data.messages.length);
             this.displayMessages(data.messages);
+
+            // ✅ GARANTIR QUE O CACHE ESTEJA SINCRONIZADO APÓS O LOAD INICIAL
+            // Alguns cenários podem pular a criação do cache; aqui garantimos
+            // que o estado inicial do cache reflita exatamente o que vem do banco.
+            data.messages.forEach((m) => {
+              if (!this.messagesCache.has(m.id)) {
+                this.messagesCache.set(m.id, {
+                  id: m.id,
+                  resultado: m.resultado, // pode ser null
+                  timestamp: Date.now(),
+                });
+              }
+            });
+
             if (data.messages.length > 0) {
               // ✅ CORRIGIDO: Pegar o MAIOR ID (primeiro da lista, pois está DESC)
               this.lastUpdateId =
                 data.messages[0].update_id || data.messages[0].id;
               console.log("🔄 Último Update ID:", this.lastUpdateId);
             }
+
+            // ✅ RECARREGAMENTO EM BACKGROUND DESATIVADO - POLLING FAZ O TRABALHO
+            // console.log("🚀 Iniciando background reload em 1 segundo...");
+            // setTimeout(() => {
+            //   console.log("🎯 EXECUTANDO reloadMessagesInBackground()");
+            //   this.reloadMessagesInBackground();
+            // }, 1000);
           }
         } else {
           console.error("❌ Erro na resposta:", data);
@@ -62,6 +91,92 @@ const TelegramMessenger = {
         console.error("❌ Erro ao carregar mensagens:", error);
         // Não mostrar erro, mostrar vazio em caso de falha
         this.showEmpty();
+      });
+  },
+
+  // ✅ NOVA FUNÇÃO: Recarregar mensagens em background (como F5 silencioso)
+  reloadMessagesInBackground() {
+    this.reloadCount++;
+    console.log("═".repeat(60));
+    console.log(`⏰ BACKGROUND RELOAD #${this.reloadCount} - INICIANDO AGORA!`);
+    console.log("═".repeat(60));
+
+    fetch(
+      "api/carregar-mensagens-banco.php?action=get-messages&t=" + Date.now()
+    )
+      .then((response) => response.json())
+      .then((data) => {
+        if (data.success && data.messages.length > 0) {
+          console.log(
+            `🔄 Reload #${this.reloadCount}: ${data.messages.length} mensagens do banco`
+          );
+
+          // ✅ Mostrar resultados das 3 primeiras mensagens
+          data.messages.forEach((msg, idx) => {
+            if (idx < 3) {
+              console.log(
+                `  📨 ID ${msg.id}: resultado="${msg.resultado || "null"}"`
+              );
+            }
+          });
+
+          // ✅ LIMPAR CONTAINER E RECRIAR TUDO (como F5 mas só nas mensagens)
+          this.container.innerHTML = "";
+
+          // ✅ RECRIAR TODAS AS MENSAGENS DO ZERO
+          data.messages.forEach((msgFromDB) => {
+            console.log("📝 Processando mensagem:", msgFromDB);
+
+            // Criar elemento da mensagem
+            const msgText = msgFromDB.text || msgFromDB.mensagem_completa || "";
+            console.log(`   📄 Texto: "${msgText.substring(0, 50)}..."`);
+            console.log(`   ⏰ Hora: "${msgFromDB.time}"`);
+            console.log(`   🎯 Resultado: "${msgFromDB.resultado}"`);
+
+            const formattedContent = this.formatMessage(
+              msgText,
+              msgFromDB.time || msgFromDB.hora_mensagem,
+              msgFromDB
+            );
+
+            const messageEl = document.createElement("div");
+            messageEl.className = "telegram-message";
+            messageEl.setAttribute("data-message-id", msgFromDB.id);
+            messageEl.innerHTML = `
+              <div class="msg-header-external">
+                <div class="msg-header-left">
+                  <span class="msg-title-external"><i class="fas fa-bell"></i> Oportunidade!</span>
+                </div>
+                <div class="msg-header-right">
+                  <span class="msg-time-external">
+                    <i class="fas fa-clock"></i>
+                    ${msgFromDB.time}
+                  </span>
+                </div>
+              </div>
+              ${formattedContent}
+            `;
+
+            // Adicionar ao container
+            this.container.appendChild(messageEl);
+          });
+
+          console.log(
+            `✅ Reload #${this.reloadCount} concluído - Próximo em 1s`
+          );
+        } else {
+          console.log(
+            `📭 Reload #${this.reloadCount}: Nenhuma mensagem no banco`
+          );
+        }
+
+        // ✅ CONTINUAR RECARREGANDO A CADA 1 SEGUNDO
+        setTimeout(() => this.reloadMessagesInBackground(), 1000);
+      })
+      .catch((error) => {
+        console.error(`❌ Erro no reload #${this.reloadCount}:`, error);
+        // Tentar novamente em 2 segundos
+        setTimeout(() => this.reloadMessagesInBackground(), 2000);
       });
   },
 
@@ -82,16 +197,22 @@ const TelegramMessenger = {
 
     this.isPolling = true;
     console.log(
-      "🔔 Iniciando polling para novas mensagens (do banco de dados)..."
+      "[POLLING] Iniciando polling INCREMENTAL para atualizacoes em tempo real..."
     );
 
+    // ✅ Inicializar timestamp de último check
+    this.lastCheck = new Date().toISOString().slice(0, 19).replace("T", " ");
+    this.lastUpdateId = 0;
+
     const poll = () => {
-      // ✅ CARREGAR DO BANCO DE DADOS (não do Telegram)
-      fetch(
-        `api/carregar-mensagens-banco.php?action=poll&last_update=${
-          this.lastUpdateId
-        }&t=${Date.now()}`
-      )
+      this.pollCount++;
+
+      // ✅ POLLING INCREMENTAL: Só buscar mensagens criadas/atualizadas desde lastCheck
+      const url = `api/carregar-mensagens-banco.php?action=poll&last_check=${encodeURIComponent(
+        this.lastCheck
+      )}&last_update=${this.lastUpdateId}&t=${Date.now()}`;
+
+      fetch(url)
         .then((response) => {
           if (!response.ok) {
             throw new Error("Erro HTTP: " + response.status);
@@ -100,37 +221,64 @@ const TelegramMessenger = {
         })
         .then((data) => {
           if (data.success) {
-            if (data.messages.length > 0) {
-              console.log(
-                "🔔 Novas mensagens detectadas:",
-                data.messages.length
-              );
-              console.log("📬 Mensagens:", data.messages);
-              // Adicionar novas mensagens ao container
-              data.messages.forEach((msg) => {
-                this.addMessage(msg);
-              });
-
-              // ✅ ATUALIZAR lastUpdateId com o maior ID das novas mensagens
-              const maxId = Math.max(
-                ...data.messages.map((m) => m.update_id || m.id)
-              );
-              this.lastUpdateId = maxId;
-              console.log("🔄 Update ID atualizado para:", this.lastUpdateId);
+            // ✅ Atualizar ponteiros de tempo
+            if (data.last_check) {
+              this.lastCheck = data.last_check;
+            }
+            if (data.last_update) {
+              this.lastUpdateId = data.last_update;
             }
 
-            // Atualizar último ID da API (fallback)
-            if (data.last_update && data.messages.length === 0) {
-              this.lastUpdateId = data.last_update;
-              console.log("🔄 Update ID (from API):", this.lastUpdateId);
+            // ✅ Se houver mensagens atualizadas, processar
+            if (data.messages && data.messages.length > 0) {
+              console.log(
+                `[POLLING] #${this.pollCount}: ${data.messages.length} mensagens atualizadas (modo: ${data.polling_mode})`
+              );
+
+              data.messages.forEach((msg) => {
+                const cached = this.messagesCache.get(msg.id);
+                console.log(`  [DEBUG] Msg ${msg.id}:`, {
+                  cached: cached?.resultado || "nao existe",
+                  novo: msg.resultado || "null",
+                  updated_at: msg.updated_at,
+                  isDifferent: !cached || cached.resultado !== msg.resultado,
+                });
+
+                // ✅ ADICIONAR ou ATUALIZAR mensagem
+                const exists = document.querySelector(
+                  `[data-message-id="${msg.id}"], [data-message-id="${msg.update_id}"]`
+                );
+
+                if (exists) {
+                  // ✅ Mensagem já existe - ATUALIZAR
+                  const cachedResultado = cached ? cached.resultado : null;
+                  const serverResultado = msg.resultado || null;
+
+                  if (cachedResultado !== serverResultado) {
+                    console.warn(
+                      `[UPDATE] Atualizando DOM ID ${msg.id}: "${cachedResultado}" -> "${serverResultado}"`
+                    );
+                    this.updateMessage(msg, exists);
+                  }
+                } else {
+                  // ✅ Mensagem nova - ADICIONAR ao DOM
+                  console.log(`[NEW] Nova mensagem detectada: ID ${msg.id}`);
+                  this.addMessage(msg);
+                }
+              });
             }
           }
         })
-        .catch((error) => console.error("❌ Erro ao fazer polling:", error));
+        .catch((error) =>
+          console.error("[ERROR] Erro ao fazer polling:", error)
+        );
     };
 
-    // Fazer polling a cada 1 segundo (mais frequente para tempo real)
-    this.pollInterval = setInterval(poll, 1000);
+    // ✅ POLLING RÁPIDO: A cada 500ms (meio segundo) para capturar resultados instantaneamente
+    this.pollInterval = setInterval(poll, 500);
+    console.log(
+      "[POLLING] Polling incremental ativado - modo: updated_at + last_check"
+    );
   },
 
   stopPolling() {
@@ -168,13 +316,38 @@ const TelegramMessenger = {
 
     // ✅ VALIDAR formato da mensagem
     if (!this.isValidMessage(msg)) {
+      console.log(`❌ Mensagem inválida ignorada: ID ${msg.id}`);
       return;
     }
 
-    // Verificar se mensagem já existe
-    if (document.querySelector(`[data-message-id="${msg.id}"]`)) {
+    console.log(
+      `📨 addMessage() chamado - ID: ${msg.id}, resultado: "${
+        msg.resultado || "null"
+      }"`
+    );
+
+    // ✅ VERIFICAR SE MENSAGEM JÁ EXISTE - SE SIM, ATUALIZAR
+    const existingMessage = document.querySelector(
+      `[data-message-id="${msg.id}"]`
+    );
+    if (existingMessage) {
+      console.log(
+        `🔄 Mensagem JÁ EXISTE no DOM, chamando updateMessage() - ID: ${msg.id}`
+      );
+      this.updateMessage(msg, existingMessage);
       return;
     }
+
+    console.log(`➕ Criando NOVA mensagem - ID: ${msg.id}`);
+
+    // ✅ ADICIONAR AO CACHE quando criar mensagem nova
+    // Guardar o valor REAL de `resultado` (pode ser null) para que
+    // futuras comparações detectem corretamente mudanças (null -> GREEN etc.)
+    this.messagesCache.set(msg.id, {
+      id: msg.id,
+      resultado: msg.resultado, // armazenar o valor real (NULL ou string)
+      timestamp: Date.now(),
+    });
 
     // ✅ NÃO PRECISA MAIS SALVAR - A MENSAGEM JÁ VEM DO BANCO!
     // (As mensagens são salvas diretamente quando chegam do Telegram via webhook)
@@ -208,6 +381,73 @@ const TelegramMessenger = {
 
     // Scroll para cima (primeira mensagem)
     setTimeout(() => this.scrollToTop(), 100);
+  },
+
+  // ✅ NOVA FUNÇÃO: Atualizar mensagem existente com efeito visual
+  updateMessage(msg, messageEl) {
+    if (!messageEl) {
+      console.warn(`⚠️ messageEl não encontrado para ID: ${msg.id}`);
+      return;
+    }
+
+    const msgText = msg.text || msg.mensagem_completa || "";
+    const newResultado = msg.resultado || "PENDENTE";
+
+    // ✅ BUSCAR RESULTADO ANTERIOR DO CACHE
+    const cachedMsg = this.messagesCache.get(msg.id);
+    const oldResultado = cachedMsg?.resultado || "PENDENTE";
+
+    console.log(
+      `🔍 updateMessage() chamado - ID: ${msg.id}`,
+      `\n   Cache: "${oldResultado}"`,
+      `\n   Novo: "${newResultado}"`,
+      `\n   Mudou: ${oldResultado !== newResultado}`
+    );
+
+    // ✅ Se o resultado mudou, aplicar efeito visual
+    const resultadoMudou = oldResultado !== newResultado;
+
+    // ✅ SEMPRE ATUALIZAR O CONTEÚDO (mesmo sem mudança visual)
+    const contentDiv = messageEl.querySelector(".telegram-formatted-message");
+    if (contentDiv) {
+      console.log(`   📝 Atualizando DOM para ID: ${msg.id}`);
+      const formattedContent = this.formatMessage(msgText, msg.time, msg);
+      contentDiv.outerHTML = formattedContent;
+    } else {
+      console.warn(
+        `   ⚠️ .telegram-formatted-message não encontrado para ID: ${msg.id}`
+      );
+    }
+
+    // ✅ ATUALIZAR CACHE COM NOVO RESULTADO (sempre)
+    this.messagesCache.set(msg.id, {
+      id: msg.id,
+      resultado: newResultado,
+      timestamp: Date.now(),
+    });
+
+    if (resultadoMudou) {
+      console.log(
+        `✨ RESULTADO ATUALIZADO! ${oldResultado} → ${newResultado} (ID: ${msg.id})`
+      );
+
+      // ✅ EFEITO FLASH: Adicionar classe de animação
+      messageEl.classList.add("message-flash");
+
+      // Remover a classe após a animação (2 segundos)
+      setTimeout(() => {
+        messageEl.classList.remove("message-flash");
+      }, 2000);
+
+      // ✅ SCROLL SUAVE até a mensagem atualizada
+      setTimeout(() => {
+        messageEl.scrollIntoView({ behavior: "smooth", block: "center" });
+      }, 100);
+
+      console.log("✅ Mensagem atualizada com sucesso!", msg.id);
+    } else {
+      console.log(`⏭️ Conteúdo atualizado silenciosamente (ID: ${msg.id})`);
+    }
   },
 
   showLoading() {

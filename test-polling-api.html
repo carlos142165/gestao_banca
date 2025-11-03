@@ -1,0 +1,367 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Teste API Polling</title>
+    <style>
+      body {
+        font-family: "Courier New", monospace;
+        max-width: 1200px;
+        margin: 20px auto;
+        padding: 20px;
+        background-color: #1e1e1e;
+        color: #d4d4d4;
+      }
+      h1 {
+        color: #4ec9b0;
+      }
+      .section {
+        background-color: #252526;
+        padding: 15px;
+        margin: 15px 0;
+        border-left: 3px solid #007acc;
+        border-radius: 5px;
+      }
+      button {
+        background-color: #0e639c;
+        color: white;
+        border: none;
+        padding: 10px 20px;
+        cursor: pointer;
+        border-radius: 3px;
+        margin: 5px;
+        font-size: 14px;
+      }
+      button:hover {
+        background-color: #1177bb;
+      }
+      pre {
+        background-color: #1e1e1e;
+        padding: 15px;
+        border-radius: 5px;
+        overflow-x: auto;
+        white-space: pre-wrap;
+        word-wrap: break-word;
+      }
+      .success {
+        color: #4ec9b0;
+      }
+      .error {
+        color: #f48771;
+      }
+      .warning {
+        color: #dcdcaa;
+      }
+      .info {
+        color: #9cdcfe;
+      }
+      .timestamp {
+        color: #6a9955;
+      }
+    </style>
+  </head>
+  <body>
+    <h1>🔍 Teste de API - Polling Incremental</h1>
+
+    <div class="section">
+      <h2>1. Testar Endpoint action=get-messages</h2>
+      <button onclick="testGetMessages()">▶ Testar GET Messages</button>
+      <pre id="result1">Aguardando teste...</pre>
+    </div>
+
+    <div class="section">
+      <h2>2. Testar Endpoint action=poll (modo incremental)</h2>
+      <button onclick="testPollIncremental()">▶ Testar Poll Incremental</button>
+      <pre id="result2">Aguardando teste...</pre>
+    </div>
+
+    <div class="section">
+      <h2>3. Verificar Estrutura da Tabela</h2>
+      <button onclick="testDatabaseStructure()">
+        ▶ Verificar Coluna updated_at
+      </button>
+      <pre id="result3">Aguardando teste...</pre>
+    </div>
+
+    <div class="section">
+      <h2>4. Polling Automático (5 segundos)</h2>
+      <button onclick="startAutoPoll()">▶ Iniciar Polling</button>
+      <button onclick="stopAutoPoll()">⏸ Parar Polling</button>
+      <pre id="result4">Aguardando início...</pre>
+    </div>
+
+    <script>
+      let pollInterval = null;
+      let lastCheck = new Date().toISOString().slice(0, 19).replace("T", " ");
+      let lastUpdateId = 0;
+
+      function log(elementId, message, type = "info") {
+        const element = document.getElementById(elementId);
+        const timestamp = new Date().toISOString().slice(11, 19);
+        const className = type;
+        element.innerHTML += `<span class="timestamp">[${timestamp}]</span> <span class="${className}">${message}</span>\n`;
+      }
+
+      function clear(elementId) {
+        document.getElementById(elementId).innerHTML = "";
+      }
+
+      async function testGetMessages() {
+        clear("result1");
+        log("result1", "🔍 Testando endpoint GET Messages...", "info");
+
+        try {
+          const url = `api/carregar-mensagens-banco.php?action=get-messages&t=${Date.now()}`;
+          log("result1", `📡 URL: ${url}`, "info");
+
+          const response = await fetch(url);
+          log(
+            "result1",
+            `✅ Status: ${response.status} ${response.statusText}`,
+            "success"
+          );
+
+          const data = await response.json();
+          log(
+            "result1",
+            `📦 Total de mensagens: ${data.messages?.length || 0}`,
+            "success"
+          );
+
+          if (data.messages && data.messages.length > 0) {
+            log("result1", "\n📋 Primeiras 3 mensagens:", "warning");
+            data.messages.slice(0, 3).forEach((msg, idx) => {
+              log(
+                "result1",
+                `\n  [${idx + 1}] ID: ${msg.id} | Update ID: ${msg.update_id}`,
+                "info"
+              );
+              log(
+                "result1",
+                `      Resultado: ${msg.resultado || "NULL"}`,
+                "info"
+              );
+              log(
+                "result1",
+                `      Updated_at: ${msg.updated_at || "N/A"}`,
+                "info"
+              );
+              log("result1", `      Título: ${msg.title}`, "info");
+            });
+          }
+
+          log("result1", "\n📄 Response completo:", "warning");
+          log("result1", JSON.stringify(data, null, 2), "info");
+        } catch (error) {
+          log("result1", `❌ ERRO: ${error.message}`, "error");
+          log("result1", error.stack, "error");
+        }
+      }
+
+      async function testPollIncremental() {
+        clear("result2");
+        log("result2", "🔍 Testando endpoint POLL (incremental)...", "info");
+
+        try {
+          const url = `api/carregar-mensagens-banco.php?action=poll&last_check=${encodeURIComponent(
+            lastCheck
+          )}&last_update=${lastUpdateId}&t=${Date.now()}`;
+          log("result2", `📡 URL: ${url}`, "info");
+          log("result2", `⏰ last_check: ${lastCheck}`, "info");
+          log("result2", `🔢 last_update: ${lastUpdateId}`, "info");
+
+          const response = await fetch(url);
+          log(
+            "result2",
+            `✅ Status: ${response.status} ${response.statusText}`,
+            "success"
+          );
+
+          const data = await response.json();
+          log(
+            "result2",
+            `📦 Mensagens atualizadas: ${data.messages?.length || 0}`,
+            "success"
+          );
+          log(
+            "result2",
+            `🔧 Polling mode: ${data.polling_mode}`,
+            data.polling_mode === "incremental" ? "success" : "warning"
+          );
+
+          if (data.polling_mode === "fallback") {
+            log(
+              "result2",
+              "⚠️ AVISO: Coluna updated_at pode não existir!",
+              "warning"
+            );
+          }
+
+          if (data.messages && data.messages.length > 0) {
+            log("result2", "\n📋 Mensagens retornadas:", "warning");
+            data.messages.forEach((msg, idx) => {
+              log(
+                "result2",
+                `\n  [${idx + 1}] ID: ${msg.id} | Update ID: ${msg.update_id}`,
+                "info"
+              );
+              log(
+                "result2",
+                `      Resultado: ${msg.resultado || "NULL"}`,
+                "info"
+              );
+              log(
+                "result2",
+                `      Updated_at: ${msg.updated_at || "N/A"}`,
+                "info"
+              );
+            });
+
+            // Atualizar ponteiros
+            if (data.last_check) lastCheck = data.last_check;
+            if (data.last_update) lastUpdateId = data.last_update;
+            log("result2", `\n⏰ Novo last_check: ${lastCheck}`, "success");
+            log("result2", `🔢 Novo last_update: ${lastUpdateId}`, "success");
+          }
+
+          log("result2", "\n📄 Response completo:", "warning");
+          log("result2", JSON.stringify(data, null, 2), "info");
+        } catch (error) {
+          log("result2", `❌ ERRO: ${error.message}`, "error");
+          log("result2", error.stack, "error");
+        }
+      }
+
+      async function testDatabaseStructure() {
+        clear("result3");
+        log("result3", "🔍 Verificando estrutura do banco...", "info");
+        log(
+          "result3",
+          "ℹ️ Este teste verifica se o campo updated_at aparece nos dados retornados",
+          "info"
+        );
+
+        try {
+          const response = await fetch(
+            `api/carregar-mensagens-banco.php?action=get-messages&t=${Date.now()}`
+          );
+          const data = await response.json();
+
+          if (data.messages && data.messages.length > 0) {
+            const firstMsg = data.messages[0];
+            const hasUpdatedAt = "updated_at" in firstMsg;
+
+            if (hasUpdatedAt) {
+              log("result3", "✅ Campo updated_at ENCONTRADO!", "success");
+              log("result3", `   Valor: ${firstMsg.updated_at}`, "success");
+            } else {
+              log("result3", "❌ Campo updated_at NÃO ENCONTRADO!", "error");
+              log(
+                "result3",
+                "⚠️ Você precisa executar a migration!",
+                "warning"
+              );
+            }
+
+            log("result3", "\n📋 Campos disponíveis:", "info");
+            Object.keys(firstMsg).forEach((key) => {
+              log("result3", `   - ${key}: ${firstMsg[key]}`, "info");
+            });
+          } else {
+            log(
+              "result3",
+              "❌ Nenhuma mensagem no banco para verificar",
+              "error"
+            );
+          }
+        } catch (error) {
+          log("result3", `❌ ERRO: ${error.message}`, "error");
+        }
+      }
+
+      async function startAutoPoll() {
+        if (pollInterval) {
+          log("result4", "⚠️ Polling já está ativo!", "warning");
+          return;
+        }
+
+        clear("result4");
+        log(
+          "result4",
+          "🚀 Iniciando polling automático a cada 5 segundos...",
+          "success"
+        );
+        log(
+          "result4",
+          "💡 Envie um resultado pelo Telegram para ver a atualização!",
+          "info"
+        );
+
+        // Reset dos ponteiros
+        lastCheck = new Date().toISOString().slice(0, 19).replace("T", " ");
+        lastUpdateId = 0;
+
+        let pollCount = 0;
+
+        const poll = async () => {
+          pollCount++;
+
+          try {
+            const url = `api/carregar-mensagens-banco.php?action=poll&last_check=${encodeURIComponent(
+              lastCheck
+            )}&last_update=${lastUpdateId}&t=${Date.now()}`;
+            const response = await fetch(url);
+            const data = await response.json();
+
+            if (data.messages && data.messages.length > 0) {
+              log(
+                "result4",
+                `\n🔔 POLLING #${pollCount}: ${data.messages.length} mensagens atualizadas!`,
+                "success"
+              );
+              data.messages.forEach((msg) => {
+                log(
+                  "result4",
+                  `   📌 ID ${msg.id}: resultado = "${
+                    msg.resultado || "NULL"
+                  }"`,
+                  "warning"
+                );
+              });
+
+              if (data.last_check) lastCheck = data.last_check;
+              if (data.last_update) lastUpdateId = data.last_update;
+            } else {
+              log(
+                "result4",
+                `⏳ Polling #${pollCount}: Nenhuma atualização (modo: ${data.polling_mode})`,
+                "info"
+              );
+            }
+          } catch (error) {
+            log(
+              "result4",
+              `❌ Erro no polling #${pollCount}: ${error.message}`,
+              "error"
+            );
+          }
+        };
+
+        // Executar primeira vez imediatamente
+        poll();
+
+        // Depois a cada 5 segundos
+        pollInterval = setInterval(poll, 5000);
+      }
+
+      function stopAutoPoll() {
+        if (pollInterval) {
+          clearInterval(pollInterval);
+          pollInterval = null;
+          log("result4", "\n⏸ Polling parado!", "warning");
+        }
+      }
+    </script>
+  </body>
+</html>

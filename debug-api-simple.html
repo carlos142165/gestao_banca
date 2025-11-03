@@ -1,0 +1,44 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="UTF-8">
+    <title>Debug API</title>
+</head>
+<body>
+    <h1>Debug API - Abra o Console (F12)</h1>
+    <button onclick="testAPI()">Testar API</button>
+    
+    <script>
+        async function testAPI() {
+            console.log('=== TESTE 1: GET MESSAGES ===');
+            try {
+                const res1 = await fetch('api/carregar-mensagens-banco.php?action=get-messages');
+                const data1 = await res1.json();
+                console.log('Resposta GET:', data1);
+                console.log('Total mensagens:', data1.messages?.length);
+                if (data1.messages?.[0]) {
+                    console.log('Primeira mensagem tem updated_at?', 'updated_at' in data1.messages[0]);
+                    console.log('Campos disponíveis:', Object.keys(data1.messages[0]));
+                }
+            } catch(e) {
+                console.error('Erro GET:', e);
+            }
+            
+            console.log('\n=== TESTE 2: POLL ===');
+            try {
+                const now = new Date().toISOString().slice(0, 19).replace('T', ' ');
+                const res2 = await fetch(`api/carregar-mensagens-banco.php?action=poll&last_check=${encodeURIComponent(now)}&last_update=0`);
+                const data2 = await res2.json();
+                console.log('Resposta POLL:', data2);
+                console.log('Polling mode:', data2.polling_mode);
+                console.log('Mensagens:', data2.messages?.length);
+            } catch(e) {
+                console.error('Erro POLL:', e);
+            }
+        }
+        
+        // Auto-executar
+        window.onload = testAPI;
+    </script>
+</body>
+</html>

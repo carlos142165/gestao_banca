@@ -246,7 +246,8 @@ function processarResultado($resultadoText, $msgTime, $telegramMessageId) {
                     WHEN ? = 'RED' THEN 'PERDIDA'
                     WHEN ? = 'REEMBOLSO' THEN 'CANCELADA'
                     ELSE 'ATIVA'
-                END
+                END,
+                updated_at = NOW()
             WHERE id = ?
         ";
         

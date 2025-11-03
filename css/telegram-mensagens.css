@@ -622,3 +622,60 @@
   font-size: 12px;
 }
 
+/* ========== ANIMAÇÃO DE FLASH QUANDO RESULTADO ATUALIZA ========== */
+@keyframes flashUpdate {
+  0% {
+    background-color: #fff9c4;
+    box-shadow: 0 0 0 0 rgba(255, 235, 59, 0.7);
+    transform: scale(1);
+  }
+  25% {
+    background-color: #fff59d;
+    box-shadow: 0 0 0 10px rgba(255, 235, 59, 0);
+    transform: scale(1.03);
+  }
+  50% {
+    background-color: #ffeb3b;
+    transform: scale(1.02);
+  }
+  75% {
+    background-color: #fff59d;
+    transform: scale(1.01);
+  }
+  100% {
+    background-color: white;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.08);
+    transform: scale(1);
+  }
+}
+
+@keyframes pulseGlow {
+  0%, 100% {
+    box-shadow: 0 0 5px rgba(76, 175, 80, 0.5), 0 0 10px rgba(76, 175, 80, 0.3);
+  }
+  50% {
+    box-shadow: 0 0 20px rgba(76, 175, 80, 0.8), 0 0 30px rgba(76, 175, 80, 0.5);
+  }
+}
+
+/* Aplicar flash na mensagem quando atualizada */
+.telegram-message.message-flash {
+  animation: flashUpdate 2s ease-out;
+  border-left: 4px solid #ffeb3b !important;
+}
+
+/* Aplicar glow pulsante no badge de resultado */
+.telegram-message.message-flash .odds-resultado.odds-green {
+  animation: pulseGlow 1.5s ease-in-out 3;
+}
+
+.telegram-message.message-flash .odds-resultado.odds-red {
+  animation: pulseGlow 1.5s ease-in-out 3;
+  box-shadow: 0 0 5px rgba(244, 67, 54, 0.5), 0 0 10px rgba(244, 67, 54, 0.3);
+}
+
+.telegram-message.message-flash .odds-resultado.odds-refund {
+  animation: pulseGlow 1.5s ease-in-out 3;
+  box-shadow: 0 0 5px rgba(255, 152, 0, 0.5), 0 0 10px rgba(255, 152, 0, 0.3);
+}
+

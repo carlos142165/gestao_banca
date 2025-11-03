@@ -167,59 +167,103 @@ function getMessagesFromDatabase() {
 
 /**
  * ================================================================
- * FUNÇÃO: Polling de NOVAS mensagens no banco de dados
+ * FUNÇÃO: Polling de NOVAS/ATUALIZADAS mensagens no banco
  * ================================================================
  * 
- * GET: /api/carregar-mensagens-banco.php?action=poll&last_update=123
+ * GET: /api/carregar-mensagens-banco.php?action=poll&last_check=2025-02-01%2012:00:00
  * 
- * Retorna apenas as mensagens MAIS NOVAS que o último ID fornecido
+ * Retorna mensagens CRIADAS ou MODIFICADAS depois de last_check
  */
 function pollNewMessages() {
     global $conexao;
     
+    $lastCheck = isset($_GET['last_check']) ? $_GET['last_check'] : null;
     $lastUpdateId = isset($_GET['last_update']) ? intval($_GET['last_update']) : 0;
     
     try {
-        // ✅ BUSCAR APENAS MENSAGENS MAIS NOVAS
-        $query = "
-            SELECT 
-                id,
-                telegram_message_id,
-                titulo,
-                tipo_aposta,
-                time_1,
-                time_2,
-                placar_1,
-                placar_2,
-                escanteios_1,
-                escanteios_2,
-                valor_over,
-                odds,
-                tipo_odds,
-                hora_mensagem,
-                status_aposta,
-                resultado,
-                mensagem_completa,
-                data_criacao,
-                UNIX_TIMESTAMP(data_criacao) as timestamp
-            FROM bote
-            WHERE id > ?
-            ORDER BY data_criacao ASC
-            LIMIT 50
-        ";
+        // ✅ VERIFICAR SE COLUNA updated_at EXISTE
+        $columnCheck = $conexao->query("SHOW COLUMNS FROM bote LIKE 'updated_at'");
+        $hasUpdatedAt = ($columnCheck && $columnCheck->num_rows > 0);
         
-        $stmt = $conexao->prepare($query);
-        
-        if (!$stmt) {
-            throw new Exception("Erro ao preparar statement: " . $conexao->error);
+        if ($hasUpdatedAt && $lastCheck) {
+            // ✅ MODO NOVO: Polling incremental com updated_at
+            $query = "
+                SELECT 
+                    id,
+                    telegram_message_id,
+                    titulo,
+                    tipo_aposta,
+                    time_1,
+                    time_2,
+                    placar_1,
+                    placar_2,
+                    escanteios_1,
+                    escanteios_2,
+                    valor_over,
+                    odds,
+                    tipo_odds,
+                    hora_mensagem,
+                    status_aposta,
+                    resultado,
+                    mensagem_completa,
+                    data_criacao,
+                    updated_at,
+                    UNIX_TIMESTAMP(data_criacao) as timestamp
+                FROM bote
+                WHERE updated_at > ? OR (updated_at IS NULL AND id > ?)
+                ORDER BY data_criacao ASC
+                LIMIT 50
+            ";
+            
+            $stmt = $conexao->prepare($query);
+            if (!$stmt) {
+                throw new Exception("Erro ao preparar statement: " . $conexao->error);
+            }
+            
+            $stmt->bind_param("si", $lastCheck, $lastUpdateId);
+        } else {
+            // ✅ MODO ANTIGO: Polling por ID (fallback)
+            $query = "
+                SELECT 
+                    id,
+                    telegram_message_id,
+                    titulo,
+                    tipo_aposta,
+                    time_1,
+                    time_2,
+                    placar_1,
+                    placar_2,
+                    escanteios_1,
+                    escanteios_2,
+                    valor_over,
+                    odds,
+                    tipo_odds,
+                    hora_mensagem,
+                    status_aposta,
+                    resultado,
+                    mensagem_completa,
+                    data_criacao,
+                    UNIX_TIMESTAMP(data_criacao) as timestamp
+                FROM bote
+                WHERE id > ?
+                ORDER BY data_criacao ASC
+                LIMIT 50
+            ";
+            
+            $stmt = $conexao->prepare($query);
+            if (!$stmt) {
+                throw new Exception("Erro ao preparar statement: " . $conexao->error);
+            }
+            
+            $stmt->bind_param("i", $lastUpdateId);
         }
         
-        $stmt->bind_param("i", $lastUpdateId);
         $stmt->execute();
         $result = $stmt->get_result();
         
         $newMessages = [];
         $maxId = $lastUpdateId;
+        $maxUpdatedAt = $lastCheck ?: date('Y-m-d H:i:s');
         
         while ($row = $result->fetch_assoc()) {
             $newMessages[] = [
@@ -232,16 +276,21 @@ function pollNewMessages() {
                 'title' => $row['titulo'],
                 'type' => $row['tipo_aposta'],
                 'status' => $row['status_aposta'],
-                'resultado' => $row['resultado']
+                'resultado' => $row['resultado'],
+                'updated_at' => $row['updated_at'] ?? null
             ];
             
             $maxId = max($maxId, intval($row['id']));
+            
+            if (isset($row['updated_at']) && $row['updated_at']) {
+                $maxUpdatedAt = max($maxUpdatedAt, $row['updated_at']);
+            }
         }
         
         $stmt->close();
         
         if (count($newMessages) > 0) {
-            error_log("🔔 Polling: Encontradas " . count($newMessages) . " novas mensagens");
+            error_log("🔔 Polling: Encontradas " . count($newMessages) . " mensagens atualizadas");
         }
         
         http_response_code(200);
@@ -249,6 +298,8 @@ function pollNewMessages() {
             'success' => true,
             'messages' => $newMessages,
             'last_update' => $maxId,
+            'last_check' => $maxUpdatedAt,
+            'polling_mode' => $hasUpdatedAt ? 'incremental' : 'fallback',
             'source' => 'database'
         ]);
         
