@@ -1,0 +1,349 @@
+<?php
+/**
+ * ================================================================
+ * API PARA CARREGAR MENSAGENS DO BANCO DE DADOS
+ * ================================================================
+ * 
+ * Esta API carrega as mensagens que foram salvas na tabela 'bote'
+ * em vez de buscar direto do Telegram.
+ * 
+ * FLUXO:
+ * Telegram (envia mensagem)
+ *   ↓
+ * Webhook/API (telegram-webhook.php)
+ *   ↓
+ * Banco de dados (tabela: bote)
+ *   ↓
+ * Esta API (carregar-mensagens-banco.php)
+ *   ↓
+ * Frontend (bot_aovivo.php - BLOCO 1)
+ * 
+ * ================================================================
+ */
+
+// ✅ SEM SESSION_START - PERMITE ACESSO PÚBLICO
+header('Content-Type: application/json; charset=utf-8');
+header('Cache-Control: no-cache, no-store, must-revalidate');
+header('Pragma: no-cache');
+header('Expires: 0');
+error_reporting(E_ALL);
+ini_set('display_errors', 0);
+
+// ✅ CONFIGURAR FUSO HORÁRIO PARA BRASIL (São Paulo)
+date_default_timezone_set('America/Sao_Paulo');
+
+// ✅ INCLUIR CONFIGURAÇÃO DO BANCO
+if (!file_exists('../config.php')) {
+    http_response_code(500);
+    die(json_encode(['success' => false, 'error' => 'config.php não encontrado']));
+}
+require_once '../config.php';
+
+// Verificar se $conexao foi criada
+if (!isset($conexao) || !$conexao) {
+    http_response_code(500);
+    die(json_encode(['success' => false, 'error' => 'Conexão com banco não estabelecida']));
+}
+
+$action = isset($_GET['action']) ? $_GET['action'] : 'get-messages';
+
+try {
+    switch ($action) {
+        case 'get-messages':
+            getMessagesFromDatabase();
+            break;
+        
+        case 'poll':
+            pollNewMessages();
+            break;
+        
+        case 'get-by-date':
+            getMessagesByDate();
+            break;
+        
+        default:
+            throw new Exception('Ação inválida: ' . $action);
+    }
+} catch (Exception $e) {
+    http_response_code(400);
+    echo json_encode([
+        'success' => false,
+        'message' => 'Erro: ' . $e->getMessage(),
+        'error' => $e->getMessage()
+    ]);
+}
+
+/**
+ * ================================================================
+ * FUNÇÃO: Carregar mensagens de HOJE do banco de dados
+ * ================================================================
+ * 
+ * GET: /api/carregar-mensagens-banco.php?action=get-messages
+ * 
+ * Retorna: {
+ *   success: true,
+ *   messages: [...],
+ *   total: 10,
+ *   last_update: 12345
+ * }
+ */
+function getMessagesFromDatabase() {
+    global $conexao;
+    
+    try {
+        // ✅ BUSCAR TODAS AS MENSAGENS (não apenas de hoje)
+        $query = "
+            SELECT 
+                id,
+                telegram_message_id,
+                titulo,
+                tipo_aposta,
+                time_1,
+                time_2,
+                placar_1,
+                placar_2,
+                escanteios_1,
+                escanteios_2,
+                valor_over,
+                odds,
+                tipo_odds,
+                hora_mensagem,
+                status_aposta,
+                resultado,
+                mensagem_completa,
+                data_criacao,
+                UNIX_TIMESTAMP(data_criacao) as timestamp
+            FROM bote
+            ORDER BY data_criacao DESC
+            LIMIT 100
+        ";
+        
+        $stmt = $conexao->prepare($query);
+        
+        if (!$stmt) {
+            throw new Exception("Erro ao preparar statement: " . $conexao->error);
+        }
+        
+        $stmt->execute();
+        $result = $stmt->get_result();
+        
+        $messages = [];
+        $lastId = 0;
+        
+        while ($row = $result->fetch_assoc()) {
+            $messages[] = [
+                'id' => intval($row['telegram_message_id'] ?: $row['id']),
+                'text' => $row['mensagem_completa'],
+                'timestamp' => intval($row['timestamp']),
+                'time' => $row['hora_mensagem'] ?: date('H:i:s', intval($row['timestamp'])),
+                'date' => date('d/m/Y', intval($row['timestamp'])),
+                'update_id' => intval($row['id']),
+                'title' => $row['titulo'],
+                'type' => $row['tipo_aposta'],
+                'status' => $row['status_aposta'],
+                'resultado' => $row['resultado']
+            ];
+            
+            $lastId = max($lastId, intval($row['id']));
+        }
+        
+        $stmt->close();
+        
+        error_log("✅ Carregadas " . count($messages) . " mensagens do banco");
+        
+        http_response_code(200);
+        echo json_encode([
+            'success' => true,
+            'messages' => $messages,
+            'total' => count($messages),
+            'last_update' => $lastId,
+            'source' => 'database'
+        ]);
+        
+    } catch (Exception $e) {
+        throw new Exception("Erro ao buscar mensagens: " . $e->getMessage());
+    }
+}
+
+/**
+ * ================================================================
+ * FUNÇÃO: Polling de NOVAS mensagens no banco de dados
+ * ================================================================
+ * 
+ * GET: /api/carregar-mensagens-banco.php?action=poll&last_update=123
+ * 
+ * Retorna apenas as mensagens MAIS NOVAS que o último ID fornecido
+ */
+function pollNewMessages() {
+    global $conexao;
+    
+    $lastUpdateId = isset($_GET['last_update']) ? intval($_GET['last_update']) : 0;
+    
+    try {
+        // ✅ BUSCAR APENAS MENSAGENS MAIS NOVAS
+        $query = "
+            SELECT 
+                id,
+                telegram_message_id,
+                titulo,
+                tipo_aposta,
+                time_1,
+                time_2,
+                placar_1,
+                placar_2,
+                escanteios_1,
+                escanteios_2,
+                valor_over,
+                odds,
+                tipo_odds,
+                hora_mensagem,
+                status_aposta,
+                resultado,
+                mensagem_completa,
+                data_criacao,
+                UNIX_TIMESTAMP(data_criacao) as timestamp
+            FROM bote
+            WHERE id > ?
+            ORDER BY data_criacao ASC
+            LIMIT 50
+        ";
+        
+        $stmt = $conexao->prepare($query);
+        
+        if (!$stmt) {
+            throw new Exception("Erro ao preparar statement: " . $conexao->error);
+        }
+        
+        $stmt->bind_param("i", $lastUpdateId);
+        $stmt->execute();
+        $result = $stmt->get_result();
+        
+        $newMessages = [];
+        $maxId = $lastUpdateId;
+        
+        while ($row = $result->fetch_assoc()) {
+            $newMessages[] = [
+                'id' => intval($row['telegram_message_id'] ?: $row['id']),
+                'text' => $row['mensagem_completa'],
+                'timestamp' => intval($row['timestamp']),
+                'time' => $row['hora_mensagem'] ?: date('H:i:s', intval($row['timestamp'])),
+                'date' => date('d/m/Y', intval($row['timestamp'])),
+                'update_id' => intval($row['id']),
+                'title' => $row['titulo'],
+                'type' => $row['tipo_aposta'],
+                'status' => $row['status_aposta'],
+                'resultado' => $row['resultado']
+            ];
+            
+            $maxId = max($maxId, intval($row['id']));
+        }
+        
+        $stmt->close();
+        
+        if (count($newMessages) > 0) {
+            error_log("🔔 Polling: Encontradas " . count($newMessages) . " novas mensagens");
+        }
+        
+        http_response_code(200);
+        echo json_encode([
+            'success' => true,
+            'messages' => $newMessages,
+            'last_update' => $maxId,
+            'source' => 'database'
+        ]);
+        
+    } catch (Exception $e) {
+        throw new Exception("Erro ao fazer polling: " . $e->getMessage());
+    }
+}
+
+/**
+ * ================================================================
+ * FUNÇÃO: Buscar mensagens por data específica
+ * ================================================================
+ * 
+ * GET: /api/carregar-mensagens-banco.php?action=get-by-date&date=2025-11-02
+ */
+function getMessagesByDate() {
+    global $conexao;
+    
+    $date = isset($_GET['date']) ? $_GET['date'] : date('Y-m-d');
+    
+    // ✅ VALIDAR FORMATO DA DATA
+    if (!preg_match('/^\d{4}-\d{2}-\d{2}$/', $date)) {
+        throw new Exception("Formato de data inválido. Use: YYYY-MM-DD");
+    }
+    
+    try {
+        $query = "
+            SELECT 
+                id,
+                telegram_message_id,
+                titulo,
+                tipo_aposta,
+                time_1,
+                time_2,
+                placar_1,
+                placar_2,
+                escanteios_1,
+                escanteios_2,
+                valor_over,
+                odds,
+                tipo_odds,
+                hora_mensagem,
+                status_aposta,
+                resultado,
+                mensagem_completa,
+                data_criacao,
+                UNIX_TIMESTAMP(data_criacao) as timestamp
+            FROM bote
+            WHERE DATE(data_criacao) = ?
+            ORDER BY data_criacao ASC
+        ";
+        
+        $stmt = $conexao->prepare($query);
+        
+        if (!$stmt) {
+            throw new Exception("Erro ao preparar statement: " . $conexao->error);
+        }
+        
+        $stmt->bind_param("s", $date);
+        $stmt->execute();
+        $result = $stmt->get_result();
+        
+        $messages = [];
+        
+        while ($row = $result->fetch_assoc()) {
+            $messages[] = [
+                'id' => intval($row['telegram_message_id'] ?: $row['id']),
+                'text' => $row['mensagem_completa'],
+                'timestamp' => intval($row['timestamp']),
+                'time' => $row['hora_mensagem'] ?: date('H:i:s', intval($row['timestamp'])),
+                'date' => date('d/m/Y', intval($row['timestamp'])),
+                'update_id' => intval($row['id']),
+                'title' => $row['titulo'],
+                'type' => $row['tipo_aposta'],
+                'status' => $row['status_aposta'],
+                'resultado' => $row['resultado']
+            ];
+        }
+        
+        $stmt->close();
+        
+        error_log("✅ Carregadas " . count($messages) . " mensagens do banco para data: " . $date);
+        
+        http_response_code(200);
+        echo json_encode([
+            'success' => true,
+            'messages' => $messages,
+            'date' => $date,
+            'total' => count($messages),
+            'source' => 'database'
+        ]);
+        
+    } catch (Exception $e) {
+        throw new Exception("Erro ao buscar mensagens por data: " . $e->getMessage());
+    }
+}
+
+?>

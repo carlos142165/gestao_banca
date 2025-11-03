@@ -1,8 +1,8 @@
 const TelegramMessenger = {
+  container: null,
   lastUpdateId: 0,
   isPolling: false,
-  pollInterval: null,
-  container: null,
+  messagesSalvas: new Set(),
   retryCount: 0,
   maxRetries: 3,
 
@@ -14,11 +14,7 @@ const TelegramMessenger = {
     }
 
     console.log("✅ Telegram Messenger inicializado");
-
-    // Carregar mensagens iniciais
     this.loadMessages();
-
-    // Iniciar polling a cada 2 segundos
     this.startPolling();
   },
 
@@ -28,7 +24,10 @@ const TelegramMessenger = {
     // Mostrar loading
     this.showLoading();
 
-    fetch("api/telegram-mensagens.php?action=get-messages&t=" + Date.now())
+    // ✅ CARREGAR DO BANCO DE DADOS (não do Telegram)
+    fetch(
+      "api/carregar-mensagens-banco.php?action=get-messages&t=" + Date.now()
+    )
       .then((response) => {
         console.log("📡 Status da resposta:", response.status);
         if (!response.ok) {
@@ -47,9 +46,9 @@ const TelegramMessenger = {
             console.log("✅ Mensagens carregadas:", data.messages.length);
             this.displayMessages(data.messages);
             if (data.messages.length > 0) {
+              // ✅ CORRIGIDO: Pegar o MAIOR ID (primeiro da lista, pois está DESC)
               this.lastUpdateId =
-                data.messages[data.messages.length - 1].update_id ||
-                data.messages[data.messages.length - 1].id;
+                data.messages[0].update_id || data.messages[0].id;
               console.log("🔄 Último Update ID:", this.lastUpdateId);
             }
           }
@@ -82,11 +81,14 @@ const TelegramMessenger = {
     if (this.isPolling) return;
 
     this.isPolling = true;
-    console.log("🔔 Iniciando polling para novas mensagens...");
+    console.log(
+      "🔔 Iniciando polling para novas mensagens (do banco de dados)..."
+    );
 
     const poll = () => {
+      // ✅ CARREGAR DO BANCO DE DADOS (não do Telegram)
       fetch(
-        `api/telegram-mensagens.php?action=poll&last_update=${
+        `api/carregar-mensagens-banco.php?action=poll&last_update=${
           this.lastUpdateId
         }&t=${Date.now()}`
       )
@@ -103,16 +105,24 @@ const TelegramMessenger = {
                 "🔔 Novas mensagens detectadas:",
                 data.messages.length
               );
+              console.log("📬 Mensagens:", data.messages);
               // Adicionar novas mensagens ao container
               data.messages.forEach((msg) => {
                 this.addMessage(msg);
               });
+
+              // ✅ ATUALIZAR lastUpdateId com o maior ID das novas mensagens
+              const maxId = Math.max(
+                ...data.messages.map((m) => m.update_id || m.id)
+              );
+              this.lastUpdateId = maxId;
+              console.log("🔄 Update ID atualizado para:", this.lastUpdateId);
             }
 
-            // Atualizar último ID sempre (mesmo se vazio)
-            if (data.last_update) {
+            // Atualizar último ID da API (fallback)
+            if (data.last_update && data.messages.length === 0) {
               this.lastUpdateId = data.last_update;
-              console.log("🔄 Update ID:", this.lastUpdateId);
+              console.log("🔄 Update ID (from API):", this.lastUpdateId);
             }
           }
         })
@@ -135,8 +145,17 @@ const TelegramMessenger = {
 
     this.container.innerHTML = "";
 
+    // ✅ FILTRAR: Apenas mensagens com formato válido
+    const validMessages = messages.filter((msg) => this.isValidMessage(msg));
+
+    if (validMessages.length === 0) {
+      console.log("ℹ️ Nenhuma mensagem com formato válido encontrada");
+      this.showEmpty();
+      return;
+    }
+
     // ✅ INVERTER ORDEM: Mensagens mais recentes em cima, antigas em baixo
-    [...messages].reverse().forEach((msg) => {
+    [...validMessages].reverse().forEach((msg) => {
       this.addMessage(msg);
     });
 
@@ -147,23 +166,42 @@ const TelegramMessenger = {
   addMessage(msg) {
     if (!this.container) return;
 
+    // ✅ VALIDAR formato da mensagem
+    if (!this.isValidMessage(msg)) {
+      return;
+    }
+
     // Verificar se mensagem já existe
     if (document.querySelector(`[data-message-id="${msg.id}"]`)) {
       return;
     }
 
+    // ✅ NÃO PRECISA MAIS SALVAR - A MENSAGEM JÁ VEM DO BANCO!
+    // (As mensagens são salvas diretamente quando chegam do Telegram via webhook)
+    // Apenas marcamos como já vista para não duplicar na exibição
+    this.messagesSalvas.add(msg.id);
+
+    // ✅ FORMATAR a mensagem antes de exibir
+    const msgText = msg.text || msg.mensagem_completa || "";
+    const formattedContent = this.formatMessage(msgText, msg.time, msg);
+
     const messageEl = document.createElement("div");
     messageEl.className = "telegram-message";
     messageEl.setAttribute("data-message-id", msg.id);
     messageEl.innerHTML = `
-            <div class="telegram-message-time">
-                <i class="fas fa-clock"></i>
-                <span>${msg.time}</span>
-            </div>
-            <div class="telegram-message-text">${this.escapeHtml(
-              msg.text
-            )}</div>
-        `;
+      <div class="msg-header-external">
+        <div class="msg-header-left">
+          <span class="msg-title-external"><i class="fas fa-bell"></i> Oportunidade!</span>
+        </div>
+        <div class="msg-header-right">
+          <span class="msg-time-external">
+            <i class="fas fa-clock"></i>
+            ${msg.time}
+          </span>
+        </div>
+      </div>
+      ${formattedContent}
+    `;
 
     // ✅ INSERIR NO INÍCIO (para ordem de cima para baixo)
     this.container.insertBefore(messageEl, this.container.firstChild);
@@ -188,8 +226,8 @@ const TelegramMessenger = {
 
     this.container.innerHTML = `
             <div class="telegram-empty">
-                <i class="fas fa-comments"></i>
-                <p>Nenhuma mensagem de hoje</p>
+                <i class="fas fa-search"></i>
+                <p>Buscando Melhor Oportunidade</p>
             </div>
         `;
   },
@@ -225,6 +263,219 @@ const TelegramMessenger = {
     const div = document.createElement("div");
     div.textContent = text;
     return div.innerHTML;
+  },
+
+  isValidMessage(msg) {
+    // ✅ VALIDAÇÃO: Mensagem deve começar com "Oportunidade! 🚨"
+    const validFormat = "Oportunidade! 🚨";
+    const msgText = msg.text || msg.mensagem_completa || "";
+
+    if (!msgText || !msgText.startsWith(validFormat)) {
+      console.log(
+        "⚠️ Mensagem ignorada (formato inválido):",
+        msgText?.substring(0, 50)
+      );
+      return false;
+    }
+    return true;
+  },
+
+  formatMessage(rawText, msgTime = "", msgData = null) {
+    // ✅ EXTRAI E FORMATA A MENSAGEM DO TELEGRAM
+    // msgData contém os dados da BD incluindo o resultado
+    const text =
+      typeof rawText === "string"
+        ? rawText
+        : rawText.text || rawText.mensagem_completa || "";
+    const lines = text
+      .split("\n")
+      .map((line) => line.trim())
+      .filter((line) => line);
+
+    let titulo = "";
+    let time1 = "";
+    let time2 = "";
+    let placar1 = "";
+    let placar2 = "";
+    let odds = "";
+    let tipoOdds = "Gols over";
+    let escanteios1 = 0;
+    let escanteios2 = 0;
+    let resultado = null; // ✅ NOVO: armazenar resultado da BD
+
+    // ✅ SE TEMOS DADOS DA BD, EXTRAIR RESULTADO
+    if (msgData && msgData.resultado) {
+      resultado = msgData.resultado;
+      console.log("🎯 Resultado encontrado:", resultado);
+    }
+
+    // Extrair informações linha por linha
+    for (let i = 0; i < lines.length; i++) {
+      const line = lines[i];
+
+      // ✅ TÍTULO (linha com 📊) - PEGAR EXATAMENTE COMO VEM NA MENSAGEM
+      if (line.includes("📊")) {
+        // Remove apenas o emoji 📊 e emojis extras, mantém o resto
+        titulo = line
+          .replace(/�/g, "") // Remove emoji de gráfico
+          .replace(/🚨/g, "") // Remove emoji de alerta
+          .trim(); // Remove espaços extras
+      }
+
+      // ✅ EXTRAIR ESCANTEIOS (⛳️ Escanteios: 7 - 5)
+      if (line.includes("⛳") || line.includes("Escanteios:")) {
+        const escanteiosMatch = line.match(/(\d+)\s*-\s*(\d+)/);
+        if (escanteiosMatch) {
+          escanteios1 = parseInt(escanteiosMatch[1]);
+          escanteios2 = parseInt(escanteiosMatch[2]);
+
+          // Se o título tem "CANTOS", atualizar com a soma +1
+          if (titulo.includes("CANTOS")) {
+            const totalEscanteios = escanteios1 + escanteios2 + 1;
+            titulo = titulo.replace(
+              /\(\s*\+[\d\.]+⛳/,
+              `( +${totalEscanteios}⛳`
+            );
+          }
+        }
+      }
+
+      // Times e placar
+      if (
+        (line.includes("x") && line.includes("(H)")) ||
+        line.includes("(A)")
+      ) {
+        const parts = line.split("x");
+        if (parts[0]) {
+          time1 = parts[0].replace(/\([^)]*\)/g, "").trim();
+          time2 = parts[1] ? parts[1].replace(/\([^)]*\)/g, "").trim() : "";
+        }
+      }
+
+      // Placar
+      if (line.includes("Placar:")) {
+        const placarMatch = line.match(/(\d+)\s*-\s*(\d+)/);
+        if (placarMatch) {
+          placar1 = placarMatch[1];
+          placar2 = placarMatch[2];
+
+          // ✅ Se o título tem "GOLS" ou "GOL", atualizar com a soma do placar
+          if (titulo.includes("GOLS") || titulo.includes("GOL")) {
+            const totalGols = parseInt(placar1) + parseInt(placar2);
+
+            // Verificar se tem ".5" no título
+            if (titulo.includes(".5")) {
+              // Exemplo: OVER ( +0.5 ⚽GOL ) → OVER ( +1.5 ⚽GOLS )
+              const novoTotal = totalGols + 0.5;
+              titulo = titulo.replace(
+                /\(\s*\+[\d\.]+\s*⚽?[^\)]*\s*(GOLS?)/,
+                `( +${novoTotal} ⚽GOLS`
+              );
+            } else {
+              // Exemplo: OVER ( +1 ⚽GOL ) → OVER ( +3 ⚽GOLS )
+              const novoTotal = totalGols + 1;
+              titulo = titulo.replace(
+                /\(\s*\+[\d\.]+\s*⚽?[^\)]*\s*(GOLS?)/,
+                `( +${novoTotal} ⚽GOLS`
+              );
+            }
+          }
+        }
+      }
+
+      // ✅ EXTRAIR ODDS - Procurar por "Gols over" ou "Escanteios over"
+      if (line.includes("Gols over")) {
+        const golesMatch = line.match(
+          /Gols over\s*[\+\-]?[\d\.]*\s*:\s*([\d\.]+)/i
+        );
+        if (golesMatch) {
+          odds = golesMatch[1];
+          tipoOdds = "Gols Odds";
+        }
+      } else if (line.includes("Escanteios over")) {
+        const escanteiosOddsMatch = line.match(
+          /Escanteios over\s*[\+\-]?[\d\.]*\s*:\s*([\d\.]+)/i
+        );
+        if (escanteiosOddsMatch) {
+          odds = escanteiosOddsMatch[1];
+          tipoOdds = "Escanteios Odds";
+        }
+      }
+    }
+
+    // ✅ USA O TÍTULO ORIGINAL DA MENSAGEM
+    const tipoAposta = titulo ? titulo : "APOSTA";
+
+    // Formatar HTML com ícones profissionais
+    // Escolher ícone apropriado baseado no tipo de aposta
+    const apostIcon =
+      tipoAposta.includes("GOLS") || tipoAposta.includes("GOL")
+        ? '<i class="fas fa-futbol"></i>'
+        : '<i class="fas fa-flag"></i>';
+
+    const oddsIcon = tipoOdds.includes("Gols")
+      ? '<i class="fas fa-soccer-ball"></i>'
+      : '<i class="fas fa-flag"></i>';
+
+    // ✅ FORMATAR STATUS BASEADO NO RESULTADO
+    let statusHTML = "";
+    let oddsCssClass = "";
+
+    if (resultado) {
+      // Tem resultado - exibir resultado ao invés de PENDENTE
+      if (resultado === "GREEN") {
+        statusHTML = '<span class="odds-resultado odds-green">GREEN ✅</span>';
+        oddsCssClass = "odds-with-result-green";
+      } else if (resultado === "RED") {
+        statusHTML = '<span class="odds-resultado odds-red">RED ❌</span>';
+        oddsCssClass = "odds-with-result-red";
+      } else if (resultado === "REEMBOLSO") {
+        statusHTML =
+          '<span class="odds-resultado odds-refund">REEMBOLSO 🔄</span>';
+        oddsCssClass = "odds-with-result-refund";
+      }
+    } else {
+      // Sem resultado - exibir PENDENTE
+      statusHTML = '<span class="odds-resultado odds-pending">PENDENTE</span>';
+      oddsCssClass = "odds-with-result-pending";
+    }
+
+    return `
+      <div class="telegram-formatted-message">
+        <div class="msg-content">
+          <div class="msg-aposta">
+            ${apostIcon}
+            ${tipoAposta}
+          </div>
+          
+          <div class="msg-match">
+            <div class="msg-time-row">
+              <span class="msg-team">${time1}</span>
+              <span class="msg-team">${time2}</span>
+            </div>
+            <div class="msg-score-row">
+              <span class="msg-score">${placar1}</span>
+              <span class="msg-score">${placar2}</span>
+            </div>
+          </div>
+          
+          <div class="msg-odds ${oddsCssClass}">
+            ${oddsIcon}
+            ${tipoOdds} $${odds} - ${statusHTML}
+          </div>
+        </div>
+      </div>
+    `;
+  },
+
+  // ✅ FUNÇÃO DESCONTINUADA - MENSAGENS SÃO SALVAS DIRETO DO WEBHOOK
+  // (Mantida para compatibilidade, mas não é mais necessária)
+  salvarNosBancoDados(msg) {
+    // ✅ NÃO FAZER NADA - O WEBHOOK DO TELEGRAM JÁ SALVA NO BANCO!
+    // Quando uma mensagem chega no Telegram, o webhook (telegram-webhook.php)
+    // a salva imediatamente no banco de dados. Portanto, quando carregamos
+    // via carregar-mensagens-banco.php, a mensagem já está salva!
+    console.log("ℹ️ Mensagem já está no banco (salva via webhook):", msg.id);
   },
 };
 

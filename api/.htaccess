@@ -1,0 +1,14 @@
+# Proteção para o webhook - não fazer redirecionamentos
+
+<IfModule mod_rewrite.c>
+    RewriteEngine On
+    
+    # Para o webhook do Telegram - sem redirecionamentos
+    RewriteCond %{REQUEST_URI} ^/api/telegram-webhook\.php$
+    RewriteRule ^ - [L]
+    
+    # Para arquivos da API - sem redirecionamentos
+    RewriteCond %{REQUEST_FILENAME} -f
+    RewriteCond %{REQUEST_FILENAME} ^/api/
+    RewriteRule ^ - [L]
+</IfModule>

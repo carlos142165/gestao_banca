@@ -1,0 +1,20 @@
+# Remover redirecionamentos em loop
+<IfModule mod_rewrite.c>
+    RewriteEngine On
+    
+    # Permitir acesso direto aos arquivos PHP da pasta api sem redirecionamentos
+    RewriteCond %{REQUEST_FILENAME} -f
+    RewriteCond %{REQUEST_FILENAME} ^/api/
+    RewriteRule ^ - [L]
+    
+    # Desabilitar redirecionamentos para o webhook
+    RewriteCond %{REQUEST_URI} ^/api/telegram-webhook\.php$
+    RewriteRule ^ - [L]
+    
+    # Desabilitar redirecionamentos para carregar-mensagens-banco
+    RewriteCond %{REQUEST_URI} ^/api/carregar-mensagens-banco\.php$
+    RewriteRule ^ - [L]
+</IfModule>
+
+# Instruções para limpar cookies
+# Remova os cookies do navegador para analisegb.com

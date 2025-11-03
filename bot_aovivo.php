@@ -749,7 +749,7 @@ if (!isset($_SESSION['usuario_id']) || empty($_SESSION['usuario_id'])) {
         }
     </style>
 </head>
-<body>
+<body <?php echo isset($_SESSION['usuario_id']) ? 'data-user-id="' . intval($_SESSION['usuario_id']) . '"' : ''; ?>>
     <header class="header">
         <div class="menu-topo-container">
             <div id="top-bar"> 
@@ -848,8 +848,6 @@ if (!isset($_SESSION['usuario_id']) || empty($_SESSION['usuario_id'])) {
             <div class="bloco bloco-1">
                 <div class="telegram-container">
                     <div class="telegram-header">
-                        <i class="fab fa-telegram"></i>
-                        <h3>Mensagens Telegram</h3>
                         <div class="telegram-status">
                             <span class="telegram-status-dot"></span>
                             <span>Ao vivo</span>
@@ -1020,6 +1018,9 @@ if (!isset($_SESSION['usuario_id']) || empty($_SESSION['usuario_id'])) {
 
     <!-- ✅ Script para atualizar rótulo dinâmico do lucro - FORA DO ENDIF PARA FUNCIONAR COM USUÁRIOS AUTENTICADOS -->
     <script src="js/rotulo-lucro-dinamico.js" defer></script>
+
+    <!-- ✅ SCRIPT PARA SALVAR MENSAGENS NO BANCO DE DADOS -->
+    <script src="js/telegram-salvar-bote.js" defer></script>
 
     <!-- ✅ SCRIPT PARA CARREGAR MENSAGENS DO TELEGRAM -->
     <script src="js/telegram-mensagens.js" defer></script>

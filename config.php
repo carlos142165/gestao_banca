@@ -6,10 +6,11 @@
 // Modifique aqui e TODOS os arquivos usarão as novas configurações
 
 // Configurações de conexão
-define('DB_HOST', 'localhost');
-define('DB_USERNAME', 'root');
-define('DB_PASSWORD', '');
-define('DB_NAME', 'formulario-carlos');
+// 🔧 PREENCHA COM OS DADOS DO SEU BANCO NA HOSTINGER
+define('DB_HOST', '127.0.0.1');  // Geralmente 127.0.0.1 na Hostinger
+define('DB_USERNAME', 'u857325944_formu');  // ⚠️ SUBSTITUA COM SEU USUÁRIO
+define('DB_PASSWORD', 'JkF4B7N1');    // ⚠️ SUBSTITUA COM SUA SENHA
+define('DB_NAME', 'u857325944_formu');   // ⚠️ SUBSTITUA COM SEU BANCO
 
 // Variáveis globais para compatibilidade com código existente
 $dbHost = DB_HOST;
