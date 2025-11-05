@@ -188,44 +188,225 @@
   }
 }
 
-/* ========== MENSAGEM FORMATADA ========== */
+/* ========== MENSAGEM FORMATADA (ESTILO OPORTUNIDADE DE GOLS - VERTICAL COMPACTO) ========== */
 .telegram-formatted-message {
   font-family: "Segoe UI", Tahoma, Geneva, Verdana, sans-serif;
-  background: linear-gradient(135deg, #f8f9fa 0%, #ffffff 100%);
+  background: white;
   border-radius: 8px;
-  padding: 14px;
+  overflow: hidden;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.12);
   margin-top: 8px;
-  border: 1px solid #e0e0e0;
+  transition: transform 0.3s ease, box-shadow 0.3s ease;
+  display: flex;
+  flex-direction: column;
+  gap: 0;
+}
+
+.telegram-formatted-message:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
 }
 
 .msg-header {
   display: flex;
   align-items: center;
-  gap: 8px;
-  margin-bottom: 8px;
+  justify-content: space-between;
+  padding: 16px 20px;
+  background: white;
+  border-bottom: 2px solid #e0e0e0;
   font-weight: 700;
-  font-size: 13px;
-  color: #1976d2;
-  justify-content: flex-start;
+  font-size: 16px;
+  color: #d32f2f;
+  gap: 10px;
 }
 
 .msg-header i {
-  font-size: 14px;
+  font-size: 20px;
+  animation: pulse 1.5s infinite;
+}
+
+@keyframes pulse {
+  0%,
+  100% {
+    transform: scale(1);
+    opacity: 1;
+  }
+  50% {
+    transform: scale(1.15);
+    opacity: 0.8;
+  }
+}
+
+/* ========== BADGE "AO VIVO" ========== */
+.msg-status-ao-vivo {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  padding: 4px 8px;
+  background: transparent;
+  color: #ff9800;
+  border-radius: 4px;
+  font-size: 11px;
+  font-weight: 600;
+  letter-spacing: 0.2px;
+  margin-left: auto;
+  margin-right: 0;
+  white-space: nowrap;
+  animation: blink 1s infinite;
+  transition: color 0.3s ease;
+}
+
+.msg-status-ao-vivo::before {
+  content: "●";
+  font-size: 10px;
+  color: #ff5252;
+  animation: pulse-dot 1.2s ease-in-out infinite;
+}
+
+@keyframes blink {
+  0%,
+  100% {
+    opacity: 1;
+  }
+  50% {
+    opacity: 0.6;
+  }
+}
+
+@keyframes pulse-dot {
+  0%,
+  100% {
+    opacity: 1;
+    transform: scale(1);
+  }
+  50% {
+    opacity: 0.5;
+    transform: scale(1.2);
+  }
+}
+
+/* ========== INFORMAÇÕES SUPERIORES (TEMPO E GRÁFICO) ========== */
+.msg-info-top {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 8px 12px 0;
+  background: white;
+  gap: 12px;
+  height: 28px;
+  flex-shrink: 0;
+}
+
+.msg-info-tempo {
+  display: none;
+}
+
+.msg-icon-relogio {
+  display: none;
+}
+
+.msg-info-grafico {
+  display: flex;
+  align-items: center;
+  gap: 2px;
+  margin-left: auto;
+}
+
+.msg-icon-grafico {
+  width: 20px;
+  height: 16px;
+  display: flex;
+  align-items: flex-end;
+  justify-content: space-between;
+  gap: 1px;
+}
+
+.msg-icon-grafico span {
+  width: 3px;
+  background: linear-gradient(to top, #2196f3, #64b5f6);
+  border-radius: 1px 1px 0 0;
+  animation: barChart 2s ease-in-out infinite;
+}
+
+.msg-icon-grafico span:nth-child(1) {
+  height: 50%;
+  animation-delay: 0s;
+}
+.msg-icon-grafico span:nth-child(2) {
+  height: 35%;
+  animation-delay: 0.2s;
+}
+.msg-icon-grafico span:nth-child(3) {
+  height: 65%;
+  animation-delay: 0.4s;
+}
+.msg-icon-grafico span:nth-child(4) {
+  height: 45%;
+  animation-delay: 0.6s;
+}
+
+@keyframes barChart {
+  0%,
+  100% {
+    transform: scaleY(1);
+  }
+  50% {
+    transform: scaleY(1.2);
+  }
+}
+
+/* ========== CONTEÚDO PRINCIPAL (IMAGEM EM CIMA) ========== */
+.msg-content-wrapper {
+  display: flex;
+  flex-direction: column;
+  align-items: stretch;
+  padding: 0;
+  background: white;
+  gap: 0;
+  flex: 1;
+}
+
+/* Imagem da bola na rede - RETANGULAR */
+.msg-imagem-gol {
+  flex-shrink: 0;
+  width: 100%;
+  height: 130px;
+  border-radius: 0;
+  overflow: hidden;
+  box-shadow: none;
+}
+
+.msg-imagem-gol img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
 }
 
 .msg-content {
   font-size: 13px;
-  line-height: 1.4;
+  line-height: 1;
+  flex: 0;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  padding: 12px 8px;
+  background: #f0f0f0;
+  gap: 6px;
 }
 
 .msg-aposta {
-  color: #1976d2;
+  color: #1a3a3a;
   font-weight: 700;
-  margin-bottom: 8px;
-  font-size: 13px;
+  margin-bottom: 0;
+  font-size: 11px;
   display: flex;
   align-items: center;
-  gap: 6px;
+  gap: 3px;
+  white-space: nowrap;
+  text-align: center;
+  line-height: 1;
+  height: 14px;
 }
 
 .msg-separator {
@@ -233,64 +414,111 @@
 }
 
 .msg-match {
-  margin: 8px 0;
-  padding: 10px 8px;
-  background: linear-gradient(135deg, #f0f7ff 0%, #ffffff 100%);
-  border-radius: 6px;
-  border: 1px solid #e3f2fd;
-}
-
-.msg-time-row {
-  display: grid;
-  grid-template-columns: 1fr 1fr;
-  gap: 12px;
-  align-items: center;
-  margin-bottom: 6px;
-}
-
-.msg-team {
-  text-align: center;
-  color: #1a1a1a;
-  font-weight: 600;
-  font-size: 13px;
-  word-break: break-word;
-}
-
-.msg-vs {
-  display: none;
-}
-
-.msg-score-row {
-  display: grid;
-  grid-template-columns: 1fr 1fr;
-  gap: 12px;
-  align-items: center;
-  font-weight: 800;
-  font-size: 28px;
-  color: #1976d2;
-}
-
-.msg-score {
-  text-align: center;
+  margin: 0;
+  padding: 0;
+  background: transparent;
+  border-radius: 0;
+  border: none;
+  flex: 0;
   display: flex;
+  flex-direction: column;
+  gap: 6px;
   align-items: center;
   justify-content: center;
 }
 
+.msg-time-row {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 20px;
+  height: 18px;
+  width: 100%;
+  padding: 0 10px;
+}
+
+.msg-team {
+  flex: 1;
+  text-align: center;
+  color: #1a3a3a;
+  font-weight: 700;
+  font-size: 12px;
+  word-break: break-word;
+  line-height: 1;
+  white-space: nowrap;
+}
+
+.msg-vs {
+  font-size: 12px;
+  font-weight: 400;
+  color: #999;
+  display: none;
+}
+
+.msg-score-row {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 20px;
+  font-weight: 900;
+  font-size: 26px;
+  color: #1a3a3a;
+  line-height: 1;
+  height: 32px;
+  width: 100%;
+  padding: 0 10px;
+}
+
+.msg-score {
+  flex: 1;
+  text-align: center;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: auto;
+}
+
 .msg-score-vs {
+  font-size: 14px;
+  font-weight: 400;
+  color: #999;
   display: none;
 }
 
 .msg-odds {
-  background: linear-gradient(135deg, #e3f2fd 0%, #f0f7ff 100%);
-  padding: 8px 12px;
-  border-radius: 6px;
-  color: #0277bd;
+  padding: 10px 12px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
   font-weight: 700;
-  text-align: center;
+  font-size: 13px;
+  transition: all 0.3s ease;
+  color: white;
+  letter-spacing: 0.2px;
+  border-radius: 0;
+  gap: 12px;
+  height: auto;
+  flex-shrink: 0;
+}
+
+/* ESTILO PADRÃO (SEM RESULTADO) */
+.msg-odds {
+  background: linear-gradient(135deg, #e3f2fd 0%, #f0f7ff 100%);
+  border: none;
+  color: #0277bd;
+}
+
+.msg-odds > span:first-child {
+  flex: 1;
+  display: flex;
+  align-items: center;
+  gap: 6px;
   font-size: 12px;
-  border: 1px solid #b3e5fc;
-  margin-top: 8px;
+  white-space: nowrap;
+}
+
+.msg-odds > span:last-child {
+  flex-shrink: 0;
 }
 
 /* ========== HORÁRIO DA MENSAGEM ========== */
@@ -409,6 +637,96 @@
   .telegram-message-text {
     font-size: 13px;
   }
+
+  /* Oportunidades de Gols - Mobile */
+  .telegram-formatted-message {
+    border-radius: 12px;
+  }
+
+  .msg-header {
+    padding: 12px 16px;
+    font-size: 14px;
+  }
+
+  .msg-status-ao-vivo {
+    font-size: 11px;
+    padding: 4px 10px;
+  }
+
+  .msg-content-wrapper {
+    flex-direction: column;
+    padding: 16px;
+    gap: 16px;
+  }
+
+  .msg-imagem-gol {
+    width: 100%;
+    height: 180px;
+  }
+
+  .msg-team {
+    font-size: 14px;
+  }
+
+  .msg-score-row {
+    font-size: 32px;
+  }
+
+  .msg-vs,
+  .msg-score-vs {
+    font-size: 18px;
+  }
+
+  .msg-odds {
+    flex-direction: column;
+    gap: 12px;
+    padding: 14px 16px;
+    text-align: center;
+  }
+
+  .msg-aposta {
+    flex-direction: column;
+    gap: 6px;
+    font-size: 15px;
+  }
+
+  .odds-resultado {
+    font-size: 16px !important;
+    padding: 8px 20px !important;
+  }
+}
+
+@media screen and (max-width: 480px) {
+  .msg-info-top {
+    padding: 0 16px 10px;
+  }
+
+  .msg-info-tempo {
+    font-size: 13px;
+  }
+
+  .msg-icon-relogio {
+    width: 20px;
+    height: 20px;
+    font-size: 10px;
+  }
+
+  .msg-icon-grafico {
+    width: 24px;
+    height: 20px;
+  }
+
+  .msg-team {
+    font-size: 13px;
+  }
+
+  .msg-score-row {
+    font-size: 28px;
+  }
+
+  .msg-imagem-gol {
+    height: 160px;
+  }
 }
 
 /* ========== ESTILOS DE RESULTADO (GREEN/RED/REEMBOLSO) ========== */
@@ -457,67 +775,84 @@
 
 /* ========== CLASSES DE CONTEXTO PARA MSG-ODDS ========== */
 
-/* Quando há resultado GREEN */
+/* ✅ GREEN - Vitória */
 .msg-odds.odds-with-result-green {
-  background: linear-gradient(135deg, #e8f5e9 0%, #f1f8e9 100%);
-  border-left: 4px solid #4caf50;
-  border: 1px solid #c8e6c9;
-  color: #2e7d32;
-  border-radius: 6px;
-  padding: 10px 12px;
+  background: linear-gradient(135deg, #2e7d32 0%, #43a047 100%);
+  border: none;
+  color: white;
 }
 
-.msg-odds.odds-with-result-green::before {
-  content: "";
-  display: inline-block;
-  width: 12px;
-  height: 12px;
-  border-radius: 50%;
-  background-color: #4caf50;
-  margin-right: 8px;
-  box-shadow: 0 0 8px rgba(76, 175, 80, 0.5);
+.msg-odds.odds-with-result-green .odds-resultado {
+  background: rgba(255, 255, 255, 0.25);
+  border: 2px solid rgba(255, 255, 255, 0.5);
+  padding: 5px 14px;
+  border-radius: 4px;
+  font-size: 13px;
+  font-weight: 900;
+  text-transform: uppercase;
+  letter-spacing: 0.4px;
+  color: white;
+  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.2);
 }
 
-/* Quando há resultado RED */
+/* ❌ RED - Derrota */
 .msg-odds.odds-with-result-red {
-  background: linear-gradient(135deg, #ffebee 0%, #ffebee 100%);
-  border-left: 4px solid #f44336;
-  border: 1px solid #ef9a9a;
-  color: #c62828;
-  border-radius: 6px;
-  padding: 10px 12px;
+  background: linear-gradient(135deg, #c62828 0%, #e53935 100%);
+  border: none;
+  color: white;
 }
 
-.msg-odds.odds-with-result-red::before {
-  content: "";
-  display: inline-block;
-  width: 12px;
-  height: 12px;
-  border-radius: 50%;
-  background-color: #f44336;
-  margin-right: 8px;
-  box-shadow: 0 0 8px rgba(244, 67, 54, 0.5);
+.msg-odds.odds-with-result-red .odds-resultado {
+  background: rgba(0, 0, 0, 0.2);
+  border: 2px solid rgba(255, 255, 255, 0.3);
+  padding: 5px 14px;
+  border-radius: 4px;
+  font-size: 13px;
+  font-weight: 900;
+  text-transform: uppercase;
+  letter-spacing: 0.4px;
+  color: white;
+  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.2);
 }
 
-/* Quando há resultado REEMBOLSO */
+/* 🔄 REEMBOLSO */
 .msg-odds.odds-with-result-refund {
-  background: linear-gradient(135deg, #fff3e0 0%, #fffde7 100%);
-  border-left: 4px solid #ff9800;
-  border: 1px solid #ffe0b2;
-  color: #e65100;
-  border-radius: 6px;
-  padding: 10px 12px;
+  background: linear-gradient(135deg, #757575 0%, #9e9e9e 100%);
+  border: none;
+  color: white;
 }
 
-.msg-odds.odds-with-result-refund::before {
-  content: "";
-  display: inline-block;
-  width: 12px;
-  height: 12px;
-  border-radius: 50%;
-  background-color: #ff9800;
-  margin-right: 8px;
-  box-shadow: 0 0 8px rgba(255, 152, 0, 0.5);
+.msg-odds.odds-with-result-refund .odds-resultado {
+  background: rgba(255, 255, 255, 0.2);
+  border: 2px solid rgba(255, 255, 255, 0.4);
+  padding: 5px 14px;
+  border-radius: 4px;
+  font-size: 13px;
+  font-weight: 900;
+  text-transform: uppercase;
+  letter-spacing: 0.4px;
+  color: white;
+  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.2);
+}
+
+/* ⏳ PENDENTE - Aguardando resultado */
+.msg-odds.odds-with-result-pending {
+  background: linear-gradient(135deg, #1565c0 0%, #1976d2 100%);
+  border: none;
+  color: white;
+}
+
+.msg-odds.odds-with-result-pending .odds-resultado {
+  background: linear-gradient(135deg, #ffa500 0%, #ff8c00 100%);
+  border: 2px solid rgba(255, 255, 255, 0.6);
+  padding: 5px 14px;
+  border-radius: 4px;
+  font-size: 13px;
+  font-weight: 900;
+  text-transform: uppercase;
+  letter-spacing: 0.4px;
+  color: #000;
+  box-shadow: 0 2px 8px rgba(255, 165, 0, 0.5);
 }
 
 /* Quando está PENDENTE */
@@ -650,7 +985,8 @@
 }
 
 @keyframes pulseGlow {
-  0%, 100% {
+  0%,
+  100% {
     box-shadow: 0 0 5px rgba(76, 175, 80, 0.5), 0 0 10px rgba(76, 175, 80, 0.3);
   }
   50% {
@@ -678,4 +1014,3 @@
   animation: pulseGlow 1.5s ease-in-out 3;
   box-shadow: 0 0 5px rgba(255, 152, 0, 0.5), 0 0 10px rgba(255, 152, 0, 0.3);
 }
-

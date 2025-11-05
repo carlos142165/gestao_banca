@@ -587,8 +587,18 @@ const TelegramMessenger = {
       ) {
         const parts = line.split("x");
         if (parts[0]) {
-          time1 = parts[0].replace(/\([^)]*\)/g, "").trim();
-          time2 = parts[1] ? parts[1].replace(/\([^)]*\)/g, "").trim() : "";
+          time1 = parts[0]
+            .replace(/\([^)]*\)/g, "")
+            .replace(/⚽/g, "") // ✅ Remove ícone de bola
+            .replace(/🚩/g, "") // ✅ Remove ícone de bandeira
+            .trim();
+          time2 = parts[1] 
+            ? parts[1]
+              .replace(/\([^)]*\)/g, "")
+              .replace(/⚽/g, "")
+              .replace(/🚩/g, "")
+              .trim()
+            : "";
         }
       }
 
@@ -646,7 +656,76 @@ const TelegramMessenger = {
     // ✅ USA O TÍTULO ORIGINAL DA MENSAGEM
     const tipoAposta = titulo ? titulo : "APOSTA";
 
-    // Formatar HTML com ícones profissionais
+    // ✅ DETECTAR SE É CANTOS OU GOLS PARA USAR A IMAGEM CORRETA
+    const isCantos =
+      tipoAposta.includes("CANTOS") || tipoAposta.includes("CANTO");
+    const imagemSrc = isCantos ? "img/cantos.jpg" : "img/gol.jpg";
+
+    // ✅ ABREVIAR TÍTULO PARA O FOOTER
+    let tituloAbreviado = "";
+
+    // Debug: Log do título original
+    console.log("📝 Título original:", tipoAposta);
+
+    if (isCantos) {
+      // Se for CANTOS, tentar extrair o +XX CANTOS
+      let cantosMatch = tipoAposta.match(/[\+]?\d+[\.]?\d*\s*CANTOS?/i);
+      if (!cantosMatch) {
+        cantosMatch = tipoAposta.match(/\d+[\.]?\d*\s*CANTOS?/i);
+      }
+      if (!cantosMatch) {
+        cantosMatch = tipoAposta.match(/\(\s*[\+]?\d+[^)]*\)/i);
+      }
+      tituloAbreviado = cantosMatch ? cantosMatch[0].trim() : "CANTOS";
+
+      // ✅ Formatar para: +XX CANTOS
+      if (tituloAbreviado && !tituloAbreviado.startsWith("+")) {
+        // Extrair apenas números
+        const numMatch = tituloAbreviado.match(/\d+[\.]?\d*/);
+        if (numMatch) {
+          tituloAbreviado = "+" + numMatch[0] + " CANTOS";
+        }
+      }
+      console.log(
+        "🎯 CANTOS Match:",
+        cantosMatch ? cantosMatch[0] : "NOT FOUND"
+      );
+    } else {
+      // Se for GOLS, tentar extrair o +XX GOLS
+      let golsMatch = tipoAposta.match(/[\+]?\d+[\.]?\d*\s*GOLS?/i);
+      if (!golsMatch) {
+        golsMatch = tipoAposta.match(/\d+[\.]?\d*\s*GOLS?/i);
+      }
+      if (!golsMatch) {
+        golsMatch = tipoAposta.match(/\(\s*[\+]?\d+[^)]*\)/i);
+      }
+      tituloAbreviado = golsMatch ? golsMatch[0].trim() : "GOLS";
+
+      // ✅ Formatar para: +XX GOLS
+      if (tituloAbreviado && !tituloAbreviado.startsWith("+")) {
+        // Extrair apenas números
+        const numMatch = tituloAbreviado.match(/\d+[\.]?\d*/);
+        if (numMatch) {
+          tituloAbreviado = "+" + numMatch[0] + " GOLS";
+        }
+      }
+      console.log("⚽ GOLS Match:", golsMatch ? golsMatch[0] : "NOT FOUND");
+    }
+
+    // ✅ Se não conseguiu extrair com regex, usar substring
+    if (!tituloAbreviado || tituloAbreviado.length === 0) {
+      tituloAbreviado = tipoAposta
+        .replace(/📊/g, "")
+        .replace(/🚨/g, "")
+        .replace(/⚽/g, "")
+        .replace(/⛳/g, "")
+        .replace(/\([^)]*\)/g, "")
+        .replace(/🚩/g, "")
+        .trim()
+        .substring(0, 20);
+    }
+
+    console.log("✅ Título abreviado final:", tituloAbreviado); // Formatar HTML com ícones profissionais
     // Escolher ícone apropriado baseado no tipo de aposta
     const apostIcon =
       tipoAposta.includes("GOLS") || tipoAposta.includes("GOL")
@@ -660,18 +739,20 @@ const TelegramMessenger = {
     // ✅ FORMATAR STATUS BASEADO NO RESULTADO
     let statusHTML = "";
     let oddsCssClass = "";
+    let statusAoVivo = "Ao Vivo"; // ✅ Padrão: Ao Vivo
 
     if (resultado) {
-      // Tem resultado - exibir resultado ao invés de PENDENTE
+      // Tem resultado - mudar para "Fim" e exibir resultado
+      statusAoVivo = "Fim"; // ✅ Mudou para Fim
       if (resultado === "GREEN") {
-        statusHTML = '<span class="odds-resultado odds-green">GREEN ✅</span>';
+        statusHTML = '<span class="odds-resultado odds-green">GREEN</span>';
         oddsCssClass = "odds-with-result-green";
       } else if (resultado === "RED") {
-        statusHTML = '<span class="odds-resultado odds-red">RED ❌</span>';
+        statusHTML = '<span class="odds-resultado odds-red">RED</span>';
         oddsCssClass = "odds-with-result-red";
       } else if (resultado === "REEMBOLSO") {
         statusHTML =
-          '<span class="odds-resultado odds-refund">REEMBOLSO 🔄</span>';
+          '<span class="odds-resultado odds-refund">REEMBOLSO</span>';
         oddsCssClass = "odds-with-result-refund";
       }
     } else {
@@ -682,27 +763,47 @@ const TelegramMessenger = {
 
     return `
       <div class="telegram-formatted-message">
-        <div class="msg-content">
-          <div class="msg-aposta">
-            ${apostIcon}
-            ${tipoAposta}
-          </div>
-          
-          <div class="msg-match">
-            <div class="msg-time-row">
-              <span class="msg-team">${time1}</span>
-              <span class="msg-team">${time2}</span>
-            </div>
-            <div class="msg-score-row">
-              <span class="msg-score">${placar1}</span>
-              <span class="msg-score">${placar2}</span>
+        <!-- Info Top: Gráfico e Ao Vivo -->
+        <div class="msg-info-top">
+          <div class="msg-info-grafico">
+            <div class="msg-icon-grafico">
+              <span></span>
+              <span></span>
+              <span></span>
+              <span></span>
             </div>
           </div>
-          
-          <div class="msg-odds ${oddsCssClass}">
-            ${oddsIcon}
-            ${tipoOdds} $${odds} - ${statusHTML}
+          <span class="msg-status-ao-vivo">${statusAoVivo}</span>
+        </div>
+
+        <!-- Conteúdo Principal: VERTICAL (Imagem em cima, Times/Placar embaixo) -->
+        <div class="msg-content-wrapper">
+          <!-- Imagem da Bola na Rede - RETANGULAR NO TOPO -->
+          <div class="msg-imagem-gol">
+            <img src="${imagemSrc}" alt="Imagem da Aposta">
           </div>
+
+          <!-- Times e Placar - EMBAIXO DA IMAGEM -->
+          <div class="msg-content">
+            <div class="msg-match">
+              <div class="msg-time-row">
+                <span class="msg-team">${time1}</span>
+                <span class="msg-team">${time2}</span>
+              </div>
+              <div class="msg-score-row">
+                <span class="msg-score">${placar1}</span>
+                <span class="msg-score">${placar2}</span>
+              </div>
+            </div>
+          </div>
+        </div>
+          
+        <!-- Footer com Odds e Resultado -->
+        <div class="msg-odds ${oddsCssClass}">
+          <span>${
+            isCantos ? "🚩" : "⚽"
+          } ${tituloAbreviado} - ODDS - $${odds}</span>
+          ${statusHTML}
         </div>
       </div>
     `;

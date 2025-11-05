@@ -1,0 +1,300 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Exemplo - GOLS vs CANTOS</title>
+    <link rel="stylesheet" href="css/telegram-mensagens.css" />
+    <style>
+      * {
+        margin: 0;
+        padding: 0;
+        box-sizing: border-box;
+      }
+
+      body {
+        font-family: "Segoe UI", Tahoma, Geneva, Verdana, sans-serif;
+        background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        padding: 30px 20px;
+        min-height: 100vh;
+      }
+
+      .container {
+        max-width: 400px;
+        margin: 0 auto;
+      }
+
+      .title {
+        color: white;
+        text-align: center;
+        margin-bottom: 30px;
+        font-size: 24px;
+        font-weight: 700;
+        text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.3);
+      }
+
+      .section-title {
+        color: white;
+        font-size: 16px;
+        font-weight: 700;
+        margin-top: 30px;
+        margin-bottom: 15px;
+        text-transform: uppercase;
+        letter-spacing: 1px;
+        display: flex;
+        align-items: center;
+        gap: 10px;
+      }
+
+      .icon {
+        font-size: 20px;
+      }
+
+      .example-section {
+        margin-bottom: 20px;
+      }
+    </style>
+  </head>
+  <body>
+    <div class="container">
+      <h1 class="title">⚽ GOLS vs CANTOS 🎯</h1>
+
+      <!-- ========== SEÇÃO GOLS ========== -->
+      <div class="section-title">
+        <span class="icon">⚽</span>
+        Apostas de GOLS
+      </div>
+
+      <!-- EXEMPLO 1: GOLS - PENDENTE -->
+      <div class="example-section">
+        <div class="telegram-formatted-message">
+          <div class="msg-info-top">
+            <div class="msg-info-tempo">
+              <span class="msg-icon-relogio">🕐</span>
+              <span>20:10:02</span>
+            </div>
+            <div class="msg-info-grafico">
+              <div class="msg-icon-grafico">
+                <span></span>
+                <span></span>
+                <span></span>
+                <span></span>
+              </div>
+            </div>
+            <span class="msg-status-ao-vivo">Ao Vivo</span>
+          </div>
+
+          <div class="msg-content-wrapper">
+            <div class="msg-imagem-gol">
+              <img src="img/gol.jpg" alt="Gol - Bola na Rede" />
+            </div>
+
+            <div class="msg-content">
+              <div class="msg-match">
+                <div class="msg-time-row">
+                  <span class="msg-team">Internacional</span>
+                  <span class="msg-team">Atlético Mineiro</span>
+                </div>
+                <div class="msg-score-row">
+                  <span class="msg-score">0</span>
+                  <span class="msg-score">1</span>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <div class="msg-odds odds-with-result-pending">
+            <span>⚽ +2 GOLS - ODDS - $1.50</span>
+            <span class="odds-resultado">PENDENTE</span>
+          </div>
+        </div>
+      </div>
+
+      <!-- EXEMPLO 2: GOLS - GREEN -->
+      <div class="example-section">
+        <div class="telegram-formatted-message">
+          <div class="msg-info-top">
+            <div class="msg-info-tempo">
+              <span class="msg-icon-relogio">🕐</span>
+              <span>18:45:30</span>
+            </div>
+            <div class="msg-info-grafico">
+              <div class="msg-icon-grafico">
+                <span></span>
+                <span></span>
+                <span></span>
+                <span></span>
+              </div>
+            </div>
+            <span class="msg-status-ao-vivo">Fim</span>
+          </div>
+
+          <div class="msg-content-wrapper">
+            <div class="msg-imagem-gol">
+              <img src="img/gol.jpg" alt="Gol - Bola na Rede" />
+            </div>
+
+            <div class="msg-content">
+              <div class="msg-match">
+                <div class="msg-time-row">
+                  <span class="msg-team">Barcelona</span>
+                  <span class="msg-team">Real Madrid</span>
+                </div>
+                <div class="msg-score-row">
+                  <span class="msg-score">2</span>
+                  <span class="msg-score">1</span>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <div class="msg-odds odds-with-result-green">
+            <span>⚽ OVER 2.5 - ODDS - $1.75</span>
+            <span class="odds-resultado">GREEN</span>
+          </div>
+        </div>
+      </div>
+
+      <!-- ========== SEÇÃO CANTOS ========== -->
+      <div class="section-title">
+        <span class="icon">🎯</span>
+        Apostas de CANTOS
+      </div>
+
+      <!-- EXEMPLO 3: CANTOS - PENDENTE -->
+      <div class="example-section">
+        <div class="telegram-formatted-message">
+          <div class="msg-info-top">
+            <div class="msg-info-tempo">
+              <span class="msg-icon-relogio">🕐</span>
+              <span>19:30:15</span>
+            </div>
+            <div class="msg-info-grafico">
+              <div class="msg-icon-grafico">
+                <span></span>
+                <span></span>
+                <span></span>
+                <span></span>
+              </div>
+            </div>
+            <span class="msg-status-ao-vivo">Ao Vivo</span>
+          </div>
+
+          <div class="msg-content-wrapper">
+            <div class="msg-imagem-gol">
+              <img src="img/cantos.jpg" alt="Cantos - Campo de Futebol" />
+            </div>
+
+            <div class="msg-content">
+              <div class="msg-match">
+                <div class="msg-time-row">
+                  <span class="msg-team">Flamengo</span>
+                  <span class="msg-team">Palmeiras</span>
+                </div>
+                <div class="msg-score-row">
+                  <span class="msg-score">7</span>
+                  <span class="msg-score">5</span>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <div class="msg-odds odds-with-result-pending">
+            <span>🚩 +12 CANTOS - ODDS - $1.65</span>
+            <span class="odds-resultado">PENDENTE</span>
+          </div>
+        </div>
+      </div>
+
+      <!-- EXEMPLO 4: CANTOS - RED -->
+      <div class="example-section">
+        <div class="telegram-formatted-message">
+          <div class="msg-info-top">
+            <div class="msg-info-tempo">
+              <span class="msg-icon-relogio">🕐</span>
+              <span>21:20:45</span>
+            </div>
+            <div class="msg-info-grafico">
+              <div class="msg-icon-grafico">
+                <span></span>
+                <span></span>
+                <span></span>
+                <span></span>
+              </div>
+            </div>
+            <span class="msg-status-ao-vivo">Fim</span>
+          </div>
+
+          <div class="msg-content-wrapper">
+            <div class="msg-imagem-gol">
+              <img src="img/cantos.jpg" alt="Cantos - Campo de Futebol" />
+            </div>
+
+            <div class="msg-content">
+              <div class="msg-match">
+                <div class="msg-time-row">
+                  <span class="msg-team">Manchester</span>
+                  <span class="msg-team">Liverpool</span>
+                </div>
+                <div class="msg-score-row">
+                  <span class="msg-score">6</span>
+                  <span class="msg-score">8</span>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <div class="msg-odds odds-with-result-red">
+            <span>🚩 +15 CANTOS - ODDS - $1.80</span>
+            <span class="odds-resultado">RED</span>
+          </div>
+        </div>
+      </div>
+
+      <!-- EXEMPLO 5: CANTOS - REEMBOLSO -->
+      <div class="example-section">
+        <div class="telegram-formatted-message">
+          <div class="msg-info-top">
+            <div class="msg-info-tempo">
+              <span class="msg-icon-relogio">🕐</span>
+              <span>17:15:30</span>
+            </div>
+            <div class="msg-info-grafico">
+              <div class="msg-icon-grafico">
+                <span></span>
+                <span></span>
+                <span></span>
+                <span></span>
+              </div>
+            </div>
+            <span class="msg-status-ao-vivo">Fim</span>
+          </div>
+
+          <div class="msg-content-wrapper">
+            <div class="msg-imagem-gol">
+              <img src="img/cantos.jpg" alt="Cantos - Campo de Futebol" />
+            </div>
+
+            <div class="msg-content">
+              <div class="msg-match">
+                <div class="msg-time-row">
+                  <span class="msg-team">Bayern</span>
+                  <span class="msg-team">Dortmund</span>
+                </div>
+                <div class="msg-score-row">
+                  <span class="msg-score">9</span>
+                  <span class="msg-score">9</span>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <div class="msg-odds odds-with-result-refund">
+            <span>🚩 +19 CANTOS - ODDS - $1.70</span>
+            <span class="odds-resultado">REEMBOLSO</span>
+          </div>
+        </div>
+      </div>
+    </div>
+  </body>
+</html>
