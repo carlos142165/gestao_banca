@@ -592,12 +592,12 @@ const TelegramMessenger = {
             .replace(/⚽/g, "") // ✅ Remove ícone de bola
             .replace(/🚩/g, "") // ✅ Remove ícone de bandeira
             .trim();
-          time2 = parts[1] 
+          time2 = parts[1]
             ? parts[1]
-              .replace(/\([^)]*\)/g, "")
-              .replace(/⚽/g, "")
-              .replace(/🚩/g, "")
-              .trim()
+                .replace(/\([^)]*\)/g, "")
+                .replace(/⚽/g, "")
+                .replace(/🚩/g, "")
+                .trim()
             : "";
         }
       }
@@ -765,7 +765,9 @@ const TelegramMessenger = {
       <div class="telegram-formatted-message">
         <!-- Info Top: Gráfico e Ao Vivo -->
         <div class="msg-info-top">
-          <div class="msg-info-grafico">
+          <div class="msg-info-grafico" data-time1="${time1}" data-time2="${time2}" data-tipo="${
+      isCantos ? "cantos" : "gols"
+    }" onclick="abrirModalHistorico(this)">
             <div class="msg-icon-grafico">
               <span></span>
               <span></span>
@@ -786,13 +788,12 @@ const TelegramMessenger = {
           <!-- Times e Placar - EMBAIXO DA IMAGEM -->
           <div class="msg-content">
             <div class="msg-match">
-              <div class="msg-time-row">
+              <div class="msg-teams-scores">
                 <span class="msg-team">${time1}</span>
-                <span class="msg-team">${time2}</span>
-              </div>
-              <div class="msg-score-row">
                 <span class="msg-score">${placar1}</span>
+                <span class="msg-vs">x</span>
                 <span class="msg-score">${placar2}</span>
+                <span class="msg-team">${time2}</span>
               </div>
             </div>
           </div>

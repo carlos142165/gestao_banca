@@ -16,8 +16,9 @@ if (!isset($_SESSION['usuario_id']) || empty($_SESSION['usuario_id'])) {
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Bot ao Vivo</title>
     <!-- ✅ Carregar CSS ANTES dos estilos inline -->
-    <link rel="stylesheet" href="css/menu-topo.css">
-    <link rel="stylesheet" href="css/telegram-mensagens.css">
+    <link rel="stylesheet" href="css/menu-topo.css?v=<?php echo time(); ?>">
+    <link rel="stylesheet" href="css/telegram-mensagens.css?v=<?php echo time(); ?>">
+    <link rel="stylesheet" href="css/modal-historico-resultados.css?v=<?php echo time(); ?>">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <style>
         .telegram-container {
@@ -1017,13 +1018,13 @@ if (!isset($_SESSION['usuario_id']) || empty($_SESSION['usuario_id'])) {
     </script>
 
     <!-- ✅ Script para atualizar rótulo dinâmico do lucro - FORA DO ENDIF PARA FUNCIONAR COM USUÁRIOS AUTENTICADOS -->
-    <script src="js/rotulo-lucro-dinamico.js" defer></script>
+    <script src="js/rotulo-lucro-dinamico.js?v=<?php echo time(); ?>" defer></script>
 
     <!-- ✅ SCRIPT PARA SALVAR MENSAGENS NO BANCO DE DADOS -->
-    <script src="js/telegram-salvar-bote.js" defer></script>
+    <script src="js/telegram-salvar-bote.js?v=<?php echo time(); ?>" defer></script>
 
     <!-- ✅ SCRIPT PARA CARREGAR MENSAGENS DO TELEGRAM -->
-    <script src="js/telegram-mensagens.js" defer></script>
+    <script src="js/telegram-mensagens.js?v=<?php echo time(); ?>" defer></script>
 
     <!-- ✅ SCRIPT PARA CARREGAR DADOS DINÂMICOS - CLONE DE HOME.PHP -->
     <script>
@@ -1123,5 +1124,8 @@ if (!isset($_SESSION['usuario_id']) || empty($_SESSION['usuario_id'])) {
     // ✅ ATUALIZAR A CADA 30 SEGUNDOS
     setInterval(carregarDadosBancaELucro, 30000);
     </script>
+
+    <!-- ✅ SCRIPT PARA MODAL DE HISTÓRICO DE RESULTADOS -->
+    <script src="js/modal-historico-resultados.js?v=<?php echo time(); ?>" defer></script>
 </body>
 </html>
