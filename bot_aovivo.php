@@ -19,6 +19,7 @@ if (!isset($_SESSION['usuario_id']) || empty($_SESSION['usuario_id'])) {
     <link rel="stylesheet" href="css/menu-topo.css?v=<?php echo time(); ?>">
     <link rel="stylesheet" href="css/telegram-mensagens.css?v=<?php echo time(); ?>">
     <link rel="stylesheet" href="css/modal-historico-resultados.css?v=<?php echo time(); ?>">
+    <link rel="stylesheet" href="css/carousel-blocos.css?v=<?php echo time(); ?>">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <style>
         .telegram-container {
@@ -1127,5 +1128,8 @@ if (!isset($_SESSION['usuario_id']) || empty($_SESSION['usuario_id'])) {
 
     <!-- ✅ SCRIPT PARA MODAL DE HISTÓRICO DE RESULTADOS -->
     <script src="js/modal-historico-resultados.js?v=<?php echo time(); ?>" defer></script>
+
+    <!-- ✅ SCRIPT CAROUSEL RESPONSIVO PARA BLOCOS -->
+    <script src="js/carousel-blocos.js" defer></script>
 </body>
 </html>

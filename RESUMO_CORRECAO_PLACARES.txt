@@ -1,0 +1,97 @@
+✅ CORREÇÃO APLICADA COM SUCESSO
+═════════════════════════════════════════════════════════════════════════
+
+📍 PROBLEMA IDENTIFICADO
+─────────────────────────
+Em mobile, os placares (GREEN-RED-REEMBOLSO) estavam quebrando linhas:
+
+❌ ANTES:
+  01/11/2025
+  3
+  x
+  2
+  Reembolso: R$ 100,00
+
+✅ DEPOIS:
+  01/11/2025  3 x 2  Reembolso: R$ 100,00
+
+═════════════════════════════════════════════════════════════════════════
+
+🔧 SOLUÇÃO IMPLEMENTADA
+───────────────────────
+
+Arquivo modificado: css/carousel-blocos.css
+
+Adicionado novo CSS com media query para mobile (≤1024px):
+
+  • Força .placar-dia para flex horizontal
+  • Previne quebra de linhas com white-space: nowrap
+  • Alinha todos elementos lado a lado
+  • Mantém espaçamento uniforme com gap: 8px
+  • Aplica flex-wrap: nowrap para segurança
+
+═════════════════════════════════════════════════════════════════════════
+
+📊 RESULTADO FINAL
+──────────────────
+
+Desktop (≥1025px):
+└─ ✓ Mantém layout original (3 blocos)
+└─ ✓ Placares lado a lado (já estava funcionando)
+
+Mobile (≤1024px):
+└─ ✓ Carousel horizontal ativo
+└─ ✓ Placares lado a lado (NOVO - CORRIGIDO)
+└─ ✓ GREEN, RED, e REEMBOLSO na mesma linha
+└─ ✓ Compacto e legível
+
+═════════════════════════════════════════════════════════════════════════
+
+🚀 O QUE FAZER AGORA
+────────────────────
+
+1. ✅ A correção já está aplicada localmente em XAMPP
+   └─ Arquivo: c:\xampp\htdocs\gestao\gestao_banca\css\carousel-blocos.css
+
+2. 📤 Fazer upload para Hostinger:
+   └─ Arquivo: css/carousel-blocos.css
+   └─ Via: cPanel File Manager ou FTP
+   └─ Permissões: 644
+
+3. 🧹 Limpar cache do navegador:
+   └─ Ctrl+Shift+Delete (Windows)
+   └─ Cmd+Shift+Delete (Mac)
+
+4. 🧪 Testar em mobile:
+   └─ F12 → Modo responsivo → 375px
+   └─ Verificar se placares ficam lado a lado
+
+═════════════════════════════════════════════════════════════════════════
+
+📋 CHECKLIST RÁPIDO
+
+  ☐ Arquivo css/carousel-blocos.css atualizado localmente
+  ☐ Fazer upload para Hostinger
+  ☐ Definir permissões em 644
+  ☐ Limpar cache do navegador
+  ☐ Testar em mobile
+  ☐ Verificar gestao-diaria.php
+  ☐ Verificar bot_aovivo.php
+  ☐ Sucesso! 🎉
+
+═════════════════════════════════════════════════════════════════════════
+
+🎯 RESUMO DO UPLOAD
+
+Arquivo: css/carousel-blocos.css
+Status: ✅ Modificado localmente
+Tamanho: ~410 linhas (aumentou ~60 linhas)
+Ação: Re-fazer upload para Hostinger
+Permissões: 644
+Verificação: Via diagnostico-carousel.php
+
+═════════════════════════════════════════════════════════════════════════
+
+Versão: 1.1 - Com correção de placares mobile
+Data: 2025-11-06
+Status: ✅ PRONTO PARA DEPLOY

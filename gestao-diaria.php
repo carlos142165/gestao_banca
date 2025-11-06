@@ -586,6 +586,7 @@ ob_end_flush();
 <link rel="stylesheet" href="css/minhaconta.css"> <!-- CSS consolidado do modal Minha Conta -->
 <link rel="stylesheet" href="css/celebracao-plano.css"> <!-- CSS da celebração de plano global -->
 <link rel="stylesheet" href="css/swiper-mobile.css"> <!-- CSS do Swiper mobile carousel -->
+<link rel="stylesheet" href="css/carousel-blocos.css"> <!-- CSS do carousel responsivo para blocos -->
 
 <style>
 /* ===== ÍCONE AO VIVO PISCANDO ===== */
@@ -644,6 +645,8 @@ ob_end_flush();
 <script src="js/rotulo-lucro-dinamico.js" defer></script>
 <script src="js/celebracao-plano.js" defer></script> <!-- Sistema Global de Celebração -->
 <?php endif; ?>
+<!-- ✅ CAROUSEL RESPONSIVO PARA BLOCOS -->
+<script src="js/carousel-blocos.js" defer></script> <!-- Carousel 3 blocos deslizáveis -->
 <!-- -->
 <!-- -->
 <!-- -->
