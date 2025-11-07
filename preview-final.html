@@ -1,0 +1,410 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Preview Final - Bot ao Vivo</title>
+    <link
+      rel="stylesheet"
+      href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css"
+    />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@400;600&display=swap"
+      rel="stylesheet"
+    />
+    <style>
+      * {
+        margin: 0;
+        padding: 0;
+        box-sizing: border-box;
+      }
+
+      body {
+        font-family: "Inter", -apple-system, BlinkMacSystemFont, "Segoe UI",
+          sans-serif;
+        background: linear-gradient(135deg, #f5f7fa 0%, #c3cfe2 100%);
+        padding: 20px;
+        min-height: 100vh;
+      }
+
+      .page-title {
+        margin-bottom: 15px;
+        font-size: 28px;
+        font-weight: 700;
+        color: #1a1a1a;
+        font-family: "Inter", sans-serif;
+        letter-spacing: -0.5px;
+      }
+
+      .info-box {
+        background: linear-gradient(135deg, #e3f2fd 0%, #bbdefb 100%);
+        border-left: 4px solid #2196f3;
+        padding: 14px 16px;
+        margin: 20px auto 20px auto;
+        border-radius: 8px;
+        color: #1565c0;
+        font-size: 13px;
+        max-width: 700px;
+        font-family: "Inter", sans-serif;
+        font-weight: 500;
+      }
+
+      .container {
+        max-width: 420px;
+        margin: 0 auto;
+        background: white;
+        border-radius: 12px;
+        box-shadow: 0 8px 32px rgba(0, 0, 0, 0.1);
+        overflow: hidden;
+        display: flex;
+        flex-direction: column;
+        height: 600px;
+      }
+
+      /* ===== HEADER NOVO - LAYOUT COMPACTO ===== */
+      .header-bloco {
+        background: linear-gradient(135deg, #113647 0%, #0e2a35 100%);
+        padding: 12px 16px;
+        color: white;
+        font-size: 13px;
+        line-height: 1.6;
+        position: sticky;
+        top: 0;
+        z-index: 100;
+        box-shadow: 0 4px 8px rgba(0, 0, 0, 0.15);
+        border-bottom: 2px solid #0a1f26;
+        border-radius: 8px 8px 0 0;
+      }
+
+      /* Linha 1 - Data e UND */
+      .linha-data {
+        display: flex;
+        align-items: center;
+        gap: 6px;
+        margin-bottom: 8px;
+        font-weight: 500;
+        font-size: 12px;
+        letter-spacing: 0.3px;
+        white-space: nowrap;
+      }
+
+      .und-input {
+        width: 110px;
+        padding: 8px 10px;
+        border: 2px solid rgba(255, 255, 255, 0.6);
+        border-radius: 6px;
+        background: rgba(255, 255, 255, 0.12);
+        color: white;
+        font-weight: 600;
+        font-size: 13px;
+        font-family: "JetBrains Mono", monospace;
+        transition: all 0.3s ease;
+      }
+
+      .und-input::placeholder {
+        color: rgba(255, 255, 255, 0.5);
+      }
+
+      .und-input:focus {
+        outline: none;
+        background: rgba(255, 255, 255, 0.2);
+        border-color: white;
+        box-shadow: 0 0 8px rgba(255, 255, 255, 0.3);
+      }
+
+      .linha-separadora {
+        border-top: 1px solid rgba(255, 255, 255, 0.25);
+        margin: 6px 0;
+      }
+
+      /* Container de Mensagens */
+      .messages-area {
+        padding: 20px;
+        overflow-y: auto;
+        flex: 1;
+        background-color: #f0f4f8;
+        border-radius: 0 0 8px 8px;
+        width: 100%;
+        box-sizing: border-box;
+      }
+
+      /* Remove scrollbar em navegadores webkit */
+      .messages-area::-webkit-scrollbar {
+        display: none;
+      }
+
+      .empty-message {
+        background: linear-gradient(135deg, #f0f4f8 0%, #e8eef5 100%);
+        padding: 24px;
+        border-radius: 10px;
+        border-left: 4px solid #113647;
+        color: #555;
+        text-align: center;
+        font-size: 14px;
+        font-weight: 500;
+      }
+
+      .empty-message p {
+        line-height: 1.6;
+      }
+
+      .empty-message i {
+        font-size: 28px;
+        color: #113647;
+        margin-bottom: 10px;
+        display: block;
+      }
+
+      /* ===== RESPONSIVIDADE MOBILE ===== */
+      @media screen and (max-width: 768px) {
+        .container {
+          width: 90vw;
+          max-width: 420px;
+          height: 70vh;
+          max-height: 600px;
+        }
+
+        .header-bloco {
+          padding: 10px 12px;
+          font-size: 12px;
+        }
+
+        .messages-area {
+          padding: 15px;
+          width: 100%;
+          box-sizing: border-box;
+        }
+      }
+
+      @media screen and (max-width: 480px) {
+        .container {
+          width: 95vw;
+          max-width: 100%;
+          height: 65vh;
+        }
+
+        .header-bloco {
+          padding: 8px 10px;
+          font-size: 11px;
+        }
+
+        .messages-area {
+          padding: 12px;
+          width: 100%;
+          box-sizing: border-box;
+          overflow-y: scroll;
+          -ms-overflow-style: none;
+          scrollbar-width: none;
+        }
+
+        .messages-area::-webkit-scrollbar {
+          display: none;
+        }
+      }
+    </style>
+  </head>
+  <body>
+    <div class="page-title">
+      🎮 Preview Final - Bot ao Vivo (Layout Atualizado)
+    </div>
+
+    <div class="info-box">
+      💡 <strong>Layout Finalizado:</strong> Header compacto (420px) com
+      mensagens expandidas (480px)
+    </div>
+
+    <div class="container">
+      <!-- HEADER AZUL - TUDO COMPACTO -->
+      <div class="header-bloco">
+        <!-- Linha 1: Data e UND -->
+        <div class="linha-data" style="justify-content: space-between">
+          <span>📅 Quinta-Feira - 06/11</span>
+          <span
+            style="
+              color: #4ade80;
+              display: flex;
+              align-items: center;
+              gap: 8px;
+              margin-left: auto;
+            "
+          >
+            UND:<input
+              type="text"
+              class="und-input"
+              value="R$ 100,00"
+              placeholder="R$ 0,00"
+              style="
+                color: #4ade80;
+                border: 1px solid rgba(255, 255, 255, 0.4);
+                border-radius: 4px;
+                padding: 2px 4px;
+                background: transparent;
+                font-weight: bold;
+                text-align: left;
+                min-width: 30px;
+                font-family: 'JetBrains Mono', monospace;
+                font-size: 11px;
+              "
+            />
+          </span>
+        </div>
+
+        <!-- Separador 1 -->
+        <div class="linha-separadora"></div>
+
+        <!-- Linhas de Apostas - Com colunas alinhadas -->
+        <div
+          style="
+            margin-top: 6px;
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 12px;
+            line-height: 1.6;
+            color: white;
+            letter-spacing: 0.5px;
+            font-weight: 500;
+            display: grid;
+            grid-template-columns: 2.2fr 0.9fr 1fr;
+            gap: 6px;
+            align-items: start;
+            grid-auto-flow: row;
+          "
+        >
+          <!-- Linha 1: +1 Gols asiaticos -->
+          <div>⚽ +1 Gols asiaticos</div>
+          <div style="text-align: center">
+            <span style="color: #4ade80">0</span>
+            <span style="color: #c0d0e0; font-size: 10px"> X </span>
+            <span style="color: #eea7ad">0</span>
+          </div>
+          <div style="text-align: left; color: #cfcdcd">R$ 0,00</div>
+
+          <!-- Linha 2: +0.5 Gols ft -->
+          <div>⚽ +0.5 Gols ft</div>
+          <div style="text-align: center">
+            <span style="color: #4ade80">0</span>
+            <span style="color: #c0d0e0; font-size: 10px"> X </span>
+            <span style="color: #eea7ad">0</span>
+          </div>
+          <div style="text-align: left; color: #4ade80">R$ 50,00</div>
+
+          <!-- Linha 3: +1 Cantos asiaticos -->
+          <div>🚩 +1 Cantos asiaticos</div>
+          <div style="text-align: center">
+            <span style="color: #4ade80">0</span>
+            <span style="color: #c0d0e0; font-size: 10px"> X </span>
+            <span style="color: #eea7ad">0</span>
+          </div>
+          <div style="text-align: left; color: #eea7ad">R$ -25,00</div>
+        </div>
+
+        <!-- Separador 2 -->
+        <div class="linha-separadora"></div>
+
+        <!-- Total - Com mesmo layout -->
+        <div
+          style="
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 12px;
+            color: white;
+            letter-spacing: 0.5px;
+            font-weight: 600;
+            display: grid;
+            grid-template-columns: 2.2fr 0.9fr 1fr;
+            gap: 6px;
+            align-items: center;
+            margin-bottom: 12px;
+          "
+        >
+          <div>📊 Total:</div>
+          <div style="text-align: center">
+            <span style="color: #4ade80">0</span>
+            <span style="color: #c0d0e0; font-size: 10px"> X </span>
+            <span style="color: #eea7ad">0</span>
+          </div>
+          <div style="text-align: left; color: #4ade80">R$ 25,00</div>
+        </div>
+      </div>
+
+      <!-- CONTAINER DE MENSAGENS -->
+      <div class="messages-area">
+        <div class="empty-message">
+          <i class="fas fa-inbox"></i>
+          <p>
+            <strong>As mensagens que chegam do Telegram aparecem aqui</strong>
+          </p>
+          <p style="font-size: 12px; margin-top: 8px; color: #999">
+            Com a mesma estrutura visual anterior
+          </p>
+        </div>
+      </div>
+    </div>
+
+    <script>
+      // Formatação de moeda no UND
+      const undInputs = document.querySelectorAll(".und-input");
+
+      undInputs.forEach((input) => {
+        // Função para ajustar largura do input
+        function adjustWidth() {
+          const temp = document.createElement("span");
+          temp.style.visibility = "hidden";
+          temp.style.position = "absolute";
+          temp.style.fontFamily = "JetBrains Mono, monospace";
+          temp.style.fontSize = "11px";
+          temp.style.fontWeight = "bold";
+          temp.style.padding = "2px 4px";
+          temp.textContent = input.value;
+          document.body.appendChild(temp);
+
+          const width = temp.offsetWidth;
+          document.body.removeChild(temp);
+
+          input.style.width = Math.max(130, width + 4) + "px";
+        }
+
+        // Evento ao digitar - formatar a moeda
+        input.addEventListener("input", function (e) {
+          let valor = e.target.value.replace(/\D/g, "");
+          if (valor.length === 0) {
+            e.target.value = "R$ 0,00";
+            adjustWidth();
+            return;
+          }
+          valor = (parseInt(valor) / 100).toLocaleString("pt-BR", {
+            style: "currency",
+            currency: "BRL",
+          });
+          e.target.value = valor;
+          adjustWidth();
+        });
+
+        // Evento ao focar
+        input.addEventListener("focus", function (e) {
+          e.target.select();
+        });
+
+        // Evento ao sair do campo
+        input.addEventListener("blur", function (e) {
+          if (e.target.value === "") {
+            e.target.value = "R$ 0,00";
+          } else {
+            let valor = e.target.value.replace(/\D/g, "");
+            if (valor.length > 0) {
+              valor = (parseInt(valor) / 100).toLocaleString("pt-BR", {
+                style: "currency",
+                currency: "BRL",
+              });
+              e.target.value = valor;
+            } else {
+              e.target.value = "R$ 0,00";
+            }
+          }
+          adjustWidth();
+        });
+
+        // Ajustar largura inicial
+        adjustWidth();
+      });
+    </script>
+  </body>
+</html>

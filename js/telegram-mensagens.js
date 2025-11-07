@@ -307,6 +307,40 @@ const TelegramMessenger = {
       this.addMessage(msg);
     });
 
+    // ✅ ADICIONAR LINHA DE TOTAL NO FINAL
+    if (validMessages.length > 0) {
+      // Calcular totais (valores fictícios para demonstração)
+      const totalGols1 = validMessages.reduce((sum, msg) => {
+        const placarMatch = (msg.text || msg.mensagem_completa || "").match(
+          /Placar:\s*(\d+)\s*-\s*(\d+)/
+        );
+        return sum + (placarMatch ? parseInt(placarMatch[1]) : 0);
+      }, 0);
+
+      const totalGols2 = validMessages.reduce((sum, msg) => {
+        const placarMatch = (msg.text || msg.mensagem_completa || "").match(
+          /Placar:\s*(\d+)\s*-\s*(\d+)/
+        );
+        return sum + (placarMatch ? parseInt(placarMatch[2]) : 0);
+      }, 0);
+
+      const totalOdds = (validMessages.length * 0).toFixed(2); // Placeholder
+
+      const totalHTML = `
+        <div style="padding: 10px 12px; background: #f5f5f5; display: flex; align-items: center; gap: 12px; border-top: 2px solid #333; font-size: 12px; font-weight: 600; margin-top: 8px;">
+          <div style="min-width: 80px; color: #333;">📊 TOTAL:</div>
+          <div style="text-align: center; min-width: 45px; color: #333;">${totalGols1}</div>
+          <div style="font-weight: bold; color: #333; font-size: 14px;">X</div>
+          <div style="text-align: center; min-width: 45px; color: #333;">${totalGols2}</div>
+          <div style="min-width: 70px; text-align: center; color: #0277bd;">R$ ${totalOdds}</div>
+        </div>
+      `;
+
+      const totalDiv = document.createElement("div");
+      totalDiv.innerHTML = totalHTML;
+      this.container.appendChild(totalDiv);
+    }
+
     // Auto-scroll para cima (não para baixo)
     setTimeout(() => this.scrollToTop(), 100);
   },
@@ -361,20 +395,7 @@ const TelegramMessenger = {
     const messageEl = document.createElement("div");
     messageEl.className = "telegram-message";
     messageEl.setAttribute("data-message-id", msg.id);
-    messageEl.innerHTML = `
-      <div class="msg-header-external">
-        <div class="msg-header-left">
-          <span class="msg-title-external"><i class="fas fa-bell"></i> Oportunidade!</span>
-        </div>
-        <div class="msg-header-right">
-          <span class="msg-time-external">
-            <i class="fas fa-clock"></i>
-            ${msg.time}
-          </span>
-        </div>
-      </div>
-      ${formattedContent}
-    `;
+    messageEl.innerHTML = formattedContent;
 
     // ✅ INSERIR NO INÍCIO (para ordem de cima para baixo)
     this.container.insertBefore(messageEl, this.container.firstChild);
@@ -761,49 +782,40 @@ const TelegramMessenger = {
       oddsCssClass = "odds-with-result-pending";
     }
 
+    // ✅ NOVO LAYOUT: Compacto com ícone, tipo aposta, placar e odds tudo em uma linha
     return `
-      <div class="telegram-formatted-message">
-        <!-- Info Top: Gráfico e Ao Vivo -->
-        <div class="msg-info-top">
-          <div class="msg-info-grafico" data-time1="${time1}" data-time2="${time2}" data-tipo="${
-      isCantos ? "cantos" : "gols"
-    }" onclick="abrirModalHistorico(this)">
-            <div class="msg-icon-grafico">
-              <span></span>
-              <span></span>
-              <span></span>
-              <span></span>
-            </div>
-          </div>
-          <span class="msg-status-ao-vivo">${statusAoVivo}</span>
+      <div class="telegram-formatted-message-nova" style="padding: 10px 12px; background: white; display: flex; align-items: center; gap: 12px; border-bottom: 1px solid #e0e0e0; font-size: 12px;">
+        <!-- Ícone + Tipo Aposta -->
+        <div style="min-width: 80px; font-weight: 600; color: #333;">
+          ${isCantos ? "🚩" : "⚽"} ${tituloAbreviado}
         </div>
-
-        <!-- Conteúdo Principal: VERTICAL (Imagem em cima, Times/Placar embaixo) -->
-        <div class="msg-content-wrapper">
-          <!-- Imagem da Bola na Rede - RETANGULAR NO TOPO -->
-          <div class="msg-imagem-gol">
-            <img src="${imagemSrc}" alt="Imagem da Aposta">
-          </div>
-
-          <!-- Times e Placar - EMBAIXO DA IMAGEM -->
-          <div class="msg-content">
-            <div class="msg-match">
-              <div class="msg-teams-scores">
-                <span class="msg-team">${time1}</span>
-                <span class="msg-score">${placar1}</span>
-                <span class="msg-vs">x</span>
-                <span class="msg-score">${placar2}</span>
-                <span class="msg-team">${time2}</span>
-              </div>
-            </div>
-          </div>
+        
+        <!-- Time 1 / Placar 1 -->
+        <div style="text-align: center; min-width: 45px;">
+          <div style="font-size: 11px; color: #666; margin-bottom: 2px;">${
+            time1 ? time1.substring(0, 10) : "---"
+          }</div>
+          <div style="font-weight: bold; font-size: 14px; color: #333;">${placar1}</div>
         </div>
-          
-        <!-- Footer com Odds e Resultado -->
-        <div class="msg-odds ${oddsCssClass}">
-          <span>${
-            isCantos ? "🚩" : "⚽"
-          } ${tituloAbreviado} - ODDS - $${odds}</span>
+        
+        <!-- Separador X -->
+        <div style="font-weight: bold; color: #999; font-size: 14px;">X</div>
+        
+        <!-- Time 2 / Placar 2 -->
+        <div style="text-align: center; min-width: 45px;">
+          <div style="font-size: 11px; color: #666; margin-bottom: 2px;">${
+            time2 ? time2.substring(0, 10) : "---"
+          }</div>
+          <div style="font-weight: bold; font-size: 14px; color: #333;">${placar2}</div>
+        </div>
+        
+        <!-- Odds -->
+        <div style="min-width: 70px; text-align: center; font-weight: 600; color: #0277bd;">
+          R$ ${odds}
+        </div>
+        
+        <!-- Resultado -->
+        <div style="min-width: 60px;">
           ${statusHTML}
         </div>
       </div>

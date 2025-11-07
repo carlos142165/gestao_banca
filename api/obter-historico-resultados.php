@@ -4,6 +4,12 @@ session_start();
 
 header('Content-Type: application/json; charset=utf-8');
 
+// ✅ CONFIGURAR TIMEZONE
+date_default_timezone_set('America/Sao_Paulo');
+
+// ✅ INCLUIR CONFIG CENTRALIZADA
+require_once '../config.php';
+
 // Verificar se é POST
 if ($_SERVER['REQUEST_METHOD'] !== 'POST') {
     http_response_code(405);
@@ -30,14 +36,8 @@ if (empty($time1) || empty($time2)) {
     exit;
 }
 
-// ✅ CONECTAR AO BANCO DE DADOS DA HOSTINGER
-$db_host = '127.0.0.1';
-$db_username = 'u857325944_formu';
-$db_password = 'JkF4B7N1';
-$db_name = 'u857325944_formu';
-
-
-$conexao = new mysqli($db_host, $db_username, $db_password, $db_name);
+// ✅ CONECTAR AO BANCO DE DADOS
+// A conexão já vem de config.php ($conexao)
 
 // Verificar conexão
 if ($conexao->connect_error) {

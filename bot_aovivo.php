@@ -21,6 +21,10 @@ if (!isset($_SESSION['usuario_id']) || empty($_SESSION['usuario_id'])) {
     <link rel="stylesheet" href="css/modal-historico-resultados.css?v=<?php echo time(); ?>">
     <link rel="stylesheet" href="css/carousel-blocos.css?v=<?php echo time(); ?>">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link
+      href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@400;600&display=swap"
+      rel="stylesheet"
+    />
     <style>
         .telegram-container {
             display: flex;
@@ -31,6 +35,85 @@ if (!isset($_SESSION['usuario_id']) || empty($_SESSION['usuario_id'])) {
         
         .telegram-messages-wrapper {
             flex: 1;
+        }
+
+        /* ===== HEADER NOVO - LAYOUT COMPACTO ===== */
+        .header-bloco {
+            background: linear-gradient(135deg, #113647 0%, #0e2a35 100%);
+            padding: 12px 16px;
+            color: white;
+            font-size: 13px;
+            line-height: 1.6;
+            position: sticky;
+            top: 0;
+            z-index: 100;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.15);
+            border-bottom: 2px solid #0a1f26;
+            border-radius: 8px 8px 0 0;
+        }
+
+        /* Linha 1 - Data e UND */
+        .linha-data {
+            display: flex;
+            align-items: center;
+            gap: 6px;
+            margin-bottom: 8px;
+            font-weight: 500;
+            font-size: 12px;
+            letter-spacing: 0.3px;
+            white-space: nowrap;
+        }
+
+        .und-input {
+            width: 110px;
+            padding: 8px 10px;
+            border: 2px solid rgba(255, 255, 255, 0.6);
+            border-radius: 6px;
+            background: rgba(255, 255, 255, 0.12);
+            color: white;
+            font-weight: 600;
+            font-size: 13px;
+            font-family: "JetBrains Mono", monospace;
+            transition: all 0.3s ease;
+        }
+
+        .und-input::placeholder {
+            color: rgba(255, 255, 255, 0.5);
+        }
+
+        .und-input:focus {
+            outline: none;
+            background: rgba(255, 255, 255, 0.2);
+            border-color: white;
+            box-shadow: 0 0 8px rgba(255, 255, 255, 0.3);
+        }
+
+        .linha-separadora {
+            border-top: 1px solid rgba(255, 255, 255, 0.25);
+            margin: 6px 0;
+        }
+
+        /* Container de Mensagens */
+        .messages-area {
+            padding: 20px;
+            overflow-y: auto;
+            flex: 1;
+            background-color: #f0f4f8;
+            border-radius: 0 0 8px 8px;
+            width: 100%;
+            box-sizing: border-box;
+        }
+
+        /* Seletor específico para telegram-messages-wrapper */
+        body > main > div > div.bloco.bloco-1 > div > div.messages-area.telegram-messages-wrapper {
+            width: 100% !important;
+            padding: 20px !important;
+            box-sizing: border-box !important;
+        }
+
+        /* Remove scrollbar em navegadores webkit */
+        .messages-area::-webkit-scrollbar {
+            display: none;
         }
     </style>
     <style>
@@ -92,10 +175,12 @@ if (!isset($_SESSION['usuario_id']) || empty($_SESSION['usuario_id'])) {
             background-color: #f5f5f5;
             border: 2px solid #ddd;
             border-radius: 8px;
-            padding: 20px;
+            padding: 0;
             box-shadow: 0 2px 4px rgba(0,0,0,0.1);
-            overflow-y: auto;
+            overflow: hidden;
             flex-shrink: 0;
+            display: flex;
+            flex-direction: column;
         }
 
         /* Classes específicas dos blocos do seu código */
@@ -585,6 +670,111 @@ if (!isset($_SESSION['usuario_id']) || empty($_SESSION['usuario_id'])) {
             margin-bottom: 15px;
         }
 
+        /* ===== RESPONSIVIDADE MOBILE ===== */
+        @media screen and (max-width: 768px) {
+            .bloco {
+                width: 90vw;
+                max-width: 420px;
+                height: 70vh;
+                max-height: 600px;
+            }
+
+            .header-bloco {
+                padding: 10px 12px;
+                font-size: 12px;
+            }
+
+            .linha-data {
+                font-size: 11px;
+                gap: 4px;
+                margin-bottom: 6px;
+            }
+
+            .und-input {
+                width: 100px;
+                padding: 6px 8px;
+                font-size: 12px;
+            }
+
+            .linha-separadora {
+                margin: 4px 0;
+            }
+
+            .messages-area {
+                padding: 15px;
+                width: 100%;
+                box-sizing: border-box;
+                overflow-y: auto;
+            }
+
+            body > main > div > div.bloco.bloco-1 > div > div.messages-area.telegram-messages-wrapper {
+                width: 100% !important;
+                padding: 15px !important;
+                box-sizing: border-box !important;
+            }
+
+            /* Grid das apostas mobile */
+            .header-bloco > div[style*="grid-template-columns"] {
+                grid-template-columns: 2fr 0.8fr 0.9fr !important;
+                gap: 4px !important;
+                font-size: 11px !important;
+            }
+        }
+
+        @media screen and (max-width: 480px) {
+            .bloco {
+                width: 95vw;
+                max-width: 100%;
+                height: 65vh;
+            }
+
+            .header-bloco {
+                padding: 8px 10px;
+                font-size: 11px;
+            }
+
+            .linha-data {
+                font-size: 10px;
+                gap: 3px;
+                margin-bottom: 4px;
+            }
+
+            .und-input {
+                width: 90px;
+                padding: 5px 6px;
+                font-size: 11px;
+            }
+
+            .messages-area {
+                padding: 12px;
+                width: 100%;
+                box-sizing: border-box;
+                overflow-y: scroll;
+                -ms-overflow-style: none;
+                scrollbar-width: none;
+            }
+
+            body > main > div > div.bloco.bloco-1 > div > div.messages-area.telegram-messages-wrapper {
+                width: 100% !important;
+                padding: 12px !important;
+                box-sizing: border-box !important;
+                overflow-y: scroll !important;
+                -ms-overflow-style: none !important;
+                scrollbar-width: none !important;
+            }
+
+            .messages-area::-webkit-scrollbar {
+                display: none;
+            }
+
+            /* Grid das apostas mobile pequeno */
+            .header-bloco > div[style*="grid-template-columns"] {
+                grid-template-columns: 1.8fr 0.7fr 0.8fr !important;
+                gap: 3px !important;
+                font-size: 10px !important;
+            }
+        }
+
         /* Responsividade para diferentes resoluções */
         @media screen and (max-width: 1400px) {
             .container {
@@ -749,6 +939,22 @@ if (!isset($_SESSION['usuario_id']) || empty($_SESSION['usuario_id'])) {
         .auth-buttons a i {
           font-size: 14px;
         }
+
+        /* ===== ESTILOS DA ENTRADA DE UND FORMATADA ===== */
+        .und-input-formatado {
+          transition: all 0.3s ease !important;
+        }
+
+        .und-input-formatado:focus {
+          outline: none !important;
+          border: 2px solid #fff !important;
+          background: rgba(255,255,255,0.2) !important;
+          box-shadow: 0 0 8px rgba(255,255,255,0.4) !important;
+        }
+
+        .und-input-formatado::placeholder {
+          color: rgba(255,255,255,0.6) !important;
+        }
     </style>
 </head>
 <body <?php echo isset($_SESSION['usuario_id']) ? 'data-user-id="' . intval($_SESSION['usuario_id']) . '"' : ''; ?>>
@@ -849,13 +1055,118 @@ if (!isset($_SESSION['usuario_id']) || empty($_SESSION['usuario_id'])) {
             <!-- BLOCO 1 -->
             <div class="bloco bloco-1">
                 <div class="telegram-container">
-                    <div class="telegram-header">
-                        <div class="telegram-status">
-                            <span class="telegram-status-dot"></span>
-                            <span>Ao vivo</span>
+                    <!-- HEADER AZUL - TUDO COMPACTO -->
+                    <div class="header-bloco">
+                        <!-- Linha 1: Data e UND -->
+                        <div class="linha-data" style="justify-content: space-between">
+                            <span>📅 <span id="resumo-dia-data">Carregando...</span></span>
+                            <span
+                                style="
+                                    color: #4ade80;
+                                    display: flex;
+                                    align-items: center;
+                                    gap: 8px;
+                                    margin-left: auto;
+                                "
+                                >UND:<input
+                                    type="text"
+                                    id="resumo-valor-und-input"
+                                    class="und-input"
+                                    value="R$ 100,00"
+                                    placeholder="R$ 0,00"
+                                    style="
+                                        color: #4ade80;
+                                        border: 1px solid rgba(255, 255, 255, 0.4);
+                                        border-radius: 4px;
+                                        padding: 2px 4px;
+                                        background: transparent;
+                                        font-weight: bold;
+                                        text-align: left;
+                                        min-width: 30px;
+                                        font-family: 'JetBrains Mono', monospace;
+                                        font-size: 11px;
+                                    "
+                                /></span>
+                        </div>
+
+                        <!-- Separador 1 - Abaixo da data -->
+                        <div class="linha-separadora"></div>
+
+                        <!-- Linhas de Apostas - Com colunas alinhadas -->
+                        <div
+                            style="
+                                margin-top: 6px;
+                                font-family: 'JetBrains Mono', monospace;
+                                font-size: 12px;
+                                line-height: 1.6;
+                                color: white;
+                                letter-spacing: 0.5px;
+                                font-weight: 500;
+                                display: grid;
+                                grid-template-columns: 2.2fr 0.9fr 1fr;
+                                gap: 6px;
+                                align-items: start;
+                                grid-auto-flow: row;
+                            "
+                        >
+                            <!-- Linha 1: +1 Gols asiaticos -->
+                            <div>⚽ +1 Gols asiaticos</div>
+                            <div style="text-align: center;">
+                                <span style="color: #4ade80" id="placar-1-green">0</span>
+                                <span style="color: #c0d0e0; font-size: 10px;"> X </span>
+                                <span style="color: #eea7ad" id="placar-1-red">0</span>
+                            </div>
+                            <div style="text-align: left; color: #cfcdcd" id="valor-1-final">R$ 0,00</div>
+
+                            <!-- Linha 2: +0.5 Gols ft -->
+                            <div>⚽ +0.5 Gols ft</div>
+                            <div style="text-align: center;">
+                                <span style="color: #4ade80" id="placar-2-green">0</span>
+                                <span style="color: #c0d0e0; font-size: 10px;"> X </span>
+                                <span style="color: #eea7ad" id="placar-2-red">0</span>
+                            </div>
+                            <div style="text-align: left; color: #4ade80" id="valor-2-final">R$ 50,00</div>
+
+                            <!-- Linha 3: +1 Cantos asiaticos -->
+                            <div>🚩 +1 Cantos asiaticos</div>
+                            <div style="text-align: center;">
+                                <span style="color: #4ade80" id="placar-3-green">0</span>
+                                <span style="color: #c0d0e0; font-size: 10px;"> X </span>
+                                <span style="color: #eea7ad" id="placar-3-red">0</span>
+                            </div>
+                            <div style="text-align: left; color: #eea7ad" id="valor-3-final">R$ -25,00</div>
+                        </div>
+
+                        <!-- Separador 2 - Acima do Total -->
+                        <div class="linha-separadora"></div>
+
+                        <!-- Total - Com mesmo layout -->
+                        <div
+                            style="
+                                font-family: 'JetBrains Mono', monospace;
+                                font-size: 12px;
+                                color: white;
+                                letter-spacing: 0.5px;
+                                font-weight: 600;
+                                display: grid;
+                                grid-template-columns: 2.2fr 0.9fr 1fr;
+                                gap: 6px;
+                                align-items: center;
+                                margin-bottom: 12px;
+                            "
+                        >
+                            <div>📊 Total:</div>
+                            <div style="text-align: center;">
+                                <span style="color: #4ade80" id="placar-total-green">0</span>
+                                <span style="color: #c0d0e0; font-size: 10px;"> X </span>
+                                <span style="color: #eea7ad" id="placar-total-red">0</span>
+                            </div>
+                            <div style="text-align: left; color: #4ade80" id="valor-total-final">R$ 25,00</div>
                         </div>
                     </div>
-                    <div class="telegram-messages-wrapper">
+
+                    <!-- CONTAINER DE MENSAGENS -->
+                    <div class="messages-area telegram-messages-wrapper">
                         <div class="telegram-loading">
                             <div class="telegram-loading-spinner"></div>
                             <p>Carregando mensagens...</p>
@@ -1019,6 +1330,199 @@ if (!isset($_SESSION['usuario_id']) || empty($_SESSION['usuario_id'])) {
     </script>
 
     <!-- ✅ Script para atualizar rótulo dinâmico do lucro - FORA DO ENDIF PARA FUNCIONAR COM USUÁRIOS AUTENTICADOS -->
+    <script>
+      // ===== NOVO: Formatação de moeda no UND com dynamic width =====
+      const undInputs = document.querySelectorAll("#resumo-valor-und-input");
+
+      undInputs.forEach((input) => {
+        // Função para ajustar largura do input
+        function adjustWidth() {
+          // Cria um elemento temporário para medir o texto
+          const temp = document.createElement("span");
+          temp.style.visibility = "hidden";
+          temp.style.position = "absolute";
+          temp.style.fontFamily = "JetBrains Mono, monospace";
+          temp.style.fontSize = "11px";
+          temp.style.fontWeight = "bold";
+          temp.style.padding = "2px 4px";
+          temp.textContent = input.value;
+          document.body.appendChild(temp);
+
+          const width = temp.offsetWidth;
+          document.body.removeChild(temp);
+
+          // Começa com 130px, mas aumenta se o conteúdo for maior
+          input.style.width = Math.max(130, width + 4) + "px";
+        }
+
+        // Evento ao digitar - formatar a moeda
+        input.addEventListener("input", function (e) {
+          let valor = e.target.value.replace(/\D/g, "");
+          if (valor.length === 0) {
+            e.target.value = "R$ 0,00";
+            adjustWidth();
+            return;
+          }
+          valor = (parseInt(valor) / 100).toLocaleString("pt-BR", {
+            style: "currency",
+            currency: "BRL",
+          });
+          e.target.value = valor;
+          adjustWidth();
+        });
+
+        // Evento ao clicar/focar - SELECIONA TUDO mas MANTÉM a formatação
+        input.addEventListener("focus", function (e) {
+          e.target.select();
+        });
+
+        // Evento ao sair do campo - garante formatação correta
+        input.addEventListener("blur", function (e) {
+          if (e.target.value === "") {
+            e.target.value = "R$ 0,00";
+          } else {
+            let valor = e.target.value.replace(/\D/g, "");
+            if (valor.length > 0) {
+              valor = (parseInt(valor) / 100).toLocaleString("pt-BR", {
+                style: "currency",
+                currency: "BRL",
+              });
+              e.target.value = valor;
+            } else {
+              e.target.value = "R$ 0,00";
+            }
+          }
+          adjustWidth();
+        });
+
+        // Ajustar largura inicial
+        adjustWidth();
+      });
+    </script>
+        <!-- ✅ SCRIPT PARA ATUALIZAR PLACAR DO DIA (GREEN E RED) -->
+    <script>
+      // ✅ FUNÇÃO PARA ATUALIZAR PLACAR COM GREEN E RED DO DIA
+      function atualizarPlacarDia() {
+        // Obter valor do UND (input)
+        const undInput = document.getElementById('resumo-valor-und-input');
+        const valorUndText = undInput ? undInput.value.replace(/[^\d,]/g, '').replace(',', '.') : '100';
+        const valorUnd = parseFloat(valorUndText) || 100;
+        
+        // Função auxiliar para formatar moeda
+        function formatarMoeda(valor) {
+          return new Intl.NumberFormat('pt-BR', {
+            style: 'currency',
+            currency: 'BRL',
+            minimumFractionDigits: 2,
+            maximumFractionDigits: 2
+          }).format(valor);
+        }
+        
+        fetch('obter-placar-dia.php')
+          .then(response => response.json())
+          .then(data => {
+            if (data.success && data.apostas) {
+              console.log('✅ Dados das apostas recebidos:', data.apostas);
+              console.log('💰 Valor UND: ' + formatarMoeda(valorUnd));
+              
+              // ========== ATUALIZAR APOSTA 1: +1⚽GOL ==========
+              const aposta1 = data.apostas.aposta_1;
+              if (aposta1) {
+                document.getElementById('placar-1-green').textContent = aposta1.green;
+                document.getElementById('placar-1-red').textContent = aposta1.red;
+                
+                // Calcular valor final
+                const lucro1 = (aposta1.lucro_coef_green + aposta1.lucro_coef_red) * valorUnd;
+                const valor1Elem = document.getElementById('valor-1-final');
+                if (valor1Elem) {
+                  valor1Elem.textContent = formatarMoeda(lucro1);
+                  valor1Elem.style.color = lucro1 >= 0 ? '#4ade80' : '#eea7ad';
+                }
+                
+                console.log(`📊 Aposta 1 (+1⚽GOL): ${aposta1.green} Green, ${aposta1.red} Red | Lucro: ${formatarMoeda(lucro1)}`);
+              }
+              
+              // ========== ATUALIZAR APOSTA 2: +0.5⚽GOL ==========
+              const aposta2 = data.apostas.aposta_2;
+              if (aposta2) {
+                document.getElementById('placar-2-green').textContent = aposta2.green;
+                document.getElementById('placar-2-red').textContent = aposta2.red;
+                
+                // Calcular valor final
+                const lucro2 = (aposta2.lucro_coef_green + aposta2.lucro_coef_red) * valorUnd;
+                const valor2Elem = document.getElementById('valor-2-final');
+                if (valor2Elem) {
+                  valor2Elem.textContent = formatarMoeda(lucro2);
+                  valor2Elem.style.color = lucro2 >= 0 ? '#4ade80' : '#eea7ad';
+                }
+                
+                console.log(`📊 Aposta 2 (+0.5⚽GOL): ${aposta2.green} Green, ${aposta2.red} Red | Lucro: ${formatarMoeda(lucro2)}`);
+              }
+              
+              // ========== ATUALIZAR APOSTA 3: +1⛳️CANTOS ==========
+              const aposta3 = data.apostas.aposta_3;
+              if (aposta3) {
+                document.getElementById('placar-3-green').textContent = aposta3.green;
+                document.getElementById('placar-3-red').textContent = aposta3.red;
+                
+                // Calcular valor final
+                const lucro3 = (aposta3.lucro_coef_green + aposta3.lucro_coef_red) * valorUnd;
+                const valor3Elem = document.getElementById('valor-3-final');
+                if (valor3Elem) {
+                  valor3Elem.textContent = formatarMoeda(lucro3);
+                  valor3Elem.style.color = lucro3 >= 0 ? '#4ade80' : '#eea7ad';
+                }
+                
+                console.log(`📊 Aposta 3 (+1⛳️CANTOS): ${aposta3.green} Green, ${aposta3.red} Red | Lucro: ${formatarMoeda(lucro3)}`);
+              }
+              
+              // ========== ATUALIZAR TOTAL ==========
+              if (data.total) {
+                document.getElementById('placar-total-green').textContent = data.total.green;
+                document.getElementById('placar-total-red').textContent = data.total.red;
+                
+                // Calcular valor final total
+                const lucroTotal = (data.total.lucro_coef_green + data.total.lucro_coef_red) * valorUnd;
+                const valorTotalElem = document.getElementById('valor-total-final');
+                if (valorTotalElem) {
+                  valorTotalElem.textContent = formatarMoeda(lucroTotal);
+                  valorTotalElem.style.color = lucroTotal >= 0 ? '#4ade80' : '#eea7ad';
+                }
+                
+                console.log(`📊 Total do dia: ${data.total.green} Green, ${data.total.red} Red | Lucro Total: ${formatarMoeda(lucroTotal)}`);
+              }
+            } else {
+              console.warn('⚠️ Dados inválidos ou sem sucesso:', data);
+            }
+          })
+          .catch(error => console.error('❌ Erro ao carregar placar:', error));
+      }
+      
+      // Carregar ao abrir página
+      document.addEventListener('DOMContentLoaded', function() {
+        setTimeout(function() {
+          atualizarPlacarDia();
+        }, 500);
+      });
+      
+      // Atualizar a cada 10 segundos
+      setInterval(atualizarPlacarDia, 10000);
+      
+      // ✅ ADICIONAR LISTENER PARA MUDANÇAS NO INPUT UND
+      const undInput = document.getElementById('resumo-valor-und-input');
+      if (undInput) {
+        undInput.addEventListener('change', function() {
+          console.log('💰 Valor UND alterado, recalculando placares...');
+          setTimeout(atualizarPlacarDia, 100);
+        });
+        
+        undInput.addEventListener('blur', function() {
+          console.log('💰 Input UND perdeu foco, recalculando placares...');
+          setTimeout(atualizarPlacarDia, 100);
+        });
+      }
+    </script>
+
     <script src="js/rotulo-lucro-dinamico.js?v=<?php echo time(); ?>" defer></script>
 
     <!-- ✅ SCRIPT PARA SALVAR MENSAGENS NO BANCO DE DADOS -->
@@ -1029,6 +1533,148 @@ if (!isset($_SESSION['usuario_id']) || empty($_SESSION['usuario_id'])) {
 
     <!-- ✅ SCRIPT PARA CARREGAR DADOS DINÂMICOS - CLONE DE HOME.PHP -->
     <script>
+    // ✅ ADICIONAR LISTENERS PARA DATA E UND NA INICIALIZAÇÃO
+    document.addEventListener('DOMContentLoaded', function() {
+      // Atualizar Data
+      function atualizarData() {
+        const hoje = new Date();
+        const diasSemana = ['Domingo', 'Segunda-Feira', 'Terça-Feira', 'Quarta-Feira', 'Quinta-Feira', 'Sexta-Feira', 'Sábado'];
+        const dia = String(hoje.getDate()).padStart(2, '0');
+        const mes = String(hoje.getMonth() + 1).padStart(2, '0');
+        const diaSemana = diasSemana[hoje.getDay()];
+        
+        const textoDia = `${diaSemana} - ${dia}/${mes}`;
+        const resumoDiaData = document.getElementById('resumo-dia-data');
+        if (resumoDiaData) {
+          resumoDiaData.textContent = textoDia;
+        }
+      }
+      
+      atualizarData();
+      
+      // Atualizar UND a cada 30 segundos
+      setInterval(atualizarData, 30000);
+    });
+
+    /*
+    // ✅ SCRIPT ANTIGO - AGORA SUBSTITUÍDO PELO NOVO SISTEMA
+    // ✅ FUNÇÃO PARA FORMATAR MOEDA NA ENTRADA
+    function formatarMoedaAoDigitar(input) {
+      let valor = input.value.replace(/\D/g, '');
+      
+      if (valor.length === 0) {
+        input.value = 'R$ 0,00';
+        return;
+      }
+      
+      // Converter para número com 2 casas decimais
+      valor = (parseInt(valor) / 100).toLocaleString('pt-BR', {
+        style: 'currency',
+        currency: 'BRL'
+      });
+      
+      input.value = valor;
+    }
+
+    // ✅ ADICIONAR LISTENER NA ENTRADA DE UND
+    document.addEventListener('DOMContentLoaded', function() {
+      const undInput = document.getElementById('resumo-valor-und-input');
+      if (undInput) {
+        // Formatar ao digitar
+        undInput.addEventListener('input', function(e) {
+          formatarMoedaAoDigitar(e.target);
+        });
+        
+        // Remover máscara ao focar
+        undInput.addEventListener('focus', function(e) {
+          const valorLimpo = e.target.value.replace(/\D/g, '');
+          e.target.value = valorLimpo;
+        });
+        
+        // Recolocar máscara ao sair
+        undInput.addEventListener('blur', function(e) {
+          if (e.target.value === '') {
+            e.target.value = 'R$ 0,00';
+          } else {
+            formatarMoedaAoDigitar(e.target);
+          }
+        });
+      }
+    });
+
+    // ✅ FUNÇÃO PARA ATUALIZAR RESUMO COM DATA E UND
+    function atualizarResumoDiaEUnd() {
+      // Atualizar data
+      const hoje = new Date();
+      const diasSemana = ['Domingo', 'Segunda-Feira', 'Terça-Feira', 'Quarta-Feira', 'Quinta-Feira', 'Sexta-Feira', 'Sábado'];
+      const dia = String(hoje.getDate()).padStart(2, '0');
+      const mes = String(hoje.getMonth() + 1).padStart(2, '0');
+      const ano = hoje.getFullYear();
+      const diaSemana = diasSemana[hoje.getDay()];
+      
+      const textoDia = `${diaSemana} - ${dia}/${mes}`;
+      const resumoDiaData = document.getElementById('resumo-dia-data');
+      if (resumoDiaData) {
+        resumoDiaData.textContent = textoDia;
+        console.log('📅 Data atualizada:', textoDia);
+      }
+      
+      // Obter valor da unidade
+      const undInput = document.getElementById('resumo-valor-und-input');
+      if (!undInput) {
+        console.error('❌ Elemento #resumo-valor-und-input não encontrado');
+        return;
+      }
+      
+      // ✅ NÃO SOBRESCREVER se o usuário já digitou um valor diferente
+      const valorAtual = undInput.value.replace(/\D/g, '');
+      const valorPadrao = 'R$ 0,00'.replace(/\D/g, '');
+      
+      // Se o usuário já mudou o valor, não sobrescrever
+      if (valorAtual !== valorPadrao && valorAtual !== '') {
+        console.log('✅ Valor já foi editado pelo usuário, não sobrescrevendo:', undInput.value);
+        return;
+      }
+      
+      // Tentar obter valor da unidade do localStorage
+      let valorUnd = localStorage.getItem('valor-unidade');
+      
+      if (valorUnd) {
+        // Se tiver no localStorage, usar
+        undInput.value = valorUnd;
+        console.log('💾 UND do localStorage:', valorUnd);
+      } else {
+        // Se não tiver, fazer fetch para obter-und.php
+        console.log('🔄 Buscando UND do servidor...');
+        fetch('obter-und.php')
+          .then(response => {
+            if (!response.ok) {
+              throw new Error('Erro na resposta: ' + response.status);
+            }
+            return response.json();
+          })
+          .then(data => {
+            console.log('📡 Resposta recebida:', data);
+            
+            if (data.success && data.valor_formatado) {
+              undInput.value = data.valor_formatado;
+              console.log('✅ UND atualizado:', data.valor_formatado);
+              
+              // Salvar no localStorage
+              localStorage.setItem('valor-unidade', data.valor_formatado);
+            } else {
+              undInput.value = data.valor_formatado || 'R$ 0,00';
+              console.warn('⚠️ Dados não carregados, usando padrão:', data.valor_formatado);
+            }
+          })
+          .catch(error => {
+            console.error('❌ Erro ao obter UND:', error);
+            undInput.value = 'R$ 0,00';
+          });
+      }
+    }
+    */
+
     // ✅ FUNÇÃO PARA CARREGAR DADOS DINÂMICOS
     function carregarDadosBancaELucro() {
       // Só carregar se o usuário estiver autenticado
@@ -1123,7 +1769,9 @@ if (!isset($_SESSION['usuario_id']) || empty($_SESSION['usuario_id'])) {
     });
 
     // ✅ ATUALIZAR A CADA 30 SEGUNDOS
-    setInterval(carregarDadosBancaELucro, 30000);
+    setInterval(function() {
+      carregarDadosBancaELucro();
+    }, 30000);
     </script>
 
     <!-- ✅ SCRIPT PARA MODAL DE HISTÓRICO DE RESULTADOS -->
