@@ -130,6 +130,74 @@ function renderizarModalHistorico(data, modal, time1, time2, tipo, limite = 5) {
   const resultados1 = historicoTime1.slice(0, limite);
   const resultados2 = historicoTime2.slice(0, limite);
 
+  // ✅ SINCRONIZAR RESULTADOS GREEN - VERSÃO MELHORADA
+  // Se um jogo foi GREEN, ambos os times devem ver como GREEN
+  // Comparar pela DATA E pelos TIMES envolvidos para identificar o mesmo jogo
+
+  console.log("🔍 Antes da sincronização:");
+  console.log("Time1 resultados:", resultados1);
+  console.log("Time2 resultados:", resultados2);
+
+  resultados1.forEach((jogo1, idx1) => {
+    if (jogo1.resultado === "GREEN" || jogo1.resultado === "green") {
+      console.log(
+        `🟢 Time1[${idx1}] é GREEN - buscando correspondente em Time2...`
+      );
+
+      // Procurar jogo de mesma data E que envolva os mesmos times
+      const jogoCorrespondente = resultados2.find((jogo2) => {
+        const mesmaData = jogo2.data_criacao === jogo1.data_criacao;
+        const mesmosTeams =
+          (jogo2.time_1.toLowerCase() === jogo1.time_1.toLowerCase() &&
+            jogo2.time_2.toLowerCase() === jogo1.time_2.toLowerCase()) ||
+          (jogo2.time_1.toLowerCase() === jogo1.time_2.toLowerCase() &&
+            jogo2.time_2.toLowerCase() === jogo1.time_1.toLowerCase());
+
+        console.log(`  Comparando: data=${mesmaData}, teams=${mesmosTeams}`);
+        return mesmaData && mesmosTeams;
+      });
+
+      if (jogoCorrespondente) {
+        console.log(`✅ Encontrado correspondente! Sincronizando para GREEN`);
+        jogoCorrespondente.resultado = "GREEN";
+      } else {
+        console.log(`❌ Não encontrado correspondente`);
+      }
+    }
+  });
+
+  // Também sincronizar time2 para time1
+  resultados2.forEach((jogo2, idx2) => {
+    if (jogo2.resultado === "GREEN" || jogo2.resultado === "green") {
+      console.log(
+        `🟢 Time2[${idx2}] é GREEN - buscando correspondente em Time1...`
+      );
+
+      const jogoCorrespondente = resultados1.find((jogo1) => {
+        const mesmaData = jogo1.data_criacao === jogo2.data_criacao;
+        const mesmosTeams =
+          (jogo1.time_1.toLowerCase() === jogo2.time_1.toLowerCase() &&
+            jogo1.time_2.toLowerCase() === jogo2.time_2.toLowerCase()) ||
+          (jogo1.time_1.toLowerCase() === jogo2.time_2.toLowerCase() &&
+            jogo1.time_2.toLowerCase() === jogo2.time_1.toLowerCase());
+
+        console.log(`  Comparando: data=${mesmaData}, teams=${mesmosTeams}`);
+        return mesmaData && mesmosTeams;
+      });
+
+      if (jogoCorrespondente) {
+        console.log(`✅ Encontrado correspondente! Sincronizando para GREEN`);
+        jogoCorrespondente.resultado = "GREEN";
+      } else {
+        console.log(`❌ Não encontrado correspondente`);
+      }
+    }
+  });
+
+  console.log("🔍 Após sincronização:");
+  console.log("Time1 resultados:", resultados1);
+  console.log("Time2 resultados:", resultados2);
+
   // Calcular acurácia individual
   const acuracia1 = calcularAcuracia(resultados1);
   const acuracia2 = calcularAcuracia(resultados2);
@@ -171,11 +239,22 @@ function renderizarModalHistorico(data, modal, time1, time2, tipo, limite = 5) {
                 (resultado) => `
               <div class="historico-resultado ${getClasseResultado(
                 resultado.resultado
-              )}">
+              )}" title="${resultado.time_1} vs ${resultado.time_2}">
                 <span class="historico-resultado-icone">${getIconeResultado(
                   resultado.resultado
                 )}</span>
-                ${getTextoResultado(resultado)}
+                <div style="display: flex; flex-direction: column; gap: 2px; flex: 1;">
+                  <span class="historico-data">${new Date(
+                    resultado.data_criacao
+                  ).toLocaleDateString("pt-BR")}</span>
+                  <span style="font-size: 11px; color: #555; font-weight: 500; white-space: nowrap; overflow: hidden; text-overflow: ellipsis;">
+                    ${
+                      resultado.time_1 === "${time1}"
+                        ? resultado.time_2
+                        : resultado.time_1
+                    }
+                  </span>
+                </div>
               </div>
             `
               )
@@ -207,11 +286,22 @@ function renderizarModalHistorico(data, modal, time1, time2, tipo, limite = 5) {
                 (resultado) => `
               <div class="historico-resultado ${getClasseResultado(
                 resultado.resultado
-              )}">
+              )}" title="${resultado.time_1} vs ${resultado.time_2}">
                 <span class="historico-resultado-icone">${getIconeResultado(
                   resultado.resultado
                 )}</span>
-                ${getTextoResultado(resultado)}
+                <div style="display: flex; flex-direction: column; gap: 2px; flex: 1;">
+                  <span class="historico-data">${new Date(
+                    resultado.data_criacao
+                  ).toLocaleDateString("pt-BR")}</span>
+                  <span style="font-size: 11px; color: #555; font-weight: 500; white-space: nowrap; overflow: hidden; text-overflow: ellipsis;">
+                    ${
+                      resultado.time_1 === "${time2}"
+                        ? resultado.time_2
+                        : resultado.time_1
+                    }
+                  </span>
+                </div>
               </div>
             `
               )
@@ -250,12 +340,6 @@ function getIconeResultado(resultado) {
   if (resultado === "red" || resultado === "RED") return "❌";
   if (resultado === "reembolso" || resultado === "REEMBOLSO") return "↩️";
   return "⏳";
-}
-
-function getTextoResultado(resultado) {
-  const data = new Date(resultado.data_criacao);
-  const dataFormatada = data.toLocaleDateString("pt-BR");
-  return `<span class="historico-data">${dataFormatada}</span>`;
 }
 
 function calcularAcuracia(resultados) {

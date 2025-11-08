@@ -135,7 +135,9 @@ try {
     
     file_put_contents($logFile, "✅ Aposta encontrada: ID " . $aposta['id'] . "\n", FILE_APPEND);
     
-    // ✅ ATUALIZAR RESULTADO
+    // ✅ ATUALIZAR RESULTADO - PARA AMBOS OS TIMES
+    // Se o jogo foi GREEN, AMBOS os times veem como GREEN
+    // Atualizar TODAS as apostas que envolvem estes dois times com este tipo
     $updateQuery = "
         UPDATE bote
         SET 
@@ -146,7 +148,15 @@ try {
                 WHEN ? = 'REEMBOLSO' THEN 'CANCELADA'
                 ELSE 'ATIVA'
             END
-        WHERE id = ?
+        WHERE 
+            resultado IS NULL
+            AND status_aposta = 'ATIVA'
+            AND (
+                (time_1 LIKE ? AND time_2 LIKE ?)
+                OR (time_1 LIKE ? AND time_2 LIKE ?)
+            )
+            AND tipo_aposta LIKE ?
+            AND data_criacao >= DATE_SUB(NOW(), INTERVAL 24 HOUR)
     ";
     
     $updateStmt = $conexao->prepare($updateQuery);
@@ -155,15 +165,16 @@ try {
         throw new Exception("Erro ao preparar update: " . $conexao->error);
     }
     
-    $updateStmt->bind_param('ssssi', $resultado, $resultado, $resultado, $resultado, $aposta['id']);
+    $updateStmt->bind_param('sssssssss', $resultado, $resultado, $resultado, $resultado, $time1_search, $time2_search, $time2_search, $time1_search, $tipo_search);
     
     if (!$updateStmt->execute()) {
         throw new Exception("Erro ao atualizar: " . $updateStmt->error);
     }
     
+    $rowsAffected = $updateStmt->affected_rows;
     $updateStmt->close();
     
-    file_put_contents($logFile, "💾 Aposta atualizada com resultado: $resultado\n", FILE_APPEND);
+    file_put_contents($logFile, "💾 Apostas atualizadas com resultado: $resultado (Total: $rowsAffected)\n", FILE_APPEND);
     file_put_contents($logFile, "✅ Sucesso\n\n", FILE_APPEND);
     
     // ✅ RESPONDER COM SUCESSO
@@ -173,7 +184,8 @@ try {
         'mensagem' => 'Resultado atualizado com sucesso',
         'aposta_id' => $aposta['id'],
         'resultado' => $resultado,
-        'titulo' => $aposta['titulo']
+        'titulo' => $aposta['titulo'],
+        'apostas_atualizadas' => $rowsAffected
     ]);
     
 } catch (Exception $e) {

@@ -307,40 +307,6 @@ const TelegramMessenger = {
       this.addMessage(msg);
     });
 
-    // ✅ ADICIONAR LINHA DE TOTAL NO FINAL
-    if (validMessages.length > 0) {
-      // Calcular totais (valores fictícios para demonstração)
-      const totalGols1 = validMessages.reduce((sum, msg) => {
-        const placarMatch = (msg.text || msg.mensagem_completa || "").match(
-          /Placar:\s*(\d+)\s*-\s*(\d+)/
-        );
-        return sum + (placarMatch ? parseInt(placarMatch[1]) : 0);
-      }, 0);
-
-      const totalGols2 = validMessages.reduce((sum, msg) => {
-        const placarMatch = (msg.text || msg.mensagem_completa || "").match(
-          /Placar:\s*(\d+)\s*-\s*(\d+)/
-        );
-        return sum + (placarMatch ? parseInt(placarMatch[2]) : 0);
-      }, 0);
-
-      const totalOdds = (validMessages.length * 0).toFixed(2); // Placeholder
-
-      const totalHTML = `
-        <div style="padding: 10px 12px; background: #f5f5f5; display: flex; align-items: center; gap: 12px; border-top: 2px solid #333; font-size: 12px; font-weight: 600; margin-top: 8px;">
-          <div style="min-width: 80px; color: #333;">📊 TOTAL:</div>
-          <div style="text-align: center; min-width: 45px; color: #333;">${totalGols1}</div>
-          <div style="font-weight: bold; color: #333; font-size: 14px;">X</div>
-          <div style="text-align: center; min-width: 45px; color: #333;">${totalGols2}</div>
-          <div style="min-width: 70px; text-align: center; color: #0277bd;">R$ ${totalOdds}</div>
-        </div>
-      `;
-
-      const totalDiv = document.createElement("div");
-      totalDiv.innerHTML = totalHTML;
-      this.container.appendChild(totalDiv);
-    }
-
     // Auto-scroll para cima (não para baixo)
     setTimeout(() => this.scrollToTop(), 100);
   },
@@ -395,7 +361,31 @@ const TelegramMessenger = {
     const messageEl = document.createElement("div");
     messageEl.className = "telegram-message";
     messageEl.setAttribute("data-message-id", msg.id);
-    messageEl.innerHTML = formattedContent;
+    
+    // ✅ ADICIONAR CLASSE DE RESULTADO PARA COLORIR BORDA LEFT
+    if (msg.resultado === "GREEN") {
+      messageEl.classList.add("msg-with-green-result");
+    } else if (msg.resultado === "RED") {
+      messageEl.classList.add("msg-with-red-result");
+    } else if (msg.resultado === "REEMBOLSO") {
+      messageEl.classList.add("msg-with-refund-result");
+    } else {
+      // PENDENTE é o padrão
+      messageEl.classList.add("msg-with-pending-result");
+    }    messageEl.innerHTML = `
+      <div class="msg-header-external">
+        <div class="msg-header-left">
+          <span class="msg-title-external"><i class="fas fa-bell"></i> Oportunidade!</span>
+        </div>
+        <div class="msg-header-right">
+          <span class="msg-time-external">
+            <i class="fas fa-clock"></i>
+            ${msg.time || msg.hora_mensagem || ""}
+          </span>
+        </div>
+      </div>
+      ${formattedContent}
+    `;
 
     // ✅ INSERIR NO INÍCIO (para ordem de cima para baixo)
     this.container.insertBefore(messageEl, this.container.firstChild);
@@ -451,6 +441,23 @@ const TelegramMessenger = {
       console.log(
         `✨ RESULTADO ATUALIZADO! ${oldResultado} → ${newResultado} (ID: ${msg.id})`
       );
+
+      // ✅ MUDAR COR DA BORDA LEFT DE ACORDO COM RESULTADO
+      messageEl.classList.remove(
+        "msg-with-green-result",
+        "msg-with-red-result",
+        "msg-with-refund-result",
+        "msg-with-pending-result"
+      );
+      if (msg.resultado === "GREEN") {
+        messageEl.classList.add("msg-with-green-result");
+      } else if (msg.resultado === "RED") {
+        messageEl.classList.add("msg-with-red-result");
+      } else if (msg.resultado === "REEMBOLSO") {
+        messageEl.classList.add("msg-with-refund-result");
+      } else {
+        messageEl.classList.add("msg-with-pending-result");
+      }
 
       // ✅ EFEITO FLASH: Adicionar classe de animação
       messageEl.classList.add("message-flash");
@@ -699,12 +706,18 @@ const TelegramMessenger = {
       }
       tituloAbreviado = cantosMatch ? cantosMatch[0].trim() : "CANTOS";
 
-      // ✅ Formatar para: +XX CANTOS
+      // ✅ Formatar para: +XX CANTOS ASIATICOS
       if (tituloAbreviado && !tituloAbreviado.startsWith("+")) {
         // Extrair apenas números
         const numMatch = tituloAbreviado.match(/\d+[\.]?\d*/);
         if (numMatch) {
-          tituloAbreviado = "+" + numMatch[0] + " CANTOS";
+          tituloAbreviado = "+ " + numMatch[0] + " CANTOS ASIATICOS";
+        }
+      } else if (tituloAbreviado.startsWith("+")) {
+        // Se já começar com +, adicionar espaço e complemento
+        const numMatch = tituloAbreviado.match(/\d+[\.]?\d*/);
+        if (numMatch) {
+          tituloAbreviado = "+ " + numMatch[0] + " CANTOS ASIATICOS";
         }
       }
       console.log(
@@ -720,16 +733,25 @@ const TelegramMessenger = {
       if (!golsMatch) {
         golsMatch = tipoAposta.match(/\(\s*[\+]?\d+[^)]*\)/i);
       }
-      tituloAbreviado = golsMatch ? golsMatch[0].trim() : "GOLS";
 
-      // ✅ Formatar para: +XX GOLS
-      if (tituloAbreviado && !tituloAbreviado.startsWith("+")) {
-        // Extrair apenas números
-        const numMatch = tituloAbreviado.match(/\d+[\.]?\d*/);
+      if (golsMatch) {
+        const numMatch = golsMatch[0].match(/[\+]?(\d+[\.]?\d*)/);
         if (numMatch) {
-          tituloAbreviado = "+" + numMatch[0] + " GOLS";
+          const valor = numMatch[1];
+          // ✅ Se contém ".5", é "GOL - FT"
+          if (valor.includes(".5")) {
+            tituloAbreviado = "+ " + valor + " GOL - FT";
+          } else {
+            // ✅ Senão, é "GOLS ASIATICOS"
+            tituloAbreviado = "+ " + valor + " GOLS ASIATICOS";
+          }
+        } else {
+          tituloAbreviado = "GOLS";
         }
+      } else {
+        tituloAbreviado = "GOLS";
       }
+
       console.log("⚽ GOLS Match:", golsMatch ? golsMatch[0] : "NOT FOUND");
     }
 
@@ -761,63 +783,123 @@ const TelegramMessenger = {
     let statusHTML = "";
     let oddsCssClass = "";
     let statusAoVivo = "Ao Vivo"; // ✅ Padrão: Ao Vivo
+    let borderLeftColor = "#fbc02d"; // ✅ Cor padrão: amarelo (PENDENTE)
 
     if (resultado) {
       // Tem resultado - mudar para "Fim" e exibir resultado
       statusAoVivo = "Fim"; // ✅ Mudou para Fim
       if (resultado === "GREEN") {
-        statusHTML = '<span class="odds-resultado odds-green">GREEN</span>';
+        statusHTML =
+          '<span class="odds-resultado odds-green" style="padding: 4px 10px; border-radius: 4px; background: #4caf50; color: white; font-size: 11px;">GREEN</span>';
         oddsCssClass = "odds-with-result-green";
+        borderLeftColor = "#4caf50"; // ✅ Verde
       } else if (resultado === "RED") {
-        statusHTML = '<span class="odds-resultado odds-red">RED</span>';
+        statusHTML =
+          '<span class="odds-resultado odds-red" style="padding: 4px 10px; border-radius: 4px; background: #f44336; color: white; font-size: 11px;">RED</span>';
         oddsCssClass = "odds-with-result-red";
+        borderLeftColor = "#f44336"; // ✅ Vermelho
       } else if (resultado === "REEMBOLSO") {
         statusHTML =
-          '<span class="odds-resultado odds-refund">REEMBOLSO</span>';
+          '<span class="odds-resultado odds-refund" style="padding: 4px 10px; border-radius: 4px; background: #9e9e9e; color: white; font-size: 11px;">REEMBOLSO</span>';
         oddsCssClass = "odds-with-result-refund";
+        borderLeftColor = "#9e9e9e"; // ✅ Cinza
       }
     } else {
       // Sem resultado - exibir PENDENTE
-      statusHTML = '<span class="odds-resultado odds-pending">PENDENTE</span>';
+      statusHTML =
+        '<span class="odds-resultado odds-pending" style="padding: 4px 10px; border-radius: 4px; background: #fbc02d; color: white; font-size: 11px;">PENDENTE</span>';
       oddsCssClass = "odds-with-result-pending";
+      borderLeftColor = "#fbc02d"; // ✅ Amarelo
     }
 
-    // ✅ NOVO LAYOUT: Compacto com ícone, tipo aposta, placar e odds tudo em uma linha
+    // ✅ LAYOUT COM IMAGEM DE FUNDO (gol.jpg ou cantos.jpg)
     return `
-      <div class="telegram-formatted-message-nova" style="padding: 10px 12px; background: white; display: flex; align-items: center; gap: 12px; border-bottom: 1px solid #e0e0e0; font-size: 12px;">
-        <!-- Ícone + Tipo Aposta -->
-        <div style="min-width: 80px; font-weight: 600; color: #333;">
-          ${isCantos ? "🚩" : "⚽"} ${tituloAbreviado}
+      <div class="telegram-formatted-message" style="
+        background-image: url('${imagemSrc}');
+        background-size: cover;
+        background-position: center;
+        position: relative;
+        border-radius: 6px;
+        overflow: hidden;
+        margin: 8px 0;
+      ">
+        <!-- OVERLAY ESCURO -->
+        <div style="
+          position: absolute;
+          top: 0;
+          left: 0;
+          right: 0;
+          bottom: 0;
+          background: rgba(0, 0, 0, 0.6);
+          z-index: 1;
+        "></div>
+        
+        <!-- CONTEÚDO -->
+        <div style="
+          position: relative;
+          z-index: 2;
+          padding: 12px;
+          display: flex;
+          flex-direction: column;
+          gap: 13px;
+          color: white;
+        ">
+          <!-- Status "Ao Vivo" ou "Fim" no canto superior direito -->
+          <div style="position: absolute; top: 8px; right: 8px; z-index: 10; display: flex; align-items: center; gap: 4px; font-size: 9px; color: white; font-weight: 600;">
+            ${
+              resultado
+                ? '<span style="background: #f44336; color: white; padding: 4px 8px; border-radius: 3px; font-size: 10px; font-weight: 700;">FIM</span>'
+                : '<span style="width: 8px; height: 8px; background: #e74c3c; border-radius: 50%; animation: piscar 1s infinite;"></span><span>Ao Vivo</span>'
+            }
+          </div>
+          
+          <!-- Tipo Aposta -->
+          <div style="font-weight: 700; font-size: 14px; ${
+            isCantos ? "color: #ffeb3b;" : "color: #4ade80;"
+          }; text-transform: capitalize;">
+            ${tituloAbreviado.toLowerCase()}
+          </div>
+          
+          <!-- Times e Placar -->
+          <div style="display: flex; align-items: center; justify-content: center; gap: 6px; font-weight: 600; font-size: 13px;">
+            <div style="text-align: right; min-width: 50px;">
+              ${time1 ? time1.substring(0, 12) : "---"}
+            </div>
+            <div style="display: flex; gap: 3px; align-items: center;">
+              <div style="text-align: center; min-width: 28px; font-size: 16px; font-weight: 700;">${placar1}</div>
+              <div style="font-size: 14px;">X</div>
+              <div style="text-align: center; min-width: 28px; font-size: 16px; font-weight: 700;">${placar2}</div>
+            </div>
+            <div style="text-align: left; min-width: 50px;">
+              ${time2 ? time2.substring(0, 12) : "---"}
+            </div>
+          </div>
+          
+          <!-- Odds e Resultado -->
+          <div style="display: flex; justify-content: space-between; align-items: center; font-size: 12px; font-weight: 600;">
+            <div style="color: #ffeb3b;">
+              💰 R$ ${odds}
+            </div>
+            <div style="font-size: 12px;">
+              ${statusHTML}
+            </div>
+          </div>
         </div>
         
-        <!-- Time 1 / Placar 1 -->
-        <div style="text-align: center; min-width: 45px;">
-          <div style="font-size: 11px; color: #666; margin-bottom: 2px;">${
-            time1 ? time1.substring(0, 10) : "---"
-          }</div>
-          <div style="font-weight: bold; font-size: 14px; color: #333;">${placar1}</div>
-        </div>
-        
-        <!-- Separador X -->
-        <div style="font-weight: bold; color: #999; font-size: 14px;">X</div>
-        
-        <!-- Time 2 / Placar 2 -->
-        <div style="text-align: center; min-width: 45px;">
-          <div style="font-size: 11px; color: #666; margin-bottom: 2px;">${
-            time2 ? time2.substring(0, 10) : "---"
-          }</div>
-          <div style="font-weight: bold; font-size: 14px; color: #333;">${placar2}</div>
-        </div>
-        
-        <!-- Odds -->
-        <div style="min-width: 70px; text-align: center; font-weight: 600; color: #0277bd;">
-          R$ ${odds}
-        </div>
-        
-        <!-- Resultado -->
-        <div style="min-width: 60px;">
-          ${statusHTML}
-        </div>
+        <!-- ESTILO RESPONSIVO PARA MOBILE -->
+        <style>
+          @keyframes piscar {
+            0%, 49% { opacity: 1; }
+            50%, 100% { opacity: 0.4; }
+          }
+          
+          @media (max-width: 480px) {
+            .telegram-formatted-message .odds-resultado {
+              font-size: 10px !important;
+              padding: 3px 8px !important;
+            }
+          }
+        </style>
       </div>
     `;
   },

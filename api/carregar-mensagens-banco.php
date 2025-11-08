@@ -91,7 +91,7 @@ function getMessagesFromDatabase() {
     global $conexao;
     
     try {
-        // ✅ BUSCAR TODAS AS MENSAGENS (não apenas de hoje)
+        // ✅ BUSCAR APENAS MENSAGENS DE HOJE
         $query = "
             SELECT 
                 id,
@@ -114,6 +114,7 @@ function getMessagesFromDatabase() {
                 data_criacao,
                 UNIX_TIMESTAMP(data_criacao) as timestamp
             FROM bote
+            WHERE DATE(data_criacao) = CURDATE()
             ORDER BY data_criacao DESC
             LIMIT 100
         ";
@@ -181,82 +182,46 @@ function pollNewMessages() {
     $lastUpdateId = isset($_GET['last_update']) ? intval($_GET['last_update']) : 0;
     
     try {
-        // ✅ VERIFICAR SE COLUNA updated_at EXISTE
-        $columnCheck = $conexao->query("SHOW COLUMNS FROM bote LIKE 'updated_at'");
-        $hasUpdatedAt = ($columnCheck && $columnCheck->num_rows > 0);
+        // ✅ POLLING PARA HOJE APENAS
+        // Buscar mensagens de hoje com ID maior que o último visto
+        // OU que foram atualizadas (resultado mudou)
+        $query = "
+            SELECT 
+                id,
+                telegram_message_id,
+                titulo,
+                tipo_aposta,
+                time_1,
+                time_2,
+                placar_1,
+                placar_2,
+                escanteios_1,
+                escanteios_2,
+                valor_over,
+                odds,
+                tipo_odds,
+                hora_mensagem,
+                status_aposta,
+                resultado,
+                mensagem_completa,
+                data_criacao,
+                UNIX_TIMESTAMP(data_criacao) as timestamp
+            FROM bote
+            WHERE DATE(data_criacao) = CURDATE()
+            AND (
+                id > ?
+                OR resultado IS NOT NULL
+            )
+            ORDER BY data_criacao ASC
+            LIMIT 100
+        ";
         
-        if ($hasUpdatedAt && $lastCheck) {
-            // ✅ MODO NOVO: Polling incremental com updated_at
-            $query = "
-                SELECT 
-                    id,
-                    telegram_message_id,
-                    titulo,
-                    tipo_aposta,
-                    time_1,
-                    time_2,
-                    placar_1,
-                    placar_2,
-                    escanteios_1,
-                    escanteios_2,
-                    valor_over,
-                    odds,
-                    tipo_odds,
-                    hora_mensagem,
-                    status_aposta,
-                    resultado,
-                    mensagem_completa,
-                    data_criacao,
-                    updated_at,
-                    UNIX_TIMESTAMP(data_criacao) as timestamp
-                FROM bote
-                WHERE updated_at > ? OR (updated_at IS NULL AND id > ?)
-                ORDER BY data_criacao ASC
-                LIMIT 50
-            ";
-            
-            $stmt = $conexao->prepare($query);
-            if (!$stmt) {
-                throw new Exception("Erro ao preparar statement: " . $conexao->error);
-            }
-            
-            $stmt->bind_param("si", $lastCheck, $lastUpdateId);
-        } else {
-            // ✅ MODO ANTIGO: Polling por ID (fallback)
-            $query = "
-                SELECT 
-                    id,
-                    telegram_message_id,
-                    titulo,
-                    tipo_aposta,
-                    time_1,
-                    time_2,
-                    placar_1,
-                    placar_2,
-                    escanteios_1,
-                    escanteios_2,
-                    valor_over,
-                    odds,
-                    tipo_odds,
-                    hora_mensagem,
-                    status_aposta,
-                    resultado,
-                    mensagem_completa,
-                    data_criacao,
-                    UNIX_TIMESTAMP(data_criacao) as timestamp
-                FROM bote
-                WHERE id > ?
-                ORDER BY data_criacao ASC
-                LIMIT 50
-            ";
-            
-            $stmt = $conexao->prepare($query);
-            if (!$stmt) {
-                throw new Exception("Erro ao preparar statement: " . $conexao->error);
-            }
-            
-            $stmt->bind_param("i", $lastUpdateId);
+        $stmt = $conexao->prepare($query);
+        if (!$stmt) {
+            throw new Exception("Erro ao preparar statement: " . $conexao->error);
         }
+        
+        $stmt->bind_param("i", $lastUpdateId);
         
         $stmt->execute();
         $result = $stmt->get_result();
@@ -277,20 +242,16 @@ function pollNewMessages() {
                 'type' => $row['tipo_aposta'],
                 'status' => $row['status_aposta'],
                 'resultado' => $row['resultado'],
-                'updated_at' => $row['updated_at'] ?? null
+                'updated_at' => null
             ];
             
             $maxId = max($maxId, intval($row['id']));
-            
-            if (isset($row['updated_at']) && $row['updated_at']) {
-                $maxUpdatedAt = max($maxUpdatedAt, $row['updated_at']);
-            }
         }
         
         $stmt->close();
         
         if (count($newMessages) > 0) {
-            error_log("🔔 Polling: Encontradas " . count($newMessages) . " mensagens atualizadas");
+            error_log("🔔 Polling de HOJE: Encontradas " . count($newMessages) . " mensagens");
         }
         
         http_response_code(200);
@@ -299,7 +260,7 @@ function pollNewMessages() {
             'messages' => $newMessages,
             'last_update' => $maxId,
             'last_check' => $maxUpdatedAt,
-            'polling_mode' => $hasUpdatedAt ? 'incremental' : 'fallback',
+            'polling_mode' => 'today-only',
             'source' => 'database'
         ]);
         

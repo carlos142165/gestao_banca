@@ -7,7 +7,7 @@
 
 // Configurações de conexão
 // 🔧 PREENCHA COM OS DADOS DO SEU BANCO NA HOSTINGER
-define('DB_HOST', '127.0.0.1');  // Geralmente 127.0.0.1 na Hostinger
+define('DB_HOST', 'localhost');  // Hostinger geralmente usa 'localhost' para aplicações locais
 define('DB_USERNAME', 'u857325944_formu');  // ⚠️ SUBSTITUA COM SEU USUÁRIO
 define('DB_PASSWORD', 'JkF4B7N1');    // ⚠️ SUBSTITUA COM SUA SENHA
 define('DB_NAME', 'u857325944_formu');   // ⚠️ SUBSTITUA COM SEU BANCO

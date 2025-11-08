@@ -186,6 +186,17 @@
   transform: translateX(4px);
 }
 
+/* ========== DESTAQUE PARA CONFRONTOS DIRETOS ========== */
+.historico-resultado.historico-direto {
+  box-shadow: 0 0 0 2px #ff6b00, 0 4px 12px rgba(255, 107, 0, 0.3);
+  font-weight: 700;
+}
+
+.historico-resultado.historico-direto:hover {
+  transform: translateX(4px) scale(1.02);
+  box-shadow: 0 0 0 2px #ff6b00, 0 6px 16px rgba(255, 107, 0, 0.4);
+}
+
 /* ========== ESTADOS DOS RESULTADOS ========== */
 .resultado-green {
   background: linear-gradient(135deg, #e8f5e9 0%, #c8e6c9 100%);

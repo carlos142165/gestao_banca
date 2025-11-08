@@ -1,6 +1,7 @@
 <?php
 
-session_start();
+// ✅ NÃO USAR SESSION - API PÚBLICA
+// session_start();
 
 header('Content-Type: application/json; charset=utf-8');
 
@@ -54,7 +55,7 @@ if ($conexao->connect_error) {
 $conexao->set_charset("utf8mb4");
 
 try {
-    // Consultar histórico do TIME 1 na tabela 'bote'
+    // ✅ BUSCAR ÚLTIMOS 5 JOGOS DO TIME 1 (independentemente)
     $sql1 = "SELECT 
                 resultado,
                 data_criacao,
@@ -65,12 +66,14 @@ try {
                 tipo_aposta
             FROM bote 
             WHERE (
-                (LOWER(time_1) = LOWER(?) AND resultado IN ('GREEN', 'RED', 'REEMBOLSO'))
-                OR (LOWER(time_2) = LOWER(?) AND resultado IN ('GREEN', 'RED', 'REEMBOLSO'))
+                (LOWER(time_1) = LOWER(?) AND (resultado IN ('GREEN', 'RED', 'REEMBOLSO') OR resultado IS NULL))
+                OR (LOWER(time_2) = LOWER(?) AND (resultado IN ('GREEN', 'RED', 'REEMBOLSO') OR resultado IS NULL))
             )
             AND LOWER(tipo_aposta) LIKE LOWER(CONCAT('%', ?, '%'))
             ORDER BY data_criacao DESC
             LIMIT ?";
+
+    error_log("🔍 SQL1: $sql1");
 
     error_log("🔍 Executando query para $time1 com tipo=" . $tipo);
 
@@ -109,7 +112,7 @@ try {
 
     error_log("✅ Time 1 ($time1): " . count($historico_time1) . " resultados encontrados");
 
-    // Consultar histórico do TIME 2 na tabela 'bote'
+    // ✅ BUSCAR ÚLTIMOS 5 JOGOS DO TIME 2 (independentemente)
     $sql2 = "SELECT 
                 resultado,
                 data_criacao,
@@ -120,8 +123,8 @@ try {
                 tipo_aposta
             FROM bote
             WHERE (
-                (LOWER(time_1) = LOWER(?) AND resultado IN ('GREEN', 'RED', 'REEMBOLSO'))
-                OR (LOWER(time_2) = LOWER(?) AND resultado IN ('GREEN', 'RED', 'REEMBOLSO'))
+                (LOWER(time_1) = LOWER(?) AND (resultado IN ('GREEN', 'RED', 'REEMBOLSO') OR resultado IS NULL))
+                OR (LOWER(time_2) = LOWER(?) AND (resultado IN ('GREEN', 'RED', 'REEMBOLSO') OR resultado IS NULL))
             )
             AND LOWER(tipo_aposta) LIKE LOWER(CONCAT('%', ?, '%'))
             ORDER BY data_criacao DESC
