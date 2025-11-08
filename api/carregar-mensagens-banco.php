@@ -132,6 +132,12 @@ function getMessagesFromDatabase() {
         $lastId = 0;
         
         while ($row = $result->fetch_assoc()) {
+            // ✅ EXTRAIR VALOR OVER/UNDER DO TÍTULO OU MENSAGEM
+            $overUnderMatch = null;
+            if (preg_match('/([+\-]?\d+\.?\d*)\s*(?:GOLS?|⚽|GOL|CANTOS?)/i', $row['titulo'] ?: $row['mensagem_completa'], $matches)) {
+                $overUnderMatch = $matches[1];
+            }
+            
             $messages[] = [
                 'id' => intval($row['telegram_message_id'] ?: $row['id']),
                 'text' => $row['mensagem_completa'],
@@ -142,7 +148,11 @@ function getMessagesFromDatabase() {
                 'title' => $row['titulo'],
                 'type' => $row['tipo_aposta'],
                 'status' => $row['status_aposta'],
-                'resultado' => $row['resultado']
+                'resultado' => $row['resultado'],
+                'time_1' => $row['time_1'],
+                'time_2' => $row['time_2'],
+                'valor_over' => $row['valor_over'],
+                'over_under_value' => $overUnderMatch
             ];
             
             $lastId = max($lastId, intval($row['id']));
@@ -208,11 +218,7 @@ function pollNewMessages() {
                 UNIX_TIMESTAMP(data_criacao) as timestamp
             FROM bote
             WHERE DATE(data_criacao) = CURDATE()
-            AND (
-                id > ?
-                OR resultado IS NOT NULL
-            )
-            ORDER BY data_criacao ASC
+            ORDER BY data_criacao DESC
             LIMIT 100
         ";
         
@@ -221,16 +227,20 @@ function pollNewMessages() {
             throw new Exception("Erro ao preparar statement: " . $conexao->error);
         }
         
-        $stmt->bind_param("i", $lastUpdateId);
-        
         $stmt->execute();
         $result = $stmt->get_result();
         
         $newMessages = [];
         $maxId = $lastUpdateId;
-        $maxUpdatedAt = $lastCheck ?: date('Y-m-d H:i:s');
+        $maxUpdatedAt = date('Y-m-d H:i:s');
         
         while ($row = $result->fetch_assoc()) {
+            // ✅ EXTRAIR VALOR OVER/UNDER DO TÍTULO OU MENSAGEM
+            $overUnderMatch = null;
+            if (preg_match('/([+\-]?\d+\.?\d*)\s*(?:GOLS?|⚽|GOL|CANTOS?)/i', $row['titulo'] ?: $row['mensagem_completa'], $matches)) {
+                $overUnderMatch = $matches[1];
+            }
+            
             $newMessages[] = [
                 'id' => intval($row['telegram_message_id'] ?: $row['id']),
                 'text' => $row['mensagem_completa'],
@@ -242,6 +252,10 @@ function pollNewMessages() {
                 'type' => $row['tipo_aposta'],
                 'status' => $row['status_aposta'],
                 'resultado' => $row['resultado'],
+                'time_1' => $row['time_1'],
+                'time_2' => $row['time_2'],
+                'valor_over' => $row['valor_over'],
+                'over_under_value' => $overUnderMatch,
                 'updated_at' => null
             ];
             
@@ -326,6 +340,12 @@ function getMessagesByDate() {
         $messages = [];
         
         while ($row = $result->fetch_assoc()) {
+            // ✅ EXTRAIR VALOR OVER/UNDER DO TÍTULO OU MENSAGEM
+            $overUnderMatch = null;
+            if (preg_match('/([+\-]?\d+\.?\d*)\s*(?:GOLS?|⚽|GOL|CANTOS?)/i', $row['titulo'] ?: $row['mensagem_completa'], $matches)) {
+                $overUnderMatch = $matches[1];
+            }
+            
             $messages[] = [
                 'id' => intval($row['telegram_message_id'] ?: $row['id']),
                 'text' => $row['mensagem_completa'],
@@ -336,7 +356,11 @@ function getMessagesByDate() {
                 'title' => $row['titulo'],
                 'type' => $row['tipo_aposta'],
                 'status' => $row['status_aposta'],
-                'resultado' => $row['resultado']
+                'resultado' => $row['resultado'],
+                'time_1' => $row['time_1'],
+                'time_2' => $row['time_2'],
+                'valor_over' => $row['valor_over'],
+                'over_under_value' => $overUnderMatch
             ];
         }
         

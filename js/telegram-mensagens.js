@@ -17,11 +17,15 @@ const TelegramMessenger = {
     }
 
     console.log("✅ Telegram Messenger inicializado");
-    console.log("⚡ Background reload: A cada 1 segundo (silencioso)");
+    console.log("⚡ Polling: Verificando atualizações a cada 500ms");
     console.log("📦 Cache: Sistema de detecção de mudanças ativo");
-    this.loadMessages();
-    // ✅ POLLING REATIVADO PARA ATUALIZAÇÕES EM TEMPO REAL
+
+    // ✅ INICIAR POLLING PRIMEIRO (antes de carregar as mensagens)
+    // Assim, se chegar uma mensagem nova enquanto está carregando, será detectada
     this.startPolling();
+
+    // ✅ DEPOIS carregar as mensagens
+    this.loadMessages();
   },
 
   loadMessages() {
@@ -201,8 +205,16 @@ const TelegramMessenger = {
     );
 
     // ✅ Inicializar timestamp de último check
-    this.lastCheck = new Date().toISOString().slice(0, 19).replace("T", " ");
+    // IMPORTANTE: Usar a hora atual menos 5 minutos para garantir que pega mensagens antigas também
+    const now = new Date();
+    const fiveMinutesAgo = new Date(now.getTime() - 5 * 60 * 1000);
+    this.lastCheck = fiveMinutesAgo
+      .toISOString()
+      .slice(0, 19)
+      .replace("T", " ");
     this.lastUpdateId = 0;
+
+    console.log(`[POLLING] Iniciando com lastCheck: ${this.lastCheck}`);
 
     const poll = () => {
       this.pollCount++;
@@ -220,6 +232,14 @@ const TelegramMessenger = {
           return response.json();
         })
         .then((data) => {
+          console.log(`[POLLING] #${this.pollCount} - Resposta da API:`, {
+            success: data.success,
+            messages_count: data.messages?.length || 0,
+            last_check: data.last_check,
+            last_update: data.last_update,
+            polling_mode: data.polling_mode,
+          });
+
           if (data.success) {
             // ✅ Atualizar ponteiros de tempo
             if (data.last_check) {
@@ -236,42 +256,78 @@ const TelegramMessenger = {
               );
 
               data.messages.forEach((msg) => {
+                // ✅ VERIFICAR NO CACHE SE A MENSAGEM JÁ FOI VISTA
                 const cached = this.messagesCache.get(msg.id);
+                const isNewMessage = !cached; // Se não está no cache, é nova
+
                 console.log(`  [DEBUG] Msg ${msg.id}:`, {
-                  cached: cached?.resultado || "nao existe",
-                  novo: msg.resultado || "null",
-                  updated_at: msg.updated_at,
+                  isNew: isNewMessage,
+                  cachedResultado: cached?.resultado || "n/a",
+                  novoResultado: msg.resultado || "null",
                   isDifferent: !cached || cached.resultado !== msg.resultado,
                 });
 
-                // ✅ ADICIONAR ou ATUALIZAR mensagem
-                const exists = document.querySelector(
-                  `[data-message-id="${msg.id}"], [data-message-id="${msg.update_id}"]`
+                // ✅ CRIAR HASH ÚNICO PARA MATCH PRECISO (times + OVER/UNDER)
+                const overUnderMatch = (
+                  msg.titulo ||
+                  msg.text ||
+                  msg.mensagem_completa ||
+                  ""
+                ).match(/([+\-]?\d+\.?\d*)\s*(?:GOLS?|⚽|GOL|CANTOS?)/i);
+                const overUnderValue = overUnderMatch ? overUnderMatch[1] : "";
+                const uniqueHash = `${msg.time_1 || ""}_${
+                  msg.time_2 || ""
+                }_${overUnderValue}`
+                  .toLowerCase()
+                  .replace(/\s+/g, "_");
+
+                // ✅ PROCURAR A MENSAGEM NO DOM
+                let exists = document.querySelector(
+                  `[data-message-id="${msg.id}"]`
                 );
 
-                if (exists) {
-                  // ✅ Mensagem já existe - ATUALIZAR
-                  const cachedResultado = cached ? cached.resultado : null;
-                  const serverResultado = msg.resultado || null;
-
-                  if (cachedResultado !== serverResultado) {
-                    console.warn(
-                      `[UPDATE] Atualizando DOM ID ${msg.id}: "${cachedResultado}" -> "${serverResultado}"`
+                // ✅ SE NÃO ENCONTROU POR ID, TENTAR PELO HASH ÚNICO (mais preciso)
+                if (!exists && uniqueHash) {
+                  exists = document.querySelector(
+                    `[data-unique-hash="${uniqueHash}"]`
+                  );
+                  if (exists) {
+                    console.log(
+                      `   🔍 Encontrada por HASH em vez de ID: ${uniqueHash}`
                     );
-                    this.updateMessage(msg, exists);
                   }
-                } else {
-                  // ✅ Mensagem nova - ADICIONAR ao DOM
-                  console.log(`[NEW] Nova mensagem detectada: ID ${msg.id}`);
+                }
+
+                // ✅ LÓGICA DE DECISÃO
+                if (isNewMessage) {
+                  // ✅ MENSAGEM NUNCA FOI VISTA - ADICIONAR AO DOM
+                  console.log(`[NEW] 🆕 Nova mensagem detectada: ID ${msg.id}`);
                   this.addMessage(msg);
+                } else if (exists && cached.resultado !== msg.resultado) {
+                  // ✅ MENSAGEM EXISTE E RESULTADO MUDOU - ATUALIZAR
+                  console.warn(
+                    `[UPDATE] ⚡ Resultado atualizado ID ${msg.id}: "${cached.resultado}" -> "${msg.resultado}"`
+                  );
+                  this.updateMessage(msg, exists);
+                } else if (!exists) {
+                  // ✅ MENSAGEM ESTAVA NO CACHE MAS NÃO ESTÁ NO DOM - RE-ADICIONAR
+                  console.log(
+                    `[RECOVER] 🔄 Mensagem perdida no DOM, re-adicionando ID: ${msg.id}`
+                  );
+                  this.addMessage(msg);
+                } else {
+                  // ✅ MENSAGEM EXISTE E RESULTADO IGUAL - SEM AÇÃO
+                  console.log(`[NOOP] ⏭️ Sem mudanças para ID ${msg.id}`);
                 }
               });
             }
+          } else {
+            console.warn("[POLLING] API retornou success=false:", data);
           }
         })
-        .catch((error) =>
-          console.error("[ERROR] Erro ao fazer polling:", error)
-        );
+        .catch((error) => {
+          console.error("[ERROR] Erro ao fazer polling:", error);
+        });
     };
 
     // ✅ POLLING RÁPIDO: A cada 500ms (meio segundo) para capturar resultados instantaneamente
@@ -361,7 +417,23 @@ const TelegramMessenger = {
     const messageEl = document.createElement("div");
     messageEl.className = "telegram-message";
     messageEl.setAttribute("data-message-id", msg.id);
-    
+
+    // ✅ CRIAR IDENTIFICADOR ÚNICO: times + OVER/UNDER value para match preciso
+    const overUnderMatch = (msg.titulo || msg.text || "").match(
+      /([+\-]?\d+\.?\d*)\s*(?:GOLS?|⚽|GOL|CANTOS?)/i
+    );
+    const overUnderValue = overUnderMatch ? overUnderMatch[1] : "";
+    const uniqueHash = `${msg.time_1 || ""}_${
+      msg.time_2 || ""
+    }_${overUnderValue}`
+      .toLowerCase()
+      .replace(/\s+/g, "_");
+    messageEl.setAttribute("data-unique-hash", uniqueHash);
+
+    console.log(
+      `✅ Mensagem criada - ID: ${msg.id}, Hash: ${uniqueHash}, OVER/UNDER: ${overUnderValue}`
+    );
+
     // ✅ ADICIONAR CLASSE DE RESULTADO PARA COLORIR BORDA LEFT
     if (msg.resultado === "GREEN") {
       messageEl.classList.add("msg-with-green-result");
@@ -372,7 +444,8 @@ const TelegramMessenger = {
     } else {
       // PENDENTE é o padrão
       messageEl.classList.add("msg-with-pending-result");
-    }    messageEl.innerHTML = `
+    }
+    messageEl.innerHTML = `
       <div class="msg-header-external">
         <div class="msg-header-left">
           <span class="msg-title-external"><i class="fas fa-bell"></i> Oportunidade!</span>
@@ -431,10 +504,23 @@ const TelegramMessenger = {
     }
 
     // ✅ ATUALIZAR CACHE COM NOVO RESULTADO (sempre)
+    // ✅ TAMBÉM ARMAZENAR O HASH ÚNICO PARA REFERÊNCIA FUTURA
+    const overUnderMatch = (msgText || msg.titulo || "").match(
+      /([+\-]?\d+\.?\d*)\s*(?:GOLS?|⚽|GOL|CANTOS?)/i
+    );
+    const overUnderValue = overUnderMatch ? overUnderMatch[1] : "";
+    const uniqueHash = `${msg.time_1 || ""}_${
+      msg.time_2 || ""
+    }_${overUnderValue}`
+      .toLowerCase()
+      .replace(/\s+/g, "_");
+
     this.messagesCache.set(msg.id, {
       id: msg.id,
       resultado: newResultado,
       timestamp: Date.now(),
+      uniqueHash: uniqueHash,
+      overUnderValue: overUnderValue,
     });
 
     if (resultadoMudou) {
