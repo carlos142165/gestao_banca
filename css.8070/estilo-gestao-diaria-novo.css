@@ -1,0 +1,6781 @@
+/* =======================================================================================================================================================
+     - ROOT VARIABLES (CONSOLIDADO) - CONTROLE INDIVIDUAL DE CADA ELEMENTO
+  =======================================================================================================================================================*/
+:root {
+  /**/
+  /**/
+  /**/
+  /**/
+  /**/
+  /**/
+  /* --------------------------------------------------
+    ALTURA - LARGURA - ALTURA - LARGURA - 
+  -------------------------------------------------- */
+  --btn-add-usuario-size: clamp(30px, 6vw, 30px); /* Botão adicionar Mentor*/
+  --lista-mentores-width: 90%; /* Campo: ( MENTORES ) */
+  --mentor-img-size: clamp(50px, 8vw, 50px); /* ( FOTO MENTOR ) */
+
+  --bloco1-max-height: calc(100vh - 80px);
+  --bloco1-padding-left: 0;
+  --widget-meta-max-height: min(520px, 62vh);
+  --widget-meta-alt-max-height: 48vh;
+  --widget-conteudo-max-height: min(420px, 55vh);
+  --mentor-card-height: 82px;
+  --mentor-card-min-height: 82px;
+
+  --value-box-saldo-min-width: clamp(80px, 16vw, 120px);
+  --mentor-wrapper-scrollbar-width: 8px;
+
+  --bloco1-scrollbar-thumb: rgba(124, 117, 117, 0.911);
+  /* --------------------------------------------------
+    ALTURA - LARGURA - ALTURA - LARGURA - 
+  -------------------------------------------------- */
+  /**/
+  /**/
+  /**/
+  /**/
+  /**/
+  /* --------------------------------------------------
+   - MARGIN TOP - MARGIN TOP - MARGIN TOP -
+  -------------------------------------------------- */
+  --data-header-margin-top: -15px !important; /* Data do dia */
+  --data-header-icon-margin-top: -15px !important; /* icone calendario */
+  --periodo-selecao-top: 22px !important; /* Periodo (DIA - MÊS - ANO ) */
+  --periodo-selecao-margin-top: 0px !important; /* Periodo (DIA - MÊS - ANO ) */
+  --widget-conteudo-principal-margin-top: 14px; /* Campo: ( valor meta - meta fixa - rotulo - barra de progresso +++  ) */
+  --widget-meta-valor-margin-top: 12px; /* valor meta */
+  --widget-meta-rotulo-margin-top: -3px !important; /* rótulo da meta (ex: 'Resta p/ Meta do Dia') */
+  --widget-barra-container-margin-top: 8px !important; /* Barra de progresso */
+  --saldo-info-margin-top: 10px !important; /* Saldo ( POSITIVO / NEGATIVO ) */
+  --meta-badge-top: 12px !important; /* Meta Fixa / Meta Turbo */
+  --btn-add-usuario-margin-top: 0px !important; /* Botão adicionar Mentor*/
+  --area-central-margin-top: -16px; /* Campo : ( PLACAR ) */
+
+  --lista-mentores-margin-top: 18px; /* Campo: ( TODOS MENTORES ) */
+  --mentor-img-margin-top: 1px !important; /* ( FOTO MENTOR ) */
+  --mentor-nome-margin-top: 3px; /* ( NOME MENTOR ) */
+  --mentor-values-margin-top: 0px; /* PLACAR - MENTOR */
+  --value-box-saldo-margin-top: 0px; /* SALDO - MENTOR */
+
+  /* --------------------------------------------------
+   - MARGIN TOP - MARGIN TOP - MARGIN TOP -
+  -------------------------------------------------- */
+  /**/
+  /**/
+  /**/
+  /**/
+  /**/
+  /* --------------------------------------------------
+   - MARGIN LEFT - MARGIN RIGHT - MARGIN LEFT -
+  -------------------------------------------------- */
+  --data-header-margin-left: 0px !important; /* Data do dia */
+  --periodo-selecao-margin-left: 250px !important; /* Periodo (DIA - MÊS - ANO ) */
+  --widget-meta-valor-margin-left: 5px; /* valor meta */
+  --widget-meta-rotulo-margin-left: 5px; /* rótulo da meta (ex: 'Meta do Dia') */
+  --widget-barra-container-margin-left: 5px; /* Barra de progresso */
+  --rotulo-meta-margin-left: var(
+    --widget-meta-rotulo-margin-left
+  ); /* rótulo da meta (ex: 'Meta do Dia') */
+  --saldo-info-margin-left: 5px !important; /* Saldo ( POSITIVO / NEGATIVO ) */
+  --meta-badge-right: 56px !important; /* Meta Fixa / Meta Turbo */
+  --meta-badge-left: auto !important; /* Meta Fixa / Meta Turbo */
+  --btn-add-usuario-margin-left: 10px; /* Botão adicionar Mentor*/
+  --area-central-margin-left: 40px; /* Campo: ( PLACAR ) */
+  --pontuacao-gap: clamp(8px, 2vw, 20px); /* Separar ( PLACAR ) */
+
+  --lista-mentores-margin-left: 16px; /* Campo: ( MENTORES ) */
+  --mentor-wrapper-scrollbar-offset: 5px; /* barra de rolagem lateral */
+  --mentor-img-margin-left: 0px; /* ( FOTO MENTOR ) */
+  --mentor-card-padding: 15px; /* Campo: ( TODOS MENTORES ) */
+  --mentor-rank-margin-left: 5px; /* rank */
+  --mentor-values-margin-left: 15px; /* PLACAR - MENTOR */
+  --value-box-saldo-margin-left: 0px !important; /* SALDO - MENTOR */
+  --mentor-menu-externo-margin-left: 10px; /* Menu externo (3 pontos) */
+  /* --------------------------------------------------
+   - MARGIN LEFT - MARGIN LEFT - MARGIN LEFT -
+  -------------------------------------------------- */
+  /**/
+  /**/
+  /**/
+  /**/
+  /**/
+  /* --------------------------------------------------
+   - FONTE - FONTE  - FONTE - FONTE
+  -------------------------------------------------- */
+  --fs-placar-top-b1: 16px; /* ( SEPARADOR PLACAR ) */
+  --mentor-name-font-size: clamp(9px, 1.8vw, 12px); /* ( NOME MENTOR ) */
+
+  /* --------------------------------------------------
+   - FONTE - FONTE  - FONTE - FONTE
+  -------------------------------------------------- */
+  /**/
+  /**/
+  /**/
+  /**/
+  /**/
+  --container-resumos-margin-top: 15px;
+  /* control top spacing for the mentors list */
+
+  --widget-meta-valor-margin-bottom: 8px;
+  --widget-info-progresso-margin-top: 0;
+  --campo-mentores-margin-top: 0px;
+  --mentor-wrapper-margin-top: 10px;
+  --mentor-item-margin-bottom: 8px;
+
+  --valor-ultrapassou-margin-top: -9px;
+  --valor-ultrapassou-margin-bottom: 10px;
+  --widget-conteudo-principal-margin-bottom: 12px; /* Campo: ( valor meta - meta fixa - rotulo - barra de progresso +++  ) */
+  --nome-arquivo-margin-top: 10px;
+  --botoes-formulario-margin-top: 20px;
+  --modal-texto-margin-bottom: 30px;
+  --grupo-barra-margin-bottom-clamp: clamp(15px, 3vw, 20px);
+  --titulo-bloco-margin-bottom-clamp: clamp(15px, 3vw, 20px);
+  --bloco-meta-simples-margin-bottom-clamp: clamp(15px, 3vw, 20px);
+  --widget-conteudo-principal-margin: 0;
+  --global-margin-top: 8px !important;
+  /* Font size for placar top (match bloco-2) */
+
+  /**/
+  /**/
+  /**/
+  /**/
+  /**/
+
+  --widget-info-progresso-margin-left: 0;
+
+  --mentor-nome-margin-left: 0;
+  --valor-ultrapassou-margin-left: 0;
+  --mentor-card-sem-valores-margin-left: 0;
+  --btn-add-usuario-width: var(--btn-add-usuario-size);
+  --btn-add-usuario-height: var(--btn-add-usuario-size);
+
+  /* control top offset for the right area */
+
+  --mentor-menu-externo-margin-top: 0px;
+  --mentor-wrapper-margin-left: 0;
+  --mentor-right-margin-right: 6px;
+  --value-box-saldo-margin-left: 10px;
+  --separador-red-left: -12px;
+  --separador-red-left-ajuste: -10px;
+  --conteudo-left-margin-left: 15%;
+  /* Placar (pontuação) spacing controls */
+  --separador-margin: clamp(4px, 1vw, 8px);
+  /* PADDING */
+  --bloco1-padding-right: 0;
+  --mentor-values-inline-padding: 0 8px;
+  --porcentagem-fundo-padding: 0 10px;
+  --porcentagem-fundo-padding-pequeno: 0 8px;
+
+  /* RESPONSIVIDADE */
+  --periodo-selecao-margin-left-mobile: 15px;
+  --widget-meta-rotulo-margin-left-mobile: 12px;
+  --area-direita-padding-mobile: clamp(2px, 0.5vw, 4px);
+  --periodo-selecao-margin-left-small: 10px;
+  --area-direita-padding-small: 2px;
+
+  /* Margin-top control for the period selection container */
+
+  /* BORDER RADIUS */
+  --bloco1-border-radius: 20px;
+  --mentor-rank-border-radius: 50%;
+  --mentor-img-border-radius: 50%;
+  --mentor-card-border-radius: 12px;
+  --widget-meta-border-radius: 12px;
+  --widget-conteudo-border-radius: 12px;
+  --data-header-border-radius-top: 20px;
+  --data-header-border-radius-bottom: 0;
+  --campo-mentores-border-radius-bottom: 20px;
+  --widget-barra-container-border-radius: 20px;
+  --widget-barra-progresso-border-radius: 25px;
+  --porcentagem-fundo-border-radius-left: 0;
+  --porcentagem-fundo-border-radius-right: 25px;
+  --btn-add-usuario-border-radius: 50%;
+  --menu-opcoes-border-radius: 6px;
+  --bloco-meta-simples-border-radius: 15px;
+  --container-barra-horizontal-border-radius: 15px;
+  --progresso-dourado-border-radius: 15px;
+  --progresso-verde-border-radius: 15px;
+  --modal-conteudo-border-radius: 24px;
+  --modal-content-border-radius: 20px;
+  --preview-img-border-radius: 50%;
+  --label-arquivo-border-radius: 16px;
+  --nome-arquivo-border-radius: 8px;
+  --btn-remover-foto-border-radius: 20px;
+  --input-text-border-radius: 16px;
+  --btn-enviar-border-radius: 16px;
+  --btn-excluir-border-radius: 16px;
+  --botao-confirmar-border-radius: 12px;
+  --botao-cancelar-border-radius: 12px;
+  --container-primeiro-mentor-border-radius: 24px;
+  --icone-mentor-vazio-border-radius: 50%;
+  --valor-ultrapassou-container-border-radius: 12px;
+  --scrollbar-track-border-radius: 10px;
+  --scrollbar-thumb-border-radius: 10px;
+  --widget-scrollbar-track-border-radius: 8px;
+  --widget-scrollbar-thumb-border-radius: 8px;
+  /**/
+  /**/
+  /**/
+  /**/
+  /**/
+  /* --------------------------------------------------
+   - DIAS DO MÊS - DIAS DO MÊS - DIAS DO MÊS -
+  -------------------------------------------------- */
+  /* ===== POSICIONAMENTO ===== */
+  --contador-dias-top: 1px; /* Distância do topo */
+  --contador-dias-right: -1px; /* Distância da direita */
+  --contador-dias-margin-top: 0px; /* Margem superior adicional */
+  --contador-dias-margin-right: 0px; /* Margem direita adicional */
+
+  /* ===== DIMENSÕES ===== */
+  --contador-dias-width: 50px; /* ✅ REDUZIDO: 65px → 50px */
+  --contador-dias-height: auto; /* Altura automática */
+  --contador-dias-padding: 6px 8px; /* ✅ REDUZIDO: 12px 10px → 6px 8px */
+  --contador-dias-gap: 2px; /* ✅ REDUZIDO: 4px → 2px */
+
+  /* ===== TIPOGRAFIA - LABEL "Dias" ===== */
+  --contador-dias-label-size: 8px; /* ✅ REDUZIDO: 11px → 9px */
+  --contador-dias-label-weight: 600;
+  --contador-dias-label-color: #6a0dad; /* ✅ ROXO (mesma cor da data) */
+  --contador-dias-label-spacing: 0.3px; /* ✅ REDUZIDO: 0.5px → 0.3px */
+  --contador-dias-label-transform: uppercase;
+
+  /* ===== TIPOGRAFIA - VALOR (Número) ===== */
+  --contador-dias-valor-size: 15px; /* ✅ REDUZIDO: 18px → 20px (mas mais compacto) */
+  --contador-dias-valor-weight: 600;
+  --contador-dias-valor-color: #6a0dad; /* ✅ ROXO (mesma cor da data) */
+  --contador-dias-valor-line-height: 1;
+
+  /* ===== CORES E FUNDO ===== */
+  --contador-dias-bg: transparent; /* ✅ SEM FUNDO */
+  --contador-dias-bg-hover: rgba(106, 13, 173, 0.05); /* ✅ Leve hover roxo */
+  --contador-dias-border-color: transparent; /* ✅ SEM BORDA */
+  --contador-dias-border-width: 0px; /* ✅ SEM BORDA */
+  --contador-dias-border-radius: 8px; /* ✅ REDUZIDO: 16px → 8px */
+
+  /* ===== SOMBRAS ===== */
+  --contador-dias-shadow: none; /* ✅ SEM SOMBRA */
+  --contador-dias-shadow-hover: none; /* ✅ SEM SOMBRA */
+
+  /* ===== ANIMAÇÃO ===== */
+  --contador-dias-transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+  --contador-dias-scale-hover: 1.05;
+
+  /* ===== Z-INDEX ===== */
+  --contador-dias-z-index: 1000;
+  /* --------------------------------------------------
+   DIAS DO MÊS - DIAS DO MÊS - DIAS DO MÊS -
+  -------------------------------------------------- */
+  /**/
+  /**/
+  /**/
+  /**/
+  /**/
+  /* --------------------------------------------------
+   - AREA DIREITA - UNIDADE E PORCENTAGEM -
+  -------------------------------------------------- */
+  --area-direita-gap-horizontal: 10px; /* ✅ AJUSTADO: aproximar 1% de UND */
+  --area-direita-gap-interno: 1px; /* Espaçamento DENTRO de cada bloco */
+
+  /* Margens individuais para cada elemento */
+  --area-direita-icon-margin-top: 0px;
+  --area-direita-rotulo-unidade-margin-top: 0px;
+  --area-direita-porcentagem-margin-top: 0px;
+  --area-direita-valor-unidade-margin-top: 0px;
+  --area-direita-margin-top: 30px;
+  --area-direita-valor-unidade-wrapper-margin-top: 0px;
+
+  --area-direita-icon-margin-left: 0px;
+  --area-direita-valor-unidade-margin-left: 0px;
+  --area-direita-rotulo-unidade-margin-left: 0px;
+
+  /* ✅ CRÍTICO: mudar para auto para empurrar para direita */
+  --area-direita-margin-left: auto; /* Campo: ( PORCENTAGEM / UNIDADE) */
+  --area-direita-margin-right: -20px; /* ✅ Distância do canto direito */
+
+  --area-direita-porcentagem-margin-left: 0px;
+  --area-direita-z-index: 300;
+
+  /* ✅ Largura máxima para não entrar no bloco-1 */
+  --area-direita-max-width: 200px; /* ou 25% */
+  /* --------------------------------------------------
+   - AREA DIREITA - UNIDADE E PORCENTAGEM -
+  -------------------------------------------------- */
+  /**/
+  /**/
+  /**/
+  /**/
+  /**/
+  /* =======================================================================================================================================================
+     - ROOT PARA TELA CELULAR - ROOT PARA TELA CELULAR - ROOT PARA TELA CELULAR - ROOT PARA TELA CELULAR
+  =======================================================================================================================================================*/
+}
+@media (max-width: 1024px) {
+  :root {
+    --area-direita-max-width: 35%; /* Mais espaço em telas menores */
+    --area-direita-margin-right: 8px;
+  }
+}
+
+@media (max-width: 768px) {
+  :root {
+    --area-direita-max-width: 40%;
+    --area-direita-margin-right: 5px;
+    --area-direita-gap-horizontal: -10px;
+  }
+}
+
+@media (max-width: 480px) {
+  :root {
+    --area-direita-max-width: 45%;
+    --area-direita-margin-right: 3px;
+  }
+}
+/* =======================================================================================================================================================
+     - ROOT PARA TELA CELULAR - ROOT PARA TELA CELULAR - ROOT PARA TELA CELULAR - ROOT PARA TELA CELULAR
+  =======================================================================================================================================================*/
+/**/
+/**/
+/**/
+/**/
+/**/
+/**/
+/**/
+/**/
+/**/
+/**/
+/* ========================
+   OVERRIDE: Aumentar altura dos itens de entrada no modal (tela de edição)
+   Garante que cada entrada possa exibir todo o conteúdo sem corte.
+   Colocado aqui para sobrescrever regras em `modais.css` sem editar o arquivo original.
+   ======================== */
+
+/* Remove altura fixa e define uma altura mínima confortável */
+.modais-container .entrada-card {
+  height: auto !important; /* permitir o conteúdo ditar a altura */
+  min-height: 68px !important; /* maior que o padrão anterior (50px) */
+  padding: 14px 16px !important; /* mais espaço interno para o conteúdo */
+  align-items: center !important; /* centraliza verticalmente o conteúdo */
+  gap: 10px !important;
+}
+
+/* Ajustes no bloco de informação para evitar margens negativas que compactam o layout */
+.modais-container .entrada-info p {
+  margin: 0 !important;
+  margin-bottom: 4px !important;
+  line-height: 1.35 !important;
+  font-size: 14px !important;
+}
+
+/* Ações (ícones) alinhadas ao centro verticalmente */
+.modais-container .entrada-acoes {
+  display: flex !important;
+  align-items: center !important;
+  justify-content: center !important;
+}
+
+/* Ajuste no botão lixeira para não criar deslocamento vertical inesperado */
+.modais-container .btn-lixeira {
+  margin-top: 0 !important;
+  padding: 6px !important;
+}
+
+/* Responsividade: garantir que em telas pequenas as entradas não fiquem apertadas */
+@media (max-width: 480px) {
+  .modais-container .entrada-card {
+    min-height: 64px !important;
+    padding: 12px 12px !important;
+    flex-direction: column !important;
+    align-items: flex-start !important;
+    gap: 6px !important;
+  }
+
+  .modais-container .entrada-acoes {
+    align-self: flex-end !important;
+  }
+}
+
+/* ========================
+   OVERRIDES: Modal width, scrollbar fina e lixeira à direita
+   - Torna a tela de edição/exclusão maior no desktop
+   - Força scrollbar mais fina (WebKit + Firefox) no container de edição/modal
+   - Posiciona o botão lixeira no canto direito das entradas
+   ======================== */
+
+/* Aumentar largura da tela de edição (tela onde aparecem as entradas) */
+.modais-container .tela-edicao {
+  max-width: 340px !important;
+  width: min(92%, 540px) !important;
+  padding: 22px !important; /* leve aumento de padding para respirar */
+  box-sizing: border-box !important;
+}
+
+/* Também aumentar levemente o modal de confirmação (quando aplicável) */
+.modal-confirmacao-entrada .modal-conteudo-exclusao {
+  max-width: 340px !important;
+  width: min(92%, 340px) !important;
+}
+
+/* Scrollbar fina para o container de edição/modal (WebKit browsers) */
+.modais-container .tela-edicao::-webkit-scrollbar,
+.modal-confirmacao-entrada .modal-conteudo-exclusao::-webkit-scrollbar {
+  width: 6px !important;
+  height: 6px !important;
+}
+
+.modais-container .tela-edicao::-webkit-scrollbar-track,
+.modal-confirmacao-entrada .modal-conteudo-exclusao::-webkit-scrollbar-track {
+  background: transparent !important;
+  border-radius: var(--scrollbar-track-border-radius, 8px) !important;
+}
+
+.modais-container .tela-edicao::-webkit-scrollbar-thumb,
+.modal-confirmacao-entrada .modal-conteudo-exclusao::-webkit-scrollbar-thumb {
+  background: rgba(60, 60, 60, 0.22) !important;
+  border-radius: var(--scrollbar-thumb-border-radius, 8px) !important;
+}
+
+.modais-container .tela-edicao:hover::-webkit-scrollbar-thumb,
+.modal-confirmacao-entrada
+  .modal-conteudo-exclusao:hover::-webkit-scrollbar-thumb {
+  background: rgba(60, 60, 60, 0.36) !important;
+}
+
+/* Firefox thin scrollbar */
+.modais-container .tela-edicao,
+.modal-confirmacao-entrada .modal-conteudo-exclusao {
+  scrollbar-width: thin !important;
+  scrollbar-color: rgba(60, 60, 60, 0.22) transparent !important;
+}
+
+/* Garantir que a lixeira (btn-lixeira) fique à direita das entradas */
+.modais-container .entrada-card {
+  display: flex !important;
+  justify-content: space-between !important; /* texto à esquerda, ações à direita */
+  align-items: center !important;
+}
+
+.modais-container .entrada-card .entrada-acoes {
+  display: flex !important;
+  justify-content: flex-end !important;
+  align-items: center !important;
+  gap: 8px !important;
+}
+
+.modais-container .btn-lixeira,
+.modais-container .btn-icon.btn-lixeira {
+  margin-top: 0 !important;
+  margin-left: 8px !important;
+  color: #b4b4b4ff !important;
+}
+
+@media (max-width: 480px) {
+  /* em dispositivos pequenos mantemos comportamento empilhado, mas lixeira alinhada à direita */
+  .modais-container .entrada-card {
+    flex-direction: column !important;
+    align-items: flex-start !important;
+  }
+
+  .modais-container .entrada-card .entrada-acoes {
+    width: 100% !important;
+    justify-content: flex-end !important;
+  }
+}
+
+/* Preserva o deslocamento vertical durante a animação de entrada
+   evita que a animação sobrescreva o translateY definido por variáveis. */
+@keyframes fadeInScale {
+  from {
+    opacity: 0;
+    transform: translateY(var(--data-header-margin-top)) scale(0.98);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(var(--data-header-margin-top)) scale(1);
+  }
+}
+
+/* APLICAÇÃO DAS VARIÁVEIS */
+.data-header-integrada {
+  margin-top: 0 !important;
+  position: relative !important;
+}
+/* Aplicar deslocamento apenas ao elemento de texto principal da data */
+.data-header-integrada .data-principal-integrada {
+  display: inline-block;
+  transform: translateY(var(--data-header-margin-top)) !important;
+  will-change: transform;
+}
+.container-resumos {
+  margin-top: var(--container-resumos-margin-top) !important;
+}
+.mentor-img {
+  margin-top: var(--mentor-img-margin-top) !important;
+  margin-left: var(--mentor-img-margin-left) !important;
+}
+.mentor-nome {
+  margin-top: var(--mentor-nome-margin-top) !important;
+  margin-left: var(--mentor-nome-margin-left) !important;
+}
+.widget-meta-valor,
+#meta-valor {
+  display: inline-flex !important;
+  align-items: center !important;
+  gap: 8px !important;
+  margin-top: var(--widget-meta-valor-margin-top) !important;
+  margin-bottom: var(--widget-meta-valor-margin-bottom) !important;
+  margin-left: var(--widget-meta-valor-margin-left) !important;
+}
+
+/* Fallback high-specificity rule to ensure separador font-size/weight follow root variables
+   This helps when other stylesheets apply strong overrides. */
+#pontuacao .separador {
+  font-size: var(--fs-placar-top-b1, var(--fs-placar-top)) !important;
+  font-weight: var(--fs-placar-weight) !important;
+}
+.widget-meta-rotulo {
+  margin-bottom: var(--widget-meta-rotulo-margin-bottom) !important;
+  margin-left: var(--widget-meta-rotulo-margin-left) !important;
+}
+#rotulo-meta {
+  margin-left: var(--rotulo-meta-margin-left) !important;
+}
+.widget-meta-rotulo,
+#rotulo-meta {
+  margin-top: var(--widget-meta-rotulo-margin-top) !important;
+}
+.widget-barra-container {
+  margin-top: var(--widget-barra-container-margin-top) !important;
+  margin-left: var(--widget-barra-container-margin-left) !important;
+}
+/* Container class used by JS to allow CSS-driven badge positioning */
+.meta-badge-container {
+  position: relative !important;
+}
+
+/* Meta type badge positioned via root variables */
+.meta-badge-container .meta-tipo-badge,
+#meta-tipo-badge {
+  position: absolute !important;
+  top: var(--meta-badge-top) !important;
+  right: var(--meta-badge-right) !important;
+  left: var(--meta-badge-left) !important;
+  color: white !important;
+  font-size: 8px !important;
+  font-weight: 700 !important;
+  text-transform: uppercase !important;
+  letter-spacing: 0.3px !important;
+  padding: 4px 8px !important;
+  border-radius: 12px !important;
+  z-index: 999 !important;
+  white-space: nowrap !important;
+  display: block !important;
+  visibility: visible !important;
+  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif !important;
+}
+.widget-info-progresso {
+  margin-top: var(--widget-info-progresso-margin-top) !important;
+  margin-left: var(--widget-info-progresso-margin-left) !important;
+}
+.campo_mentores {
+  margin-top: var(--campo-mentores-margin-top) !important;
+}
+.mentor-wrapper {
+  margin-top: var(--mentor-wrapper-margin-top) !important;
+  margin-left: var(--mentor-wrapper-margin-left) !important;
+}
+
+/* Allow adjusting the top offset of the mentors list from :root */
+#listaMentores,
+.mentor-wrapper {
+  margin-top: var(--lista-mentores-margin-top) !important;
+  max-width: var(--lista-mentores-width) !important;
+  width: 100% !important;
+  margin-left: var(--lista-mentores-margin-left) !important;
+}
+.mentor-item {
+  margin-bottom: var(--mentor-item-margin-bottom) !important;
+}
+.mentor-card {
+  margin-top: var(--mentor-card-margin-top) !important;
+}
+.mentor-item.sem-valores .mentor-card {
+  margin-left: var(--mentor-card-sem-valores-margin-left) !important;
+}
+.valor-ultrapassou {
+  margin-top: var(--valor-ultrapassou-margin-top) !important;
+  margin-bottom: var(--valor-ultrapassou-margin-bottom) !important;
+  margin-left: var(--valor-ultrapassou-margin-left) !important;
+}
+#saldo-info {
+  margin-top: var(--saldo-info-margin-top) !important;
+  margin-left: var(--saldo-info-margin-left) !important;
+}
+.widget-conteudo-principal {
+  margin-top: var(--widget-conteudo-principal-margin-top) !important;
+  margin-bottom: var(--widget-conteudo-principal-margin-bottom) !important;
+}
+.periodo-selecao-container {
+  margin-left: var(--periodo-selecao-margin-left, 0px) !important;
+}
+.btn-add-usuario {
+  margin-left: var(--btn-add-usuario-margin-left) !important;
+  margin-top: var(--btn-add-usuario-margin-top) !important;
+}
+.barra-superior .area-direita {
+  margin-left: var(--area-direita-margin-left) !important;
+}
+.mentor-wrapper {
+  /* Força um scrollbar fino em navegadores Firefox */
+  scrollbar-width: thin;
+  /* Default: hidden/invisible thumb (transparent) so scrollbar only appears perceptibly on hover */
+  scrollbar-color: transparent transparent; /* firefox: thumb color, track color */
+}
+
+.mentor-wrapper::-webkit-scrollbar {
+  width: calc(
+    var(--mentor-wrapper-scrollbar-width) -
+      var(--mentor-wrapper-scrollbar-offset)
+  ); /* visual width adjusted by offset */
+}
+
+.mentor-wrapper::-webkit-scrollbar-track {
+  background: rgba(0, 0, 0, 0.03); /* light track */
+  border-radius: 10px;
+}
+
+.mentor-wrapper::-webkit-scrollbar-thumb {
+  /* Default: almost transparent so it isn't visible until hover */
+  background: transparent;
+  border-radius: 10px;
+  transition: background-color 0.16s ease, box-shadow 0.12s ease;
+  border: 1px solid rgba(255, 255, 255, 0.06);
+}
+
+/* Hover: show a softer, weak gray (cinza fraco) — less contrast */
+.mentor-wrapper:hover {
+  scrollbar-color: rgba(160, 160, 160, 0.28) rgba(0, 0, 0, 0.04); /* firefox: weak gray thumb */
+}
+
+.mentor-wrapper:hover::-webkit-scrollbar-thumb,
+.mentor-wrapper::-webkit-scrollbar-thumb:hover {
+  background: rgba(160, 160, 160, 0.28); /* weaker gray on hover */
+  box-shadow: inset 0 0 0 1px rgba(0, 0, 0, 0.04);
+}
+
+/* Active (user clicks/drags the thumb): slightly darker gray for feedback */
+.mentor-wrapper::-webkit-scrollbar-thumb:active {
+  background: rgba(
+    120,
+    120,
+    120,
+    0.45
+  ) !important; /* darker but still subtle */
+}
+
+/* Firefox active state — use :focus-within on the container to approximate active drag */
+.mentor-wrapper:focus-within {
+  scrollbar-color: rgba(120, 120, 120, 0.45) rgba(0, 0, 0, 0.04);
+}
+
+@media (max-width: 480px) {
+  .periodo-selecao-container {
+    margin-left: var(
+      --periodo-selecao-margin-left-small,
+      var(--periodo-selecao-margin-left, 10px)
+    ) !important;
+  }
+  .barra-superior .area-direita {
+    padding: var(--area-direita-padding-small) !important;
+  }
+}
+
+/* UTILITÁRIOS PARA RESET SELETIVO */
+.bloco-1-reset-top {
+  margin-top: 0 !important;
+  padding-top: 0 !important;
+}
+.container-resumos-reset-top {
+  margin-top: 0 !important;
+  padding-top: 0 !important;
+}
+.data-header-reset-top {
+  margin-top: 0 !important;
+  padding-top: 0 !important;
+}
+
+/* EXEMPLOS DE USO: (removidos entradas duplicadas para evitar conflitos de :root) */
+/* --------------------------------------------------
+APLICAÇÃO DAS VARIÁVEIS - MARGIN TOP
+-------------------------------------------------- */
+
+/* Header com data e seleção de período */
+.data-header-integrada {
+  margin-top: 0 !important;
+  position: relative !important;
+  top: 0 !important;
+}
+
+/* Container principal dos resumos */
+.container-resumos {
+  margin-top: var(--container-resumos-margin-top) !important;
+}
+
+/* Foto do mentor - alinhamento vertical */
+.mentor-img {
+  margin-top: var(--mentor-img-margin-top);
+  margin-left: var(--mentor-img-margin-left);
+}
+
+/* Nome do mentor */
+.mentor-nome {
+  margin-top: var(--mentor-nome-margin-top);
+  margin-left: var(--mentor-nome-margin-left);
+}
+
+/* Meta valor - espaçamento */
+.widget-meta-valor,
+#meta-valor {
+  margin-bottom: var(--widget-meta-valor-margin-bottom) !important;
+  margin-left: var(--widget-meta-valor-margin-left) !important;
+}
+
+/* Rótulo da meta */
+.widget-meta-rotulo {
+  margin-bottom: var(--widget-meta-rotulo-margin-bottom) !important;
+  margin-left: var(--widget-meta-rotulo-margin-left) !important;
+}
+
+#rotulo-meta {
+  margin-left: var(--rotulo-meta-margin-left) !important;
+}
+
+/* Container da barra de progresso */
+.widget-barra-container {
+  margin-top: var(--widget-barra-container-margin-top) !important;
+}
+
+/* Info de progresso com saldo */
+.widget-info-progresso {
+  margin-top: var(--widget-info-progresso-margin-top) !important;
+  margin-left: var(--widget-info-progresso-margin-left);
+}
+
+/* Campo principal dos mentores */
+.campo_mentores {
+  margin-top: var(--campo-mentores-margin-top);
+}
+
+/* Wrapper da lista de mentores */
+.mentor-wrapper {
+  margin-top: var(--mentor-wrapper-margin-top);
+  margin-left: var(--mentor-wrapper-margin-left);
+}
+
+/* Espaçamento entre itens de mentores */
+.mentor-item {
+  margin-bottom: var(--mentor-item-margin-bottom);
+}
+
+/* Card individual do mentor */
+.mentor-card {
+  margin-top: var(--mentor-card-margin-top);
+}
+
+/* Card sem valores - ajuste gap quando não há rank */
+.mentor-item.sem-valores .mentor-card {
+  margin-left: var(--mentor-card-margin-left);
+}
+
+/* Valor que ultrapassou a meta */
+.valor-ultrapassou {
+  margin-top: var(--valor-ultrapassou-margin-top) !important;
+  margin-bottom: var(--valor-ultrapassou-margin-bottom) !important;
+  margin-left: var(--valor-ultrapassou-margin-left) !important;
+}
+
+/* Container do saldo */
+#saldo-info {
+  margin-top: var(--saldo-info-margin-top) !important;
+}
+
+/* --------------------------------------------------
+APLICAÇÃO DAS VARIÁVEIS - MARGIN LEFT
+-------------------------------------------------- */
+
+/* Seleção de período */
+.periodo-selecao-container {
+  margin-left: var(--periodo-selecao-margin-left);
+}
+
+/* Botão adicionar usuário */
+.btn-add-usuario {
+  margin-left: var(--btn-add-usuario-margin-left);
+}
+
+/* Área direita do header */
+.barra-superior .area-direita {
+  margin-left: var(--area-direita-margin-left);
+}
+
+/* Menu externo do mentor */
+.mentor-menu-externo {
+  margin-left: var(--mentor-menu-externo-margin-left) !important;
+  margin-top: var(--mentor-menu-externo-margin-top) !important;
+}
+
+/* Espaço para menu de opções */
+.mentor-right {
+  margin-right: var(--mentor-right-margin-right);
+}
+
+/* Espaço do separador "x" */
+.value-box-saldo {
+  margin-left: var(--value-box-saldo-margin-left) !important;
+}
+
+/* Posição do separador entre Green e Red */
+.mentor-values-inline > .value-box-red::before {
+  left: var(--separador-red-left) !important;
+}
+
+/* Ajuste fino da posição do separador */
+.mentor-values-inline > .value-box-red::before {
+  left: var(--separador-red-left-ajuste) !important;
+}
+
+/* Conteúdo alinhado à esquerda */
+.conteudo-left {
+  margin-left: var(--conteudo-left-margin-left);
+}
+
+/* --------------------------------------------------
+FORMULÁRIOS E MODAIS
+-------------------------------------------------- */
+
+/* Nome do arquivo no upload */
+.modais-container .nome-arquivo {
+  margin-top: var(--nome-arquivo-margin-top);
+}
+
+/* Botões do formulário */
+.modais-container .botoes-formulario {
+  margin-top: var(--botoes-formulario-margin-top);
+}
+
+/* Texto do modal de confirmação */
+.modais-container .modal-texto {
+  margin-bottom: var(--modal-texto-margin-bottom);
+}
+
+/* --------------------------------------------------
+BLOCOS E WIDGETS
+-------------------------------------------------- */
+
+/* Grupo de barras */
+.grupo-barra {
+  margin-bottom: var(--grupo-barra-margin-bottom-clamp);
+}
+
+/* Título dos blocos */
+.titulo-bloco {
+  margin: 0 0 var(--titulo-bloco-margin-bottom-clamp) 0;
+}
+
+/* Bloco meta simples */
+.bloco-meta-simples {
+  margin-bottom: var(--bloco-meta-simples-margin-bottom-clamp);
+}
+
+/* Conteúdo principal do widget */
+.widget-conteudo-principal {
+  margin-top: var(--widget-conteudo-principal-margin-top) !important;
+  margin-bottom: var(--widget-conteudo-principal-margin-bottom) !important;
+  margin-left: 0 !important;
+  margin-right: 0 !important;
+}
+
+/* --------------------------------------------------
+RESPONSIVIDADE - APLICAÇÃO DAS VARIÁVEIS
+-------------------------------------------------- */
+
+@media (max-width: 768px) {
+  .periodo-selecao-container {
+    margin-left: var(--periodo-selecao-margin-left-mobile);
+  }
+
+  .widget-meta-rotulo {
+    margin-left: var(--widget-meta-rotulo-margin-left-mobile) !important;
+  }
+
+  .barra-superior .area-direita {
+    padding: var(--area-direita-padding-mobile);
+  }
+}
+
+@media (max-width: 480px) {
+  .periodo-selecao-container {
+    margin-left: var(--periodo-selecao-margin-left-small);
+  }
+
+  .barra-superior .area-direita {
+    padding: var(--area-direita-padding-small);
+  }
+}
+
+/* --------------------------------------------------
+FORÇA RESET PARA BLOCO-1 (SE NECESSÁRIO)
+-------------------------------------------------- */
+
+/* Remove margins/paddings que impedem itens de colar ao topo */
+/* Limita o reset apenas aos containers principais do bloco-1
+   para não forçar margens/paddings em todos os descendentes.
+   Lista explícita de filhos mais comuns mantém independência. */
+html body .main-content .container > .bloco.bloco-1,
+.bloco-1,
+.bloco-1 > .container-resumos,
+.bloco-1 > .widget-meta-item,
+.bloco-1 > .mentor-wrapper {
+  margin-top: 0 !important;
+  padding-top: 0 !important;
+}
+
+/* Headers sticky colam ao topo */
+.bloco-1 .widget-meta-item .data-header-integrada {
+  transform: none !important; /* container must not translate; child text will */
+  padding-top: 0 !important;
+  /* High-specificity fallback: garantir margin-left da barra de progresso */
+  #widget-meta .widget-barra-container,
+  .widget-meta-item .widget-barra-container,
+  .widget-barra-container {
+    margin-left: var(--widget-barra-container-margin-left) !important;
+  }
+  box-sizing: border-box;
+  position: -webkit-sticky !important; /* support for older Safari */
+  position: sticky !important; /* stick to the top of its scroll container */
+  left: 0 !important;
+  right: 0 !important;
+  z-index: 9999; /* acima do conteúdo interno */
+  border: none !important;
+  outline: none !important;
+
+  /* Solução para acabamento perfeito dos cantos arredondados */
+  -webkit-transform: translateZ(0);
+  transform: translateZ(0);
+  -webkit-backface-visibility: hidden;
+  backface-visibility: hidden;
+  will-change: transform;
+
+  /* Clipping mask para garantir bordas perfeitas */
+  overflow: hidden !important;
+  -webkit-mask-image: -webkit-radial-gradient(white, black);
+  mask-image: radial-gradient(white, black);
+
+  /* Garantir que o gradiente preencha perfeitamente os cantos */
+  background-origin: border-box !important;
+  background-clip: border-box !important;
+
+  /* Remover qualquer borda ou sombra que cause dentilhado */
+  box-shadow: none !important;
+}
+
+/* Utilitário para reverter se necessário */
+.bloco-1.force-top-reset {
+  margin-top: 0 !important;
+  padding-top: 0 !important;
+}
+
+/* Override: quando um container contém o header integrado, garantir que
+   nenhum margin-top/padding-top seja aplicado ao container pai que
+   deslocaria visualmente todo o bloco. Usa :has() para ser específico. */
+.widget-meta-item:has(.data-header-integrada),
+.widget-meta-container:has(.data-header-integrada),
+.bloco-1:has(.data-header-integrada) {
+  margin-top: 0 !important;
+  padding-top: 0 !important;
+}
+
+/* RANK COM COR DINÂMICA BASEADA NO SALDO */
+.mentor-rank-externo {
+  /* Dimensões fixas para manter formato circular */
+  width: 30px !important;
+  height: 30px !important;
+  min-width: 30px !important;
+  min-height: 30px !important;
+
+  /* Remover padding e usar apenas dimensões fixas */
+  padding: 0 !important;
+
+  /* Centralização perfeita */
+  display: flex !important;
+  align-items: center !important;
+  justify-content: center !important;
+
+  /* Garantir formato circular */
+  border-radius: 50% !important;
+
+  /* Visual - removendo cor padrão */
+  font-size: 12px !important;
+  font-weight: 700;
+  color: white !important; /* texto branco para contraste */
+
+  /* Borda será definida por classe */
+  border: 2px solid transparent;
+
+  /* Outros */
+  flex-shrink: 0;
+  box-sizing: border-box;
+  text-align: center;
+  line-height: 1;
+  white-space: nowrap;
+  overflow: hidden;
+  margin-right: 8px;
+  margin-left: var(--mentor-rank-margin-left) !important;
+
+  /* Transição suave */
+  transition: all 0.3s ease;
+}
+
+/* CORES DO RANK BASEADAS NO CARD */
+
+/* Rank Verde - Saldo Positivo */
+.mentor-item:has(.card-positivo) .mentor-rank-externo,
+.mentor-item .mentor-rank-externo.rank-positivo {
+  background: linear-gradient(135deg, #00a651 0%, #2ecc71 100%) !important;
+  border-color: #00a651 !important;
+  box-shadow: 0 2px 8px rgba(0, 166, 81, 0.3) !important;
+  color: white !important;
+}
+
+/* Rank Vermelho - Saldo Negativo */
+.mentor-item:has(.card-negativo) .mentor-rank-externo,
+.mentor-item .mentor-rank-externo.rank-negativo {
+  background: linear-gradient(135deg, #e74c3c 0%, #c0392b 100%) !important;
+  border-color: #e74c3c !important;
+  box-shadow: 0 2px 8px rgba(231, 76, 60, 0.3) !important;
+  color: white !important;
+}
+
+/* Rank Cinza - Saldo Neutro */
+.mentor-item:has(.card-neutro) .mentor-rank-externo,
+.mentor-item .mentor-rank-externo.rank-neutro {
+  background: linear-gradient(135deg, #95a5a6 0%, #7f8c8d 100%) !important;
+  border-color: #95a5a6 !important;
+  box-shadow: 0 2px 8px rgba(149, 165, 166, 0.3) !important;
+  color: white !important;
+}
+
+/* HOVER EFFECTS NO RANK */
+.mentor-item:has(.card-positivo) .mentor-rank-externo:hover,
+.mentor-item .mentor-rank-externo.rank-positivo:hover {
+  transform: scale(1.1);
+  box-shadow: 0 4px 12px rgba(0, 166, 81, 0.5) !important;
+}
+
+.mentor-item:has(.card-negativo) .mentor-rank-externo:hover,
+.mentor-item .mentor-rank-externo.rank-negativo:hover {
+  transform: scale(1.1);
+  box-shadow: 0 4px 12px rgba(231, 76, 60, 0.5) !important;
+}
+
+.mentor-item:has(.card-neutro) .mentor-rank-externo:hover,
+.mentor-item .mentor-rank-externo.rank-neutro:hover {
+  transform: scale(1.1);
+  box-shadow: 0 4px 12px rgba(149, 165, 166, 0.5) !important;
+}
+
+/* MENTORES SEM VALORES - REGRAS CRÍTICAS */
+.mentor-item.sem-valores {
+  opacity: 1 !important; /* Container mantém opacidade normal */
+}
+
+.mentor-item.sem-valores .mentor-rank-externo {
+  display: none !important;
+  visibility: hidden !important;
+  opacity: 0 !important;
+  pointer-events: none !important;
+}
+
+.mentor-item.sem-valores .mentor-card {
+  opacity: 0.42 !important;
+  transition: opacity 0.3s ease !important;
+  background: #f5f5f5 !important;
+  border-style: dashed !important;
+  cursor: pointer !important;
+}
+
+.mentor-item.sem-valores .mentor-card:hover {
+  opacity: 0.6 !important;
+  transform: none !important;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1) !important;
+}
+
+/* Manter o botão de menu visível mesmo sem valores */
+.mentor-item.sem-valores .menu-toggle,
+.mentor-item.sem-valores .mentor-menu-externo {
+  pointer-events: auto !important;
+  opacity: 1 !important;
+  visibility: visible !important;
+  display: inline-flex !important;
+  z-index: 99999 !important;
+}
+
+/* GARANTIR VISIBILIDADE PARA MENTORES COM VALORES */
+.mentor-item:not(.sem-valores) .mentor-rank-externo {
+  display: flex !important;
+  visibility: visible !important;
+  opacity: 1 !important;
+}
+
+.mentor-item:not(.sem-valores) .mentor-card {
+  opacity: 1 !important;
+}
+
+/* ANIMAÇÃO PULSE PARA RANK #1 */
+.mentor-item:first-child .mentor-rank-externo {
+  animation: pulseBadge 2s ease-in-out infinite;
+}
+
+.mentor-item:first-child .mentor-rank-externo {
+  position: relative !important;
+  z-index: 100002 !important;
+  -webkit-font-smoothing: antialiased !important;
+  -moz-osx-font-smoothing: grayscale !important;
+  text-rendering: geometricPrecision !important;
+  font-weight: 800 !important;
+  filter: none !important;
+  transform: translateZ(0) !important;
+  will-change: transform, opacity !important;
+  text-shadow: 0 1px 0 rgba(0, 0, 0, 0.08) !important;
+}
+
+@keyframes pulseBadge {
+  0%,
+  100% {
+    transform: scale(1);
+  }
+  50% {
+    transform: scale(1.05);
+  }
+}
+
+/* AJUSTE DE FONTE PARA NÚMEROS GRANDES */
+.mentor-rank-externo {
+  font-size: 13px !important;
+}
+/* Fallback high-specificity rule to ensure the external menu uses root-controlled margins
+   This helps when other stylesheets or later blocks apply strong overrides. */
+body .mentor-item .mentor-menu-externo {
+  position: absolute !important;
+  right: 8px !important;
+  top: 50% !important;
+  transform: translateY(-50%) !important;
+  margin-left: var(--mentor-menu-externo-margin-left) !important;
+  margin-top: var(--mentor-menu-externo-margin-top) !important;
+  z-index: 100010 !important; /* keep above most elements */
+}
+
+/* Para ranks com 2 dígitos, fonte menor */
+.mentor-rank-externo:has-text("10"),
+.mentor-rank-externo:has-text("11"),
+.mentor-rank-externo:has-text("12"),
+.mentor-rank-externo:has-text("13"),
+.mentor-rank-externo:has-text("14"),
+.mentor-rank-externo:has-text("15"),
+.mentor-rank-externo:has-text("16"),
+.mentor-rank-externo:has-text("17"),
+.mentor-rank-externo:has-text("18"),
+.mentor-rank-externo:has-text("19"),
+.mentor-rank-externo:has-text("20") {
+  font-size: 11px !important;
+}
+
+/* RESPONSIVIDADE */
+@media (max-width: 768px) {
+  .mentor-rank-externo {
+    width: 28px !important;
+    height: 28px !important;
+    min-width: 28px !important;
+    min-height: 28px !important;
+    font-size: 11px !important;
+  }
+}
+
+@media (max-width: 480px) {
+  .mentor-rank-externo {
+    width: 24px !important;
+    height: 24px !important;
+    min-width: 24px !important;
+    min-height: 24px !important;
+    font-size: 10px !important;
+  }
+}
+
+/* CORREÇÃO: VALOR DO SALDO VISÍVEL */
+.value-box-saldo {
+  flex: 1 1 auto;
+  min-width: 90px !important;
+  max-width: 140px !important;
+  display: flex !important;
+  flex-direction: column !important;
+  align-items: center !important;
+  justify-content: center !important;
+  padding: 0 5px !important;
+  margin-left: 10px !important;
+  height: 100%;
+  overflow: visible !important;
+}
+
+.value-box-saldo p:nth-child(2) {
+  display: block !important;
+  visibility: visible !important;
+  font-size: 13px !important;
+  font-weight: 700 !important;
+  white-space: nowrap !important;
+  overflow: visible !important;
+  text-overflow: clip !important;
+  line-height: 1.2 !important;
+  margin: 0 !important;
+  padding: 0 !important;
+}
+
+/* CORES DO SALDO BASEADAS NO ESTADO */
+.mentor-card.card-positivo .value-box-saldo p:nth-child(2) {
+  color: #00a651 !important;
+}
+
+.mentor-card.card-negativo .value-box-saldo p:nth-child(2) {
+  color: #e74c3c !important;
+}
+
+.mentor-card.card-neutro .value-box-saldo p:nth-child(2) {
+  color: #7f8c8d !important;
+}
+
+/* TRANSIÇÕES SUAVES PARA EVITAR FLICKER */
+.mentor-rank-externo {
+  transition: opacity 0.2s ease, visibility 0.2s ease, display 0.2s ease !important;
+}
+
+.mentor-card {
+  transition: opacity 0.3s ease, background 0.3s ease, border 0.3s ease !important;
+}
+
+/* FORÇA APLICAÇÃO IMEDIATA - MAIOR ESPECIFICIDADE */
+body .mentor-item.sem-valores .mentor-rank-externo {
+  display: none !important;
+  visibility: hidden !important;
+  opacity: 0 !important;
+}
+
+body .mentor-item:not(.sem-valores) .mentor-rank-externo {
+  display: flex !important;
+  visibility: visible !important;
+  opacity: 1 !important;
+}
+
+/* PREVENT FLASH OF UNSTYLED CONTENT */
+.mentor-rank-externo[style*="display: none"] {
+  display: none !important;
+}
+
+.mentor-rank-externo[style*="display: flex"] {
+  display: flex !important;
+}
+
+/* CSS CRÍTICO - DEVE SER NO TOPO DO ARQUIVO */
+
+/* Forçar ocultação imediata no carregamento */
+.mentor-rank-externo.forcar-oculto {
+  display: none !important;
+  visibility: hidden !important;
+  opacity: 0 !important;
+}
+
+/* Estado inicial mais agressivo */
+.mentor-item.sem-valores {
+  opacity: 0.42 !important;
+}
+
+.mentor-item.sem-valores .mentor-rank-externo {
+  display: none !important;
+  visibility: hidden !important;
+  opacity: 0 !important;
+}
+
+.mentor-item.sem-valores .mentor-card {
+  opacity: 0.42 !important;
+  background: #f5f5f5 !important;
+  border-style: dashed !important;
+}
+
+/* Garantir que mentores com valores sejam visíveis */
+.mentor-item:not(.sem-valores) .mentor-rank-externo {
+  display: flex !important;
+  visibility: visible !important;
+  opacity: 1 !important;
+}
+
+.mentor-item:not(.sem-valores) .mentor-card {
+  opacity: 1 !important;
+}
+
+/* ===== RANK COM COR DINÂMICA BASEADA NO SALDO ===== */
+.mentor-rank-externo {
+  /* Dimensões fixas para manter formato circular */
+  width: 30px !important;
+  height: 30px !important;
+  min-width: 30px !important;
+  min-height: 30px !important;
+
+  /* Remover padding e usar apenas dimensões fixas */
+  padding: 0 !important;
+
+  /* Centralização perfeita */
+  display: flex !important;
+  align-items: center !important;
+  justify-content: center !important;
+
+  /* Garantir formato circular */
+  border-radius: 50% !important;
+
+  /* Visual - removendo cor padrão */
+  font-size: 12px !important;
+  font-weight: 700;
+  color: white !important; /* texto branco para contraste */
+
+  /* Borda será definida por classe */
+  border: 2px solid transparent;
+
+  /* Outros */
+  flex-shrink: 0;
+  box-sizing: border-box;
+  text-align: center;
+  line-height: 1;
+  white-space: nowrap;
+  overflow: hidden;
+  margin-right: 8px;
+
+  /* Transição suave */
+  transition: all 0.3s ease;
+}
+
+/* ===== CORES DO RANK BASEADAS NO CARD ===== */
+
+/* Rank Verde - Saldo Positivo */
+.mentor-item:has(.card-positivo) .mentor-rank-externo {
+  background: linear-gradient(135deg, #00a651 0%, #2ecc71 100%) !important;
+  border-color: #00a651 !important;
+  box-shadow: 0 2px 8px rgba(0, 166, 81, 0.3) !important;
+  color: white !important;
+}
+
+/* Rank Vermelho - Saldo Negativo */
+.mentor-item:has(.card-negativo) .mentor-rank-externo {
+  background: linear-gradient(135deg, #e74c3c 0%, #c0392b 100%) !important;
+  border-color: #e74c3c !important;
+  box-shadow: 0 2px 8px rgba(231, 76, 60, 0.3) !important;
+  color: white !important;
+}
+
+/* Rank Cinza - Saldo Neutro */
+.mentor-item:has(.card-neutro) .mentor-rank-externo {
+  background: linear-gradient(135deg, #95a5a6 0%, #7f8c8d 100%) !important;
+  border-color: #95a5a6 !important;
+  box-shadow: 0 2px 8px rgba(149, 165, 166, 0.3) !important;
+  color: white !important;
+}
+
+/* ===== HOVER EFFECTS NO RANK ===== */
+.mentor-item:has(.card-positivo) .mentor-rank-externo:hover {
+  transform: scale(1.1);
+  box-shadow: 0 4px 12px rgba(0, 166, 81, 0.5) !important;
+}
+
+.mentor-item:has(.card-negativo) .mentor-rank-externo:hover {
+  transform: scale(1.1);
+  box-shadow: 0 4px 12px rgba(231, 76, 60, 0.5) !important;
+}
+
+.mentor-item:has(.card-neutro) .mentor-rank-externo:hover {
+  transform: scale(1.1);
+  box-shadow: 0 4px 12px rgba(149, 165, 166, 0.5) !important;
+}
+
+/* ===== AJUSTE DE FONTE PARA NÚMEROS GRANDES ===== */
+.mentor-rank-externo {
+  font-size: 13px !important;
+}
+
+/* Para ranks com 2 dígitos, fonte menor */
+.mentor-item:has(.mentor-rank-externo:contains("10")) .mentor-rank-externo,
+.mentor-item:has(.mentor-rank-externo:contains("11")) .mentor-rank-externo,
+.mentor-item:has(.mentor-rank-externo:contains("12")) .mentor-rank-externo,
+.mentor-item:has(.mentor-rank-externo:contains("13")) .mentor-rank-externo,
+.mentor-item:has(.mentor-rank-externo:contains("14")) .mentor-rank-externo,
+.mentor-item:has(.mentor-rank-externo:contains("15")) .mentor-rank-externo,
+.mentor-item:has(.mentor-rank-externo:contains("16")) .mentor-rank-externo,
+.mentor-item:has(.mentor-rank-externo:contains("17")) .mentor-rank-externo,
+.mentor-item:has(.mentor-rank-externo:contains("18")) .mentor-rank-externo,
+.mentor-item:has(.mentor-rank-externo:contains("19")) .mentor-rank-externo,
+.mentor-item:has(.mentor-rank-externo:contains("20")) .mentor-rank-externo {
+  font-size: 11px !important;
+}
+
+/* ===== FALLBACK PARA NAVEGADORES SEM :has() ===== */
+/* Para navegadores que não suportam :has(), usar JavaScript ou classes diretas */
+.mentor-item .mentor-rank-externo.rank-positivo {
+  background: linear-gradient(135deg, #00a651 0%, #2ecc71 100%) !important;
+  border-color: #00a651 !important;
+  box-shadow: 0 2px 8px rgba(0, 166, 81, 0.3) !important;
+  color: white !important;
+}
+
+.mentor-item .mentor-rank-externo.rank-negativo {
+  background: linear-gradient(135deg, #e74c3c 0%, #c0392b 100%) !important;
+  border-color: #e74c3c !important;
+  box-shadow: 0 2px 8px rgba(231, 76, 60, 0.3) !important;
+  color: white !important;
+}
+
+.mentor-item .mentor-rank-externo.rank-neutro {
+  background: linear-gradient(135deg, #95a5a6 0%, #7f8c8d 100%) !important;
+  border-color: #95a5a6 !important;
+  box-shadow: 0 2px 8px rgba(149, 165, 166, 0.3) !important;
+  color: white !important;
+}
+
+/* ===== ANIMAÇÃO PULSE PARA RANK #1 ===== */
+.mentor-item:first-child .mentor-rank-externo {
+  animation: pulseBadge 2s ease-in-out infinite;
+}
+
+/* Garanta que o badge do 1º lugar esteja sempre nítido e visível acima do card */
+.mentor-item:first-child .mentor-rank-externo {
+  position: relative !important;
+  z-index: 100002 !important; /* acima de menus e sombras */
+  -webkit-font-smoothing: antialiased !important; /* melhora nitidez em WebKit */
+  -moz-osx-font-smoothing: grayscale !important; /* melhora nitidez em Firefox Mac */
+  text-rendering: geometricPrecision !important;
+  font-weight: 800 !important;
+  filter: none !important; /* remove qualquer blur/filter herdado */
+  transform: translateZ(
+    0
+  ) !important; /* cria novo stacking context para renderização */
+  will-change: transform, opacity !important;
+  text-shadow: 0 1px 0 rgba(0, 0, 0, 0.08) !important; /* sombra leve para contraste */
+}
+
+@keyframes pulseBadge {
+  0%,
+  100% {
+    transform: scale(1);
+  }
+  50% {
+    transform: scale(1.05);
+  }
+}
+
+/* ===== RESPONSIVIDADE COM CORES ===== */
+@media (max-width: 768px) {
+  .mentor-rank-externo {
+    width: 28px !important;
+    height: 28px !important;
+    min-width: 28px !important;
+    min-height: 28px !important;
+    font-size: 11px !important;
+  }
+}
+
+@media (max-width: 480px) {
+  .mentor-rank-externo {
+    width: 24px !important;
+    height: 24px !important;
+    min-width: 24px !important;
+    min-height: 24px !important;
+    font-size: 10px !important;
+  }
+}
+
+/* ===== CORREÇÃO 2: VALOR DO SALDO VISÍVEL ===== */
+.value-box-saldo {
+  flex: 1 1 auto;
+  min-width: 90px !important; /* largura mínima aumentada */
+  max-width: 140px !important; /* largura máxima definida */
+  display: flex !important;
+  flex-direction: column !important;
+  align-items: center !important;
+  justify-content: center !important;
+  padding: 0 5px !important;
+  margin-left: 10px !important; /* espaço do separador "x" */
+  height: 100%;
+  overflow: visible !important; /* permitir que o conteúdo seja visível */
+}
+
+/* Garantir que o valor do saldo seja visível */
+.value-box-saldo p:nth-child(2) {
+  display: block !important;
+  visibility: visible !important;
+  font-size: 13px !important;
+  font-weight: 700 !important;
+  white-space: nowrap !important;
+  overflow: visible !important;
+  text-overflow: clip !important;
+  line-height: 1.2 !important;
+  margin: 0 !important;
+  padding: 0 !important;
+}
+
+/* ===== CORREÇÃO 3: REORGANIZAÇÃO DO CARD ===== */
+.mentor-card {
+  display: flex;
+  align-items: center;
+  flex: 1 1 auto;
+
+  /* Dimensões ajustadas */
+  height: 76px !important; /* altura reduzida para comportar melhor */
+  min-height: 76px !important;
+
+  /* Espaçamento interno otimizado (controlado por :root) */
+  padding: var(--mentor-card-padding) !important;
+  padding-right: calc(
+    var(--mentor-card-padding) + 40px
+  ) !important; /* mantém espaço para o menu */
+
+  /* Visual */
+  background-color: #f7f6f6;
+  border: 1px solid #dcdcdc;
+  border-radius: 12px;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+
+  /* Layout */
+  gap: 8px !important; /* gap reduzido */
+  box-sizing: border-box;
+  position: relative;
+  overflow: hidden;
+  transition: transform 0.2s ease, box-shadow 0.2s ease;
+}
+
+/* Ajuste do header (foto + nome) */
+.mentor-header {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  width: 65px !important; /* largura reduzida */
+  flex-shrink: 0;
+  gap: 2px;
+}
+
+/* Foto menor */
+.mentor-img {
+  width: var(--mentor-img-size) !important; /* tamanho controlado por :root */
+  height: var(--mentor-img-size) !important;
+  border-radius: 50%;
+  object-fit: cover;
+  border: 2px solid #00a651;
+  /* Use :root variables for top/left margins so they can be customized */
+  margin-top: var(--mentor-img-margin-top) !important;
+  margin-left: var(--mentor-img-margin-left) !important;
+}
+
+/* Nome com fonte menor */
+.mentor-nome {
+  font-size: 10px !important; /* fonte reduzida */
+  margin-top: var(--mentor-nome-margin-top) !important;
+  margin-left: var(--mentor-nome-margin-left) !important;
+  color: #333;
+  text-align: center;
+  font-weight: 600;
+  line-height: 1.1;
+  max-width: 13ch; /* permitir exibir até 13 caracteres antes de truncar */
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+/* Área direita expandida */
+.mentor-right {
+  display: flex;
+  justify-content: flex-start !important; /* alinhar à esquerda */
+  flex: 1 1 auto;
+  height: 100%;
+  align-items: center;
+  padding-left: 5px;
+  margin-top: var(--mentor-values-margin-top) !important;
+  margin-left: var(--mentor-values-margin-left) !important;
+}
+
+/* Container dos valores inline */
+.mentor-values-inline {
+  display: flex;
+  justify-content: flex-start !important;
+  align-items: center;
+  height: 100%;
+  gap: 4px !important; /* gap menor */
+  flex-wrap: nowrap;
+  width: 100%;
+}
+
+/* Caixas de valores otimizadas */
+.value-box-green,
+.value-box-red {
+  flex: 0 0 35px !important; /* largura fixa menor */
+  height: 40px !important;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 0 !important;
+}
+
+/* Números do placar */
+.value-box-green p:nth-child(2),
+.value-box-red p:nth-child(2) {
+  font-size: 14px !important;
+  font-weight: 700 !important;
+  margin: 0 !important;
+  line-height: 1 !important;
+}
+
+/* Separador "x" entre green e red - posicionamento ajustado */
+.mentor-values-inline > .value-box-red::before {
+  content: "x";
+  position: absolute;
+  left: -10px !important; /* ajuste fino da posição */
+  top: 50%;
+  transform: translateY(-50%);
+  color: #7f8c8d;
+  font-weight: 500;
+  font-size: 13px !important;
+  padding: 0 4px !important;
+  pointer-events: none;
+}
+
+/* Menu externo ajustado */
+.mentor-menu-externo {
+  position: absolute !important;
+  right: 8px !important;
+  top: 50% !important;
+  transform: translateY(-50%) !important;
+  margin-left: var(--mentor-menu-externo-margin-left) !important;
+  margin-top: var(--mentor-menu-externo-margin-top) !important;
+  z-index: 10;
+}
+
+/* Toggle do menu menor */
+.menu-toggle {
+  color: #8f8e8eff;
+  background-color: transparent;
+  border: none;
+  cursor: pointer;
+  font-size: 18px !important; /* tamanho reduzido */
+  padding: 4px !important;
+  line-height: 1;
+}
+
+/* ===== CORES DO SALDO BASEADAS NO ESTADO ===== */
+.mentor-card.card-positivo .value-box-saldo p:nth-child(2) {
+  color: #00a651 !important;
+}
+
+.mentor-card.card-negativo .value-box-saldo p:nth-child(2) {
+  color: #e74c3c !important;
+}
+
+.mentor-card.card-neutro .value-box-saldo p:nth-child(2) {
+  color: #7f8c8d !important;
+}
+
+/* ===== RESPONSIVIDADE AJUSTADA ===== */
+@media (max-width: 768px) {
+  .mentor-rank-externo {
+    width: 32px !important;
+    height: 32px !important;
+    min-width: 32px !important;
+    min-height: 32px !important;
+    font-size: 11px !important;
+  }
+
+  .value-box-saldo {
+    min-width: 75px !important;
+    max-width: 120px !important;
+  }
+
+  .value-box-saldo p:nth-child(2) {
+    font-size: 12px !important;
+  }
+}
+
+@media (max-width: 480px) {
+  .mentor-rank-externo {
+    width: 28px !important;
+    height: 28px !important;
+    min-width: 28px !important;
+    min-height: 28px !important;
+    font-size: 10px !important;
+  }
+
+  .mentor-card {
+    height: 70px !important;
+    min-height: 70px !important;
+    padding-right: 40px !important;
+  }
+
+  .mentor-img {
+    width: 35px !important;
+    height: 35px !important;
+  }
+
+  .value-box-saldo p:nth-child(2) {
+    font-size: 11px !important;
+  }
+}
+
+/* Garantir que o bloco esquerdo não cresça além da viewport e que seus filhos
+   possam rolar internamente sem empurrar os blocos subsequentes. */
+.bloco-1 {
+  display: flex !important;
+  flex-direction: column !important;
+  max-height: var(
+    --bloco1-max-height
+  ) !important; /* reserva espaço para topo e margens */
+  overflow: hidden !important; /* controlar overflow nos filhos */
+  border-radius: 20px !important; /* canto arredondado do bloco-1 */
+  -webkit-border-radius: 20px !important;
+  -moz-border-radius: 20px !important;
+  /* Igualar acabamento ao Bloco-2: remover sombras/bordas no topo que
+     podem criar uma linha ou dentilhado quando lado a lado com o Bloco-2. */
+  border-top: none !important;
+  box-shadow: none !important;
+  background-clip: padding-box !important;
+  -webkit-backface-visibility: hidden;
+  backface-visibility: hidden;
+  -webkit-transform: translateZ(0);
+  transform: translateZ(0);
+  /* Neutral inset to normalize compositing and hide 1px hairlines */
+  box-shadow: 0 0 0 1px rgba(255, 255, 255, 0) inset;
+  padding-left: var(
+    --bloco1-padding-left
+  ) !important; /* remover padding lateral interno */
+  padding-right: 0 !important; /* remover padding lateral interno */
+  box-sizing: border-box !important; /* garantir que largura inclua padding/border */
+  margin-left: 0 !important; /* evitar deslocamentos residuais */
+  margin-right: 0 !important;
+}
+
+/* Match bloco-2 stacking and visual flush so the top contour renders identically */
+.container .bloco.bloco-1 {
+  z-index: 10000 !important; /* same as bloco-2 to avoid compositing differences */
+  border: none !important;
+  box-shadow: none !important;
+}
+
+.bloco-1 .widget-meta-item {
+  margin: 0 !important;
+  padding: 0 !important;
+  box-shadow: none !important;
+  border: none !important;
+  background-clip: padding-box !important;
+}
+
+.container-resumos {
+  display: flex !important;
+  flex-direction: column !important;
+  margin-top: var(
+    --container-resumos-margin-top
+  ) !important; /* controlado via :root */
+  flex: 1 1 auto !important;
+  min-height: 0 !important; /* permite que filhos com overflow rolem corretamente */
+  overflow: hidden !important;
+  border-radius: inherit !important; /* garantir que container respeite cantos do bloco */
+}
+
+.widget-meta-container,
+.widget-meta-row {
+  flex: 0 0 auto !important;
+}
+
+/* Já que o widget pode aumentar de conteúdo, forçamos seu item a rolar
+   internamente e não expandir o pai. */
+.widget-meta-item {
+  flex: 0 0 auto !important;
+  min-height: 0 !important;
+  max-height: var(--widget-meta-alt-max-height) !important;
+  overflow-y: auto !important;
+  -webkit-overflow-scrolling: touch !important;
+}
+
+/* Forçar layout flex interno para que o cabeçalho não exponha o conteúdo
+   e o corpo role dentro do próprio widget. */
+.widget-meta-item {
+  display: flex !important;
+  flex-direction: column !important;
+}
+
+/* Conteúdo interno principal deve crescer até o espaço disponível e rolar */
+.widget-meta-item > .widget-conteudo-principal {
+  flex: 1 1 auto !important;
+  min-height: 0 !important; /* permite o overflow funcionar dentro do flex */
+  overflow-y: auto !important;
+  -webkit-overflow-scrolling: touch !important;
+}
+
+/* Evitar qualquer overflow horizontal que gere barra embaixo */
+.widget-meta-item,
+.widget-meta-item > .widget-conteudo-principal {
+  overflow-x: hidden !important;
+}
+
+/* Forçar filhos a não ultrapassarem a largura do widget */
+.widget-meta-item .widget-barra-container,
+.widget-meta-item .meta-valor-container,
+.widget-meta-item .valor-ultrapassou,
+.widget-meta-item .widget-info-progresso,
+.widget-meta-item .valor-texto,
+.widget-meta-item .porcentagem-barra {
+  max-width: 100% !important;
+  box-sizing: border-box !important;
+  white-space: normal !important;
+  overflow-wrap: break-word !important;
+  word-break: break-word !important;
+}
+
+/* garantir que o ícone não force largura extra */
+.widget-meta-item .fa-solid {
+  max-width: 1.4em !important;
+}
+
+/* Esconder barras de rolagem mantendo rolagem funcional */
+.widget-meta-item::-webkit-scrollbar,
+.widget-meta-item > .widget-conteudo-principal::-webkit-scrollbar {
+  width: 0 !important;
+  height: 0 !important;
+}
+.widget-meta-item {
+  scrollbar-width: none !important; /* Firefox */
+  -ms-overflow-style: none !important; /* IE 10+ */
+}
+
+/* ---- Override: mostrar scrollbar visível (substitui regras que a escondiam) ---- */
+.widget-meta-item::-webkit-scrollbar,
+.widget-meta-item > .widget-conteudo-principal::-webkit-scrollbar {
+  width: 8px !important;
+  height: 8px !important;
+}
+
+.widget-meta-item::-webkit-scrollbar-track,
+.widget-meta-item > .widget-conteudo-principal::-webkit-scrollbar-track {
+  background: transparent;
+  border-radius: 8px;
+}
+
+.widget-meta-item::-webkit-scrollbar-thumb,
+.widget-meta-item > .widget-conteudo-principal::-webkit-scrollbar-thumb {
+  background: rgba(0, 0, 0, 0.18);
+  border-radius: 8px;
+  border: 2px solid rgba(255, 255, 255, 0.06);
+}
+
+/* Firefox */
+.widget-meta-item,
+.widget-meta-item > .widget-conteudo-principal {
+  scrollbar-width: thin !important;
+  scrollbar-color: rgba(0, 0, 0, 0.18) transparent !important;
+  -ms-overflow-style: auto !important; /* IE */
+}
+
+/* Hover deixa a thumb mais escura para acessibilidade */
+.widget-meta-item:hover::-webkit-scrollbar-thumb,
+.widget-meta-item > .widget-conteudo-principal:hover::-webkit-scrollbar-thumb {
+  background: rgba(0, 0, 0, 0.34);
+}
+
+/* Manter o conteúdo do widget com barras ocultas mas roláveis */
+.widget-meta-item::-webkit-scrollbar,
+.widget-conteudo-principal::-webkit-scrollbar {
+  width: 0;
+  height: 0;
+}
+
+/* Scrollbar customizada para blocos */
+.bloco-1::-webkit-scrollbar {
+  width: 6px;
+}
+
+.bloco-1::-webkit-scrollbar-thumb {
+  background-color: rgba(0, 0, 0, 0.2);
+  border-radius: 10px;
+}
+
+/* ===== BLOCO 2 - TOTALMENTE FLEXÍVEL ===== */
+
+/* ===== CONTAINER RESUMOS - AGORA 100% FLEXÍVEL ===== */
+
+/* NOVO: reduzir gap em visualizações menores se necessário */
+@media (max-width: 1024px) {
+  .container {
+    gap: 6px !important;
+  }
+  .bloco-1 {
+    flex: 0 0 380px !important;
+    width: 380px !important;
+  }
+  .bloco-2 {
+    flex: 0 0 calc(100% - 380px) !important;
+    width: calc(100% - 380px) !important;
+  }
+
+  /* Override global: reduzir padding interno do Bloco 2 para aumentar espaço útil */
+  .bloco-2 {
+    padding: 6px !important;
+    box-sizing: border-box !important;
+  }
+}
+
+/* ===== WIDGET META - TOTALMENTE RESPONSIVO ===== */
+.widget-meta-container {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  width: 100%;
+  border: none;
+}
+
+.widget-meta-row {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  width: 100%;
+}
+
+.widget-meta-item {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  background: rgba(247, 246, 246, 0.95);
+  backdrop-filter: blur(5px);
+
+  padding: 0;
+
+  width: 100%; /* Sempre 100% da largura disponível */
+  min-height: 180px;
+  box-sizing: border-box;
+  box-shadow: 0 8px 20px rgba(0, 0, 0, 0.1);
+  position: relative;
+  overflow: hidden;
+}
+
+/* Evitar que o widget cresça e empurre containers externos.
+   Definimos um limite máximo e usamos overflow interno. */
+.widget-meta-item {
+  max-height: var(--widget-meta-max-height) !important;
+  overflow: hidden !important;
+  display: flex !important;
+  flex-direction: column !important;
+  position: relative !important; /* permitir que o header posicionado absoluto se ancore aqui */
+}
+
+/* ===== TOPO FIXO COM DATA E PLACAR - RESPONSIVO ===== */
+.widget-meta-item .data-header-integrada {
+  /* High-specificity fallback: garantir margin-left da barra de progresso */
+  #widget-meta .widget-barra-container,
+  .widget-meta-item .widget-barra-container,
+  .widget-barra-container {
+    margin-left: var(--widget-barra-container-margin-left) !important;
+  }
+  box-sizing: border-box;
+  position: -webkit-sticky !important; /* support for older Safari */
+  position: sticky !important; /* stick to the top of its scroll container */
+  left: 0 !important;
+  right: 0 !important;
+  z-index: 9999; /* acima do conteúdo interno */
+  border: none !important;
+  outline: none !important;
+
+  /* Solução para acabamento perfeito dos cantos arredondados */
+  -webkit-transform: translateZ(0);
+  transform: translateZ(0);
+  -webkit-backface-visibility: hidden;
+  backface-visibility: hidden;
+  will-change: transform;
+
+  /* Clipping mask para garantir bordas perfeitas */
+  overflow: hidden !important;
+  -webkit-mask-image: -webkit-radial-gradient(white, black);
+  mask-image: radial-gradient(white, black);
+
+  /* Garantir que o gradiente preencha perfeitamente os cantos */
+  background-origin: border-box !important;
+  background-clip: border-box !important;
+
+  /* Remover qualquer borda ou sombra que cause dentilhado */
+  box-shadow: none !important;
+}
+
+/* Decorative overlay to paint a crisp contour and mask any hairline seams
+   The pseudo-element sits above the background but below content, drawing
+   only the small finishing strokes (so the underlying block doesn't show
+   through at the rounded corners). */
+.widget-meta-item .data-header-integrada::after {
+  content: "";
+  position: absolute;
+  left: 0;
+  right: 0;
+  top: 0;
+  height: 100%;
+  pointer-events: none;
+  border-radius: 20px 20px 0 0;
+  box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.06); /* subtle inner highlight */
+  /* a very thin stroke to hide any seam while keeping the gradient visible */
+  -webkit-mask-image: linear-gradient(#000, #000);
+  mask-image: linear-gradient(#000, #000);
+  z-index: 1; /* sit above background but below header content */
+}
+
+.widget-meta-item .data-header-integrada > * {
+  position: relative;
+  z-index: 2; /* ensure content (icons, text) stays above the decorative overlay */
+}
+
+/* High-specificity fallback: use widget ID to ensure margins from :root are applied
+   This covers cases where other stylesheets loaded later override the class rules. */
+#widget-meta > .data-header-integrada,
+#widget-meta .data-header-integrada {
+  margin-left: 0 !important; /* ensure no container-level left margin from fallback */
+}
+
+/* Correção visual: garantir que o header fique perfeitamente colado
+   aos cantos arredondados do bloco pai (remove pequenos gaps causados
+   por backgrounds semi-transparente, bordas ou anti-aliasing). */
+.widget-meta-item {
+  overflow: hidden !important; /* garante que os cantos arredondados clipem filhos */
+  -webkit-background-clip: padding-box !important;
+  background-clip: padding-box !important;
+}
+
+.widget-meta-item .data-header-integrada {
+  margin-top: 0 !important; /* remover qualquer margem residual */
+  border-top-left-radius: inherit !important; /* herdar o raio do pai */
+  border-top-right-radius: inherit !important; /* herdar o raio do pai */
+  -webkit-background-clip: padding-box !important; /* evita linha fina entre bordas */
+  background-clip: padding-box !important;
+  /* força uma composição de camada que reduz artefatos visuais em alguns navegadores */
+  transform: translateZ(0);
+}
+
+/* Garantir que containers que contenham o header não recebam margin/padding
+   que empurre todo o bloco. Usa :has() quando suportado; fallback com seletores
+   mais específicos para navegadores sem :has(). */
+.widget-meta-item:has(.data-header-integrada),
+.widget-meta-container:has(.data-header-integrada),
+.bloco-1:has(.data-header-integrada) {
+  margin-top: 0 !important;
+  padding-top: 0 !important;
+}
+
+/* Fallback amplo para navegadores sem suporte a :has():
+   Anula regras comuns que possam aplicar margin-top ao container. */
+.widget-meta-item .data-header-integrada ~ *,
+.bloco-1 > .container-resumos {
+  margin-top: 0 !important;
+  padding-top: 0 !important;
+}
+
+/* Quando a seleção de período estiver dentro do header, anular a posição fixed global */
+.data-header-integrada .periodo-selecao-container {
+  /* Ensure the period selector remains fixed in the viewport and does not
+     shift when the date text width changes. Uses root variables for position. */
+  position: fixed !important;
+  top: var(--periodo-selecao-top, 22px) !important;
+  left: var(--periodo-selecao-margin-left, 0px) !important;
+  margin-left: 0 !important; /* left handled by `left` above */
+  z-index: 999 !important;
+}
+
+/* Reservar espaço no conteúdo principal para o header absoluto */
+.widget-meta-item > .widget-conteudo-principal {
+  padding-top: 0 !important; /* Não precisamos mais reservar espaço quando o header é sticky */
+  box-sizing: border-box !important;
+}
+
+/* Data no canto esquerdo */
+.data-texto-compacto {
+  display: flex;
+  align-items: center;
+  gap: 4px; /* reduzido para aproximar o texto do ícone */
+  flex: 0 0 auto;
+}
+
+/* Make icon and date align on the text baseline so icon can be nudged up
+   without moving the whole block. Use baseline and allow per-element transform. */
+.data-header-integrada .data-texto-compacto {
+  /* Use center alignment to keep icon visually beside the date (matches bloco 2) */
+  align-items: center !important;
+  /* Apply left offset only to the date+icon group */
+  margin-left: var(--data-header-margin-left) !important;
+}
+
+/* Apply root-controlled margin-top so the selection can be nudged without editing markup */
+.periodo-selecao-container {
+  margin-top: var(--periodo-selecao-margin-top) !important;
+}
+
+.data-header-integrada .fa-solid.fa-calendar-days {
+  display: inline-block !important; /* permitir deslocamento vertical */
+  font-size: 13px !important; /* seguir bloco 2 (ícone maior) */
+  vertical-align: middle !important;
+  color: #6a0dad !important;
+  margin-right: 2px !important; /* aproximar do texto (reduzido) */
+  -webkit-transform: translateY(var(--data-header-icon-margin-top)) !important;
+  transform: translateY(var(--data-header-icon-margin-top)) !important;
+  will-change: transform;
+  transition: transform 220ms ease, color 260ms ease, opacity 220ms ease;
+}
+
+/* Generic header icon rules: apply to all calendar icon variants so JS swapping
+   classes doesn't change positioning/flow. Keeps icon inline and uses transform
+   for vertical offset. */
+.data-header-integrada .fa-solid.fa-calendar-days,
+.data-header-integrada .fa-solid.fa-calendar-day,
+.data-header-integrada .fa-solid.fa-calendar {
+  display: inline-block !important;
+  position: static !important;
+  float: none !important;
+  vertical-align: middle !important;
+  margin: 0 2px 0 0 !important; /* margin-right reduzida para consistência */
+  /* Force consistent icon size across periods */
+  font-size: 13px !important;
+  -webkit-transform: translateY(var(--data-header-icon-margin-top)) !important;
+  transform: translateY(var(--data-header-icon-margin-top)) !important;
+  transition: transform 220ms ease, color 260ms ease, opacity 220ms ease;
+}
+
+.data-principal-integrada {
+  display: inline-block !important; /* manter no fluxo, mas permitir transform sem mover o pai */
+  font-size: 13px !important; /* seguir bloco 2 (texto do título) */
+  font-weight: 600 !important;
+  line-height: 1 !important; /* igual ao .titulo-bloco do bloco 2 */
+  color: #6a0dad !important;
+  letter-spacing: 0.5px;
+  white-space: nowrap;
+  transform: translateY(
+    var(--data-header-margin-top)
+  ) !important; /* aplicar deslocamento visual apenas ao texto */
+  -webkit-transform: translateY(var(--data-header-margin-top)) !important;
+  will-change: transform;
+  transition: opacity 260ms ease, transform 220ms ease;
+}
+
+/* Remove text-shadow for date and calendar icon in header to ensure no shadow appears */
+#data-header .data-texto-compacto > .data-principal-integrada,
+#data-header .data-texto-compacto > i {
+  text-shadow: none !important;
+}
+
+/* Strong override: ensure icon and date stay inline beside each other
+   Prevent any rules (inline styles or other sheets) from absolutely positioning
+   or floating the icon out of the flow. */
+.data-header-integrada .data-texto-compacto > i,
+.data-header-integrada .data-texto-compacto > .data-principal-integrada {
+  position: static !important;
+  top: auto !important;
+  left: auto !important;
+  float: none !important;
+  display: inline-block !important;
+  vertical-align: middle !important;
+  margin: 0 !important;
+}
+
+/* Placar centralizado */
+.pontuacao {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: var(--pontuacao-gap); /* Gap responsivo via :root */
+  color: white;
+  font-size: clamp(16px, 4vw, 24px); /* Fonte responsiva */
+  font-weight: 700;
+
+  position: absolute;
+  left: calc(50% + var(--pontuacao-margin-left));
+  transform: translateX(-50%);
+  margin-top: var(--pontuacao-margin-top) !important;
+}
+
+.placar-green {
+  color: #03a158;
+
+  font-weight: bold;
+}
+
+.placar-red {
+  color: #e93a3a;
+
+  font-weight: bold;
+}
+
+.separador {
+  /* default hidden state while waiting for values */
+  color: transparent;
+  opacity: 0;
+  font-size: var(--fs-placar-top); /* match bloco-2 */
+  font-weight: 300;
+  margin: 0 var(--separador-margin); /* Margin responsiva via :root */
+  transition: color 180ms ease, opacity 180ms ease;
+}
+
+#pontuacao.placar-has-values .separador {
+  color: rgba(
+    109,
+    107,
+    107,
+    0.95
+  ) !important; /* normal gray separator like bloco-2 */
+  opacity: 1 !important;
+}
+
+/* AREA DIREITA TOPO FIXO */
+
+/* Container principal da área direita */
+/* Container principal da área direita */
+/* Container principal da área direita - FORÇA posicionamento direito */
+.barra-superior .area-direita {
+  display: flex !important;
+  flex-direction: row !important;
+  align-items: center !important;
+  justify-content: flex-end !important;
+  gap: var(--area-direita-gap-horizontal) !important;
+
+  /* ✅ FORÇA empurrar para direita */
+  margin-left: auto !important;
+  margin-right: var(--area-direita-margin-right, 10px) !important;
+  margin-top: var(--area-direita-margin-top) !important;
+
+  /* ✅ Controle de largura */
+  max-width: var(--area-direita-max-width, 200px) !important;
+  min-width: max-content !important;
+
+  flex-shrink: 1 !important;
+  padding: clamp(4px, 1vw, 8px) !important;
+  z-index: var(--area-direita-z-index) !important;
+  position: relative !important;
+
+  /* ✅ Permitir overflow visível */
+  overflow: visible !important;
+  white-space: nowrap !important;
+}
+
+/* Elementos de valor dinâmico APENAS dentro da .area-direita */
+/* Elementos de valor dinâmico APENAS dentro da .area-direita */
+.barra-superior .area-direita .valor-dinamico {
+  display: flex;
+  align-items: center;
+  justify-content: flex-start;
+  gap: var(--area-direita-gap-interno); /* ✅ NOVO: gap interno controlado */
+  font-size: clamp(10px, 2vw, 12px);
+  font-weight: 600;
+  color: #576574;
+  background: transparent;
+  border: none;
+  padding: 0;
+  border-radius: 0;
+  transition: all 0.3s ease;
+  width: auto; /* ✅ MUDADO: auto para não forçar largura */
+  white-space: nowrap !important;
+  overflow: visible !important;
+}
+.barra-superior .area-direita #porcentagem-diaria,
+.barra-superior .area-direita #valor-unidade {
+  white-space: nowrap !important;
+  overflow: visible !important;
+}
+
+.barra-superior .area-direita .valor-dinamico:hover {
+  transform: scale(1.05);
+}
+/* ===== ÍCONE DO BANCO (DIÁRIA) - APENAS na .area-direita ===== */
+.barra-superior .area-direita .valor-diaria {
+  order: 1;
+}
+
+.barra-superior .area-direita .valor-diaria .fas.fa-university {
+  color: #3498db;
+  font-size: clamp(10px, 2vw, 12px);
+  margin-right: var(--area-direita-icon-margin-left);
+  margin-top: var(--area-direita-icon-margin-top);
+}
+
+.barra-superior .area-direita #porcentagem-diaria {
+  color: #3498db;
+  font-weight: 700;
+  text-shadow: 0 1px 2px rgba(52, 152, 219, 0.3);
+  margin-left: var(--area-direita-porcentagem-margin-left);
+  margin-top: var(--area-direita-porcentagem-margin-top);
+}
+
+/* ===== RÓTULO E VALOR DA UNIDADE - APENAS na .area-direita ===== */
+.barra-superior .area-direita .valor-unidade {
+  order: 2;
+  margin-top: var(--area-direita-valor-unidade-wrapper-margin-top);
+}
+
+.barra-superior .area-direita .valor-unidade {
+  margin-top: var(--area-direita-valor-unidade-wrapper-margin-top);
+}
+
+.barra-superior .area-direita .rotulo-und {
+  color: #8e44ad;
+  font-weight: 700;
+  font-size: clamp(9px, 1.8vw, 10px);
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  margin-left: var(--area-direita-rotulo-unidade-margin-left);
+  margin-top: var(--area-direita-rotulo-unidade-margin-top);
+}
+
+.barra-superior .area-direita #valor-unidade {
+  color: #28a745;
+  font-weight: 700;
+  text-shadow: 0 1px 2px rgba(39, 174, 96, 0.3);
+  margin-left: var(--area-direita-valor-unidade-margin-left);
+  margin-top: var(--area-direita-valor-unidade-margin-top);
+}
+
+/* ===== ANIMAÇÕES DE ATUALIZAÇÃO - APENAS na .area-direita ===== */
+.barra-superior .area-direita .valor-dinamico.atualizado {
+  transform: scale(1.1);
+}
+
+.barra-superior .area-direita .valor-dinamico.atualizado #porcentagem-diaria {
+  text-shadow: 0 0 8px rgba(52, 152, 219, 0.6);
+}
+
+.barra-superior .area-direita .valor-dinamico.atualizado #valor-unidade {
+  text-shadow: 0 0 8px rgba(39, 174, 96, 0.6);
+}
+
+/* ===== RESPONSIVIDADE - APENAS para .area-direita ===== */
+@media (max-width: 768px) {
+  .barra-superior .area-direita {
+    gap: clamp(2px, 0.5vw, 4px);
+    padding: clamp(2px, 0.5vw, 4px);
+  }
+
+  .barra-superior .area-direita .valor-dinamico {
+    font-size: clamp(8px, 1.8vw, 10px);
+    gap: clamp(2px, 0.5vw, 3px);
+  }
+
+  .barra-superior .area-direita .valor-diaria .fas.fa-university {
+    font-size: clamp(8px, 1.5vw, 10px);
+  }
+
+  .barra-superior .area-direita .rotulo-und {
+    font-size: clamp(7px, 1.5vw, 8px);
+  }
+}
+
+@media (max-width: 480px) {
+  .barra-superior .area-direita {
+    gap: 1px;
+    padding: 2px;
+  }
+
+  .barra-superior .area-direita .valor-dinamico {
+    font-size: clamp(7px, 1.5vw, 8px);
+    gap: 1px;
+  }
+
+  .barra-superior .area-direita .valor-diaria .fas.fa-university {
+    font-size: clamp(6px, 1.2vw, 8px);
+  }
+
+  .barra-superior .area-direita .rotulo-und {
+    font-size: clamp(6px, 1.2vw, 7px);
+  }
+}
+
+/* ===== CLASSES UTILITÁRIAS - APENAS para elementos na .area-direita ===== */
+.barra-superior .area-direita .valor-positivo {
+  color: #27ae60 !important;
+  text-shadow: 0 1px 2px rgba(39, 174, 96, 0.4) !important;
+}
+
+.barra-superior .area-direita .valor-negativo {
+  color: #e74c3c !important;
+  text-shadow: 0 1px 2px rgba(231, 76, 60, 0.4) !important;
+}
+
+.barra-superior .area-direita .valor-neutro {
+  color: #7f8c8d !important;
+  text-shadow: 0 1px 2px rgba(127, 140, 141, 0.4) !important;
+}
+/* Container principal da área direita */
+.barra-superior .area-direita {
+  display: flex;
+  flex-direction: row; /* ✅ MUDANÇA: row para lado a lado */
+  align-items: center; /* ✅ MUDANÇA: centralizar verticalmente */
+  justify-content: flex-end; /* ✅ MUDANÇA: alinhar à direita */
+  gap: clamp(8px, 2vw, 15px); /* ✅ AUMENTADO: espaçamento entre elementos */
+  justify-self: end;
+  flex-shrink: 0;
+  padding: clamp(4px, 1vw, 8px);
+  margin-left: var(--area-direita-margin-left) !important;
+  margin-top: var(--area-direita-margin-top) !important;
+}
+
+/* FIM AREA DIREITA TOPO FIXO */
+
+/* Espaço reservado à direita para equilíbrio */
+.espaco-equilibrio {
+  flex: 0 0 auto;
+  width: clamp(40px, 8vw, 80px); /* Largura responsiva */
+}
+
+/* ===== CONTEÚDO PRINCIPAL DO WIDGET - RESPONSIVO ===== */
+.widget-conteudo-principal {
+  background: #f8f9fa !important;
+  border-radius: 12px !important;
+  padding: 20px !important;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05) !important;
+  display: flex !important;
+  flex-direction: column !important;
+  align-items: flex-start !important; /* ✅ MUDADO: de center para flex-start */
+  width: 100% !important;
+  box-sizing: border-box !important;
+  /* Limitar altura para que conteúdo extra role internamente
+    sem empurrar os containers abaixo. Valor responsivo para evitar
+    overflow na maioria das telas. */
+  max-height: var(--widget-conteudo-max-height) !important;
+  overflow-y: auto !important;
+  -webkit-overflow-scrolling: touch !important; /* suaviza o scroll em mobile */
+}
+
+/* Permitir que o elemento flex interno role corretamente dentro do pai
+   (solução para o 'overflow' não funcionar em alguns navegadores). */
+.widget-conteudo-principal {
+  flex: 1 1 auto !important;
+  min-height: 0 !important;
+}
+
+/* Esconder a barra de rolagem mas manter a capacidade de rolar (mouse/touch/trackpad) */
+.widget-conteudo-principal {
+  scrollbar-width: none; /* Firefox */
+  -ms-overflow-style: none; /* IE 10+ */
+}
+
+.widget-conteudo-principal::-webkit-scrollbar {
+  width: 0; /* esconder em WebKit */
+  height: 0;
+}
+
+.widget-conteudo-principal::-webkit-scrollbar-thumb {
+  background: transparent;
+}
+
+/* Mantém espaçamento interno legível quando o conteúdo está rolando */
+.widget-conteudo-principal {
+  box-sizing: border-box;
+}
+
+.widget-info-progresso {
+  font-size: clamp(10px, 2vw, 13px); /* Fonte responsiva */
+  color: #576574;
+  display: flex;
+  justify-content: center;
+  width: 100%;
+  font-weight: 600;
+}
+
+.widget-info-progresso span {
+  display: flex;
+  align-items: center;
+  gap: 5px;
+}
+
+.widget-info-progresso .fa-wallet {
+  color: #95a5a6;
+  font-size: clamp(10px, 2vw, 13px); /* Fonte responsiva */
+}
+
+/* ===== CAMPO MENTORES - TOTALMENTE RESPONSIVO ===== */
+.campo_mentores {
+  position: relative;
+  width: 100%; /* Sempre 100% da largura do bloco pai */
+  height: 580px;
+  background: rgba(247, 246, 246, 0.95);
+  backdrop-filter: blur(5px);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  border-bottom-left-radius: inherit !important;
+  border-bottom-right-radius: inherit !important;
+  padding: 0;
+  box-sizing: border-box;
+  overflow: hidden;
+  margin-top: 0px;
+}
+
+/* ===== BARRA SUPERIOR RESPONSIVA ===== */
+.barra-superior {
+  position: sticky;
+  top: 0;
+  left: 0;
+  right: 0;
+  width: 100%;
+  height: 60px;
+  background: rgba(247, 246, 246, 0.95);
+  display: flex;
+  align-items: center;
+  justify-content: flex-start; /* Alinha conteúdo à esquerda */
+  padding: 0 5%; /* Padding proporcional */
+  z-index: 100;
+  border-bottom: 1px solid rgba(206, 205, 205, 0.3);
+  position: relative;
+}
+
+/* ===== BOTÃO ADD RESPONSIVO ===== */
+.btn-add-usuario {
+  background: rgba(255, 255, 255, 0.15);
+  backdrop-filter: blur(8px);
+  color: #27ae60;
+  font-size: clamp(12px, 2.5vw, 16px); /* Fonte responsiva */
+  border: 2px solid #27ae60;
+  border-radius: 50%;
+  width: var(--btn-add-usuario-width); /* Largura responsiva via :root */
+  height: var(--btn-add-usuario-height); /* Altura responsiva via :root */
+  cursor: pointer;
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  position: relative;
+  overflow: hidden;
+  box-shadow: 0 2px 6px rgba(39, 174, 96, 0.2);
+  flex-shrink: 0; /* Impede que o botão diminua */
+  margin-left: var(--btn-add-usuario-margin-left) !important;
+}
+
+.btn-add-usuario:hover {
+  transform: scale(1.1);
+  background: rgba(39, 174, 96, 0.15);
+  border-color: #2ecc71;
+  color: #2ecc71;
+  box-shadow: 0 4px 15px rgba(39, 174, 96, 0.3);
+}
+
+.btn-add-usuario:active {
+  transform: scale(0.95);
+}
+
+.area-central {
+  position: absolute;
+  left: calc(50% + var(--area-central-margin-left));
+  top: calc(50% + var(--area-central-margin-top));
+  transform: translate(-50%, -50%);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: clamp(12px, 2.5vw, 16px);
+  font-weight: 600;
+  color: #576574;
+  text-transform: uppercase;
+  letter-spacing: 1px;
+  /* Adicione estilos específicos para seus elementos centrais aqui */
+}
+
+/* ===== ESTILOS PARA ELEMENTOS DENTRO DA ÁREA CENTRAL ===== */
+.area-central span {
+  display: flex;
+  align-items: center;
+  gap: clamp(4px, 1vw, 8px);
+}
+
+.area-central i {
+  font-size: clamp(10px, 2vw, 14px);
+  color: #8e44ad;
+}
+/* ===== RESPONSIVE ADJUSTMENTS ===== */
+@media (max-width: 768px) {
+  .barra-superior {
+    height: 50px;
+    padding: 0 3%;
+  }
+
+  .area-central {
+    font-size: clamp(10px, 2vw, 14px);
+  }
+}
+
+@media (max-width: 480px) {
+  .barra-superior {
+    height: 45px;
+    padding: 0 2%;
+  }
+
+  .area-central {
+    font-size: clamp(9px, 1.8vw, 12px);
+  }
+}
+
+/* ===== ÁREA DOS MENTORES RESPONSIVA ===== */
+.mentor-wrapper {
+  /* Make the mentor list a vertical flex container so each .mentor-item stretches
+     to the same width and avoids centering the last item. Keep scroll behaviour. */
+  display: flex;
+  flex-direction: column;
+  align-items: stretch; /* ensure children take full available width */
+  padding: 0 !important; /* remover padding interno para colar nas laterais */
+  padding-right: calc(
+    var(--mentor-wrapper-scrollbar-offset) + 4px
+  ) !important; /* make room so scrollbar is inset */
+  width: 100%;
+  max-height: calc(100% - 60px);
+  height: auto;
+  overflow-y: auto;
+  overflow-x: hidden;
+  margin-top: 0;
+  margin-left: 0; /* remove left offset that could cause layout shift */
+  box-sizing: border-box;
+  position: relative;
+}
+
+/* Barra de rolagem fina que combina com o fundo de .campo_mentores
+   Padrão: cor suave parecida com o fundo; ao passar o mouse sobre o container
+   a cor do thumb fica mais forte. Compatível WebKit (Chrome/Safari/Edge) e Firefox */
+.mentor-wrapper {
+  /* Força um scrollbar fino em navegadores Firefox */
+  scrollbar-width: thin;
+  /* thumb default color + track transparent for firefox */
+  scrollbar-color: rgba(247, 246, 246, 0.6) transparent;
+}
+
+.mentor-wrapper::-webkit-scrollbar {
+  width: calc(
+    var(--mentor-wrapper-scrollbar-width) -
+      var(--mentor-wrapper-scrollbar-offset)
+  ); /* adjust visual width by offset */
+}
+
+.mentor-wrapper::-webkit-scrollbar-track {
+  background: rgba(0, 0, 0, 0.03); /* leve contraste com o conteúdo */
+  border-radius: 10px;
+}
+
+.mentor-wrapper::-webkit-scrollbar-thumb {
+  background: var(--bloco1-scrollbar-thumb); /* visível por padrão */
+  border-radius: 10px;
+  transition: background-color 0.12s ease, box-shadow 0.12s ease;
+  border: 1px solid rgba(255, 255, 255, 0.06);
+}
+
+/* Quando o usuário move o mouse sobre o container, o thumb fica mais visível */
+.mentor-wrapper:hover {
+  /* firefox on-hover color */
+  scrollbar-color: rgba(60, 60, 60, 0.95) rgba(0, 0, 0, 0.04);
+}
+
+.mentor-wrapper:hover::-webkit-scrollbar-thumb,
+.mentor-wrapper::-webkit-scrollbar-thumb:hover {
+  background: rgba(60, 60, 60, 0.95); /* cor mais forte ao hover */
+  box-shadow: inset 0 0 0 1px rgba(0, 0, 0, 0.08);
+}
+
+/* ===== ESTILOS DOS MENTORES RESPONSIVOS ===== */
+.mentor-item {
+  display: flex;
+  align-items: center;
+  position: relative;
+  margin-bottom: 8px;
+  gap: 8px; /* Espaçamento reduzido entre rank e card (ajustado) */
+  padding: 0;
+}
+
+/* Normalizar alinhamento do último item da lista de mentores */
+.mentor-wrapper .mentor-item:last-child {
+  margin-bottom: 8px;
+  align-items: center;
+}
+/* Regra de .mentor-rank-externo unificada está definida no topo do arquivo.
+   Mantida somente a declaração única para evitar conflitos entre regras.
+*/
+
+/* ===== MENTORES SEM VALORES - OPACIDADE E EXCLUSÃO DO RANK ===== */
+
+.mentor-item.sem-valores .mentor-card {
+  opacity: 0.42; /* leve dim apenas no card */
+  transition: opacity 0.3s ease, transform 0.2s ease;
+  background: #f5f5f5;
+  border-style: dashed;
+  margin-left: 0; /* ajustar gap quando não há rank */
+  cursor: pointer; /* permitir mão de clique mesmo quando sem valores */
+}
+
+.mentor-item.sem-valores .mentor-card:hover {
+  transform: none;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+  cursor: pointer;
+}
+
+.mentor-item.sem-valores:hover .mentor-card {
+  opacity: 0.6; /* leve clareamento no hover mantendo menu legível */
+}
+
+.mentor-item.sem-valores .mentor-rank-externo {
+  display: none !important;
+}
+
+/* Manter o botão de menu (3 pontinhos) visível e clicável mesmo quando o mentor
+   estiver com a classe .sem-valores. O card fica desabilitado, mas o toggle deve
+   permanecer em cima para ações administrativas. */
+.mentor-item.sem-valores .menu-toggle,
+.mentor-item.sem-valores .mentor-menu-externo {
+  pointer-events: auto !important;
+  opacity: 1 !important;
+  visibility: visible !important;
+  display: inline-flex !important;
+  z-index: 99999 !important;
+}
+
+.mentor-item.sem-valores .menu-toggle {
+  position: relative !important;
+}
+
+/* ===== CARD PRINCIPAL - ESTRUTURA CORRIGIDA ===== */
+.mentor-card {
+  display: flex;
+  align-items: center;
+  flex: 1 1 auto; /* Ocupa o espaço restante */
+
+  /* Dimensões */
+  height: var(
+    --mentor-card-height
+  ); /* Altura aumentada para acomodar valores maiores */
+  min-height: var(--mentor-card-min-height);
+
+  /* Espaçamento interno (controlado por :root) */
+  padding: var(--mentor-card-padding) !important;
+  padding-right: calc(
+    var(--mentor-card-padding) + 40px
+  ) !important; /* Espaço para o menu de 3 pontos */
+
+  /* Visual */
+  background-color: #f7f6f6;
+  border: 1px solid #dcdcdc;
+  border-radius: 12px;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+
+  /* Layout */
+  gap: 12px; /* Espaçamento entre foto e valores */
+  box-sizing: border-box;
+  position: relative;
+  overflow: hidden;
+
+  /* Transições */
+  transition: transform 0.2s ease, box-shadow 0.2s ease;
+}
+
+.card-neutro {
+  border-color: #999;
+}
+
+.card-positivo {
+  border-color: #2ecc71;
+}
+
+.card-negativo {
+  border-color: #e74c3c;
+}
+
+.mentor-card:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.15);
+  cursor: pointer; /* mostra mão de clique ao passar o mouse sobre o card */
+}
+
+.mentor-header {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  width: clamp(
+    48px,
+    12vw,
+    80px
+  ); /* reduzido para liberar mais espaço horizontal */
+  flex-shrink: 0;
+}
+
+.mentor-img {
+  width: var(--mentor-img-size); /* Largura responsiva */
+  height: var(--mentor-img-size); /* Altura responsiva */
+  border-radius: 50%;
+  object-fit: cover;
+  border: 2px solid #00a651;
+  margin-top: 5px; /* alinhar verticalmente: 5px pedido pelo usuário */
+  margin-left: 0; /* remover deslocamento horizontal que causava desalinhamento */
+}
+
+.mentor-nome {
+  font-size: var(--mentor-name-font-size); /* Fonte responsiva */
+  margin-top: var(--mentor-nome-margin-top) !important;
+  color: #333;
+  text-align: center;
+  font-weight: normal;
+  margin-left: var(
+    --mentor-nome-margin-left
+  ) !important; /* remover deslocamento horizontal */
+}
+
+.mentor-right {
+  display: flex;
+  justify-content: center; /* centralizar valores horizontalmente dentro do card */
+  flex: 1 1 auto; /* permitir que a área direita cresça para acomodar valores maiores */
+  height: 100%;
+  align-items: center;
+}
+
+.mentor-values-inline {
+  display: flex;
+  justify-content: center; /* centralizar o conjunto de valores */
+  align-items: center;
+  height: 100%;
+  gap: 6px; /* pequeno gap */
+  flex-wrap: nowrap;
+  width: 100%; /* ocupar espaço disponível à direita */
+  margin-right: 6px; /* espaço para o menu de opções */
+}
+
+/* Separador visual entre Green e Red: mostra "×" entre os dois números */
+.mentor-values-inline > .value-box-red {
+  position: relative; /* para posicionar o pseudo-elemento fora da caixa */
+}
+
+.mentor-values-inline > .value-box-red::before {
+  content: "x";
+  position: absolute;
+  left: -12px; /* posiciona entre as caixas */
+  top: 50%;
+  transform: translateY(-50%);
+  color: #7f8c8d;
+  font-weight: 500;
+  font-size: 14px !important;
+  font-family: "Rajdhani", sans-serif !important;
+  padding: 0 8px; /* espaço lateral para ficar como '0  x  0' */
+  pointer-events: none;
+}
+
+/* Forçar tamanho de fonte 12px para nomes, rank e contadores dentro do mentor-card */
+
+.mentor-card .value-box-green p:nth-child(2),
+.mentor-card .value-box-red p:nth-child(2),
+.mentor-card .value-box-saldo p:nth-child(2) {
+  font-size: 14px !important;
+  line-height: 1 !important;
+}
+
+.value-box-green,
+.value-box-red,
+.value-box-saldo {
+  height: clamp(45px, 9vw, 60px); /* Altura responsiva */
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  box-sizing: border-box;
+  text-align: center;
+}
+
+.value-box-green {
+  flex: 0 0 clamp(40px, 8vw, 60px); /* largura fixa para coluna Green */
+}
+
+.value-box-red {
+  flex: 0 0 clamp(40px, 8vw, 60px); /* largura fixa para coluna Red */
+}
+
+.value-box-saldo {
+  flex: 1 1 auto; /* ocupa o restante */
+  min-width: var(
+    --value-box-saldo-min-width
+  ); /* Largura mínima aumentada para mostrar o valor sem cortar */
+  display: flex;
+  align-items: center;
+  justify-content: center; /* centralizar o valor dentro da coluna de saldo */
+  padding-left: 0; /* remover padding para evitar indentação */
+  white-space: nowrap; /* evitar quebra */
+  overflow: hidden; /* evitar que estoure o card */
+}
+
+.value-box-saldo p:nth-child(2) {
+  text-align: left !important;
+  display: inline-block !important;
+  white-space: nowrap !important;
+}
+
+/* Garantir que o valor do saldo fique em uma única linha e com 12px */
+.value-box-saldo {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  white-space: nowrap; /* evita quebra em múltiplas linhas */
+  overflow: hidden;
+}
+
+.mentor-card .value-box-saldo p:nth-child(2) {
+  font-size: 14px !important;
+  line-height: 1 !important;
+  white-space: nowrap !important;
+}
+
+/* Aplicar margens controladas por :root especificamente para o box de saldo dentro do mentor */
+.mentor-card .value-box-saldo.saldo {
+  margin-top: var(--value-box-saldo-margin-top) !important;
+  margin-left: var(--value-box-saldo-margin-left) !important;
+}
+
+.value-box-green p,
+.value-box-red p,
+.value-box-saldo p {
+  margin: 2px 1;
+  line-height: 0.2;
+}
+
+.value-box-green p:nth-child(2),
+.value-box-red p:nth-child(2),
+.value-box-saldo p:nth-child(2) {
+  font-size: clamp(9px, 2vw, 13px); /* Fonte responsiva */
+  color: #333;
+}
+
+/* Esconder os rótulos textuais "Green" e "Red" mantendo os contadores visíveis */
+.mentor-card .value-box-green p:first-child,
+.mentor-card .value-box-red p:first-child {
+  display: none;
+}
+
+/* Esconder também o rótulo 'Saldo' mantendo o valor visível */
+.mentor-card .value-box-saldo p:first-child {
+  display: none;
+}
+
+/* Colorir os números: primeiro número (contador Green) em verde, segundo (contador Red) em vermelho */
+.mentor-card .value-box-green p:nth-child(2) {
+  color: #00a651; /* verde */
+  font-weight: 700;
+}
+
+.mentor-card .value-box-red p:nth-child(2) {
+  color: #e74c3c; /* vermelho */
+  font-weight: 700;
+}
+
+/* Opcional: tonificar o saldo para cor neutra escura */
+.mentor-card .value-box-saldo p:nth-child(2) {
+  color: #3d3d3d;
+  font-weight: 700;
+}
+
+/* Forçar fonte 14px para placar (green/red) e saldo dentro do mentor card */
+.mentor-card .value-box-green p:nth-child(2),
+.mentor-card .value-box-red p:nth-child(2),
+.mentor-card .value-box-saldo p:nth-child(2) {
+  font-size: 14px !important;
+  line-height: 1 !important;
+}
+
+.value-box-green p:first-child,
+.value-box-red p:first-child,
+.value-box-saldo p:first-child {
+  font-weight: bold;
+  font-size: clamp(9px, 2vw, 13px); /* Fonte responsiva */
+}
+
+.value-box-green.green p:first-child {
+  color: #00a651;
+}
+
+.value-box-green.red p:first-child,
+.value-box-red.red p:first-child {
+  color: #ff4d4d;
+}
+
+.value-box-green.saldo p:first-child,
+.value-box-red.saldo p:first-child,
+.value-box-saldo.saldo p:first-child {
+  color: rgb(95, 93, 93);
+}
+
+/* Regra de .mentor-rank-externo unificada definida mais acima.
+  A definição duplicada foi removida para evitar conflitos
+  (permite que ranks com 2 caracteres, ex: "10º", expandam sem
+  deslocar o card). */
+
+.mentor-menu-externo {
+  /* Manter o menu posicionado sobre o card e fora de qualquer overflow
+     do card; usar position: relative aqui e z-index alto para que
+     .menu-opcoes (absoluto) possa flutuar acima do card. */
+  position: relative;
+  margin-left: 6px; /* pequeno espaçamento entre card e menu */
+  flex: 0 0 auto;
+  align-self: center;
+  z-index: 100000; /* garantir precedência sobre o card */
+  width: auto;
+}
+
+.menu-toggle {
+  color: #8f8e8eff;
+  background-color: transparent;
+  border: none;
+  cursor: pointer;
+  transition: color 0.3s ease;
+  font-size: clamp(16px, 3vw, 22px); /* Fonte responsiva */
+  user-select: none;
+  padding: 4px; /* menor área clicável, mais próximo visualmente */
+}
+
+.menu-toggle:hover {
+  color: #4caf50;
+}
+
+.menu-opcoes {
+  display: none;
+  position: absolute;
+  top: 28px;
+  right: 0;
+  background-color: #fff;
+  border: 1px solid #ccc;
+  border-radius: 6px;
+  box-shadow: 0 2px 12px rgba(0, 0, 0, 0.25);
+  min-width: 160px;
+  padding: 6px;
+  z-index: 100001 !important; /* garantir que fique acima dos cards */
+}
+
+.menu-opcoes button {
+  display: block;
+  width: 100%;
+  background: none;
+  border: none;
+  text-align: left;
+  font-size: clamp(10px, 2vw, 14px); /* Fonte responsiva */
+  padding: 6px 10px;
+  cursor: pointer;
+}
+
+.menu-opcoes button:hover {
+  background-color: #f0f0f0;
+}
+
+/* ===== BLOCO 2 - RESUMO DO MÊS RESPONSIVO ===== */
+.resumo-mes {
+  width: 100%;
+  height: 100%;
+  display: flex;
+  flex-direction: column;
+  box-sizing: border-box;
+}
+
+/* Garantir que todos os valores/textos dentro do card usem Rajdhani */
+.mentor-card,
+.mentor-card * {
+  font-family: "Rajdhani", sans-serif !important;
+}
+
+/* Ajuste específico para rank e valores numéricos para manter legibilidade */
+.mentor-rank-externo,
+.mentor-card .value-box-green p:nth-child(2),
+.mentor-card .value-box-red p:nth-child(2),
+.mentor-card .value-box-saldo p:nth-child(2),
+.mentor-card .mentor-nome {
+  font-family: "Rajdhani", sans-serif !important;
+}
+
+/* --- Personalizações solicitadas pelo usuário --- */
+/* Nome do mentor menor (11px) */
+.mentor-card .mentor-nome {
+  font-size: 12px !important;
+  max-width: 13ch !important; /* garantir compatibilidade com limite JS de 13 caracteres */
+  overflow: hidden !important;
+  text-overflow: ellipsis !important;
+  white-space: nowrap !important;
+  margin-top: var(--mentor-nome-margin-top) !important;
+  margin-left: var(--mentor-nome-margin-left) !important;
+}
+
+/* Colorir o valor do saldo dependendo do estado do card
+   (as classes card-positivo / card-negativo / card-neutro são geradas server-side)
+*/
+.mentor-card.card-positivo .value-box-saldo p:nth-child(2) {
+  color: #00a651 !important; /* verde */
+}
+.mentor-card.card-negativo .value-box-saldo p:nth-child(2) {
+  color: #e74c3c !important; /* vermelho */
+}
+.mentor-card.card-neutro .value-box-saldo p:nth-child(2) {
+  color: #7f8c8d !important; /* cinza neutro */
+}
+
+.bloco-meta-simples {
+  background: rgba(255, 255, 255, 0.95);
+  border-radius: 15px;
+  padding: clamp(15px, 4vw, 25px);
+  margin-bottom: clamp(15px, 3vw, 20px);
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+  border: 2px solid #e0e0e0;
+}
+
+.fixo-topo {
+  position: sticky;
+  top: 0;
+  z-index: 10;
+  background: rgba(255, 255, 255, 0.98);
+  backdrop-filter: blur(10px);
+}
+
+/* FORCE: make bloco-1 header visually match bloco-2 top to remove hairline/seam */
+.bloco-1 .widget-meta-item .data-header-integrada {
+  /* High-specificity fallback: garantir margin-left da barra de progresso */
+  #widget-meta .widget-barra-container,
+  .widget-meta-item .widget-barra-container,
+  .widget-barra-container {
+    margin-left: var(--widget-barra-container-margin-left) !important;
+  }
+  box-sizing: border-box;
+  position: -webkit-sticky !important; /* support for older Safari */
+  position: sticky !important; /* stick to the top of its scroll container */
+  left: 0 !important;
+  right: 0 !important;
+  z-index: 9999; /* acima do conteúdo interno */
+  border: none !important;
+  outline: none !important;
+
+  /* Solução para acabamento perfeito dos cantos arredondados */
+  -webkit-transform: translateZ(0);
+  transform: translateZ(0);
+  -webkit-backface-visibility: hidden;
+  backface-visibility: hidden;
+  will-change: transform;
+
+  /* Clipping mask para garantir bordas perfeitas */
+  overflow: hidden !important;
+  -webkit-mask-image: -webkit-radial-gradient(white, black);
+  mask-image: radial-gradient(white, black);
+
+  /* Garantir que o gradiente preencha perfeitamente os cantos */
+  background-origin: border-box !important;
+  background-clip: border-box !important;
+
+  /* Remover qualquer borda ou sombra que cause dentilhado */
+  box-shadow: none !important;
+}
+
+.bloco-1 .widget-meta-item .data-header-integrada .fa-solid,
+.bloco-1 .widget-meta-item .data-header-integrada .data-principal-integrada {
+  color: #6a0dad !important;
+  text-shadow: 0 2px 4px rgba(0, 0, 0, 0.3) !important;
+  font-weight: 600 !important;
+}
+
+.titulo-bloco {
+  font-size: clamp(16px, 4vw, 22px);
+  font-weight: 700;
+  color: #2c3e50;
+  margin: 0 0 clamp(15px, 3vw, 20px) 0;
+  text-align: center;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: clamp(8px, 2vw, 12px);
+}
+
+.titulo-bloco i {
+  color: #8e44ad;
+  font-size: clamp(14px, 3.5vw, 20px);
+}
+
+.grupo-barra {
+  margin-bottom: clamp(15px, 3vw, 20px);
+  display: flex;
+  flex-direction: column;
+  gap: clamp(6px, 1.5vw, 10px);
+}
+
+.valor-meta {
+  font-size: clamp(14px, 3vw, 18px);
+  font-weight: 700;
+  color: #2c3e50;
+  display: flex;
+  align-items: center;
+  gap: clamp(6px, 1.5vw, 10px);
+  justify-content: center;
+}
+
+.valor-meta i {
+  color: #f39c12;
+  font-size: clamp(12px, 2.5vw, 16px);
+}
+
+.container-barra-horizontal {
+  width: 100%;
+  height: clamp(20px, 4vw, 28px);
+  background: rgba(0, 0, 0, 0.1);
+  border-radius: 15px;
+  position: relative;
+  overflow: hidden;
+  box-shadow: inset 0 2px 4px rgba(0, 0, 0, 0.1);
+}
+
+.progresso-dourado {
+  height: 100%;
+  width: 100%;
+  background: linear-gradient(90deg, #f39c12 0%, #f1c40f 50%, #f39c12 100%);
+  border-radius: 15px;
+  box-shadow: 0 0 10px rgba(243, 156, 18, 0.4);
+}
+
+.progresso-verde {
+  height: 100%;
+  width: var(--largura-barra, 0%);
+  background: linear-gradient(90deg, #27ae60 0%, #2ecc71 50%, #27ae60 100%);
+  border-radius: 15px;
+  box-shadow: 0 0 10px rgba(39, 174, 96, 0.4);
+  transition: width 0.8s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.porcento-barra {
+  position: absolute;
+  top: 50%;
+  right: clamp(8px, 2vw, 15px);
+  transform: translateY(-50%);
+  font-size: clamp(10px, 2vw, 14px);
+  font-weight: 700;
+  color: #fff;
+  text-shadow: 0 1px 2px rgba(0, 0, 0, 0.5);
+}
+
+/* ===== LISTA DE DIAS: estilos movidos para css/estilo-campo-mes.css ===== */
+/* Para evitar duplicação, as regras relativas a .lista-dias, .gd-linha-dia,
+   .data, .placar, .valor, .icone e responsividade foram centralizadas em
+   css/estilo-campo-mes.css. Mantido aqui apenas esse comentário de referência. */
+/* ===== ESTILOS AUXILIARES ===== */
+.valor-ultrapassou {
+  display: none;
+  color: #27ae60;
+  font-size: clamp(10px, 2vw, 14px);
+  margin-top: 10px;
+  font-weight: 600;
+}
+
+.loading-text {
+  color: #576574;
+}
+
+h2 {
+  color: #333;
+  margin-bottom: 15px;
+}
+
+p {
+  color: #666;
+  line-height: 1.6;
+}
+
+.erro-mentores {
+  color: #e74c3c;
+  text-align: center;
+  padding: 20px;
+  font-weight: 600;
+}
+
+/* ===== CONTROLE DE LARGURA DOS BLOCOS ===== */
+
+/* ===========================================================================================================================================================
+    CSS DAS CAIXAS DE SELEÇÃO FILTRO POR DIA MES ANO NO TOPO 
+   ==========================================================================================================================================================*/
+.periodo-selecao-container {
+  position: fixed;
+  top: var(
+    --periodo-selecao-top,
+    22px
+  ) !important; /* Distância do topo da tela (controlada por :root) */
+  margin-left: var(
+    --periodo-selecao-margin-left,
+    200px
+  ) !important; /* controlled from :root */
+  display: flex;
+  align-items: center;
+  gap: 15px;
+  z-index: 999; /* Garante que fique acima de outros elementos */
+}
+
+.periodo-opcao {
+  display: flex;
+  align-items: center;
+}
+
+.periodo-label {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  cursor: pointer;
+  font-size: 12px;
+  font-weight: 600;
+  color: #666;
+  transition: color 0.2s ease;
+  user-select: none;
+}
+
+.periodo-label:hover {
+  color: #333;
+}
+
+.periodo-radio {
+  width: 14px;
+  height: 14px;
+  margin: 0;
+  cursor: pointer;
+  accent-color: #007bff;
+}
+
+.periodo-radio:checked + .periodo-texto {
+  color: #007bff;
+  font-weight: 700;
+}
+
+.periodo-texto {
+  font-size: 11px;
+  letter-spacing: 0.5px;
+  text-transform: uppercase;
+  transition: color 0.2s ease;
+}
+
+/* Responsividade para telas menores */
+@media (max-width: 768px) {
+  .periodo-selecao-container {
+    gap: 10px;
+    margin-left: 15px;
+  }
+
+  .periodo-label {
+    font-size: 11px;
+    gap: 4px;
+  }
+
+  .periodo-radio {
+    width: 12px;
+    height: 12px;
+  }
+
+  .periodo-texto {
+    font-size: 10px;
+  }
+}
+
+@media (max-width: 480px) {
+  .periodo-selecao-container {
+    gap: 8px;
+    margin-left: 10px;
+  }
+
+  .periodo-label {
+    font-size: 10px;
+    gap: 3px;
+  }
+
+  .periodo-radio {
+    width: 10px;
+    height: 10px;
+  }
+
+  .periodo-texto {
+    font-size: 9px;
+  }
+}
+
+/* =======================================================================================================================================================
+    FIM CSS DAS CAIXAS DE SELEÇÃO FILTRO POR DIA MES ANO NO TOPO 
+   ==========================================================================================================================================================*/
+/* */
+/* */
+/* */
+/* */
+/* */
+/* */
+/* */
+/* */
+/* */
+/* */
+/* */
+/* */
+/* ========================================
+   3. VALOR DA META 
+   ======================================== */
+
+/* Container principal do valor da meta - MAIOR */
+@import url("https://fonts.googleapis.com/css2?family=Rajdhani:wght@600&display=swap");
+
+.widget-meta-valor,
+#meta-valor {
+  display: flex !important;
+
+  justify-content: flex-start !important; /* ✅ MUDADO: de center para flex-start */
+  font-size: 18px !important;
+
+  font-family: "Rajdhani", sans-serif !important;
+  transition: all 0.3s ease !important;
+  margin-bottom: 8px !important;
+  margin-left: var(
+    --widget-meta-valor-margin-left
+  ) !important; /* controlled from :root */
+  padding-left: 0 !important; /* ✅ Sem padding à esquerda */
+  width: auto !important; /* ✅ Largura automática */
+}
+
+.widget-meta-valor .fa-solid.fa-coins {
+  font-size: clamp(16px, 4vw, 26px); /* Fonte responsiva */
+  color: #f39c12;
+}
+
+/* Ícone de moedas ao lado do valor */
+.widget-meta-valor .fa-coins,
+#meta-valor .fa-coins {
+  margin-right: 0px !important; /* Pequeno espaço entre ícone e valor */
+  font-size: 20px !important;
+  color: #f3b200 !important;
+  margin-left: 0px;
+}
+
+/* Texto do valor da meta */
+.valor-texto {
+  font-weight: 700;
+  font-size: 19px;
+  letter-spacing: -0.5px;
+}
+
+/* Laranja para sem banca */
+.valor-meta.sem-banca .valor-texto {
+  color: #e67e22;
+}
+
+/* Azul para meta batida */
+.valor-meta.meta-batida .valor-texto {
+  color: #2196f3;
+}
+
+/* Vermelho para negativo */
+.valor-meta.negativo .valor-texto {
+  color: #f53520;
+}
+
+/* Cinza para neutro */
+.valor-meta.neutro .valor-texto {
+  color: #7f8c8d;
+}
+
+/* Verde para lucro */
+.valor-meta.lucro .valor-texto {
+  color: #00a651;
+}
+
+/* Estado visível do valor extra */
+.valor-ultrapassou {
+  display: none;
+  margin-top: -9px !important;
+  margin-bottom: 10px !important;
+  margin-left: 0 !important; /* ✅ Alinhado à esquerda */
+  position: relative !important;
+  z-index: 30 !important;
+}
+
+.valor-ultrapassou.mostrar {
+  display: flex !important;
+  justify-content: flex-start !important; /* ✅ MUDADO: de center para flex-start */
+  align-items: center !important;
+  animation: pulseGold 2s infinite !important;
+}
+
+/* Container com gradiente premium melhorado */
+
+/* Efeito de brilho no fundo */
+
+/* Ícone da taça dourada */
+.valor-ultrapassou-icone {
+  color: #f78f08;
+  font-size: 24px;
+  margin-right: 12px;
+
+  animation: bounce 1.5s ease-in-out infinite;
+}
+
+/* Texto "Lucro Extra:" */
+.valor-ultrapassou-texto {
+  color: #0073df;
+  font-weight: bold;
+  font-size: 16px;
+  margin-right: 8px;
+}
+
+/* Valor em dourado com sombra */
+.valor-ultrapassou-valor {
+  color: #f78f08;
+  font-weight: 900;
+  font-size: 20px;
+}
+/* ========================================
+   3. FIM VALOR DA META 
+   ======================================== */
+/* */
+/* */
+/* */
+/* */
+/* */
+/* */
+/* */
+/* */
+/* */
+/* */
+/* */
+/* */
+/* */
+/* */
+/* */
+
+/* ========================================
+   8. SALDO + ROTULO
+   ======================================== */
+
+/* Container do saldo - centralizado com a barra menor */
+#saldo-info {
+  margin-top: var(--saldo-info-margin-top) !important;
+}
+
+.saldo-info-container {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+/* Rótulo do saldo */
+.saldo-info-rotulo {
+  font-weight: bold;
+  margin-right: 1px;
+  font-size: 13px;
+}
+
+/* Valor do saldo */
+.saldo-info-valor {
+  font-weight: bold;
+  font-size: 13px;
+}
+#saldo-info i {
+  margin-right: 0px;
+  font-size: 1em;
+}
+
+.saldo-info-container {
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+}
+
+.saldo-positivo i {
+  color: #4caf50;
+}
+
+.saldo-negativo i {
+  color: #f44336;
+}
+
+.saldo-zero i {
+  color: #95a5a6;
+}
+
+/* Verde para lucro positivo */
+
+.saldo-positivo .saldo-info-valor {
+  color: #00a651;
+}
+
+/* Vermelho para negativo */
+
+.saldo-negativo .saldo-info-valor {
+  color: #f44336;
+}
+/* */
+/* */
+/* ROTULO SALDO */
+.saldo-zero .saldo-info-valor {
+  color: #666;
+}
+
+/* Verde para lucro positivo */
+.saldo-positivo .saldo-info-rotulo {
+  color: #5d6360;
+}
+
+/* Vermelho para negativo */
+.saldo-negativo .saldo-info-rotulo {
+  color: #5d6360;
+}
+
+/* Cinza para neutro */
+.saldo-zero .saldo-info-rotulo {
+  color: #5d6360;
+}
+
+/* ========================================
+   9. ANIMAÇÕES
+   ======================================== */
+
+/* Classe para animação de atualização */
+.atualizado {
+  animation: pulse-update 1.5s ease-in-out;
+}
+
+/* ========================================
+   10. MODAL - CORES DO LUCRO
+   ======================================== */
+
+.modal-lucro-positivo {
+  color: #4caf50 !important;
+}
+
+.modal-lucro-negativo {
+  color: #f44336 !important;
+}
+
+.modal-lucro-neutro {
+  color: #666 !important;
+}
+
+/* ========================================
+   11. RESPONSIVIDADE - MOBILE
+   ======================================== */
+
+@media (max-width: 768px) {
+  /* Barra ajustada para mobile */
+  .barra-container {
+    width: 90%; /* Um pouco maior em mobile */
+    height: 24px; /* Um pouco menor em mobile */
+    border-radius: 12px;
+  }
+
+  #barra-progresso,
+  .widget-barra-progresso {
+    border-radius: 12px;
+  }
+
+  /* Porcentagem ajustada para mobile */
+  .porcentagem-barra {
+    font-size: 12px;
+    right: 8px;
+    font-weight: 800;
+  }
+
+  /* Valor da meta menor em mobile */
+  .widget-meta-valor,
+  #meta-valor {
+    font-size: 20px;
+  }
+
+  .valor-texto {
+    font-size: 20px;
+  }
+
+  .widget-meta-valor .fa-coins,
+  #meta-valor .fa-coins {
+    font-size: 18px;
+  }
+
+  /* Container do valor extra em mobile */
+  .valor-ultrapassou-container {
+    padding: 8px 12px;
+  }
+
+  .valor-ultrapassou-icone {
+    font-size: 20px;
+    margin-right: 8px;
+  }
+
+  .valor-ultrapassou-texto {
+    font-size: 14px;
+  }
+
+  .valor-ultrapassou-valor {
+    font-size: 16px;
+  }
+
+  .saldo-info-valor {
+    font-size: 12px;
+  }
+}
+
+/* ========================================
+   12. ESTADOS DE LOADING
+   ======================================== */
+
+.loading-text {
+  color: #999;
+  font-style: italic;
+}
+
+/* ========================================
+   13. CLASSES UTILITÁRIAS
+   ======================================== */
+
+.text-center {
+  text-align: center;
+}
+
+.flex-center {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.flex-start {
+  display: flex;
+  align-items: center;
+  justify-content: flex-start;
+}
+
+.font-bold {
+  font-weight: bold;
+}
+
+.margin-top-small {
+  margin-top: 8px;
+}
+
+.margin-top-medium {
+  margin-top: 10px;
+}
+
+/* ========================================
+   13. TESTE
+   ======================================== */
+
+/* ========================================
+   ADICIONAR ESTES ESTILOS PARA A BARRA
+   ======================================== */
+
+/* Container da barra - alinhado ao estilo do Bloco 2 */
+.widget-barra-container {
+  background: #ecf0f1 !important;
+  border-radius: 20px !important;
+  height: 24px !important;
+  position: relative !important;
+  overflow: hidden !important;
+  /* Igual ao Bloco 2 */
+  box-shadow: inset 0 2px 4px rgba(0, 0, 0, 0.1) !important;
+  margin-top: var(--widget-barra-container-margin-top) !important;
+  width: 330px !important;
+  max-width: 100% !important;
+}
+
+/* Barra de progresso - mesmo estilo do Bloco 2 */
+.widget-barra-progresso {
+  height: 100% !important;
+  border-radius: 25px !important;
+  transition: all 0.5s cubic-bezier(0.4, 0, 0.2, 1) !important;
+  position: relative !important;
+  display: flex !important;
+  align-items: center !important;
+  background: none !important;
+  box-shadow: none !important;
+  margin-top: 0px;
+}
+
+/* ========================================
+   CORES DAS BARRAS - IMPORTANTES
+   ======================================== */
+
+.widget-barra-progresso.barra-lucro {
+  background: linear-gradient(90deg, #4caf50, #66bb6a) !important;
+}
+
+.widget-barra-progresso.barra-meta-batida {
+  background: linear-gradient(90deg, #2196f3, #42a5f5) !important;
+}
+
+.widget-barra-progresso.barra-lucro-extra {
+  background: linear-gradient(90deg, #ffd700, #ffa500) !important;
+  animation: shimmer 2s linear infinite !important;
+}
+
+.widget-barra-progresso.barra-negativo {
+  background: linear-gradient(90deg, #f44336, #ef5350) !important;
+}
+
+.widget-barra-progresso.barra-neutro {
+  background: linear-gradient(90deg, #95a5a6, #b4bcc2) !important;
+}
+
+.widget-barra-progresso.barra-sem-banca {
+  background: linear-gradient(90deg, #e67e22, #f39c12) !important;
+}
+
+/* Animação shimmer */
+@keyframes shimmer {
+  0% {
+    background-position: -200% 50%;
+  }
+  100% {
+    background-position: 200% 50%;
+  }
+}
+
+/* ========================================
+   PORCENTAGEM - POSICIONAMENTO CORRETO
+   ======================================== */
+
+.porcentagem-barra {
+  position: absolute !important;
+  right: 0 !important;
+  top: 0 !important;
+  height: 100% !important;
+  z-index: 10 !important;
+  display: flex !important;
+  align-items: center !important;
+  overflow: hidden !important;
+  /* Remover estilos conflitantes */
+  font-size: inherit !important;
+  font-weight: inherit !important;
+}
+
+/* ========================================
+   PORCENTAGEM COM LARGURA REDUZIDA
+   ======================================== */
+
+/* ========================================
+   PORCENTAGEM - BORDA ESQUERDA SEMPRE RETA
+   ======================================== */
+
+.porcentagem-fundo {
+  display: flex !important;
+  align-items: center !important;
+  justify-content: center !important;
+  padding: 0 10px !important;
+  height: 100% !important;
+  font-size: 12px !important;
+  font-weight: 700 !important;
+  color: white !important;
+  text-shadow: 0 1px 3px rgba(0, 0, 0, 0.3) !important;
+  transition: all 0.3s ease !important;
+  min-width: 40px !important;
+  position: relative !important;
+  /* ✅ CRÍTICO: Forçar borda esquerda RETA e direita arredondada */
+  border-radius: 0 25px 25px 0 !important;
+  border-top-left-radius: 0 !important;
+  border-bottom-left-radius: 0 !important;
+  border-top-right-radius: 25px !important;
+  border-bottom-right-radius: 25px !important;
+  border-left: 2px solid rgba(255, 255, 255, 0.3) !important;
+}
+
+/* ✅ OVERRIDE PARA CLASSE PEQUENO - NÃO MUDAR BORDAS */
+.porcentagem-barra.pequeno .porcentagem-fundo {
+  /* FORÇAR borda esquerda reta mesmo em valores pequenos */
+  border-radius: 0 25px 25px 0 !important;
+  border-top-left-radius: 0 !important;
+  border-bottom-left-radius: 0 !important;
+  border-top-right-radius: 25px !important;
+  border-bottom-right-radius: 25px !important;
+  min-width: 45px !important;
+  padding: 0 8px !important;
+}
+
+/* ========================================
+   FORÇAR EM TODAS AS CORES - BORDA ESQUERDA RETA
+   ======================================== */
+
+/* Verde - Lucro */
+.porcentagem-fundo.barra-lucro {
+  background: rgba(76, 175, 80, 0.9) !important;
+  backdrop-filter: blur(5px) !important;
+  /* Forçar bordas */
+  border-top-left-radius: 0 !important;
+  border-bottom-left-radius: 0 !important;
+  border-top-right-radius: 25px !important;
+  border-bottom-right-radius: 25px !important;
+}
+
+/* Azul - Meta Batida */
+.porcentagem-fundo.barra-meta-batida {
+  background: rgba(33, 150, 243, 0.9) !important;
+  backdrop-filter: blur(5px) !important;
+  /* Forçar bordas */
+  border-top-left-radius: 0 !important;
+  border-bottom-left-radius: 0 !important;
+  border-top-right-radius: 25px !important;
+  border-bottom-right-radius: 25px !important;
+}
+
+/* Dourado - Lucro Extra */
+.porcentagem-fundo.barra-lucro-extra {
+  background: linear-gradient(
+    135deg,
+    rgba(255, 215, 0, 0.95),
+    rgba(255, 165, 0, 0.95)
+  ) !important;
+  backdrop-filter: blur(5px) !important;
+  animation: pulseGold 2s ease-in-out infinite !important;
+  /* Forçar bordas */
+  border-top-left-radius: 0 !important;
+  border-bottom-left-radius: 0 !important;
+  border-top-right-radius: 25px !important;
+  border-bottom-right-radius: 25px !important;
+}
+
+/* Vermelho - Negativo */
+.porcentagem-fundo.barra-negativo {
+  background: rgba(244, 67, 54, 0.9) !important;
+  backdrop-filter: blur(5px) !important;
+  /* Forçar bordas */
+  border-top-left-radius: 0 !important;
+  border-bottom-left-radius: 0 !important;
+  border-top-right-radius: 25px !important;
+  border-bottom-right-radius: 25px !important;
+}
+
+/* Cinza - Neutro */
+.porcentagem-fundo.barra-neutro {
+  background: rgba(149, 165, 166, 0.9) !important;
+  backdrop-filter: blur(5px) !important;
+  /* Forçar bordas */
+  border-top-left-radius: 0 !important;
+  border-bottom-left-radius: 0 !important;
+  border-top-right-radius: 25px !important;
+  border-bottom-right-radius: 25px !important;
+}
+
+/* Laranja - Sem Banca */
+.porcentagem-fundo.barra-sem-banca {
+  background: rgba(230, 126, 34, 0.9) !important;
+  backdrop-filter: blur(5px) !important;
+  /* Forçar bordas */
+  border-top-left-radius: 0 !important;
+  border-bottom-left-radius: 0 !important;
+  border-top-right-radius: 25px !important;
+  border-bottom-right-radius: 25px !important;
+}
+
+/* ========================================
+   HOVER - MANTER BORDAS
+   ======================================== */
+
+.porcentagem-fundo:hover {
+  padding: 0 12px !important;
+  font-size: 13px !important;
+  filter: brightness(1.1) !important;
+  cursor: default !important;
+  /* Forçar bordas no hover também */
+  border-top-left-radius: 0 !important;
+  border-bottom-left-radius: 0 !important;
+  border-top-right-radius: 25px !important;
+  border-bottom-right-radius: 25px !important;
+}
+
+/* ========================================
+   REGRA GLOBAL - MÁXIMA PRIORIDADE
+   ======================================== */
+
+/* Aplicar a TODOS os elementos com porcentagem-fundo, independente do estado */
+[class*="porcentagem-fundo"] {
+  border-top-left-radius: 0 !important;
+  border-bottom-left-radius: 0 !important;
+  border-top-right-radius: 25px !important;
+  border-bottom-right-radius: 25px !important;
+}
+
+/* Para garantir em valores muito pequenos */
+.widget-barra-progresso[style*="width: 0"]
+  ~ .porcentagem-barra
+  .porcentagem-fundo,
+.widget-barra-progresso[style*="width: 1"]
+  ~ .porcentagem-barra
+  .porcentagem-fundo,
+.widget-barra-progresso[style*="width: 2"]
+  ~ .porcentagem-barra
+  .porcentagem-fundo,
+.widget-barra-progresso[style*="width: 3"]
+  ~ .porcentagem-barra
+  .porcentagem-fundo,
+.widget-barra-progresso[style*="width: 4"]
+  ~ .porcentagem-barra
+  .porcentagem-fundo,
+.widget-barra-progresso[style*="width: 5"]
+  ~ .porcentagem-barra
+  .porcentagem-fundo {
+  border-top-left-radius: 0 !important;
+  border-bottom-left-radius: 0 !important;
+}
+
+/* ========================================
+   WIDGET META ROTULO - GARANTIR VISIBILIDADE
+   ======================================== */
+
+.widget-meta-rotulo {
+  font-size: 14px !important;
+  color: #7f8c8d !important;
+  margin-top: var(--widget-meta-rotulo-margin-top) !important;
+  margin-bottom: 15px !important;
+  margin-left: var(
+    --widget-meta-rotulo-margin-left
+  ) !important; /* controlled from :root */
+  padding-left: 0 !important; /* ✅ Sem padding */
+  font-weight: 500 !important;
+  text-transform: none !important;
+  letter-spacing: 0.5px !important;
+  text-align: left !important; /* ✅ MUDADO: de center para left */
+  display: block !important;
+  width: auto !important; /* ✅ Largura automática */
+}
+/* Garantir que o texto não seja forçado para maiúsculas em nenhum lugar */
+#rotulo-meta {
+  text-transform: none !important;
+  /* NOVO: garantir que o rótulo fique colado no canto esquerdo do widget (alinhado ao ícone de moeda) */
+  margin-left: var(--rotulo-meta-margin-left) !important;
+  margin-top: var(--widget-meta-rotulo-margin-top) !important;
+  padding-left: 0 !important;
+  text-align: left !important;
+  display: block !important;
+  margin-bottom: 4px !important;
+}
+
+/* ========================================
+   WIDGET INFO PROGRESSO - AJUSTE
+   ======================================== */
+
+.widget-info-progresso {
+  margin-top: 0px !important;
+  display: flex !important;
+  justify-content: flex-start !important; /* ✅ Também alinhado à esquerda */
+  width: 100% !important;
+  margin-left: 0px;
+}
+
+/* ========================================
+   CONTAINER PRINCIPAL - FUNDO CINZA CLARO
+   ======================================== */
+
+.widget-conteudo-principal {
+  /* Fundo cinza claro como na demonstração */
+  background: #f8f9fa !important;
+
+  /* Bordas arredondadas */
+  border-radius: 12px !important;
+
+  /* Padding interno */
+  padding: 10px !important;
+
+  /* Sombra suave opcional */
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05) !important;
+
+  /* Outros estilos */
+  display: flex !important;
+  flex-direction: column !important;
+
+  width: 95% !important;
+  box-sizing: border-box !important;
+
+  /* Margem opcional se quiser espaçamento */
+  margin: 20px 0 !important;
+  align-items: center !important;
+}
+.widget-conteudo-principal > div {
+  text-align: center;
+  width: 100%;
+}
+.conteudo-left {
+  margin-left: 15%;
+}
+
+/* Alternativa se quiser um card mais definido */
+.widget-conteudo-principal.card-style {
+  background: white !important;
+  border: 1px solid #e0e0e0 !important;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08) !important;
+}
+
+/* Se quiser o mesmo efeito em outros containers */
+.widget-meta-item .widget-conteudo-principal {
+  background: #f8f9fa !important;
+}
+
+/* ========================================
+   OPÇÕES DE CORES DE FUNDO
+   ======================================== */
+
+/* Opção 1: Cinza muito claro (recomendado) */
+.fundo-cinza-claro {
+  background: #f8f9fa !important;
+}
+
+/* Opção 2: Cinza mais claro ainda */
+.fundo-cinza-super-claro {
+  background: #fafbfc !important;
+}
+
+/* Opção 3: Cinza com tom levemente azulado */
+.fundo-cinza-azulado {
+  background: #f0f4f8 !important;
+}
+
+/* Opção 4: Branco com transparência */
+.fundo-branco-transparente {
+  background: rgba(255, 255, 255, 0.9) !important;
+  backdrop-filter: blur(10px) !important;
+}
+
+/* ========================================
+   AJUSTES PARA ELEMENTOS INTERNOS
+   ======================================== */
+
+/* Barra de progresso com destaque */
+.widget-conteudo-principal .widget-barra-container {
+  /* Já tem seu próprio fundo #ecf0f1 */
+  /* Remover sombra externa; aplicar apenas sombra interna no topo (igual Bloco 2) */
+  box-shadow: inset 0 2px 4px rgba(0, 0, 0, 0.1) !important;
+}
+
+@media (max-width: 768px) {
+  .widget-meta-valor,
+  #meta-valor {
+    font-size: 20px !important;
+  }
+
+  .widget-meta-valor .fa-coins,
+  #meta-valor .fa-coins {
+    font-size: 22px !important;
+  }
+
+  .widget-meta-rotulo {
+    font-size: 12px !important;
+  }
+}
+
+@media (max-width: 480px) {
+  .widget-conteudo-principal {
+    padding: 15px !important;
+  }
+
+  .widget-meta-valor,
+  #meta-valor {
+    font-size: 18px !important;
+  }
+
+  .widget-meta-valor .fa-coins,
+  #meta-valor .fa-coins {
+    font-size: 20px !important;
+  }
+}
+/* */
+/* */
+/* */
+/* */
+/* */
+/* */
+/* */
+/* */
+/* */
+/* */
+/* =======================================================================================================================================================
+                                          💼  FORMULARIO DE CADASTRO DO MENTOR + MODAL EXCLUSÃO DO MENTOR    
+   ==========================================================================================================================================================*/
+/* ===== CSS MODERNO ADAPTADO AO SEU HTML EXISTENTE ===== */
+
+/* Import da fonte moderna */
+@import url("https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap");
+
+/* Container principal dos modais */
+.widget-barra-container {
+  background: #ecf0f1 !important;
+  border-radius: 20px !important;
+  height: 24px !important;
+  position: relative !important;
+  overflow: hidden !important;
+  /* Sombra interna mais fina para combinar com o Bloco 2 */
+  box-shadow: inset 0 1px 2px rgba(0, 0, 0, 0.06) !important;
+  margin-top: var(--widget-barra-container-margin-top) !important;
+  width: 330px !important;
+  max-width: 100% !important;
+}
+
+.modais-container .modal.show .modal-conteudo {
+  transform: scale(1) translateY(0);
+}
+
+/* ===== CABEÇALHO MODERNO ===== */
+.modais-container .modal-conteudo::before {
+  content: "";
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: 80px;
+  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  /* Match the parent radius and place behind content to avoid white seams */
+  /* This decorative pseudo-element is disabled because the modal container
+     now uses a background gradient. Keeping it could create stacking/seam issues. */
+  display: none !important;
+}
+
+/* FORÇA: garantir que .widget-meta-valor respeite a variável do :root para margin-left */
+#meta-valor,
+.widget-meta-valor,
+.widget-meta-item .widget-meta-valor {
+  margin-left: var(--widget-meta-valor-margin-left) !important;
+}
+
+/* Botão fechar modernizado */
+.modais-container .fechar {
+  position: absolute;
+  top: 20px;
+  right: 20px;
+  background: rgba(255, 255, 255, 0.2);
+  border: none;
+  width: 40px;
+  height: 40px;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  z-index: 10;
+  color: white;
+  font-size: 18px;
+  line-height: 1;
+}
+
+.modais-container .fechar:hover {
+  background: rgba(255, 255, 255, 0.3);
+  transform: rotate(90deg);
+}
+
+/* ===== FORMULÁRIO MODERNIZADO ===== */
+.modais-container .formulario-mentor-completo {
+  padding: 100px 30px 30px;
+  display: flex;
+  flex-direction: column;
+  gap: 25px;
+  position: relative;
+  /* Ensure form content sits above the decorative header */
+  z-index: 2;
+}
+
+/* ===== PREVIEW DA FOTO MODERNIZADO ===== */
+.modais-container .preview-foto-wrapper {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 15px;
+  margin-bottom: 20px;
+}
+
+.modais-container .preview-img {
+  width: 120px;
+  height: 120px;
+  border-radius: 50%;
+  object-fit: cover;
+  border: 6px solid #f0f0f0;
+  transition: all 0.3s ease;
+  box-shadow: 0 8px 20px rgba(0, 0, 0, 0.1);
+  cursor: pointer;
+  position: relative;
+}
+
+.modais-container .preview-img:hover {
+  border-color: #667eea;
+  transform: scale(1.05);
+  box-shadow: 0 12px 25px rgba(102, 126, 234, 0.3);
+}
+
+/* Overlay de hover na imagem */
+.modais-container .preview-img::after {
+  content: "\f030";
+  font-family: "Font Awesome 6 Free";
+  font-weight: 900;
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  color: white;
+  font-size: 24px;
+  opacity: 0;
+  transition: opacity 0.3s ease;
+  background: rgba(102, 126, 234, 0.8);
+  width: 100%;
+  height: 100%;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.modais-container .preview-img:hover::after {
+  opacity: 1;
+}
+
+/* Nome do mentor */
+.modais-container .mentor-nome-preview {
+  font-size: 20px;
+  font-weight: 600;
+  color: #2d3748;
+  margin: 0;
+  min-height: 28px;
+  text-align: center;
+}
+
+.modais-container .mentor-nome-preview:empty::before {
+  content: "Nome do Mentor";
+  color: #a0aec0;
+  font-style: italic;
+}
+
+/* ===== BOTÃO DE UPLOAD MODERNO ===== */
+.modais-container .input-group {
+  margin-bottom: 20px;
+}
+
+.modais-container .label-arquivo {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 10px;
+  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  color: white;
+  padding: 16px 24px;
+  border-radius: 16px;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  font-weight: 500;
+  font-size: 16px;
+  border: none;
+  box-shadow: 0 4px 15px rgba(102, 126, 234, 0.3);
+  position: relative;
+  overflow: hidden;
+}
+
+.modais-container .label-arquivo::before {
+  content: "";
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  width: 0;
+  height: 0;
+  background: rgba(255, 255, 255, 0.2);
+  border-radius: 50%;
+  transition: all 0.6s ease;
+  transform: translate(-50%, -50%);
+}
+
+.modais-container .label-arquivo:hover::before {
+  width: 300px;
+  height: 300px;
+}
+
+.modais-container .label-arquivo:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 6px 20px rgba(102, 126, 234, 0.4);
+}
+
+.modais-container .nome-arquivo {
+  display: block;
+  text-align: center;
+  font-size: 14px;
+  color: #718096;
+  margin-top: 10px;
+  padding: 8px 16px;
+  background: #f7fafc;
+  border-radius: 8px;
+  font-style: italic;
+}
+
+/* ===== BOTÃO REMOVER FOTO ===== */
+.modais-container .btn-remover-foto {
+  background: linear-gradient(135deg, #f56565 0%, #e53e3e 100%);
+  color: white;
+  border: none;
+  padding: 8px 16px;
+  border-radius: 20px;
+  font-size: 12px;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  font-weight: 500;
+}
+
+.modais-container .btn-remover-foto:hover {
+  transform: scale(1.05);
+  box-shadow: 0 4px 12px rgba(229, 62, 62, 0.3);
+}
+
+/* ===== CAMPO DE NOME MODERNO ===== */
+.modais-container .input-text {
+  width: 100%;
+  padding: 16px 20px;
+  border: 2px solid #e2e8f0;
+  border-radius: 16px;
+  font-size: 16px;
+  font-weight: 400;
+  color: #2d3748;
+  background: #ffffff;
+  transition: all 0.3s ease;
+  outline: none;
+  box-sizing: border-box;
+  font-family: "Inter", sans-serif;
+}
+
+.modais-container .input-text:focus {
+  border-color: #667eea;
+  box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.1);
+  transform: translateY(-1px);
+}
+
+.modais-container .input-text::placeholder {
+  color: #a0aec0;
+  font-style: italic;
+}
+
+/* ===== BOTÕES MODERNOS ===== */
+.modais-container .botoes-formulario {
+  display: flex;
+  gap: 12px;
+  margin-top: 20px;
+}
+
+.modais-container .btn-enviar,
+.modais-container .btn-excluir {
+  flex: 1;
+  padding: 16px 24px;
+  border: none;
+  border-radius: 16px;
+  font-size: 16px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  position: relative;
+  overflow: hidden;
+  font-family: "Inter", sans-serif;
+}
+
+.modais-container .btn-enviar::before,
+.modais-container .btn-excluir::before {
+  content: "";
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  width: 0;
+  height: 0;
+  background: rgba(255, 255, 255, 0.2);
+  border-radius: 50%;
+  transition: all 0.6s ease;
+  transform: translate(-50%, -50%);
+}
+
+.modais-container .btn-enviar:active::before,
+.modais-container .btn-excluir:active::before {
+  width: 300px;
+  height: 300px;
+}
+
+/* Botão principal */
+.modais-container .btn-enviar {
+  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  color: white;
+  box-shadow: 0 4px 15px rgba(102, 126, 234, 0.3);
+}
+
+.modais-container .btn-enviar:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 6px 20px rgba(102, 126, 234, 0.4);
+}
+
+/* Botão excluir */
+.modais-container .btn-excluir {
+  background: linear-gradient(135deg, #e53e3e 0%, #c53030 100%);
+  color: white;
+  box-shadow: 0 4px 15px rgba(229, 62, 62, 0.3);
+}
+
+.modais-container .btn-excluir:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 6px 20px rgba(229, 62, 62, 0.4);
+}
+
+/* ===== MODAL DE CONFIRMAÇÃO MODERNIZADO ===== */
+.modais-container .modal-confirmacao {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: rgba(0, 0, 0, 0.8);
+  backdrop-filter: blur(10px);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 2000;
+  opacity: 0;
+  visibility: hidden;
+  transition: all 0.3s ease;
+}
+
+.modais-container .modal-confirmacao.show {
+  opacity: 1;
+  visibility: visible;
+}
+
+.modais-container .modal-content {
+  background: white;
+  border-radius: 20px;
+  padding: 40px 30px;
+  max-width: 400px;
+  width: 90%;
+  text-align: center;
+  box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.25);
+  transform: scale(0.9);
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+  position: relative;
+}
+
+.modais-container .modal-confirmacao.show .modal-content {
+  transform: scale(1);
+}
+
+/* Adiciona ícone de aviso */
+.modais-container .modal-content::before {
+  content: "\f071";
+  font-family: "Font Awesome 6 Free";
+  font-weight: 900;
+  font-size: 36px;
+  color: #e53e3e;
+  display: block;
+  margin-bottom: 20px;
+  width: 80px;
+  height: 80px;
+  background: linear-gradient(135deg, #fed7d7 0%, #feb2b2 100%);
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin: 0 auto 20px;
+}
+
+.modais-container .modal-texto {
+  font-size: 18px;
+  color: #2d3748;
+  line-height: 1.5;
+  margin-bottom: 30px;
+  font-weight: 500;
+}
+
+.modais-container .botoes-modal {
+  display: flex;
+  gap: 12px;
+}
+
+.modais-container .botao-confirmar,
+.modais-container .botao-cancelar {
+  flex: 1;
+  padding: 14px 20px;
+  border: none;
+  border-radius: 12px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  font-size: 16px;
+  font-family: "Inter", sans-serif;
+}
+
+.modais-container .botao-confirmar {
+  background: linear-gradient(135deg, #e53e3e 0%, #c53030 100%);
+  color: white;
+  box-shadow: 0 4px 12px rgba(229, 62, 62, 0.3);
+}
+
+.modais-container .botao-confirmar:hover {
+  transform: translateY(-1px);
+  box-shadow: 0 6px 16px rgba(229, 62, 62, 0.4);
+}
+
+.modais-container .botao-cancelar {
+  background: #f7fafc;
+  color: #4a5568;
+  border: 2px solid #e2e8f0;
+}
+
+.modais-container .botao-cancelar:hover {
+  background: #edf2f7;
+  border-color: #cbd5e0;
+  transform: translateY(-1px);
+}
+
+/* ===== RESPONSIVIDADE ===== */
+@media (max-width: 768px) {
+  .modais-container .modal-conteudo {
+    width: 95%;
+    margin: 20px;
+  }
+
+  .modais-container .formulario-mentor-completo {
+    padding: 80px 20px 20px;
+  }
+
+  .modais-container .botoes-formulario {
+    flex-direction: column;
+  }
+
+  .modais-container .preview-img {
+    width: 100px;
+    height: 100px;
+  }
+}
+
+@media (max-width: 480px) {
+  .modais-container .formulario-mentor-completo {
+    padding: 70px 15px 15px;
+    gap: 20px;
+  }
+
+  .modais-container .modal-content {
+    padding: 30px 20px;
+    margin: 10px;
+  }
+
+  .modais-container .preview-img {
+    width: 80px;
+    height: 80px;
+  }
+}
+
+/* ===== ANIMAÇÕES ===== */
+@keyframes slideInUp {
+  from {
+    opacity: 0;
+    transform: translateY(30px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@keyframes pulse {
+  0%,
+  100% {
+    transform: scale(1);
+  }
+  50% {
+    transform: scale(1.05);
+  }
+}
+
+/* ===== ESTADOS DE LOADING ===== */
+.modais-container .formulario-mentor-completo.loading {
+  pointer-events: none;
+  opacity: 0.7;
+}
+
+.modais-container .formulario-mentor-completo.loading::after {
+  content: "";
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: rgba(255, 255, 255, 0.9);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  /* Match modal top-only radius so bottom corners stay square */
+  border-radius: inherit;
+}
+
+/* ===== MELHORIAS VISUAIS ===== */
+.modais-container .input-file {
+  position: absolute;
+  opacity: 0;
+  pointer-events: none;
+}
+
+/* Smooth scroll para mobile */
+@supports (-webkit-touch-callout: none) {
+  .modais-container .modal-conteudo {
+    -webkit-overflow-scrolling: touch;
+  }
+}
+
+/* Focus visible para acessibilidade */
+.modais-container button:focus-visible {
+  outline: 2px solid #667eea;
+  outline-offset: 2px;
+}
+
+.modais-container .input-text:focus-visible {
+  outline: 2px solid #667eea;
+  outline-offset: 2px;
+}
+/* ===== CSS PARA CORRIGIR MODAL =====  */
+.modais-container #modal-confirmacao-exclusao {
+  position: fixed !important;
+  top: 0 !important;
+  left: 0 !important;
+  width: 100% !important;
+  height: 100% !important;
+  background: rgba(0, 0, 0, 0.8) !important;
+  backdrop-filter: blur(10px) !important;
+  /* Raised above the main modal (.modal-conteudo z-index: 1000001) */
+  z-index: 2147483646 !important;
+  display: none !important;
+  align-items: center !important;
+  justify-content: center !important;
+}
+
+.modais-container #modal-confirmacao-exclusao .modal-content {
+  background: white !important;
+  border-radius: 20px !important;
+  padding: 40px 30px !important;
+  max-width: 400px !important;
+  width: 90% !important;
+  text-align: center !important;
+  box-shadow: 0 25px 50px rgba(0, 0, 0, 0.4) !important;
+  /* Ensure the content sits above the overlay and other modals */
+  z-index: 2147483647 !important;
+}
+
+/* ===== ADICIONAR NO FINAL DO <STYLE> ===== */
+
+/* CSS FORÇADO PARA MODAL DE CONFIRMAÇÃO */
+#modal-confirmacao-exclusao {
+  position: fixed !important;
+  top: 0 !important;
+  left: 0 !important;
+  width: 100vw !important;
+  height: 100vh !important;
+  background: rgba(0, 0, 0, 0.8) !important;
+  z-index: 2147483646 !important;
+  display: none !important;
+  align-items: center !important;
+  justify-content: center !important;
+}
+
+#modal-confirmacao-exclusao .modal-content {
+  background: white !important;
+  border-radius: 20px !important;
+  padding: 40px 30px !important;
+  max-width: 420px !important;
+  width: 90% !important;
+  text-align: center !important;
+  box-shadow: 0 25px 50px rgba(0, 0, 0, 0.4) !important;
+  z-index: 2147483647 !important;
+}
+
+#modal-confirmacao-exclusao .botao-confirmar {
+  background: linear-gradient(135deg, #e53e3e 0%, #c53030 100%) !important;
+  color: white !important;
+  border: none !important;
+  padding: 15px 20px !important;
+  border-radius: 12px !important;
+  font-weight: 600 !important;
+  cursor: pointer !important;
+  margin: 0 5px !important;
+}
+
+#modal-confirmacao-exclusao .botao-cancelar {
+  background: #f7fafc !important;
+  color: #4a5568 !important;
+  border: 2px solid #e2e8f0 !important;
+  padding: 15px 20px !important;
+  border-radius: 12px !important;
+  font-weight: 600 !important;
+  cursor: pointer !important;
+  margin: 0 5px !important;
+}
+
+/* =======================================================================================================================================================
+                                          💼  FIM FORMULARIO DE CADASTRO DO MENTOR + MODAL EXCLUSÃO DO MENTOR    
+   ==========================================================================================================================================================*/
+/* */
+/* */
+/* */
+/* */
+/* */
+/* */
+/* */
+/* */
+/* */
+/* */
+/* */
+/* */
+/* =======================================================================================================================================================
+                                          💼  CODIGO RESPONSAVEL PELO TEXTO LUCRO EXTRA   + VALOR TAXADO
+   ==========================================================================================================================================================*/
+/* ✅ CSS PARA VALOR TACHADO E EXTRA */
+
+/* Container da meta valor */
+
+/* ==================================================================================================================
+   EMERGENCY OVERRIDE: Force modal-confirmacao-exclusao to top of stacking order
+   This is a last-resort rule that ensures the confirmation overlay cannot be occluded
+   by any other element. It is intentionally intrusive (uses !important and maximum z-index).
+   Remove after verifying behavior in all pages.
+==================================================================================================================*/
+body > #modal-confirmacao-exclusao,
+#modal-confirmacao-exclusao {
+  position: fixed !important;
+  inset: 0 !important; /* shorthand for top/right/bottom/left */
+  width: 100vw !important;
+  height: 100vh !important;
+  display: none !important; /* JS toggles display */
+  align-items: center !important;
+  justify-content: center !important;
+  visibility: hidden !important;
+  pointer-events: none !important;
+  background: rgba(0, 0, 0, 0.85) !important;
+  z-index: 2147483647 !important; /* max safe int */
+}
+
+/* When shown, ensure it's visible and interactive */
+body > #modal-confirmacao-exclusao.show,
+#modal-confirmacao-exclusao.show {
+  display: flex !important;
+  visibility: visible !important;
+  pointer-events: auto !important;
+}
+
+#modal-confirmacao-exclusao .modal-content,
+#modal-confirmacao-exclusao .modal-conteudo {
+  position: fixed !important;
+  z-index: 2147483648 !important;
+}
+
+/* End emergency override */
+.meta-valor-container {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 4px;
+}
+
+/* Meta com valor extra */
+.meta-com-extra {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+/* Valor tachado (cinza com linha no meio) */
+.valor-tachado {
+  position: relative;
+  color: #888;
+  font-weight: bold;
+  text-decoration: line-through;
+  text-decoration-color: #666;
+  text-decoration-thickness: 2px;
+  opacity: 0.8;
+}
+
+/* Valor extra (dourado) */
+.valor-extra {
+  color: #f08000;
+  font-weight: bold;
+  animation: brilhoDourado 2s ease-in-out infinite alternate;
+}
+
+/* Animação do brilho dourado */
+@keyframes brilhoDourado {
+  0% {
+    text-shadow: 0 0 5px rgba(255, 215, 0, 0.3);
+  }
+  100% {
+    text-shadow: 0 0 10px rgba(255, 215, 0, 0.6);
+  }
+}
+
+/* Status de meta superada */
+.valor-meta.meta-superada {
+  border-color: #ffd700;
+  box-shadow: 0 0 10px rgba(255, 215, 0, 0.2);
+}
+
+/* Barra de progresso para meta superada */
+.barra-meta-superada {
+  background: linear-gradient(45deg, #28a745, #ffd700);
+  animation: barraDourada 1.5s ease-in-out infinite alternate;
+}
+
+/* Animação da barra dourada */
+@keyframes barraDourada {
+  0% {
+    filter: brightness(1);
+  }
+  100% {
+    filter: brightness(1.2);
+  }
+}
+
+/* Responsividade para telas menores */
+@media (max-width: 768px) {
+  .meta-valor-container {
+    gap: 2px;
+  }
+
+  .valor-tachado,
+  .valor-extra {
+    font-size: 0.9em;
+  }
+}
+
+/* Variações de cor para diferentes tipos de meta */
+.meta-fixa .valor-extra {
+  color: #ff6b35;
+  text-shadow: 0 0 5px rgba(255, 107, 53, 0.3);
+}
+
+.meta-turbo .valor-extra {
+  color: #ffd700;
+  text-shadow: 0 0 5px rgba(255, 215, 0, 0.3);
+}
+
+/* Estado de loading para o valor */
+.loading-text {
+  opacity: 0.6;
+  animation: pulsarLoading 1.5s ease-in-out infinite;
+}
+
+@keyframes pulsarLoading {
+  0%,
+  100% {
+    opacity: 0.6;
+  }
+  50% {
+    opacity: 1;
+  }
+}
+/* =======================================================================================================================================================
+                                          💼  FIM CODIGO RESPONSAVEL PELO TEXTO LUCRO EXTRA   + VALOR TAXADO
+   ==========================================================================================================================================================*/
+/* */
+/* */
+/* */
+/* */
+/* */
+/* */
+/* */
+/* */
+/* */
+/* */
+/* */
+
+/* =======================================================================================================================================================
+                                          💼  TELA SEM CADASTRO DE MENTORES
+   ==========================================================================================================================================================*/
+/* ===== CSS PARA TELA SEM MENTORES ===== */
+
+.mentor-item.sem-mentores {
+  width: 100%;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  min-height: 100%;
+  margin: 0;
+  padding: 20px;
+  box-sizing: border-box;
+}
+
+.container-primeiro-mentor {
+  background: linear-gradient(135deg, #f8fafc 0%, #e2e8f0 100%);
+  border: 2px dashed #cbd5e0;
+  border-radius: 24px;
+  padding: 40px 30px;
+  text-align: center;
+  width: 100%;
+  max-width: 100%;
+  height: auto;
+  min-height: 280px;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  transition: all 0.3s ease;
+  box-shadow: 0 4px 15px rgba(0, 0, 0, 0.08);
+  position: relative;
+  overflow: hidden;
+  margin: 0 auto;
+  /* pequeno ajuste para aproximar do topo/à esquerda do container pai */
+  left: -5px; /* move levemente para a esquerda */
+  top: -12px; /* sobe um pouco o container */
+}
+
+.container-primeiro-mentor::before {
+  content: "";
+  position: absolute;
+  top: -50%;
+  left: -50%;
+  width: 200%;
+  height: 200%;
+  background: linear-gradient(
+    45deg,
+    transparent 30%,
+    rgba(255, 255, 255, 0.1) 50%,
+    transparent 70%
+  );
+  transform: rotate(45deg);
+  animation: shimmer 3s infinite;
+}
+
+@keyframes shimmer {
+  0% {
+    transform: translateX(-100%) translateY(-100%) rotate(45deg);
+  }
+  100% {
+    transform: translateX(100%) translateY(100%) rotate(45deg);
+  }
+}
+
+.container-primeiro-mentor:hover {
+  border-color: #667eea;
+  box-shadow: 0 8px 25px rgba(102, 126, 234, 0.15);
+  transform: translateY(-5px);
+}
+
+.icone-mentor-vazio {
+  width: 60px;
+  height: 60px;
+  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin: 0 auto 20px;
+  font-size: 24px;
+  color: white;
+  box-shadow: 0 6px 15px rgba(102, 126, 234, 0.3);
+  transition: all 0.3s ease;
+  animation: pulse 2s infinite;
+  flex-shrink: 0;
+}
+
+@keyframes pulse {
+  0% {
+    box-shadow: 0 8px 20px rgba(102, 126, 234, 0.3);
+  }
+  50% {
+    box-shadow: 0 8px 30px rgba(102, 126, 234, 0.5);
+    transform: scale(1.05);
+  }
+  100% {
+    box-shadow: 0 8px 20px rgba(102, 126, 234, 0.3);
+  }
+}
+
+.titulo-sem-mentores {
+  font-size: 20px;
+  font-weight: 700;
+  color: #2d3748;
+  margin: 0;
+  min-height: 28px;
+  text-align: center;
+}
+
+.modais-container .mentor-nome-preview:empty::before {
+  content: "Nome do Mentor";
+  color: #a0aec0;
+  font-style: italic;
+}
+
+/* ===== BOTÃO DE UPLOAD MODERNO ===== */
+.modais-container .input-group {
+  margin-bottom: 20px;
+}
+
+.modais-container .label-arquivo {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 10px;
+  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  color: white;
+  padding: 16px 24px;
+  border-radius: 16px;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  font-weight: 500;
+  font-size: 16px;
+  border: none;
+  box-shadow: 0 4px 15px rgba(102, 126, 234, 0.3);
+  position: relative;
+  overflow: hidden;
+}
+
+.modais-container .label-arquivo::before {
+  content: "";
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  width: 0;
+  height: 0;
+  background: rgba(255, 255, 255, 0.2);
+  border-radius: 50%;
+  transition: all 0.6s ease;
+  transform: translate(-50%, -50%);
+}
+
+.modais-container .label-arquivo:hover::before {
+  width: 300px;
+  height: 300px;
+}
+
+.modais-container .label-arquivo:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 6px 20px rgba(102, 126, 234, 0.4);
+}
+
+.modais-container .nome-arquivo {
+  display: block;
+  text-align: center;
+  font-size: 14px;
+  color: #718096;
+  margin-top: 10px;
+  padding: 8px 16px;
+  background: #f7fafc;
+  border-radius: 8px;
+  font-style: italic;
+}
+
+/* ===== BOTÃO REMOVER FOTO ===== */
+.modais-container .btn-remover-foto {
+  background: linear-gradient(135deg, #f56565 0%, #e53e3e 100%);
+  color: white;
+  border: none;
+  padding: 8px 16px;
+  border-radius: 20px;
+  font-size: 12px;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  font-weight: 500;
+}
+
+.modais-container .btn-remover-foto:hover {
+  transform: scale(1.05);
+  box-shadow: 0 4px 12px rgba(229, 62, 62, 0.3);
+}
+
+/* ===== CAMPO DE NOME MODERNO ===== */
+.modais-container .input-text {
+  width: 100%;
+  padding: 16px 20px;
+  border: 2px solid #e2e8f0;
+  border-radius: 16px;
+  font-size: 16px;
+  font-weight: 400;
+  color: #2d3748;
+  background: #ffffff;
+  transition: all 0.3s ease;
+  outline: none;
+  box-sizing: border-box;
+  font-family: "Inter", sans-serif;
+}
+
+.modais-container .input-text:focus {
+  border-color: #667eea;
+  box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.1);
+  transform: translateY(-1px);
+}
+
+.modais-container .input-text::placeholder {
+  color: #a0aec0;
+  font-style: italic;
+}
+
+/* ===== BOTÕES MODERNOS ===== */
+.modais-container .botoes-formulario {
+  display: flex;
+  gap: 12px;
+  margin-top: 20px;
+}
+
+.modais-container .btn-enviar,
+.modais-container .btn-excluir {
+  flex: 1;
+  padding: 16px 24px;
+  border: none;
+  border-radius: 16px;
+  font-size: 16px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  position: relative;
+  overflow: hidden;
+  font-family: "Inter", sans-serif;
+}
+
+.modais-container .btn-enviar::before,
+.modais-container .btn-excluir::before {
+  content: "";
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  width: 0;
+  height: 0;
+  background: rgba(255, 255, 255, 0.2);
+  border-radius: 50%;
+  transition: all 0.6s ease;
+  transform: translate(-50%, -50%);
+}
+
+.modais-container .btn-enviar:active::before,
+.modais-container .btn-excluir:active::before {
+  width: 300px;
+  height: 300px;
+}
+
+/* Botão principal */
+.modais-container .btn-enviar {
+  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  color: white;
+  box-shadow: 0 4px 15px rgba(102, 126, 234, 0.3);
+}
+
+.modais-container .btn-enviar:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 6px 20px rgba(102, 126, 234, 0.4);
+}
+
+/* Botão excluir */
+.modais-container .btn-excluir {
+  background: linear-gradient(135deg, #e53e3e 0%, #c53030 100%);
+  color: white;
+  box-shadow: 0 4px 15px rgba(229, 62, 62, 0.3);
+}
+
+.modais-container .btn-excluir:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 6px 20px rgba(229, 62, 62, 0.4);
+}
+
+/* ===== MODAL DE CONFIRMAÇÃO MODERNIZADO ===== */
+.modais-container .modal-confirmacao {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: rgba(0, 0, 0, 0.8);
+  backdrop-filter: blur(10px);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 2000;
+  opacity: 0;
+  visibility: hidden;
+  transition: all 0.3s ease;
+}
+
+.modais-container .modal-confirmacao.show {
+  opacity: 1;
+  visibility: visible;
+}
+
+.btn-primeiro-mentor.carregando::after {
+  content: "";
+  position: absolute;
+  width: 20px;
+  height: 20px;
+  border: 2px solid transparent;
+  border-top: 2px solid white;
+  border-radius: 50%;
+  animation: spin 1s linear infinite;
+  right: 20px;
+}
+
+@keyframes spin {
+  0% {
+    transform: rotate(0deg);
+  }
+  100% {
+    transform: rotate(360deg);
+  }
+}
+
+/* ===== DARK MODE SUPPORT ===== */
+@media (prefers-color-scheme: dark) {
+  .container-primeiro-mentor {
+    background: linear-gradient(135deg, #2d3748 0%, #4a5568 100%);
+    border-color: #4a5568;
+  }
+
+  .titulo-sem-mentores {
+    color: #e2e8f0;
+  }
+
+  .descricao-sem-mentores {
+    color: #a0aec0;
+  }
+}
+
+/* ===== ACESSIBILIDADE ===== */
+.btn-primeiro-mentor:focus {
+  outline: none;
+  box-shadow: 0 8px 20px rgba(102, 126, 234, 0.3),
+    0 0 0 3px rgba(102, 126, 234, 0.2);
+}
+
+.btn-primeiro-mentor:focus-visible {
+  outline: 2px solid #667eea;
+  outline-offset: 2px;
+}
+
+/* ===== REDUZIR MOVIMENTO PARA USUÁRIOS SENSÍVEIS ===== */
+@media (prefers-reduced-motion: reduce) {
+  .container-primeiro-mentor::before,
+  .icone-mentor-vazio,
+  .btn-primeiro-mentor,
+  .container-primeiro-mentor {
+    animation: none;
+  }
+
+  .container-primeiro-mentor:hover .icone-mentor-vazio {
+    transform: scale(1.05);
+    transition: transform 0.2s ease;
+  }
+}
+/* =======================================================================================================================================================
+                                          💼  FIM CSS PARA TELA SEM CADASTRO DE MENTORES COM BOTÃO ADD+
+   ==========================================================================================================================================================*/
+/* */
+/* */
+/* */
+/* */
+/* */
+/* */
+/* */
+/* */
+/* */
+/* */
+/* */
+
+/* ---------------------------------------------------------------------------
+   SCOPE GUARD: impedir que este CSS afete globalmente elementos como
+   .lista-dias, .gd-linha-dia, .data, .placar, .valor, .icone, .separador
+   a menos que o HTML esteja explicitamente dentro de um wrapper com a
+   classe `.gdsc-root`.
+
+   Para ativar os estilos deste arquivo no novo widget, envolva o HTML com:
+     <div class="gdsc-root"> ... </div>
+
+   Sem `.gdsc-root`, as regras abaixo reverterão os estilos herdados destes
+   seletores, evitando qualquer contato indesejado com o seu trecho atual.
+---------------------------------------------------------------------------*/
+
+:not(.gdsc-root) .lista-dias,
+:not(.gdsc-root) .gd-linha-dia,
+:not(.gdsc-root) .data,
+:not(.gdsc-root) .placar-dia,
+:not(.gdsc-root) .placar,
+:not(.gdsc-root) .separador,
+:not(.gdsc-root) .valor,
+:not(.gdsc-root) .icone,
+:not(.gdsc-root) .texto-cinza,
+:not(.gdsc-root) .gd-dia-destaque,
+:not(.gdsc-root) .dia-normal {
+  all: revert !important;
+}
+
+/* Fallback: garantir ícones e font-size básicos não sejam removidos em alguns navegadores */
+:not(.gdsc-root) .data i,
+:not(.gdsc-root) .valor i,
+:not(.gdsc-root) .icone i {
+  all: unset !important;
+  display: inline-block !important;
+}
+
+/* Nota: se preferir, posso em vez disso renomear todas as classes internas
+   do arquivo para um namespace exclusivo (ex: gdsc-*) para evitar selectors
+   :not() e `revert`. Diga se prefere essa abordagem e eu faço a alteração.
+*/
+/* Transições suaves para evitar piscadas */
+.mentor-rank-externo {
+  transition: opacity 0.2s ease, visibility 0.2s ease !important;
+}
+
+.mentor-item.sem-valores .mentor-rank-externo {
+  opacity: 0 !important;
+  visibility: hidden !important;
+  transition: opacity 0.2s ease, visibility 0.2s ease !important;
+}
+
+.mentor-item:not(.sem-valores) .mentor-rank-externo {
+  opacity: 1 !important;
+  visibility: visible !important;
+  transition: opacity 0.2s ease, visibility 0.2s ease !important;
+}
+
+/* CSS ADICIONAL - Adicione no final do seu arquivo CSS */
+
+/* Forçar ocultação inicial para mentores sem valores */
+.mentor-item .mentor-rank-externo {
+  transition: opacity 0.3s ease, visibility 0.3s ease !important;
+}
+
+/* Estado inicial: verificar se mentor tem valores antes de mostrar rank */
+.mentor-item:not(.sem-valores) .mentor-rank-externo {
+  opacity: 1 !important;
+  visibility: visible !important;
+  display: flex !important;
+}
+
+.mentor-item.sem-valores .mentor-rank-externo {
+  opacity: 0 !important;
+  visibility: hidden !important;
+  display: none !important;
+}
+
+/* Garantir que cards sem valores tenham opacidade reduzida */
+.mentor-item.sem-valores .mentor-card {
+  opacity: 0.42 !important;
+  transition: opacity 0.3s ease !important;
+  background: #f5f5f5 !important;
+  border-style: dashed !important;
+}
+
+/* Garantir que menu continue visível mesmo em cards sem valores */
+.mentor-item.sem-valores .menu-toggle,
+.mentor-item.sem-valores .mentor-menu-externo {
+  pointer-events: auto !important;
+  opacity: 1 !important;
+  visibility: visible !important;
+  display: inline-flex !important;
+}
+
+/* ===== FORCE: remover qualquer margem/padding superior que impeça itens de colar ao topo do bloco-1 ===== */
+/* Alta especificidade + !important para sobrepor regras anteriores sem alterar estrutura */
+/* Limita o reset apenas aos containers principais do bloco-1
+   para não forçar margens/paddings em todos os descendentes. */
+html body .main-content .container > .bloco.bloco-1,
+.bloco-1,
+.bloco-1 > .container-resumos,
+.bloco-1 > .widget-meta-item,
+.bloco-1 > .widget-conteudo-principal,
+.bloco-1 > .mentor-wrapper {
+  margin-top: 0 !important;
+  padding-top: 0 !important;
+}
+
+/* Garantir que headers sticky coler ao topo do seu scroll container */
+.bloco-1 .widget-meta-item .data-header-integrada {
+  margin-top: 0 !important;
+  transform: none !important; /* container must not translate; child text will */
+  padding-top: 0 !important;
+}
+
+/* Manter overflow nos filhos para rolar sem adicionar gap acima */
+.bloco-1 .widget-meta-item,
+.bloco-1 .widget-conteudo-principal,
+.bloco-1 .mentor-wrapper {
+  box-sizing: border-box !important;
+  min-height: 0 !important;
+}
+
+/* Pequeno utilitário: se precisar reverter visualmente sem editar o código, comente a regra abaixo */
+.bloco-1.force-top-reset {
+  margin-top: 0 !important;
+  padding-top: 0 !important;
+}
+
+.widget-meta-item .data-header-integrada,
+.bloco-1 .widget-meta-item .data-header-integrada,
+#widget-meta > .data-header-integrada,
+#widget-meta .data-header-integrada {
+  display: flex !important;
+  align-items: center !important;
+  justify-content: space-between !important;
+  width: 100% !important;
+  height: 60px !important; /* restore visible header height */
+  padding: 0 12px !important;
+  box-sizing: border-box !important;
+  background: linear-gradient(
+    90deg,
+    #9ea39d 0%,
+    #b5cfb1 50%,
+    #abb3ab 100%
+  ) !important;
+  border-radius: 15px 15px 0 0 !important;
+  color: #ffffff !important;
+  overflow: hidden !important; /* keep rounded corners clean */
+  -webkit-transform: translateZ(0) !important;
+  transform: translateZ(0) !important;
+}
+
+/* DEBUG / FORÇA: regra de alta especificidade para garantir que a
+  variável :root controle a margem superior do conteúdo do widget.
+  Remova após validação. */
+#widget-meta .widget-conteudo-principal,
+html body #widget-meta .widget-conteudo-principal,
+.bloco-1 #widget-meta .widget-conteudo-principal {
+  margin-top: var(--widget-conteudo-principal-margin-top) !important;
+}
+
+/* FORÇA: alinhar conteúdo do widget à esquerda e remover margin-left global do conteudo-left */
+#widget-meta .widget-conteudo-principal,
+.widget-meta-item #widget-meta .widget-conteudo-principal,
+.bloco-1 .widget-conteudo-principal {
+  text-align: left !important;
+  align-items: flex-start !important;
+}
+
+#widget-meta .widget-conteudo-principal .conteudo-left,
+.bloco-1 .widget-conteudo-principal .conteudo-left {
+  margin-left: 0 !important;
+  width: 100% !important;
+}
+
+/* High-specificity fallback: garantir margin-top/left para widget-info-progresso (remover após validação) */
+#widget-meta .widget-info-progresso,
+.widget-meta-item .widget-info-progresso,
+.widget-info-progresso {
+  margin-top: var(--widget-info-progresso-margin-top) !important;
+  margin-left: var(--widget-info-progresso-margin-left) !important;
+}
+
+/* Normalizar borda superior dos headers para casar com o border-radius dos blocos
+   Evita que cantos de outros elementos internos 'vazem' e mostrem cores diferentes.
+   Use alta especificidade e !important para garantir aplicação contra regras anteriores. */
+.container .bloco,
+.container .bloco.bloco-1,
+.container .bloco.bloco-2,
+.container .bloco.bloco-3 {
+  border-radius: 15px !important; /* padronizar */
+  -webkit-background-clip: padding-box !important;
+  background-clip: padding-box !important;
+}
+
+.container .bloco .widget-meta-item,
+.container .bloco .widget-meta-item .data-header-integrada,
+.container .bloco .data-header-integrada {
+  border-top-left-radius: 15px !important;
+  border-top-right-radius: 15px !important;
+  background-clip: padding-box !important;
+  -webkit-background-clip: padding-box !important;
+  overflow: hidden !important; /* garante que filhos não vazem além dos cantos arredondados */
+  box-shadow: none !important; /* evitar sombras que podem revelar seams */
+}
+
+/* remover possíveis margens/paddings que criem gap entre header e o topo do bloco */
+.container .bloco .widget-meta-item .data-header-integrada {
+  margin: 0 !important;
+  padding-top: 0 !important;
+}
+
+/* ===== PERFORMANCE MODE (SAFE, REVERSIBLE) =====
+   Aplicar a classe `.gestao-perf-mode` em `document.documentElement` reduz
+   efeitos caros: filtros, backdrop-filter, animações contínuas e sombras.
+   Mantém layout e acessibilidade — só reduz trabalho de pintura/composição.
+*/
+.gestao-perf-mode * {
+  animation: none !important;
+  transition: none !important;
+  will-change: auto !important;
+  filter: none !important;
+  -webkit-filter: none !important;
+  backdrop-filter: none !important;
+}
+
+.gestao-perf-mode .widget-meta-item,
+.gestao-perf-mode .bloco,
+.gestao-perf-mode .card,
+.gestao-perf-mode .panel,
+.gestao-perf-mode .popup {
+  box-shadow: none !important;
+}
+
+.gestao-perf-mode .btn,
+.gestao-perf-mode .clickable {
+  transition: transform 120ms ease !important;
+}
+
+.gestao-perf-mode .pulse,
+.gestao-perf-mode .spinner,
+.gestao-perf-mode .shimmer {
+  animation-duration: 3s !important;
+  animation-iteration-count: 1 !important;
+  animation-play-state: paused !important;
+}
+
+/* End of perf-mode overrides */
+.data-header-integrada {
+  background: linear-gradient(
+    90deg,
+    #9ea39d 0%,
+    #b5cfb1 50%,
+    #abb3ab 100%
+  ) !important;
+  margin-top: -1px !important;
+  padding-top: 1px !important;
+  border-radius: 20px 20px 0 0 !important;
+  overflow: hidden !important;
+}
+/* =======================================================================================
+   CORREÇÃO DEFINITIVA: Combate direto contra JavaScript + CSS Override Total
+   
+   Esta correção usa todas as técnicas possíveis para garantir bordas perfeitas
+   ======================================================================================= */
+
+/* 1. RESET TOTAL - Remover qualquer background/borda que cause vazamento */
+.widget-meta-item,
+.widget-meta-container,
+.widget-meta-row,
+.bloco-1,
+.container-resumos {
+  background: none !important;
+  background-color: transparent !important;
+  background-image: none !important;
+  border: none !important;
+  box-shadow: none !important;
+  outline: none !important;
+}
+
+/* 2. BACKGROUND SÓLIDO FORÇADO no container principal */
+.bloco-1 {
+  background: #f3f5f4 !important;
+  border-radius: 15px !important;
+  overflow: hidden !important;
+}
+
+/* 3. WIDGET META com fundo sólido */
+.widget-meta-item {
+  background: #f3f5f4 !important;
+  border-radius: 15px !important;
+  overflow: hidden !important;
+  position: relative !important;
+}
+
+/* 4. HEADER com TODAS as técnicas anti-JavaScript */
+.data-header-integrada {
+  /* Background sólido absoluto */
+  background: #9ea39d !important;
+  background-color: #9ea39d !important;
+  background-image: linear-gradient(
+    90deg,
+    #9ea39d 0%,
+    #b5cfb1 50%,
+    #abb3ab 100%
+  ) !important;
+
+  /* Bordas forçadas */
+  border-radius: 15px 15px 0 0 !important;
+  border-top-left-radius: 15px !important;
+  border-top-right-radius: 15px !important;
+  border-bottom-left-radius: 0 !important;
+  border-bottom-right-radius: 0 !important;
+
+  /* Estrutura */
+  position: relative !important;
+  top: 0 !important;
+  left: 0 !important;
+  right: 0 !important;
+  width: 100% !important;
+  height: 60px !important;
+
+  /* Remover espaçamentos */
+  margin: 0 !important;
+  margin-top: 0 !important;
+  margin-left: 0 !important;
+  margin-right: 0 !important;
+  margin-bottom: 0 !important;
+
+  /* Padding controlado */
+  padding: 0 12px !important;
+  padding-top: 0 !important;
+  padding-bottom: 0 !important;
+
+  /* Overflow e clipping */
+  overflow: hidden !important;
+  box-sizing: border-box !important;
+
+  /* Anti-transparência */
+  opacity: 1 !important;
+
+  /* Display e layout */
+  display: flex !important;
+  align-items: center !important;
+  justify-content: space-between !important;
+
+  /* Z-index */
+  z-index: 9999 !important;
+
+  /* Clipping de fundo */
+  background-clip: padding-box !important;
+  -webkit-background-clip: padding-box !important;
+
+  /* Composição limpa */
+  transform: translateZ(0) !important;
+  -webkit-transform: translateZ(0) !important;
+  backface-visibility: hidden !important;
+  -webkit-backface-visibility: hidden !important;
+}
+
+/* 5. PSEUDO-ELEMENTO para garantir fundo sólido */
+.data-header-integrada::before {
+  content: "";
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: linear-gradient(90deg, #9ea39d 0%, #b5cfb1 50%, #abb3ab 100%);
+  border-radius: 15px 15px 0 0;
+  z-index: -1;
+  pointer-events: none;
+}
+
+/* 6. MÁSCARA para esconder qualquer vazamento */
+.widget-meta-item::before {
+  content: "";
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: 60px;
+  background: linear-gradient(90deg, #9ea39d 0%, #b5cfb1 50%, #abb3ab 100%);
+  border-radius: 15px 15px 0 0;
+  z-index: 1;
+  pointer-events: none;
+}
+
+/* 7. CONTEÚDO do header acima da máscara */
+.data-header-integrada > * {
+  position: relative;
+  z-index: 2;
+}
+
+/* 8. OVERRIDE para QUALQUER estilo inline */
+.data-header-integrada[style] {
+  background: linear-gradient(
+    90deg,
+    #9ea39d 0%,
+    #b5cfb1 50%,
+    #abb3ab 100%
+  ) !important;
+  border-radius: 15px 15px 0 0 !important;
+  margin: 0 !important;
+}
+
+/* 9. ESPECIFICIDADE MÁXIMA - Todos os seletores possíveis */
+html body .main-content .container .bloco.bloco-1 .data-header-integrada,
+.widget-meta-item .data-header-integrada,
+.bloco-1 .widget-meta-item .data-header-integrada,
+#widget-meta > .data-header-integrada,
+#widget-meta .data-header-integrada,
+.container-resumos .data-header-integrada,
+.widget-meta-container .data-header-integrada,
+.widget-meta-row .data-header-integrada {
+  background: linear-gradient(
+    90deg,
+    #9ea39d 0%,
+    #b5cfb1 50%,
+    #abb3ab 100%
+  ) !important;
+  background-color: #9ea39d !important;
+  border-radius: 15px 15px 0 0 !important;
+  margin: 0 !important;
+  padding: 0 12px !important;
+  height: 60px !important;
+  overflow: hidden !important;
+  position: relative !important;
+  z-index: 9999 !important;
+}
+
+/* 10. TÉCNICA FINAL: CSS Animation para sobrescrever JavaScript continuamente */
+@keyframes forceHeaderStyle {
+  0%,
+  100% {
+    background: linear-gradient(90deg, #9ea39d 0%, #b5cfb1 50%, #abb3ab 100%);
+    border-radius: 15px 15px 0 0;
+    margin: 0;
+    overflow: hidden;
+  }
+}
+
+.data-header-integrada {
+  animation: forceHeaderStyle 0.1s infinite;
+}
+
+/* 11. FALLBACK VISUAL: Border sólida como última linha de defesa */
+.data-header-integrada {
+  border-top: 3px solid #9ea39d !important;
+  border-left: 3px solid #9ea39d !important;
+  border-right: 3px solid #9ea39d !important;
+  border-bottom: none !important;
+}
+
+/* 12. CONTAINER PRINCIPAL - Fundo sólido garantido */
+.bloco-1 {
+  background: #f3f5f4 !important;
+  background-color: #f3f5f4 !important;
+  background-image: none !important;
+}
+
+/* 13. OVERRIDE JAVASCRIPT ESPECÍFICO - Interceptar variáveis CSS */
+:root {
+  --header-bg: linear-gradient(
+    90deg,
+    #9ea39d 0%,
+    #b5cfb1 50%,
+    #abb3ab 100%
+  ) !important;
+  --header-radius: 15px 15px 0 0 !important;
+}
+
+.data-header-integrada {
+  background: var(--header-bg) !important;
+  border-radius: var(--header-radius) !important;
+}
+
+/* 14. ÚLTIMA TENTATIVA: Usar outline para simular borda */
+.data-header-integrada {
+  outline: 3px solid #9ea39d;
+  outline-offset: -3px;
+}
+
+/* 15. DEBUG: Para testar se CSS está funcionando */
+.debug-force-red .data-header-integrada {
+  background: red !important;
+  border: 5px solid blue !important;
+}
+
+/* Para ativar debug, adicione classe 'debug-force-red' ao .bloco-1 */
+/* */
+/* */
+/* */
+/* */
+/* */
+/* */
+/* */
+/* */
+/* */
+/* */
+/* */
+/* =======================================================================================================================================================
+                                          💼  CONTADOR DE DIAS RESTANTES DO MÊS - CONTROLE TOTAL VIA ROOT
+   ==========================================================================================================================================================*/
+
+/* ===== CONTAINER PRINCIPAL ===== */
+.contador-dias-mes {
+  /* Posicionamento absoluto no canto direito */
+  position: absolute;
+  top: var(--contador-dias-top);
+  right: var(--contador-dias-right);
+  margin-top: var(--contador-dias-margin-top);
+  margin-right: var(--contador-dias-margin-right);
+
+  /* Dimensões */
+  width: var(--contador-dias-width);
+  height: var(--contador-dias-height);
+  padding: var(--contador-dias-padding);
+
+  /* Layout interno */
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: var(--contador-dias-gap);
+
+  /* Visual */
+  background: var(--contador-dias-bg);
+  border: var(--contador-dias-border-width) solid
+    var(--contador-dias-border-color);
+  border-radius: var(--contador-dias-border-radius);
+  box-shadow: var(--contador-dias-shadow);
+
+  /* Comportamento */
+  cursor: default;
+  user-select: none;
+  z-index: var(--contador-dias-z-index);
+  transition: var(--contador-dias-transition);
+
+  /* Composição */
+  box-sizing: border-box;
+}
+
+/* ===== LABEL "Dias" ===== */
+.contador-dias-label {
+  font-size: var(--contador-dias-label-size);
+  font-weight: var(--contador-dias-label-weight);
+  color: var(--contador-dias-label-color);
+  letter-spacing: var(--contador-dias-label-spacing);
+  text-transform: var(--contador-dias-label-transform);
+  line-height: 1.2;
+  margin: 0;
+  padding: 0;
+  font-family: "Inter", -apple-system, BlinkMacSystemFont, "Segoe UI",
+    sans-serif;
+}
+
+/* ===== VALOR (Número) ===== */
+.contador-dias-valor {
+  font-size: var(--contador-dias-valor-size);
+  font-weight: var(--contador-dias-valor-weight);
+  color: var(--contador-dias-valor-color);
+  line-height: var(--contador-dias-valor-line-height);
+  margin: 0;
+  padding: 0;
+  font-family: "Rajdhani", "Inter", -apple-system, sans-serif;
+  font-variant-numeric: tabular-nums;
+  letter-spacing: -0.5px;
+}
+
+/* ===== HOVER ===== */
+.contador-dias-mes:hover {
+  background: var(--contador-dias-bg-hover);
+  box-shadow: var(--contador-dias-shadow-hover);
+  transform: scale(var(--contador-dias-scale-hover));
+}
+
+.contador-dias-mes:hover .contador-dias-label {
+  color: #5a0d8d; /* Roxo mais escuro no hover */
+}
+
+.contador-dias-mes:hover .contador-dias-valor {
+  color: #5a0d8d; /* Roxo mais escuro no hover */
+}
+
+/* ===== ANIMAÇÃO DE ENTRADA ===== */
+@keyframes contadorFadeIn {
+  from {
+    opacity: 0;
+    transform: translateY(-10px) scale(0.95);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0) scale(1);
+  }
+}
+
+.contador-dias-mes {
+  animation: contadorFadeIn 0.5s cubic-bezier(0.4, 0, 0.2, 1) 0.2s backwards;
+}
+
+/* ===== ESTADO DE URGÊNCIA (Últimos 7 dias) ===== */
+.contador-dias-mes.urgente {
+  background: rgba(229, 62, 62, 0.05); /* ✅ Fundo vermelho muito sutil */
+}
+
+.contador-dias-mes.urgente .contador-dias-label {
+  color: #c53030; /* Vermelho escuro */
+  font-weight: 700;
+}
+
+.contador-dias-mes.urgente .contador-dias-valor {
+  color: #e53e3e; /* Vermelho */
+  animation: pulsarUrgente 2s ease-in-out infinite;
+}
+
+@keyframes pulsarUrgente {
+  0%,
+  100% {
+    transform: scale(1);
+    text-shadow: 0 0 0 rgba(229, 62, 62, 0);
+  }
+  50% {
+    transform: scale(1.05);
+    text-shadow: 0 0 8px rgba(229, 62, 62, 0.4);
+  }
+}
+
+/* ===== RESPONSIVIDADE ===== */
+
+/* Tablets */
+@media (max-width: 1024px) {
+  :root {
+    --contador-dias-right: 4px;
+    --contador-dias-top: 1px;
+    --contador-dias-width: 45px;
+    --contador-dias-padding: 5px 6px;
+    --contador-dias-label-size: 8px;
+    --contador-dias-valor-size: 18px;
+  }
+}
+
+/* Mobile */
+@media (max-width: 768px) {
+  :root {
+    --contador-dias-right: 3px;
+    --contador-dias-top: 1px;
+    --contador-dias-width: 40px;
+    --contador-dias-padding: 4px 5px;
+    --contador-dias-label-size: 7px;
+    --contador-dias-valor-size: 16px;
+    --contador-dias-border-radius: 6px;
+  }
+}
+
+/* Mobile pequeno */
+@media (max-width: 480px) {
+  :root {
+    --contador-dias-right: 2px;
+    --contador-dias-top: 1px;
+    --contador-dias-width: 35px;
+    --contador-dias-padding: 3px 4px;
+    --contador-dias-label-size: 6px;
+    --contador-dias-valor-size: 14px;
+    --contador-dias-border-radius: 5px;
+    --contador-dias-gap: 1px;
+  }
+}
+
+/* ===== ACESSIBILIDADE ===== */
+.contador-dias-mes:focus-visible {
+  outline: 2px solid #6a0dad; /* ✅ Outline roxo */
+  outline-offset: 2px;
+}
+
+/* Reduzir movimento para usuários sensíveis */
+@media (prefers-reduced-motion: reduce) {
+  .contador-dias-mes {
+    animation: none;
+    transition: none;
+  }
+}
+
+/* ========================================================================================
+ ✅ MODAL DE CELEBRAÇÃO - META BATIDA (DESIGN INOVADO E PROFISSIONAL)
+ ======================================================================================== */
+
+.modal-meta-batida {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  z-index: 99999;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-family: "Segoe UI", "Helvetica Neue", sans-serif;
+  pointer-events: none;
+}
+
+.modal-meta-batida * {
+  pointer-events: auto;
+}
+
+.overlay-meta-batida {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: linear-gradient(
+    135deg,
+    rgba(0, 0, 0, 0.7) 0%,
+    rgba(0, 0, 0, 0.9) 100%
+  );
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
+  animation: escurecer-background 0.5s ease-out forwards;
+}
+@keyframes escurecer-background {
+  from {
+    background: linear-gradient(
+      135deg,
+      rgba(0, 0, 0, 0) 0%,
+      rgba(0, 0, 0, 0.3) 100%
+    );
+    backdrop-filter: blur(3px);
+  }
+  to {
+    background: linear-gradient(
+      135deg,
+      rgba(0, 0, 0, 0.7) 0%,
+      rgba(0, 0, 0, 0.9) 100%
+    );
+    backdrop-filter: blur(12px);
+  }
+}
+
+.container-meta-batida {
+  position: relative;
+  z-index: 10;
+  background: linear-gradient(
+    135deg,
+    #0d2818 0%,
+    #1a472a 25%,
+    #2d7a3f 50%,
+    #1a472a 75%,
+    #0d2818 100%
+  );
+  border-radius: 30px;
+  padding: 60px 50px;
+  max-width: 550px;
+  width: 95%;
+  max-height: 90vh;
+  overflow-y: auto;
+
+  /* Sombra Premium com múltiplas camadas */
+  box-shadow: 0 30px 100px rgba(0, 0, 0, 0.6), 0 0 60px rgba(76, 175, 80, 0.4),
+    0 0 30px rgba(76, 175, 80, 0.2), inset 0 1px 0 rgba(255, 255, 255, 0.15),
+    inset 0 -1px 0 rgba(0, 0, 0, 0.3);
+
+  border: 3px solid;
+  border-image: linear-gradient(135deg, #4caf50, #8bc34a, #4caf50) 1;
+  text-align: center;
+  overflow: hidden;
+
+  /* Perspectiva 3D */
+  transform-style: preserve-3d;
+  animation: aparecer-container 0.5s cubic-bezier(0.34, 1.56, 0.64, 1) forwards;
+}
+
+@keyframes aparecer-container {
+  0% {
+    opacity: 0;
+    transform: translate(-50%, -50%) scale(0.7) rotateX(10deg);
+  }
+  100% {
+    opacity: 1;
+    transform: translate(-50%, -50%) scale(1) rotateX(0deg);
+  }
+}
+
+/* Antes do container para brilho de fundo */
+.container-meta-batida::before {
+  content: "";
+  position: absolute;
+  top: -50%;
+  left: -50%;
+  width: 200%;
+  height: 200%;
+  background: radial-gradient(
+    circle,
+    rgba(76, 175, 80, 0.1) 0%,
+    transparent 70%
+  );
+  animation: girar-brilho 20s linear infinite;
+  pointer-events: none;
+  z-index: 0;
+}
+
+@keyframes girar-brilho {
+  0% {
+    transform: rotate(0deg);
+  }
+  100% {
+    transform: rotate(360deg);
+  }
+}
+
+.confetti-container {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  pointer-events: none;
+  z-index: 1;
+  overflow: hidden;
+}
+
+.confetti {
+  position: absolute;
+  width: 14px;
+  height: 14px;
+  border-radius: 50%;
+  opacity: 0;
+  animation: cair-confetti-premium 3s ease-in forwards;
+}
+
+/* Cores variadas para os confetes */
+.confetti:nth-child(1) {
+  left: 15%;
+  background: linear-gradient(135deg, #ffd700, #ffa500);
+  animation-delay: 0s;
+  animation-duration: 2.8s;
+  width: 12px;
+  height: 12px;
+}
+
+.confetti:nth-child(2) {
+  left: 30%;
+  background: linear-gradient(135deg, #4caf50, #8bc34a);
+  animation-delay: 0.2s;
+  animation-duration: 3.2s;
+  width: 16px;
+  height: 16px;
+}
+
+.confetti:nth-child(3) {
+  left: 50%;
+  background: linear-gradient(135deg, #ff6b6b, #ff9800);
+  animation-delay: 0.1s;
+  animation-duration: 3s;
+  width: 14px;
+  height: 14px;
+}
+
+.confetti:nth-child(4) {
+  left: 70%;
+  background: linear-gradient(135deg, #9c27b0, #e91e63);
+  animation-delay: 0.3s;
+  animation-duration: 2.9s;
+  width: 13px;
+  height: 13px;
+}
+
+.confetti:nth-child(5) {
+  left: 85%;
+  background: linear-gradient(135deg, #00bcd4, #4caf50);
+  animation-delay: 0.15s;
+  animation-duration: 3.1s;
+  width: 15px;
+  height: 15px;
+}
+
+@keyframes cair-confetti-premium {
+  0% {
+    opacity: 1;
+    transform: translateY(-20px) translateX(0) rotateZ(0deg) scale(1);
+  }
+  50% {
+    opacity: 1;
+  }
+  100% {
+    opacity: 0;
+    transform: translateY(100vh) translateX(80px) rotateZ(720deg) scale(0);
+  }
+}
+
+.conteudo-celebracao {
+  position: relative;
+  z-index: 2;
+}
+
+/* ===== ICONE TROFEU ===== */
+.icone-trofeu {
+  font-size: 90px;
+  color: #ffd700;
+  margin-bottom: 25px;
+  animation: bounce-trofeu-premium 0.6s ease-in-out infinite;
+  text-shadow: 0 0 20px rgba(255, 215, 0, 0.8), 0 0 40px rgba(255, 215, 0, 0.4),
+    0 5px 15px rgba(0, 0, 0, 0.3);
+  filter: drop-shadow(0 0 10px rgba(255, 215, 0, 0.5));
+}
+
+@keyframes bounce-trofeu-premium {
+  0%,
+  100% {
+    transform: translateY(0) scale(1);
+  }
+  50% {
+    transform: translateY(-25px) scale(1.1);
+  }
+}
+
+/* ===== TITULO PRINCIPAL ===== */
+.titulo-celebracao {
+  font-size: 56px;
+  font-weight: 900;
+  color: #ffd700;
+  margin: 0 0 20px 0;
+  text-transform: uppercase;
+  letter-spacing: 3px;
+  text-shadow: 0 3px 10px rgba(0, 0, 0, 0.4), 0 0 20px rgba(255, 215, 0, 0.6);
+  animation: titulo-aparecer 0.6s ease-out 0.1s both;
+}
+
+@keyframes titulo-aparecer {
+  from {
+    opacity: 0;
+    transform: translateY(-20px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+/* ===== TEXTO PRINCIPAL ===== */
+.texto-principal {
+  margin-bottom: 25px;
+  animation: conteudo-aparecer 0.6s ease-out 0.2s both;
+}
+
+@keyframes conteudo-aparecer {
+  from {
+    opacity: 0;
+    transform: translateY(10px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.meta-batida-texto {
+  font-size: 38px;
+  font-weight: 800;
+  color: #4caf50;
+  margin: 0 0 12px 0;
+  text-transform: uppercase;
+  letter-spacing: 2px;
+  text-shadow: 0 2px 8px rgba(0, 0, 0, 0.3);
+}
+
+.emoji-stop {
+  font-size: 32px;
+  color: #ff6b6b;
+  font-weight: 900;
+  margin: 0;
+  text-transform: uppercase;
+  letter-spacing: 2px;
+  animation: pulse-stop-premium 1s ease-in-out infinite;
+  text-shadow: 0 0 15px rgba(255, 107, 107, 0.6);
+}
+
+@keyframes pulse-stop-premium {
+  0%,
+  100% {
+    transform: scale(1);
+    filter: brightness(1);
+  }
+  50% {
+    transform: scale(1.15);
+    filter: brightness(1.2);
+  }
+}
+
+/* ===== LINHA SEPARADORA ===== */
+.linha-separadora {
+  height: 3px;
+  background: linear-gradient(
+    90deg,
+    transparent,
+    #ffd700,
+    #4caf50,
+    #ffd700,
+    transparent
+  );
+  margin: 25px 0 25px 0;
+  border-radius: 2px;
+  box-shadow: 0 0 15px rgba(255, 215, 0, 0.4);
+  animation: expandir-linha 0.6s ease-out 0.3s both;
+}
+
+@keyframes expandir-linha {
+  from {
+    width: 0;
+    opacity: 0;
+  }
+  to {
+    width: 100%;
+    opacity: 1;
+  }
+}
+
+/* ===== MENSAGEM DE CONTROLE ===== */
+.mensagem-controle {
+  background: linear-gradient(
+    135deg,
+    rgba(255, 152, 0, 0.1) 0%,
+    rgba(255, 107, 107, 0.05) 100%
+  );
+  padding: 18px;
+  border-radius: 15px;
+  margin-bottom: 25px;
+  border-left: 5px solid #ff9800;
+  border-top: 1px solid rgba(255, 152, 0, 0.3);
+  backdrop-filter: blur(10px);
+  animation: conteudo-aparecer 0.6s ease-out 0.4s both;
+}
+
+.obs-texto {
+  color: #fff;
+  font-size: 15px;
+  margin: 6px 0;
+  line-height: 1.5;
+  font-weight: 500;
+}
+
+.obs-texto strong {
+  color: #ffd700;
+  font-size: 16px;
+  font-weight: 900;
+}
+
+/* ===== DADOS DA META ===== */
+.dados-meta {
+  display: grid;
+  grid-template-columns: 1fr 1fr 1fr;
+  gap: 12px;
+  margin-bottom: 30px;
+  animation: conteudo-aparecer 0.6s ease-out 0.5s both;
+}
+
+.dado-info {
+  background: linear-gradient(
+    135deg,
+    rgba(0, 0, 0, 0.4) 0%,
+    rgba(76, 175, 80, 0.1) 100%
+  );
+  padding: 15px;
+  border-radius: 12px;
+  border: 2px solid rgba(76, 175, 80, 0.5);
+  transition: all 0.3s ease;
+  box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2);
+}
+
+.dado-info:hover {
+  transform: translateY(-5px);
+  background: linear-gradient(
+    135deg,
+    rgba(0, 0, 0, 0.5) 0%,
+    rgba(76, 175, 80, 0.15) 100%
+  );
+  border-color: rgba(255, 215, 0, 0.6);
+  box-shadow: 0 8px 25px rgba(76, 175, 80, 0.3);
+}
+
+.label-dado {
+  display: block;
+  color: #b0bec5;
+  font-size: 11px;
+  margin-bottom: 6px;
+  text-transform: uppercase;
+  letter-spacing: 1px;
+  font-weight: 600;
+}
+
+.valor-dado {
+  display: block;
+  color: #ffd700;
+  font-size: 20px;
+  font-weight: 900;
+  text-shadow: 0 2px 8px rgba(255, 215, 0, 0.4);
+}
+
+/* ===== BOTAO FECHAR ===== */
+.btn-fechar-celebracao {
+  background: linear-gradient(135deg, #4caf50 0%, #45a049 50%, #3d8b40 100%);
+  color: white;
+  border: none;
+  padding: 16px 35px;
+  font-size: 15px;
+  font-weight: 900;
+  border-radius: 12px;
+  cursor: pointer;
+  transition: all 0.3s cubic-bezier(0.34, 1.56, 0.64, 1);
+  box-shadow: 0 8px 25px rgba(76, 175, 80, 0.4), 0 0 20px rgba(76, 175, 80, 0.2),
+    inset 0 1px 0 rgba(255, 255, 255, 0.2);
+  text-transform: uppercase;
+  letter-spacing: 1.5px;
+  position: relative;
+  overflow: hidden;
+  animation: conteudo-aparecer 0.6s ease-out 0.6s both;
+}
+
+/* Efeito de brilho no botão */
+.btn-fechar-celebracao::before {
+  content: "";
+  position: absolute;
+  top: 0;
+  left: -100%;
+  width: 100%;
+  height: 100%;
+  background: linear-gradient(
+    90deg,
+    transparent,
+    rgba(255, 255, 255, 0.3),
+    transparent
+  );
+  transition: left 0.5s ease;
+}
+
+.btn-fechar-celebracao:hover::before {
+  left: 100%;
+}
+
+.btn-fechar-celebracao:hover {
+  transform: translateY(-3px) scale(1.05);
+  box-shadow: 0 12px 35px rgba(76, 175, 80, 0.6),
+    0 0 30px rgba(76, 175, 80, 0.3), inset 0 1px 0 rgba(255, 255, 255, 0.3);
+  background: linear-gradient(135deg, #45a049 0%, #3d8b40 50%, #2e6b32 100%);
+}
+
+.btn-fechar-celebracao:active {
+  transform: translateY(-1px) scale(1.02);
+  box-shadow: 0 8px 20px rgba(76, 175, 80, 0.5),
+    inset 0 2px 5px rgba(0, 0, 0, 0.2);
+}
+
+.btn-fechar-celebracao:focus {
+  outline: none;
+  box-shadow: 0 8px 25px rgba(76, 175, 80, 0.4), 0 0 20px rgba(76, 175, 80, 0.2),
+    inset 0 1px 0 rgba(255, 255, 255, 0.2), 0 0 0 3px rgba(76, 175, 80, 0.1);
+}
+
+/* ===== RESPONSIVIDADE - TABLET ===== */
+@media (max-width: 900px) {
+  .container-meta-batida {
+    padding: 50px 40px;
+    border-radius: 25px;
+  }
+
+  .icone-trofeu {
+    font-size: 75px;
+  }
+
+  .titulo-celebracao {
+    font-size: 48px;
+  }
+
+  .meta-batida-texto {
+    font-size: 32px;
+  }
+
+  .emoji-stop {
+    font-size: 28px;
+  }
+}
+
+/* ===== RESPONSIVIDADE - MOBILE ===== */
+@media (max-width: 768px) {
+  .container-meta-batida {
+    padding: 40px 25px;
+    border-radius: 20px;
+    max-width: 95%;
+    margin: 20px auto;
+  }
+
+  .icone-trofeu {
+    font-size: 60px;
+    margin-bottom: 15px;
+  }
+
+  .titulo-celebracao {
+    font-size: 40px;
+    margin-bottom: 15px;
+    letter-spacing: 2px;
+  }
+
+  .meta-batida-texto {
+    font-size: 28px;
+    margin-bottom: 8px;
+  }
+
+  .emoji-stop {
+    font-size: 24px;
+  }
+
+  .dados-meta {
+    grid-template-columns: 1fr;
+    gap: 10px;
+  }
+
+  .btn-fechar-celebracao {
+    padding: 14px 25px;
+    font-size: 13px;
+  }
+
+  .obs-texto {
+    font-size: 13px;
+  }
+
+  .label-dado {
+    font-size: 10px;
+  }
+
+  .valor-dado {
+    font-size: 18px;
+  }
+}
+
+/* ===== RESPONSIVIDADE - MOBILE PEQUENO ===== */
+@media (max-width: 480px) {
+  .container-meta-batida {
+    padding: 30px 15px;
+    border-radius: 15px;
+  }
+
+  .icone-trofeu {
+    font-size: 50px;
+    margin-bottom: 12px;
+  }
+
+  .titulo-celebracao {
+    font-size: 32px;
+    letter-spacing: 1px;
+    margin-bottom: 10px;
+  }
+
+  .meta-batida-texto {
+    font-size: 22px;
+  }
+
+  .emoji-stop {
+    font-size: 20px;
+  }
+
+  .texto-principal {
+    margin-bottom: 15px;
+  }
+
+  .mensagem-controle {
+    padding: 12px;
+    margin-bottom: 15px;
+  }
+
+  .obs-texto {
+    font-size: 12px;
+    margin: 4px 0;
+  }
+
+  .obs-texto strong {
+    font-size: 13px;
+  }
+
+  .dados-meta {
+    grid-template-columns: 1fr;
+    gap: 8px;
+    margin-bottom: 20px;
+  }
+
+  .dado-info {
+    padding: 12px;
+    border-radius: 10px;
+  }
+
+  .label-dado {
+    font-size: 9px;
+  }
+
+  .valor-dado {
+    font-size: 16px;
+  }
+
+  .btn-fechar-celebracao {
+    padding: 12px 20px;
+    font-size: 12px;
+    letter-spacing: 0.5px;
+  }
+
+  .linha-separadora {
+    margin: 15px 0;
+  }
+}
+
+/* ========================================================================================
+   ✅ FIM MODAL DE CELEBRAÇÃO
+   ======================================================================================== */
+
+.contador-dias-mes:hover {
+  transform: none;
+}
+
+.contador-dias-mes.urgente .contador-dias-valor {
+  animation: none;
+}
+
+/* ===== DARK MODE (OPCIONAL) ===== */
+@media (prefers-color-scheme: dark) {
+  :root {
+    --contador-dias-label-color: #b794f4; /* Roxo claro para dark mode */
+    --contador-dias-valor-color: #d6bcfa; /* Roxo mais claro */
+  }
+}
+/* =======================================================================================================================================================
+                                          💼  FIM CONTADOR DE DIAS RESTANTES DO MÊS - CONTROLE TOTAL VIA ROOT
+   ==========================================================================================================================================================*/
+
+/* ========================================================================================
+   🚀 OTIMIZAÇÕES DE PERFORMANCE PARA MOBILE
+   ======================================================================================== */
+
+/* Desabilitar animações custosas em mobile */
+@media (max-width: 1024px) {
+  * {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+  }
+
+  /* Manter apenas transições críticas */
+  .pontuacao,
+  .area-central,
+  .area-direita,
+  .valor-dinamico {
+    animation-duration: 0.2s !important;
+    transition-duration: 0.15s !important;
+  }
+
+  /* Otimizar scrolling */
+  .bloco,
+  .mentor-wrapper,
+  .lista-dias {
+    -webkit-overflow-scrolling: touch !important;
+    scroll-behavior: auto !important;
+  }
+
+  /* Reduzir reflow em elementos com scroll */
+  .mentor-item {
+    flex-basis: auto !important;
+    min-height: auto !important;
+  }
+
+  /* Desabilitar box-shadows custosas */
+  .bloco {
+    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.08) !important;
+  }
+
+  .mentor-card,
+  .widget-meta-item {
+    box-shadow: 0 1px 2px rgba(0, 0, 0, 0.05) !important;
+  }
+
+  /* Simplificar gradientes */
+  .widget-barra-progresso {
+    background: linear-gradient(90deg, #22c55e 0%, #16a34a 100%) !important;
+  }
+
+  /* GPU acceleration para scrolling */
+  .main-content,
+  .container,
+  .mentor-wrapper {
+    -webkit-transform: translateZ(0) !important;
+    transform: translateZ(0) !important;
+  }
+
+  /* Remover blur e filtros complexos */
+  .backdrop {
+    backdrop-filter: none !important;
+    background: rgba(0, 0, 0, 0.5) !important;
+  }
+
+  /* Otimizar fonts */
+  body {
+    -webkit-font-smoothing: antialiased !important;
+    -moz-osx-font-smoothing: grayscale !important;
+  }
+
+  /* Desabilitar hover states em touch devices */
+  @media (hover: none) {
+    .mentor-card:hover {
+      background-color: inherit !important;
+    }
+
+    .btn-add-usuario:hover,
+    .menu-toggle:hover {
+      opacity: 1 !important;
+    }
+  }
+}

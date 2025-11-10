@@ -1,0 +1,1038 @@
+/* ========== CONTAINER DE MENSAGENS DO TELEGRAM ========== */
+.telegram-container {
+  display: flex;
+  flex-direction: column;
+  height: 100%;
+  gap: 15px;
+}
+
+/* ========== HEADER EXTERNO (FORA DO QUADRO) ========== */
+.msg-header-external {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 8px;
+  padding-bottom: 8px;
+  border-bottom: 1px solid #e0e0e0;
+  font-weight: 700;
+  font-size: 14px;
+  color: #d32f2f;
+  gap: 10px;
+}
+
+.msg-header-left {
+  display: flex;
+  align-items: center;
+  flex: 1;
+}
+
+.msg-header-right {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  margin-left: auto;
+}
+
+.msg-title-external {
+  color: #d32f2f;
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+
+.msg-time-external {
+  display: flex;
+  align-items: center;
+  gap: 5px;
+  font-size: 12px;
+  color: #0088cc;
+  font-weight: 500;
+}
+
+.msg-time-external i {
+  font-size: 11px;
+}
+
+/* ========== BOTÃO DELETE ========== */
+.msg-delete-btn {
+  background: none;
+  border: none;
+  color: #ef4444;
+  font-size: 14px;
+  cursor: pointer;
+  padding: 4px 8px;
+  border-radius: 4px;
+  transition: all 0.2s ease;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  min-width: 32px;
+  min-height: 32px;
+}
+
+.msg-delete-btn:hover {
+  background-color: #fee2e2;
+  color: #dc2626;
+  transform: scale(1.1);
+}
+
+.msg-delete-btn:active {
+  transform: scale(0.95);
+}
+
+.msg-delete-btn i {
+  font-size: 14px;
+}
+
+/* ========== HEADER INTERNO ========== */
+.telegram-header {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 15px;
+  background: linear-gradient(135deg, #0088cc 0%, #0077aa 100%);
+  border-radius: 8px;
+  color: white;
+}
+
+.telegram-header i {
+  font-size: 20px;
+}
+
+.telegram-header h3 {
+  margin: 0;
+  font-size: 16px;
+  font-weight: 600;
+  color: white;
+}
+
+.telegram-status {
+  margin-left: auto;
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  font-size: 12px;
+  color: white;
+}
+
+.telegram-status-dot {
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  background-color: #4ade80;
+  animation: blincar 1.5s ease-in-out infinite;
+}
+
+@keyframes blincar {
+  0%,
+  100% {
+    opacity: 1;
+  }
+  50% {
+    opacity: 0.5;
+  }
+}
+
+/* ========== AREA DE MENSAGENS ========== */
+.telegram-messages-wrapper {
+  flex: 1;
+  overflow-y: auto;
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  padding: 15px 5px 0px 0px;
+}
+
+.telegram-messages-wrapper::-webkit-scrollbar {
+  width: 6px;
+}
+
+.telegram-messages-wrapper::-webkit-scrollbar-track {
+  background: #f1f1f1;
+  border-radius: 10px;
+}
+
+.telegram-messages-wrapper::-webkit-scrollbar-thumb {
+  background: #0088cc;
+  border-radius: 10px;
+}
+
+.telegram-messages-wrapper::-webkit-scrollbar-thumb:hover {
+  background: #0077aa;
+}
+
+/* ========== MENSAGEM INDIVIDUAL ========== */
+.telegram-message {
+  background: white;
+  border-left: 4px solid #0088cc;
+  padding: 12px 15px;
+  border-radius: 6px;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.08);
+  animation: slideInRight 0.3s ease-out;
+  transition: all 0.3s ease;
+}
+
+.telegram-message:hover {
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.12);
+  transform: translateX(2px);
+}
+
+@keyframes slideInRight {
+  from {
+    opacity: 0;
+    transform: translateX(-20px);
+  }
+  to {
+    opacity: 1;
+    transform: translateX(0);
+  }
+}
+
+/* ========== MENSAGEM FORMATADA (ESTILO OPORTUNIDADE DE GOLS - VERTICAL COMPACTO) ========== */
+.telegram-formatted-message {
+  font-family: "Segoe UI", Tahoma, Geneva, Verdana, sans-serif;
+  background: white;
+  border-radius: 8px;
+  overflow: hidden;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.12);
+  margin-top: 8px;
+  transition: transform 0.3s ease, box-shadow 0.3s ease;
+  display: flex;
+  flex-direction: column;
+  gap: 0;
+}
+
+.telegram-formatted-message:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+}
+
+.msg-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 16px 20px;
+  background: white;
+  border-bottom: 2px solid #e0e0e0;
+  font-weight: 700;
+  font-size: 16px;
+  color: #d32f2f;
+  gap: 10px;
+}
+
+.msg-header i {
+  font-size: 20px;
+  animation: pulse 1.5s infinite;
+}
+
+@keyframes pulse {
+  0%,
+  100% {
+    transform: scale(1);
+    opacity: 1;
+  }
+  50% {
+    transform: scale(1.15);
+    opacity: 0.8;
+  }
+}
+
+/* ========== BADGE "AO VIVO" ========== */
+.msg-status-ao-vivo {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  padding: 4px 8px;
+  background: transparent;
+  color: #ff9800;
+  border-radius: 4px;
+  font-size: 11px;
+  font-weight: 600;
+  letter-spacing: 0.2px;
+  margin-left: auto;
+  margin-right: 0;
+  white-space: nowrap;
+  animation: blink 1s infinite;
+  transition: color 0.3s ease;
+}
+
+.msg-status-ao-vivo::before {
+  content: "●";
+  font-size: 10px;
+  color: #ff5252;
+  animation: pulse-dot 1.2s ease-in-out infinite;
+}
+
+@keyframes blink {
+  0%,
+  100% {
+    opacity: 1;
+  }
+  50% {
+    opacity: 0.6;
+  }
+}
+
+@keyframes pulse-dot {
+  0%,
+  100% {
+    opacity: 1;
+    transform: scale(1);
+  }
+  50% {
+    opacity: 0.5;
+    transform: scale(1.2);
+  }
+}
+
+/* ========== INFORMAÇÕES SUPERIORES (TEMPO E GRÁFICO) ========== */
+.msg-info-top {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 8px 12px 0;
+  background: white;
+  gap: 12px;
+  height: 28px;
+  flex-shrink: 0;
+}
+
+.msg-info-tempo {
+  display: none;
+}
+
+.msg-icon-relogio {
+  display: none;
+}
+
+.msg-info-grafico {
+  display: flex;
+  align-items: center;
+  gap: 2px;
+  margin-left: auto;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  padding: 6px 8px;
+  border-radius: 4px;
+}
+
+.msg-info-grafico:hover {
+  background-color: rgba(33, 150, 243, 0.1);
+  transform: scale(1.05);
+}
+
+.msg-icon-grafico {
+  width: 20px;
+  height: 16px;
+  display: flex;
+  align-items: flex-end;
+  justify-content: space-between;
+  gap: 1px;
+}
+
+.msg-icon-grafico span {
+  width: 3px;
+  background: linear-gradient(to top, #2196f3, #64b5f6);
+  border-radius: 1px 1px 0 0;
+  animation: barChart 2s ease-in-out infinite;
+}
+
+.msg-icon-grafico span:nth-child(1) {
+  height: 50%;
+  animation-delay: 0s;
+}
+.msg-icon-grafico span:nth-child(2) {
+  height: 35%;
+  animation-delay: 0.2s;
+}
+.msg-icon-grafico span:nth-child(3) {
+  height: 65%;
+  animation-delay: 0.4s;
+}
+.msg-icon-grafico span:nth-child(4) {
+  height: 45%;
+  animation-delay: 0.6s;
+}
+
+@keyframes barChart {
+  0%,
+  100% {
+    transform: scaleY(1);
+  }
+  50% {
+    transform: scaleY(1.2);
+  }
+}
+
+/* ========== CONTEÚDO PRINCIPAL (IMAGEM EM CIMA) ========== */
+.msg-content-wrapper {
+  display: flex;
+  flex-direction: column;
+  align-items: stretch;
+  padding: 0;
+  background: white;
+  gap: 0;
+  flex: 1;
+}
+
+/* Imagem da bola na rede - RETANGULAR */
+.msg-imagem-gol {
+  flex-shrink: 0;
+  width: 100%;
+  height: 130px;
+  border-radius: 0;
+  overflow: hidden;
+  box-shadow: none;
+}
+
+.msg-imagem-gol img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+.msg-content {
+  font-size: 13px;
+  line-height: 1;
+  flex: 0;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  padding: 12px 8px;
+  background: #f0f0f0;
+  gap: 6px;
+}
+
+.msg-aposta {
+  color: #1a3a3a;
+  font-weight: 700;
+  margin-bottom: 0;
+  font-size: 11px;
+  display: flex;
+  align-items: center;
+  gap: 3px;
+  white-space: nowrap;
+  text-align: center;
+  line-height: 1;
+  height: 14px;
+}
+
+.msg-separator {
+  display: none;
+}
+
+.msg-match {
+  margin: 0;
+  padding: 0;
+  background: transparent;
+  border-radius: 0;
+  border: none;
+  flex: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  align-items: center;
+  justify-content: center;
+}
+
+.msg-teams-scores {
+  display: grid;
+  grid-template-columns: auto auto auto auto auto;
+  grid-template-rows: auto;
+  align-items: center;
+  justify-items: center;
+  justify-content: center;
+  gap: 12px;
+  width: 100%;
+  padding: 0 10px;
+}
+
+.msg-team {
+  text-align: center;
+  color: #1a3a3a;
+  font-weight: 700;
+  font-size: 12px;
+  word-break: break-word;
+  line-height: 1;
+  white-space: nowrap;
+  min-width: 50px;
+  max-width: 90px;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.msg-team:first-of-type {
+  grid-column: 1;
+  justify-self: end;
+}
+
+.msg-team:last-of-type {
+  grid-column: 5;
+  justify-self: start;
+}
+
+.msg-vs {
+  grid-column: 3;
+  font-size: 10px;
+  font-weight: 600;
+  color: #888;
+}
+
+.msg-score {
+  text-align: center;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: #1a3a3a;
+  font-weight: 700;
+  font-size: 26px;
+  width: 32px;
+  height: 32px;
+  line-height: 1;
+}
+
+.msg-score:first-of-type {
+  grid-column: 2;
+}
+
+.msg-score:last-of-type {
+  grid-column: 4;
+}
+
+.msg-score-vs {
+  font-size: 14px;
+  font-weight: 400;
+  color: #999;
+  display: none;
+}
+
+.msg-odds {
+  padding: 10px 12px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  font-weight: 700;
+  font-size: 13px;
+  transition: all 0.3s ease;
+  color: white;
+  letter-spacing: 0.2px;
+  border-radius: 0;
+  gap: 12px;
+  height: auto;
+  flex-shrink: 0;
+}
+
+/* ESTILO PADRÃO (SEM RESULTADO) */
+.msg-odds {
+  background: linear-gradient(135deg, #e3f2fd 0%, #f0f7ff 100%);
+  border: none;
+  color: #0277bd;
+}
+
+.msg-odds > span:first-child {
+  flex: 1;
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  font-size: 12px;
+  white-space: nowrap;
+}
+
+.msg-odds > span:last-child {
+  flex-shrink: 0;
+}
+
+/* ========== HORÁRIO DA MENSAGEM ========== */
+.telegram-message-time {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  font-size: 12px;
+  color: #666;
+  margin-bottom: 8px;
+  font-weight: 500;
+}
+
+.telegram-message-time i {
+  font-size: 11px;
+  color: #0088cc;
+}
+
+/* ========== TEXTO DA MENSAGEM ========== */
+.telegram-message-text {
+  font-size: 14px;
+  color: #333;
+  line-height: 1.5;
+  word-break: break-word;
+  white-space: pre-wrap;
+}
+
+/* ========== ESTADO VAZIO ========== */
+.telegram-empty {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  height: 100%;
+  color: #999;
+  gap: 12px;
+}
+
+.telegram-empty i {
+  font-size: 40px;
+  opacity: 0.5;
+}
+
+.telegram-empty p {
+  margin: 0;
+  font-size: 14px;
+  text-align: center;
+}
+
+/* ========== ESTADO DE CARREGAMENTO ========== */
+.telegram-loading {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  height: 100%;
+  gap: 15px;
+}
+
+.telegram-loading-spinner {
+  width: 40px;
+  height: 40px;
+  border: 4px solid #f1f1f1;
+  border-top: 4px solid #0088cc;
+  border-radius: 50%;
+  animation: spin 0.8s linear infinite;
+}
+
+@keyframes spin {
+  0% {
+    transform: rotate(0deg);
+  }
+  100% {
+    transform: rotate(360deg);
+  }
+}
+
+.telegram-loading p {
+  margin: 0;
+  font-size: 13px;
+  color: #666;
+}
+
+/* ========== ERRO ========== */
+.telegram-error {
+  background: #ffebee;
+  border-left: 4px solid #e53935;
+  padding: 12px 15px;
+  border-radius: 6px;
+  color: #c62828;
+  font-size: 13px;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.telegram-error i {
+  font-size: 16px;
+  flex-shrink: 0;
+}
+
+/* ========== RESPONSIVIDADE ========== */
+@media screen and (max-width: 768px) {
+  .telegram-header {
+    padding: 12px;
+  }
+
+  .telegram-header h3 {
+    font-size: 14px;
+  }
+
+  .telegram-message {
+    padding: 10px 12px;
+  }
+
+  .telegram-message-text {
+    font-size: 13px;
+  }
+
+  /* Oportunidades de Gols - Mobile */
+  .telegram-formatted-message {
+    border-radius: 12px;
+  }
+
+  .msg-header {
+    padding: 12px 16px;
+    font-size: 14px;
+  }
+
+  .msg-status-ao-vivo {
+    font-size: 11px;
+    padding: 4px 10px;
+  }
+
+  .msg-content-wrapper {
+    flex-direction: column;
+    padding: 16px;
+    gap: 16px;
+  }
+
+  .msg-imagem-gol {
+    width: 100%;
+    height: 180px;
+  }
+
+  .msg-team {
+    font-size: 14px;
+  }
+
+  .msg-score-row {
+    font-size: 32px;
+  }
+
+  .msg-vs,
+  .msg-score-vs {
+    font-size: 18px;
+  }
+
+  .msg-odds {
+    flex-direction: column;
+    gap: 12px;
+    padding: 14px 16px;
+    text-align: center;
+  }
+
+  .msg-aposta {
+    flex-direction: column;
+    gap: 6px;
+    font-size: 15px;
+  }
+
+  .odds-resultado {
+    font-size: 16px !important;
+    padding: 8px 20px !important;
+  }
+}
+
+@media screen and (max-width: 480px) {
+  .msg-info-top {
+    padding: 0 16px 10px;
+  }
+
+  .msg-info-tempo {
+    font-size: 13px;
+  }
+
+  .msg-icon-relogio {
+    width: 20px;
+    height: 20px;
+    font-size: 10px;
+  }
+
+  .msg-icon-grafico {
+    width: 24px;
+    height: 20px;
+  }
+
+  .msg-team {
+    font-size: 13px;
+  }
+
+  .msg-score-row {
+    font-size: 28px;
+  }
+
+  .msg-imagem-gol {
+    height: 160px;
+  }
+}
+
+/* ========== ESTILOS DE RESULTADO (GREEN/RED/REEMBOLSO) ========== */
+
+/* Container de resultado */
+.odds-resultado {
+  font-weight: 700;
+  font-size: 12px;
+  padding: 4px 8px;
+  border-radius: 4px;
+  display: inline-block;
+  margin-left: 4px;
+  transition: all 0.3s ease;
+}
+
+/* ✅ RESULTADO GREEN */
+.odds-resultado.odds-green {
+  color: #ffffff;
+  background-color: #4caf50;
+  box-shadow: 0 2px 6px rgba(76, 175, 80, 0.3);
+  text-shadow: 0 1px 2px rgba(0, 0, 0, 0.1);
+}
+
+/* ❌ RESULTADO RED */
+.odds-resultado.odds-red {
+  color: #ffffff;
+  background-color: #f44336;
+  box-shadow: 0 2px 6px rgba(244, 67, 54, 0.3);
+  text-shadow: 0 1px 2px rgba(0, 0, 0, 0.1);
+}
+
+/* 🔄 RESULTADO REEMBOLSO */
+.odds-resultado.odds-refund {
+  color: #ffffff;
+  background-color: #ff9800;
+  box-shadow: 0 2px 6px rgba(255, 152, 0, 0.3);
+  text-shadow: 0 1px 2px rgba(0, 0, 0, 0.1);
+}
+
+/* ⏳ STATUS PENDENTE */
+.odds-resultado.odds-pending {
+  color: #666;
+  background-color: #e0e0e0;
+  box-shadow: none;
+}
+
+/* ========== CLASSES DE CONTEXTO PARA MSG-ODDS ========== */
+
+/* ✅ GREEN - Vitória */
+.msg-odds.odds-with-result-green {
+  background: linear-gradient(135deg, #2e7d32 0%, #43a047 100%);
+  border: none;
+  color: white;
+}
+
+.msg-odds.odds-with-result-green .odds-resultado {
+  background: rgba(255, 255, 255, 0.25);
+  border: 2px solid rgba(255, 255, 255, 0.5);
+  padding: 5px 14px;
+  border-radius: 4px;
+  font-size: 13px;
+  font-weight: 900;
+  text-transform: uppercase;
+  letter-spacing: 0.4px;
+  color: white;
+  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.2);
+}
+
+/* ❌ RED - Derrota */
+.msg-odds.odds-with-result-red {
+  background: linear-gradient(135deg, #c62828 0%, #e53935 100%);
+  border: none;
+  color: white;
+}
+
+.msg-odds.odds-with-result-red .odds-resultado {
+  background: rgba(0, 0, 0, 0.2);
+  border: 2px solid rgba(255, 255, 255, 0.3);
+  padding: 5px 14px;
+  border-radius: 4px;
+  font-size: 13px;
+  font-weight: 900;
+  text-transform: uppercase;
+  letter-spacing: 0.4px;
+  color: white;
+  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.2);
+}
+
+/* 🔄 REEMBOLSO */
+.msg-odds.odds-with-result-refund {
+  background: linear-gradient(135deg, #757575 0%, #9e9e9e 100%);
+  border: none;
+  color: white;
+}
+
+.msg-odds.odds-with-result-refund .odds-resultado {
+  background: rgba(255, 255, 255, 0.2);
+  border: 2px solid rgba(255, 255, 255, 0.4);
+  padding: 5px 14px;
+  border-radius: 4px;
+  font-size: 13px;
+  font-weight: 900;
+  text-transform: uppercase;
+  letter-spacing: 0.4px;
+  color: white;
+  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.2);
+}
+
+/* ⏳ PENDENTE - Aguardando resultado */
+.msg-odds.odds-with-result-pending {
+  background: linear-gradient(135deg, #1565c0 0%, #1976d2 100%);
+  border: none;
+  color: white;
+}
+
+.msg-odds.odds-with-result-pending .odds-resultado {
+  background: linear-gradient(135deg, #ffa500 0%, #ff8c00 100%);
+  border: 2px solid rgba(255, 255, 255, 0.6);
+  padding: 5px 14px;
+  border-radius: 4px;
+  font-size: 13px;
+  font-weight: 900;
+  text-transform: uppercase;
+  letter-spacing: 0.4px;
+  color: #000;
+  box-shadow: 0 2px 8px rgba(255, 165, 0, 0.5);
+}
+
+/* Quando está PENDENTE */
+.msg-odds.odds-with-result-pending {
+  background: linear-gradient(135deg, #e3f2fd 0%, #f0f7ff 100%);
+  border: 1px solid #b3e5fc;
+  color: #0277bd;
+}
+
+/* ========== ANIMAÇÕES PARA RESULTADO ========== */
+
+@keyframes resultadoAppear {
+  0% {
+    opacity: 0;
+    transform: scale(0.8);
+  }
+  50% {
+    transform: scale(1.05);
+  }
+  100% {
+    opacity: 1;
+    transform: scale(1);
+  }
+}
+
+.odds-resultado {
+  animation: resultadoAppear 0.5s ease-out;
+}
+
+/* Pulsação sutil para resultado */
+@keyframes pulseResultado {
+  0%,
+  100% {
+    box-shadow: 0 2px 6px rgba(76, 175, 80, 0.3);
+  }
+  50% {
+    box-shadow: 0 4px 12px rgba(76, 175, 80, 0.6);
+  }
+}
+
+.odds-resultado.odds-green:hover,
+.odds-resultado.odds-red:hover,
+.odds-resultado.odds-refund:hover {
+  animation: pulseResultado 0.6s ease-in-out;
+}
+
+/* ========== HEADER DA MENSAGEM COM RESULTADO ========== */
+
+.telegram-message.msg-with-green-result {
+  border-left: 4px solid #4caf50;
+  background: linear-gradient(to right, #f1f8e9 0%, #ffffff 100%);
+}
+
+.telegram-message.msg-with-red-result {
+  border-left: 4px solid #f44336;
+  background: linear-gradient(to right, #ffebee 0%, #ffffff 100%);
+}
+
+.telegram-message.msg-with-refund-result {
+  border-left: 4px solid #ff9800;
+  background: linear-gradient(to right, #fff3e0 0%, #ffffff 100%);
+}
+
+/* ========== ANIMAÇÃO DE ATUALIZAÇÃO DE RESULTADO ========== */
+@keyframes messageUpdated {
+  0% {
+    transform: scale(1) translateY(0);
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+  }
+  50% {
+    transform: scale(1.02) translateY(-2px);
+    box-shadow: 0 8px 20px rgba(76, 175, 80, 0.5);
+  }
+  100% {
+    transform: scale(1) translateY(0);
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+  }
+}
+
+.telegram-message.message-updated {
+  animation: messageUpdated 0.6s cubic-bezier(0.68, -0.55, 0.265, 1.55);
+}
+
+/* ========== ANIMAÇÃO DO RESULTADO APARECER ========== */
+@keyframes resultadoAppear {
+  0% {
+    opacity: 0;
+    transform: scale(0.8) rotateY(-20deg);
+  }
+  100% {
+    opacity: 1;
+    transform: scale(1) rotateY(0deg);
+  }
+}
+
+.odds-resultado {
+  animation: resultadoAppear 0.4s ease-out;
+  display: inline-block;
+  padding: 4px 8px;
+  border-radius: 4px;
+  font-weight: 600;
+  font-size: 12px;
+}
+
+/* ========== ANIMAÇÃO DE FLASH QUANDO RESULTADO ATUALIZA ========== */
+@keyframes flashUpdate {
+  0% {
+    background-color: #fff9c4;
+    box-shadow: 0 0 0 0 rgba(255, 235, 59, 0.7);
+    transform: scale(1);
+  }
+  25% {
+    background-color: #fff59d;
+    box-shadow: 0 0 0 10px rgba(255, 235, 59, 0);
+    transform: scale(1.03);
+  }
+  50% {
+    background-color: #ffeb3b;
+    transform: scale(1.02);
+  }
+  75% {
+    background-color: #fff59d;
+    transform: scale(1.01);
+  }
+  100% {
+    background-color: white;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.08);
+    transform: scale(1);
+  }
+}
+
+@keyframes pulseGlow {
+  0%,
+  100% {
+    box-shadow: 0 0 5px rgba(76, 175, 80, 0.5), 0 0 10px rgba(76, 175, 80, 0.3);
+  }
+  50% {
+    box-shadow: 0 0 20px rgba(76, 175, 80, 0.8), 0 0 30px rgba(76, 175, 80, 0.5);
+  }
+}
+
+/* Aplicar flash na mensagem quando atualizada */
+.telegram-message.message-flash {
+  animation: flashUpdate 2s ease-out;
+  border-left: 4px solid #ffeb3b !important;
+}
+
+/* Aplicar glow pulsante no badge de resultado */
+.telegram-message.message-flash .odds-resultado.odds-green {
+  animation: pulseGlow 1.5s ease-in-out 3;
+}
+
+.telegram-message.message-flash .odds-resultado.odds-red {
+  animation: pulseGlow 1.5s ease-in-out 3;
+  box-shadow: 0 0 5px rgba(244, 67, 54, 0.5), 0 0 10px rgba(244, 67, 54, 0.3);
+}
+
+.telegram-message.message-flash .odds-resultado.odds-refund {
+  animation: pulseGlow 1.5s ease-in-out 3;
+  box-shadow: 0 0 5px rgba(255, 152, 0, 0.5), 0 0 10px rgba(255, 152, 0, 0.3);
+}

@@ -1,0 +1,105 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="UTF-8">
+    <title>Teste Recebimento de Dados</title>
+    <style>
+        body { font-family: monospace; background: #1e1e1e; color: #00ff00; padding: 20px; }
+        .container { background: #2d2d2d; padding: 20px; border-radius: 5px; }
+        h1 { color: #ffff00; }
+        .btn { background: #00aa00; color: black; padding: 10px 20px; margin: 5px; cursor: pointer; border-radius: 3px; font-weight: bold; border: none; }
+        .btn:hover { background: #00ff00; }
+        pre { background: #0a0a0a; padding: 10px; border-radius: 3px; overflow-x: auto; color: #00ff00; }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>🔍 Teste de Recebimento de Dados</h1>
+        
+        <h2>Teste 1: Enviar com valorOver</h2>
+        <button class="btn" onclick="testarComValorOver()">Testar: time1=Palmeiras, valorOver=1</button>
+        <pre id="resultado1"></pre>
+
+        <h2>Teste 2: Enviar SEM valorOver</h2>
+        <button class="btn" onclick="testarSemValorOver()">Testar: time1=Palmeiras, SEM valorOver</button>
+        <pre id="resultado2"></pre>
+
+        <h2>Teste 3: Enviar com valorOver=0.5</h2>
+        <button class="btn" onclick="testarComValorOver05()">Testar: time1=Palmeiras, valorOver=0.5</button>
+        <pre id="resultado3"></pre>
+
+        <h2>Resultado Completo</h2>
+        <pre id="resultadoCompleto"></pre>
+    </div>
+
+    <script>
+        async function testarComValorOver() {
+            console.log("Teste 1: Enviando payload COM valorOver=1");
+            const payload = {
+                time1: "Palmeiras",
+                time2: "Santos",
+                tipo: "gols",
+                limite: 10,
+                valorOver: "1"
+            };
+            console.log("Payload:", payload);
+            
+            const response = await fetch('api/debug-teste-recebimento.php', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify(payload)
+            });
+            
+            const data = await response.json();
+            console.log("Resposta:", data);
+            document.getElementById('resultado1').textContent = JSON.stringify(data, null, 2);
+            document.getElementById('resultadoCompleto').textContent = JSON.stringify(data, null, 2);
+        }
+
+        async function testarSemValorOver() {
+            console.log("Teste 2: Enviando payload SEM valorOver");
+            const payload = {
+                time1: "Palmeiras",
+                time2: "Santos",
+                tipo: "gols",
+                limite: 10
+            };
+            console.log("Payload:", payload);
+            
+            const response = await fetch('api/debug-teste-recebimento.php', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify(payload)
+            });
+            
+            const data = await response.json();
+            console.log("Resposta:", data);
+            document.getElementById('resultado2').textContent = JSON.stringify(data, null, 2);
+            document.getElementById('resultadoCompleto').textContent = JSON.stringify(data, null, 2);
+        }
+
+        async function testarComValorOver05() {
+            console.log("Teste 3: Enviando payload COM valorOver=0.5");
+            const payload = {
+                time1: "Palmeiras",
+                time2: "Santos",
+                tipo: "gols",
+                limite: 10,
+                valorOver: "0.5"
+            };
+            console.log("Payload:", payload);
+            
+            const response = await fetch('api/debug-teste-recebimento.php', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify(payload)
+            });
+            
+            const data = await response.json();
+            console.log("Resposta:", data);
+            document.getElementById('resultado3').textContent = JSON.stringify(data, null, 2);
+            document.getElementById('resultadoCompleto').textContent = JSON.stringify(data, null, 2);
+        }
+    </script>
+</body>
+</html>

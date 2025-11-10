@@ -147,6 +147,7 @@ function getMessagesFromDatabase() {
                 'update_id' => intval($row['id']),
                 'title' => $row['titulo'],
                 'type' => $row['tipo_aposta'],
+                'tipo_aposta' => $row['tipo_aposta'],
                 'status' => $row['status_aposta'],
                 'resultado' => $row['resultado'],
                 'time_1' => $row['time_1'],
@@ -159,8 +160,6 @@ function getMessagesFromDatabase() {
         }
         
         $stmt->close();
-        
-        error_log("✅ Carregadas " . count($messages) . " mensagens do banco");
         
         http_response_code(200);
         echo json_encode([
@@ -250,6 +249,7 @@ function pollNewMessages() {
                 'update_id' => intval($row['id']),
                 'title' => $row['titulo'],
                 'type' => $row['tipo_aposta'],
+                'tipo_aposta' => $row['tipo_aposta'],
                 'status' => $row['status_aposta'],
                 'resultado' => $row['resultado'],
                 'time_1' => $row['time_1'],
@@ -263,10 +263,6 @@ function pollNewMessages() {
         }
         
         $stmt->close();
-        
-        if (count($newMessages) > 0) {
-            error_log("🔔 Polling de HOJE: Encontradas " . count($newMessages) . " mensagens");
-        }
         
         http_response_code(200);
         echo json_encode([
@@ -355,6 +351,7 @@ function getMessagesByDate() {
                 'update_id' => intval($row['id']),
                 'title' => $row['titulo'],
                 'type' => $row['tipo_aposta'],
+                'tipo_aposta' => $row['tipo_aposta'],
                 'status' => $row['status_aposta'],
                 'resultado' => $row['resultado'],
                 'time_1' => $row['time_1'],
@@ -365,8 +362,6 @@ function getMessagesByDate() {
         }
         
         $stmt->close();
-        
-        error_log("✅ Carregadas " . count($messages) . " mensagens do banco para data: " . $date);
         
         http_response_code(200);
         echo json_encode([

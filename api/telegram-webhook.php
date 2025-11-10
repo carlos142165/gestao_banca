@@ -32,6 +32,8 @@ if (!is_dir(dirname($logFile))) {
 $input = json_decode(file_get_contents('php://input'), true);
 file_put_contents($logFile, "\n" . str_repeat("=", 80) . "\n", FILE_APPEND);
 file_put_contents($logFile, "[" . date('Y-m-d H:i:s') . "] Webhook acionado\n", FILE_APPEND);
+file_put_contents($logFile, "Ambiente: " . (defined('ENVIRONMENT') ? ENVIRONMENT : 'desconhecido') . "\n", FILE_APPEND);
+file_put_contents($logFile, "Banco: " . DB_NAME . " | Host: " . DB_HOST . "\n", FILE_APPEND);
 file_put_contents($logFile, "Dados recebidos: " . json_encode($input) . "\n", FILE_APPEND);
 
 try {
@@ -139,6 +141,7 @@ try {
  * FUNÇÃO: Processar mensagem de resultado
  * ================================================================
  * Extrai os dados do resultado e atualiza a aposta correspondente
+ * ✅ AGORA: Compara o TIPO DE APOSTA antes de aplicar o resultado
  */
 function processarResultado($resultadoText, $msgTime, $telegramMessageId) {
     global $conexao, $logFile;
@@ -156,6 +159,7 @@ function processarResultado($resultadoText, $msgTime, $telegramMessageId) {
         $time_1 = "";
         $time_2 = "";
         $tipo_aposta = "";
+        $valor_over = "";
         $resultado = "";
         
         foreach ($lines as $line) {
@@ -172,12 +176,20 @@ function processarResultado($resultadoText, $msgTime, $telegramMessageId) {
                 }
             }
             
-            // Extrair tipo de aposta e resultado
+            // Extrair tipo de aposta, valor e resultado
             // Exemplo: Gols over +0.5 - ODD: 2.005 - GREEN✅
             if (strpos($line, 'over') !== false) {
-                // Extrair tipo (Gols, Escanteios, etc)
+                // Extrair tipo (Gols, Escanteios, Cantos, etc) e o valor (+0.5, +1, etc)
                 if (preg_match('/(Gols|Escanteios|Cantos)\s+over\s+([\+\-]?[\d\.]+)/i', $line, $matches)) {
-                    $tipo_aposta = $matches[1] . ' over ' . $matches[2];
+                    $tipo_base = trim(strtoupper($matches[1]));
+                    $valor_over = trim($matches[2]); // Ex: +0.5, +1, +2.5
+                    
+                    // Classificar o tipo de aposta (simplificado)
+                    if (stripos($tipo_base, 'GOL') !== false) {
+                        $tipo_aposta = 'GOL';
+                    } elseif (stripos($tipo_base, 'ESCANTEIO') !== false || stripos($tipo_base, 'CANTO') !== false) {
+                        $tipo_aposta = 'CANTOS';
+                    }
                 }
                 
                 // Extrair resultado (GREEN, RED, REEMBOLSO)
@@ -195,46 +207,115 @@ function processarResultado($resultadoText, $msgTime, $telegramMessageId) {
         }
         
         file_put_contents($logFile, "   Times extraídos: $time_1 vs $time_2\n", FILE_APPEND);
-        file_put_contents($logFile, "   Tipo extraído: $tipo_aposta\n", FILE_APPEND);
+        file_put_contents($logFile, "   Tipo de aposta extraído: $tipo_aposta\n", FILE_APPEND);
+        file_put_contents($logFile, "   Valor over (RAW): '$valor_over'\n", FILE_APPEND);
+        file_put_contents($logFile, "   Valor over (LENGTH): " . strlen($valor_over) . "\n", FILE_APPEND);
         file_put_contents($logFile, "   Resultado extraído: $resultado\n", FILE_APPEND);
         
-        // ✅ BUSCAR APOSTA NÃO RESOLVIDA
+        // ✅ BUSCAR APOSTA NÃO RESOLVIDA - VALIDAÇÃO RIGOROSA
+        // SÓ APLICA RESULTADO SE TIPO + VALOR COMBINAREM EXATAMENTE
+        $aposta = null;
+        
+        file_put_contents($logFile, "🔍 VALIDAÇÃO RIGOROSA: Procurando aposta com tipo=$tipo_aposta e valor=$valor_over\n", FILE_APPEND);
+        
+        // 🎯 BUSCAR APENAS APOSTAS QUE COMBINAM TIPO + VALOR EXATAMENTE
         $searchQuery = "
-            SELECT id, titulo, tipo_odds
+            SELECT id, titulo, tipo_odds, valor_over
             FROM bote
             WHERE 
                 status_aposta = 'ATIVA'
                 AND resultado IS NULL
-                AND data_criacao >= DATE_SUB(NOW(), INTERVAL 24 HOUR)
+                AND data_criacao >= DATE_SUB(NOW(), INTERVAL 7 DAY)
                 AND (
                     (time_1 LIKE ? AND time_2 LIKE ?)
                     OR (time_1 LIKE ? AND time_2 LIKE ?)
                 )
             ORDER BY data_criacao DESC
-            LIMIT 1
+            LIMIT 50
         ";
         
         $searchStmt = $conexao->prepare($searchQuery);
         
-        if (!$searchStmt) {
-            throw new Exception("Erro ao preparar busca: " . $conexao->error);
+        if ($searchStmt) {
+            $time1_search = '%' . $time_1 . '%';
+            $time2_search = '%' . $time_2 . '%';
+            
+            $searchStmt->bind_param('ssss', 
+                $time1_search, $time2_search, 
+                $time2_search, $time1_search
+            );
+            $searchStmt->execute();
+            $searchResult = $searchStmt->get_result();
+            
+            // Normalizar valor extraído (remover +, e espaços - MANTER o ponto decimal)
+            $valor_normalizado = trim(str_replace(['+', ' '], '', $valor_over));
+            
+            file_put_contents($logFile, "   Valor normalizado da mensagem: '$valor_normalizado'\n", FILE_APPEND);
+            
+            // Procurar por matching EXATO de tipo E valor
+            while ($row = $searchResult->fetch_assoc()) {
+                $titulo_banco = strtoupper($row['titulo']);
+                // Normalizar valor do banco (remover +, parênteses, espaços - MANTER o ponto decimal)
+                $valor_banco = trim(str_replace(['+', '-', '(', ')', ' '], '', $row['valor_over'] ?: '0'));
+                
+                file_put_contents($logFile, "   Testando ID " . $row['id'] . ": Titulo='" . $row['titulo'] . "' | Valor_banco='$valor_banco'\n", FILE_APPEND);
+                
+                // Verificar se TIPO combina
+                $tipo_combina = false;
+                if ($tipo_aposta === 'GOL' && strpos($titulo_banco, 'GOL') !== false) {
+                    $tipo_combina = true;
+                } elseif ($tipo_aposta === 'CANTOS' && strpos($titulo_banco, 'CANTO') !== false) {
+                    $tipo_combina = true;
+                }
+                
+                // Verificar se VALOR combina - COMPARAÇÃO FLEXÍVEL
+                // Tenta: igualdade exata, floatval (0.5 == 0.5), ou com formatação
+                $valor_combina = false;
+                
+                // Tentativa 1: Comparação de strings exata
+                if ($valor_banco === $valor_normalizado) {
+                    $valor_combina = true;
+                    file_put_contents($logFile, "      ✅ Match exato de string: '$valor_banco' === '$valor_normalizado'\n", FILE_APPEND);
+                }
+                
+                // Tentativa 2: Comparação como float (ignora diferenças de formatação)
+                if (!$valor_combina && floatval($valor_banco) == floatval($valor_normalizado)) {
+                    $valor_combina = true;
+                    file_put_contents($logFile, "      ✅ Match como float: " . floatval($valor_banco) . " == " . floatval($valor_normalizado) . "\n", FILE_APPEND);
+                }
+                
+                // Tentativa 3: Remove casa decimal se for .0 (1.0 -> 1)
+                if (!$valor_combina) {
+                    $valor_banco_sem_zero = str_replace('.0', '', $valor_banco);
+                    $valor_msg_sem_zero = str_replace('.0', '', $valor_normalizado);
+                    if ($valor_banco_sem_zero === $valor_msg_sem_zero) {
+                        $valor_combina = true;
+                        file_put_contents($logFile, "      ✅ Match removendo .0: '$valor_banco_sem_zero' === '$valor_msg_sem_zero'\n", FILE_APPEND);
+                    }
+                }
+                
+                file_put_contents($logFile, "      Tipo combina? " . ($tipo_combina ? "SIM" : "NÃO") . " | Valor combina? " . ($valor_combina ? "SIM" : "NÃO ($valor_banco vs $valor_normalizado)") . "\n", FILE_APPEND);
+                
+                // SÓ USAR SE TIPO E VALOR COMBINAREM
+                if ($tipo_combina && $valor_combina) {
+                    $aposta = $row;
+                    file_put_contents($logFile, "✅ MATCH EXATO ENCONTRADO: ID " . $aposta['id'] . " - Tipo: " . $aposta['titulo'] . " - Valor: " . $aposta['valor_over'] . "\n", FILE_APPEND);
+                    break;
+                }
+            }
+            
+            $searchStmt->close();
         }
-        
-        $time1_search = '%' . $time_1 . '%';
-        $time2_search = '%' . $time_2 . '%';
-        
-        $searchStmt->bind_param('ssss', $time1_search, $time2_search, $time2_search, $time1_search);
-        $searchStmt->execute();
-        $searchResult = $searchStmt->get_result();
-        $aposta = $searchResult->fetch_assoc();
-        $searchStmt->close();
         
         if (!$aposta) {
-            file_put_contents($logFile, "⚠️ Nenhuma aposta encontrada para $time_1 x $time_2\n", FILE_APPEND);
+            file_put_contents($logFile, "❌ NENHUM MATCH: Nenhuma aposta encontrada com tipo=$tipo_aposta E valor=$valor_over para $time_1 x $time_2\n", FILE_APPEND);
+            file_put_contents($logFile, "📋 RESUMO DA BUSCA:\n", FILE_APPEND);
+            file_put_contents($logFile, "   - Times procurados: '$time_1' ou '$time_2'\n", FILE_APPEND);
+            file_put_contents($logFile, "   - Tipo procurado: $tipo_aposta\n", FILE_APPEND);
+            file_put_contents($logFile, "   - Valor procurado: '$valor_over' (normalizado: '$valor_normalizado')\n", FILE_APPEND);
+            file_put_contents($logFile, "⏭️ RESULTADO NÃO APLICADO\n\n", FILE_APPEND);
             return false;
         }
-        
-        file_put_contents($logFile, "✅ Aposta encontrada: ID " . $aposta['id'] . "\n", FILE_APPEND);
         
         // ✅ ATUALIZAR RESULTADO
         $updateQuery = "
@@ -265,7 +346,7 @@ function processarResultado($resultadoText, $msgTime, $telegramMessageId) {
         
         $updateStmt->close();
         
-        file_put_contents($logFile, "💾 Resultado atualizado: $resultado\n", FILE_APPEND);
+        file_put_contents($logFile, "💾 Resultado atualizado: $resultado para aposta ID " . $aposta['id'] . "\n", FILE_APPEND);
         file_put_contents($logFile, "✅ Resultado processado com sucesso\n\n", FILE_APPEND);
         
         return true;
@@ -314,8 +395,10 @@ function extrairDadosMensagem($rawText, $msgTime, $telegramMessageId) {
             }
             
             // Extrair valor_over do título (ex: +2.5, +1, etc)
-            if (preg_match('/\+(\d+\.?\d*)/', $titulo, $matches)) {
-                $valor_over = floatval($matches[1]);
+            // Remove emojis antes de fazer o regex
+            $titulo_limpo = preg_replace('/[\x{1F300}-\x{1F9FF}]/u', '', $titulo);
+            if (preg_match('/\+(\d+\.?\d*)/', $titulo_limpo, $matches)) {
+                $valor_over = trim($matches[1]); // Manter como STRING para comparação exata
             }
         }
         
@@ -390,6 +473,8 @@ function salvarNosBancoDados($dadosMensagem) {
     
     try {
         file_put_contents($logFile, "📝 Iniciando salvamento nos dados:\n", FILE_APPEND);
+        file_put_contents($logFile, "   - Banco: " . DB_NAME . " | Host: " . DB_HOST . "\n", FILE_APPEND);
+        file_put_contents($logFile, "   - Conexão: " . ($conexao ? "✅ OK" : "❌ ERRO") . "\n", FILE_APPEND);
         file_put_contents($logFile, "   - Título: " . substr($dadosMensagem['titulo'], 0, 50) . "\n", FILE_APPEND);
         file_put_contents($logFile, "   - Time 1: " . $dadosMensagem['time_1'] . "\n", FILE_APPEND);
         file_put_contents($logFile, "   - Time 2: " . $dadosMensagem['time_2'] . "\n", FILE_APPEND);
@@ -459,6 +544,8 @@ function salvarNosBancoDados($dadosMensagem) {
         
         $insertedId = $conexao->insert_id;
         file_put_contents($logFile, "✅ Registrado ID: $insertedId (linhas afetadas: " . $stmt->affected_rows . ")\n", FILE_APPEND);
+        file_put_contents($logFile, "✅ Banco: " . DB_NAME . " | Host: " . DB_HOST . "\n", FILE_APPEND);
+        file_put_contents($logFile, "✅ Query executada com sucesso\n", FILE_APPEND);
         
         $stmt->close();
         

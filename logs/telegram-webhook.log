@@ -1014,3 +1014,1053 @@ Gols over +0.5 - ODD: 2.09 - GREEN
 💾 Resultado atualizado: GREEN
 ✅ Resultado processado com sucesso
 
+
+================================================================================
+[2025-11-08 12:08:09] Webhook acionado
+Dados recebidos: {"update_id":213068664,"channel_post":{"message_id":859,"sender_chat":{"id":-1002047004959,"title":"Bateubet_VIP","type":"channel"},"chat":{"id":-1002047004959,"title":"Bateubet_VIP","type":"channel"},"date":1762614488,"text":"Oportunidade! \ud83d\udea8\n\n\ud83d\udcca \ud83d\udea8 OVER ( +1 \u26bd\ufe0fGOL  ) AS..\n\n\n\u26bd\ufe0f Estoril (H) x Arouca (A) (ao vivo)\n\n\u23f0 Tempo: 49'\nOdds iniciais: Casa: 1.95 - Emp. 3.6 - Fora: 3.7\n\ud83c\udfdf Portugal Primeira Liga\n\n\ud83e\udd45 Placar: 2 - 2  \n\u21aa\ufe0f \u00daltimo gol: 41' - 30'\nGols over +1.0: 1.51 \nStake: 1%\n    \nLinks da partida:\n\nBet365 | Betfair","entities":[{"offset":278,"length":6,"type":"text_link","url":"https:\/\/www.bet365.bet.br\/#\/AX\/K%5EEstoril"},{"offset":278,"length":6,"type":"bold"},{"offset":287,"length":7,"type":"text_link","url":"https:\/\/betfair.bet.br\/exchange\/plus\/en\/football\/portuguese-primeira-liga\/estoril-praia-v-arouca-betting-34917358"},{"offset":287,"length":7,"type":"bold"}],"link_preview_options":{"url":"https:\/\/www.bet365.bet.br\/"}}}
+✅ Tipo: CHANNEL_POST
+Texto extraído: Oportunidade! 🚨
+
+📊 🚨 OVER ( +1 ⚽️GOL  ) AS..
+
+
+⚽️ Estoril (H) x Arouca (A) (ao vivo...
+É oportunidade? SIM
+É resultado? NÃO
+📨 Mensagem válida recebida
+   ID: 859
+   Hora: 12:08:08
+   Tipo: OPORTUNIDADE
+💾 Salvando oportunidade...
+📝 Iniciando salvamento nos dados:
+   - Título: OVER ( +1 ⚽️GOL  ) AS..
+   - Time 1: ⚽️ Estoril
+   - Time 2: Arouca
+   - Tipo: GOL
+✅ Registrado ID: 116 (linhas afetadas: 1)
+✅ Oportunidade salva com sucesso
+
+
+================================================================================
+[2025-11-08 12:11:57] Webhook acionado
+Dados recebidos: {"update_id":213068665,"channel_post":{"message_id":860,"sender_chat":{"id":-1002047004959,"title":"Bateubet_VIP","type":"channel"},"chat":{"id":-1002047004959,"title":"Bateubet_VIP","type":"channel"},"date":1762614716,"text":"Oportunidade! \ud83d\udea8\n\n\ud83d\udcca \ud83d\udea8 OVER ( +1\u26f3\ufe0f CANTOS ) AS..\n\n\n\u26bd\ufe0f Werder Bremen (H) x Wolfsburg (A) (ao vivo)\n\n\u23f0 Tempo: 83'\nOdds iniciais: Casa: 2.2 - Emp. 3.6 - Fora: 3.1\n\ud83c\udfdf Germany Bundesliga I\n\n\ud83e\udd45 Placar: 1 - 1  \n\u21aa\ufe0f \u00daltimo gol: 82' - 26'\nEscanteios over +1.0: 1.55 \nStake: 1%\n    \n\u26f3\ufe0f Escanteios: 10 - 3  \n\u21aa\ufe0f \u00daltimo escanteio: 81' - 41'\n\ud83d\udd25 Ataques perigosos: 76 - 29\n\ud83d\udd25 Ataques perigosos\/min. (5min.): 0.6 - 0.2\n\ud83d\udd25 Ataques perigosos\/min. (Total): 0.91 - 0.34\n\ud83d\udfe8 Cart\u00f5es amarelos: 1 - 0\n\u21aa\ufe0f \u00daltimo cart\u00e3o amarelo: 60' - \u00f8\n\ud83d\udfe5 Cart\u00f5es vermelhos: 0 - 0\n\ud83c\udfaf Chutes ao lado: 11 - 3\n\u21aa\ufe0f \u00daltimo chute ao lado: 72' - 47'\n\ud83c\udfaf Chutes no alvo: 4 - 4\n\u21aa\ufe0f \u00daltimo chute no alvo: 82' - 46'\n\ud83d\udcaf Posse de bola: 59% - 41%\n\ud83e\udde0 PI 1: 91.8 - 8.2\n\u26a1\ufe0f PI 2: 6 - 2\n\n\nLinks da partida:\n\nBet365 | Betfair","entities":[{"offset":744,"length":6,"type":"text_link","url":"https:\/\/www.bet365.bet.br\/#\/AX\/K%5EWerder%20Bremen"},{"offset":744,"length":6,"type":"bold"},{"offset":753,"length":7,"type":"text_link","url":"https:\/\/betfair.bet.br\/exchange\/plus\/en\/football\/german-bundesliga\/werder-bremen-v-wolfsburg-betting-34891286"},{"offset":753,"length":7,"type":"bold"}],"link_preview_options":{"url":"https:\/\/www.bet365.bet.br\/"}}}
+✅ Tipo: CHANNEL_POST
+Texto extraído: Oportunidade! 🚨
+
+📊 🚨 OVER ( +1⛳️ CANTOS ) AS..
+
+
+⚽️ Werder Bremen (H) x Wolfsburg (...
+É oportunidade? SIM
+É resultado? NÃO
+📨 Mensagem válida recebida
+   ID: 860
+   Hora: 12:11:56
+   Tipo: OPORTUNIDADE
+💾 Salvando oportunidade...
+📝 Iniciando salvamento nos dados:
+   - Título: OVER ( +1⛳️ CANTOS ) AS..
+   - Time 1: ⚽️ Werder Bremen
+   - Time 2: Wolfsburg
+   - Tipo: CANTOS
+✅ Registrado ID: 117 (linhas afetadas: 1)
+✅ Oportunidade salva com sucesso
+
+
+================================================================================
+[2025-11-08 12:13:13] Webhook acionado
+Dados recebidos: {"update_id":213068666,"channel_post":{"message_id":861,"sender_chat":{"id":-1002047004959,"title":"Bateubet_VIP","type":"channel"},"chat":{"id":-1002047004959,"title":"Bateubet_VIP","type":"channel"},"date":1762614792,"text":"Resultado dispon\u00edvel!\n\u26bd\ufe0f Estoril (H) x Arouca (A) (ao vivo)\nGols over +1.0 - ODD: 1.515 - GREEN\n\u2705"}}
+✅ Tipo: CHANNEL_POST
+Texto extraído: Resultado disponível!
+⚽️ Estoril (H) x Arouca (A) (ao vivo)
+Gols over +1.0 - ODD: 1.515 - GREEN...
+É oportunidade? NÃO
+É resultado? SIM
+📨 Mensagem válida recebida
+   ID: 861
+   Hora: 12:13:12
+   Tipo: RESULTADO
+🎯 Processando resultado...
+   Times extraídos: ️ Estoril vs Arouca
+   Tipo extraído: Gols over +1.0
+   Resultado extraído: GREEN
+✅ Aposta encontrada: ID 116
+💾 Resultado atualizado: GREEN
+✅ Resultado processado com sucesso
+
+
+================================================================================
+[2025-11-08 12:14:15] Webhook acionado
+Dados recebidos: {"update_id":213068667,"channel_post":{"message_id":862,"sender_chat":{"id":-1002047004959,"title":"Bateubet_VIP","type":"channel"},"chat":{"id":-1002047004959,"title":"Bateubet_VIP","type":"channel"},"date":1762614855,"text":"Resultado dispon\u00edvel!\n\u26bd\ufe0f Werder Bremen (H) x Wolfsburg (A) (ao vivo)\nEscanteios over +1.0 - ODD: 1.552 - RED\n\u274c"}}
+✅ Tipo: CHANNEL_POST
+Texto extraído: Resultado disponível!
+⚽️ Werder Bremen (H) x Wolfsburg (A) (ao vivo)
+Escanteios over +1.0 - ODD...
+É oportunidade? NÃO
+É resultado? SIM
+📨 Mensagem válida recebida
+   ID: 862
+   Hora: 12:14:15
+   Tipo: RESULTADO
+🎯 Processando resultado...
+   Times extraídos: ️ Werder Bremen vs Wolfsburg
+   Tipo extraído: Escanteios over +1.0
+   Resultado extraído: RED
+✅ Aposta encontrada: ID 117
+💾 Resultado atualizado: RED
+✅ Resultado processado com sucesso
+
+
+================================================================================
+[2025-11-08 12:52:05] Webhook acionado
+Dados recebidos: {"update_id":213068668,"channel_post":{"message_id":863,"sender_chat":{"id":-1002047004959,"title":"Bateubet_VIP","type":"channel"},"chat":{"id":-1002047004959,"title":"Bateubet_VIP","type":"channel"},"date":1762617125,"text":"Oportunidade! \ud83d\udea8\n\n\ud83d\udcca \ud83d\udea8 OVER ( +1 \u26bdGOL  ) AS..\n\n\n\u26bd\ufe0f Everton (H) x Fulham (A) (ao vivo)\n\n\u23f0 Tempo: 51'\nOdds iniciais: Casa: 2.2 - Emp. 3.3 - Fora: 3.3\n\ud83c\udfdf England Premier League\n\n\ud83e\udd45 Placar: 1 - 0  \n\u21aa\ufe0f \u00daltimo gol: 48' - \u00f8\nGols over +1.0: 1.52 \nStake: 1%\n    \nLinks da partida:\n\nBet365 | Betfair","entities":[{"offset":274,"length":6,"type":"text_link","url":"https:\/\/www.bet365.bet.br\/#\/AX\/K%5EEverton"},{"offset":274,"length":6,"type":"bold"},{"offset":283,"length":7,"type":"text_link","url":"https:\/\/betfair.bet.br\/exchange\/plus\/en\/football\/english-premier-league\/everton-v-fulham-betting-34892545"},{"offset":283,"length":7,"type":"bold"}],"link_preview_options":{"is_disabled":true}}}
+✅ Tipo: CHANNEL_POST
+Texto extraído: Oportunidade! 🚨
+
+📊 🚨 OVER ( +1 ⚽GOL  ) AS..
+
+
+⚽️ Everton (H) x Fulham (A) (ao vivo)
+
+...
+É oportunidade? SIM
+É resultado? NÃO
+📨 Mensagem válida recebida
+   ID: 863
+   Hora: 12:52:05
+   Tipo: OPORTUNIDADE
+💾 Salvando oportunidade...
+📝 Iniciando salvamento nos dados:
+   - Título: OVER ( +1 ⚽GOL  ) AS..
+   - Time 1: ⚽️ Everton
+   - Time 2: Fulham
+   - Tipo: GOL
+✅ Registrado ID: 118 (linhas afetadas: 1)
+✅ Oportunidade salva com sucesso
+
+
+================================================================================
+[2025-11-08 13:29:55] Webhook acionado
+Dados recebidos: {"update_id":213068669,"channel_post":{"message_id":864,"sender_chat":{"id":-1002047004959,"title":"Bateubet_VIP","type":"channel"},"chat":{"id":-1002047004959,"title":"Bateubet_VIP","type":"channel"},"date":1762619394,"text":"Oportunidade! \ud83d\udea8\n\n\ud83d\udcca \ud83d\udea8 OVER ( +0.5 \u26bdGOL  ) FT\n\n\n\u26bd\ufe0f Everton (H) x Fulham (A) (ao vivo)\n\n\u23f0 Tempo: 65'\nOdds iniciais: Casa: 2.2 - Emp. 3.3 - Fora: 3.3\n\ud83c\udfdf England Premier League\n\n\ud83e\udd45 Placar: 1 - 0  \n\u21aa\ufe0f \u00daltimo gol: 48' - \u00f8\nGols over +0.5: 1.57 \nStake: 1%\n    \nLinks da partida:\n\nBet365 | Betfair","entities":[{"offset":274,"length":6,"type":"text_link","url":"https:\/\/www.bet365.bet.br\/#\/AX\/K%5EEverton"},{"offset":274,"length":6,"type":"bold"},{"offset":283,"length":7,"type":"text_link","url":"https:\/\/betfair.bet.br\/exchange\/plus\/en\/football\/english-premier-league\/everton-v-fulham-betting-34892545"},{"offset":283,"length":7,"type":"bold"}],"link_preview_options":{"is_disabled":true}}}
+✅ Tipo: CHANNEL_POST
+Texto extraído: Oportunidade! 🚨
+
+📊 🚨 OVER ( +0.5 ⚽GOL  ) FT
+
+
+⚽️ Everton (H) x Fulham (A) (ao vivo)
+
+...
+É oportunidade? SIM
+É resultado? NÃO
+📨 Mensagem válida recebida
+   ID: 864
+   Hora: 13:29:54
+   Tipo: OPORTUNIDADE
+💾 Salvando oportunidade...
+📝 Iniciando salvamento nos dados:
+   - Título: OVER ( +0.5 ⚽GOL  ) FT
+   - Time 1: ⚽️ Everton
+   - Time 2: Fulham
+   - Tipo: GOL
+✅ Registrado ID: 119 (linhas afetadas: 1)
+✅ Oportunidade salva com sucesso
+
+
+================================================================================
+[2025-11-08 14:05:24] Webhook acionado
+Dados recebidos: {"update_id":213068670,"channel_post":{"message_id":865,"sender_chat":{"id":-1002047004959,"title":"Bateubet_VIP","type":"channel"},"chat":{"id":-1002047004959,"title":"Bateubet_VIP","type":"channel"},"date":1762621524,"text":"Resultado dispon\u00edvel!\n\u26bd\ufe0f Everton (H) x Fulham (A) (ao vivo)\nGols over +1.0 - ODD: 1.525 - reembolso\n\ud83d\udd04"}}
+✅ Tipo: CHANNEL_POST
+Texto extraído: Resultado disponível!
+⚽️ Everton (H) x Fulham (A) (ao vivo)
+Gols over +1.0 - ODD: 1.525 - reemb...
+É oportunidade? NÃO
+É resultado? SIM
+📨 Mensagem válida recebida
+   ID: 865
+   Hora: 14:05:24
+   Tipo: RESULTADO
+🎯 Processando resultado...
+   Times extraídos: ️ Everton vs Fulham
+   Tipo extraído: Gols over +1.0
+   Resultado extraído: REEMBOLSO
+✅ Aposta encontrada: ID 119
+💾 Resultado atualizado: REEMBOLSO
+✅ Resultado processado com sucesso
+
+
+================================================================================
+[2025-11-08 14:05:30] Webhook acionado
+Dados recebidos: {"update_id":213068671,"channel_post":{"message_id":866,"sender_chat":{"id":-1002047004959,"title":"Bateubet_VIP","type":"channel"},"chat":{"id":-1002047004959,"title":"Bateubet_VIP","type":"channel"},"date":1762621530,"text":"Resultado dispon\u00edvel!\n\u26bd\ufe0f Everton (H) x Fulham (A) (ao vivo)\nGols over +0.5 - ODD: 1.575 - GREEN\n\u2705"}}
+✅ Tipo: CHANNEL_POST
+Texto extraído: Resultado disponível!
+⚽️ Everton (H) x Fulham (A) (ao vivo)
+Gols over +0.5 - ODD: 1.575 - GREEN...
+É oportunidade? NÃO
+É resultado? SIM
+📨 Mensagem válida recebida
+   ID: 866
+   Hora: 14:05:30
+   Tipo: RESULTADO
+🎯 Processando resultado...
+   Times extraídos: ️ Everton vs Fulham
+   Tipo extraído: Gols over +0.5
+   Resultado extraído: GREEN
+✅ Aposta encontrada: ID 118
+💾 Resultado atualizado: GREEN
+✅ Resultado processado com sucesso
+
+
+================================================================================
+[2025-11-08 14:57:11] Webhook acionado
+Dados recebidos: {"update_id":213068672,"channel_post":{"message_id":867,"sender_chat":{"id":-1002047004959,"title":"Bateubet_VIP","type":"channel"},"chat":{"id":-1002047004959,"title":"Bateubet_VIP","type":"channel"},"date":1762624630,"text":"Oportunidade! \ud83d\udea8\n\n\ud83d\udcca \ud83d\udea8 OVER ( +1 \u26bd\ufe0fGOL  ) AS..\n\n\n\u26bd\ufe0f Everton (H) x Fulham (A) (ao vivo)\n\n\u23f0 Tempo: 51'\nOdds iniciais: Casa: 2.2 - Emp. 3.3 - Fora: 3.3\n\ud83c\udfdf England Premier League\n\n\ud83e\udd45 Placar: 1 - 0  \n\u21aa\ufe0f \u00daltimo gol: 48' - \u00f8\nGols over +1.0: 1.52 \nStake: 1%\n    \nLinks da partida:\n\nBet365 | Betfair","entities":[{"offset":275,"length":6,"type":"text_link","url":"https:\/\/www.bet365.bet.br\/#\/AX\/K%5EEverton"},{"offset":275,"length":6,"type":"bold"},{"offset":284,"length":7,"type":"text_link","url":"https:\/\/betfair.bet.br\/exchange\/plus\/en\/football\/english-premier-league\/everton-v-fulham-betting-34892545"},{"offset":284,"length":7,"type":"bold"}],"link_preview_options":{"url":"https:\/\/www.bet365.bet.br\/"}}}
+✅ Tipo: CHANNEL_POST
+Texto extraído: Oportunidade! 🚨
+
+📊 🚨 OVER ( +1 ⚽️GOL  ) AS..
+
+
+⚽️ Everton (H) x Fulham (A) (ao vivo...
+É oportunidade? SIM
+É resultado? NÃO
+📨 Mensagem válida recebida
+   ID: 867
+   Hora: 14:57:10
+   Tipo: OPORTUNIDADE
+💾 Salvando oportunidade...
+📝 Iniciando salvamento nos dados:
+   - Título: OVER ( +1 ⚽️GOL  ) AS..
+   - Time 1: ⚽️ Everton
+   - Time 2: Fulham
+   - Tipo: GOL
+✅ Registrado ID: 120 (linhas afetadas: 1)
+✅ Oportunidade salva com sucesso
+
+
+================================================================================
+[2025-11-08 14:57:21] Webhook acionado
+Dados recebidos: {"update_id":213068673,"channel_post":{"message_id":868,"sender_chat":{"id":-1002047004959,"title":"Bateubet_VIP","type":"channel"},"chat":{"id":-1002047004959,"title":"Bateubet_VIP","type":"channel"},"date":1762624641,"text":"Oportunidade! \ud83d\udea8\n\n\ud83d\udcca \ud83d\udea8 OVER ( +0.5 \u26bd\ufe0fGOL  ) FT\n\n\n\u26bd\ufe0f Everton (H) x Fulham (A) (ao vivo)\n\n\u23f0 Tempo: 65'\nOdds iniciais: Casa: 2.2 - Emp. 3.3 - Fora: 3.3\n\ud83c\udfdf England Premier League\n\n\ud83e\udd45 Placar: 1 - 0  \n\u21aa\ufe0f \u00daltimo gol: 48' - \u00f8\nGols over +0.5: 1.57 \nStake: 1%\n    \nLinks da partida:\n\nBet365 | Betfair","entities":[{"offset":275,"length":6,"type":"text_link","url":"https:\/\/www.bet365.bet.br\/#\/AX\/K%5EEverton"},{"offset":275,"length":6,"type":"bold"},{"offset":284,"length":7,"type":"text_link","url":"https:\/\/betfair.bet.br\/exchange\/plus\/en\/football\/english-premier-league\/everton-v-fulham-betting-34892545"},{"offset":284,"length":7,"type":"bold"}],"link_preview_options":{"url":"https:\/\/www.bet365.bet.br\/"}}}
+✅ Tipo: CHANNEL_POST
+Texto extraído: Oportunidade! 🚨
+
+📊 🚨 OVER ( +0.5 ⚽️GOL  ) FT
+
+
+⚽️ Everton (H) x Fulham (A) (ao vivo...
+É oportunidade? SIM
+É resultado? NÃO
+📨 Mensagem válida recebida
+   ID: 868
+   Hora: 14:57:21
+   Tipo: OPORTUNIDADE
+💾 Salvando oportunidade...
+📝 Iniciando salvamento nos dados:
+   - Título: OVER ( +0.5 ⚽️GOL  ) FT
+   - Time 1: ⚽️ Everton
+   - Time 2: Fulham
+   - Tipo: GOL
+✅ Registrado ID: 121 (linhas afetadas: 1)
+✅ Oportunidade salva com sucesso
+
+
+================================================================================
+[2025-11-08 14:58:30] Webhook acionado
+Dados recebidos: {"update_id":213068674,"channel_post":{"message_id":869,"sender_chat":{"id":-1002047004959,"title":"Bateubet_VIP","type":"channel"},"chat":{"id":-1002047004959,"title":"Bateubet_VIP","type":"channel"},"date":1762624709,"text":"Resultado dispon\u00edvel!\n\u26bd\ufe0f Everton (H) x Fulham (A) (ao vivo)\nGols over +1.0 - ODD: 1.525 - reembolso\n\ud83d\udd04"}}
+✅ Tipo: CHANNEL_POST
+Texto extraído: Resultado disponível!
+⚽️ Everton (H) x Fulham (A) (ao vivo)
+Gols over +1.0 - ODD: 1.525 - reemb...
+É oportunidade? NÃO
+É resultado? SIM
+📨 Mensagem válida recebida
+   ID: 869
+   Hora: 14:58:29
+   Tipo: RESULTADO
+🎯 Processando resultado...
+   Times extraídos: ️ Everton vs Fulham
+   Tipo extraído: Gols over +1.0
+   Resultado extraído: REEMBOLSO
+✅ Aposta encontrada: ID 121
+💾 Resultado atualizado: REEMBOLSO
+✅ Resultado processado com sucesso
+
+
+================================================================================
+[2025-11-08 14:58:32] Webhook acionado
+Dados recebidos: {"update_id":213068675,"channel_post":{"message_id":870,"sender_chat":{"id":-1002047004959,"title":"Bateubet_VIP","type":"channel"},"chat":{"id":-1002047004959,"title":"Bateubet_VIP","type":"channel"},"date":1762624711,"text":"Resultado dispon\u00edvel!\n\u26bd\ufe0f Everton (H) x Fulham (A) (ao vivo)\nGols over +0.5 - ODD: 1.575 - GREEN\n\u2705"}}
+✅ Tipo: CHANNEL_POST
+Texto extraído: Resultado disponível!
+⚽️ Everton (H) x Fulham (A) (ao vivo)
+Gols over +0.5 - ODD: 1.575 - GREEN...
+É oportunidade? NÃO
+É resultado? SIM
+📨 Mensagem válida recebida
+   ID: 870
+   Hora: 14:58:31
+   Tipo: RESULTADO
+🎯 Processando resultado...
+   Times extraídos: ️ Everton vs Fulham
+   Tipo extraído: Gols over +0.5
+   Resultado extraído: GREEN
+✅ Aposta encontrada: ID 120
+💾 Resultado atualizado: GREEN
+✅ Resultado processado com sucesso
+
+
+================================================================================
+[2025-11-08 14:59:23] Webhook acionado
+Dados recebidos: {"update_id":213068676,"channel_post":{"message_id":871,"sender_chat":{"id":-1002047004959,"title":"Bateubet_VIP","type":"channel"},"chat":{"id":-1002047004959,"title":"Bateubet_VIP","type":"channel"},"date":1762624762,"text":"Oportunidade! \ud83d\udea8\n\n\ud83d\udcca \ud83d\udea8 OVER ( +1 \u26bdGOL  ) AS..\n\n\n\u26bd\ufe0f Al Duhail (H) x Al Sailiya SC (A) (ao vivo)\n\n\u23f0 Tempo: 68'\nOdds iniciais: Casa: 1.285 - Emp. 5.0 - Fora: 7.5\n\ud83c\udfdf Qatar Stars League\n\n\ud83e\udd45 Placar: 2 - 2  \n\u21aa\ufe0f \u00daltimo gol: 41' - 60'\nGols over +1.0: 1.77 \nStake: 1%\n    \nLinks da partida:\n\nBet365 | Betfair","entities":[{"offset":283,"length":6,"type":"text_link","url":"https:\/\/www.bet365.bet.br\/#\/AX\/K%5EAl%20Duhail"},{"offset":283,"length":6,"type":"bold"},{"offset":292,"length":7,"type":"text_link","url":"https:\/\/betfair.bet.br\/exchange\/plus\/en\/football\/qatari-stars-league\/al-duhail-sc-v-al-sailiya-betting-34933888"},{"offset":292,"length":7,"type":"bold"}],"link_preview_options":{"is_disabled":true}}}
+✅ Tipo: CHANNEL_POST
+Texto extraído: Oportunidade! 🚨
+
+📊 🚨 OVER ( +1 ⚽GOL  ) AS..
+
+
+⚽️ Al Duhail (H) x Al Sailiya SC (A) (a...
+É oportunidade? SIM
+É resultado? NÃO
+📨 Mensagem válida recebida
+   ID: 871
+   Hora: 14:59:22
+   Tipo: OPORTUNIDADE
+💾 Salvando oportunidade...
+📝 Iniciando salvamento nos dados:
+   - Título: OVER ( +1 ⚽GOL  ) AS..
+   - Time 1: ⚽️ Al Duhail
+   - Time 2: Al Sailiya SC
+   - Tipo: GOL
+✅ Registrado ID: 122 (linhas afetadas: 1)
+✅ Oportunidade salva com sucesso
+
+
+================================================================================
+[2025-11-08 15:11:38] Webhook acionado
+Dados recebidos: {"update_id":213068677,"channel_post":{"message_id":872,"sender_chat":{"id":-1002047004959,"title":"Bateubet_VIP","type":"channel"},"chat":{"id":-1002047004959,"title":"Bateubet_VIP","type":"channel"},"date":1762625497,"text":"Oportunidade! \ud83d\udea8\n\n\ud83d\udcca \ud83d\udea8 OVER ( +0.5 \u26bd\ufe0fGOL  ) FT\n\n\n\u26bd\ufe0f Everton (H) x Fulham (A) (ao vivo)\n\n\u23f0 Tempo: 65'\nOdds iniciais: Casa: 2.2 - Emp. 3.3 - Fora: 3.3\n\ud83c\udfdf England Premier League\n\n\ud83e\udd45 Placar: 1 - 0  \n\u21aa\ufe0f \u00daltimo gol: 48' - \u00f8\nGols over +0.5: 1.57 \nStake: 1%\n    \nLinks da partida:\n\nBet365 | Betfair","entities":[{"offset":275,"length":6,"type":"text_link","url":"https:\/\/www.bet365.bet.br\/#\/AX\/K%5EEverton"},{"offset":275,"length":6,"type":"bold"},{"offset":284,"length":7,"type":"text_link","url":"https:\/\/betfair.bet.br\/exchange\/plus\/en\/football\/english-premier-league\/everton-v-fulham-betting-34892545"},{"offset":284,"length":7,"type":"bold"}],"link_preview_options":{"url":"https:\/\/www.bet365.bet.br\/"}}}
+✅ Tipo: CHANNEL_POST
+Texto extraído: Oportunidade! 🚨
+
+📊 🚨 OVER ( +0.5 ⚽️GOL  ) FT
+
+
+⚽️ Everton (H) x Fulham (A) (ao vivo...
+É oportunidade? SIM
+É resultado? NÃO
+📨 Mensagem válida recebida
+   ID: 872
+   Hora: 15:11:37
+   Tipo: OPORTUNIDADE
+💾 Salvando oportunidade...
+📝 Iniciando salvamento nos dados:
+   - Título: OVER ( +0.5 ⚽️GOL  ) FT
+   - Time 1: ⚽️ Everton
+   - Time 2: Fulham
+   - Tipo: GOL
+✅ Registrado ID: 123 (linhas afetadas: 1)
+✅ Oportunidade salva com sucesso
+
+
+================================================================================
+[2025-11-08 15:11:44] Webhook acionado
+Dados recebidos: {"update_id":213068678,"channel_post":{"message_id":873,"sender_chat":{"id":-1002047004959,"title":"Bateubet_VIP","type":"channel"},"chat":{"id":-1002047004959,"title":"Bateubet_VIP","type":"channel"},"date":1762625503,"text":"Oportunidade! \ud83d\udea8\n\n\ud83d\udcca \ud83d\udea8 OVER ( +1 \u26bd\ufe0fGOL  ) AS..\n\n\n\u26bd\ufe0f Everton (H) x Fulham (A) (ao vivo)\n\n\u23f0 Tempo: 51'\nOdds iniciais: Casa: 2.2 - Emp. 3.3 - Fora: 3.3\n\ud83c\udfdf England Premier League\n\n\ud83e\udd45 Placar: 1 - 0  \n\u21aa\ufe0f \u00daltimo gol: 48' - \u00f8\nGols over +1.0: 1.52 \nStake: 1%\n    \nLinks da partida:\n\nBet365 | Betfair","entities":[{"offset":275,"length":6,"type":"text_link","url":"https:\/\/www.bet365.bet.br\/#\/AX\/K%5EEverton"},{"offset":275,"length":6,"type":"bold"},{"offset":284,"length":7,"type":"text_link","url":"https:\/\/betfair.bet.br\/exchange\/plus\/en\/football\/english-premier-league\/everton-v-fulham-betting-34892545"},{"offset":284,"length":7,"type":"bold"}],"link_preview_options":{"url":"https:\/\/www.bet365.bet.br\/"}}}
+✅ Tipo: CHANNEL_POST
+Texto extraído: Oportunidade! 🚨
+
+📊 🚨 OVER ( +1 ⚽️GOL  ) AS..
+
+
+⚽️ Everton (H) x Fulham (A) (ao vivo...
+É oportunidade? SIM
+É resultado? NÃO
+📨 Mensagem válida recebida
+   ID: 873
+   Hora: 15:11:43
+   Tipo: OPORTUNIDADE
+💾 Salvando oportunidade...
+📝 Iniciando salvamento nos dados:
+   - Título: OVER ( +1 ⚽️GOL  ) AS..
+   - Time 1: ⚽️ Everton
+   - Time 2: Fulham
+   - Tipo: GOL
+✅ Registrado ID: 124 (linhas afetadas: 1)
+✅ Oportunidade salva com sucesso
+
+
+================================================================================
+[2025-11-08 15:12:17] Webhook acionado
+Dados recebidos: {"update_id":213068679,"channel_post":{"message_id":874,"sender_chat":{"id":-1002047004959,"title":"Bateubet_VIP","type":"channel"},"chat":{"id":-1002047004959,"title":"Bateubet_VIP","type":"channel"},"date":1762625536,"text":"Resultado dispon\u00edvel!\n\u26bd\ufe0f Everton (H) x Fulham (A) (ao vivo)\nGols over +1.0 - ODD: 1.525 - reembolso\n\ud83d\udd04"}}
+✅ Tipo: CHANNEL_POST
+Texto extraído: Resultado disponível!
+⚽️ Everton (H) x Fulham (A) (ao vivo)
+Gols over +1.0 - ODD: 1.525 - reemb...
+É oportunidade? NÃO
+É resultado? SIM
+📨 Mensagem válida recebida
+   ID: 874
+   Hora: 15:12:16
+   Tipo: RESULTADO
+🎯 Processando resultado...
+   Times extraídos: ️ Everton vs Fulham
+   Tipo extraído: Gols over +1.0
+   Resultado extraído: REEMBOLSO
+✅ Aposta encontrada: ID 124
+💾 Resultado atualizado: REEMBOLSO
+✅ Resultado processado com sucesso
+
+
+================================================================================
+[2025-11-08 15:12:19] Webhook acionado
+Dados recebidos: {"update_id":213068680,"channel_post":{"message_id":875,"sender_chat":{"id":-1002047004959,"title":"Bateubet_VIP","type":"channel"},"chat":{"id":-1002047004959,"title":"Bateubet_VIP","type":"channel"},"date":1762625538,"text":"Resultado dispon\u00edvel!\n\u26bd\ufe0f Everton (H) x Fulham (A) (ao vivo)\nGols over +0.5 - ODD: 1.575 - GREEN\n\u2705"}}
+✅ Tipo: CHANNEL_POST
+Texto extraído: Resultado disponível!
+⚽️ Everton (H) x Fulham (A) (ao vivo)
+Gols over +0.5 - ODD: 1.575 - GREEN...
+É oportunidade? NÃO
+É resultado? SIM
+📨 Mensagem válida recebida
+   ID: 875
+   Hora: 15:12:18
+   Tipo: RESULTADO
+🎯 Processando resultado...
+   Times extraídos: ️ Everton vs Fulham
+   Tipo extraído: Gols over +0.5
+   Resultado extraído: GREEN
+✅ Aposta encontrada: ID 123
+💾 Resultado atualizado: GREEN
+✅ Resultado processado com sucesso
+
+
+================================================================================
+[2025-11-08 15:31:24] Webhook acionado
+Dados recebidos: {"update_id":213068681,"channel_post":{"message_id":876,"sender_chat":{"id":-1002047004959,"title":"Bateubet_VIP","type":"channel"},"chat":{"id":-1002047004959,"title":"Bateubet_VIP","type":"channel"},"date":1762626683,"text":"Resultado dispon\u00edvel!\n\u26bd\ufe0f Al Duhail (H) x Al Sailiya SC (A) (ao vivo)\nGols over +1.0 - ODD: 1.775 - RED\n\u274c"}}
+✅ Tipo: CHANNEL_POST
+Texto extraído: Resultado disponível!
+⚽️ Al Duhail (H) x Al Sailiya SC (A) (ao vivo)
+Gols over +1.0 - ODD: 1.77...
+É oportunidade? NÃO
+É resultado? SIM
+📨 Mensagem válida recebida
+   ID: 876
+   Hora: 15:31:23
+   Tipo: RESULTADO
+🎯 Processando resultado...
+   Times extraídos: ️ Al Duhail vs Al Sailiya SC
+   Tipo extraído: Gols over +1.0
+   Resultado extraído: RED
+✅ Aposta encontrada: ID 122
+💾 Resultado atualizado: RED
+✅ Resultado processado com sucesso
+
+
+================================================================================
+[2025-11-08 15:40:20] Webhook acionado
+Dados recebidos: {"update_id":213068682,"channel_post":{"message_id":877,"sender_chat":{"id":-1002047004959,"title":"Bateubet_VIP","type":"channel"},"chat":{"id":-1002047004959,"title":"Bateubet_VIP","type":"channel"},"date":1762627219,"text":"Oportunidade! \ud83d\udea8\n\n\ud83d\udcca \ud83d\udea8 OVER ( +1 \u26bd\ufe0fGOL  ) AS..\n\n\n\u26bd\ufe0f Everton (H) x Fulham (A) (ao vivo)\n\n\u23f0 Tempo: 51'\nOdds iniciais: Casa: 2.2 - Emp. 3.3 - Fora: 3.3\n\ud83c\udfdf England Premier League\n\n\ud83e\udd45 Placar: 1 - 0  \n\u21aa\ufe0f \u00daltimo gol: 48' - \u00f8\nGols over +1.0: 1.52 \nStake: 1%\n    \nLinks da partida:\n\nBet365 | Betfair","entities":[{"offset":275,"length":6,"type":"text_link","url":"https:\/\/www.bet365.bet.br\/#\/AX\/K%5EEverton"},{"offset":275,"length":6,"type":"bold"},{"offset":284,"length":7,"type":"text_link","url":"https:\/\/betfair.bet.br\/exchange\/plus\/en\/football\/english-premier-league\/everton-v-fulham-betting-34892545"},{"offset":284,"length":7,"type":"bold"}],"link_preview_options":{"url":"https:\/\/www.bet365.bet.br\/"}}}
+✅ Tipo: CHANNEL_POST
+Texto extraído: Oportunidade! 🚨
+
+📊 🚨 OVER ( +1 ⚽️GOL  ) AS..
+
+
+⚽️ Everton (H) x Fulham (A) (ao vivo...
+É oportunidade? SIM
+É resultado? NÃO
+📨 Mensagem válida recebida
+   ID: 877
+   Hora: 15:40:19
+   Tipo: OPORTUNIDADE
+💾 Salvando oportunidade...
+📝 Iniciando salvamento nos dados:
+   - Título: OVER ( +1 ⚽️GOL  ) AS..
+   - Time 1: ⚽️ Everton
+   - Time 2: Fulham
+   - Tipo: GOL
+✅ Registrado ID: 125 (linhas afetadas: 1)
+✅ Oportunidade salva com sucesso
+
+
+================================================================================
+[2025-11-08 15:43:03] Webhook acionado
+Dados recebidos: {"update_id":213068683,"channel_post":{"message_id":878,"sender_chat":{"id":-1002047004959,"title":"Bateubet_VIP","type":"channel"},"chat":{"id":-1002047004959,"title":"Bateubet_VIP","type":"channel"},"date":1762627382,"text":"Oportunidade! \ud83d\udea8\n\n\ud83d\udcca \ud83d\udea8 OVER ( +1 \u26bd\ufe0fGOL  ) AS..\n\n\n\u26bd\ufe0f Everton (H) x Fulham (A) (ao vivo)\n\n\u23f0 Tempo: 51'\nOdds iniciais: Casa: 2.2 - Emp. 3.3 - Fora: 3.3\n\ud83c\udfdf England Premier League\n\n\ud83e\udd45 Placar: 1 - 0  \n\u21aa\ufe0f \u00daltimo gol: 48' - \u00f8\nGols over +1.0: 1.52 \nStake: 1%\n    \nLinks da partida:\n\nBet365 | Betfair","entities":[{"offset":275,"length":6,"type":"text_link","url":"https:\/\/www.bet365.bet.br\/#\/AX\/K%5EEverton"},{"offset":275,"length":6,"type":"bold"},{"offset":284,"length":7,"type":"text_link","url":"https:\/\/betfair.bet.br\/exchange\/plus\/en\/football\/english-premier-league\/everton-v-fulham-betting-34892545"},{"offset":284,"length":7,"type":"bold"}],"link_preview_options":{"url":"https:\/\/www.bet365.bet.br\/"}}}
+✅ Tipo: CHANNEL_POST
+Texto extraído: Oportunidade! 🚨
+
+📊 🚨 OVER ( +1 ⚽️GOL  ) AS..
+
+
+⚽️ Everton (H) x Fulham (A) (ao vivo...
+É oportunidade? SIM
+É resultado? NÃO
+📨 Mensagem válida recebida
+   ID: 878
+   Hora: 15:43:02
+   Tipo: OPORTUNIDADE
+💾 Salvando oportunidade...
+📝 Iniciando salvamento nos dados:
+   - Título: OVER ( +1 ⚽️GOL  ) AS..
+   - Time 1: ⚽️ Everton
+   - Time 2: Fulham
+   - Tipo: GOL
+✅ Registrado ID: 126 (linhas afetadas: 1)
+✅ Oportunidade salva com sucesso
+
+
+================================================================================
+[2025-11-08 15:57:05] Webhook acionado
+Dados recebidos: {"update_id":213068684,"channel_post":{"message_id":879,"sender_chat":{"id":-1002047004959,"title":"Bateubet_VIP","type":"channel"},"chat":{"id":-1002047004959,"title":"Bateubet_VIP","type":"channel"},"date":1762628224,"text":"Resultado dispon\u00edvel!\n\u26bd\ufe0f Everton (H) x Fulham (A) (ao vivo)\nGols over +1.0 - ODD: 1.525 - reembolso\n\ud83d\udd04"}}
+✅ Tipo: CHANNEL_POST
+Texto extraído: Resultado disponível!
+⚽️ Everton (H) x Fulham (A) (ao vivo)
+Gols over +1.0 - ODD: 1.525 - reemb...
+É oportunidade? NÃO
+É resultado? SIM
+📨 Mensagem válida recebida
+   ID: 879
+   Hora: 15:57:04
+   Tipo: RESULTADO
+🎯 Processando resultado...
+   Times extraídos: ️ Everton vs Fulham
+   Tipo extraído: Gols over +1.0
+   Resultado extraído: REEMBOLSO
+✅ Aposta encontrada: ID 126
+💾 Resultado atualizado: REEMBOLSO
+✅ Resultado processado com sucesso
+
+
+================================================================================
+[2025-11-08 15:58:00] Webhook acionado
+Dados recebidos: {"update_id":213068685,"channel_post":{"message_id":880,"sender_chat":{"id":-1002047004959,"title":"Bateubet_VIP","type":"channel"},"chat":{"id":-1002047004959,"title":"Bateubet_VIP","type":"channel"},"date":1762628280,"text":"Oportunidade! \ud83d\udea8\n\n\ud83d\udcca \ud83d\udea8 OVER ( +1 \u26bd\ufe0fGOL  ) AS..\n\n\n\u26bd\ufe0f Everton (H) x Fulham (A) (ao vivo)\n\n\u23f0 Tempo: 51'\nOdds iniciais: Casa: 2.2 - Emp. 3.3 - Fora: 3.3\n\ud83c\udfdf England Premier League\n\n\ud83e\udd45 Placar: 1 - 0  \n\u21aa\ufe0f \u00daltimo gol: 48' - \u00f8\nGols over +1.0: 1.52 \nStake: 1%\n    \nLinks da partida:\n\nBet365 | Betfair","entities":[{"offset":275,"length":6,"type":"text_link","url":"https:\/\/www.bet365.bet.br\/#\/AX\/K%5EEverton"},{"offset":275,"length":6,"type":"bold"},{"offset":284,"length":7,"type":"text_link","url":"https:\/\/betfair.bet.br\/exchange\/plus\/en\/football\/english-premier-league\/everton-v-fulham-betting-34892545"},{"offset":284,"length":7,"type":"bold"}],"link_preview_options":{"url":"https:\/\/www.bet365.bet.br\/"}}}
+✅ Tipo: CHANNEL_POST
+Texto extraído: Oportunidade! 🚨
+
+📊 🚨 OVER ( +1 ⚽️GOL  ) AS..
+
+
+⚽️ Everton (H) x Fulham (A) (ao vivo...
+É oportunidade? SIM
+É resultado? NÃO
+📨 Mensagem válida recebida
+   ID: 880
+   Hora: 15:58:00
+   Tipo: OPORTUNIDADE
+💾 Salvando oportunidade...
+📝 Iniciando salvamento nos dados:
+   - Título: OVER ( +1 ⚽️GOL  ) AS..
+   - Time 1: ⚽️ Everton
+   - Time 2: Fulham
+   - Tipo: GOL
+✅ Registrado ID: 127 (linhas afetadas: 1)
+✅ Oportunidade salva com sucesso
+
+
+================================================================================
+[2025-11-08 15:59:35] Webhook acionado
+Dados recebidos: {"update_id":213068686,"channel_post":{"message_id":881,"sender_chat":{"id":-1002047004959,"title":"Bateubet_VIP","type":"channel"},"chat":{"id":-1002047004959,"title":"Bateubet_VIP","type":"channel"},"date":1762628375,"text":"Oportunidade! \ud83d\udea8\n\n\ud83d\udcca \ud83d\udea8 OVER ( +1 \u26bd\ufe0fGOL  ) AS..\n\n\n\u26bd\ufe0f Al Duhail (H) x Al Sailiya SC (A) (ao vivo)\n\n\u23f0 Tempo: 68'\nOdds iniciais: Casa: 1.285 - Emp. 5.0 - Fora: 7.5\n\ud83c\udfdf Qatar Stars League\n\n\ud83e\udd45 Placar: 2 - 2  \n\u21aa\ufe0f \u00daltimo gol: 41' - 60'\nGols over +1.0: 1.77 \nStake: 1%\n    \nLinks da partida:"}}
+✅ Tipo: CHANNEL_POST
+Texto extraído: Oportunidade! 🚨
+
+📊 🚨 OVER ( +1 ⚽️GOL  ) AS..
+
+
+⚽️ Al Duhail (H) x Al Sailiya SC (A)...
+É oportunidade? SIM
+É resultado? NÃO
+📨 Mensagem válida recebida
+   ID: 881
+   Hora: 15:59:35
+   Tipo: OPORTUNIDADE
+💾 Salvando oportunidade...
+📝 Iniciando salvamento nos dados:
+   - Título: OVER ( +1 ⚽️GOL  ) AS..
+   - Time 1: ⚽️ Al Duhail
+   - Time 2: Al Sailiya SC
+   - Tipo: GOL
+✅ Registrado ID: 128 (linhas afetadas: 1)
+✅ Oportunidade salva com sucesso
+
+
+================================================================================
+[2025-11-08 16:03:22] Webhook acionado
+Dados recebidos: {"update_id":213068687,"channel_post":{"message_id":882,"sender_chat":{"id":-1002047004959,"title":"Bateubet_VIP","type":"channel"},"chat":{"id":-1002047004959,"title":"Bateubet_VIP","type":"channel"},"date":1762628601,"text":"Resultado dispon\u00edvel!\n\u26bd\ufe0f Al Duhail (H) x Al Sailiya SC (A) (ao vivo)\nGols over +1.0 - ODD: 1.775 - RED\n\u274c"}}
+✅ Tipo: CHANNEL_POST
+Texto extraído: Resultado disponível!
+⚽️ Al Duhail (H) x Al Sailiya SC (A) (ao vivo)
+Gols over +1.0 - ODD: 1.77...
+É oportunidade? NÃO
+É resultado? SIM
+📨 Mensagem válida recebida
+   ID: 882
+   Hora: 16:03:21
+   Tipo: RESULTADO
+🎯 Processando resultado...
+   Times extraídos: ️ Al Duhail vs Al Sailiya SC
+   Tipo extraído: Gols over +1.0
+   Resultado extraído: RED
+✅ Aposta encontrada: ID 128
+💾 Resultado atualizado: RED
+✅ Resultado processado com sucesso
+
+
+================================================================================
+[2025-11-08 16:08:51] Webhook acionado
+Dados recebidos: {"update_id":213068688,"channel_post":{"message_id":883,"sender_chat":{"id":-1002047004959,"title":"Bateubet_VIP","type":"channel"},"chat":{"id":-1002047004959,"title":"Bateubet_VIP","type":"channel"},"date":1762628930,"text":"Oportunidade! \ud83d\udea8\n\n\ud83d\udcca \ud83d\udea8 OVER ( +1 \u26bd\ufe0fGOL  ) AS..\n\n\n\u26bd\ufe0f Al Duhail (H) x Al Sailiya SC (A) (ao vivo)\n\n\u23f0 Tempo: 68'\nOdds iniciais: Casa: 1.285 - Emp. 5.0 - Fora: 7.5\n\ud83c\udfdf Qatar Stars League\n\n\ud83e\udd45 Placar: 2 - 2  \n\u21aa\ufe0f \u00daltimo gol: 41' - 60'\nGols over +1.0: 1.77 \nStake: 1%\n    \nLinks da partida:"}}
+✅ Tipo: CHANNEL_POST
+Texto extraído: Oportunidade! 🚨
+
+📊 🚨 OVER ( +1 ⚽️GOL  ) AS..
+
+
+⚽️ Al Duhail (H) x Al Sailiya SC (A)...
+É oportunidade? SIM
+É resultado? NÃO
+📨 Mensagem válida recebida
+   ID: 883
+   Hora: 16:08:50
+   Tipo: OPORTUNIDADE
+💾 Salvando oportunidade...
+📝 Iniciando salvamento nos dados:
+   - Título: OVER ( +1 ⚽️GOL  ) AS..
+   - Time 1: ⚽️ Al Duhail
+   - Time 2: Al Sailiya SC
+   - Tipo: GOL
+✅ Registrado ID: 129 (linhas afetadas: 1)
+✅ Oportunidade salva com sucesso
+
+
+================================================================================
+[2025-11-08 16:09:08] Webhook acionado
+Dados recebidos: {"update_id":213068689,"channel_post":{"message_id":884,"sender_chat":{"id":-1002047004959,"title":"Bateubet_VIP","type":"channel"},"chat":{"id":-1002047004959,"title":"Bateubet_VIP","type":"channel"},"date":1762628948,"text":"Resultado dispon\u00edvel!\n\u26bd\ufe0f Al Duhail (H) x Al Sailiya SC (A) (ao vivo)\nGols over +1.0 - ODD: 1.775 - RED\n\u274c"}}
+✅ Tipo: CHANNEL_POST
+Texto extraído: Resultado disponível!
+⚽️ Al Duhail (H) x Al Sailiya SC (A) (ao vivo)
+Gols over +1.0 - ODD: 1.77...
+É oportunidade? NÃO
+É resultado? SIM
+📨 Mensagem válida recebida
+   ID: 884
+   Hora: 16:09:08
+   Tipo: RESULTADO
+🎯 Processando resultado...
+   Times extraídos: ️ Al Duhail vs Al Sailiya SC
+   Tipo extraído: Gols over +1.0
+   Resultado extraído: RED
+✅ Aposta encontrada: ID 129
+💾 Resultado atualizado: RED
+✅ Resultado processado com sucesso
+
+
+================================================================================
+[2025-11-08 17:26:17] Webhook acionado
+Dados recebidos: {"update_id":213068690,"channel_post":{"message_id":885,"sender_chat":{"id":-1002047004959,"title":"Bateubet_VIP","type":"channel"},"chat":{"id":-1002047004959,"title":"Bateubet_VIP","type":"channel"},"date":1762633576,"text":"Oportunidade! \ud83d\udea8\n\n\ud83d\udcca \ud83d\udea8 OVER ( +1\u26f3\ufe0f CANTOS ) AS..\n\n\n\u26bd\ufe0f Werder Bremen (H) x Wolfsburg (A) (ao vivo)\n\n\u23f0 Tempo: 83'\nOdds iniciais: Casa: 2.2 - Emp. 3.6 - Fora: 3.1\n\ud83c\udfdf Germany Bundesliga I\n\n\ud83e\udd45 Placar: 1 - 1  \n\u21aa\ufe0f \u00daltimo gol: 82' - 26'\nEscanteios over +1.0: 1.55 \nStake: 1%\n    \n\u26f3\ufe0f Escanteios: 10 - 3  \n\u21aa\ufe0f \u00daltimo escanteio: 81' - 41'\n\ud83d\udd25 Ataques perigosos: 76 - 29\n\ud83d\udd25 Ataques perigosos\/min. (5min.): 0.6 - 0.2\n\ud83d\udd25 Ataques perigosos\/min. (Total): 0.91 - 0.34\n\ud83d\udfe8 Cart\u00f5es amarelos: 1 - 0\n\u21aa\ufe0f \u00daltimo cart\u00e3o amarelo: 60' - \u00f8\n\ud83d\udfe5 Cart\u00f5es vermelhos: 0 - 0\n\ud83c\udfaf Chutes ao lado: 11 - 3\n\u21aa\ufe0f \u00daltimo chute ao lado: 72' - 47'\n\ud83c\udfaf Chutes no alvo: 4 - 4\n\u21aa\ufe0f \u00daltimo chute no alvo: 82' - 46'\n\ud83d\udcaf Posse de bola: 59% - 41%\n\ud83e\udde0 PI 1: 91.8 - 8.2\n\u26a1\ufe0f PI 2: 6 - 2\n\n\nLinks da partida:\n\nBet365 | Betfair","entities":[{"offset":744,"length":6,"type":"text_link","url":"https:\/\/www.bet365.bet.br\/#\/AX\/K%5EWerder%20Bremen"},{"offset":744,"length":6,"type":"bold"},{"offset":753,"length":7,"type":"text_link","url":"https:\/\/betfair.bet.br\/exchange\/plus\/en\/football\/german-bundesliga\/werder-bremen-v-wolfsburg-betting-34891286"},{"offset":753,"length":7,"type":"bold"}],"link_preview_options":{"url":"https:\/\/www.bet365.bet.br\/"}}}
+✅ Tipo: CHANNEL_POST
+Texto extraído: Oportunidade! 🚨
+
+📊 🚨 OVER ( +1⛳️ CANTOS ) AS..
+
+
+⚽️ Werder Bremen (H) x Wolfsburg (...
+É oportunidade? SIM
+É resultado? NÃO
+📨 Mensagem válida recebida
+   ID: 885
+   Hora: 17:26:16
+   Tipo: OPORTUNIDADE
+💾 Salvando oportunidade...
+📝 Iniciando salvamento nos dados:
+   - Título: OVER ( +1⛳️ CANTOS ) AS..
+   - Time 1: ⚽️ Werder Bremen
+   - Time 2: Wolfsburg
+   - Tipo: CANTOS
+✅ Registrado ID: 130 (linhas afetadas: 1)
+✅ Oportunidade salva com sucesso
+
+
+================================================================================
+[2025-11-08 18:16:16] Webhook acionado
+Dados recebidos: {"update_id":213068691,"channel_post":{"message_id":886,"sender_chat":{"id":-1002047004959,"title":"Bateubet_VIP","type":"channel"},"chat":{"id":-1002047004959,"title":"Bateubet_VIP","type":"channel"},"date":1762636575,"text":"Oportunidade! \ud83d\udea8\n\n\ud83d\udcca \ud83d\udea8 OVER ( +1 \u26bd\ufe0fGOL  ) AS..\n\n\n\u26bd\ufe0f Everton (H) x Estoril (A) (ao vivo)\n\n\u23f0 Tempo: 51'\nOdds iniciais: Casa: 2.2 - Emp. 3.3 - Fora: 3.3\n\ud83c\udfdf England Premier League\n\n\ud83e\udd45 Placar: 1 - 0  \n\u21aa\ufe0f \u00daltimo gol: 48' - \u00f8\nGols over +1.0: 1.52 \nStake: 1%\n    \nLinks da partida:\n\nBet365 | Betfair","entities":[{"offset":276,"length":6,"type":"text_link","url":"https:\/\/www.bet365.bet.br\/#\/AX\/K%5EEverton"},{"offset":276,"length":6,"type":"bold"},{"offset":285,"length":7,"type":"text_link","url":"https:\/\/betfair.bet.br\/exchange\/plus\/en\/football\/english-premier-league\/everton-v-fulham-betting-34892545"},{"offset":285,"length":7,"type":"bold"}],"link_preview_options":{"url":"https:\/\/www.bet365.bet.br\/"}}}
+✅ Tipo: CHANNEL_POST
+Texto extraído: Oportunidade! 🚨
+
+📊 🚨 OVER ( +1 ⚽️GOL  ) AS..
+
+
+⚽️ Everton (H) x Estoril (A) (ao viv...
+É oportunidade? SIM
+É resultado? NÃO
+📨 Mensagem válida recebida
+   ID: 886
+   Hora: 18:16:15
+   Tipo: OPORTUNIDADE
+💾 Salvando oportunidade...
+📝 Iniciando salvamento nos dados:
+   - Título: OVER ( +1 ⚽️GOL  ) AS..
+   - Time 1: ⚽️ Everton
+   - Time 2: Estoril
+   - Tipo: GOL
+✅ Registrado ID: 131 (linhas afetadas: 1)
+✅ Oportunidade salva com sucesso
+
+
+================================================================================
+[2025-11-08 18:18:59] Webhook acionado
+Dados recebidos: {"update_id":213068692,"channel_post":{"message_id":887,"sender_chat":{"id":-1002047004959,"title":"Bateubet_VIP","type":"channel"},"chat":{"id":-1002047004959,"title":"Bateubet_VIP","type":"channel"},"date":1762636739,"text":"Oportunidade! \ud83d\udea8\n\n\ud83d\udcca \ud83d\udea8 OVER ( +1 \u26bd\ufe0fGOL  ) AS..\n\n\n\u26bd\ufe0f Everton (H) x Le Havre (A) (ao vivo)\n\n\u23f0 Tempo: 51'\nOdds iniciais: Casa: 2.2 - Emp. 3.3 - Fora: 3.3\n\ud83c\udfdf England Premier League\n\n\ud83e\udd45 Placar: 1 - 0  \n\u21aa\ufe0f \u00daltimo gol: 48' - \u00f8\nGols over +1.0: 1.52 \nStake: 1%\n    \nLinks da partida:\n\nBet365 | Betfair","entities":[{"offset":277,"length":6,"type":"text_link","url":"https:\/\/www.bet365.bet.br\/#\/AX\/K%5EEverton"},{"offset":277,"length":6,"type":"bold"},{"offset":286,"length":7,"type":"text_link","url":"https:\/\/betfair.bet.br\/exchange\/plus\/en\/football\/english-premier-league\/everton-v-fulham-betting-34892545"},{"offset":286,"length":7,"type":"bold"}],"link_preview_options":{"url":"https:\/\/www.bet365.bet.br\/"}}}
+✅ Tipo: CHANNEL_POST
+Texto extraído: Oportunidade! 🚨
+
+📊 🚨 OVER ( +1 ⚽️GOL  ) AS..
+
+
+⚽️ Everton (H) x Le Havre (A) (ao vi...
+É oportunidade? SIM
+É resultado? NÃO
+📨 Mensagem válida recebida
+   ID: 887
+   Hora: 18:18:59
+   Tipo: OPORTUNIDADE
+💾 Salvando oportunidade...
+📝 Iniciando salvamento nos dados:
+   - Título: OVER ( +1 ⚽️GOL  ) AS..
+   - Time 1: ⚽️ Everton
+   - Time 2: Le Havre
+   - Tipo: GOL
+✅ Registrado ID: 132 (linhas afetadas: 1)
+✅ Oportunidade salva com sucesso
+
+
+================================================================================
+[2025-11-08 18:30:31] Webhook acionado
+Dados recebidos: {"update_id":213068693,"channel_post":{"message_id":888,"sender_chat":{"id":-1002047004959,"title":"Bateubet_VIP","type":"channel"},"chat":{"id":-1002047004959,"title":"Bateubet_VIP","type":"channel"},"date":1762637431,"text":"Oportunidade! \ud83d\udea8\n\n\ud83d\udcca \ud83d\udea8 OVER ( +1\u26f3\ufe0f CANTOS ) AS..\n\n\n\u26bd\ufe0f Brommapojkarna (H) x Wolfsburg (A) (ao vivo)\n\n\u23f0 Tempo: 83'\nOdds iniciais: Casa: 2.2 - Emp. 3.6 - Fora: 3.1\n\ud83c\udfdf Germany Bundesliga I\n\n\ud83e\udd45 Placar: 1 - 1  \n\u21aa\ufe0f \u00daltimo gol: 82' - 26'\nEscanteios over +1.0: 1.55 \nStake: 1%\n    \n\u26f3\ufe0f Escanteios: 10 - 3  \n\u21aa\ufe0f \u00daltimo escanteio: 81' - 41'\n\ud83d\udd25 Ataques perigosos: 76 - 29\n\ud83d\udd25 Ataques perigosos\/min. (5min.): 0.6 - 0.2\n\ud83d\udd25 Ataques perigosos\/min. (Total): 0.91 - 0.34\n\ud83d\udfe8 Cart\u00f5es amarelos: 1 - 0\n\u21aa\ufe0f \u00daltimo cart\u00e3o amarelo: 60' - \u00f8\n\ud83d\udfe5 Cart\u00f5es vermelhos: 0 - 0\n\ud83c\udfaf Chutes ao lado: 11 - 3\n\u21aa\ufe0f \u00daltimo chute ao lado: 72' - 47'\n\ud83c\udfaf Chutes no alvo: 4 - 4\n\u21aa\ufe0f \u00daltimo chute no alvo: 82' - 46'\n\ud83d\udcaf Posse de bola: 59% - 41%\n\ud83e\udde0 PI 1: 91.8 - 8.2\n\u26a1\ufe0f PI 2: 6 - 2\n\n\nLinks da partida:\n\nBet365 | Betfair","entities":[{"offset":745,"length":6,"type":"text_link","url":"https:\/\/www.bet365.bet.br\/#\/AX\/K%5EWerder%20Bremen"},{"offset":745,"length":6,"type":"bold"},{"offset":754,"length":7,"type":"text_link","url":"https:\/\/betfair.bet.br\/exchange\/plus\/en\/football\/german-bundesliga\/werder-bremen-v-wolfsburg-betting-34891286"},{"offset":754,"length":7,"type":"bold"}],"link_preview_options":{"url":"https:\/\/www.bet365.bet.br\/"}}}
+✅ Tipo: CHANNEL_POST
+Texto extraído: Oportunidade! 🚨
+
+📊 🚨 OVER ( +1⛳️ CANTOS ) AS..
+
+
+⚽️ Brommapojkarna (H) x Wolfsburg ...
+É oportunidade? SIM
+É resultado? NÃO
+📨 Mensagem válida recebida
+   ID: 888
+   Hora: 18:30:31
+   Tipo: OPORTUNIDADE
+💾 Salvando oportunidade...
+📝 Iniciando salvamento nos dados:
+   - Título: OVER ( +1⛳️ CANTOS ) AS..
+   - Time 1: ⚽️ Brommapojkarna
+   - Time 2: Wolfsburg
+   - Tipo: CANTOS
+✅ Registrado ID: 133 (linhas afetadas: 1)
+✅ Oportunidade salva com sucesso
+
+
+================================================================================
+[2025-11-08 19:24:40] Webhook acionado
+Dados recebidos: {"update_id":213068694,"channel_post":{"message_id":889,"sender_chat":{"id":-1002047004959,"title":"Bateubet_VIP","type":"channel"},"chat":{"id":-1002047004959,"title":"Bateubet_VIP","type":"channel"},"date":1762640680,"text":"Oportunidade! \ud83d\udea8\n\n\ud83d\udcca \ud83d\udea8 OVER ( +1 \u26bdGOL  ) AS..\n\n\n\u26bd\ufe0f Fortaleza CEIF (H) x Junior (A) (ao vivo)\n\n\u23f0 Tempo: 50'\nOdds iniciais: Casa: 2.2 - Emp. 3.1 - Fora: 3.4\n\ud83c\udfdf Colombia Primera A\n\n\ud83e\udd45 Placar: 1 - 1  \n\u21aa\ufe0f \u00daltimo gol: 45' - 1'\nGols over +1.0: 1.52 \nStake: 1%\n    \nLinks da partida:\n\nBet365 | Betfair","entities":[{"offset":278,"length":6,"type":"text_link","url":"https:\/\/www.bet365.bet.br\/#\/AX\/K%5EFortaleza%20CEIF"},{"offset":278,"length":6,"type":"bold"},{"offset":287,"length":7,"type":"text_link","url":"https:\/\/betfair.bet.br\/exchange\/plus\/en\/football\/colombian-primera-a\/fortaleza-fc-v-junior-fc-barranquilla-betting-34904276"},{"offset":287,"length":7,"type":"bold"}],"link_preview_options":{"is_disabled":true}}}
+✅ Tipo: CHANNEL_POST
+Texto extraído: Oportunidade! 🚨
+
+📊 🚨 OVER ( +1 ⚽GOL  ) AS..
+
+
+⚽️ Fortaleza CEIF (H) x Junior (A) (ao ...
+É oportunidade? SIM
+É resultado? NÃO
+📨 Mensagem válida recebida
+   ID: 889
+   Hora: 19:24:40
+   Tipo: OPORTUNIDADE
+💾 Salvando oportunidade...
+📝 Iniciando salvamento nos dados:
+   - Título: OVER ( +1 ⚽GOL  ) AS..
+   - Time 1: ⚽️ Fortaleza CEIF
+   - Time 2: Junior
+   - Tipo: GOL
+✅ Registrado ID: 134 (linhas afetadas: 1)
+✅ Oportunidade salva com sucesso
+
+
+================================================================================
+[2025-11-08 19:39:32] Webhook acionado
+Dados recebidos: {"update_id":213068695,"channel_post":{"message_id":890,"sender_chat":{"id":-1002047004959,"title":"Bateubet_VIP","type":"channel"},"chat":{"id":-1002047004959,"title":"Bateubet_VIP","type":"channel"},"date":1762641571,"text":"Oportunidade! \ud83d\udea8\n\n\ud83d\udcca \ud83d\udea8 OVER ( +0.5 \u26bdGOL  ) FT\n\n\n\u26bd\ufe0f Fortaleza CEIF (H) x Junior (A) (ao vivo)\n\n\u23f0 Tempo: 65'\nOdds iniciais: Casa: 2.2 - Emp. 3.1 - Fora: 3.4\n\ud83c\udfdf Colombia Primera A\n\n\ud83e\udd45 Placar: 1 - 1  \n\u21aa\ufe0f \u00daltimo gol: 45' - 1'\nGols over +0.5: 1.57 \nStake: 1%\n    \nLinks da partida:\n\nBet365 | Betfair","entities":[{"offset":278,"length":6,"type":"text_link","url":"https:\/\/www.bet365.bet.br\/#\/AX\/K%5EFortaleza%20CEIF"},{"offset":278,"length":6,"type":"bold"},{"offset":287,"length":7,"type":"text_link","url":"https:\/\/betfair.bet.br\/exchange\/plus\/en\/football\/colombian-primera-a\/fortaleza-fc-v-junior-fc-barranquilla-betting-34904276"},{"offset":287,"length":7,"type":"bold"}],"link_preview_options":{"is_disabled":true}}}
+✅ Tipo: CHANNEL_POST
+Texto extraído: Oportunidade! 🚨
+
+📊 🚨 OVER ( +0.5 ⚽GOL  ) FT
+
+
+⚽️ Fortaleza CEIF (H) x Junior (A) (ao ...
+É oportunidade? SIM
+É resultado? NÃO
+📨 Mensagem válida recebida
+   ID: 890
+   Hora: 19:39:31
+   Tipo: OPORTUNIDADE
+💾 Salvando oportunidade...
+📝 Iniciando salvamento nos dados:
+   - Título: OVER ( +0.5 ⚽GOL  ) FT
+   - Time 1: ⚽️ Fortaleza CEIF
+   - Time 2: Junior
+   - Tipo: GOL
+✅ Registrado ID: 135 (linhas afetadas: 1)
+✅ Oportunidade salva com sucesso
+
+
+================================================================================
+[2025-11-08 19:42:00] Webhook acionado
+Dados recebidos: {"update_id":213068696,"channel_post":{"message_id":891,"sender_chat":{"id":-1002047004959,"title":"Bateubet_VIP","type":"channel"},"chat":{"id":-1002047004959,"title":"Bateubet_VIP","type":"channel"},"date":1762641719,"text":"Oportunidade! \ud83d\udea8\n\n\ud83d\udcca \ud83d\udea8 OVER ( +1 \u26bdGOL  ) AS..\n\n\n\u26bd\ufe0f Internacional (H) x EC Bahia (A) (ao vivo)\n\n\u23f0 Tempo: 47'\nOdds iniciais: Casa: 2.25 - Emp. 3.1 - Fora: 3.4\n\ud83c\udfdf Brazil Serie A\n\n\ud83e\udd45 Placar: 1 - 0  \n\u21aa\ufe0f \u00daltimo gol: 24' - \u00f8\nGols over +1.0: 1.5 \nStake: 1%\n    \nLinks da partida:\n\nBet365 | Betfair","entities":[{"offset":274,"length":6,"type":"text_link","url":"https:\/\/www.bet365.bet.br\/#\/AX\/K%5EInternacional"},{"offset":274,"length":6,"type":"bold"},{"offset":283,"length":7,"type":"text_link","url":"https:\/\/betfair.bet.br\/exchange\/plus\/en\/football\/brazilian-serie-a\/internacional-v-bahia-betting-34920555"},{"offset":283,"length":7,"type":"bold"}],"link_preview_options":{"is_disabled":true}}}
+✅ Tipo: CHANNEL_POST
+Texto extraído: Oportunidade! 🚨
+
+📊 🚨 OVER ( +1 ⚽GOL  ) AS..
+
+
+⚽️ Internacional (H) x EC Bahia (A) (ao...
+É oportunidade? SIM
+É resultado? NÃO
+📨 Mensagem válida recebida
+   ID: 891
+   Hora: 19:41:59
+   Tipo: OPORTUNIDADE
+💾 Salvando oportunidade...
+📝 Iniciando salvamento nos dados:
+   - Título: OVER ( +1 ⚽GOL  ) AS..
+   - Time 1: ⚽️ Internacional
+   - Time 2: EC Bahia
+   - Tipo: GOL
+✅ Registrado ID: 136 (linhas afetadas: 1)
+✅ Oportunidade salva com sucesso
+
+
+================================================================================
+[2025-11-08 20:09:51] Webhook acionado
+Dados recebidos: {"update_id":213068697,"channel_post":{"message_id":892,"sender_chat":{"id":-1002047004959,"title":"Bateubet_VIP","type":"channel"},"chat":{"id":-1002047004959,"title":"Bateubet_VIP","type":"channel"},"date":1762643390,"text":"Resultado dispon\u00edvel!\n\u26bd\ufe0f Fortaleza CEIF (H) x Junior (A) (ao vivo)\nGols over +1.0 - ODD: 1.52 - RED\n\u274c"}}
+✅ Tipo: CHANNEL_POST
+Texto extraído: Resultado disponível!
+⚽️ Fortaleza CEIF (H) x Junior (A) (ao vivo)
+Gols over +1.0 - ODD: 1.52 -...
+É oportunidade? NÃO
+É resultado? SIM
+📨 Mensagem válida recebida
+   ID: 892
+   Hora: 20:09:50
+   Tipo: RESULTADO
+🎯 Processando resultado...
+   Times extraídos: ️ Fortaleza CEIF vs Junior
+   Tipo extraído: Gols over +1.0
+   Resultado extraído: RED
+✅ Aposta encontrada: ID 135
+💾 Resultado atualizado: RED
+✅ Resultado processado com sucesso
+
+
+================================================================================
+[2025-11-08 20:09:52] Webhook acionado
+Dados recebidos: {"update_id":213068698,"channel_post":{"message_id":893,"sender_chat":{"id":-1002047004959,"title":"Bateubet_VIP","type":"channel"},"chat":{"id":-1002047004959,"title":"Bateubet_VIP","type":"channel"},"date":1762643392,"text":"Resultado dispon\u00edvel!\n\u26bd\ufe0f Fortaleza CEIF (H) x Junior (A) (ao vivo)\nGols over +0.5 - ODD: 1.575 - RED\n\u274c"}}
+✅ Tipo: CHANNEL_POST
+Texto extraído: Resultado disponível!
+⚽️ Fortaleza CEIF (H) x Junior (A) (ao vivo)
+Gols over +0.5 - ODD: 1.575 ...
+É oportunidade? NÃO
+É resultado? SIM
+📨 Mensagem válida recebida
+   ID: 893
+   Hora: 20:09:52
+   Tipo: RESULTADO
+🎯 Processando resultado...
+   Times extraídos: ️ Fortaleza CEIF vs Junior
+   Tipo extraído: Gols over +0.5
+   Resultado extraído: RED
+✅ Aposta encontrada: ID 134
+💾 Resultado atualizado: RED
+✅ Resultado processado com sucesso
+
+
+================================================================================
+[2025-11-08 20:37:39] Webhook acionado
+Dados recebidos: {"update_id":213068699,"channel_post":{"message_id":894,"sender_chat":{"id":-1002047004959,"title":"Bateubet_VIP","type":"channel"},"chat":{"id":-1002047004959,"title":"Bateubet_VIP","type":"channel"},"date":1762645058,"text":"Resultado dispon\u00edvel!\n\u26bd\ufe0f Internacional (H) x EC Bahia (A) (ao vivo)\nGols over +1.0 - ODD: 1.5 - GREEN\n\u2705"}}
+✅ Tipo: CHANNEL_POST
+Texto extraído: Resultado disponível!
+⚽️ Internacional (H) x EC Bahia (A) (ao vivo)
+Gols over +1.0 - ODD: 1.5 -...
+É oportunidade? NÃO
+É resultado? SIM
+📨 Mensagem válida recebida
+   ID: 894
+   Hora: 20:37:38
+   Tipo: RESULTADO
+🎯 Processando resultado...
+   Times extraídos: ️ Internacional vs EC Bahia
+   Tipo extraído: Gols over +1.0
+   Resultado extraído: GREEN
+✅ Aposta encontrada: ID 136
+💾 Resultado atualizado: GREEN
+✅ Resultado processado com sucesso
+
+
+================================================================================
+[2025-11-08 21:09:33] Webhook acionado
+Dados recebidos: {"update_id":213068700,"channel_post":{"message_id":895,"sender_chat":{"id":-1002047004959,"title":"Bateubet_VIP","type":"channel"},"chat":{"id":-1002047004959,"title":"Bateubet_VIP","type":"channel"},"date":1762646973,"text":"Oportunidade! \ud83d\udea8\n\n\ud83d\udcca \ud83d\udea8 OVER ( +1\u26f3\ufe0f CANTOS ) AS..\n\n\n\u26bd\ufe0f Atletico Mineiro (H) x Wolfsburg (A) (ao vivo)\n\n\u23f0 Tempo: 83'\nOdds iniciais: Casa: 2.2 - Emp. 3.6 - Fora: 3.1\n\ud83c\udfdf Germany Bundesliga I\n\n\ud83e\udd45 Placar: 1 - 1  \n\u21aa\ufe0f \u00daltimo gol: 82' - 26'\nEscanteios over +1.0: 1.55 \nStake: 1%\n    \n\u26f3\ufe0f Escanteios: 10 - 3  \n\u21aa\ufe0f \u00daltimo escanteio: 81' - 41'\n\ud83d\udd25 Ataques perigosos: 76 - 29\n\ud83d\udd25 Ataques perigosos\/min. (5min.): 0.6 - 0.2\n\ud83d\udd25 Ataques perigosos\/min. (Total): 0.91 - 0.34\n\ud83d\udfe8 Cart\u00f5es amarelos: 1 - 0\n\u21aa\ufe0f \u00daltimo cart\u00e3o amarelo: 60' - \u00f8\n\ud83d\udfe5 Cart\u00f5es vermelhos: 0 - 0\n\ud83c\udfaf Chutes ao lado: 11 - 3\n\u21aa\ufe0f \u00daltimo chute ao lado: 72' - 47'\n\ud83c\udfaf Chutes no alvo: 4 - 4\n\u21aa\ufe0f \u00daltimo chute no alvo: 82' - 46'\n\ud83d\udcaf Posse de bola: 59% - 41%\n\ud83e\udde0 PI 1: 91.8 - 8.2\n\u26a1\ufe0f PI 2: 6 - 2\n\n\nLinks da partida:\n\nBet365 | Betfair","entities":[{"offset":747,"length":6,"type":"text_link","url":"https:\/\/www.bet365.bet.br\/#\/AX\/K%5EWerder%20Bremen"},{"offset":747,"length":6,"type":"bold"},{"offset":756,"length":7,"type":"text_link","url":"https:\/\/betfair.bet.br\/exchange\/plus\/en\/football\/german-bundesliga\/werder-bremen-v-wolfsburg-betting-34891286"},{"offset":756,"length":7,"type":"bold"}],"link_preview_options":{"url":"https:\/\/www.bet365.bet.br\/"}}}
+✅ Tipo: CHANNEL_POST
+Texto extraído: Oportunidade! 🚨
+
+📊 🚨 OVER ( +1⛳️ CANTOS ) AS..
+
+
+⚽️ Atletico Mineiro (H) x Wolfsbur...
+É oportunidade? SIM
+É resultado? NÃO
+📨 Mensagem válida recebida
+   ID: 895
+   Hora: 21:09:33
+   Tipo: OPORTUNIDADE
+💾 Salvando oportunidade...
+📝 Iniciando salvamento nos dados:
+   - Título: OVER ( +1⛳️ CANTOS ) AS..
+   - Time 1: ⚽️ Atletico Mineiro
+   - Time 2: Wolfsburg
+   - Tipo: CANTOS
+✅ Registrado ID: 137 (linhas afetadas: 1)
+✅ Oportunidade salva com sucesso
+
+
+================================================================================
+[2025-11-08 21:26:01] Webhook acionado
+Dados recebidos: {"update_id":213068701,"channel_post":{"message_id":896,"sender_chat":{"id":-1002047004959,"title":"Bateubet_VIP","type":"channel"},"chat":{"id":-1002047004959,"title":"Bateubet_VIP","type":"channel"},"date":1762647961,"text":"Oportunidade! \ud83d\udea8\n\n\ud83d\udcca \ud83d\udea8 OVER ( +1 \u26bdGOL  ) AS..\n\n\n\u26bd\ufe0f Tigres UANL (H) x Atletico San Luis (A) (ao vivo)\n\n\u23f0 Tempo: 58'\nOdds iniciais: Casa: 1.42 - Emp. 4.5 - Fora: 7.5\n\ud83c\udfdf Mexico Liga MX\n\n\ud83e\udd45 Placar: 2 - 1  \n\u21aa\ufe0f \u00daltimo gol: 55' - 5'\nGols over +1.0: 1.52 \nStake: 1%\n    \nLinks da partida:\n\nBet365 | Betfair","entities":[{"offset":283,"length":6,"type":"text_link","url":"https:\/\/www.bet365.bet.br\/#\/AX\/K%5ETigres%20UANL"},{"offset":283,"length":6,"type":"bold"},{"offset":292,"length":7,"type":"text_link","url":"https:\/\/betfair.bet.br\/exchange\/plus\/en\/football\/mexican-liga-mx\/tigres-v-atletico-san-luis-betting-34915650"},{"offset":292,"length":7,"type":"bold"}],"link_preview_options":{"is_disabled":true}}}
+✅ Tipo: CHANNEL_POST
+Texto extraído: Oportunidade! 🚨
+
+📊 🚨 OVER ( +1 ⚽GOL  ) AS..
+
+
+⚽️ Tigres UANL (H) x Atletico San Luis ...
+É oportunidade? SIM
+É resultado? NÃO
+📨 Mensagem válida recebida
+   ID: 896
+   Hora: 21:26:01
+   Tipo: OPORTUNIDADE
+💾 Salvando oportunidade...
+📝 Iniciando salvamento nos dados:
+   - Título: OVER ( +1 ⚽GOL  ) AS..
+   - Time 1: ⚽️ Tigres UANL
+   - Time 2: Atletico San Luis
+   - Tipo: GOL
+✅ Registrado ID: 138 (linhas afetadas: 1)
+✅ Oportunidade salva com sucesso
+
+
+================================================================================
+[2025-11-08 21:35:39] Webhook acionado
+Dados recebidos: {"update_id":213068702,"channel_post":{"message_id":897,"sender_chat":{"id":-1002047004959,"title":"Bateubet_VIP","type":"channel"},"chat":{"id":-1002047004959,"title":"Bateubet_VIP","type":"channel"},"date":1762648538,"text":"Oportunidade! \ud83d\udea8\n\n\ud83d\udcca \ud83d\udea8 OVER ( +1 \u26bdGOL  ) AS..\n\n\n\u26bd\ufe0f Atletico Nacional Medellin (H) x Aguilas Doradas (A) (ao vivo)\n\n\u23f0 Tempo: 56'\nOdds iniciais: Casa: 1.333 - Emp. 4.75 - Fora: 9.0\n\ud83c\udfdf Colombia Primera A\n\n\ud83e\udd45 Placar: 2 - 1  \n\u21aa\ufe0f \u00daltimo gol: 47' - 37'\nGols over +1.0: 1.52 \nStake: 1%\n    \nLinks da partida:\n\nBet365 | Betfair","entities":[{"offset":303,"length":6,"type":"text_link","url":"https:\/\/www.bet365.bet.br\/#\/AX\/K%5EAtletico%20Nacional%20Medellin"},{"offset":303,"length":6,"type":"bold"},{"offset":312,"length":7,"type":"text_link","url":"https:\/\/betfair.bet.br\/exchange\/plus\/en\/football\/colombian-primera-a\/atletico-nacional-medellin-v-aguilas-doradas-betting-34916231"},{"offset":312,"length":7,"type":"bold"}],"link_preview_options":{"is_disabled":true}}}
+✅ Tipo: CHANNEL_POST
+Texto extraído: Oportunidade! 🚨
+
+📊 🚨 OVER ( +1 ⚽GOL  ) AS..
+
+
+⚽️ Atletico Nacional Medellin (H) x Agu...
+É oportunidade? SIM
+É resultado? NÃO
+📨 Mensagem válida recebida
+   ID: 897
+   Hora: 21:35:38
+   Tipo: OPORTUNIDADE
+💾 Salvando oportunidade...
+📝 Iniciando salvamento nos dados:
+   - Título: OVER ( +1 ⚽GOL  ) AS..
+   - Time 1: ⚽️ Atletico Nacional Medellin
+   - Time 2: Aguilas Doradas
+   - Tipo: GOL
+✅ Registrado ID: 139 (linhas afetadas: 1)
+✅ Oportunidade salva com sucesso
+
+
+================================================================================
+[2025-11-08 22:05:48] Webhook acionado
+Dados recebidos: {"update_id":213068703,"channel_post":{"message_id":898,"sender_chat":{"id":-1002047004959,"title":"Bateubet_VIP","type":"channel"},"chat":{"id":-1002047004959,"title":"Bateubet_VIP","type":"channel"},"date":1762650348,"text":"Resultado dispon\u00edvel!\n\u26bd\ufe0f Tigres UANL (H) x Atletico San Luis (A) (ao vivo)\nGols over +1.0 - ODD: 1.52 - reembolso\n\ud83d\udd04"}}
+✅ Tipo: CHANNEL_POST
+Texto extraído: Resultado disponível!
+⚽️ Tigres UANL (H) x Atletico San Luis (A) (ao vivo)
+Gols over +1.0 - ODD...
+É oportunidade? NÃO
+É resultado? SIM
+📨 Mensagem válida recebida
+   ID: 898
+   Hora: 22:05:48
+   Tipo: RESULTADO
+🎯 Processando resultado...
+   Times extraídos: ️ Tigres UANL vs Atletico San Luis
+   Tipo extraído: Gols over +1.0
+   Resultado extraído: REEMBOLSO
+✅ Aposta encontrada: ID 138
+💾 Resultado atualizado: REEMBOLSO
+✅ Resultado processado com sucesso
+
+
+================================================================================
+[2025-11-08 22:17:31] Webhook acionado
+Dados recebidos: {"update_id":213068704,"channel_post":{"message_id":899,"sender_chat":{"id":-1002047004959,"title":"Bateubet_VIP","type":"channel"},"chat":{"id":-1002047004959,"title":"Bateubet_VIP","type":"channel"},"date":1762651051,"text":"Resultado dispon\u00edvel!\n\u26bd\ufe0f Atletico Nacional Medellin (H) x Aguilas Doradas (A) (ao vivo)\nGols over +1.0 - ODD: 1.52 - RED\n\u274c"}}
+✅ Tipo: CHANNEL_POST
+Texto extraído: Resultado disponível!
+⚽️ Atletico Nacional Medellin (H) x Aguilas Doradas (A) (ao vivo)
+Gols ov...
+É oportunidade? NÃO
+É resultado? SIM
+📨 Mensagem válida recebida
+   ID: 899
+   Hora: 22:17:31
+   Tipo: RESULTADO
+🎯 Processando resultado...
+   Times extraídos: ️ Atletico Nacional Medellin vs Aguilas Doradas
+   Tipo extraído: Gols over +1.0
+   Resultado extraído: RED
+✅ Aposta encontrada: ID 139
+💾 Resultado atualizado: RED
+✅ Resultado processado com sucesso
+
+
+================================================================================
+[2025-11-08 22:42:17] Webhook acionado
+Dados recebidos: {"update_id":213068705,"channel_post":{"message_id":900,"sender_chat":{"id":-1002047004959,"title":"Bateubet_VIP","type":"channel"},"chat":{"id":-1002047004959,"title":"Bateubet_VIP","type":"channel"},"date":1762652536,"text":"Oportunidade! \ud83d\udea8\n\n\ud83d\udcca \ud83d\udea8 OVER ( +1\u26f3 CANTOS ) AS..\n\n\n\u26bd\ufe0f Sao Paulo (H) x Bragantino (A) (ao vivo)\n\n\u23f0 Tempo: 84'\nOdds iniciais: Casa: 1.75 - Emp. 3.4 - Fora: 5.25\n\ud83c\udfdf Brazil Serie A\n\n\ud83e\udd45 Placar: 0 - 1  \n\u21aa\ufe0f \u00daltimo gol: \u00f8 - 73'\nEscanteios over +1.0: 1.5 \nStake: 1%\n    \n\u26f3\ufe0f Escanteios: 6 - 1  \n\u21aa\ufe0f \u00daltimo escanteio: 76' - 52'\n\ud83d\udd25 Ataques perigosos: 41 - 36\n\ud83d\udd25 Ataques perigosos\/min. (5min.): 0.2 - 0.4\n\ud83d\udd25 Ataques perigosos\/min. (Total): 0.48 - 0.42\n\ud83d\udfe8 Cart\u00f5es amarelos: 1 - 1\n\u21aa\ufe0f \u00daltimo cart\u00e3o amarelo: 72' - 43'\n\ud83d\udfe5 Cart\u00f5es vermelhos: 0 - 0\n\ud83c\udfaf Chutes ao lado: 5 - 7\n\u21aa\ufe0f \u00daltimo chute ao lado: 63' - 61'\n\ud83c\udfaf Chutes no alvo: 3 - 2\n\u21aa\ufe0f \u00daltimo chute no alvo: 76' - 73'\n\ud83d\udcaf Posse de bola: 62% - 38%\n\ud83e\udde0 PI 1: 12.4 - 7.6\n\u26a1\ufe0f PI 2: 2 - 4\n\n\nLinks da partida:\n\nBet365 | Betfair","entities":[{"offset":733,"length":6,"type":"text_link","url":"https:\/\/www.bet365.bet.br\/#\/AX\/K%5ESao%20Paulo"},{"offset":733,"length":6,"type":"bold"},{"offset":742,"length":7,"type":"text_link","url":"https:\/\/betfair.bet.br\/exchange\/plus\/en\/football\/brazilian-serie-a\/sao-paulo-v-red-bull-bragantino-betting-34920549"},{"offset":742,"length":7,"type":"bold"}],"link_preview_options":{"is_disabled":true}}}
+✅ Tipo: CHANNEL_POST
+Texto extraído: Oportunidade! 🚨
+
+📊 🚨 OVER ( +1⛳ CANTOS ) AS..
+
+
+⚽️ Sao Paulo (H) x Bragantino (A) (ao...
+É oportunidade? SIM
+É resultado? NÃO
+📨 Mensagem válida recebida
+   ID: 900
+   Hora: 22:42:16
+   Tipo: OPORTUNIDADE
+💾 Salvando oportunidade...
+📝 Iniciando salvamento nos dados:
+   - Título: OVER ( +1⛳ CANTOS ) AS..
+   - Time 1: ⚽️ Sao Paulo
+   - Time 2: Bragantino
+   - Tipo: CANTOS
+✅ Registrado ID: 140 (linhas afetadas: 1)
+✅ Oportunidade salva com sucesso
+
+
+================================================================================
+[2025-11-08 22:57:12] Webhook acionado
+Dados recebidos: {"update_id":213068706,"channel_post":{"message_id":901,"sender_chat":{"id":-1002047004959,"title":"Bateubet_VIP","type":"channel"},"chat":{"id":-1002047004959,"title":"Bateubet_VIP","type":"channel"},"date":1762653431,"text":"Resultado dispon\u00edvel!\n\u26bd\ufe0f Sao Paulo (H) x Bragantino (A) (ao vivo)\nEscanteios over +1.0 - ODD: 1.504 - reembolso\n\ud83d\udd04"}}
+✅ Tipo: CHANNEL_POST
+Texto extraído: Resultado disponível!
+⚽️ Sao Paulo (H) x Bragantino (A) (ao vivo)
+Escanteios over +1.0 - ODD: 1...
+É oportunidade? NÃO
+É resultado? SIM
+📨 Mensagem válida recebida
+   ID: 901
+   Hora: 22:57:11
+   Tipo: RESULTADO
+🎯 Processando resultado...
+   Times extraídos: ️ Sao Paulo vs Bragantino
+   Tipo extraído: Escanteios over +1.0
+   Resultado extraído: REEMBOLSO
+✅ Aposta encontrada: ID 140
+💾 Resultado atualizado: REEMBOLSO
+✅ Resultado processado com sucesso
+

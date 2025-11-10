@@ -463,8 +463,213 @@ const TelegramMessenger = {
     // ✅ INSERIR NO INÍCIO (para ordem de cima para baixo)
     this.container.insertBefore(messageEl, this.container.firstChild);
 
+    // ✅ ADICIONAR EVENT LISTENERS
+    // Clique no card inteiro abre modal com resultados do time
+    messageEl.addEventListener("click", (e) => {
+      if (e.target.closest(".btn-grafico-resultados")) {
+        // Se clicou no gráfico, não propagate
+        e.stopPropagation();
+        this.mostrarResultadosTime(msg);
+      } else {
+        // Clique em qualquer lugar do card
+        this.mostrarResultadosTime(msg);
+      }
+    });
+
+    // Hover effect - mudar cursor
+    messageEl.style.cursor = "pointer";
+    messageEl.addEventListener("mouseenter", () => {
+      messageEl.style.opacity = "0.95";
+    });
+    messageEl.addEventListener("mouseleave", () => {
+      messageEl.style.opacity = "1";
+    });
+
     // Scroll para cima (primeira mensagem)
     setTimeout(() => this.scrollToTop(), 100);
+  },
+
+  // ✅ NOVA FUNÇÃO: Mostrar resultados do time em um modal
+  mostrarResultadosTime(msg) {
+    const time1 = msg.time_1 || "---";
+    const time2 = msg.time_2 || "---";
+    const titulo = (msg.titulo || "").toLowerCase();
+
+    // 🔧 USAR tipo_aposta DO BANCO SE DISPONÍVEL
+    let tipo = "gols"; // default
+
+    if (msg.tipo_aposta) {
+      // Campo tipo_aposta vem do banco de dados
+      const tipoAposta = msg.tipo_aposta.toLowerCase();
+      tipo = tipoAposta.includes("canto") ? "cantos" : "gols";
+      console.log(
+        `✅ Tipo detectado do banco: "${msg.tipo_aposta}" => "${tipo}"`
+      );
+    } else {
+      // Fallback: detectar pelo título
+      tipo =
+        titulo.includes("⛳") ||
+        titulo.includes("canto") ||
+        titulo.includes("escanteio")
+          ? "cantos"
+          : "gols";
+      console.log(`⚠️ Tipo_aposta vazio, detectado por título: "${tipo}"`);
+    }
+
+    // ✅ EXTRAIR OVER: TENTAR 3 FONTES (valor_over do banco > titulo > null)
+    let valorOver = null;
+
+    console.log("🔍 EXTRAÇÃO DE OVER - Verificando fontes...");
+    console.log(
+      "   msg.valor_over:",
+      msg.valor_over,
+      "(type:",
+      typeof msg.valor_over + ")"
+    );
+    console.log("   msg.over_under_value:", msg.over_under_value);
+    console.log(
+      "   msg.titulo:",
+      msg.titulo ? msg.titulo.substring(0, 50) : "null"
+    );
+
+    // FONTE 1: msg.valor_over (já vem do banco processado)
+    if (msg.valor_over && msg.valor_over !== "0.00" && msg.valor_over !== "0") {
+      // Normalizar: "0.50" -> "0.5", "1.00" -> "1", "2.50" -> "2.5"
+      valorOver = parseFloat(msg.valor_over).toString();
+      console.log(
+        "✅ SOURCE 1 (valor_over do banco):",
+        msg.valor_over,
+        "→",
+        valorOver
+      );
+    }
+    // FONTE 2: msg.over_under_value (campo alternativo no banco)
+    else if (msg.over_under_value) {
+      console.log(
+        "⚠️ SOURCE 1 falhou, tentando SOURCE 2 (over_under_value)..."
+      );
+      const match = msg.over_under_value.match(/\+(\d+\.?\d*)/);
+      if (match) {
+        valorOver = match[1];
+        console.log(
+          "✅ SOURCE 2 (over_under_value do banco):",
+          msg.over_under_value,
+          "→",
+          valorOver
+        );
+      }
+    }
+    // FONTE 3: Extrair do titulo
+    else if (msg.titulo) {
+      console.log("⚠️ FONTE 1 e 2 falharam, tentando SOURCE 3 (titulo)...");
+      const tituloStr = msg.titulo.toString().trim();
+
+      // Múltiplas tentativas de regex
+      const regexs = [
+        /OVER\s*\(\s*\+(\d+\.?\d*)/i, // OVER ( +1
+        /\+(\d+\.?\d*)\s*(?:⚽|⛳|gol|canto|gols|cantos)/i, // +1 ⚽GOL
+        /\+(\d+\.?\d*)/, // +1
+      ];
+
+      for (let regex of regexs) {
+        const match = tituloStr.match(regex);
+        if (match) {
+          valorOver = match[1];
+          console.log("✅ SOURCE 3 (extraído do titulo com regex):", valorOver);
+          break;
+        }
+      }
+    }
+
+    if (!valorOver) {
+      console.warn("⚠️ valorOver não encontrado em nenhuma fonte!");
+      console.log("   msg.valor_over vazio?", !msg.valor_over);
+      console.log("   msg.over_under_value vazio?", !msg.over_under_value);
+      console.log("   msg.titulo vazio?", !msg.titulo);
+    }
+
+    // ✅ NOVO: Detectar se é +0.5 GOL FT para aplicar filtro de REEMBOLSO
+    let filtrarSemReembolso = false;
+    const tituloStr = (msg.titulo || "").toString().trim().toUpperCase(); // ✅ CONVERTIDO PARA UPPERCASE
+
+    console.log("🔍 DEBUG FILTRO: tituloStr (UPPERCASE)='" + tituloStr + "'");
+    console.log("🔍 DEBUG FILTRO: tituloStr.includes('FT')? " + tituloStr.includes("FT"));
+    console.log("🔍 DEBUG FILTRO: tituloStr.includes('.5')? " + tituloStr.includes(".5"));
+    console.log("🔍 DEBUG FILTRO: tituloStr.includes('0.5')? " + tituloStr.includes("0.5"));
+
+    // Verificar se é +0.5 GOL com FT ou similar
+    // ✅ MELHORADO: Verificar por ".5" em vez de "0.5" (mais robusto)
+    const temMeioGol =
+      valorOver === "0.5" ||
+      parseFloat(valorOver) === 0.5 ||
+      tituloStr.includes(".5") ||
+      tituloStr.includes("0.5");
+    const temFT =
+      tituloStr.includes("FT") ||
+      tituloStr.includes(" FT") ||
+      tituloStr.includes("- FT");
+    const ehGol = tipo === "gols";
+
+    console.log(
+      "🔍 DEBUG FILTRO: temMeioGol=" +
+        temMeioGol +
+        ", temFT=" +
+        temFT +
+        ", ehGol=" +
+        ehGol
+    );
+    
+    // ✅ RESUMO VISUAL
+    console.log("%c📋 RESUMO DO FILTRO", "background: blue; color: white; padding: 5px;");
+    console.log("✓ Vale 0.5? " + temMeioGol);
+    console.log("✓ Tem FT? " + temFT);
+    console.log("✓ É GOL? " + ehGol);
+    console.log("✓ TODAS as 3 condições? " + (temMeioGol && ehGol && temFT));
+
+    if (temMeioGol && ehGol && temFT) {
+      filtrarSemReembolso = true;
+      console.log(
+        "✅ FILTRO ATIVADO: +0.5 GOL FT detectado - será filtrado sem REEMBOLSO"
+      );
+      console.warn("⚠️⚠️⚠️ FILTRO ATIVADO PARA REEMBOLSO ⚠️⚠️⚠️");
+      // Opcional: Mostrar visual para debug
+      if (typeof window !== 'undefined' && window.location.hostname === 'localhost') {
+        console.clear(); // Limpar console anterior
+        console.log("%c🚫 FILTRO DE REEMBOLSO ATIVADO! 🚫", "background: red; color: white; font-size: 16px; padding: 10px;");
+        console.log("Título: " + msg.titulo);
+        console.log("Valor Over: " + valorOver);
+        console.log("Tipo: " + tipo);
+      }
+    } else {
+      console.log("❌ FILTRO NÃO ATIVADO:");
+      console.log("   - temMeioGol? " + temMeioGol);
+      console.log("   - ehGol? " + ehGol);
+      console.log("   - temFT? " + temFT);
+    }
+
+    // Criar elemento temporário com data attributes para a função existente usar
+    const elemento = document.createElement("div");
+    elemento.dataset.time1 = time1;
+    elemento.dataset.time2 = time2;
+    elemento.dataset.tipo = tipo;
+    elemento.dataset.valorover = valorOver || ""; // novo atributo (lowercase)
+    elemento.dataset.filtrarSemReembolso = filtrarSemReembolso
+      ? "true"
+      : "false"; // ✅ NOVO
+    console.log("🎯 Dataset do elemento criado:", {
+      time1: elemento.dataset.time1,
+      time2: elemento.dataset.time2,
+      tipo: elemento.dataset.tipo,
+      valorover: elemento.dataset.valorover,
+      filtrarSemReembolso: elemento.dataset.filtrarSemReembolso, // ✅ NOVO
+    });
+    if (typeof abrirModalHistorico === "function") {
+      abrirModalHistorico(elemento);
+    } else {
+      console.warn(
+        "⚠️ Função abrirModalHistorico não encontrada. Verifique se modal-historico-resultados.js foi carregado."
+      );
+    }
   },
 
   // ✅ NOVA FUNÇÃO: Atualizar mensagem existente com efeito visual
@@ -908,6 +1113,7 @@ const TelegramMessenger = {
         border-radius: 6px;
         overflow: hidden;
         margin: 8px 0;
+        cursor: pointer;
       ">
         <!-- OVERLAY ESCURO -->
         <div style="
@@ -934,7 +1140,7 @@ const TelegramMessenger = {
           <div style="position: absolute; top: 8px; right: 8px; z-index: 10; display: flex; align-items: center; gap: 4px; font-size: 9px; color: white; font-weight: 600;">
             ${
               resultado
-                ? '<span style="background: #f44336; color: white; padding: 4px 8px; border-radius: 3px; font-size: 10px; font-weight: 700;">FIM</span>'
+                ? '<span style="width: 8px; height: 8px; background: #f44336; border-radius: 50%; display: inline-block;"></span><span style="font-size: 9px; color: #f44336; font-weight: 700;">FIM</span>'
                 : '<span style="width: 8px; height: 8px; background: #e74c3c; border-radius: 50%; animation: piscar 1s infinite;"></span><span>Ao Vivo</span>'
             }
           </div>
@@ -977,6 +1183,10 @@ const TelegramMessenger = {
           @keyframes piscar {
             0%, 49% { opacity: 1; }
             50%, 100% { opacity: 0.4; }
+          }
+          
+          .btn-grafico-resultados:hover {
+            opacity: 1 !important;
           }
           
           @media (max-width: 480px) {

@@ -55,8 +55,21 @@
   justify-content: space-between;
   padding: 24px;
   border-bottom: 2px solid #f0f0f0;
-  background: linear-gradient(135deg, #2196f3 0%, #1976d2 100%);
+  background: linear-gradient(135deg, #033a08 0%, #023806 100%);
   border-radius: 12px 12px 0 0;
+  position: relative;
+  overflow: hidden;
+}
+
+.modal-historico-tipo-imagem {
+  position: absolute;
+  left: 0;
+  top: 0;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  opacity: 0.25;
+  z-index: 1;
 }
 
 .modal-historico-header h2 {
@@ -65,6 +78,8 @@
   font-weight: 700;
   margin: 0;
   letter-spacing: 0.3px;
+  position: relative;
+  z-index: 2;
 }
 
 .modal-historico-fechar {
@@ -81,6 +96,8 @@
   align-items: center;
   justify-content: center;
   font-weight: bold;
+  position: relative;
+  z-index: 2;
 }
 
 .modal-historico-fechar:hover {
@@ -198,18 +215,58 @@
 }
 
 /* ========== ESTADOS DOS RESULTADOS ========== */
+
+/* Confronto Direto - Destaque especial */
+.historico-resultado.confronto-direto {
+  border: 2px solid #ff9800;
+  background: linear-gradient(135deg, #fff3e0 0%, #ffe0b2 100%);
+  box-shadow: 0 2px 8px rgba(255, 152, 0, 0.3);
+  font-weight: 600;
+  position: relative;
+}
+
+.historico-resultado.confronto-direto::before {
+  content: "⚔️";
+  position: absolute;
+  right: 8px;
+  top: 50%;
+  transform: translateY(-50%);
+  font-size: 16px;
+  opacity: 0.7;
+}
+
+.historico-resultado.confronto-direto:hover {
+  box-shadow: 0 4px 12px rgba(255, 152, 0, 0.5);
+  transform: translateY(-2px);
+}
+
+/* GREEN */
 .resultado-green {
   background: linear-gradient(135deg, #e8f5e9 0%, #c8e6c9 100%);
   border-left: 4px solid #4caf50;
   color: #2e7d32;
 }
 
+/* GREEN + Confronto Direto */
+.resultado-green.confronto-direto {
+  background: linear-gradient(135deg, #c8e6c9 0%, #a5d6a7 100%);
+  border: 2px solid #4caf50;
+}
+
+/* RED */
 .resultado-red {
   background: linear-gradient(135deg, #ffebee 0%, #ffcdd2 100%);
   border-left: 4px solid #f44336;
   color: #c62828;
 }
 
+/* RED + Confronto Direto */
+.resultado-red.confronto-direto {
+  background: linear-gradient(135deg, #ffcdd2 0%, #ef9a9a 100%);
+  border: 2px solid #f44336;
+}
+
+/* REEMBOLSO */
 .resultado-reembolso {
   background: linear-gradient(135deg, #f5f5f5 0%, #eeeeee 100%);
   border-left: 4px solid #9e9e9e;

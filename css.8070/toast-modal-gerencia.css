@@ -1,0 +1,204 @@
+/* ===== CSS ESPECÍFICO PARA TOAST DO MODAL DE GERENCIAMENTO ===== */
+
+/* Toast dentro do modal de gerenciamento - Força absoluta */
+div#toastModal {
+  display: block !important;
+  position: relative !important;
+  width: 100% !important;
+  padding: 12px 16px !important;
+  margin: 15px 0 !important;
+  border-radius: 8px !important;
+  font-size: 14px !important;
+  font-weight: 600 !important;
+  text-align: center !important;
+  font-family: "Segoe UI", Tahoma, Geneva, Verdana, sans-serif !important;
+  box-sizing: border-box !important;
+  transition: all 0.3s ease !important;
+  border: 2px solid transparent !important;
+  opacity: 0 !important;
+  transform: translateY(-10px) !important;
+  z-index: 1000 !important;
+}
+
+/* Estados de visibilidade */
+div#toastModal.show {
+  opacity: 1 !important;
+  transform: translateY(0) !important;
+}
+
+div#toastModal.hide,
+div#toastModal:empty {
+  opacity: 0 !important;
+  transform: translateY(-10px) !important;
+}
+
+/* Tipos de toast - cores específicas */
+div#toastModal.sucesso {
+  background-color: #d4edda !important;
+  color: #155724 !important;
+  border-color: #c3e6cb !important;
+  box-shadow: 0 2px 8px rgba(21, 87, 36, 0.2) !important;
+}
+
+div#toastModal.erro {
+  background-color: #f8d7da !important;
+  color: #721c24 !important;
+  border-color: #f5c6cb !important;
+  box-shadow: 0 2px 8px rgba(114, 28, 36, 0.2) !important;
+}
+
+div#toastModal.aviso {
+  background-color: #fff3cd !important;
+  color: #856404 !important;
+  border-color: #ffeaa7 !important;
+  box-shadow: 0 2px 8px rgba(133, 100, 4, 0.2) !important;
+}
+
+div#toastModal.info {
+  background-color: #d1ecf1 !important;
+  color: #0c5460 !important;
+  border-color: #bee5eb !important;
+  box-shadow: 0 2px 8px rgba(12, 84, 96, 0.2) !important;
+}
+
+/* Container do modal - garantir que não interfira */
+.modal-gerencia-banca {
+  position: relative !important;
+}
+
+.modal-gerencia-banca .modal-content {
+  position: relative !important;
+  overflow: visible !important;
+}
+
+.modal-gerencia-banca form {
+  position: relative !important;
+}
+
+/* Seletor super específico para garantir */
+.modal-gerencia-banca .modal-content form div#toastModal {
+  display: block !important;
+  position: relative !important;
+  width: 100% !important;
+  padding: 12px 16px !important;
+  margin: 15px 0 !important;
+  border-radius: 8px !important;
+  font-size: 14px !important;
+  font-weight: 600 !important;
+  text-align: center !important;
+  font-family: "Segoe UI", Tahoma, Geneva, Verdana, sans-serif !important;
+  box-sizing: border-box !important;
+  transition: all 0.3s ease !important;
+  border: 2px solid transparent !important;
+  opacity: 0 !important;
+  transform: translateY(-10px) !important;
+  z-index: 1000 !important;
+}
+
+.modal-gerencia-banca .modal-content form div#toastModal.show {
+  opacity: 1 !important;
+  transform: translateY(0) !important;
+}
+
+.modal-gerencia-banca .modal-content form div#toastModal.sucesso {
+  background-color: #d4edda !important;
+  color: #155724 !important;
+  border-color: #c3e6cb !important;
+  box-shadow: 0 2px 8px rgba(21, 87, 36, 0.2) !important;
+}
+
+.modal-gerencia-banca .modal-content form div#toastModal.erro {
+  background-color: #f8d7da !important;
+  color: #721c24 !important;
+  border-color: #f5c6cb !important;
+  box-shadow: 0 2px 8px rgba(114, 28, 36, 0.2) !important;
+}
+
+.modal-gerencia-banca .modal-content form div#toastModal.aviso {
+  background-color: #fff3cd !important;
+  color: #856404 !important;
+  border-color: #ffeaa7 !important;
+  box-shadow: 0 2px 8px rgba(133, 100, 4, 0.2) !important;
+}
+
+/* Reset de conflitos possíveis */
+div#toastModal * {
+  box-sizing: border-box !important;
+}
+
+/* Animação suave */
+@keyframes toastSlideIn {
+  from {
+    opacity: 0;
+    transform: translateY(-20px) scale(0.95);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0) scale(1);
+  }
+}
+
+div#toastModal.show {
+  animation: toastSlideIn 0.3s ease-out !important;
+}
+
+/* Responsividade */
+@media (max-width: 768px) {
+  div#toastModal,
+  .modal-gerencia-banca .modal-content form div#toastModal {
+    font-size: 13px !important;
+    padding: 10px 14px !important;
+    margin: 12px 0 !important;
+  }
+}
+
+@media (max-width: 480px) {
+  div#toastModal,
+  .modal-gerencia-banca .modal-content form div#toastModal {
+    font-size: 12px !important;
+    padding: 8px 12px !important;
+    margin: 10px 0 !important;
+  }
+}
+
+/* Debug - para verificar se o elemento existe */
+div#toastModal:before {
+  content: attr(data-debug) !important;
+  display: none !important;
+}
+
+/* Força a exibição quando tem conteúdo */
+div#toastModal:not(:empty) {
+  min-height: 20px !important;
+}
+
+/* Toast externo (canto da tela) */
+div#toast-msg {
+  position: fixed !important;
+  top: 20px !important;
+  right: 20px !important;
+  padding: 12px 18px !important;
+  background-color: #333 !important;
+  color: white !important;
+  border-radius: 6px !important;
+  font-size: 14px !important;
+  font-family: "Segoe UI", sans-serif !important;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3) !important;
+  z-index: 99999 !important;
+  opacity: 0 !important;
+  transition: all 0.3s ease !important;
+  display: none !important;
+  transform: translateX(100%) !important;
+}
+
+div#toast-msg.show {
+  display: block !important;
+  opacity: 1 !important;
+  transform: translateX(0) !important;
+}
+
+div#toast-msg.hidden {
+  display: none !important;
+  opacity: 0 !important;
+  transform: translateX(100%) !important;
+}

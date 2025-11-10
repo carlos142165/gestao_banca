@@ -1,0 +1,6254 @@
+/* Today-specific styles (dia atual) were removed from this file per request. */
+
+/* Classes para substituir inline styles aplicados por scripts */
+.entrada-card {
+  padding: 12px !important;
+  border-radius: 8px !important;
+  background: #fff !important;
+  box-shadow: 0 1px 2px rgba(0, 0, 0, 0.03) !important;
+  border-left: 4px solid transparent !important;
+}
+.entrada-card.entrada-card--positivo {
+  border-left-color: var(--gd-valor-positive-border, #00a651) !important;
+}
+.entrada-card.entrada-card--negativo {
+  border-left-color: var(--gd-valor-negative-border, #d64545) !important;
+}
+
+/* Toast classes to replace inline borderLeft */
+.toast--sucesso {
+  border-left: 4px solid var(--gd-valor-positive-border, #00a651) !important;
+}
+.toast--erro {
+  border-left: 4px solid var(--gd-valor-negative-border, #d64545) !important;
+}
+
+/* ===== CORES DO DIA ATUAL - SIMPLIFICADAS E DEDUPLICADAS ===== */
+
+/* Positive (verde) */
+.gd-linha-dia.gd-dia-hoje.valor-positivo {
+  background: linear-gradient(
+    90deg,
+    #edfcf0fa,
+    rgba(230, 253, 242, 0.98)
+  ) !important;
+  border-left: 4px solid var(--dia-atual-positivo-border-left-color, #058b32) !important;
+  padding-left: 13px !important;
+  box-shadow: none !important;
+}
+.gd-linha-dia.gd-dia-hoje.valor-positivo .data,
+.gd-linha-dia.gd-dia-hoje.valor-positivo .placar-dia,
+.gd-linha-dia.gd-dia-hoje.valor-positivo .placar-dia *,
+.gd-linha-dia.gd-dia-hoje.valor-positivo .valor,
+.gd-linha-dia.gd-dia-hoje.valor-positivo .icone i {
+  color: var(--dia-atual-positivo-valor-color, #058b32) !important;
+  font-weight: var(--dia-atual-valor-weight, 500) !important;
+  opacity: 1 !important;
+}
+
+/* Negative (vermelho) */
+.gd-linha-dia.gd-dia-hoje.valor-negativo {
+  background: linear-gradient(
+    90deg,
+    rgba(255, 242, 242, 0.98),
+    rgba(255, 238, 238, 0.98)
+  ) !important;
+  border-left: 4px solid var(--dia-atual-negativo-border-left-color, #ec0606) !important;
+  padding-left: 13px !important;
+  box-shadow: none !important;
+}
+.gd-linha-dia.gd-dia-hoje.valor-negativo .data,
+.gd-linha-dia.gd-dia-hoje.valor-negativo .placar-dia,
+.gd-linha-dia.gd-dia-hoje.valor-negativo .placar-dia *,
+.gd-linha-dia.gd-dia-hoje.valor-negativo .valor,
+.gd-linha-dia.gd-dia-hoje.valor-negativo .icone i {
+  color: var(--dia-atual-negativo-valor-color, #ec0606) !important;
+  font-weight: var(--dia-atual-valor-weight, 500) !important;
+  opacity: 1 !important;
+}
+
+/* Zero / Neutral (cinza) */
+.gd-linha-dia.gd-dia-hoje.valor-zero {
+  background: linear-gradient(
+    90deg,
+    rgba(255, 255, 255, 0.98),
+    rgba(248, 249, 250, 0.98)
+  ) !important;
+  border-left: 4px solid var(--dia-atual-zero-border-left-color, #43464d) !important;
+  padding-left: 13px !important;
+  box-shadow: 0 2px 8px rgba(67, 70, 77, 0.08) inset !important;
+}
+.gd-linha-dia.gd-dia-hoje.valor-zero .data,
+.gd-linha-dia.gd-dia-hoje.valor-zero .placar-dia,
+.gd-linha-dia.gd-dia-hoje.valor-zero .placar-dia *,
+.gd-linha-dia.gd-dia-hoje.valor-zero .valor,
+.gd-linha-dia.gd-dia-hoje.valor-zero .icone i {
+  color: var(--dia-atual-zero-valor-color, #111827) !important;
+  font-weight: var(--dia-atual-valor-weight, 500) !important;
+  opacity: 1 !important;
+}
+
+/* FORÇA APLICAÇÃO EM TEMPO REAL - removed hardcoded date-specific selectors to avoid duplication */
+
+/* ===== FALLBACK UNIVERSAL PARA QUALQUER DIA ATUAL ===== */
+
+/* Usar atributo data-date dinâmico via JavaScript */
+.gd-linha-dia.gd-dia-hoje {
+  /* Aplicação de cores será feita via JavaScript baseado no valor */
+  position: relative !important;
+  z-index: 2 !important;
+  transition: all 160ms ease !important;
+  animation: none !important;
+}
+
+/* ===== CORREÇÃO ADICIONAL - GARANTIR VISIBILIDADE ===== */
+
+/* Removed verbose today animation override (consolidated above) */
+
+/* Garantir que não seja sobrescrito por outras regras */
+.gd-linha-dia.gd-dia-hoje[data-meta-batida="true"],
+.gd-linha-dia.gd-dia-hoje[data-meta-batida="false"] {
+  --gd-dia-hoje-marker: 1; /* marker property to avoid empty ruleset */
+}
+
+/* ===== FORÇAR APLICAÇÃO VIA JAVASCRIPT ===== */
+
+/* Esta regra será aplicada dinamicamente via JS */
+.dia-atual-aplicado.valor-positivo {
+  background: linear-gradient(
+    90deg,
+    #edfcf0fa,
+    rgba(230, 253, 242, 0.98)
+  ) !important;
+  border-left: var(--dia-atual-border-left-width)
+    var(--dia-atual-border-left-style)
+    var(--dia-atual-positivo-border-left-color) !important;
+  padding-left: 13px !important;
+}
+
+.dia-atual-aplicado.valor-negativo {
+  background: linear-gradient(
+    90deg,
+    rgba(255, 242, 242, 0.98),
+    rgba(255, 238, 238, 0.98)
+  ) !important;
+  border-left: var(--dia-atual-border-left-width)
+    var(--dia-atual-border-left-style)
+    var(--dia-atual-negativo-border-left-color) !important;
+  padding-left: 13px !important;
+}
+
+.dia-atual-aplicado.valor-zero {
+  background: linear-gradient(
+    90deg,
+    rgba(255, 255, 255, 0.98),
+    rgba(248, 249, 250, 0.98)
+  ) !important;
+  border-left: var(--dia-atual-border-left-width)
+    var(--dia-atual-border-left-style) var(--dia-atual-zero-border-left-color) !important;
+  padding-left: 13px !important;
+}
+
+/* Cores dos elementos internos quando aplicado */
+.dia-atual-aplicado.valor-positivo .data,
+.dia-atual-aplicado.valor-positivo .placar-dia,
+.dia-atual-aplicado.valor-positivo .placar-dia *,
+.dia-atual-aplicado.valor-positivo .valor,
+.dia-atual-aplicado.valor-positivo .icone i {
+  color: #058b32 !important;
+  opacity: 1 !important;
+}
+
+.dia-atual-aplicado.valor-negativo .data,
+.dia-atual-aplicado.valor-negativo .placar-dia,
+.dia-atual-aplicado.valor-negativo .placar-dia *,
+.dia-atual-aplicado.valor-negativo .valor,
+.dia-atual-aplicado.valor-negativo .icone i {
+  color: #ec0606 !important;
+  opacity: 1 !important;
+}
+
+.dia-atual-aplicado.valor-zero .data,
+.dia-atual-aplicado.valor-zero .placar-dia,
+.dia-atual-aplicado.valor-zero .placar-dia *,
+.dia-atual-aplicado.valor-zero .valor,
+.dia-atual-aplicado.valor-zero .icone i {
+  color: #111827 !important;
+  opacity: 1 !important;
+}
+
+/* ===================================================================
+   CORREÇÃO: Bloco 2 responsivo ao zoom - expansão proporcional
+   Remove altura fixa e permite expansão natural junto com outros blocos
+   =================================================================== */
+
+/* 1. REMOVER ALTURAS FIXAS E PERMITIR EXPANSÃO NATURAL */
+
+/* 2. CONTAINER PRINCIPAL - USAR FLEXBOX RESPONSIVO */
+.main-content .container {
+  display: flex !important;
+  align-items: stretch !important;
+  gap: 20px !important;
+  min-height: calc(100vh - 160px) !important; /* viewport menos header/footer */
+  height: auto !important;
+  max-height: none !important;
+}
+
+/* 3. TODOS OS BLOCOS - EXPANSÃO UNIFORME */
+.main-content .container > .bloco,
+.main-content .container > .bloco-1,
+.main-content .container > .bloco-2,
+.main-content .container > .bloco-3 {
+  flex: 1 1 auto !important;
+  display: flex !important;
+  flex-direction: column !important;
+  height: auto !important;
+  min-height: calc(100vh - 200px) !important; /* altura mínima responsiva */
+  max-height: none !important;
+  overflow: visible !important;
+}
+
+/* 4. BLOCO 2 ESPECÍFICO - ESTRUTURA FLEXÍVEL */
+.container .bloco.bloco-2 {
+  width: var(--lista-dias-width-responsive) !important;
+  max-width: var(--lista-dias-container-width) !important;
+  height: auto !important;
+  min-height: 0 !important;
+  max-height: none !important;
+  display: flex !important;
+  flex-direction: column !important;
+  overflow: visible !important;
+}
+
+/* 5. RESUMO-MES - CONTAINER FLEXÍVEL */
+.container .bloco.bloco-2 .resumo-mes {
+  flex: 1 1 auto !important;
+  display: flex !important;
+  flex-direction: column !important;
+  height: 100% !important;
+  min-height: 0 !important;
+  max-height: none !important;
+  overflow: visible !important;
+  position: relative !important;
+}
+
+/* FORCE: make resumo-mes flush to bloco-2 with no gap/line and keep bloco-2 on top */
+.container .bloco.bloco-2 {
+  margin: 0 !important;
+  padding: 0 !important;
+  position: relative !important;
+  z-index: 10000 !important; /* ensure bloco-2 stays above other content */
+
+  border: none !important;
+  box-shadow: none !important;
+}
+
+.container .bloco.bloco-2 .resumo-mes {
+  margin: 0 !important;
+  padding: 0 !important;
+  width: 100% !important;
+  height: 100% !important;
+  box-sizing: border-box !important;
+  border: none !important;
+  box-shadow: none !important;
+}
+
+/* Remove any seam created by children (header/list) */
+.container .bloco.bloco-2 .resumo-mes .bloco-meta-simples,
+.container .bloco.bloco-2 .resumo-mes .bloco-meta-simples.fixo-topo {
+  margin: 0 !important;
+  padding: 0 !important;
+  border: none !important;
+  box-shadow: none !important;
+}
+
+.container .bloco.bloco-2 .resumo-mes .lista-dias {
+  margin: 0 !important;
+  padding: 0 12px !important; /* keep internal padding for content but no external gap */
+  border: none !important;
+  box-shadow: none !important;
+}
+
+/* 6. LISTA-DIAS - EXPANSÃO FLEXÍVEL COM SCROLL INTERNO */
+.container .bloco.bloco-2 .resumo-mes .lista-dias,
+html body .main-content .container .bloco.bloco-2 .resumo-mes > .lista-dias,
+html body .container .bloco.bloco-2 .resumo-mes > .lista-dias {
+  /* REMOVER ALTURAS FIXAS */
+  height: auto !important;
+  min-height: 300px !important; /* altura mínima para funcionalidade */
+  max-height: none !important;
+
+  /* FLEXBOX RESPONSIVO */
+  flex: 1 1 auto !important;
+
+  /* SCROLL APENAS QUANDO NECESSÁRIO */
+  overflow-y: auto !important;
+  overflow-x: hidden !important;
+
+  /* MANTER OUTRAS PROPRIEDADES IMPORTANTES */
+  width: var(--lista-dias-width, calc(100% + 24px)) !important;
+  max-width: var(--lista-dias-maxwidth, calc(100% + 24px)) !important;
+  margin-left: var(--lista-dias-margin-left, 10px) !important;
+  margin-top: var(--lista-dias-margin-top) !important;
+  padding: 12px var(--lista-dias-lateral-padding, 10px) !important;
+
+  border-radius: 20px !important;
+  box-sizing: border-box !important;
+
+  /* SCROLLBAR CONFIGURAÇÕES */
+  scrollbar-gutter: stable both-edges !important;
+  -webkit-overflow-scrolling: touch !important;
+}
+
+/* 7. CABEÇALHO FIXO - AJUSTAR PARA NÃO INTERFERIR */
+.container .bloco.bloco-2 .resumo-mes .bloco-meta-simples.fixo-topo {
+  position: absolute !important;
+  /* Keep header contained inside the bloco while removing the hairline seam
+     that appeared on some displays. We avoid negative offsets and instead
+     ensure the header uses full available width and remove right border
+     artifacts. */
+  /* Make header full-width inside bloco-2 and remove right-edge hairline */
+}
+
+/* Ensure the fixed header uses the bloco's full inner width and does not create a seam */
+html body .container .bloco.bloco-2 .resumo-mes .bloco-meta-simples.fixo-topo {
+  left: 0 !important;
+  right: 0 !important;
+  width: 100% !important;
+  box-sizing: border-box !important;
+  padding-right: 0 !important;
+  position: absolute !important;
+  height: 50px !important;
+}
+
+html
+  body
+  .container
+  .bloco.bloco-2
+  .resumo-mes
+  .bloco-meta-simples.fixo-topo
+  .campo-armazena-data-placar {
+  width: 100% !important;
+  margin: 0 !important;
+  padding-right: 0 !important;
+  border-right: none !important;
+  /* remove hard inset shadows that can create a visible hairline */
+  box-shadow: 0 1px 2px rgba(0, 0, 0, 0.02) inset !important;
+  background-clip: padding-box !important;
+}
+
+/* Defensive: ensure resumo-mes has no right border that could create a seam */
+html body .container .bloco.bloco-2 .resumo-mes {
+  border-right: none !important;
+}
+
+@media (max-width: 480px) {
+  html body .container .bloco.bloco-2 .resumo-mes .bloco-meta-simples.fixo-topo,
+  html
+    body
+    .container
+    .bloco.bloco-2
+    .resumo-mes
+    .bloco-meta-simples.fixo-topo
+    .campo-armazena-data-placar {
+    left: 0 !important;
+    right: 0 !important;
+    width: 100% !important;
+    margin: 0 !important;
+    padding-right: 8px !important;
+  }
+
+  .container .bloco.bloco-2 .resumo-mes .lista-dias {
+    min-height: 250px !important;
+    margin-top: 60px !important; /* header menor no mobile */
+  }
+}
+
+/* 10. ZOOM ESPECÍFICO - GARANTIR EXPANSÃO PROPORCIONAL */
+
+/* Para zoom 125% */
+@media screen and (min-resolution: 120dpi) {
+  .main-content .container > .bloco {
+    min-height: calc(100vh - 200px) !important;
+  }
+}
+
+/* Para zoom 150% */
+@media screen and (min-resolution: 144dpi) {
+  .main-content .container > .bloco {
+    min-height: calc(100vh - 220px) !important;
+  }
+}
+
+/* DEBUG: Force-visible left stripe for 'hoje' rows to verify selectors match.
+   Remove this after verification. Very high specificity + !important. */
+/* Debug stripe removed to allow :root variables to control the left border */
+
+/* 11. FORÇA OVERRIDE PARA ESTILOS INLINE EXISTENTES */
+.container .bloco.bloco-2[style],
+.container .bloco.bloco-2 .resumo-mes[style],
+.container .bloco.bloco-2 .resumo-mes .lista-dias[style] {
+  height: auto !important;
+  max-height: none !important;
+}
+
+/* 12. GARANTIR QUE SCROLLBAR APAREÇA APENAS QUANDO NECESSÁRIO */
+.container .bloco.bloco-2 .resumo-mes .lista-dias::-webkit-scrollbar {
+  width: 8px !important;
+}
+
+.container .bloco.bloco-2 .resumo-mes .lista-dias::-webkit-scrollbar-track {
+  background: transparent !important;
+}
+
+.container .bloco.bloco-2 .resumo-mes .lista-dias::-webkit-scrollbar-thumb {
+  background: rgba(0, 0, 0, 0.2) !important;
+  border-radius: 4px !important;
+}
+
+.container
+  .bloco.bloco-2
+  .resumo-mes
+  .lista-dias::-webkit-scrollbar-thumb:hover {
+  background: rgba(0, 0, 0, 0.4) !important;
+}
+
+/* 13. GARANTIR ALINHAMENTO VERTICAL DOS BLOCOS */
+.main-content .container {
+  align-items: stretch !important; /* todos os blocos mesma altura */
+}
+
+/* 14. FALLBACK PARA NAVEGADORES SEM SUPORTE A VIEWPORT UNITS */
+@supports not (height: 100vh) {
+  .main-content .container > .bloco {
+    min-height: 600px !important;
+  }
+
+  .container .bloco.bloco-2 .resumo-mes .lista-dias {
+    min-height: 400px !important;
+  }
+}
+
+/* 15. DEBUG - REMOVER APÓS CONFIRMAÇÃO (OPCIONAL) */
+/*
+.main-content .container > .bloco {
+  border: 2px solid red !important;
+  box-sizing: border-box !important;
+}
+
+.container .bloco.bloco-2 {
+  border: 2px solid blue !important;
+}
+
+.container .bloco.bloco-2 .resumo-mes .lista-dias {
+  border: 2px solid green !important;
+}
+*/
+/* ===== CSS COMPLETO PARA SISTEMA DE RANKING ===== */
+
+/* RANK COM COR DINÂMICA BASEADA NO SALDO */
+.mentor-rank-externo {
+  /* Dimensões fixas para manter formato circular */
+  width: 30px !important;
+  height: 30px !important;
+  min-width: 30px !important;
+  min-height: 30px !important;
+
+  /* Remover padding e usar apenas dimensões fixas */
+  padding: 0 !important;
+
+  /* Centralização perfeita */
+  display: flex !important;
+  align-items: center !important;
+  justify-content: center !important;
+
+  /* Garantir formato circular */
+  border-radius: 50% !important;
+
+  /* Visual - removendo cor padrão */
+  font-size: 12px !important;
+  font-weight: 700;
+  color: white !important; /* texto branco para contraste */
+
+  /* Borda será definida por classe */
+  border: 2px solid transparent;
+
+  /* Outros */
+  flex-shrink: 0;
+  box-sizing: border-box;
+  text-align: center;
+  line-height: 1;
+  white-space: nowrap;
+  overflow: hidden;
+  margin-right: 8px;
+
+  /* Transição suave */
+  transition: all 0.3s ease;
+}
+
+/* CORES DO RANK BASEADAS NO CARD */
+
+/* Rank Verde - Saldo Positivo */
+.mentor-item:has(.card-positivo) .mentor-rank-externo,
+.mentor-item .mentor-rank-externo.rank-positivo {
+  background: linear-gradient(135deg, #00a651 0%, #2ecc71 100%) !important;
+  border-color: #00a651 !important;
+  box-shadow: 0 2px 8px rgba(0, 166, 81, 0.3) !important;
+  color: white !important;
+}
+
+/* Rank Vermelho - Saldo Negativo */
+.mentor-item:has(.card-negativo) .mentor-rank-externo,
+.mentor-item .mentor-rank-externo.rank-negativo {
+  background: linear-gradient(135deg, #e74c3c 0%, #c0392b 100%) !important;
+  border-color: #e74c3c !important;
+  box-shadow: 0 2px 8px rgba(231, 76, 60, 0.3) !important;
+  color: white !important;
+}
+
+/* Rank Cinza - Saldo Neutro */
+.mentor-item:has(.card-neutro) .mentor-rank-externo,
+.mentor-item .mentor-rank-externo.rank-neutro {
+  background: linear-gradient(135deg, #95a5a6 0%, #7f8c8d 100%) !important;
+  border-color: #95a5a6 !important;
+  box-shadow: 0 2px 8px rgba(149, 165, 166, 0.3) !important;
+  color: white !important;
+}
+
+/* HOVER EFFECTS NO RANK */
+.mentor-item:has(.card-positivo) .mentor-rank-externo:hover,
+.mentor-item .mentor-rank-externo.rank-positivo:hover {
+  transform: scale(1.1);
+  box-shadow: 0 4px 12px rgba(0, 166, 81, 0.5) !important;
+}
+
+.mentor-item:has(.card-negativo) .mentor-rank-externo:hover,
+.mentor-item .mentor-rank-externo.rank-negativo:hover {
+  transform: scale(1.1);
+  box-shadow: 0 4px 12px rgba(231, 76, 60, 0.5) !important;
+}
+
+.mentor-item:has(.card-neutro) .mentor-rank-externo:hover,
+.mentor-item .mentor-rank-externo.rank-neutro:hover {
+  transform: scale(1.1);
+  box-shadow: 0 4px 12px rgba(149, 165, 166, 0.5) !important;
+}
+
+/* MENTORES SEM VALORES - REGRAS CRÍTICAS */
+.mentor-item.sem-valores {
+  opacity: 1 !important; /* Container mantém opacidade normal */
+}
+
+.mentor-item.sem-valores .mentor-rank-externo {
+  display: none !important;
+  visibility: hidden !important;
+  opacity: 0 !important;
+  pointer-events: none !important;
+}
+
+.mentor-item.sem-valores .mentor-card {
+  opacity: 0.42 !important;
+  transition: opacity 0.3s ease !important;
+  background: #f5f5f5 !important;
+  border-style: dashed !important;
+  cursor: pointer !important;
+}
+
+.mentor-item.sem-valores .mentor-card:hover {
+  opacity: 0.6 !important;
+  transform: none !important;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1) !important;
+}
+
+/* Manter o botão de menu visível mesmo sem valores */
+.mentor-item.sem-valores .menu-toggle,
+.mentor-item.sem-valores .mentor-menu-externo {
+  pointer-events: auto !important;
+  opacity: 1 !important;
+  visibility: visible !important;
+  display: inline-flex !important;
+  z-index: 99999 !important;
+}
+
+/* GARANTIR VISIBILIDADE PARA MENTORES COM VALORES */
+.mentor-item:not(.sem-valores) .mentor-rank-externo {
+  display: flex !important;
+  visibility: visible !important;
+  opacity: 1 !important;
+}
+
+.mentor-item:not(.sem-valores) .mentor-card {
+  opacity: 1 !important;
+}
+
+/* ANIMAÇÃO PULSE PARA RANK #1 */
+.mentor-item:first-child .mentor-rank-externo {
+  animation: pulseBadge 2s ease-in-out infinite;
+}
+
+.mentor-item:first-child .mentor-rank-externo {
+  position: relative !important;
+  z-index: 100002 !important;
+  -webkit-font-smoothing: antialiased !important;
+  -moz-osx-font-smoothing: grayscale !important;
+  text-rendering: geometricPrecision !important;
+  font-weight: 800 !important;
+  filter: none !important;
+  transform: translateZ(0) !important;
+  will-change: transform, opacity !important;
+  text-shadow: 0 1px 0 rgba(0, 0, 0, 0.08) !important;
+}
+
+@keyframes pulseBadge {
+  0%,
+  100% {
+    transform: scale(1);
+  }
+  50% {
+    transform: scale(1.05);
+  }
+}
+
+/* AJUSTE DE FONTE PARA NÚMEROS GRANDES */
+.mentor-rank-externo {
+  font-size: 13px !important;
+}
+
+/* Para ranks com 2 dígitos, fonte menor */
+.mentor-rank-externo:has-text("10"),
+.mentor-rank-externo:has-text("11"),
+.mentor-rank-externo:has-text("12"),
+.mentor-rank-externo:has-text("13"),
+.mentor-rank-externo:has-text("14"),
+.mentor-rank-externo:has-text("15"),
+.mentor-rank-externo:has-text("16"),
+.mentor-rank-externo:has-text("17"),
+.mentor-rank-externo:has-text("18"),
+.mentor-rank-externo:has-text("19"),
+.mentor-rank-externo:has-text("20") {
+  font-size: 11px !important;
+}
+
+/* RESPONSIVIDADE */
+@media (max-width: 768px) {
+  .mentor-rank-externo {
+    width: var(--gd-linha-dia-height, 28px) !important;
+    height: var(--gd-linha-dia-height, 28px) !important;
+    min-width: var(--gd-linha-dia-min-height, 28px) !important;
+    min-height: var(--gd-linha-dia-min-height, 28px) !important;
+    font-size: 11px !important;
+  }
+}
+
+@media (max-width: 480px) {
+  .mentor-rank-externo {
+    width: 24px !important;
+    height: 24px !important;
+    min-width: 24px !important;
+    min-height: 24px !important;
+    font-size: 10px !important;
+  }
+}
+
+/* CORREÇÃO: VALOR DO SALDO VISÍVEL */
+.value-box-saldo {
+  flex: 1 1 auto;
+  min-width: 90px !important;
+  max-width: 140px !important;
+  display: flex !important;
+  flex-direction: column !important;
+  align-items: center !important;
+  justify-content: center !important;
+  padding: 0 5px !important;
+  margin-left: 10px !important;
+  height: 100%;
+  overflow: visible !important;
+}
+
+.value-box-saldo p:nth-child(2) {
+  display: block !important;
+  visibility: visible !important;
+  font-size: 13px !important;
+  font-weight: 700 !important;
+  white-space: nowrap !important;
+  overflow: visible !important;
+  text-overflow: clip !important;
+  line-height: 1.2 !important;
+  margin: 0 !important;
+  padding: 0 !important;
+}
+
+/* CORES DO SALDO BASEADAS NO ESTADO */
+.mentor-card.card-positivo .value-box-saldo p:nth-child(2) {
+  color: #00a651 !important;
+}
+
+.mentor-card.card-negativo .value-box-saldo p:nth-child(2) {
+  color: #e74c3c !important;
+}
+
+.mentor-card.card-neutro .value-box-saldo p:nth-child(2) {
+  color: #7f8c8d !important;
+}
+
+/* TRANSIÇÕES SUAVES PARA EVITAR FLICKER */
+.mentor-rank-externo {
+  transition: opacity 0.2s ease, visibility 0.2s ease, display 0.2s ease !important;
+}
+
+.mentor-card {
+  transition: opacity 0.3s ease, background 0.3s ease, border 0.3s ease !important;
+}
+
+/* FORÇA APLICAÇÃO IMEDIATA - MAIOR ESPECIFICIDADE */
+body .mentor-item.sem-valores .mentor-rank-externo {
+  display: none !important;
+  visibility: hidden !important;
+  opacity: 0 !important;
+}
+
+body .mentor-item:not(.sem-valores) .mentor-rank-externo {
+  display: flex !important;
+  visibility: visible !important;
+  opacity: 1 !important;
+}
+
+/* PREVENT FLASH OF UNSTYLED CONTENT */
+.mentor-rank-externo[style*="display: none"] {
+  display: none !important;
+}
+
+.mentor-rank-externo[style*="display: flex"] {
+  display: flex !important;
+}
+
+/* =======================================================================================================================================================
+  (DATA-PLACAR-SALDO) - CONTROLE DE ALTURA
+   =======================================================================================================================================================*/
+@import url("https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700&display=swap");
+/**/
+/**/
+/**/
+/**/
+/**/
+/**/
+/**/
+/**/
+/**/
+/**/
+/**/
+/* =======================================================================================================================================================
+     - ROOT- ROOT - ROOT  - ROOT- ROOT - ROOT  - ROOT- ROOT - ROOT  - ROOT- ROOT - ROOT  - ROOT- ROOT - ROOT - ROOT- ROOT - ROOT
+  =======================================================================================================================================================*/
+:root {
+  --lista-dias-height-default: var(--lista-dias-base);
+  --lista-dias-height-desktop: calc(
+    var(--lista-dias-base) + 168px
+  ); /* => 583px */
+  --lista-dias-maxheight-desktop: var(--lista-dias-height-desktop);
+  --lista-dias-height-externo: calc(
+    var(--lista-dias-base) + 108px
+  ); /* => 523px */
+  --lista-dias-maxheight-externo: calc(
+    var(--lista-dias-height-externo) + 27px
+  ); /* => 550px */
+  --lista-dias-height-block: calc(
+    var(--lista-dias-base) + 100px
+  ); /* => 515px */
+  --lista-dias-maxheight-block: calc(
+    var(--lista-dias-height-block) + 300px
+  ); /* => 815px */
+  --lista-dias-height-mobile: calc(
+    var(--lista-dias-base) - 100px
+  ); /* => 315px */
+
+  /* Largura responsiva derivada */
+  --lista-dias-width-responsive: clamp(
+    var(--lista-dias-minwidth-mobile),
+    92vw,
+    var(--lista-dias-maxwidth-block)
+  );
+  --lista-dias-container-width: min(
+    var(--lista-dias-width-base),
+    var(--lista-dias-maxwidth-desktop)
+  );
+
+  /* Variáveis de largura para o campo `.lista-dias` (controle centralizado) */
+  --lista-dias-width: var(--lista-dias-width-responsive);
+  --lista-dias-maxwidth: var(--lista-dias-container-width);
+
+  /**/
+  /**/
+  /**/
+  /**/
+  /**/
+  /**/
+  /* --------------------------------------------------
+    ALTURA - LARGURA - ALTURA - LARGURA - 
+  -------------------------------------------------- */
+  --lista-dias-height: auto !important;
+  --lista-dias-maxheight: none !important;
+  --lista-dias-height-desktop: auto !important;
+  --lista-dias-maxheight-desktop: none !important;
+  --lista-dias-height-externo: auto !important;
+  --lista-dias-maxheight-externo: none !important;
+  --lista-dias-height-block: auto !important;
+  --lista-dias-maxheight-block: none !important;
+  --lista-dias-height-mobile: auto !important;
+  /* --------------------------------------------------
+    ALTURA - LARGURA - ALTURA - LARGURA - 
+  -------------------------------------------------- */
+  /**/
+  /**/
+  /**/
+  /**/
+  /**/
+  /**/
+  /**/
+
+  /* --------------------------------------------------
+   - FONTE - FONTE  - FONTE - FONTE
+  -------------------------------------------------- */
+  /* Fontes */
+  --font-family-base: "Inter", -apple-system, BlinkMacSystemFont, "Segoe UI",
+    Roboto, sans-serif;
+  --font-family-heading: "Rajdhani", sans-serif;
+  --font-family-mono: "Courier New", Courier, monospace;
+
+  /* Pesos */
+  --fw-regular: 400;
+  --fw-medium: 400;
+  --fw-semibold: 400;
+  --date-font-weight: 400; /* Peso datas  */
+  --date-font-weight-positive: 400; /* Peso datas positivos */
+
+  /* Tamanhos */
+  --fs-xs: 12px; /* Fontes para tela Celular */
+  --fs-sm: 12px; /* Fontes para Lista itens */
+  --fs-base: 12px; /* Fontes para data */
+  --fs-lg: 12px; /*  */
+  --fs-placar: 12px; /* Tamanho do placar (lista ao lado das datas) */
+  --fs-placar-top: 20px; /* Tamanho do placar no topo do bloco (mês / cabeçalho) */
+  --fs-valor: 12px; /* Tamanho do valor (R$)*/
+
+  /* Cores principais */
+  --color-positive: #00a651; /* texto valor positivo */
+  --color-positive-strong: #059669; /* variação para placar */
+  --color-negative: #dc2626; /* vermelho padrão */
+  --color-negative-border: #cf0101; /* borda vermelha forte */
+  --color-neutral: #94a3b8; /* cinza claro */
+  --color-muted: #6c757d; /* neutro escuro */
+  --color-trophy: #f59e0b; /* troféu/dourado */
+  --color-meta: #f3b200; /* ícone moeda/meta */
+
+  /* Icon sizes */
+  --icon-size-sm: 12px;
+  --icon-size-md: 15px;
+  --icon-size-lg: 20px;
+  /* Variáveis específicas para a coluna de datas */
+  --date-font-family: var(--font-family-mono);
+  --date-font-size: var(--fs-base);
+  --date-color: var(--color-muted);
+  --date-letter-spacing: 0;
+  /* --------------------------------------------------
+   - FONTE - FONTE  - FONTE - FONTE
+-------------------------------------------------- */
+  /**/
+  /**/
+  /**/
+  /**/
+  /**/
+  /* --------------------------------------------------
+   - MARGIN TOP - MARGIN TOP - MARGIN TOP -
+  -------------------------------------------------- */
+  --lista-dias-margin-top: 20px; /*  lista de dias ( DATA - PLACAR - VALOR ) */
+  --widget-meta-valor-2-margin-top: 5px; /* valor  da meta */
+  --rotulo-restando-meta-mes-margin-top: -12px; /* 'Restando p/ Meta do Mês' */
+  --widget-barra-container-2-margin-top: 5px; /*barra de progresso */
+  --rotulo-saldo-bloco2-margin-top: 0px; /* rótulo + saldo  */
+  --titulo-mes-margin-top: 0px; /*  DATA (ex: 'SETEMBRO 2025') */
+  --placar-2-top: 30px; /* PLACAR */
+  /* --------------------------------------------------
+   - MARGIN TOP - MARGIN TOP - MARGIN TOP -
+  -------------------------------------------------- */
+  /**/
+  /**/
+  /**/
+  /**/
+  /**/
+
+  /* --------------------------------------------------
+   - MARGIN LEFT - MARGIN RIGHT - MARGIN LEFT -
+  -------------------------------------------------- */
+  --lista-dias-margin-left: 4px; /* BLOCO.. lista de dias */
+  --widget-meta-valor-2-margin-left: 0px; /*valor da meta */
+  --rotulo-restando-meta-mes-margin-left: 0px; /* 'Restando p/ Meta do Mês' */
+  --widget-barra-container-2-margin-left: 0px; /* margem-left para a barra de progresso */
+  --rotulo-saldo-bloco2-margin-left: 0px; /* rótulo + saldo do Bloco 2 */
+  --titulo-mes-margin-left: 0px; /*  DATA (ex: 'SETEMBRO 2025') */
+  --placar-2-left: 50%; /* PLACAR TOPO */
+  --lista-dias-data-margin-left: -4px; /* DATA .lista-dias */
+  --placar-2-translate: -10px; /* PLACAR DA LISTA */
+  --lista-dias-valor-margin-left: 20px; /* VALOR .lista-dias */
+  --lista-dias-icone-margin-left: 0px; /* ICONE .lista-dias */
+  --lista-dias-icone-margin-right-edge: -18px; /* ICONE .lista-dias */
+
+  /* Left border colors for lista-dias lines */
+  --lista-dias-border-left: rgba(156, 163, 175, 0.3); /* neutral light gray */
+  --lista-dias-border-left-today: #373a41; /* darker gray for today */
+
+  /* --------------------------------------------------
+   - MARGIN LEFT - MARGIN LEFT - MARGIN LEFT -
+  -------------------------------------------------- */
+  /**/
+  /**/
+  /**/
+  /**/
+  /**/
+  /* --------------------------------------------------
+   PADDING - PADDING - PADDING - PADDING - PADDING
+  -------------------------------------------------- */
+  --lista-dias-lateral-padding: -10px; /* BLOCO .lista-dias (positive by default) */
+
+  /* CAMPO RESPONSAVEL PELO : ( DATA + PLACAR + VALOR + ICONE )*/
+  --gd-linha-dia-height: 28px; /* altura do campo de cada linha */
+  --gd-linha-dia-min-height: 28px; /* altura do campo de cada linha */
+  --gd-linha-dia-max-height: 28px; /* altura do campo de cada linha */
+  --gd-linha-dia-gap: 10px; /* horizontal margin between items */
+  --gd-linha-dia-padding-x: 16px; /* horizontal padding inside each item */
+  --gd-linha-dia-row-gap: 0px; /* vertical margin between rows */
+  --gd-linha-dia-font-size: 14px; /* tamanho da fonte */
+  --gd-linha-dia-font-weight: 400; /* peso da fonte (padronizado para valores) */
+
+  /* --------------------------------------------------
+ PADDING - PADDING - PADDING - PADDING - PADDING
+  -------------------------------------------------- */
+  /**/
+  /**/
+  /**/
+  /**/
+  /**/
+  /**/
+
+  /* --------------------------------------------------
+    COR - DATA - PLACAR - VALOR - ICONE - BORDA
+  -------------------------------------------------- */
+
+  /* Valor Positivo (Verde) */
+  --gd-valor-positive-bg: rgb(242, 255, 247);
+  --gd-valor-positive-border: #00a651;
+  --gd-valor-positive-text: #00a651;
+  --gd-valor-positive-border-width: 3px;
+  --gd-valor-positive-padding-left: 13px;
+
+  /* Valor Negativo (Vermelho) */
+  --gd-valor-negative-bg: rgb(255, 235, 235);
+  --gd-valor-negative-border: #d64545;
+  --gd-valor-negative-text: #dc2626;
+  --gd-valor-negative-border-width: 3px;
+  --gd-valor-negative-padding-left: 13px;
+
+  /* Valor Zero (Neutro) */
+  --gd-valor-zero-bg: rgba(255, 255, 255, 0.95);
+  --gd-valor-zero-border: rgba(156, 163, 175, 0.3);
+  --gd-valor-zero-text: #94a3b8;
+  --gd-valor-zero-border-width: 3px;
+  --gd-valor-zero-padding-left: 13px;
+
+  /* Hover Effects */
+  --gd-valor-positive-hover-bg: rgba(141, 219, 170, 0.18);
+  --gd-valor-negative-hover-bg: rgba(247, 224, 224, 0.9);
+  --gd-valor-zero-hover-bg: rgba(255, 255, 255, 1);
+
+  /* Transições */
+  --gd-valor-transition: background-color 0.15s ease, border-color 0.15s ease,
+    color 0.15s ease;
+
+  /* PLACAR - PLACAR (NÃO MUDAM COM SALDO) ===== */
+  --placar-green-color-fixed: #03a158;
+  --placar-red-color-fixed: #e93a3a;
+  --placar-separator-color-fixed: #6d6b6b;
+
+  /* ===== CORES PARA SALDO ZERO (0,00) ===== */
+  --placar-zero-green-color: #94a3b8; /* Cinza para green quando saldo 0 */
+  --placar-zero-red-color: #94a3b8; /* Cinza para red quando saldo 0 */
+  --placar-zero-separator-color: #94a3b8; /* Cinza para separador quando saldo 0 */
+
+  /* ===== CORES ESPECIAIS PARA DIA ATUAL ===== */
+  --placar-hoje-green-color: #03a158;
+  --placar-hoje-red-color: #e93a3a;
+  --placar-hoje-separator-color: #6d6b6b;
+
+  /* Tamanhos */
+  --placar-font-size-fixed: 12px;
+  --placar-font-weight-fixed: 400;
+
+  /* ===== CONTROLE INDEPENDENTE DO SEPARADOR ===== */
+  --placar-separator-font-size: 9px;
+  --placar-separator-font-weight: 400;
+  --placar-separator-margin: 0 2px;
+  --placar-separator-opacity: 1;
+  --gd-placar-gap: 2px; /* gap between green number, separator and red number */
+  --gd-placar-padding-x: 4px; /* horizontal padding for each placar number */
+  --gd-placar-separador-padding-x: 2px; /* horizontal padding for the separator */
+  --gd-placar-separador-margin-x: 2px; /* margin around the separator */
+  /**/
+  /**/
+  /**/
+  /**/
+  /**/
+  /**/
+
+  /* --------------------------------------------------
+    COR - DATA - PLACAR - VALOR - ICONE - BORDA
+  -------------------------------------------------- */
+  /**/
+  /**/
+  /**/
+  /**/
+  /**/
+  /**/
+  /* --------------------------------------------------
+    COR - DIA ATUAL - COR - DIA ATUAL - COR - DIA ATUAL
+  -------------------------------------------------- */
+
+  /* Backgrounds para o dia atual */
+  --dia-atual-positivo-bg: linear-gradient(
+    90deg,
+    #edfcf0fa,
+    rgba(230, 253, 242, 0.98)
+  );
+  --dia-atual-negativo-bg: linear-gradient(
+    90deg,
+    rgba(255, 242, 242, 0.98),
+    rgba(255, 238, 238, 0.98)
+  );
+  --dia-atual-zero-bg: linear-gradient(
+    90deg,
+    rgba(255, 255, 255, 0.98),
+    rgba(248, 249, 250, 0.98)
+  );
+
+  /* Cores dos textos - dia atual genérico */
+  --dia-atual-data-color: #111827;
+  --dia-atual-data-weight: 700;
+
+  --dia-atual-placar-color: #111827;
+  --dia-atual-placar-weight: 700;
+
+  --dia-atual-valor-color: #111827;
+  --dia-atual-valor-weight: 700;
+
+  --dia-atual-icone-color: #111827;
+  --dia-atual-icone-weight: 700;
+
+  /* Para combinações com valores específicos */
+  /* Dia atual + valor positivo */
+  --dia-atual-positivo-data-color: #058b32;
+  --dia-atual-positivo-placar-color: #058b32;
+  --dia-atual-positivo-valor-color: #058b32;
+  --dia-atual-positivo-icone-color: #058b32;
+
+  /* Dia atual + valor negativo */
+  --dia-atual-negativo-data-color: #ec0606;
+  --dia-atual-negativo-placar-color: #ec0606;
+  --dia-atual-negativo-valor-color: #ec0606;
+  --dia-atual-negativo-icone-color: #ec0606;
+
+  /* Dia atual + valor zero */
+  --dia-atual-zero-data-color: #111827;
+  --dia-atual-zero-placar-color: #111827;
+  --dia-atual-zero-valor-color: #111827;
+  --dia-atual-zero-icone-color: #111827;
+
+  /* Bordas do dia atual - genérico */
+  --dia-atual-border-left-color: #43464d;
+  --dia-atual-border-left-width: 3px;
+  --dia-atual-border-left-style: solid;
+
+  /* Dia atual + valor positivo */
+  --dia-atual-positivo-border-left-color: #058b32;
+  --dia-atual-positivo-border-left-width: 3px;
+  --dia-atual-positivo-border-left-style: solid;
+
+  /* Dia atual + valor negativo */
+  --dia-atual-negativo-border-left-color: #ec0606;
+  --dia-atual-negativo-border-left-width: 3px;
+  --dia-atual-negativo-border-left-style: solid;
+
+  /* Dia atual + valor zero */
+  --dia-atual-zero-border-left-color: #43464d;
+  --dia-atual-zero-border-left-width: 3px;
+  --dia-atual-zero-border-left-style: solid;
+
+  /* Padding após borda */
+  --dia-atual-padding-left: 13px;
+
+  /* Backwards-compatible aliases (some files reference these variants) */
+  --dia-atual-border-width: var(--dia-atual-border-left-width, 4px);
+  --dia-atual-border-style: var(--dia-atual-border-left-style, solid);
+  --dia-atual-border-color: var(--dia-atual-border-left-color, #43464d);
+
+  --dia-atual-positivo-border-color: var(
+    --dia-atual-positivo-border-left-color,
+    #058b32
+  );
+  --dia-atual-negativo-border-color: var(
+    --dia-atual-negativo-border-left-color,
+    #ec0606
+  );
+  --dia-atual-zero-border-color: var(
+    --dia-atual-zero-border-left-color,
+    #43464d
+  );
+
+  /* --------------------------------------------------
+    COR - DIA ATUAL - COR - DIA ATUAL - COR - DIA ATUAL
+  -------------------------------------------------- */
+  /**/
+  /**/
+  /**/
+  /**/
+  /**/
+  /**/
+}
+
+/**/
+/**/
+/**/
+/**/
+/**/
+/**/
+/**/
+/**/
+/**/
+/**/
+/**/
+/* =======================================================================================================================================================
+     - ROOT- ROOT - ROOT  - ROOT- ROOT - ROOT  - ROOT- ROOT - ROOT  - ROOT- ROOT - ROOT  - ROOT- ROOT - ROOT - ROOT- ROOT - ROOT
+  =======================================================================================================================================================*/
+/**/
+/**/
+/**/
+/**/
+/**/
+/**/
+/**/
+/**/
+/**/
+/**/
+/* Evita flash do placar antes do JS posicionar/injetar estilos */
+#pontuacao-2 {
+  visibility: hidden !important;
+}
+
+/* ======================================================================
+   FORCE PLACAR COLORS - ensure placar-green is always green,
+   placar-red is always red, and texto-cinza always wins (neutral gray).
+   Also provide .separador-transparente helper for JS toggling instead
+   of inline style writes.
+   ======================================================================
+*/
+.placar.placar-green,
+[class*="placar-green"] {
+  color: var(--color-positive, #00a651) !important;
+  fill: var(--color-positive, #00a651) !important; /* SVG fallback */
+  font-weight: 700 !important;
+}
+
+.placar.placar-red,
+[class*="placar-red"] {
+  color: var(--color-negative, #dc2626) !important;
+  fill: var(--color-negative, #dc2626) !important; /* SVG fallback */
+  font-weight: 700 !important;
+}
+
+/* Neutral / zero state must override any green/red when applied */
+.placar.texto-cinza,
+[class*="texto-cinza"] {
+  color: var(--color-neutral, #94a3b8) !important;
+  fill: var(--color-neutral, #94a3b8) !important;
+  font-weight: 400 !important;
+}
+
+/* If both classes are present, ensure the zero-state wins */
+.placar.texto-cinza.placar-green,
+.placar.texto-cinza.placar-red,
+[class*="texto-cinza"][class*="placar-green"],
+[class*="texto-cinza"][class*="placar-red"] {
+  color: var(--color-neutral, #94a3b8) !important;
+  fill: var(--color-neutral, #94a3b8) !important;
+}
+
+/* Separator control: neutral color and transparent helper */
+.placar.separador {
+  color: var(--gd-placar-separador-color, rgba(109, 107, 107, 0.95)) !important;
+}
+
+.separador-transparente {
+  color: transparent !important;
+}
+
+/* Small layout niceties: use the root spacing variables if present */
+.placar {
+  gap: var(--gd-placar-gap, 2px) !important;
+  padding-left: var(--gd-placar-padding-x, 4px) !important;
+  padding-right: var(--gd-placar-padding-x, 4px) !important;
+}
+
+.container .bloco.bloco-2 .resumo-mes .lista-dias {
+  /* Layout: largura controlada por variáveis no :root */
+  width: var(--lista-dias-width, calc(100% + 24px)) !important;
+  max-width: var(--lista-dias-maxwidth, calc(100% + 24px)) !important;
+  margin-left: var(
+    --lista-dias-margin-left,
+    10px
+  ) !important; /* controlado por :root */
+  box-sizing: border-box !important;
+  position: relative !important;
+  z-index: auto !important;
+  overflow-x: hidden !important;
+  overflow-y: auto !important;
+  height: var(--lista-dias-height, var(--lista-dias-height-desktop)) !important;
+  max-height: var(
+    --lista-dias-maxheight,
+    var(--lista-dias-maxheight-desktop)
+  ) !important;
+  border-radius: 20px !important;
+  padding: 12px var(--lista-dias-lateral-padding, 10px) !important; /* Padding controlado por var */
+  border-left: none !important;
+  border-right: none !important;
+  box-shadow: none !important;
+  flex: 1 !important;
+  scrollbar-width: thin !important;
+  -ms-overflow-style: auto !important;
+  scrollbar-gutter: stable both-edges !important;
+  background: rgba(238, 238, 238, 0.95) !important;
+}
+
+/* CODIGO DO CAMPO : bloco-meta-simples
+   - Regras do cabeçalho interno (.bloco-meta-simples) dentro de .resumo-mes
+*/
+
+/* Override: remover visual do bloco interno com traço cinza mantendo o conteúdo
+   Mantém o DOM (seguro para JS) mas elimina borda/fundo/padding para ficar como um único bloco externo */
+.container .bloco.bloco-2 .resumo-mes .bloco-meta-simples {
+  border: none !important;
+  background: transparent !important;
+  box-shadow: none !important;
+  padding: 0 !important;
+  margin: 0 0 8px 0 !important;
+}
+
+.container
+  .bloco.bloco-2
+  .resumo-mes
+  .bloco-meta-simples
+  .campo-armazena-data-placar {
+  padding: 0 !important;
+}
+
+/* Compact override: make .lista-dias visually compact like .lista-meses in ano.css */
+.container .bloco.bloco-2 .resumo-mes .lista-dias,
+.container .bloco.bloco-2 .resumo-mes .lista-dias.compact {
+  width: 100% !important;
+  max-width: 100% !important;
+  margin: var(--lista-dias-margin-top, 8px) 0 0 0 !important;
+  overflow: visible !important;
+  overflow-x: hidden !important;
+  overflow-y: visible !important;
+  max-height: none !important;
+  height: auto !important;
+  min-height: auto !important;
+  padding: 8px 12px !important;
+  background: rgba(247, 246, 246, 0.95) !important;
+  border-radius: 10px !important;
+  box-sizing: border-box !important;
+  scrollbar-width: none !important;
+  scrollbar-color: transparent transparent !important;
+  gap: 0 !important;
+  row-gap: 2px !important;
+  contain: none !important;
+  flex-grow: 0 !important;
+  flex-shrink: 0 !important;
+}
+
+.container .bloco.bloco-2 .resumo-mes .lista-dias::-webkit-scrollbar {
+  display: none !important;
+  width: 0 !important;
+  height: 0 !important;
+}
+
+.container .bloco.bloco-2 .resumo-mes .lista-dias::before,
+.container .bloco.bloco-2 .resumo-mes .lista-dias::after {
+  display: none !important;
+  content: none !important;
+}
+/* Fixo-topo variant: make the small header flush to bloco-2 lateral edges with rounded border */
+.container .bloco.bloco-2 .resumo-mes .bloco-meta-simples.fixo-topo {
+  position: relative !important;
+  width: 100% !important;
+  margin: 0 !important;
+  padding: 0 !important;
+  background: transparent !important;
+  border: none !important;
+  box-shadow: none !important;
+}
+
+/* Ensure inner content doesn't inherit removed padding */
+.container
+  .bloco.bloco-2
+  .resumo-mes
+  .bloco-meta-simples.fixo-topo
+  .campo-armazena-data-placar {
+  padding: 0 !important;
+}
+/* Make the data+score area flush to the bloco-2 inner edges */
+.container .bloco.bloco-2 .resumo-mes .campo-armazena-data-placar {
+  /* extend to the bloco edges (bloco has 8px padding) */
+  width: 100% !important;
+  margin: 0 0px !important; /* pull the element to the bloco inner edges */
+  box-sizing: border-box !important;
+  padding: 0 !important; /* no internal horizontal spacing */
+  display: flex !important;
+  align-items: center !important;
+  justify-content: space-between !important;
+}
+
+/* FIX: remove faint hairline on the right edge of Bloco 2 header
+   - ensure the fixed-top header and its inner container sit flush with
+     the bloco's rounded corners and don't show any right-side seam */
+.container .bloco.bloco-2 .resumo-mes .bloco-meta-simples.fixo-topo {
+  left: 0 !important;
+  right: 0 !important;
+  width: 100% !important;
+  padding-right: 0 !important;
+  padding-left: 0 !important;
+  border-radius: 15px 15px 0 0 !important; /* match .bloco rounding */
+  background: transparent !important;
+  box-shadow: none !important;
+  outline: none !important;
+  -webkit-backface-visibility: hidden !important;
+  backface-visibility: hidden !important;
+}
+
+.container .bloco.bloco-2 .resumo-mes .campo-armazena-data-placar {
+  border-right: none !important;
+  padding-right: 0 !important;
+  margin-right: 0 !important;
+  border-radius: 15px 15px 0 0 !important; /* keep top corners rounded */
+  box-shadow: none !important;
+  background-clip: padding-box !important;
+}
+
+/* Stronger fixes for subpixel hairline artifacts (visible at 100% and zoomed levels)
+   - force same background as parent .bloco
+   - promote elements to their own layer and remove subtle outlines/shadows
+   - use transparent outline to prevent anti-alias seam rendering */
+.container .bloco.bloco-2 {
+  /* match bloco background so header blend is seamless */
+  background-color: #f3f5f4 !important;
+  -webkit-backface-visibility: hidden !important;
+  backface-visibility: hidden !important;
+  transform: translateZ(0) !important; /* promote to its own layer */
+  will-change: transform, box-shadow !important;
+  outline: 1px solid rgba(0, 0, 0, 0) !important; /* prevents hairline on some renderers */
+}
+
+.container .bloco.bloco-2 .bloco-meta-simples.fixo-topo,
+.container .bloco.bloco-2 .resumo-mes .campo-armazena-data-placar {
+  background-color: inherit !important; /* ensure exact same background */
+  box-shadow: none !important;
+  border: none !important;
+  outline: 1px solid rgba(0, 0, 0, 0) !important; /* force composite without visible border */
+  -webkit-transform: translateZ(
+    0.01px
+  ) !important; /* tiny transform to avoid subpixel seam */
+  transform: translateZ(0.01px) !important;
+}
+
+/* Fallback: if a hairline still appears on some displays, slightly overlap the right edge
+   by 0.5px (non-destructive) to hide seam only on devices that render subpixel gaps */
+.container .bloco.bloco-2 .bloco-meta-simples.fixo-topo::after {
+  content: "" !important;
+  position: absolute !important;
+  top: 0 !important;
+  right: -0.5px !important;
+  width: 1px !important;
+  height: 100% !important;
+  background: inherit !important;
+  pointer-events: none !important;
+  display: block !important;
+  border-radius: 0 15px 0 0 !important;
+}
+
+.container
+  .bloco.bloco-2
+  .resumo-mes
+  .campo-armazena-data-placar
+  .area-central-2 {
+  flex: 1 1 auto !important;
+  display: flex !important;
+  justify-content: center !important;
+}
+/* Forçar largura do Bloco 2 via variáveis: controle centralizado em :root */
+.container .bloco.bloco-2 {
+  width: var(--lista-dias-width-responsive) !important;
+  max-width: var(--lista-dias-container-width) !important;
+  box-sizing: border-box !important;
+  padding: var(--bloco-2-padding, 10px) !important;
+}
+
+@media (max-width: 480px) {
+  .container .bloco.bloco-2 {
+    width: 100% !important;
+    max-width: 100% !important;
+  }
+}
+
+/* =======================================================================================================================================================
+  UTILITÁRIOS E OCULTAR SCROLLBAR - INTEGRADO
+  =======================================================================================================================================================*/
+
+/* ===== FORÇAR CINZA PARA ELEMENTOS NEUTROS (texto-cinza) =====
+   Esta regra tem alta especificidade e !important para garantir que,
+   quando a classe `texto-cinza` estiver aplicada (gerada pelo PHP ou JS),
+   o placar e o separador fiquem sempre na cor neutra, mesmo se outras
+   regras com !important tentarem aplicar verde/vermelho. */
+.gd-linha-dia .placar-dia .placar.texto-cinza,
+.gd-linha-dia .placar-dia .placar.texto-cinza.placar-green,
+.gd-linha-dia .placar-dia .placar.texto-cinza.placar-red,
+.gd-linha-dia .placar-dia .separador.texto-cinza,
+.lista-dias .placar.texto-cinza,
+.lista-dias .placar.texto-cinza.placar-green,
+.lista-dias .placar.texto-cinza.placar-red {
+  color: var(--color-neutral, #94a3b8) !important;
+  fill: var(--color-neutral, #94a3b8) !important;
+  font-weight: 400 !important;
+  opacity: 1 !important;
+}
+
+/* Também garantir que o estilo interno (i, span) herde a cor neutra */
+.gd-linha-dia .placar-dia .placar.texto-cinza *,
+.lista-dias .placar.texto-cinza * {
+  color: inherit !important;
+  fill: inherit !important;
+}
+
+/* =======================================================================================================================================================
+  MANUTENÇÃO DO CSS ORIGINAL PARA OUTROS COMPONENTES - WIDGETS E META
+  =======================================================================================================================================================*/
+
+/* individual: widget/meta elements */
+.widget-meta-valor-2 {
+  display: flex !important;
+  align-items: center !important;
+  justify-content: flex-start !important;
+  gap: 8px !important;
+  font-size: 18px !important;
+  font-family: "Rajdhani", sans-serif !important;
+  transition: all 0.3s ease !important;
+  margin-bottom: 8px !important;
+  margin-left: var(--widget-meta-valor-2-margin-left) !important;
+  padding-left: 0 !important;
+  width: auto !important;
+}
+
+#meta-valor-2 {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  min-height: 40px;
+}
+
+.widget-barra-container-2 {
+  background: #ecf0f1 !important;
+  border-radius: 20px !important;
+  height: 24px !important;
+  position: relative !important;
+  overflow: hidden !important;
+  box-shadow: inset 0 2px 4px rgba(0, 0, 0, 0.1) !important;
+  margin-top: -2px !important;
+  width: 330px !important;
+  max-width: 100% !important;
+}
+
+.widget-barra-progresso-2 {
+  height: 100% !important;
+  border-radius: 25px !important;
+  transition: all 0.5s cubic-bezier(0.4, 0, 0.2, 1) !important;
+  position: relative !important;
+  display: flex !important;
+  align-items: center !important;
+  background: none !important;
+  box-shadow: none !important;
+  margin-top: 0px;
+}
+
+.porcentagem-barra-2 {
+  position: absolute !important;
+  right: 0 !important;
+  top: 0 !important;
+  height: 100% !important;
+  z-index: 10 !important;
+  display: flex !important;
+  align-items: center !important;
+  overflow: hidden !important;
+}
+
+.porcentagem-fundo-2 {
+  display: flex !important;
+  align-items: center !important;
+  justify-content: center !important;
+  padding: 0 10px !important;
+  height: 100% !important;
+  font-size: 12px !important;
+  font-weight: 700 !important;
+  color: white !important;
+  text-shadow: 0 1px 3px rgba(0, 0, 0, 0.3) !important;
+  transition: all 0.3s ease !important;
+  min-width: 40px !important;
+  position: relative !important;
+}
+
+.widget-info-progresso-2 {
+  margin-top: 8px !important;
+  display: flex !important;
+  justify-content: flex-start !important;
+  width: 100% !important;
+  font-size: clamp(10px, 2vw, 13px) !important;
+  color: #576574 !important;
+  font-weight: 600 !important;
+}
+/* =======================================================================================================================================================
+     DATA TOPO - DATA TOPO  DATA TOPO - DATA TOPO  DATA TOPO - DATA TOPO  DATA TOPO - DATA TOPO
+  =======================================================================================================================================================*/
+.container .bloco.bloco-2 .bloco-meta-simples .titulo-bloco {
+  /* Ajuste específico para o título do mês: alinhamento e tipografia solicitado */
+  margin-left: var(
+    --titulo-mes-margin-left
+  ) !important; /* margem esquerda controlada por :root */
+  margin-top: var(
+    --titulo-mes-margin-top
+  ) !important; /* margem superior controlada por :root */
+  font-size: 12px !important; /* tamanho da fonte: 12px */
+  font-weight: 600 !important;
+  color: #6a0dad !important; /* cor roxa (padrão profundo) */
+  line-height: 1 !important;
+  display: flex !important;
+  align-items: center !important;
+}
+
+.container .bloco.bloco-2 .bloco-meta-simples .titulo-bloco i {
+  font-size: 14px !important;
+  vertical-align: middle !important;
+  margin-right: -5px !important;
+}
+
+/* CODIGO DO CAMPO : widget-meta-valor-2 / #meta-valor-2
+  - Espaçamento entre título do mês e o container do valor da meta
+*/
+.container .bloco.bloco-2 .bloco-meta-simples .widget-meta-valor-2 {
+  /* Reduzido: diminuir a distância entre o título do mês e o container do valor da meta */
+  margin-top: var(--widget-meta-valor-2-margin-top) !important;
+}
+
+/* =======================================================================================================================================================
+  CODIGO DO CAMPO : widget-meta-valor-2 / widget-meta-rotulo-2 / widget-barra-container-2 / widget-info-progresso-2
+  - Estilos do ICONE + VALOR DA META + ROTULO + BARRA DE PROGRESSO + SALDO do Bloco 2
+  =======================================================================================================================================================*/
+
+@import url("https://fonts.googleapis.com/css2?family=Rajdhani:wght@600&display=swap");
+
+.widget-meta-valor-2,
+#meta-valor-2 {
+  display: flex !important;
+  align-items: center !important;
+  justify-content: flex-start !important;
+  gap: 8px !important;
+  font-size: 18px !important;
+  font-family: "Rajdhani", sans-serif !important;
+  transition: all 0.3s ease !important;
+  margin-bottom: 8px !important;
+  margin-left: var(--widget-meta-valor-2-margin-left) !important;
+  padding-left: 0 !important;
+  width: auto !important;
+  margin-top: var(
+    --widget-meta-valor-2-margin-top
+  ) !important; /* controlado por :root */
+}
+
+.widget-meta-valor-2 .fa-solid-2.fa-coins-2 {
+  font-size: clamp(16px, 4vw, 26px);
+  color: var(--color-meta);
+}
+
+/* ÍCONE DA MOEDA - FORÇADO PARA HTML 2 (aplica-se a: .widget-meta-valor-2 e #meta-valor-2) */
+.widget-meta-valor-2 .fa-coins-2,
+#meta-valor-2 .fa-coins-2,
+.widget-meta-valor-2 .fa-solid,
+.widget-meta-valor-2 .fa-coins,
+#meta-valor-2 .fa-solid,
+#meta-valor-2 .fa-coins,
+.fa-solid-2.fa-coins-2,
+.fa-coins-2 {
+  margin-right: 0px !important;
+  font-size: 20px !important;
+  color: var(--color-meta) !important;
+  margin-left: 0px;
+  flex-shrink: 0 !important;
+}
+
+.valor-texto-2 {
+  font-weight: 700;
+  font-size: 19px;
+  letter-spacing: -0.5px;
+}
+
+/* Estados de cor do valor da meta baseados no status atual */
+.valor-meta-2.sem-banca .valor-texto-2 {
+  color: #e67e22;
+}
+
+.valor-meta-2.meta-batida .valor-texto-2 {
+  color: #2196f3;
+}
+
+.valor-meta-2.negativo .valor-texto-2 {
+  color: #f53520;
+}
+
+.valor-meta-2.neutro .valor-texto-2 {
+  color: #7f8c8d;
+}
+
+.valor-meta-2.lucro .valor-texto-2 {
+  color: #00a651;
+}
+
+.widget-meta-rotulo-2 {
+  font-size: 14px !important;
+  color: #7f8c8d !important;
+  margin-bottom: 8px !important;
+  margin-top: var(--rotulo-saldo-bloco2-margin-top) !important;
+  margin-left: 0px !important;
+  padding-left: 0 !important;
+  font-weight: 500 !important;
+  text-transform: none !important;
+  letter-spacing: 0.5px !important;
+  text-align: left !important;
+  display: block !important;
+  width: auto !important;
+}
+
+#rotulo-meta-2 {
+  text-transform: none !important;
+  margin-left: 0px;
+}
+
+/* Quando o rótulo indica 'Restando', aplicar margin-top controlada por :root */
+#rotulo-meta-2.rotulo-restando,
+.widget-meta-rotulo-2.rotulo-restando {
+  margin-top: var(--rotulo-restando-meta-mes-margin-top, -10px) !important;
+}
+
+/* Also ensure the same margin is applied when the meta status on #meta-valor-2
+   indicates the monthly target was reached or surpassed. The .meta-batida
+   / .meta-superada classes are added to #meta-valor-2 by JS/PHP, and the
+   rotulo element appears later in the DOM, so use the general sibling selector
+   (~) to target it regardless of intermediate elements. */
+#meta-valor-2.meta-batida ~ #rotulo-meta-2,
+#meta-valor-2.meta-superada ~ #rotulo-meta-2,
+#meta-valor-2.meta-batida ~ .widget-meta-rotulo-2,
+#meta-valor-2.meta-superada ~ .widget-meta-rotulo-2 {
+  margin-top: var(--rotulo-restando-meta-mes-margin-top, -10px) !important;
+}
+
+/* CODIGO DO CAMPO : widget-barra-container-2 / #barra-progresso-2
+  - Container e barra visual que mostra o progresso em relação à meta (Bloco 2)
+*/
+
+.widget-barra-container-2 {
+  background: #ecf0f1 !important;
+  position: relative !important;
+  /* Reduzido/normalizado para não ficar sobre formulários e modais
+    (antes: 10001 !important) - se precisar sobrepor algo pontual,
+    elevar o z-index apenas nesse elemento/controle específico. */
+  z-index: auto !important;
+  position: relative !important;
+  overflow: hidden !important;
+  box-shadow: inset 0 2px 4px rgba(0, 0, 0, 0.1) !important;
+  margin-top: var(--widget-barra-container-2-margin-top) !important;
+  width: 330px !important;
+  max-width: 100% !important;
+}
+
+.widget-barra-progresso-2 {
+  height: 100% !important;
+  border-radius: 25px !important;
+  transition: all 0.5s cubic-bezier(0.4, 0, 0.2, 1) !important;
+  position: relative !important;
+  display: flex !important;
+  align-items: center !important;
+  background: none !important;
+  box-shadow: none !important;
+  margin-top: 0px;
+}
+
+/* Cores das barras baseadas no estado atual do progresso */
+.widget-barra-progresso-2.barra-lucro-2 {
+  background: linear-gradient(90deg, #4caf50, #66bb6a) !important;
+}
+
+.widget-barra-progresso-2.barra-meta-batida-2 {
+  background: linear-gradient(90deg, #2196f3, #42a5f5) !important;
+}
+
+.widget-barra-progresso-2.barra-lucro-extra-2 {
+  background: linear-gradient(90deg, #ffd700, #ffa500) !important;
+  animation: shimmer 2s linear infinite !important;
+}
+
+.widget-barra-progresso-2.barra-negativo-2 {
+  background: linear-gradient(90deg, #f44336, #ef5350) !important;
+}
+
+.widget-barra-progresso-2.barra-neutro-2 {
+  background: linear-gradient(90deg, #95a5a6, #b4bcc2) !important;
+}
+
+.widget-barra-progresso-2.barra-sem-banca-2 {
+  background: linear-gradient(90deg, #e67e22, #f39c12) !important;
+}
+
+/* CODIGO DO CAMPO : porcentagem-barra-2 / porcentagem-fundo-2
+  - Indicador de porcentagem e seu fundo (Bloco 2)
+*/
+
+.porcentagem-barra-2 {
+  position: absolute !important;
+  right: 0 !important;
+  top: 0 !important;
+  height: 100% !important;
+  z-index: 10 !important;
+  display: flex !important;
+  align-items: center !important;
+  overflow: hidden !important;
+  font-size: inherit !important;
+  font-weight: inherit !important;
+}
+
+.porcentagem-fundo-2 {
+  display: flex !important;
+  align-items: center !important;
+  justify-content: center !important;
+  padding: 0 10px !important;
+  height: 100% !important;
+  font-size: 12px !important;
+  font-weight: 700 !important;
+  color: white !important;
+  text-shadow: 0 1px 3px rgba(0, 0, 0, 0.3) !important;
+  transition: all 0.3s ease !important;
+  min-width: 40px !important;
+  position: relative !important;
+  border-radius: 0 25px 25px 0 !important;
+  border-top-left-radius: 0 !important;
+  border-bottom-left-radius: 0 !important;
+  border-top-right-radius: 25px !important;
+  border-bottom-right-radius: 25px !important;
+  border-left: 2px solid rgba(255, 255, 255, 0.3) !important;
+}
+
+.container .bloco.bloco-2 .widget-info-progresso-2 {
+  margin-top: 10px !important;
+  display: flex !important;
+  justify-content: flex-start !important;
+  width: 100% !important;
+  font-size: clamp(10px, 2vw, 13px) !important;
+  color: #576574 !important;
+  font-weight: 600 !important;
+}
+
+/* CSS do fundo da porcentagem */
+.porcentagem-barra-2.pequeno .porcentagem-fundo-2 {
+  border-radius: 0 25px 25px 0 !important;
+  border-top-left-radius: 0 !important;
+  border-bottom-left-radius: 0 !important;
+  border-top-right-radius: 25px !important;
+  border-bottom-right-radius: 25px !important;
+  min-width: 45px !important;
+  padding: 0 8px !important;
+}
+
+/* Cores específicas da porcentagem baseadas no estado da barra */
+.porcentagem-fundo-2.barra-lucro-2 {
+  background: rgba(76, 175, 80, 0.9) !important;
+  backdrop-filter: blur(5px) !important;
+  border-top-left-radius: 0 !important;
+  border-bottom-left-radius: 0 !important;
+  border-top-right-radius: 25px !important;
+  border-bottom-right-radius: 25px !important;
+}
+
+.porcentagem-fundo-2.barra-meta-batida-2 {
+  background: rgba(33, 150, 243, 0.9) !important;
+  backdrop-filter: blur(5px) !important;
+  border-top-left-radius: 0 !important;
+  border-bottom-left-radius: 0 !important;
+  border-top-right-radius: 25px !important;
+  border-bottom-right-radius: 25px !important;
+}
+
+.porcentagem-fundo-2.barra-negativo-2 {
+  background: rgba(244, 67, 54, 0.9) !important;
+  backdrop-filter: blur(5px) !important;
+  border-top-left-radius: 0 !important;
+  border-bottom-left-radius: 0 !important;
+  border-top-right-radius: 25px !important;
+  border-bottom-right-radius: 25px !important;
+}
+
+.porcentagem-fundo-2.barra-neutro-2 {
+  background: rgba(149, 165, 166, 0.9) !important;
+  backdrop-filter: blur(5px) !important;
+  border-top-left-radius: 0 !important;
+  border-bottom-left-radius: 0 !important;
+  border-top-right-radius: 25px !important;
+  border-bottom-right-radius: 25px !important;
+}
+
+.porcentagem-fundo-2.barra-sem-banca-2 {
+  background: rgba(230, 126, 34, 0.9) !important;
+  backdrop-filter: blur(5px) !important;
+  border-top-left-radius: 0 !important;
+  border-bottom-left-radius: 0 !important;
+  border-top-right-radius: 25px !important;
+  border-bottom-right-radius: 25px !important;
+}
+
+.porcentagem-fundo-2:hover {
+  padding: 0 12px !important;
+  font-size: 13px !important;
+  filter: brightness(1.1) !important;
+  cursor: default !important;
+  border-top-left-radius: 0 !important;
+  border-bottom-left-radius: 0 !important;
+  border-top-right-radius: 25px !important;
+  border-bottom-right-radius: 25px !important;
+}
+
+/* Regra global para forçar bordas - Widget 2 */
+[class*="porcentagem-fundo-2"] {
+  border-top-left-radius: 0 !important;
+  border-bottom-left-radius: 0 !important;
+  border-top-right-radius: 25px !important;
+  border-bottom-right-radius: 25px !important;
+}
+
+.widget-info-progresso-2 {
+  margin-top: 8px !important;
+  display: flex !important;
+  justify-content: flex-start !important;
+  width: 100% !important;
+  margin-left: 0px;
+  font-size: clamp(10px, 2vw, 13px);
+  color: #576574;
+  font-weight: 600;
+}
+
+.widget-info-progresso-2 span {
+  display: flex;
+  align-items: center;
+  gap: 5px;
+}
+
+#saldo-info-2 {
+  margin-top: var(--rotulo-saldo-bloco2-margin-top) !important;
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+}
+
+.saldo-info-rotulo-2 {
+  font-weight: bold;
+  margin-right: 1px;
+  font-size: 13px;
+  color: #3c3f3d;
+}
+
+.saldo-info-valor-2 {
+  font-weight: bold;
+  font-size: 13px;
+}
+
+#saldo-info-2 i {
+  margin-right: 0px;
+  font-size: 1em;
+}
+
+/* Estados do saldo com ícones dinâmicos baseados no resultado */
+.saldo-positivo-2 i {
+  color: #00a651;
+}
+
+.saldo-negativo-2 i {
+  color: #f44336;
+}
+
+.saldo-zero-2 i {
+  color: #95a5a6;
+}
+
+/* ÍCONES ESPECÍFICOS DINÂMICOS para cada tipo de saldo */
+.saldo-positivo-2 .fa-chart-line-2 {
+  color: #00a651 !important;
+}
+
+.saldo-negativo-2 .fa-arrow-trend-down-2 {
+  color: #f44336 !important;
+}
+
+.saldo-zero-2 .fa-wallet-2 {
+  color: #95a5a6 !important;
+}
+
+.saldo-positivo-2 .saldo-info-valor-2 {
+  color: #00a651;
+}
+
+.saldo-negativo-2 .saldo-info-valor-2 {
+  color: #f44336;
+}
+
+.saldo-zero-2 .saldo-info-valor-2 {
+  color: #666;
+}
+
+.saldo-positivo-2 .saldo-info-rotulo-2,
+.saldo-negativo-2 .saldo-info-rotulo-2,
+.saldo-zero-2 .saldo-info-rotulo-2 {
+  color: #5d6360;
+}
+
+/* CODIGO DO CAMPO : classes utilitárias do Bloco 2 (valor-positivo-2, valor-negativo-2, etc.)
+  - Classes auxiliares e estados para efeitos visuais no Bloco 2
+*/
+
+.valor-positivo-2 {
+  color: #00a651 !important;
+  text-shadow: 0 1px 2px rgba(39, 174, 96, 0.4) !important;
+}
+
+.valor-negativo-2 {
+  color: #e74c3c !important;
+  text-shadow: 0 1px 2px rgba(231, 76, 60, 0.4) !important;
+}
+
+.valor-neutro-2 {
+  color: #7f8c8d !important;
+  text-shadow: 0 1px 2px rgba(127, 140, 141, 0.4) !important;
+}
+
+.atualizado-2 {
+  animation: pulse-update 1.5s ease-in-out;
+}
+
+.modal-lucro-positivo-2 {
+  color: #00a651 !important;
+}
+
+.modal-lucro-negativo-2 {
+  color: #f44336 !important;
+}
+
+.modal-lucro-neutro-2 {
+  color: #95a5a6 !important;
+}
+
+/* =======================================================================================================================================================
+  FIM: CODIGO DO CAMPO : widget-meta-valor-2 / widget-barra-container-2 / widget-info-progresso-2
+  =======================================================================================================================================================*/
+
+/* =======================================================================================================================================================
+  CODIGO DO CAMPO : #meta-valor-2 (TEXTO LUCRO EXTRA + VALOR TACHADO)
+  - Regras específicas aplicadas ao container #meta-valor-2 e seus filhos
+  =======================================================================================================================================================*/
+
+/* Encapsular tudo dentro do elemento específico da meta mensal */
+#meta-valor-2 {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  min-height: 40px;
+}
+
+/* Container da meta valor - APENAS para meta-valor-2 */
+#meta-valor-2 .meta-valor-container-2 {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 4px;
+}
+
+/* Meta com valor extra - APENAS dentro de meta-valor-2 */
+#meta-valor-2.meta-com-extra-2 {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+/* Valor tachado - APENAS dentro de meta-valor-2 */
+#meta-valor-2 .valor-tachado-2 {
+  position: relative;
+  color: #888;
+  font-weight: bold;
+  text-decoration: line-through;
+  text-decoration-color: #666;
+  text-decoration-thickness: 2px;
+  opacity: 0.8;
+}
+
+/* Valor extra - APENAS dentro de meta-valor-2 */
+#meta-valor-2 .valor-extra-2 {
+  color: #f08000;
+  font-weight: bold;
+
+  animation: brilhoDouradoMensal 2s ease-in-out infinite alternate;
+}
+
+/* Animação do brilho dourado - versão mensal */
+@keyframes brilhoDouradoMensal {
+  0% {
+    text-shadow: 0 0 5px rgba(255, 215, 0, 0.3);
+  }
+  100% {
+    text-shadow: 0 0 10px rgba(255, 215, 0, 0.6);
+  }
+}
+
+/* Classes de estado APENAS para meta-valor-2 */
+#meta-valor-2.valor-meta-2.meta-batida {
+  border-color: #00a651;
+  color: #00a651;
+}
+
+#meta-valor-2.valor-meta-2.meta-superada {
+  border-color: #ffd700;
+  color: #ffd700;
+  box-shadow: 0 0 10px rgba(255, 215, 0, 0.2);
+}
+
+#meta-valor-2.valor-meta-2.negativo {
+  border-color: #dc3545;
+  color: #dc3545;
+}
+
+#meta-valor-2.valor-meta-2.lucro {
+  border-color: #00a651;
+  color: #00a651;
+}
+
+#meta-valor-2.valor-meta-2.neutro {
+  border-color: #6c757d;
+  color: #6c757d;
+}
+
+#meta-valor-2.valor-meta-2.sem-banca {
+  border-color: #ffc107;
+  color: #ffc107;
+}
+
+/* Ícone da moeda - APENAS dentro de meta-valor-2 */
+#meta-valor-2 .fa-coins {
+  color: #ffc107;
+  margin-right: 8px;
+  font-size: 1.2em;
+}
+
+/* Texto normal - APENAS dentro de meta-valor-2 */
+#meta-valor-2 .valor-texto-2 {
+  font-weight: bold;
+  font-size: 1.1em;
+}
+
+/* Estado de loading - APENAS dentro de meta-valor-2 */
+#meta-valor-2 .loading-text-2 {
+  opacity: 0.6;
+  animation: pulsarLoadingMensal 1.5s ease-in-out infinite;
+}
+
+@keyframes pulsarLoadingMensal {
+  0%,
+  100% {
+    opacity: 0.6;
+  }
+  50% {
+    opacity: 1;
+  }
+}
+
+/* Barra de progresso - APENAS para barra-progresso-2 */
+#barra-progresso-2.widget-barra-progresso-2 {
+  height: 20px;
+  background-color: #e9ecef;
+  border-radius: 10px;
+  overflow: hidden;
+  transition: width 0.5s ease-in-out;
+}
+
+/* Classes da barra de progresso - APENAS para barra-progresso-2 */
+#barra-progresso-2.barra-meta-batida-2 {
+  background-color: #28a745;
+  background: linear-gradient(90deg, #28a745, #20c997);
+}
+
+#barra-progresso-2.barra-meta-superada-2 {
+  background: linear-gradient(45deg, #28a745, #ffd700);
+  animation: barraDouradaMensal 1.5s ease-in-out infinite alternate;
+}
+
+#barra-progresso-2.barra-negativo-2 {
+  background-color: #dc3545;
+  background: linear-gradient(90deg, #dc3545, #e74c3c);
+}
+
+#barra-progresso-2.barra-lucro-2 {
+  background-color: #17a2b8;
+  background: linear-gradient(90deg, #17a2b8, #20c997);
+}
+
+#barra-progresso-2.barra-neutro-2 {
+  background-color: #6c757d;
+}
+
+#barra-progresso-2.barra-sem-banca-2 {
+  background-color: #ffc107;
+}
+
+/* Animação da barra dourada - versão mensal */
+@keyframes barraDouradaMensal {
+  0% {
+    filter: brightness(1);
+  }
+  100% {
+    filter: brightness(1.2);
+  }
+}
+
+/* Porcentagem da barra - APENAS para porcentagem-barra-2 */
+#porcentagem-barra-2 .porcentagem-fundo-2 {
+  background-color: rgba(255, 255, 255, 0.9);
+  padding: 2px 6px;
+  border-radius: 4px;
+  font-weight: bold;
+  font-size: 0.9em;
+  color: #333;
+}
+
+#porcentagem-barra-2 .porcentagem-fundo-2.barra-meta-batida-2 {
+  background-color: rgba(40, 167, 69, 0.1);
+  color: #28a745;
+}
+
+#porcentagem-barra-2 .porcentagem-fundo-2.barra-meta-superada-2 {
+  background-color: rgba(255, 215, 0, 0.1);
+  color: #ffd700;
+}
+
+#porcentagem-barra-2 .porcentagem-fundo-2.barra-negativo-2 {
+  background-color: rgba(220, 53, 69, 0.1);
+  color: #dc3545;
+}
+
+#porcentagem-barra-2 .porcentagem-fundo-2.barra-lucro-2 {
+  background-color: rgba(23, 162, 184, 0.1);
+  color: #17a2b8;
+}
+
+/* Classes de estado do saldo - APENAS para saldo-info-2 */
+#saldo-info-2.saldo-positivo-2 {
+  color: #00a651;
+}
+
+#saldo-info-2.saldo-positivo-2 i {
+  color: #00a651;
+}
+
+#saldo-info-2.saldo-negativo-2 {
+  color: #dc3545;
+}
+
+#saldo-info-2.saldo-negativo-2 i {
+  color: #dc3545;
+}
+
+#saldo-info-2.saldo-zero-2 {
+  color: #6c757d;
+}
+
+#saldo-info-2.saldo-zero-2 i {
+  color: #6c757d;
+}
+
+/* Elementos de texto específicos - APENAS dentro de saldo-info-2 */
+#saldo-info-2 .saldo-info-rotulo-2 {
+  font-weight: 700;
+  margin-right: 4px;
+}
+
+#saldo-info-2 .saldo-info-valor-2 {
+  font-weight: bold;
+}
+
+/* Hover effects - APENAS dentro dos elementos específicos */
+#meta-valor-2 .valor-extra-2:hover {
+  transform: scale(1.05);
+  transition: transform 0.2s ease;
+}
+
+#meta-valor-2 .valor-tachado-2:hover {
+  opacity: 1;
+  transition: opacity 0.2s ease;
+}
+
+/* Variações de tipo de meta - APENAS dentro de meta-valor-2 */
+#meta-valor-2.meta-fixa-2 .valor-extra-2 {
+  color: #ff6b35;
+  text-shadow: 0 0 5px rgba(255, 107, 53, 0.3);
+}
+
+#meta-valor-2.meta-turbo-2 .valor-extra-2 {
+  color: #ffd700;
+  text-shadow: 0 0 5px rgba(255, 215, 0, 0.3);
+}
+
+/* Responsividade - APENAS para elementos específicos */
+@media (max-width: 768px) {
+  #meta-valor-2 .meta-valor-container-2 {
+    gap: 2px;
+  }
+
+  #meta-valor-2 .valor-tachado-2,
+  #meta-valor-2 .valor-extra-2 {
+    font-size: 0.9em;
+  }
+
+  #saldo-info-2 .saldo-info-rotulo-2,
+  #saldo-info-2 .saldo-info-valor-2 {
+    font-size: 0.9em;
+  }
+}
+
+/* =======================================================================================================================================================
+  FIM: CODIGO DO CAMPO : #meta-valor-2
+  =======================================================================================================================================================*/
+
+/* =======================================================================================================================================================
+  ANIMAÇÕES E EFEITOS ESPECIAIS ADICIONAIS
+  =======================================================================================================================================================*/
+
+@keyframes valueUpdate {
+  0% {
+    transform: scale(1);
+    opacity: 1;
+  }
+  50% {
+    transform: scale(1.1);
+    opacity: 0.8;
+  }
+  100% {
+    transform: scale(1);
+    opacity: 1;
+  }
+}
+
+/* Indicador de carregamento */
+.atualizando {
+  position: relative;
+}
+
+.atualizando::before {
+  content: "";
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: 2px;
+  background: linear-gradient(
+    90deg,
+    transparent,
+    #2196f3 20%,
+    #2196f3 80%,
+    transparent
+  );
+  animation: loadingBar 1.5s linear infinite;
+  z-index: 100;
+}
+
+@keyframes loadingBar {
+  0% {
+    transform: translateX(-100%);
+  }
+  100% {
+    transform: translateX(100%);
+  }
+}
+
+/* Override final: garantir alinhamento consistente dos valores (R$) em todas as linhas (alinhado à esquerda) */
+.container .bloco.bloco-2 .resumo-mes .linha-dia .valor,
+.container .bloco.bloco-2 .resumo-mes .valor {
+  padding-top: 0 !important;
+  display: inline-flex !important;
+  align-items: center !important;
+  justify-content: flex-start !important; /* alinhar valores à esquerda */
+  align-self: center !important;
+  line-height: 1.4 !important;
+  text-align: left !important; /* garantir texto à esquerda */
+}
+
+/* =======================================================================================================================================================
+  FIM: ANIMAÇÕES E EFEITOS ESPECIAIS
+  =======================================================================================================================================================*/
+
+/* =======================================================================================================================================================
+                                FIM CSS RESPONSAVEL EM CARREGA OS DADOS DOS VALORES DE ( DATA - PLACAR - SALDO )
+  =======================================================================================================================================================*/
+
+/* Ajuste: margem entre a data e o placar (solicitação) */
+.linha-dia .placar-dia,
+.container .bloco.bloco-2 .resumo-mes .linha-dia .placar-dia {
+  margin-left: var(
+    --placar-2-margin-left,
+    -16px
+  ) !important; /* reduzido para aproximar do canto esquerdo */
+}
+.linha-dia .placar-dia,
+.container .bloco.bloco-2 .resumo-mes .linha-dia .placar-dia {
+  margin-left: var(
+    --placar-2-margin-left,
+    -9px
+  ) !important; /* aproximar do canto esquerdo conforme pedido */
+}
+/* Ajuste: margem entre o placar e o valor (R$) */
+.linha-dia .valor,
+.container .bloco.bloco-2 .resumo-mes .linha-dia .valor {
+  margin-left: 10px !important;
+}
+
+/* Ajuste: tornar cada linha do dia compacta, igual às linhas de mês */
+.linha-dia,
+.container .bloco.bloco-2 .resumo-mes .lista-dias .linha-dia {
+  display: flex !important;
+  flex-direction: row !important;
+  align-items: center !important;
+  justify-content: space-between !important;
+  flex-wrap: nowrap !important;
+
+  width: 100% !important;
+  height: var(--gd-linha-dia-height, 28px) !important;
+  min-height: var(--gd-linha-dia-min-height, 28px) !important;
+  max-height: var(--gd-linha-dia-max-height, 28px) !important;
+
+  padding: 0 12px !important;
+  margin: 0 0 var(--lista-dias-row-gap, 2px) 0 !important;
+
+  background: rgba(255, 255, 255, 0.7) !important;
+  border: 1px solid rgba(226, 232, 240, 0.5) !important;
+  border-radius: 6px !important;
+
+  font-family: "Rajdhani", sans-serif !important;
+  font-weight: var(--gd-linha-dia-font-weight, 400) !important;
+  font-size: 13px !important;
+  line-height: 1.1 !important;
+
+  transition: all 0.12s ease !important;
+  box-sizing: border-box !important;
+  overflow: hidden !important;
+}
+
+/* Alinhar a coluna de data à direita (solicitação) */
+.linha-dia .data,
+.container .bloco.bloco-2 .resumo-mes .linha-dia .data,
+.container .bloco.bloco-2 .resumo-mes .lista-dias .data {
+  /* Make the date column wide enough to show full date (dd/mm/YYYY)
+     and avoid truncation with ellipsis. Keep it single-line but allow
+     the full year to be visible. */
+  width: auto !important;
+  min-width: 110px !important; /* increased to fit yyyy */
+  max-width: none !important;
+  flex: 0 0 110px !important; /* reserve sufficient fixed space */
+  box-sizing: border-box !important;
+  display: block !important;
+  align-items: normal !important;
+  justify-content: normal !important;
+  text-align: right !important; /* explicit text align */
+  padding: 0 8px 0 0 !important; /* consistent right padding */
+  margin: 0 !important;
+  white-space: nowrap !important; /* keep date in one line */
+  overflow: visible !important; /* allow full date to show */
+  text-overflow: clip !important;
+  font-variant-numeric: tabular-nums !important; /* ensure numbers use fixed-width numerals */
+  line-height: 1 !important;
+  font-family: var(--date-font-family) !important;
+  font-weight: var(--date-font-weight) !important;
+  font-size: var(--date-font-size) !important;
+  letter-spacing: var(--date-letter-spacing) !important;
+  color: var(--date-color) !important;
+}
+
+/* Ensure no extra left-padding for the data column coming from other rules */
+.container .bloco.bloco-2 .resumo-mes .lista-dias .linha-dia > .data {
+  padding-left: 0 !important;
+}
+
+/* Forçar template de grid nas linhas de data: primeira coluna fixa (data) para alinhar
+   início e fim entre todas as linhas mesmo quando outras folhas ou JS injetam regras. */
+.container .bloco.bloco-2 .resumo-mes .lista-dias .linha-dia {
+  display: grid !important;
+  grid-template-columns: 100px auto 1fr auto !important; /* data | placar | espaço flex | valor */
+  align-items: center !important;
+  gap: 8px !important;
+  box-sizing: border-box !important;
+}
+
+/* Remover gap gerado pelo .data original e garantir que não haja padding residual */
+.container .bloco.bloco-2 .resumo-mes {
+  gap: 0 !important;
+  padding: 0 !important;
+  box-sizing: border-box !important;
+}
+
+/* Mobile: permitir que as datas voltem a ser empilhadas/à esquerda em telas pequenas */
+@media (max-width: 540px) {
+  .linha-dia {
+    height: auto !important;
+    min-height: 34px !important;
+    display: flex !important;
+    gap: 6px !important;
+  }
+  .linha-dia .data,
+  .container .bloco.bloco-2 .resumo-mes .linha-dia,
+  .container .bloco.bloco-2 .resumo-mes .lista-dias .data {
+    width: auto !important;
+    text-align: left !important;
+  }
+}
+
+/* Ajuste: deixar as fontes das linhas de dias um pouco mais finas */
+.container .bloco.bloco-2 .resumo-mes .linha-dia,
+.container .bloco.bloco-2 .resumo-mes .linha-dia .data,
+.container .bloco.bloco-2 .resumo-mes .linha-dia .placar-dia,
+.container .bloco.bloco-2 .resumo-mes .linha-dia .placar,
+.container .bloco.bloco-2 .resumo-mes .linha-dia .valor,
+.container .bloco.bloco-2 .resumo-mes .linha-dia .icone {
+  /* Emergency override: ensure day-row state backgrounds are visible
+     This rule is deliberately specific and uses !important so legacy
+     inline styles do not hide the intended visual states while the
+     JS that injects inline styles is being migrated. Remove when
+     the source JS stops writing visual inline styles. */
+  body .container .bloco.bloco-2 .resumo-mes .gd-linha-dia.valor-positivo,
+  body .container .bloco.bloco-2 .resumo-mes .linha-dia.valor-positivo {
+    background: var(--gd-valor-positive-bg) !important;
+    border-left: 4px solid var(--gd-valor-positive-border) !important;
+    padding-left: 12px !important;
+  }
+
+  body .container .bloco.bloco-2 .resumo-mes .gd-linha-dia.valor-negativo,
+  body .container .bloco.bloco-2 .resumo-mes .linha-dia.valor-negativo {
+    background: var(--gd-valor-negative-bg) !important;
+    border-left: 4px solid var(--gd-valor-negative-border) !important;
+    padding-left: 12px !important;
+  }
+
+  body .container .bloco.bloco-2 .resumo-mes .gd-linha-dia.valor-zero,
+  body .container .bloco.bloco-2 .resumo-mes .linha-dia.valor-zero {
+    background: transparent !important;
+    border-left: 4px solid var(--gd-valor-zero-border, rgba(156, 163, 175, 0.3)) !important;
+    padding-left: 12px !important;
+  }
+  font-weight: 400 !important; /* normal / mais fino */
+  font-family: inherit !important;
+}
+
+/* Ensure the value text uses the standardized font weight */
+.linha-dia .valor,
+.container .bloco.bloco-2 .resumo-mes .linha-dia .valor {
+  font-weight: var(--gd-linha-dia-font-weight, 400) !important;
+}
+
+/* ==================================================================================================
+   SCOPED SHIELD: forçar uso apenas do CSS externo dentro do widget de resumo-mes
+   - Adicione a classe `resumo-mes-externo` ao elemento <div class="resumo-mes"> no HTML:
+       <div class="resumo-mes resumo-mes-externo"> ... </div>
+   - Regras abaixo usam seletores específicos e !important para sobrescrever estilos inline
+     (observação: inline styles que também usam !important continuarão tendo prioridade).
+================================================================================================== */
+
+.container .bloco.bloco-2 .resumo-mes.resumo-mes-externo,
+.container .bloco.bloco-2 .resumo-mes.resumo-mes-externo * {
+  box-sizing: border-box !important;
+  -webkit-box-sizing: border-box !important;
+}
+
+/* Lista de dias (escopo forte) */
+.container .bloco.bloco-2 .resumo-mes.resumo-mes-externo .lista-dias {
+  width: var(--lista-dias-width, calc(100% + 24px)) !important;
+  max-width: var(--lista-dias-maxwidth, calc(100% + 24px)) !important;
+  margin-left: var(--lista-dias-margin-left, 10px) !important;
+  overflow-x: hidden !important;
+  overflow-y: auto !important;
+  height: var(--lista-dias-height, var(--lista-dias-height-externo)) !important;
+  max-height: var(--lista-dias-maxheight, 550px) !important;
+  padding: 12px var(--lista-dias-lateral-padding, 10px) !important;
+  margin-top: 77px !important;
+  background: rgba(238, 238, 238, 0.95) !important;
+  border-radius: 15px !important;
+}
+
+/* Forçar grid das linhas de dia e largura da coluna de data */
+.container
+  .bloco.bloco-2
+  .resumo-mes.resumo-mes-externo
+  .lista-dias
+  .linha-dia {
+  display: grid !important;
+  grid-template-columns: 100px auto 1fr auto !important;
+  align-items: center !important;
+  gap: 8px !important;
+}
+
+.container .bloco.bloco-2 .resumo-mes.resumo-mes-externo .linha-dia .data {
+  /* External-scoped variant: ensure full date visible inside resumo-mes-externo */
+  width: auto !important;
+  min-width: 110px !important;
+  max-width: none !important;
+  flex: 0 0 110px !important;
+  text-align: right !important;
+  padding: 0 8px 0 0 !important;
+  white-space: nowrap !important;
+  overflow: visible !important;
+  text-overflow: clip !important;
+  font-variant-numeric: tabular-nums !important;
+  font-family: var(--date-font-family) !important;
+  font-weight: var(--date-font-weight) !important;
+  font-size: var(--date-font-size) !important;
+  line-height: 1 !important;
+}
+
+/* Forçar comportamento dos widgets/meta dentro do escopo */
+.container .bloco.bloco-2 .resumo-mes.resumo-mes-externo .widget-meta-valor-2,
+.container .bloco.bloco-2 .resumo-mes.resumo-mes-externo #meta-valor-2 {
+  display: flex !important;
+  align-items: center !important;
+  justify-content: flex-start !important;
+  gap: 8px !important;
+  font-size: 18px !important;
+}
+
+.container
+  .bloco.bloco-2
+  .resumo-mes.resumo-mes-externo
+  .widget-barra-container-2 {
+  width: 330px !important;
+  max-width: 100% !important;
+  height: 22px !important;
+  overflow: hidden !important;
+}
+/* Ensure parent containers don't clip the scrollbar area on the right */
+html body .main-content .container .bloco.bloco-2,
+html body .container .bloco.bloco-2,
+.main-content .container .bloco.bloco-2,
+.container .bloco.bloco-2 {
+  overflow: visible !important; /* allow children scrollbars to be visible */
+}
+
+html body .main-content .container .bloco.bloco-2 .resumo-mes,
+html body .container .bloco.bloco-2 .resumo-mes,
+.main-content .container .bloco.bloco-2 .resumo-mes,
+.container .bloco.bloco-2 .resumo-mes {
+  overflow: visible !important; /* ensure no clipping around the lista-dias container */
+}
+
+/* Porcentagem e indicadores: garantir posicionamento */
+.container .bloco.bloco-2 .resumo-mes.resumo-mes-externo .porcentagem-barra-2 {
+  position: absolute !important;
+  right: 0 !important;
+  top: 0 !important;
+  height: 100% !important;
+  z-index: 10 !important;
+  display: flex !important;
+  align-items: center !important;
+}
+
+/* Garantir alinhamento do valor (R$) */
+.container .bloco.bloco-2 .resumo-mes.resumo-mes-externo .linha-dia .valor,
+.container .bloco.bloco-2 .resumo-mes.resumo-mes-externo .valor {
+  padding-top: 0 !important;
+  display: inline-flex !important;
+  align-items: center !important;
+  justify-content: flex-start !important;
+  align-self: center !important;
+  line-height: 1.4 !important;
+  text-align: left !important;
+}
+
+/* Bloquear alterações frequentes aplicadas por JS (atributos style) em elementos chave */
+.container .bloco.bloco-2 .resumo-mes.resumo-mes-externo [style] {
+  /* Propriedades comuns que scripts costumam escrever — sobrepor com externals */
+  width: auto !important;
+  height: auto !important;
+  max-width: none !important;
+  max-height: none !important;
+  margin: inherit !important;
+  padding: inherit !important;
+  background: inherit !important;
+}
+
+/* Pequena nota para o mantenedor */
+/* IMPORTANTE: para ativar esse escopo, atualize o HTML do bloco: <div class="resumo-mes resumo-mes-externo"> */
+
+/* ====== Forçar mesma fonte para DATA | PLACAR | VALOR | ICONE dentro de .lista-dias .linha-dia ====== */
+/* Isso sobrescreve regras conflitantes e garante consistência visual */
+.container .bloco.bloco-2 .resumo-mes .lista-dias .linha-dia .data,
+.container .bloco.bloco-2 .resumo-mes .lista-dias .linha-dia .placar-dia,
+.container .bloco.bloco-2 .resumo-mes .lista-dias .linha-dia .placar,
+.container .bloco.bloco-2 .resumo-mes .lista-dias .linha-dia .valor,
+.container .bloco.bloco-2 .resumo-mes .lista-dias .linha-dia .icone,
+.container .bloco.bloco-2 .resumo-mes .lista-dias .linha-dia .separador {
+  font-family: "Poppins", "Rajdhani", Arial, sans-serif !important;
+  font-weight: 400 !important;
+  font-size: 13px !important; /* ajuste leve para consistência; altere se desejar outro tamanho */
+}
+
+/* Aplicar o mesmo a elementos filhos pontuais para cobrir estruturas internas */
+.container .bloco.bloco-2 .resumo-mes .lista-dias .linha-dia .placar > *,
+.container .bloco.bloco-2 .resumo-mes .lista-dias .linha-dia .data *,
+.container .bloco.bloco-2 .resumo-mes .lista-dias .linha-dia .valor * {
+  font-family: inherit !important;
+  font-weight: inherit !important;
+  font-size: inherit !important;
+}
+
+/* ===================================================================
+   IMPORT: estilos do arquivo estilo-gestao-diaria-novo.css
+   Copiado para dentro de estilo-campo-mes.css para centralizar o
+   estilo do widget de resumo do mês (lista-dias)
+=================================================================== */
+/* =======================================================================================================================================================
+                                              CODIGO RESPONSAVEL PELO  CAMPO ( DIA - PLACAR - VALOR - ICONE )
+  =======================================================================================================================================================*/
+
+@import url("https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap");
+@import url("https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css");
+
+/* Container principal da lista */
+.container .bloco.bloco-2 .resumo-mes .lista-dias {
+  width: 100% !important;
+  max-width: 100% !important;
+  overflow-x: hidden !important;
+  overflow-y: auto !important;
+  padding: 8px !important;
+  margin: 0 !important;
+  background: rgba(247, 246, 246, 0.95) !important;
+  border-radius: 12px !important;
+  scrollbar-width: thin !important;
+  scrollbar-color: rgba(148, 163, 184, 0.3) transparent !important;
+}
+
+/* Scrollbar customizada */
+.container .bloco.bloco-2 .resumo-mes .lista-dias::-webkit-scrollbar {
+  width: 6px;
+}
+
+.container .bloco.bloco-2 .resumo-mes .lista-dias::-webkit-scrollbar-track {
+  background: transparent;
+}
+
+.container .bloco.bloco-2 .resumo-mes .lista-dias::-webkit-scrollbar-thumb {
+  background-color: rgba(148, 163, 184, 0.3);
+  border-radius: 3px;
+}
+
+.lista-dias {
+  height: var(--lista-dias-height-default) !important;
+}
+
+/* Espaçamento extra entre o cabeçalho interno e o primeiro item da lista */
+.container .bloco.bloco-2 .resumo-mes .lista-dias > .gd-linha-dia:first-child {
+  margin-top: calc(var(--lista-dias-margin-top) / 3) !important;
+}
+
+/* ========================================
+   LINHA DO DIA - FORÇAR LAYOUT HORIZONTAL
+======================================== */
+
+/* Resetar qualquer estilo que cause empilhamento */
+.gd-linha-dia,
+.container .bloco.bloco-2 .resumo-mes .lista-dias .gd-linha-dia {
+  display: flex !important;
+  flex-direction: row !important;
+  align-items: center !important;
+  justify-content: space-between !important;
+  flex-wrap: nowrap !important;
+
+  width: 100% !important;
+  height: 32px !important;
+  min-height: 32px !important;
+  max-height: 32px !important;
+
+  padding: 0 16px !important;
+  margin: 0 0 4px 0 !important;
+
+  background: rgba(255, 255, 255, 0.7) !important;
+  border: 1px solid rgba(226, 232, 240, 0.5) !important;
+  border-radius: 8px !important;
+
+  font-family: "Inter", -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto,
+    sans-serif !important;
+  font-weight: 500 !important;
+  font-size: 14px !important;
+  line-height: 1.2 !important;
+
+  transition: all 0.15s ease !important;
+  box-sizing: border-box !important;
+
+  /* Forçar que nenhum elemento filho quebre a linha */
+  overflow: hidden !important;
+}
+
+/* Hover sutil */
+.gd-linha-dia:hover {
+  background: rgba(255, 255, 255, 0.9) !important;
+  border-color: rgba(148, 163, 184, 0.3) !important;
+  transform: translateY(-1px) !important;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05) !important;
+}
+
+/* ========================================
+   ELEMENTOS FILHOS - FORÇAR LADO A LADO
+======================================== */
+
+/* Todos os elementos filhos devem ter display inline-flex */
+.gd-linha-dia > *,
+.gd-linha-dia .data,
+.gd-linha-dia .placar-dia,
+.gd-linha-dia .valor,
+.gd-linha-dia .icone {
+  display: inline-flex !important;
+  align-items: center !important;
+  flex-shrink: 0 !important;
+  white-space: nowrap !important;
+  overflow: hidden !important;
+  text-overflow: ellipsis !important;
+  vertical-align: middle !important;
+}
+
+/* ========================================
+   COLUNA 1: DATA (SEM ÍCONE DE CALENDÁRIO)
+======================================== */
+
+.gd-linha-dia .data {
+  display: inline-flex !important;
+  align-items: center !important;
+
+  font-family: var(--date-font-family) !important;
+  font-weight: var(--date-font-weight) !important;
+  font-size: var(--date-font-size) !important;
+  color: var(--date-color) !important;
+
+  text-align: left !important;
+  justify-content: flex-start !important;
+
+  width: 95px !important;
+  min-width: 95px !important;
+  max-width: 95px !important;
+
+  letter-spacing: var(--date-letter-spacing) !important;
+  font-variant-numeric: tabular-nums !important;
+
+  /* Força posicionamento */
+  order: 1 !important;
+  margin-right: 24px !important;
+}
+
+/* ========================================
+   COLUNA 2: PLACAR
+======================================== */
+
+.gd-linha-dia .placar-dia {
+  display: inline-flex !important;
+  align-items: center !important;
+  justify-content: center !important;
+  gap: var(--gd-placar-gap, 2px) !important; /* controlled from :root */
+
+  font-family: "Rajdhani", sans-serif !important;
+  font-weight: 500 !important;
+  font-size: var(--fs-placar) !important;
+  line-height: 1 !important;
+
+  width: 84px !important;
+  min-width: 84px !important;
+  max-width: 84px !important;
+
+  justify-content: center !important;
+  gap: 4px !important;
+  padding: 0 4px !important;
+
+  /* Força posicionamento */
+  order: 2 !important;
+  margin-right: 0px !important;
+  margin-left: 20px !important; /* adicionada margem esquerda de 8px conforme pedido */
+}
+
+.gd-linha-dia .placar-dia .placar,
+.gd-linha-dia .placar-dia .separador {
+  display: inline !important;
+  font-family: inherit !important;
+  font-weight: inherit !important;
+  font-size: inherit !important;
+  line-height: inherit !important;
+}
+
+.gd-linha-dia .placar {
+  padding: 0 var(--gd-placar-padding-x, 4px) !important; /* controlled from :root */
+}
+
+.gd-linha-dia .placar.separador {
+  padding: 0 var(--gd-placar-separador-padding-x, 2px) !important;
+  margin: 0 var(--gd-placar-separador-margin-x, 1px) !important;
+}
+
+.gd-linha-dia .placar-dia .verde-bold {
+  color: var(--color-positive-strong) !important;
+  font-weight: var(--fw-semibold) !important;
+}
+
+.gd-linha-dia .placar-dia .vermelho-bold {
+  color: var(--color-negative) !important;
+  font-weight: var(--fw-semibold) !important;
+}
+
+.gd-linha-dia .placar-dia .separador {
+  color: #94a3b8 !important;
+  font-weight: 400 !important;
+  margin: 0 calc(var(--gd-placar-separador-margin-x, 2px)) !important; /* tighten spacing controlled from :root */
+}
+
+.gd-linha-dia .placar-dia .texto-cinza {
+  color: #94a3b8 !important;
+}
+
+/* ========================================
+   COLUNA 3: VALOR (SALDO)
+======================================== */
+
+.gd-linha-dia .valor {
+  font-family: var(--font-family-base) !important;
+  font-weight: var(--fw-semibold) !important;
+  font-size: var(--fs-base) !important;
+  line-height: 1 !important;
+
+  text-align: left !important;
+  justify-content: flex-start !important;
+
+  font-variant-numeric: tabular-nums !important;
+  letter-spacing: -0.01em !important;
+
+  width: 90px !important;
+  min-width: 90px !important;
+  max-width: 90px !important;
+
+  /* Força posicionamento */
+  order: 3 !important;
+  margin-right: 36px !important;
+}
+
+/* Cores dos valores */
+.gd-linha-dia .valor.verde-bold {
+  color: var(--color-positive) !important;
+  font-weight: var(--fw-semibold) !important;
+}
+
+.gd-linha-dia .valor.vermelho-bold {
+  color: var(--color-negative) !important;
+  font-weight: var(--fw-semibold) !important;
+}
+
+.gd-linha-dia .valor.texto-cinza {
+  color: var(--color-neutral) !important;
+  font-weight: var(--fw-regular) !important;
+}
+
+/* ========================================
+   ICONE ICONE  ICONE ICONE ICONE 
+======================================== */
+
+.gd-linha-dia .icone {
+  display: inline-flex !important;
+  align-items: center !important;
+  justify-content: center !important;
+
+  width: 24px !important;
+  height: 24px !important;
+  min-width: 24px !important;
+  max-width: 24px !important;
+
+  margin-left: 6px !important;
+  position: relative !important; /* allow z-index to take effect */
+  z-index: 6 !important; /* raise above list background */
+
+  /* Força posicionamento */
+  order: 4 !important;
+}
+
+.gd-linha-dia .icone i {
+  font-size: var(--icon-size-md) !important;
+  line-height: 1 !important;
+  margin-right: var(
+    --lista-dias-icone-margin-right-edge,
+    0px
+  ) !important; /* control distance to field right edge */
+  width: 16px !important;
+  height: 16px !important;
+  display: inline-flex !important;
+  align-items: center !important;
+  justify-content: center !important;
+  font-family: "Font Awesome 6 Free" !important;
+  font-weight: 900 !important;
+}
+
+/* Garantir que os ícones apareçam corretamente */
+.gd-linha-dia .icone i::before {
+  font-family: "Font Awesome 6 Free" !important;
+  font-weight: 900 !important;
+}
+
+/* Ícone check padrão */
+.gd-linha-dia .icone i.fa-check {
+  color: var(--color-neutral) !important;
+}
+
+.gd-linha-dia .icone i.fa-check::before {
+  content: "\f00c" !important;
+}
+
+/* Ícone troféu dourado */
+.gd-linha-dia .icone i.fa-trophy.trofeu-icone {
+  color: var(--color-trophy) !important;
+}
+
+.gd-linha-dia .icone i.fa-trophy::before {
+  content: "\f091" !important;
+}
+
+.gd-linha-dia .icone .texto-cinza {
+  color: #94a3b8 !important;
+}
+
+/* TIGHTEN ICON SPACING: deixar o ícone mais próximo do valor (R$) */
+.gd-linha-dia .valor {
+  /* reduzir a margem direita para trazer o ícone para mais perto
+    e aplicar margem esquerda solicitada pelo usuário */
+  margin-right: var(--lista-dias-icone-margin-right, 6px) !important;
+  margin-left: var(
+    --lista-dias-valor-margin-left,
+    15px
+  ) !important; /* margem esquerda de 15px conforme pedido */
+}
+
+.gd-linha-dia .valor-com-icone {
+  display: inline-flex !important;
+  align-items: center !important;
+  gap: 4px !important; /* menor gap entre valor e ícone */
+}
+
+.gd-linha-dia .icone {
+  /* reduzir espaço à esquerda do ícone */
+  margin-left: var(
+    --lista-dias-icone-margin-left-stuck,
+    var(--lista-dias-icone-margin-left, -14px)
+  ) !important;
+  width: auto !important;
+  min-width: 18px !important;
+  margin-top: 5px !important;
+  margin-left: var(
+    --lista-dias-icone-margin-left-stuck,
+    var(--lista-dias-icone-margin-left, 9px)
+  ) !important;
+}
+
+/* Se o ícone estiver colado no canto direito e corre por trás do contêiner,
+   permitir que o pai mostre a parte sobresalente (apenas horizontalmente) */
+.container .bloco.bloco-2 .resumo-mes .lista-dias {
+  overflow-x: visible !important;
+  /* keep vertical scrolling while allowing icons to overflow horizontally */
+  overflow-y: auto !important;
+  box-sizing: border-box !important;
+  padding-right: calc(
+    var(--lista-dias-lateral-padding, 10px) + 14px
+  ) !important; /* reserve space for scrollbar + icon */
+}
+
+/* High-specificity override: ensure icon is on top of everything in this widget */
+html
+  body
+  .container
+  .bloco.bloco-2
+  .resumo-mes
+  .lista-dias
+  .gd-linha-dia
+  .icone {
+  position: relative !important;
+  z-index: 1000 !important;
+  pointer-events: auto !important;
+}
+
+/* If the icon still overlaps content, slightly pull it inside visually while keeping it on top */
+html
+  body
+  .container
+  .bloco.bloco-2
+  .resumo-mes
+  .lista-dias
+  .gd-linha-dia
+  .icone
+  i {
+  margin-right: var(--lista-dias-icone-margin-right-edge, -12px) !important;
+  position: relative !important;
+  z-index: 1200 !important;
+}
+
+.gd-linha-dia .icone i {
+  margin-left: 0 !important; /* garantir que o próprio <i> não tenha margem extra */
+}
+
+/* GARANTIA: forçar troféu dourado em todas as variações/estados */
+.gd-linha-dia .icone i.fa-trophy,
+.gd-linha-dia.valor-positivo .icone i.fa-trophy,
+.gd-linha-dia.valor-negativo .icone i.fa-trophy,
+.gd-linha-dia.valor-zero .icone i.fa-trophy,
+.gd-linha-dia .icone i.fa-trophy.trofeu-icone {
+  color: var(--color-trophy) !important; /* dourado forte */
+  text-shadow: 0 1px 0 rgba(0, 0, 0, 0.12) !important;
+}
+
+/* Reset completo para evitar qualquer empilhamento */
+.gd-linha-dia {
+  display: flex !important;
+  flex-direction: row !important;
+  flex-wrap: nowrap !important;
+}
+
+/* FINAL: uniform border-radius for main blocks */
+.main-content .container > .bloco,
+.main-content .container > .bloco-1,
+.main-content .container > .bloco-2,
+.main-content .container > .bloco-3,
+.container .bloco.bloco-2 .resumo-mes .bloco-meta-simples.fixo-topo {
+  border-radius: 15px !important;
+}
+
+/* Final safety override: ensure the gradient header (.campo-armazena-data-placar)
+   shows the rounded top corners and is not visually clipped by parent overflow
+   or by the negative margins/expanded width used to pull it to the edges.
+*/
+#main-override
+  .container
+  .bloco.bloco-2
+  .resumo-mes
+  .bloco-meta-simples.fixo-topo,
+.container .bloco.bloco-2 .resumo-mes .bloco-meta-simples.fixo-topo {
+  position: relative !important;
+  overflow: visible !important; /* allow children to show rounded corners */
+  -webkit-mask-image: none !important;
+  mask-image: none !important;
+}
+
+.container
+  .bloco.bloco-2
+  .resumo-mes
+  .bloco-meta-simples.fixo-topo
+  .campo-armazena-data-placar {
+  /* enforce top rounded corners and clip gradient to rounded shape */
+  border-top-left-radius: 15px !important;
+  border-top-right-radius: 15px !important;
+  border-bottom-left-radius: 0 !important;
+  border-bottom-right-radius: 0 !important;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.06) inset, 0 1px 2px rgba(0, 0, 0, 0.03) !important;
+  overflow: hidden !important; /* ensure gradient respects border-radius */
+  background-clip: padding-box !important;
+}
+
+/* In case parent `.bloco` uses overflow hidden, allow the header edges to be visible
+   by slightly reducing the horizontal expansion and aligning with bloco padding. */
+.container .bloco.bloco-2 .resumo-mes .bloco-meta-simples.fixo-topo {
+  width: calc(100% + 16px) !important; /* match bloco padding: 8px each side */
+  margin-left: -8px !important;
+  margin-right: -8px !important;
+}
+
+/* Additional safety: reduce extreme expansion and ensure header floats above siblings */
+.container
+  .bloco.bloco-2
+  .resumo-mes
+  .bloco-meta-simples.fixo-topo
+  .campo-armazena-data-placar {
+  width: calc(100% + 16px) !important; /* keep aligned with bloco padding */
+  margin-left: -8px !important;
+  margin-right: -8px !important;
+  z-index: 50 !important; /* ensure header is above lista-dias */
+  border-top-left-radius: 15px !important;
+  border-top-right-radius: 15px !important;
+  overflow: hidden !important; /* clip gradient to rounded corners */
+}
+
+/* If an ancestor uses overflow:hidden, try to create a visual inset to preserve the rounded edges */
+.container .bloco.bloco-2 {
+  overflow: visible !important;
+}
+
+/* Make the header (.bloco-meta-simples.fixo-topo) sit flush to the bloco edges */
+.container .bloco.bloco-2 {
+  position: relative !important; /* establish containing block for absolute header */
+}
+
+.container .bloco.bloco-2 .resumo-mes .bloco-meta-simples.fixo-topo {
+  position: absolute !important;
+  left: 0px !important; /* align with bloco inner padding */
+  right: 0px !important; /* align with bloco inner padding */
+  top: 0px !important; /* align with bloco inner padding (top) */
+  width: auto !important;
+  margin: 0 !important;
+  z-index: 60 !important;
+  box-sizing: border-box !important;
+  background: transparent !important; /* keep visual driven by inner campo */
+}
+
+.container
+  .bloco.bloco-2
+  .resumo-mes
+  .bloco-meta-simples.fixo-topo
+  .campo-armazena-data-placar {
+  position: relative !important;
+  width: 100% !important;
+  margin: 0 !important;
+  height: 60px !important; /* keep the intended header height */
+  min-height: 60px !important;
+  border-top-left-radius: 15px !important;
+  border-top-right-radius: 15px !important;
+  border-bottom-left-radius: 0 !important;
+  border-bottom-right-radius: 0 !important;
+  overflow: hidden !important; /* ensure gradient is clipped to rounded corners */
+  z-index: 61 !important; /* above bloco-meta */
+}
+/* Final authoritative override: ensure the lista-dias height is controlled by :root variables
+     This comes last to beat earlier rules, media queries and most inline-style conflicts
+     (it will still be overridden by inline styles that use !important). */
+html body .main-content .container .bloco.bloco-2 .resumo-mes > .lista-dias,
+html body .container .bloco.bloco-2 .resumo-mes > .lista-dias,
+.main-content .container .bloco.bloco-2 .resumo-mes .lista-dias,
+.container .bloco.bloco-2 .resumo-mes .lista-dias {
+  width: var(--lista-dias-width) !important;
+  max-width: var(--lista-dias-maxwidth) !important;
+  height: var(--lista-dias-height) !important;
+  max-height: var(--lista-dias-maxheight) !important;
+  overflow-y: auto !important;
+  padding: 12px var(--lista-dias-lateral-padding, 10px) !important;
+}
+
+/* Reserve scrollbar gutter so scrollbar appears without shifting content */
+.container .bloco.bloco-2 .resumo-mes .lista-dias {
+  box-sizing: border-box !important;
+  scrollbar-gutter: stable both-edges !important;
+  -webkit-overflow-scrolling: touch !important;
+}
+
+/* For browsers that don't support scrollbar-gutter, ensure right padding equals scrollbar width fallback */
+@supports not (scrollbar-gutter: stable) {
+  .container .bloco.bloco-2 .resumo-mes .lista-dias {
+    padding-right: calc(
+      var(--lista-dias-lateral-padding, 10px) + 16px
+    ) !important; /* 16px fallback scrollbar width */
+  }
+}
+
+/* Push the list down so it doesn't overlap the absolute header */
+.container .bloco.bloco-2 .resumo-mes .lista-dias {
+  margin-top: calc(60px + 12px) !important; /* header height + small gap */
+}
+
+.gd-linha-dia > * {
+  display: inline-flex !important;
+  flex-direction: row !important;
+  float: none !important;
+  clear: none !important;
+  position: static !important;
+}
+
+/* Remover qualquer propriedade que cause quebra de linha */
+.gd-linha-dia,
+.gd-linha-dia *:not(i) {
+  display: inline-flex !important;
+  vertical-align: middle !important;
+  white-space: nowrap !important;
+}
+
+.gd-linha-dia i {
+  display: inline-block !important;
+}
+/* ========================================
+   ICONE ICONE  ICONE ICONE ICONE 
+======================================== */
+
+/* ========================================
+   RESPONSIVIDADE
+======================================== */
+
+@media (max-width: 768px) {
+  .gd-linha-dia {
+    padding: 0 12px !important;
+    font-size: var(--fs-placar) !important;
+  }
+
+  .gd-linha-dia .data {
+    width: 75px !important;
+    min-width: 75px !important;
+    max-width: 75px !important;
+    margin-right: 14px !important; /* reduzir gap para manter proximidade */
+    font-size: var(--fs-placar) !important;
+  }
+
+  .gd-linha-dia .placar-dia {
+    width: 90px !important;
+    min-width: 90px !important;
+    max-width: 90px !important;
+    margin-left: 6px !important; /* aproximar do campo data em telas medianas */
+  }
+
+  .gd-linha-dia .placar {
+    padding: 0 8px !important;
+  }
+
+  .gd-linha-dia .valor {
+    width: 80px !important;
+    min-width: 80px !important;
+    max-width: 80px !important;
+    margin-right: 18px !important;
+    font-size: var(--fs-placar) !important;
+    margin-left: 12px !important;
+  }
+
+  .gd-linha-dia .icone {
+    width: 20px !important;
+    min-width: 20px !important;
+    margin-left: 4px !important;
+  }
+
+  .gd-linha-dia .icone i {
+    font-size: 13px !important;
+  }
+}
+
+@media (max-width: 480px) {
+  .gd-linha-dia {
+    height: 30px !important;
+    min-height: 30px !important;
+    max-height: 30px !important;
+    padding: 0 8px !important;
+    font-size: var(--fs-placar) !important;
+  }
+
+  .gd-linha-dia .data {
+    width: 70px !important;
+    min-width: 70px !important;
+    margin-right: 10px !important;
+    font-size: var(--fs-placar) !important;
+  }
+
+  .gd-linha-dia .placar-day,
+  .gd-linha-dia .placar-dia {
+    width: 75px !important;
+    min-width: 75px !important;
+    max-width: 75px !important;
+    margin-left: 6px !important; /* aproximar no mobile */
+  }
+
+  .gd-linha-dia .placar {
+    padding: 0 6px !important;
+  }
+
+  .gd-linha-dia .valor {
+    width: 70px !important;
+    min-width: 70px !important;
+    margin-right: 12px !important;
+    font-size: var(--fs-placar) !important;
+    margin-left: 8px !important;
+  }
+
+  .gd-linha-dia .icone {
+    margin-left: 4px !important;
+  }
+
+  .gd-linha-dia .icone i {
+    font-size: var(--fs-placar) !important;
+  }
+}
+
+/* ========================================
+   UTILITÁRIOS AUXILIARES
+======================================== */
+
+/* Garantir que inline styles não sobrescrevam o layout horizontal */
+.gd-linha-dia[style] {
+  display: flex !important;
+  flex-direction: row !important;
+}
+
+.gd-linha-dia .data[style],
+.gd-linha-dia .valor[style] {
+  display: inline-flex !important;
+  width: inherit !important;
+}
+
+/* Remover animações que possam interferir */
+.gd-linha-dia *,
+.gd-linha-dia {
+  transition: background-color 0.15s ease, border-color 0.15s ease,
+    transform 0.15s ease !important;
+}
+
+.container .bloco.bloco-2 {
+  min-height: 400px !important;
+  height: auto !important;
+}
+.container .bloco.bloco-2 .resumo-mes .widget-conteudo-principal-2 {
+  margin-top: 70px !important; /* Mesmo espaço que a lista */
+  padding: 0 12px !important; /* Padding interno */
+}
+
+.container .bloco.bloco-2 .resumo-mes {
+  height: 100% !important;
+  display: flex !important;
+  flex-direction: column !important;
+  position: relative !important;
+  padding: 0 !important; /* Remove padding para permitir header flush */
+}
+
+.container .bloco.bloco-2 .resumo-mes .lista-dias {
+  /* Altura fixa conforme solicitado dentro do bloco 2 */
+  height: var(--lista-dias-height-block) !important;
+  max-height: var(--lista-dias-maxheight-block) !important;
+  overflow-y: auto !important;
+  /* permitir overflow horizontal para que ícones possam "sair" do fluxo sem serem cortados */
+  overflow-x: visible !important;
+  /* margem superior reduzida */
+  margin-top: var(--lista-dias-margin-top) !important;
+  /* reservar espaço no lado direito para barra de rolagem + ícone colado na borda */
+  padding-right: calc(
+    var(--lista-dias-lateral-padding, 10px) + 22px
+  ) !important;
+  /* manter padding lateral esquerdo controlável via variável */
+  padding-left: var(--lista-dias-lateral-padding, 10px) !important;
+}
+
+/* Restaurar scrollbar visível para .lista-dias (substitui as regras que a escondiam) */
+.container .bloco.bloco-2 .resumo-mes .lista-dias,
+.container .bloco.bloco-2 .resumo-mes.resumo-mes-externo .lista-dias,
+.lista-dias {
+  scrollbar-width: auto !important; /* Firefox */
+  -ms-overflow-style: auto !important; /* IE 10+ */
+}
+
+.container .bloco.bloco-2 .resumo-mes .lista-dias::-webkit-scrollbar,
+.container
+  .bloco.bloco-2
+  .resumo-mes.resumo-mes-externo
+  .lista-dias::-webkit-scrollbar,
+.lista-dias::-webkit-scrollbar {
+  width: 10px !important;
+  height: 10px !important;
+}
+
+.container .bloco.bloco-2 .resumo-mes .lista-dias::-webkit-scrollbar-track,
+.lista-dias::-webkit-scrollbar-track {
+  background: transparent !important;
+  /* Expand the header area slightly so it reaches the bloco inner corners
+   while remaining contained. Uses a small clamp to avoid overflow in
+   very narrow screens. Parent containers use box-sizing and overflow
+   rules to prevent visual overflow. */
+  html
+    body
+    .container
+    .bloco.bloco-2
+    .resumo-mes
+    .bloco-meta-simples.fixo-topo
+    .campo-armazena-data-placar {
+    width: clamp(100%, calc(100% + 12px), calc(100% + 24px)) !important;
+    margin-left: -8px !important; /* pull to left inner corner */
+    margin-right: -8px !important; /* pull to right inner corner */
+    box-sizing: border-box !important;
+    padding-left: 8px !important; /* keep content aligned visually */
+    padding-right: 8px !important;
+    overflow: hidden !important;
+    border-radius: inherit !important;
+  }
+  @media (max-width: 480px) {
+    html
+      body
+      .container
+      .bloco.bloco-2
+      .resumo-mes
+      .bloco-meta-simples.fixo-topo
+      .campo-armazena-data-placar {
+      width: 100% !important;
+      margin-left: 0 !important;
+      margin-right: 0 !important;
+      padding-left: 6px !important;
+      padding-right: 6px !important;
+    }
+  }
+}
+
+.container .bloco.bloco-2 .resumo-mes .lista-dias::-webkit-scrollbar-thumb,
+.lista-dias::-webkit-scrollbar-thumb {
+  background: rgba(120, 120, 120, 0.45) !important;
+  border-radius: 8px !important;
+}
+
+.container
+  .bloco.bloco-2
+  .resumo-mes
+  .lista-dias::-webkit-scrollbar-thumb:hover,
+.lista-dias::-webkit-scrollbar-thumb:hover {
+  background: rgba(100, 100, 100, 0.65) !important;
+}
+
+/* Fallback: esconder qualquer outline/space gerado por barras de rolagem customizadas */
+.container .bloco.bloco-2 .resumo-mes .lista-dias[style] {
+  overflow-y: auto !important;
+  margin-right: 0 !important;
+}
+
+/* Ajustes para telas muito curtas (altura limitada) */
+@media (max-height: 700px) {
+  .container .bloco.bloco-2 {
+    height: calc(100vh - 100px) !important;
+    max-height: calc(100vh - 60px) !important;
+  }
+  .container .bloco.bloco-2 .resumo-mes .lista-dias {
+    /* usar porcentagem da viewport quando espaço vertical for pequeno */
+    height: 32vh !important;
+    max-height: 45vh !important;
+  }
+}
+
+/* Mobile: largura total e lista menor para caber melhor */
+@media (max-width: 480px) {
+  .container .bloco.bloco-2 {
+    width: 100% !important;
+    max-width: 100% !important;
+    height: auto !important;
+    max-height: none !important;
+  }
+  .container .bloco.bloco-2 .resumo-mes .lista-dias {
+    height: var(--lista-dias-height-mobile) !important;
+    max-height: 50vh !important;
+    margin-top: var(--lista-dias-margin-top) !important;
+  }
+}
+/* VALOR POSITIVO - Verde com borda esquerda */
+/* ========================================
+   CSS FORÇADO COM MÁXIMA ESPECIFICIDADE
+   Para garantir que as cores apareçam
+======================================== */
+
+/* VALOR POSITIVO - Verde (mais escuro) com borda esquerda */
+.container .bloco.bloco-2 .resumo-mes .lista-dias .gd-linha-dia.valor-positivo,
+.gd-linha-dia.valor-positivo {
+  background: rgba(141, 219, 170, 0.12) !important;
+  border-left: 4px solid var(--color-positive) !important;
+  padding-left: 13px !important;
+}
+
+/* VALOR NEGATIVO - Vermelho com borda esquerda */
+.container .bloco.bloco-2 .resumo-mes .lista-dias .gd-linha-dia.valor-negativo,
+.gd-linha-dia.valor-negativo {
+  background: rgb(247, 224, 224) !important;
+  border-left: 4px solid var(--color-negative-border) !important;
+  padding-left: 13px !important;
+}
+
+/* VALOR ZERO - Branco com borda cinza */
+.container .bloco.bloco-2 .resumo-mes .lista-dias .gd-linha-dia.valor-zero,
+.gd-linha-dia.valor-zero {
+  background: rgba(255, 255, 255, 0.95) !important;
+  border-left: 4px solid
+    var(
+      --gd-valor-zero-border,
+      var(--lista-dias-border-left, var(--color-neutral))
+    ) !important;
+  padding-left: 13px !important;
+}
+
+.container
+  .bloco.bloco-2
+  .resumo-mes
+  .lista-dias
+  .gd-linha-dia.valor-zero:hover,
+.gd-linha-dia.valor-zero:hover {
+  background: rgba(255, 255, 255, 1) !important;
+  border-left: 4px solid var(--lista-dias-border-left-today, #6b7280) !important;
+}
+
+/* ===== BORDAS LEFT DO DIA ATUAL - CONTROLADAS POR VARIÁVEIS ===== */
+
+/* Dia atual - base */
+html body .container .bloco.bloco-2 .resumo-mes .lista-dias .gd-linha-dia.hoje,
+html body .container .bloco.bloco-2 .resumo-mes .lista-dias .gd-linha-dia.atual,
+html body .container .bloco.bloco-2 .resumo-mes .lista-dias .gd-linha-dia.today,
+html
+  body
+  .container
+  .bloco.bloco-2
+  .resumo-mes
+  .lista-dias
+  .gd-linha-dia.current,
+html
+  body
+  .container
+  .bloco.bloco-2
+  .resumo-mes
+  .lista-dias
+  .gd-linha-dia.active,
+html
+  body
+  .container
+  .bloco.bloco-2
+  .resumo-mes
+  .lista-dias
+  .gd-linha-dia.gd-dia-hoje,
+html
+  body
+  .container
+  .bloco.bloco-2
+  .resumo-mes
+  .lista-dias
+  .gd-linha-dia[data-hoje],
+html
+  body
+  .container
+  .bloco.bloco-2
+  .resumo-mes
+  .lista-dias
+  .gd-linha-dia[data-hoje="true"] {
+  border-left: var(--dia-atual-border-left-width)
+    var(--dia-atual-border-left-style) var(--dia-atual-border-left-color) !important;
+}
+
+/* Also support legacy `.linha-dia` class variants (some templates use this) */
+html body .container .bloco.bloco-2 .resumo-mes .lista-dias .linha-dia.hoje,
+html body .container .bloco.bloco-2 .resumo-mes .lista-dias .linha-dia.atual,
+html body .container .bloco.bloco-2 .resumo-mes .lista-dias .linha-dia.today,
+html body .container .bloco.bloco-2 .resumo-mes .lista-dias .linha-dia.current,
+html body .container .bloco.bloco-2 .resumo-mes .lista-dias .linha-dia.active,
+html
+  body
+  .container
+  .bloco.bloco-2
+  .resumo-mes
+  .lista-dias
+  .linha-dia[data-hoje],
+html
+  body
+  .container
+  .bloco.bloco-2
+  .resumo-mes
+  .lista-dias
+  .linha-dia[data-hoje="true"] {
+  border-left: var(--dia-atual-border-left-width)
+    var(--dia-atual-border-left-style) var(--dia-atual-border-left-color) !important;
+}
+
+/* Dia atual + valor positivo */
+html
+  body
+  .container
+  .bloco.bloco-2
+  .resumo-mes
+  .lista-dias
+  .gd-linha-dia.hoje.valor-positivo,
+html
+  body
+  .container
+  .bloco.bloco-2
+  .resumo-mes
+  .lista-dias
+  .gd-linha-dia.valor-positivo.gd-dia-hoje,
+html
+  body
+  .container
+  .bloco.bloco-2
+  .resumo-mes
+  .lista-dias
+  .gd-linha-dia.valor-positivo[data-hoje] {
+  border-left: var(--dia-atual-positivo-border-left-width)
+    var(--dia-atual-positivo-border-left-style)
+    var(--dia-atual-positivo-border-left-color) !important;
+}
+
+/* Dia atual + valor negativo */
+html
+  body
+  .container
+  .bloco.bloco-2
+  .resumo-mes
+  .lista-dias
+  .gd-linha-dia.hoje.valor-negativo,
+html
+  body
+  .container
+  .bloco.bloco-2
+  .resumo-mes
+  .lista-dias
+  .gd-linha-dia.valor-negativo.gd-dia-hoje,
+html
+  body
+  .container
+  .bloco.bloco-2
+  .resumo-mes
+  .lista-dias
+  .gd-linha-dia.valor-negativo[data-hoje] {
+  border-left: var(--dia-atual-negativo-border-left-width)
+    var(--dia-atual-negativo-border-left-style)
+    var(--dia-atual-negativo-border-left-color) !important;
+}
+
+/* Dia atual + valor zero */
+html
+  body
+  .container
+  .bloco.bloco-2
+  .resumo-mes
+  .lista-dias
+  .gd-linha-dia.hoje.valor-zero,
+html
+  body
+  .container
+  .bloco.bloco-2
+  .resumo-mes
+  .lista-dias
+  .gd-linha-dia.valor-zero.gd-dia-hoje,
+html
+  body
+  .container
+  .bloco.bloco-2
+  .resumo-mes
+  .lista-dias
+  .gd-linha-dia.valor-zero[data-hoje] {
+  border-left: var(--dia-atual-zero-border-left-width)
+    var(--dia-atual-zero-border-left-style)
+    var(--dia-atual-zero-border-left-color) !important;
+}
+
+/* Garantir texto/ícone/valor escuros para o dia atual sem valor */
+.gd-linha-dia.valor-zero.hoje .data,
+.gd-linha-dia.valor-zero.atual .data,
+.gd-linha-dia.valor-zero.today .data,
+.gd-linha-dia.valor-zero.current .data,
+.gd-linha-dia.valor-zero.active .data,
+.gd-linha-dia.valor-zero.hoje .valor,
+.gd-linha-dia.valor-zero.atual .valor,
+.gd-linha-dia.valor-zero.today .valor,
+.gd-linha-dia.valor-zero.current .valor,
+.gd-linha-dia.valor-zero.active .valor,
+.gd-linha-dia.valor-zero.hoje .placar-dia,
+.gd-linha-dia.valor-zero.atual .placar-dia,
+.gd-linha-dia.valor-zero.today .placar-dia,
+.gd-linha-dia.valor-zero.current .placar-dia,
+
+/* ==========================================================
+   Overrides to neutralize conflicting fixed max-heights from
+   `rodape.css` and enforce flex-based full height behavior.
+   This block uses higher specificity and !important where
+   necessary so the middle column matches bloco-1 height.
+   ========================================================== */
+
+/* Ensure main layout fills available viewport between header/footer */
+.main-content {
+  position: fixed !important;
+  top: 80px !important; /* match header height used elsewhere */
+  bottom: 80px !important; /* match footer height used elsewhere */
+  left: 0 !important;
+  right: 0 !important;
+  overflow: hidden !important;
+}
+
+/* Make sure the container and blocks are full height flex parents */
+.main-content .container {
+  display: flex !important;
+  align-items: stretch !important;
+  height: 100% !important;
+  min-height: 0 !important;
+}
+
+.main-content .container > .bloco {
+  display: flex !important;
+  flex-direction: column !important;
+  height: 100% !important;
+  min-height: 0 !important; /* critical to allow child overflow */
+}
+
+/* Specifically override rodape.css rules that set fixed max-heights */
+.main-content .container > .bloco-2,
+.main-content .container > .bloco-2 > * {
+  max-height: none !important;
+  height: 100% !important;
+}
+
+.main-content .container > .bloco-1,
+.main-content .container > .bloco-1 > * {
+  height: 100% !important;
+}
+
+/* Let resumo-mes expand and make lista-dias scroll within it */
+.main-content .container .bloco-2 .resumo-mes {
+  flex: 1 1 auto !important;
+  min-height: 0 !important;
+  display: flex !important;
+  flex-direction: column !important;
+}
+
+.main-content .container .bloco-2 .resumo-mes .lista-dias {
+  flex: 1 1 auto !important;
+  height: auto !important;
+  max-height: none !important;
+  overflow-y: auto !important;
+  min-height: 0 !important;
+}
+
+/* Final safety: ensure no ancestor max-height prevents stretching */
+.main-content,
+.main-content * {
+  max-height: none !important;
+}
+
+.gd-linha-dia.valor-zero.active .placar-dia,
+.gd-linha-dia.valor-zero.hoje .icone i,
+.gd-linha-dia.valor-zero.atual .icone i,
+.gd-linha-dia.valor-zero.today .icone i,
+.gd-linha-dia.valor-zero.current .icone i,
+.gd-linha-dia.valor-zero.active .icone i {
+  color: #374151 !important; /* cinza escuro para melhor contraste */
+  opacity: 1 !important;
+}
+
+/* Diminuir opacidade de linhas sem valor (0,00) para ficarem sutis */
+.container .bloco.bloco-2 .resumo-mes .lista-dias .gd-linha-dia.valor-zero,
+.gd-linha-dia.valor-zero {
+  opacity: 0.65 !important; /* levemente translúcido */
+}
+
+/* Restaurar opacidade ao passar o mouse para indicar interatividade */
+.container
+  .bloco.bloco-2
+  .resumo-mes
+  .lista-dias
+  .gd-linha-dia.valor-zero:hover,
+.gd-linha-dia.valor-zero:hover {
+  opacity: 1 !important;
+}
+
+/* Assegurar que os elementos filhos sigam a opacidade reduzida */
+.gd-linha-dia.valor-zero .data,
+.gd-linha-dia.valor-zero .placar-dia,
+.gd-linha-dia.valor-zero .valor,
+.gd-linha-dia.valor-zero .icone {
+  opacity: inherit !important;
+}
+
+.gd-linha-dia {
+  display: flex !important;
+  flex-direction: row !important;
+  align-items: center !important;
+  justify-content: flex-start !important;
+  gap: 16px !important;
+
+  width: 100% !important;
+  height: var(
+    --gd-linha-dia-height,
+    28px
+  ) !important; /* compact height to match meses */
+  min-height: var(--gd-linha-dia-min-height, 28px) !important;
+  max-height: var(--gd-linha-dia-max-height, 28px) !important;
+  padding: 0 12px !important; /* match meses horizontal padding */
+  margin: 0 0
+    var(--gd-linha-mes-row-gap, var(--classe-mes-string-margin-bottom, 2px)) 0 !important;
+
+  font-family: "Rajdhani", sans-serif !important;
+  font-size: 14px !important;
+  font-weight: 500 !important;
+
+  border-radius: 8px !important;
+  transition: all 0.15s ease !important;
+  box-sizing: border-box !important;
+}
+
+/* High-specificity authoritative override to force compact look identical to .gd-linha-mes */
+html body .container .bloco.bloco-2 .resumo-mes .lista-dias .gd-linha-dia,
+html body .lista-dias .gd-linha-dia,
+.main-content .container .bloco.bloco-2 .resumo-mes .lista-dias .gd-linha-dia {
+  height: var(--gd-linha-dia-height, 28px) !important;
+  min-height: var(--gd-linha-dia-min-height, 28px) !important;
+  max-height: var(--gd-linha-dia-max-height, 28px) !important;
+  padding: 0 12px !important;
+  margin: 0 0
+    var(--gd-linha-mes-row-gap, var(--classe-mes-string-margin-bottom, 2px)) 0 !important;
+  background: rgba(255, 255, 255, 0.7) !important;
+  border: 1px solid rgba(226, 232, 240, 0.5) !important;
+  border-radius: 6px !important;
+  font-family: "Rajdhani", sans-serif !important;
+  font-weight: 500 !important;
+  font-size: 13px !important;
+  line-height: 1.1 !important;
+  overflow: hidden !important;
+}
+
+/* Extra strong overrides to ensure .lista-dias is scrollable and fills available space */
+/* Placed at end to outweight earlier rules and user edits. */
+.main-content .container .bloco-2 {
+  overflow: visible !important; /* allow inner scrollbars to be visible */
+}
+
+.main-content .container .bloco-2 .resumo-mes {
+  display: flex !important;
+  flex-direction: column !important;
+  flex: 1 1 auto !important;
+  height: 100% !important;
+  min-height: 0 !important;
+  overflow: hidden !important;
+}
+
+.main-content .container .bloco-2 .resumo-mes > .lista-dias,
+.main-content .container .bloco-2 .resumo-mes .lista-dias {
+  flex: 1 1 auto !important;
+  height: 100% !important;
+  max-height: 100% !important;
+  min-height: 0 !important;
+  overflow-y: auto !important;
+  -webkit-overflow-scrolling: touch !important; /* momentum scrolling on iOS */
+  position: relative !important;
+}
+
+/* Ensure mouse wheel scrolls the inner list even when an ancestor has overflow hidden */
+.main-content .container .bloco-2 .resumo-mes .lista-dias::-webkit-scrollbar {
+  width: 10px !important;
+}
+
+/* ===== OVERRIDE CENTRALIZADO: garantir que a margem superior use a variável raíz ===== */
+/* Esta regra vem no final do arquivo com alta especificidade para substituir
+   ocorrências anteriores e em media queries. */
+html body .main-content .container .bloco.bloco-2 .resumo-mes > .lista-dias,
+html body .container .bloco.bloco-2 .resumo-mes > .lista-dias,
+.main-content .container .bloco.bloco-2 .resumo-mes .lista-dias,
+.container .bloco.bloco-2 .resumo-mes .lista-dias {
+  margin-top: var(--lista-dias-margin-top) !important;
+}
+
+/* Forçar também dentro de elementos com atributo [style] (scripts que aplicam inline) quando possível
+   — isso só ajuda se o inline não usar !important. */
+.container .bloco.bloco-2 .resumo-mes .lista-dias[style] {
+  margin-top: var(--lista-dias-margin-top) !important;
+}
+
+.gd-linha-dia .data {
+  width: 90px !important;
+  min-width: 90px !important;
+  font-weight: var(--date-font-weight) !important;
+  font-size: var(--date-font-size) !important;
+  color: var(--date-color) !important;
+  text-align: left !important;
+  margin-left: 0px !important;
+}
+
+/* === Make PLACAR typography identical to VALOR === */
+/* Applies to placar container and its inner placar items with high specificity */
+.container .bloco.bloco-2 .resumo-mes .lista-dias .gd-linha-dia .placar-dia,
+.gd-linha-dia .placar-day,
+.gd-linha-dia .placar-dia,
+.gd-linha-dia .placar,
+.gd-linha-dia .placar > *,
+.gd-linha-dia .placar-dia * {
+  font-family: "Inter", monospace !important;
+  font-weight: 600 !important;
+  font-size: 14px !important;
+  font-variant-numeric: tabular-nums !important;
+  letter-spacing: -0.01em !important;
+}
+
+/* FINAL OVERRIDE: Forçar margin-left do placar (controlado por :root) */
+.container .bloco.bloco-2 .resumo-mes .lista-dias .gd-linha-dia .placar-day,
+.container .bloco.bloco-2 .resumo-mes .lista-dias .gd-linha-dia .placar-dia,
+.gd-linha-dia .placar-day,
+.gd-linha-dia .placar-dia,
+.linha-dia .placar-day,
+.linha-dia .placar-dia {
+  margin-left: var(--placar-2-margin-left, -9px) !important;
+}
+
+/* STRONG OVERRIDE: posicionamento forçado caso margin-left seja sobrescrita
+   Usar left/transform é mais eficaz quando regras de margin/padding são conflitantes. */
+.container .bloco.bloco-2 .resumo-mes .lista-dias .gd-linha-dia > .placar-day,
+.container .bloco.bloco-2 .resumo-mes .lista-dias .gd-linha-dia > .placar-dia,
+.gd-linha-dia > .placar-day,
+.gd-linha-dia > .placar-dia,
+.linha-dia > .placar-day,
+.linha-dia > .placar-dia {
+  position: relative !important;
+  left: 0px !important; /* desloca visualmente para a esquerda */
+  transform: translateX(
+    var(--placar-2-translate, -9px)
+  ) !important; /* fallback/consistência */
+  padding-left: 0 !important;
+}
+
+/* garantir que pais não adicionem padding que empurre o placar */
+.container .bloco.bloco-2 .resumo-mes .lista-dias .gd-linha-dia,
+.gd-linha-dia,
+.linha-dia {
+  padding-left: 0 !important;
+}
+
+/* Colorir ícone de verificação ao lado do valor com base no estado do valor */
+/* Usamos seletores de irmão (+ / ~) e também variantes por classe da linha para garantir cobertura */
+.gd-linha-dia .valor.verde-bold + .icone i,
+.gd-linha-dia .valor.verde-bold ~ .icone i,
+.gd-linha-dia.valor-positivo .icone i {
+  color: var(--color-positive) !important; /* verde */
+}
+
+.gd-linha-dia .valor.vermelho-bold + .icone i,
+.gd-linha-dia .valor.vermelho-bold ~ .icone i,
+.gd-linha-dia.valor-negativo .icone i {
+  color: var(--color-negative) !important; /* vermelho */
+}
+
+.gd-linha-dia .valor.texto-cinza + .icone i,
+.gd-linha-dia .valor.texto-cinza ~ .icone i,
+.gd-linha-dia.valor-zero .icone i {
+  color: var(--color-neutral) !important; /* cinza neutro */
+}
+
+/* Garantir que troféu apareça sempre dourado (sobrescreve regras de estado) */
+.gd-linha-dia .icone i.fa-trophy.trofeu-icone,
+.container
+  .bloco.bloco-2
+  .resumo-mes
+  .lista-dias
+  .gd-linha-dia
+  .icone
+  i.fa-trophy.trofeu-icone,
+.gd-linha-dia .icone i.fa-trophy,
+.container
+  .bloco.bloco-2
+  .resumo-mes
+  .lista-dias
+  .gd-linha-dia
+  .icone
+  i.fa-trophy {
+  color: var(--color-trophy) !important; /* forçar dourado */
+  text-shadow: 0 1px 0 rgba(0, 0, 0, 0.08) !important;
+}
+
+/* Forçar também no pseudo-elemento (::before) usado pelo Font Awesome */
+.gd-linha-dia .icone i.fa-trophy::before,
+.container
+  .bloco.bloco-2
+  .resumo-mes
+  .lista-dias
+  .gd-linha-dia
+  .icone
+  i.fa-trophy::before {
+  color: #f59e0b !important;
+}
+
+/* Colorir a coluna DATA conforme o estado do valor na linha */
+/* Usa alta especificidade para sobrescrever regras anteriores que definiam cor padrão */
+.container
+  .bloco.bloco-2
+  .resumo-mes
+  .lista-dias
+  .gd-linha-dia.valor-positivo
+  .data,
+.gd-linha-dia.valor-positivo .data {
+  color: var(--color-positive) !important; /* verde para positivo */
+  font-weight: var(--date-font-weight-positive) !important;
+}
+
+.container
+  .bloco.bloco-2
+  .resumo-mes
+  .lista-dias
+  .gd-linha-dia.valor-negativo
+  .data,
+.gd-linha-dia.valor-negativo .data {
+  color: var(--color-negative) !important; /* vermelho para negativo */
+  font-weight: var(--date-font-weight) !important;
+}
+
+.container
+  .bloco.bloco-2
+  .resumo-mes
+  .lista-dias
+  .gd-linha-dia.valor-zero
+  .data,
+.gd-linha-dia.valor-zero .data {
+  color: var(--color-neutral) !important; /* cinza para neutro */
+  font-weight: var(--date-font-weight) !important;
+}
+
+/* Tornar a fonte da DATA idêntica à fonte do VALOR */
+/* Mesmo family, peso e tamanho do .gd-linha-dia .valor */
+.container .bloco.bloco-2 .resumo-mes .lista-dias .gd-linha-dia .data,
+.gd-linha-dia > .data,
+.gd-linha-dia .data {
+  font-family: var(--date-font-family) !important;
+  font-weight: var(--date-font-weight) !important;
+  font-size: var(--date-font-size) !important;
+  font-variant-numeric: tabular-nums !important;
+  letter-spacing: var(--date-letter-spacing) !important;
+}
+
+/* FORCE DATA TO LEFT EDGE: remover margem/padding esquerdo para ficar no canto */
+.gd-linha-dia .data,
+.container .bloco.bloco-2 .resumo-mes .lista-dias .linha-dia .data,
+.container .bloco.bloco-2 .resumo-mes .linha-dia .data {
+  margin-left: 5px !important; /* user-requested: move data slightly right */
+  padding-left: 0 !important;
+  text-align: left !important;
+}
+
+/* OVERRIDE PARENTS: remover padding esquerdo que empurra a coluna DATA
+   - Ajustes aplicados ao container da lista e às linhas para zerar deslocamentos */
+.container .bloco.bloco-2 .resumo-mes .lista-dias {
+  padding-left: 0 !important;
+}
+
+/* High-specificity: fazer o ícone "encostar" no canto direito sem ser cortado.
+   Reserva-se espaço com padding-right em .lista-dias e aplicamos margin-right negativa
+   ao <i> do ícone para puxá-lo visualmente até a borda. Elevamos z-index para evitar
+   sobreposição por elementos adjacentes. */
+html
+  body
+  .container
+  .bloco.bloco-2
+  .resumo-mes
+  .lista-dias
+  .gd-linha-dia
+  .icone
+  i {
+  margin-right: var(--lista-dias-icone-margin-right-edge, -18px) !important;
+  position: relative !important;
+  z-index: 1200 !important;
+}
+
+/* Garantir que o wrapper .icone permita overflow visível (para segurança) */
+html
+  body
+  .container
+  .bloco.bloco-2
+  .resumo-mes
+  .lista-dias
+  .gd-linha-dia
+  .icone {
+  overflow: visible !important;
+}
+
+.container .bloco.bloco-2 .resumo-mes .lista-dias .gd-linha-dia,
+.gd-linha-dia {
+  padding-left: 0 !important; /* remove o padding que empurra os filhos */
+}
+
+.gd-linha-dia > .data {
+  margin-left: 0 !important;
+  padding-left: 0 !important;
+}
+
+.gd-linha-dia .placar-dia {
+  width: 80px !important;
+  min-width: 80px !important;
+  display: flex !important;
+  align-items: center !important;
+  justify-content: center !important;
+  gap: 6px !important;
+  font-size: 14px !important;
+}
+
+.gd-linha-dia .valor {
+  width: 90px !important;
+  min-width: 90px !important;
+  font-weight: 600 !important;
+  font-size: 14px !important;
+  text-align: left !important;
+}
+
+.gd-linha-dia .icone {
+  width: 24px !important;
+  min-width: 24px !important;
+  display: flex !important;
+  align-items: center !important;
+  justify-content: center !important;
+}
+
+.gd-linha-dia .icone i {
+  font-size: 15px !important;
+  font-family: "Font Awesome 6 Free" !important;
+  font-weight: 900 !important;
+}
+
+/* ========================================
+   RESET COMPLETO DE CONFLITOS
+======================================== */
+
+/* Remover qualquer regra que possa interferir */
+.container .bloco.bloco-2 .resumo-mes .lista-dias .linha-dia {
+  display: none !important; /* Desabilitar CSS antigo */
+}
+
+/* Garantir que apenas .gd-linha-dia seja usado */
+.gd-linha-dia {
+  display: flex !important; /* Reforçar */
+}
+
+/* Forçar reset de estilos inline que possam existir */
+.gd-linha-dia[style] {
+  background: inherit !important;
+  border: inherit !important;
+  padding: inherit !important;
+}
+
+/* -----------------------------------------------------------------------------
+   Final Fix (simplified): guarantee the left border for the "dia atual" (today)
+   Use concise selectors to avoid duplicated long selectors that conflict.
+----------------------------------------------------------------------------- */
+.gd-linha-dia.gd-dia-hoje,
+.gd-linha-dia.gd-dia-hoje[style] {
+  border-top: none !important;
+  border-right: none !important;
+  border-bottom: none !important;
+  border-left: var(--dia-atual-border-left-width, 4px)
+    var(--dia-atual-border-left-style, solid)
+    var(--dia-atual-border-left-color, #43464d) !important;
+  padding-left: var(--dia-atual-padding-left, 13px) !important;
+  box-shadow: none !important;
+}
+
+/* State-specific colors must override the generic color above */
+.gd-linha-dia.gd-dia-hoje.valor-positivo,
+.gd-linha-dia.gd-dia-hoje.valor-positivo[style] {
+  border-left-color: var(
+    --dia-atual-positivo-border-left-color,
+    #058b32
+  ) !important;
+}
+.gd-linha-dia.gd-dia-hoje.valor-negativo,
+.gd-linha-dia.gd-dia-hoje.valor-negativo[style] {
+  border-left-color: var(
+    --dia-atual-negativo-border-left-color,
+    #ec0606
+  ) !important;
+}
+.gd-linha-dia.gd-dia-hoje.valor-zero,
+.gd-linha-dia.gd-dia-hoje.valor-zero[style] {
+  border-left-color: var(
+    --dia-atual-zero-border-left-color,
+    #43464d
+  ) !important;
+}
+
+/* =======================================================================================================================================================
+                                           FIM  CODIGO RESPONSAVEL PELO  CAMPO ( DIA - PLACAR - VALOR - ICONE )
+  =======================================================================================================================================================*/
+
+/* ==================================================================================================
+   FORCE: make date flush to left edge
+   - Some earlier rules add padding to .gd-linha-dia or to the list container.
+   - Add a high-specificity override to ensure the .data element sits at the leftmost edge.
+================================================================================================== */
+.container .bloco.bloco-2 .resumo-mes .lista-dias,
+.container .bloco.bloco-2 .resumo-mes {
+  padding-left: 0 !important;
+}
+
+.container .bloco.bloco-2 .resumo-mes .lista-dias .gd-linha-dia,
+.container .bloco.bloco-2 .resumo-mes .gd-linha-dia,
+.gd-linha-dia {
+  padding-left: 0 !important; /* remove left spacing from the row */
+}
+
+.container .bloco.bloco-2 .resumo-mes .lista-dias .gd-linha-dia > .data,
+.gd-linha-dia > .data,
+.gd-linha-dia .data {
+  margin-left: 0 !important;
+  padding-left: 0 !important;
+  text-align: left !important; /* align content to left */
+  justify-content: flex-start !important;
+  width: auto !important; /* allow space allocation to show full date */
+  min-width: 110px !important;
+  max-width: none !important;
+  overflow: visible !important;
+  text-overflow: clip !important;
+  box-sizing: border-box !important;
+}
+
+/* If any child wrapper adds internal padding, collapse it to keep date flush */
+.gd-linha-dia .data * {
+  margin-left: 0 !important;
+  padding-left: 0 !important;
+}
+
+/* Final overrides: precise margins requested by user */
+.container .bloco.bloco-2 .resumo-mes .lista-dias .gd-linha-dia .data,
+.gd-linha-dia > .data,
+.gd-linha-dia .data {
+  margin-left: var(
+    --lista-dias-data-margin-left,
+    6px
+  ) !important; /* user-requested: move data 2px to the left */
+}
+
+.container .bloco.bloco-2 .resumo-mes .lista-dias .gd-linha-dia .valor,
+.gd-linha-dia > .valor,
+.gd-linha-dia .valor {
+  margin-left: var(
+    --lista-dias-valor-margin-left,
+    15px
+  ) !important; /* pull the value slightly left as requested */
+}
+
+/* ==================================================
+   OVERRIDE: remover paddings que empurram o placar
+   - Há regras específicas (ex: valor-positivo/negativo/zero)
+     que adicionam padding-left nas linhas. Forçar 0
+     aqui com especificidade e !important para permitir
+     que .placar-dia fique mais próximo da data.
+================================================== */
+.container .bloco.bloco-2 .resumo-mes .lista-dias .gd-linha-dia,
+.container .bloco.bloco-2 .resumo-mes .lista-dias .gd-linha-dia.valor-positivo,
+.container .bloco.bloco-2 .resumo-mes .lista-dias .gd-linha-dia.valor-negativo,
+.container .bloco.bloco-2 .resumo-mes .lista-dias .gd-linha-dia.valor-zero,
+.gd-linha-dia,
+.gd-linha-dia.valor-positivo,
+.gd-linha-dia.valor-negativo,
+.gd-linha-dia.valor-zero {
+  padding-left: 0 !important; /* zera espaçamento gerado por bordas/estados */
+}
+
+/* Forçar placar mais próximo da data */
+.container .bloco.bloco-2 .resumo-mes .lista-dias .gd-linha-dia .placar-dia,
+.gd-linha-dia .placar-dia {
+  margin-left: 0px !important; /* aproximar 2px em relação à data */
+}
+
+/* Ajuste final da coluna data para garantir espaço adequado e alinhamento */
+.container .bloco.bloco-2 .resumo-mes .lista-dias .gd-linha-dia .data,
+.gd-linha-dia .data {
+  margin-right: 8px !important; /* espaço reduzido entre data e placar */
+}
+
+/* ==================================================
+   MonitorContinuo: regras para estados forçados (troféu / check)
+   - Usa classes adicionadas por js/script-mes.js: .trofeu-icone-forcado,
+     .check-icone-forcado e .meta-forcada
+   - Alta especificidade evita necessidade de estilos inline
+   - Mantém compatibilidade com seletores existentes (.fa-trophy, .fa-check)
+================================================== */
+
+.lista-dias .gd-linha-dia.meta-forcada .icone i.trofeu-icone-forcado,
+.lista-dias .gd-linha-dia.meta-forcada .icone i.fa-trophy.trofeu-icone-forcado {
+  color: rgb(255, 215, 0) !important; /* ouro */
+  font-family: "Font Awesome 6 Free" !important;
+  font-weight: 900 !important;
+  font-size: 11px !important;
+  line-height: 1 !important;
+}
+
+.lista-dias .gd-linha-dia.meta-forcada .icone i.check-icone-forcado,
+.lista-dias .gd-linha-dia.meta-forcada .icone i.fa-check.check-icone-forcado {
+  color: rgb(100, 116, 139) !important; /* cinza */
+  font-family: "Font Awesome 6 Free" !important;
+  font-weight: 900 !important;
+  font-size: 11px !important;
+  line-height: 1 !important;
+}
+
+/* Garantir que a especificidade cubra variações por classe de linha */
+.lista-dias
+  .gd-linha-dia.meta-forcada.valor-positivo
+  .icone
+  i.trofeu-icone-forcado,
+.lista-dias
+  .gd-linha-dia.meta-forcada.valor-negativo
+  .icone
+  i.trofeu-icone-forcado,
+.lista-dias
+  .gd-linha-dia.meta-forcada.valor-zero
+  .icone
+  i.trofeu-icone-forcado {
+  color: rgb(255, 215, 0) !important;
+}
+
+/* Forçar ausência de transições para evitar interferência visual */
+.lista-dias .gd-linha-dia.meta-forcada .icone i {
+  transition: none !important;
+}
+
+/* Aparência leve da linha quando meta forçada */
+.lista-dias .gd-linha-dia.meta-forcada[data-meta-batida="true"] {
+  box-shadow: inset 0 0 0 1px rgba(3, 161, 88, 0.06) !important;
+}
+
+.lista-dias .gd-linha-dia.meta-forcada[data-meta-batida="false"] {
+  box-shadow: none !important;
+}
+
+/* Fallback de maior especificidade usando o root container (se existir) */
+#app .lista-dias .gd-linha-dia.meta-forcada .icone i {
+  font-size: 11px !important;
+}
+
+/* Pequeno utilitário: limpar estilos inline eventualmente reaplicados */
+.lista-dias .gd-linha-dia.meta-forcada[style] {
+  /* não removemos inline, apenas garantimos visual consistente */
+  background: inherit !important;
+  border: inherit !important;
+}
+
+/* FIM: MonitorContinuo rules */
+
+/* ===================== Stop blinking for forced states =====================
+   When the JS marks a row with `.meta-forcada`, remove transitions,
+   animations and other visual effects that could create blinking.
+============================================================================= */
+.lista-dias .gd-linha-dia.meta-forcada,
+.lista-dias .gd-linha-dia.meta-forcada * {
+  transition: none !important;
+  animation: none !important;
+  -webkit-animation: none !important;
+  -moz-animation: none !important;
+  -o-animation: none !important;
+  will-change: auto !important;
+}
+
+/* Ensure icon color won't be repainted frequently */
+.lista-dias .gd-linha-dia.meta-forcada .icone i {
+  -webkit-font-smoothing: antialiased !important;
+  -moz-osx-font-smoothing: grayscale !important;
+}
+
+/* Reduce forced reflow: avoid changing DOM properties frequently */
+.lista-dias .gd-linha-dia.meta-forcada[data-meta-batida="true"] {
+  contain: paint !important;
+}
+
+/* Additional safety: when meta-forcada exists, do not allow other scripts
+   to add inline style color to the icon (we can't prevent it entirely but
+   this makes the stylesheet more authoritative). */
+.lista-dias .gd-linha-dia.meta-forcada .icone i[style] {
+  color: inherit !important;
+}
+
+/* End stop-blink rules */
+
+/* ===================== Force icons to 11px =====================
+   Ensure all day-list icons use 11px consistently across breakpoints.
+   This has high specificity and uses !important to override prior rules.
+================================================================== */
+.lista-dias .gd-linha-dia .icone i,
+.container .bloco.bloco-2 .resumo-mes .lista-dias .gd-linha-dia .icone i,
+.gd-linha-dia .icone i {
+  font-size: 11px !important;
+  width: 16px !important;
+  height: 16px !important;
+  line-height: 16px !important;
+}
+
+/* also ensure pseudo-element used by fontawesome matches size */
+.lista-dias .gd-linha-dia .icone i::before,
+.gd-linha-dia .icone i::before {
+  font-size: 11px !important;
+}
+
+/* Keep enforced size even in media queries */
+@media (max-width: 768px) {
+  .lista-dias .gd-linha-dia .icone i,
+  .gd-linha-dia .icone i {
+    font-size: 11px !important;
+  }
+}
+
+@media (max-width: 480px) {
+  .lista-dias .gd-linha-dia .icone i,
+  .gd-linha-dia .icone i {
+    font-size: 11px !important;
+  }
+}
+
+/* End force icons size */
+
+/* Ajuste vertical dos ícones: levantar 2px para melhor centralização */
+.lista-dias .gd-linha-dia .icone,
+.container .bloco.bloco-2 .resumo-mes .lista-dias .gd-linha-dia .icone,
+.gd-linha-dia .icone {
+  margin-top: 0px !important; /* ajusta altura do ícone para ficar centralizado */
+}
+
+@media (max-width: 768px) {
+  .lista-dias .gd-linha-dia .icone,
+  .gd-linha-dia .icone {
+    margin-top: 3px !important;
+  }
+}
+
+@media (max-width: 480px) {
+  .lista-dias .gd-linha-dia .icone,
+  .gd-linha-dia .icone {
+    margin-top: 2px !important;
+  }
+}
+
+/* ===================================================================
+   CAMPO ARMAZENA DATA PLACAR - fundo degradê cinza (3 tons), altura 70px
+   borda arredondada somente no topo
+   =================================================================== */
+.campo-armazena-data-placar {
+  position: absolute !important;
+  top: 0 !important;
+  left: 0 !important;
+  right: 0 !important;
+  width: 100% !important;
+  height: 60px !important;
+  min-height: 60px !important;
+
+  /* Remover qualquer margem/padding que cause gap */
+  margin: 0 !important;
+  padding: 0 !important;
+
+  /* Visual */
+  background: linear-gradient(
+    90deg,
+    #9ea39d 0%,
+    #dff1dd 50%,
+    #abb3ab 100%
+  ) !important;
+  border-top-left-radius: 20px !important;
+  border-top-right-radius: 20px !important;
+  border-bottom-left-radius: 0 !important;
+  border-bottom-right-radius: 0 !important;
+
+  /* Layout */
+  display: flex !important;
+  align-items: center !important;
+  justify-content: center !important;
+  box-sizing: border-box !important;
+
+  /* Z-index para ficar acima do conteúdo */
+  z-index: 100 !important;
+
+  /* Garantir que o gradiente respeite as bordas arredondadas */
+  overflow: hidden !important;
+}
+
+/* Ensure the bloco-2 is the containing block for the absolutely positioned header */
+.container .bloco.bloco-2 {
+  position: relative !important;
+}
+
+/* keep placar content padded away from the edges while the header itself is flush */
+.campo-armazena-data-placar .area-central-2 {
+  width: 100% !important;
+  height: 100% !important;
+  display: flex !important;
+  align-items: center !important;
+  justify-content: center !important;
+  position: relative !important;
+  z-index: 3 !important;
+  padding: 0 12px !important; /* Apenas padding interno para o conteúdo */
+  box-sizing: border-box !important;
+}
+
+/* Ajustes do placar quando dentro do campo: fundo transparente para mostrar o degradê */
+.campo-armazena-data-placar .pontuacao-2 {
+  background: transparent !important;
+  padding: 0 !important;
+  border-radius: 0 !important;
+  box-shadow: none !important;
+  color: #2b2b2b !important;
+  font-size: var(--fs-placar-top) !important;
+  line-height: 1 !important;
+  width: 100% !important;
+  box-sizing: border-box !important;
+}
+
+/* Forçar placar topo variante-2 a usar o tamanho do root */
+#pontuacao-2,
+.pontuacao-2,
+.campo-armazena-data-placar .pontuacao-2 {
+  font-size: var(--fs-placar-top) !important;
+  line-height: 1 !important;
+}
+
+/* FORÇAR: garantir que o VALOR (R$) ao lado da DATA use a variável central --fs-valor
+   Este bloco tem especificidade alta e vem depois das outras regras para garantir
+   que alterar --fs-valor em :root atualize o tamanho do valor na lista de dias. */
+html body .lista-dias .gd-linha-dia .valor,
+html
+  body
+  .container
+  .bloco.bloco-2
+  .resumo-mes
+  .lista-dias
+  .gd-linha-dia
+  .valor,
+html body .lista-dias .gd-linha-dia .valor *,
+html
+  body
+  .container
+  .bloco.bloco-2
+  .resumo-mes
+  .lista-dias
+  .gd-linha-dia
+  .valor
+  * {
+  font-size: var(--fs-valor) !important;
+  line-height: 1 !important;
+}
+
+/* Position the month title absolutely at the left corner of the gradient header
+   to guarantee visibility and precise offsets regardless of parent padding. */
+.campo-armazena-data-placar .titulo-bloco {
+  position: absolute !important;
+  left: 12px !important;
+  top: 8px !important;
+  margin: 0 !important;
+  font-size: 12px !important;
+  color: #6a0dad !important;
+  font-weight: 600 !important;
+  line-height: 1 !important;
+  z-index: 6 !important;
+  display: flex !important;
+  align-items: center !important;
+}
+
+/* Hide any duplicate placar instances placed in the header/corners
+   and keep only the centered #pontuacao-2 visible. */
+.campo-armazena-data-placar .pontuacao-2:not(#pontuacao-2) {
+  display: none !important;
+  visibility: hidden !important;
+  height: 0 !important;
+  overflow: hidden !important;
+  padding: 0 !important;
+  margin: 0 !important;
+  line-height: 0 !important;
+}
+
+/* Ensure the centered score is visible and properly centered */
+.area-central-2 #pontuacao-2,
+#pontuacao-2 {
+  display: flex !important;
+  justify-content: center !important;
+  align-items: center !important;
+  gap: 0.6rem !important;
+  width: auto !important;
+  height: auto !important;
+  padding: 0 !important;
+  font-size: var(--fs-placar-top) !important;
+}
+
+/* Fallback: se ambos os spans do placar estiverem vazios, esconder o separador */
+#pontuacao-2 .placar-green-2:empty + .separador-2:empty,
+#pontuacao-2 .placar-green-2:empty ~ .separador-2:empty,
+#pontuacao-2 .placar-green-2:empty + .separador-2:empty + .placar-red-2:empty {
+  display: none !important;
+}
+
+/* Separator visual state: transparent by default while waiting for values,
+   then gray when `.placar-has-values` is added by JS after real data arrives. */
+#pontuacao-2 .separador-2 {
+  color: transparent !important;
+  opacity: 0 !important;
+  transition: color 180ms ease, opacity 180ms ease;
+}
+
+#pontuacao-2.placar-has-values .separador-2 {
+  color: rgba(109, 107, 107, 0.95) !important; /* normal gray separator */
+  opacity: 1 !important;
+}
+
+/* Stronger specificity to guarantee the month text is visible and not clipped */
+.bloco-meta-simples .campo-armazena-data-placar h2.titulo-bloco #tituloMes {
+  color: #6a0dad !important;
+  font-size: 12px !important;
+  display: inline-block !important;
+  line-height: 1 !important;
+  z-index: 8 !important;
+  text-transform: none !important;
+  visibility: visible !important;
+}
+
+.container .bloco.bloco-2 .bloco-meta-simples .titulo-bloco #tituloMes {
+  /* Garantir que, mesmo que o texto venha em MAIÚSCULAS via JS, o exibido seja
+     com apenas a inicial maiúscula: 'Setembro 2025' */
+  text-transform: lowercase !important;
+  display: inline-block !important; /* para aplicar ::first-letter com segurança */
+  font-size: 13px !important;
+}
+
+.container
+  .bloco.bloco-2
+  .bloco-meta-simples
+  .titulo-bloco
+  #tituloMes::first-letter {
+  text-transform: uppercase !important;
+}
+
+/* =======================================================================================================================================================
+  FONTE RAJDHANI -  FONTE RAJDHANI - FONTE RAJDHANI -  FONTE RAJDHANI - FONTE RAJDHANI -  FONTE RAJDHANI
+  =======================================================================================================================================================*/
+
+/* OVERRIDE GLOBAL: garantir que placar use a variável de root mesmo se outros arquivos definirem tamanhos */
+html body #bloco-2 .lista-dias .gd-linha-dia .placar-dia,
+html body #bloco-2 .lista-dias .gd-linha-dia .placar,
+html body .lista-dias .gd-linha-dia .placar-dia,
+html body .lista-dias .gd-linha-dia .placar {
+  font-size: var(--fs-placar) !important;
+  line-height: 1 !important;
+}
+
+/* Garantir que elementos internos herdem o tamanho do placar */
+html body .lista-dias .gd-linha-dia .placar *,
+html body .lista-dias .gd-linha-dia .placar-dia * {
+  font-size: inherit !important;
+}
+
+/* BROAD OVERRIDE: cobrir variações de nomes de classe e seletores externos que ainda definam tamanhos */
+/* limitar selects que correspondem a nomes contendo 'placar' apenas ao escopo da lista
+   para evitar sobrescrever o placar do topo */
+html body .lista-dias .gd-linha-dia [class*="placar"],
+html body .lista-dias .gd-linha-dia [class*="placar"] * {
+  font-size: var(--fs-placar) !important;
+  line-height: 1 !important;
+}
+
+/* Incluir seletores comuns que aparecem em outros arquivos */
+/* placar do TOPO (mês/cabeçalho) */
+.pontuacao,
+.placar-green,
+.placar-red {
+  font-size: var(--fs-placar-top) !important;
+}
+
+/* placar color helpers: ensure both legacy and new class names are styled */
+.placar-green,
+.verde-bold {
+  color: var(--color-positive-strong, #03a158) !important;
+  font-weight: 700 !important;
+}
+
+.placar-red,
+.vermelho-bold {
+  color: var(--color-negative, #e93a3a) !important;
+  font-weight: 700 !important;
+}
+
+/* Extra-strong override specifically for the top placar (covers common header/container structures) */
+html body .container .pontuacao,
+html body header .pontuacao,
+html body #app .pontuacao,
+html body .topo .pontuacao,
+html body .pontuacao {
+  font-size: var(--fs-placar-top) !important;
+  line-height: 1 !important;
+}
+html body .container .pontuacao *,
+html body header .pontuacao *,
+html body #app .pontuacao *,
+html body .topo .pontuacao *,
+html body .pontuacao * {
+  font-size: inherit !important;
+}
+
+/* FORÇA BRUTA - MÁXIMA ESPECIFICIDADE PARA RAJDHANI */
+html body .container .bloco.bloco-2 .resumo-mes .lista-dias .gd-linha-dia .data,
+html
+  body
+  .container
+  .bloco.bloco-2
+  .resumo-mes
+  .lista-dias
+  .gd-linha-dia
+  .placar-dia,
+html
+  body
+  .container
+  .bloco.bloco-2
+  .resumo-mes
+  .lista-dias
+  .gd-linha-dia
+  .placar,
+html
+  body
+  .container
+  .bloco.bloco-2
+  .resumo-mes
+  .lista-dias
+  .gd-linha-dia
+  .valor,
+html
+  body
+  .container
+  .bloco.bloco-2
+  .resumo-mes
+  .lista-dias
+  .gd-linha-dia
+  .icone,
+html
+  body
+  .container
+  .bloco.bloco-2
+  .resumo-mes
+  .lista-dias
+  .gd-linha-dia
+  .separador,
+html body .container .bloco.bloco-2 .resumo-mes .lista-dias .linha-dia .data,
+html
+  body
+  .container
+  .bloco.bloco-2
+  .resumo-mes
+  .lista-dias
+  .linha-dia
+  .placar-dia,
+html body .container .bloco.bloco-2 .resumo-mes .lista-dias .linha-dia .placar,
+html body .container .bloco.bloco-2 .resumo-mes .lista-dias .linha-dia .valor,
+html body .container .bloco.bloco-2 .resumo-mes .lista-dias .linha-dia .icone,
+html
+  body
+  .container
+  .bloco.bloco-2
+  .resumo-mes
+  .lista-dias
+  .linha-dia
+  .separador {
+  font-family: "Rajdhani", sans-serif !important;
+}
+
+/* FORÇA BRUTA ADICIONAL - USANDO IDS E CLASSES ESPECÍFICAS */
+#bloco-2 .lista-dias .gd-linha-dia .data,
+#bloco-2 .lista-dias .gd-linha-dia .placar-dia,
+#bloco-2 .lista-dias .gd-linha-dia .placar,
+#bloco-2 .lista-dias .gd-linha-dia .valor,
+#bloco-2 .lista-dias .gd-linha-dia .icone {
+  font-family: "Rajdhani", sans-serif !important;
+}
+
+/* FORÇA BRUTA PARA ELEMENTOS FILHOS */
+.lista-dias * {
+  font-family: "Rajdhani", sans-serif !important;
+}
+
+/* FORÇA BRUTA PARA CLASSES ESPECÍFICAS */
+.gd-linha-dia,
+.gd-linha-dia *,
+.linha-dia,
+.linha-dia * {
+  font-family: "Rajdhani", sans-serif !important;
+}
+
+/* FORÇA BRUTA USANDO ATRIBUTO DATA */
+[data-date] .data,
+[data-date] .placar-dia,
+[data-date] .placar,
+[data-date] .valor,
+[data-date] .icone {
+  font-family: "Rajdhani", sans-serif !important;
+}
+
+/* ========================================
+   TESTE DE DIAGNÓSTICO VISUAL
+   Remove este bloco após confirmar que funciona
+======================================== */
+
+/* ========================================
+   IMPORTAÇÃO DA FONTE (caso não esteja importada)
+======================================== */
+@import url("https://fonts.googleapis.com/css2?family=Rajdhani:wght@300;400;500;600;700&display=swap");
+
+/* ========================================
+   RESET COMPLETO DE FONTES
+======================================== */
+.lista-dias,
+.lista-dias *:not(i):not(.fa):not([class*="fa-"]) {
+  font-family: "Rajdhani", sans-serif !important;
+}
+
+/* =======================================================================================================================================================
+  FONTE RAJDHANI -  FONTE RAJDHANI - FONTE RAJDHANI -  FONTE RAJDHANI - FONTE RAJDHANI -  FONTE RAJDHANI
+  =======================================================================================================================================================*/
+
+/* ======= OVERRIDE FINAL (MÁXIMA PRIORIDADE) =======
+   Garantir que o VALOR ao lado da DATA (.gd-linha-dia .valor) sempre respeite
+   a variável central --fs-valor definida em :root. Esta regra é propositalmente
+   ampla e específica para cobrir variações de carga de CSS/arquivos externos e
+   inline styles aplicados por scripts. Modifique --fs-valor no :root para alterar.
+*/
+html body #bloco-2 .lista-dias .gd-linha-dia .valor[style],
+html body #bloco-2 .lista-dias .gd-linha-dia .valor,
+html body .lista-dias .gd-linha-dia .valor[style],
+html body .lista-dias .gd-linha-dia .valor,
+#bloco-2 .lista-dias .gd-linha-dia .valor[style],
+#bloco-2 .lista-dias .gd-linha-dia .valor,
+.lista-dias .gd-linha-dia .valor[style],
+.lista-dias .gd-linha-dia .valor,
+.gd-linha-dia .valor[style],
+.gd-linha-dia .valor,
+.gd-linha-dia .valor * {
+  font-size: var(--fs-valor) !important;
+  line-height: 1 !important;
+}
+
+/* ===== Authoritative: force fixed width and reserve scrollbar gutter =====
+   Prevents the vertical scrollbar from changing the visible width of the
+   .lista-dias container when it appears on hover or scroll. This selector
+   intentionally uses high specificity and !important to beat inline styles. */
+html body .main-content .container .bloco.bloco-2 .resumo-mes > .lista-dias,
+html body .container .bloco.bloco-2 .resumo-mes > .lista-dias,
+.main-content .container .bloco.bloco-2 .resumo-mes .lista-dias,
+.container .bloco.bloco-2 .resumo-mes .lista-dias,
+.container .bloco.bloco-2 .resumo-mes .lista-dias[style] {
+  width: var(--lista-dias-width) !important;
+  min-width: var(--lista-dias-width) !important;
+  max-width: var(--lista-dias-width) !important;
+  box-sizing: border-box !important;
+  padding-left: var(--lista-dias-lateral-padding, 10px) !important;
+  /* ensure the scrollbar is not visually clipped: add extra right padding as safety */
+  padding-right: calc(
+    var(--lista-dias-lateral-padding, 10px) + 18px
+  ) !important;
+  position: relative !important;
+  z-index: 100 !important; /* place lista-dias above header overlays so scrollbar remains visible */
+  scrollbar-gutter: stable both-edges !important;
+  overflow-y: auto !important;
+}
+
+/* =======================================================================================================================================================
+        TESTE
+  =======================================================================================================================================================*/
+/* ===== BARRA DE ROLAGEM PARA .lista-dias ===== */
+
+/* Container principal da lista - forçar altura fixa e scroll */
+.container .bloco.bloco-2 .resumo-mes .lista-dias {
+  margin-top: 70px !important; /* 60px do header + 10px de gap */
+  padding: 12px !important; /* Padding interno da lista */
+}
+
+/* ===== BARRA DE ROLAGEM OCULTA QUE APARECE NO HOVER ===== */
+
+/* Webkit (Chrome, Safari, Edge) */
+.container .bloco.bloco-2 .resumo-mes .lista-dias::-webkit-scrollbar {
+  width: 8px !important; /* fixed width so layout doesn't change */
+}
+
+/* Track sempre invisível */
+.container .bloco.bloco-2 .resumo-mes .lista-dias::-webkit-scrollbar-track {
+  background: transparent !important;
+}
+
+/* Thumb invisível por padrão */
+.container .bloco.bloco-2 .resumo-mes .lista-dias::-webkit-scrollbar-thumb {
+  background: transparent !important; /* invisible by default */
+  border-radius: 4px !important;
+  transition: background-color 0.2s ease !important;
+}
+
+/* Thumb aparece apenas no hover do container */
+.container
+  .bloco.bloco-2
+  .resumo-mes
+  .lista-dias:hover::-webkit-scrollbar-thumb {
+  background: rgba(0, 0, 0, 0.3) !important; /* only color changes on hover */
+}
+
+/* Thumb mais escuro quando hover direto na barra */
+.container
+  .bloco.bloco-2
+  .resumo-mes
+  .lista-dias:hover::-webkit-scrollbar-thumb:hover {
+  background: rgba(0, 0, 0, 0.5) !important;
+}
+
+/* Thumb ativo (sendo arrastado) */
+.container
+  .bloco.bloco-2
+  .resumo-mes
+  .lista-dias::-webkit-scrollbar-thumb:active {
+  background: rgba(0, 0, 0, 0.7) !important;
+}
+
+/* Firefox - oculta por padrão, aparece no hover */
+.container .bloco.bloco-2 .resumo-mes .lista-dias {
+  scrollbar-width: thin !important; /* keep a reserved gutter for Firefox */
+  scrollbar-color: transparent transparent !important; /* transparent thumb by default */
+  scrollbar-gutter: stable both-edges !important; /* reserve space so appearance won't push content */
+}
+
+.container .bloco.bloco-2 .resumo-mes .lista-dias:hover {
+  /* On hover we only change the thumb color, not the gutter */
+  scrollbar-color: rgba(0, 0, 0, 0.3) transparent !important;
+}
+
+/* ===== AJUSTES RESPONSIVOS DA ALTURA ===== */
+
+/* Desktop grande */
+@media (min-width: 1200px) {
+  .container .bloco.bloco-2 .resumo-mes .lista-dias {
+    height: 450px !important;
+    max-height: 450px !important;
+  }
+}
+
+/* Tablet */
+@media (max-width: 1024px) {
+  .container .bloco.bloco-2 .resumo-mes .lista-dias {
+    height: 350px !important;
+    max-height: 350px !important;
+  }
+}
+
+/* Mobile */
+@media (max-width: 768px) {
+  .container .bloco.bloco-2 .resumo-mes .lista-dias {
+    height: 300px !important;
+    max-height: 300px !important;
+    padding: 8px 12px !important;
+  }
+
+  /* Barra de rolagem mais fina no mobile */
+  .container .bloco.bloco-2 .resumo-mes .lista-dias::-webkit-scrollbar {
+    width: 6px !important;
+  }
+}
+
+/* Mobile pequeno */
+@media (max-width: 480px) {
+  .container .bloco.bloco-2 .resumo-mes .lista-dias {
+    height: 250px !important;
+    max-height: 250px !important;
+    padding: 6px 10px !important;
+  }
+
+  /* Barra ainda mais fina */
+  .container .bloco.bloco-2 .resumo-mes .lista-dias::-webkit-scrollbar {
+    width: 4px !important;
+  }
+}
+
+/* ===== GARANTIR QUE AS LINHAS NÃO QUEBREM O LAYOUT ===== */
+
+.container .bloco.bloco-2 .resumo-mes .lista-dias .gd-linha-dia {
+  flex-shrink: 0 !important;
+  min-height: 32px !important;
+  margin-bottom: 4px !important;
+}
+
+/* ===== EFEITO VISUAL NO SCROLL ===== */
+
+/* Sombra interna no topo quando há conteúdo para rolar */
+.container .bloco.bloco-2 .resumo-mes .lista-dias::before {
+  content: "";
+  position: sticky;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: 8px;
+  background: linear-gradient(
+    to bottom,
+    rgba(0, 0, 0, 0.1) 0%,
+    transparent 100%
+  );
+  pointer-events: none;
+  z-index: 1;
+  margin-bottom: -8px;
+}
+
+/* Sombra interna na parte inferior */
+.container .bloco.bloco-2 {
+  position: relative !important;
+  padding: 0 !important; /* Remove padding para permitir header flush */
+  overflow: visible !important;
+}
+
+/* ===== ALTERNATIVA: BARRA DE ROLAGEM SEMPRE VISÍVEL ===== */
+
+/* Se preferir que a barra seja sempre visível, descomente: */
+/*
+.container .bloco.bloco-2 .resumo-mes .lista-dias::-webkit-scrollbar-thumb {
+  background: rgba(0, 0, 0, 0.3) !important;
+}
+*/
+
+/* ===== SCROLL INDICATOR (OPCIONAL) ===== */
+
+/* Indicador de posição do scroll */
+.lista-dias-scroll-indicator {
+  position: absolute;
+  top: 0;
+  right: 0;
+  width: 2px;
+  background: rgba(102, 126, 234, 0.3);
+  transition: height 0.2s ease;
+  border-radius: 1px;
+}
+
+/* ===== GARANTIR COMPATIBILIDADE COM ALTURAS DINÂMICAS ===== */
+
+/* Para casos onde o container pai muda de altura */
+.bloco-2 {
+  min-height: 0 !important;
+  display: flex !important;
+  flex-direction: column !important;
+}
+
+.bloco-2 .resumo-mes {
+  flex: 1 1 auto !important;
+  min-height: 0 !important;
+  display: flex !important;
+  flex-direction: column !important;
+  overflow: hidden !important;
+}
+
+/* Garantir que o cabeçalho não interfira no scroll */
+.bloco-2 .resumo-mes .bloco-meta-simples {
+  flex-shrink: 0 !important;
+}
+
+/* ===== AJUSTE FINO PARA DIFERENTES DENSIDADES DE TELA ===== */
+
+/* Telas de alta densidade */
+@media (-webkit-min-device-pixel-ratio: 2), (min-resolution: 192dpi) {
+  .container .bloco.bloco-2 .resumo-mes .lista-dias::-webkit-scrollbar {
+    width: 10px !important;
+  }
+
+  .container .bloco.bloco-2 .resumo-mes .lista-dias::-webkit-scrollbar-thumb {
+    border: 1px solid rgba(255, 255, 255, 0.2) !important;
+  }
+}
+@media (max-width: 768px) {
+  .campo-armazena-data-placar {
+    height: 50px !important;
+    min-height: 50px !important;
+  }
+
+  .campo-armazena-data-placar .titulo-bloco {
+    left: 8px !important;
+    top: 6px !important;
+    font-size: 11px !important;
+  }
+
+  .container .bloco.bloco-2 .resumo-mes .lista-dias {
+    margin-top: 60px !important; /* 50px do header + 10px de gap */
+  }
+
+  .container .bloco.bloco-2 .resumo-mes .widget-conteudo-principal-2 {
+    margin-top: 60px !important;
+  }
+}
+
+/* Garantir visibilidade do placar no topo */
+#pontuacao-2 {
+  visibility: visible !important;
+}
+
+/* Corrigir possíveis conflitos com outros elementos */
+.container
+  .bloco.bloco-2
+  .resumo-mes
+  .bloco-meta-simples.fixo-topo
+  .campo-armazena-data-placar {
+  /* Override de regras anteriores que poderiam causar gaps */
+  width: 100% !important;
+  margin-left: 0 !important;
+  margin-right: 0 !important;
+  left: 0 !important;
+  right: 0 !important;
+}
+
+/* The large "dia de hoje" / today-specific styles were removed per request. */
+
+/* (Removed earlier header-expansion override — header must remain inside the bloco)
+   Kept a single contained override later in the file to remove hairline seams
+   while ensuring the header stays inside the bloco. */
+/* ===== CORREÇÃO FORÇADA DAS CORES - MÁXIMA ESPECIFICIDADE ===== */
+
+/* ===== CORES CONTROLADAS POR VARIÁVEIS ROOT ===== */
+
+/* VALOR POSITIVO - Verde */
+html
+  body
+  .container
+  .bloco.bloco-2
+  .resumo-mes
+  .lista-dias
+  .gd-linha-dia.valor-positivo,
+html
+  body
+  .main-content
+  .container
+  .bloco.bloco-2
+  .resumo-mes
+  .lista-dias
+  .gd-linha-dia.valor-positivo,
+.gd-linha-dia.valor-positivo {
+  background: var(--gd-valor-positive-bg) !important;
+  border-left: var(--gd-valor-positive-border-width) solid
+    var(--gd-valor-positive-border) !important;
+  padding-left: var(--gd-valor-positive-padding-left) !important;
+  transition: var(--gd-valor-transition) !important;
+}
+
+.gd-linha-dia.valor-positivo:hover {
+  background: var(--gd-valor-positive-hover-bg) !important;
+}
+
+.gd-linha-dia.valor-positivo .data,
+.gd-linha-dia.valor-positivo .valor,
+.gd-linha-dia.valor-positivo .placar-dia {
+  color: var(--gd-valor-positive-text) !important;
+}
+
+/* VALOR NEGATIVO - Vermelho */
+html
+  body
+  .container
+  .bloco.bloco-2
+  .resumo-mes
+  .lista-dias
+  .gd-linha-dia.valor-negativo,
+html
+  body
+  .main-content
+  .container
+  .bloco.bloco-2
+  .resumo-mes
+  .lista-dias
+  .gd-linha-dia.valor-negativo,
+.gd-linha-dia.valor-negativo {
+  background: var(--gd-valor-negative-bg) !important;
+  border-left: var(--gd-valor-negative-border-width) solid
+    var(--gd-valor-negative-border) !important;
+  padding-left: var(--gd-valor-negative-padding-left) !important;
+  transition: var(--gd-valor-transition) !important;
+}
+
+.gd-linha-dia.valor-negativo:hover {
+  background: var(--gd-valor-negative-hover-bg) !important;
+}
+
+.gd-linha-dia.valor-negativo .data,
+.gd-linha-dia.valor-negativo .valor,
+.gd-linha-dia.valor-negativo .placar-dia {
+  color: var(--gd-valor-negative-text) !important;
+}
+
+/* VALOR ZERO - Neutro */
+html
+  body
+  .container
+  .bloco.bloco-2
+  .resumo-mes
+  .lista-dias
+  .gd-linha-dia.valor-zero,
+html
+  body
+  .main-content
+  .container
+  .bloco.bloco-2
+  .resumo-mes
+  .lista-dias
+  .gd-linha-dia.valor-zero,
+.gd-linha-dia.valor-zero {
+  background: var(--gd-valor-zero-bg) !important;
+  border-left: var(--gd-valor-zero-border-width) solid
+    var(--gd-valor-zero-border) !important;
+  padding-left: var(--gd-valor-zero-padding-left) !important;
+  transition: var(--gd-valor-transition) !important;
+}
+
+.gd-linha-dia.valor-zero:hover {
+  background: var(--gd-valor-zero-hover-bg) !important;
+}
+
+.gd-linha-dia.valor-zero .data,
+.gd-linha-dia.valor-zero .valor,
+.gd-linha-dia.valor-zero .placar-dia {
+  color: var(--gd-valor-zero-text) !important;
+}
+/* ===================================================================
+   CORREÇÃO DEFINITIVA: CORES DO DIA ATUAL COM VARIÁVEIS ROOT
+   - Força aplicação das cores da borda esquerda e background
+   - Usa máxima especificidade para sobrescrever regras conflitantes
+   =================================================================== */
+
+/* ===== ATUALIZAÇÃO DAS VARIÁVEIS ROOT ===== */
+
+/* ===== CORREÇÃO FORÇADA - DIA ATUAL + VALOR POSITIVO ===== */
+html
+  body
+  .container
+  .bloco.bloco-2
+  .resumo-mes
+  .lista-dias
+  .gd-linha-dia.hoje.valor-positivo,
+html
+  body
+  .container
+  .bloco.bloco-2
+  .resumo-mes
+  .lista-dias
+  .gd-linha-dia.valor-positivo.gd-dia-hoje,
+html
+  body
+  .container
+  .bloco.bloco-2
+  .resumo-mes
+  .lista-dias
+  .gd-linha-dia.valor-positivo[data-hoje="true"],
+html
+  body
+  .container
+  .bloco.bloco-2
+  .resumo-mes
+  .lista-dias
+  .gd-linha-dia.valor-positivo.atual,
+html
+  body
+  .container
+  .bloco.bloco-2
+  .resumo-mes
+  .lista-dias
+  .gd-linha-dia.valor-positivo.today,
+html
+  body
+  .container
+  .bloco.bloco-2
+  .resumo-mes
+  .lista-dias
+  .gd-linha-dia.valor-positivo.current,
+html
+  body
+  .container
+  .bloco.bloco-2
+  .resumo-mes
+  .lista-dias
+  .gd-linha-dia.valor-positivo.active,
+.gd-linha-dia.hoje.valor-positivo,
+.gd-linha-dia.valor-positivo.gd-dia-hoje,
+.gd-linha-dia.valor-positivo[data-hoje="true"] {
+  /* Background verde claro */
+  background: var(--dia-atual-positivo-bg) !important;
+
+  /* Borda esquerda verde forte */
+  border-left: var(--dia-atual-border-left-width)
+    var(--dia-atual-border-left-style)
+    var(--dia-atual-positivo-border-left-color) !important;
+
+  /* Padding para acomodar a borda */
+  padding-left: var(--dia-atual-padding-left) !important;
+
+  /* Remover outras sombras conflitantes */
+  box-shadow: none !important;
+
+  /* Garantir transição suave */
+  transition: background-color 0.15s ease, border-color 0.15s ease !important;
+}
+
+/* ===== CORREÇÃO FORÇADA - DIA ATUAL + VALOR NEGATIVO ===== */
+html
+  body
+  .container
+  .bloco.bloco-2
+  .resumo-mes
+  .lista-dias
+  .gd-linha-dia.hoje.valor-negativo,
+html
+  body
+  .container
+  .bloco.bloco-2
+  .resumo-mes
+  .lista-dias
+  .gd-linha-dia.valor-negativo.gd-dia-hoje,
+html
+  body
+  .container
+  .bloco.bloco-2
+  .resumo-mes
+  .lista-dias
+  .gd-linha-dia.valor-negativo[data-hoje="true"],
+html
+  body
+  .container
+  .bloco.bloco-2
+  .resumo-mes
+  .lista-dias
+  .gd-linha-dia.valor-negativo.atual,
+html
+  body
+  .container
+  .bloco.bloco-2
+  .resumo-mes
+  .lista-dias
+  .gd-linha-dia.valor-negativo.today,
+html
+  body
+  .container
+  .bloco.bloco-2
+  .resumo-mes
+  .lista-dias
+  .gd-linha-dia.valor-negativo.current,
+html
+  body
+  .container
+  .bloco.bloco-2
+  .resumo-mes
+  .lista-dias
+  .gd-linha-dia.valor-negativo.active,
+.gd-linha-dia.hoje.valor-negativo,
+.gd-linha-dia.valor-negativo.gd-dia-hoje,
+.gd-linha-dia.valor-negativo[data-hoje="true"] {
+  /* Background vermelho claro */
+  background: var(--dia-atual-negativo-bg) !important;
+
+  /* Borda esquerda vermelha forte */
+  border-left: var(--dia-atual-border-left-width)
+    var(--dia-atual-border-left-style)
+    var(--dia-atual-negativo-border-left-color) !important;
+
+  /* Padding para acomodar a borda */
+  padding-left: var(--dia-atual-padding-left) !important;
+
+  /* Remover outras sombras conflitantes */
+  box-shadow: none !important;
+
+  /* Garantir transição suave */
+  transition: background-color 0.15s ease, border-color 0.15s ease !important;
+}
+
+/* ===== CORREÇÃO FORÇADA - DIA ATUAL + VALOR ZERO/NEUTRO ===== */
+html body .container .bloco.bloco-2 .resumo-mes .lista-dias .gd-linha-dia.hoje.valor-zero,
+html body .container .bloco.bloco-2 .resumo-mes .lista-dias .gd-linha-dia.valor-zero.gd-dia-hoje,
+html body .container .bloco.bloco-2 .resumo-mes .lista-dias .gd-linha-dia.valor-zero[data-hoje="true"],
+html body .container .bloco.bloco-2 .resumo-mes .lista-dias .gd-linha-dia.valor-zero.atual,
+html body .container .bloco.bloco-2 .resumo-mes .lista-dias .gd-linha-dia.valor-zero.today,
+html body .container .bloco.bloco-2 .resumo-mes .lista-dias .gd-linha-dia.valor-zero.current,
+html body .container .bloco.bloco-2 .resumo-mes .lista-dias .gd-linha-dia.valor-zero.active,
+/* Também incluir caso o dia atual não tenha classe de valor específica */
+html body .container .bloco.bloco-2 .resumo-mes .lista-dias .gd-linha-dia.hoje:not(.valor-positivo):not(.valor-negativo),
+html body .container .bloco.bloco-2 .resumo-mes .lista-dias .gd-linha-dia.gd-dia-hoje:not(.valor-positivo):not(.valor-negativo),
+html body .container .bloco.bloco-2 .resumo-mes .lista-dias .gd-linha-dia[data-hoje="true"]:not(.valor-positivo):not(.valor-negativo),
+.gd-linha-dia.hoje.valor-zero,
+.gd-linha-dia.valor-zero.gd-dia-hoje,
+.gd-linha-dia.valor-zero[data-hoje="true"],
+.gd-linha-dia.hoje:not(.valor-positivo):not(.valor-negativo),
+.gd-linha-dia.gd-dia-hoje:not(.valor-positivo):not(.valor-negativo) {
+  /* Background cinza claro */
+  background: var(--dia-atual-zero-bg) !important;
+
+  /* Borda esquerda cinza escura */
+  border-left: var(--dia-atual-border-left-width)
+    var(--dia-atual-border-left-style) var(--dia-atual-zero-border-left-color) !important;
+
+  /* Padding para acomodar a borda */
+  padding-left: var(--dia-atual-padding-left) !important;
+
+  /* Sombra sutil para neutro */
+  box-shadow: 0 2px 8px rgba(67, 70, 77, 0.08) inset !important;
+
+  /* Garantir transição suave */
+  transition: background-color 0.15s ease, border-color 0.15s ease !important;
+}
+
+/* ===== CORES DOS TEXTOS PARA DIA ATUAL ===== */
+
+/* Dia atual + valor positivo - textos verdes */
+html
+  body
+  .container
+  .bloco.bloco-2
+  .resumo-mes
+  .lista-dias
+  .gd-linha-dia.hoje.valor-positivo
+  .data,
+html
+  body
+  .container
+  .bloco.bloco-2
+  .resumo-mes
+  .lista-dias
+  .gd-linha-dia.valor-positivo.gd-dia-hoje
+  .data,
+html
+  body
+  .container
+  .bloco.bloco-2
+  .resumo-mes
+  .lista-dias
+  .gd-linha-dia.hoje.valor-positivo
+  .placar-dia,
+html
+  body
+  .container
+  .bloco.bloco-2
+  .resumo-mes
+  .lista-dias
+  .gd-linha-dia.valor-positivo.gd-dia-hoje
+  .placar-dia,
+html
+  body
+  .container
+  .bloco.bloco-2
+  .resumo-mes
+  .lista-dias
+  .gd-linha-dia.hoje.valor-positivo
+  .placar-dia
+  *,
+html
+  body
+  .container
+  .bloco.bloco-2
+  .resumo-mes
+  .lista-dias
+  .gd-linha-dia.valor-positivo.gd-dia-hoje
+  .placar-dia
+  *,
+html
+  body
+  .container
+  .bloco.bloco-2
+  .resumo-mes
+  .lista-dias
+  .gd-linha-dia.hoje.valor-positivo
+  .valor,
+html
+  body
+  .container
+  .bloco.bloco-2
+  .resumo-mes
+  .lista-dias
+  .gd-linha-dia.valor-positivo.gd-dia-hoje
+  .valor,
+html
+  body
+  .container
+  .bloco.bloco-2
+  .resumo-mes
+  .lista-dias
+  .gd-linha-dia.hoje.valor-positivo
+  .icone
+  i,
+html
+  body
+  .container
+  .bloco.bloco-2
+  .resumo-mes
+  .lista-dias
+  .gd-linha-dia.valor-positivo.gd-dia-hoje
+  .icone
+  i {
+  color: var(--dia-atual-positivo-data-color) !important;
+  font-weight: var(--dia-atual-data-weight) !important;
+  opacity: 1 !important;
+}
+
+/* Dia atual + valor negativo - textos vermelhos */
+html
+  body
+  .container
+  .bloco.bloco-2
+  .resumo-mes
+  .lista-dias
+  .gd-linha-dia.hoje.valor-negativo
+  .data,
+html
+  body
+  .container
+  .bloco.bloco-2
+  .resumo-mes
+  .lista-dias
+  .gd-linha-dia.valor-negativo.gd-dia-hoje
+  .data,
+html
+  body
+  .container
+  .bloco.bloco-2
+  .resumo-mes
+  .lista-dias
+  .gd-linha-dia.hoje.valor-negativo
+  .placar-dia,
+html
+  body
+  .container
+  .bloco.bloco-2
+  .resumo-mes
+  .lista-dias
+  .gd-linha-dia.valor-negativo.gd-dia-hoje
+  .placar-dia,
+html
+  body
+  .container
+  .bloco.bloco-2
+  .resumo-mes
+  .lista-dias
+  .gd-linha-dia.hoje.valor-negativo
+  .placar-dia
+  *,
+html
+  body
+  .container
+  .bloco.bloco-2
+  .resumo-mes
+  .lista-dias
+  .gd-linha-dia.valor-negativo.gd-dia-hoje
+  .placar-dia
+  *,
+html
+  body
+  .container
+  .bloco.bloco-2
+  .resumo-mes
+  .lista-dias
+  .gd-linha-dia.hoje.valor-negativo
+  .valor,
+html
+  body
+  .container
+  .bloco.bloco-2
+  .resumo-mes
+  .lista-dias
+  .gd-linha-dia.valor-negativo.gd-dia-hoje
+  .valor,
+html
+  body
+  .container
+  .bloco.bloco-2
+  .resumo-mes
+  .lista-dias
+  .gd-linha-dia.hoje.valor-negativo
+  .icone
+  i,
+html
+  body
+  .container
+  .bloco.bloco-2
+  .resumo-mes
+  .lista-dias
+  .gd-linha-dia.valor-negativo.gd-dia-hoje
+  .icone
+  i {
+  color: var(--dia-atual-negativo-data-color) !important;
+  font-weight: var(--dia-atual-data-weight) !important;
+  opacity: 1 !important;
+}
+
+/* Dia atual + valor zero - textos cinza escuro */
+html
+  body
+  .container
+  .bloco.bloco-2
+  .resumo-mes
+  .lista-dias
+  .gd-linha-dia.hoje.valor-zero
+  .data,
+html
+  body
+  .container
+  .bloco.bloco-2
+  .resumo-mes
+  .lista-dias
+  .gd-linha-dia.valor-zero.gd-dia-hoje
+  .data,
+html
+  body
+  .container
+  .bloco.bloco-2
+  .resumo-mes
+  .lista-dias
+  .gd-linha-dia.hoje:not(.valor-positivo):not(.valor-negativo)
+  .data,
+html
+  body
+  .container
+  .bloco.bloco-2
+  .resumo-mes
+  .lista-dias
+  .gd-linha-dia.hoje.valor-zero
+  .placar-dia,
+html
+  body
+  .container
+  .bloco.bloco-2
+  .resumo-mes
+  .lista-dias
+  .gd-linha-dia.valor-zero.gd-dia-hoje
+  .placar-dia,
+html
+  body
+  .container
+  .bloco.bloco-2
+  .resumo-mes
+  .lista-dias
+  .gd-linha-dia.hoje:not(.valor-positivo):not(.valor-negativo)
+  .placar-dia,
+html
+  body
+  .container
+  .bloco.bloco-2
+  .resumo-mes
+  .lista-dias
+  .gd-linha-dia.hoje.valor-zero
+  .placar-dia
+  *,
+html
+  body
+  .container
+  .bloco.bloco-2
+  .resumo-mes
+  .lista-dias
+  .gd-linha-dia.valor-zero.gd-dia-hoje
+  .placar-dia
+  *,
+html
+  body
+  .container
+  .bloco.bloco-2
+  .resumo-mes
+  .lista-dias
+  .gd-linha-dia.hoje:not(.valor-positivo):not(.valor-negativo)
+  .placar-dia
+  *,
+html
+  body
+  .container
+  .bloco.bloco-2
+  .resumo-mes
+  .lista-dias
+  .gd-linha-dia.hoje.valor-zero
+  .valor,
+html
+  body
+  .container
+  .bloco.bloco-2
+  .resumo-mes
+  .lista-dias
+  .gd-linha-dia.valor-zero.gd-dia-hoje
+  .valor,
+html
+  body
+  .container
+  .bloco.bloco-2
+  .resumo-mes
+  .lista-dias
+  .gd-linha-dia.hoje:not(.valor-positivo):not(.valor-negativo)
+  .valor,
+html
+  body
+  .container
+  .bloco.bloco-2
+  .resumo-mes
+  .lista-dias
+  .gd-linha-dia.hoje.valor-zero
+  .icone
+  i,
+html
+  body
+  .container
+  .bloco.bloco-2
+  .resumo-mes
+  .lista-dias
+  .gd-linha-dia.valor-zero.gd-dia-hoje
+  .icone
+  i,
+html
+  body
+  .container
+  .bloco.bloco-2
+  .resumo-mes
+  .lista-dias
+  .gd-linha-dia.hoje:not(.valor-positivo):not(.valor-negativo)
+  .icone
+  i {
+  color: var(--dia-atual-zero-data-color) !important;
+  font-weight: var(--dia-atual-data-weight) !important;
+  opacity: 1 !important;
+}
+
+/* ===== FORÇA APLICAÇÃO EM TEMPO REAL (JAVASCRIPT OVERRIDE) ===== */
+
+/* Para casos onde JavaScript aplica estilos inline, garantir que as variáveis sejam respeitadas */
+.gd-linha-dia[data-dia-hoje-estado="positivo"] {
+  background: var(--dia-atual-positivo-bg) !important;
+  border-left: var(--dia-atual-border-left-width)
+    var(--dia-atual-border-left-style)
+    var(--dia-atual-positivo-border-left-color) !important;
+  padding-left: var(--dia-atual-padding-left) !important;
+}
+
+.gd-linha-dia[data-dia-hoje-estado="negativo"] {
+  background: var(--dia-atual-negativo-bg) !important;
+  border-left: var(--dia-atual-border-left-width)
+    var(--dia-atual-border-left-style)
+    var(--dia-atual-negativo-border-left-color) !important;
+  padding-left: var(--dia-atual-padding-left) !important;
+}
+
+.gd-linha-dia[data-dia-hoje-estado="zero"],
+.gd-linha-dia[data-dia-hoje-estado="neutro"] {
+  background: var(--dia-atual-zero-bg) !important;
+  border-left: var(--dia-atual-border-left-width)
+    var(--dia-atual-border-left-style) var(--dia-atual-zero-border-left-color) !important;
+  padding-left: var(--dia-atual-padding-left) !important;
+}
+
+/* ===== GARANTIR QUE NÃO HAJA TRANSIÇÕES QUE CAUSEM PISCAR ===== */
+.gd-linha-dia.hoje,
+.gd-linha-dia.gd-dia-hoje,
+.gd-linha-dia[data-hoje="true"],
+.gd-linha-dia[data-dia-hoje-estado] {
+  transition: none !important;
+  animation: none !important;
+  transform: none !important;
+  will-change: auto !important;
+}
+
+/* Também aplicar aos elementos filhos */
+.gd-linha-dia.hoje *,
+.gd-linha-dia.gd-dia-hoje *,
+.gd-linha-dia[data-hoje="true"] *,
+.gd-linha-dia[data-dia-hoje-estado] * {
+  transition: none !important;
+  animation: none !important;
+  transform: none !important;
+  will-change: auto !important;
+}
+
+/* ===== FALLBACK UNIVERSAL PARA QUALQUER DIA ATUAL ===== */
+
+/* Classe aplicável via JavaScript para forçar estado */
+.dia-atual-css-control.gd-dia-hoje.valor-positivo {
+  background: var(--dia-atual-positivo-bg) !important;
+  border-left: var(--dia-atual-border-left-width)
+    var(--dia-atual-border-left-style)
+    var(--dia-atual-positivo-border-left-color) !important;
+  padding-left: var(--dia-atual-padding-left) !important;
+}
+
+.dia-atual-css-control.gd-dia-hoje.valor-negativo {
+  background: var(--dia-atual-negativo-bg) !important;
+  border-left: var(--dia-atual-border-left-width)
+    var(--dia-atual-border-left-style)
+    var(--dia-atual-negativo-border-left-color) !important;
+  padding-left: var(--dia-atual-padding-left) !important;
+}
+
+.dia-atual-css-control.gd-dia-hoje.valor-zero,
+.dia-atual-css-control.gd-dia-hoje:not(.valor-positivo):not(.valor-negativo) {
+  background: var(--dia-atual-zero-bg) !important;
+  border-left: var(--dia-atual-border-left-width)
+    var(--dia-atual-border-left-style) var(--dia-atual-zero-border-left-color) !important;
+  padding-left: var(--dia-atual-padding-left) !important;
+}
+
+/* ===== DEBUG: INDICADOR VISUAL TEMPORÁRIO ===== */
+/* Remova esta seção após confirmar que funciona */
+/*
+.gd-linha-dia.hoje::after,
+.gd-linha-dia.gd-dia-hoje::after {
+  content: "HOJE";
+  position: absolute;
+  right: -50px;
+  top: 50%;
+  transform: translateY(-50%);
+  background: rgba(255, 0, 0, 0.8);
+  color: white;
+  padding: 2px 6px;
+  font-size: 10px;
+  border-radius: 3px;
+  z-index: 9999;
+}
+*/
+
+/* ===== RESPONSIVIDADE ===== */
+@media (max-width: 768px) {
+  :root {
+    --dia-atual-border-left-width: 3px;
+    --dia-atual-padding-left: 11px;
+  }
+}
+
+@media (max-width: 480px) {
+  :root {
+    --dia-atual-border-left-width: 2px;
+    --dia-atual-padding-left: 10px;
+  }
+}
+
+/* ===== ALTA ESPECIFICIDADE PARA GARANTIR APLICAÇÃO ===== */
+html
+  body
+  .main-content
+  .container
+  .bloco.bloco-2
+  .resumo-mes
+  .lista-dias
+  .gd-linha-dia.hoje.valor-positivo {
+  background: var(--dia-atual-positivo-bg) !important;
+  border-left: var(--dia-atual-border-left-width) solid
+    var(--dia-atual-positivo-border-left-color) !important;
+  padding-left: var(--dia-atual-padding-left) !important;
+}
+
+html
+  body
+  .main-content
+  .container
+  .bloco.bloco-2
+  .resumo-mes
+  .lista-dias
+  .gd-linha-dia.hoje.valor-negativo {
+  background: var(--dia-atual-negativo-bg) !important;
+  border-left: var(--dia-atual-border-left-width) solid
+    var(--dia-atual-negativo-border-left-color) !important;
+  padding-left: var(--dia-atual-padding-left) !important;
+}
+
+html
+  body
+  .main-content
+  .container
+  .bloco.bloco-2
+  .resumo-mes
+  .lista-dias
+  .gd-linha-dia.hoje.valor-zero,
+html
+  body
+  .main-content
+  .container
+  .bloco.bloco-2
+  .resumo-mes
+  .lista-dias
+  .gd-linha-dia.hoje:not(.valor-positivo):not(.valor-negativo) {
+  background: var(--dia-atual-zero-bg) !important;
+  border-left: var(--dia-atual-border-left-width) solid
+    var(--dia-atual-zero-border-left-color) !important;
+  padding-left: var(--dia-atual-padding-left) !important;
+}
+/* Removed .dia-atual-forcado compatibility rules per cleanup request */
+
+/* ===== ENFORCE TEXT COLORS - HIGH SPECIFICITY FALLBACK ===== */
+/* Ensure date, placar and valor text reflect positive/negative/neutral states
+   even when other styles or inline rules try to override them. */
+html body .lista-dias .gd-linha-dia.valor-positivo .data,
+html body .lista-dias .gd-linha-dia.valor-positivo .placar-day,
+html body .lista-dias .gd-linha-dia.valor-positivo .placar,
+html body .lista-dias .gd-linha-dia.valor-positivo .placar *,
+html body .lista-dias .gd-linha-dia.valor-positivo .valor,
+.gd-linha-dia .placar .verde-bold,
+.gd-linha-dia .valor.verde-bold,
+.gd-linha-dia .placar .verde-bold,
+.gd-linha-dia .valor.verde-bold {
+  color: var(--color-positive) !important;
+}
+
+/* Stronger green variant used for placar numbers */
+html body .lista-dias .gd-linha-dia .placar .verde-bold,
+html body .lista-dias .gd-linha-dia .placar .verde-bold {
+  color: var(--color-positive-strong, var(--color-positive)) !important;
+  font-weight: 700 !important;
+}
+
+/* Negative (red) */
+html body .lista-dias .gd-linha-dia.valor-negativo .data,
+html body .lista-dias .gd-linha-dia.valor-negativo .placar,
+html body .lista-dias .gd-linha-dia.valor-negativo .placar *,
+html body .lista-dias .gd-linha-dia.valor-negativo .valor,
+.gd-linha-dia .placar .vermelho-bold,
+.gd-linha-dia .valor.vermelho-bold,
+.gd-linha-dia .placar .vermelho-bold,
+.gd-linha-dia .valor.vermelho-bold {
+  color: var(--color-negative) !important;
+}
+
+/* Neutral / zero */
+html body .lista-dias .gd-linha-dia.valor-zero .data,
+html body .lista-dias .gd-linha-dia.valor-zero .placar,
+html body .lista-dias .gd-linha-dia.valor-zero .placar *,
+html body .lista-dias .gd-linha-dia.valor-zero .valor,
+.gd-linha-dia .placar .texto-cinza,
+.gd-linha-dia .valor.texto-cinza,
+.gd-linha-dia .placar .texto-cinza,
+.gd-linha-dia .valor.texto-cinza {
+  color: var(--color-neutral) !important;
+}
+
+/* Also cover attribute-driven state and compatibility classes */
+.gd-linha-dia[data-dia-hoje-estado="positivo"] .data,
+.gd-linha-dia[data-dia-hoje-estado="positivo"] .placar,
+.gd-linha-dia[data-dia-hoje-estado="positivo"] .valor {
+  color: var(--color-positive) !important;
+}
+.gd-linha-dia[data-dia-hoje-estado="negativo"] .data,
+.gd-linha-dia[data-dia-hoje-estado="negativo"] .placar,
+.gd-linha-dia[data-dia-hoje-estado="negativo"] .valor {
+  color: var(--color-negative) !important;
+}
+.gd-linha-dia[data-dia-hoje-estado="zero"] .data,
+.gd-linha-dia[data-dia-hoje-estado="zero"] .placar,
+.gd-linha-dia[data-dia-hoje-estado="zero"] .valor {
+  color: var(--color-neutral) !important;
+}
+
+/* Small fallback: enforce color on inner spans if parent color is overridden */
+.gd-linha-dia .data[style],
+.gd-linha-dia .placar[style],
+.gd-linha-dia .valor[style] {
+  color: inherit !important;
+}
+/* ===========================================================================================================================
+       - TESTE - - TESTE - - TESTE - - TESTE - - TESTE - - TESTE - - TESTE - - TESTE - - TESTE - - TESTE - - TESTE - 
+  ============================================================================================================================*/
+/* ===== FORÇAR CORES FIXAS NO PLACAR - IGNORAR ESTADO DO SALDO ===== */
+
+/* Placar verde - SEMPRE verde, independente do saldo */
+.gd-linha-dia .placar-dia .placar-green,
+.gd-linha-dia.valor-positivo .placar-dia .placar-green,
+.gd-linha-dia.valor-negativo .placar-dia .placar-green,
+.gd-linha-dia.valor-zero .placar-dia .placar-green,
+html body .lista-dias .gd-linha-dia .placar-dia .placar-green,
+html body .lista-dias .gd-linha-dia.valor-positivo .placar-dia .placar-green,
+html body .lista-dias .gd-linha-dia.valor-negativo .placar-dia .placar-green,
+html body .lista-dias .gd-linha-dia.valor-zero .placar-dia .placar-green {
+  color: var(--placar-green-color-fixed) !important;
+  font-weight: var(--placar-font-weight-fixed) !important;
+  font-size: var(--placar-font-size-fixed) !important;
+}
+
+/* Placar vermelho - SEMPRE vermelho, independente do saldo */
+.gd-linha-dia .placar-dia .placar-red,
+.gd-linha-dia.valor-positivo .placar-dia .placar-red,
+.gd-linha-dia.valor-negativo .placar-dia .placar-red,
+.gd-linha-dia.valor-zero .placar-dia .placar-red,
+html body .lista-dias .gd-linha-dia .placar-dia .placar-red,
+html body .lista-dias .gd-linha-dia.valor-positivo .placar-dia .placar-red,
+html body .lista-dias .gd-linha-dia.valor-negativo .placar-dia .placar-red,
+html body .lista-dias .gd-linha-dia.valor-zero .placar-dia .placar-red {
+  color: var(--placar-red-color-fixed) !important;
+  font-weight: var(--placar-font-weight-fixed) !important;
+  font-size: var(--placar-font-size-fixed) !important;
+}
+
+/* Separador - SEMPRE mesma cor, independente do saldo */
+.gd-linha-dia .placar-dia .separador,
+.gd-linha-dia.valor-positivo .placar-dia .separador,
+.gd-linha-dia.valor-negativo .placar-dia .separador,
+.gd-linha-dia.valor-zero .placar-dia .separador,
+html body .lista-dias .gd-linha-dia .placar-dia .separador,
+html body .lista-dias .gd-linha-dia.valor-positivo .placar-dia .separador,
+html body .lista-dias .gd-linha-dia.valor-negativo .placar-dia .separador,
+html body .lista-dias .gd-linha-dia.valor-zero .placar-dia .separador {
+  color: var(--placar-separator-color-fixed) !important;
+  font-weight: 400 !important;
+  font-size: var(--placar-font-size-fixed) !important;
+}
+
+/* Sobrescrever TODAS as tentativas de mudança de cor baseadas em estado */
+.gd-linha-dia[class*="valor-"] .placar-dia .placar-green {
+  color: var(--placar-green-color-fixed) !important;
+}
+
+.gd-linha-dia[class*="valor-"] .placar-dia .placar-red {
+  color: var(--placar-red-color-fixed) !important;
+}
+
+.gd-linha-dia[class*="valor-"] .placar-dia .separador {
+  color: var(--placar-separator-color-fixed) !important;
+}
+
+.gd-linha-dia .placar-dia .placar-green.texto-cinza {
+  color: var(--placar-green-color-fixed) !important;
+}
+
+.gd-linha-dia .placar-dia .placar-red.texto-cinza {
+  color: var(--placar-red-color-fixed) !important;
+}
+
+/* Específico para placar com valores zero mas mantendo cores */
+.gd-linha-dia .placar-dia .placar-green:contains("0"),
+.gd-linha-dia .placar-dia .placar-red:contains("0") {
+  opacity: 1 !important; /* Mantém visibilidade total */
+}
+/* Reforço extra para garantir cores fixas */
+.gd-linha-dia .placar-dia .placar-green {
+  color: var(--placar-green-color-fixed) !important;
+}
+
+.gd-linha-dia .placar-dia .placar-red {
+  color: var(--placar-red-color-fixed) !important;
+}
+
+.gd-linha-dia .placar-dia .separador {
+  color: var(--placar-separator-color-fixed) !important;
+  font-size: var(--placar-separator-font-size) !important;
+}
+
+/* ===== PERFORMANCE MODE (SAFE, REVERSIBLE) =====
+   Aplicar a classe `.gestao-perf-mode` em `document.documentElement` reduz
+   efeitos que causam pintura/composição pesada: filtros, backdrop-filter,
+   animações contínuas e detalhes de sombra. A classe é intencionalmente
+   conservadora — não altera layout estrutural, só reduz trabalho de pintura.
+*/
+.gestao-perf-mode * {
+  /* Não altere display/posição — apenas neutraliza efeitos caros */
+  transition-property: opacity, transform !important;
+  transition-duration: 180ms !important;
+  transition-timing-function: ease !important;
+  animation: none !important;
+  will-change: auto !important;
+}
+
+/* Remove filtros e backdrop-filters (GPU cost) */
+.gestao-perf-mode * {
+  filter: none !important;
+  -webkit-filter: none !important;
+  backdrop-filter: none !important;
+}
+
+/* Diminuir sombras pesadas (pintura) */
+.gestao-perf-mode .widget-meta-item,
+.gestao-perf-mode .bloco,
+.gestao-perf-mode .card,
+.gestao-perf-mode .panel,
+.gestao-perf-mode .popup {
+  box-shadow: none !important;
+}
+
+/* Desabilitar transições que usam `all` (causam recalcs de layout) */
+.gestao-perf-mode * {
+  transition: none !important;
+}
+
+/* Prefer transform-based micro transitions for interactive elements */
+.gestao-perf-mode .btn,
+.gestao-perf-mode .clickable {
+  transition: transform 120ms ease !important;
+}
+
+/* Limitar seletores universais pesados que forçam repaints */
+.gestao-perf-mode .lista-dias .gd-linha-dia * {
+  /* mantenha apenas o necessário para visibilidade */
+  opacity: 1 !important;
+}
+
+/* Small helper override: reduce animations rate on badges and pulsing visuals */
+.gestao-perf-mode .pulse,
+.gestao-perf-mode .spinner,
+.gestao-perf-mode .shimmer {
+  animation-duration: 3s !important;
+  animation-iteration-count: 1 !important;
+  animation-play-state: paused !important;
+}
+
+/* End of perf-mode overrides */
+/* Regras com máxima especificidade para evitar conflitos */
+html body .gd-linha-dia .placar-dia .placar.texto-cinza,
+html body .gd-linha-dia .placar-dia .separador.texto-cinza {
+  color: var(--color-neutral, #94a3b8) !important;
+  transition: none !important; /* Remove transições que causam piscar */
+}
+
+/* Desabilitar animações que podem causar piscar */
+.gd-linha-dia .placar-dia .placar,
+.gd-linha-dia .placar-dia .separador {
+  transition: none !important;
+  animation: none !important;
+}
+/* SOLUÇÃO CSS PURA - ESPECIFICIDADE MÁXIMA */
+html
+  body
+  .main-content
+  .container
+  .bloco.bloco-2
+  .resumo-mes
+  .lista-dias
+  .gd-linha-dia
+  .placar-dia
+  .placar-green,
+html
+  body
+  .main-content
+  .container
+  .bloco.bloco-2
+  .resumo-mes
+  .lista-dias
+  .gd-linha-dia
+  .placar-dia
+  .placar.placar-green {
+  color: #03a158 !important;
+  transition: none !important;
+  animation: none !important;
+}
+
+html
+  body
+  .main-content
+  .container
+  .bloco.bloco-2
+  .resumo-mes
+  .lista-dias
+  .gd-linha-dia
+  .placar-dia
+  .placar-red,
+html
+  body
+  .main-content
+  .container
+  .bloco.bloco-2
+  .resumo-mes
+  .lista-dias
+  .gd-linha-dia
+  .placar-dia
+  .placar.placar-red {
+  color: #e93a3a !important;
+  transition: none !important;
+  animation: none !important;
+}
+
+html
+  body
+  .main-content
+  .container
+  .bloco.bloco-2
+  .resumo-mes
+  .lista-dias
+  .gd-linha-dia
+  .placar-dia
+  .separador {
+  color: #6d6b6b !important;
+  transition: none !important;
+  animation: none !important;
+}
+
+/* SALDO ZERO - ESPECIFICIDADE AINDA MAIOR */
+html
+  body
+  .main-content
+  .container
+  .bloco.bloco-2
+  .resumo-mes
+  .lista-dias
+  .gd-linha-dia.valor-zero
+  .placar-dia
+  .placar-green,
+html
+  body
+  .main-content
+  .container
+  .bloco.bloco-2
+  .resumo-mes
+  .lista-dias
+  .gd-linha-dia.valor-zero
+  .placar-dia
+  .placar.placar-green,
+html
+  body
+  .main-content
+  .container
+  .bloco.bloco-2
+  .resumo-mes
+  .lista-dias
+  .gd-linha-dia.valor-zero
+  .placar-dia
+  .placar-red,
+html
+  body
+  .main-content
+  .container
+  .bloco.bloco-2
+  .resumo-mes
+  .lista-dias
+  .gd-linha-dia.valor-zero
+  .placar-dia
+  .placar.placar-red,
+html
+  body
+  .main-content
+  .container
+  .bloco.bloco-2
+  .resumo-mes
+  .lista-dias
+  .gd-linha-dia.valor-zero
+  .placar-dia
+  .separador {
+  color: #94a3b8 !important;
+}
+
+/* CLASSE TEXTO-CINZA - MÁXIMA PRIORIDADE */
+html
+  body
+  .main-content
+  .container
+  .bloco.bloco-2
+  .resumo-mes
+  .lista-dias
+  .gd-linha-dia
+  .placar-dia
+  .placar.texto-cinza,
+html
+  body
+  .main-content
+  .container
+  .bloco.bloco-2
+  .resumo-mes
+  .lista-dias
+  .gd-linha-dia
+  .placar-dia
+  .separador.texto-cinza {
+  color: #94a3b8 !important;
+}
+/* ===== MARGEM PADRÃO PARA TODOS OS RÓTULOS DE META ===== */
+#rotulo-meta-2.rotulo-meta-batida,
+.widget-meta-rotulo-2.rotulo-meta-batida,
+#rotulo-meta-2.rotulo-meta-superada,
+.widget-meta-rotulo-2.rotulo-meta-superada,
+#rotulo-meta-2.rotulo-restando,
+.widget-meta-rotulo-2.rotulo-restando {
+  margin-top: var(--rotulo-restando-meta-mes-margin-top, -12px) !important;
+}
+
+/* ===== ESPAÇAMENTO EXTRA APENAS QUANDO HÁ VALOR TACHADO/SUPERADO ===== */
+#rotulo-meta-2.rotulo-com-extra-spacing,
+.widget-meta-rotulo-2.rotulo-com-extra-spacing {
+  margin-top: calc(
+    var(--rotulo-restando-meta-mes-margin-top, -12px) + 8px
+  ) !important;
+}
+
+/* ===== ALTERNATIVA: CONTROLE MAIS FINO DO ESPAÇAMENTO ===== */
+/* Se quiser controlar o espaçamento extra via variável CSS também */
+#rotulo-meta-2.rotulo-com-extra-spacing,
+.widget-meta-rotulo-2.rotulo-com-extra-spacing {
+  margin-top: calc(
+    var(--rotulo-restando-meta-mes-margin-top, -12px) +
+      var(--rotulo-extra-spacing, 8px)
+  ) !important;
+}

@@ -1,0 +1,1122 @@
+/* ===== CSS ENCAPSULADO PARA MODAIS E FORMULÁRIOS ===== */
+
+/* Container principal para encapsular todos os modais */
+.modais-container {
+  font-family: "Poppins", sans-serif;
+}
+
+/* ===== TELA DE EDIÇÃO (HISTÓRICO DO MENTOR) ===== */
+.modais-container .tela-edicao {
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  max-height: 85vh;
+  overflow-y: auto;
+  background: #ffffff;
+  border-radius: 16px;
+  padding: 20px 25px;
+  box-shadow: 0 20px 40px rgba(0, 0, 0, 0.2);
+  z-index: 99999;
+  font-family: "Segoe UI", sans-serif;
+  color: #333;
+  width: 300px;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  position: fixed;
+  opacity: 1;
+  transition: opacity 0.3s ease;
+}
+
+.modais-container .tela-edicao.oculta {
+  opacity: 0;
+  pointer-events: none;
+}
+
+.modais-container .btn-fechar {
+  position: absolute;
+  top: 10px;
+  right: 10px;
+  background: transparent;
+  border: none;
+  font-size: 18px;
+  cursor: pointer;
+  z-index: 1000;
+  font-weight: bold;
+  color: #6d6d6dff;
+}
+
+.modais-container .mentor-img-edicao {
+  display: block;
+  margin: 15px auto 5px;
+  width: 80px;
+  height: 80px;
+  border-radius: 50%;
+  object-fit: cover;
+  box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+}
+
+.modais-container .tela-edicao h3 {
+  text-align: center;
+  margin-bottom: 20px;
+  font-size: 15px;
+  color: #2c3e50;
+  font-weight: 600;
+}
+
+.modais-container .mentor-data-horario {
+  text-align: center;
+  margin-bottom: 15px;
+  font-size: 14px;
+  color: #555;
+}
+
+.modais-container .entrada-card {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  background: #f8f8f8ff;
+  border-left: 6px solid #4caf50;
+  border-radius: 10px;
+  padding: 12px 16px;
+  margin-bottom: 12px;
+  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.06);
+  height: 50px;
+}
+
+.modais-container .entrada-info p {
+  margin: 4px 0;
+  font-size: 14px;
+  color: #34495e;
+  margin-top: -4px;
+}
+
+.modais-container .entrada-acoes {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.modais-container .btn-icon {
+  background: none;
+  border: none;
+  font-size: 1.2rem;
+  cursor: pointer;
+  transition: transform 0.2s ease;
+}
+
+.modais-container .btn-icon i {
+  pointer-events: none;
+}
+
+.modais-container .btn-lixeira {
+  color: #b4b4b4ff;
+  font-size: 15px;
+  margin-top: 15px;
+}
+
+.modais-container .btn-icon:hover {
+  transform: scale(1.2);
+}
+
+.modais-container .data-hora-edicao {
+  margin-top: 8px;
+  font-size: 16px;
+  color: #555;
+}
+
+/* ===== MODAL CONFIRMAÇÃO EXCLUSÃO ENTRADA ===== */
+.modais-container .modal-confirmacao {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  border-radius: 24px;
+  z-index: 9999999;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.modais-container .modal-conteudo {
+  background: #fff;
+  padding: 25px;
+  border-radius: 10px;
+  text-align: center;
+  /* Fully rounded corners */
+  border-radius: 24px;
+  background-image: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  background-repeat: no-repeat;
+  background-position: top center;
+  background-size: 100% 80px; /* gradient occupies top 80px */
+  z-index: 100000;
+  position: relative;
+}
+
+.modais-container .modal-texto {
+  color: #2c3e50;
+  font-size: 16px;
+  font-weight: 500;
+  margin-bottom: 20px;
+}
+
+.modais-container .botoes-modal {
+  margin-top: 15px;
+  display: flex;
+  justify-content: center;
+  gap: 10px;
+}
+
+.modais-container .botao-confirmar {
+  background: #e74c3c;
+  color: white;
+  border: none;
+  padding: 8px 16px;
+  border-radius: 6px;
+  cursor: pointer;
+  font-weight: bold;
+  transition: background-color 0.3s ease;
+}
+
+.modais-container .botao-confirmar:hover {
+  background: #c0392b;
+}
+
+.modais-container .botao-cancelar {
+  background: #ccc;
+  color: black;
+  border: none;
+  padding: 8px 16px;
+  border-radius: 6px;
+  cursor: pointer;
+  font-weight: bold;
+  transition: background-color 0.3s ease;
+}
+
+.modais-container .botao-cancelar:hover {
+  background: #bbb;
+}
+
+/* ===== MODAL CONFIRMAÇÃO EXCLUSÃO MENTOR ===== */
+.modais-container #modal-confirmacao-exclusao {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: rgba(0, 0, 0, 0.5);
+  z-index: 99999;
+  display: none;
+  justify-content: center;
+  align-items: center;
+}
+
+.modais-container #modal-confirmacao-exclusao.show {
+  display: flex;
+}
+
+.modais-container #modal-confirmacao-exclusao .modal-content {
+  transform: translateY(0);
+  background: #fff;
+  padding: 25px;
+  border-radius: 10px;
+  text-align: center;
+  max-width: 400px;
+  width: 90%;
+
+  /* ==================================================================================================================
+   EMERGENCY OVERRIDE: Force modal-confirmacao-exclusao to top of stacking order (duplicate coverage)
+==================================================================================================================*/
+  body > #modal-confirmacao-exclusao,
+  #modal-confirmacao-exclusao {
+    position: fixed !important;
+    inset: 0 !important;
+    width: 100vw !important;
+    height: 100vh !important;
+    display: none !important;
+    align-items: center !important;
+    justify-content: center !important;
+    visibility: hidden !important;
+    pointer-events: none !important;
+    background: rgba(0, 0, 0, 0.85) !important;
+    z-index: 2147483647 !important;
+  }
+
+  body > #modal-confirmacao-exclusao.show,
+  #modal-confirmacao-exclusao.show {
+    display: flex !important;
+    visibility: visible !important;
+    pointer-events: auto !important;
+  }
+
+  #modal-confirmacao-exclusao .modal-content,
+  #modal-confirmacao-exclusao .modal-conteudo {
+    position: fixed !important;
+    z-index: 2147483648 !important;
+  }
+
+  /* End emergency override */
+  margin: 20px;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
+  position: relative;
+}
+
+.modais-container #modal-confirmacao-exclusao .modal-content {
+  position: fixed;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  background: #fff;
+  padding: 25px;
+  border-radius: 10px;
+  width: 90%;
+
+  max-width: 400px;
+  text-align: center;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
+}
+
+.modais-container #modal-confirmacao-exclusao .modal-content {
+  background: #fff;
+  padding: 25px;
+  width: 350px;
+  border-radius: 10px;
+  text-align: center;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
+  font-family: "Segoe UI", sans-serif;
+  margin: 0 auto;
+  margin-top: 35%;
+}
+
+/* ===== MODAL FORMULÁRIO PRINCIPAL ===== */
+.modais-container .modal {
+  display: none;
+  position: fixed;
+  /* Elevado para garantir que o overlay do modal cubra todos os elementos da página
+     (alguns arquivos definem z-index muito altos em outros componentes). */
+  z-index: 1000000 !important;
+  left: 0;
+  top: 0;
+  width: 100%;
+  height: 100%;
+  background-color: rgba(0, 0, 0, 0.7);
+  justify-content: center;
+  align-items: center;
+  font-family: "Segoe UI", sans-serif;
+  opacity: 0;
+  transition: opacity 0.3s ease-in-out;
+  backdrop-filter: blur(5px);
+}
+
+.modais-container .modal.show {
+  opacity: 1;
+  display: flex;
+}
+
+.modais-container .modal-conteudo {
+  position: relative;
+  background-color: #fff;
+  margin: auto;
+  padding: 30px;
+  /* Fully rounded corners */
+  border-radius: 24px;
+  /* Clip children and pseudo-elements to the rounded corners */
+  overflow: hidden;
+  max-width: 450px;
+  width: 90%;
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.2);
+  animation: modalSlideIn 0.4s ease-out;
+  text-align: center;
+  transform: translateY(0);
+  transition: transform 0.3s ease-out;
+  /* Garantir que o conteúdo do modal fique acima do overlay e de outros elementos */
+  z-index: 1000001 !important;
+
+  /* Decorative gradient header as background so it fully covers the top area */
+  background-image: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  background-repeat: no-repeat;
+  background-position: top center;
+  background-size: 100% 80px; /* gradient occupies top 80px */
+}
+
+@keyframes modalSlideIn {
+  from {
+    opacity: 0;
+    transform: translateY(-60px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.modais-container .fechar {
+  position: absolute;
+  top: 2px;
+  right: 10px;
+  font-size: 26px;
+  cursor: pointer;
+  color: #888;
+  background: none;
+  border: none;
+  transition: color 0.3s ease;
+}
+
+.modais-container .fechar:hover {
+  color: #f44336;
+}
+
+/* ===== FORMULÁRIO MENTOR COMPLETO ===== */
+.modais-container .formulario-mentor-completo {
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+  animation: formFadeIn 0.5s ease-out;
+}
+
+@keyframes formFadeIn {
+  from {
+    opacity: 0;
+    transform: translateY(10px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.modais-container .input-group {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.modais-container .label-arquivo {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  font-weight: bold;
+  font-size: 15px;
+  color: #fff;
+  background-color: #4a90e2;
+  border-radius: 8px;
+  padding: 10px 16px;
+  cursor: pointer;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+  transition: background-color 0.3s ease, transform 0.2s ease;
+  margin-top: 8px;
+  text-align: center;
+  justify-content: center;
+}
+
+.modais-container .label-arquivo:hover {
+  background-color: #357abd;
+  transform: scale(1.03);
+}
+
+.modais-container .label-arquivo i {
+  font-size: 18px;
+}
+
+.modais-container .input-file {
+  display: none;
+}
+
+.modais-container .nome-arquivo {
+  display: block;
+  margin-bottom: 8px;
+  font-style: italic;
+  font-size: 13px;
+  color: #666;
+  text-align: center;
+}
+
+.modais-container .preview-foto-wrapper {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 10px;
+  margin: 15px 0;
+}
+
+.modais-container .preview-img {
+  display: block;
+  width: 120px;
+  max-width: 100%;
+  height: 120px;
+  aspect-ratio: 1 / 1;
+  border-radius: 50%;
+  object-fit: cover;
+  object-position: center;
+  border: 3px solid #4caf50;
+  box-shadow: 0 0 8px rgba(0, 0, 0, 0.2);
+  margin: 0 auto;
+}
+
+.modais-container .btn-remover-foto {
+  background-color: #f44336;
+  color: white;
+  border: none;
+  padding: 8px 12px;
+  border-radius: 8px;
+  cursor: pointer;
+  font-size: 14px;
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  transition: background-color 0.3s ease;
+}
+
+.modais-container .btn-remover-foto:hover {
+  background-color: #d32f2f;
+}
+
+.modais-container .mentor-nome-preview {
+  font-size: 18px;
+  font-weight: bold;
+  color: #333;
+  margin: 10px 0;
+}
+
+.modais-container .input-text {
+  width: 100%;
+  padding: 12px 16px;
+  border: 2px solid #e0e0e0;
+  border-radius: 12px;
+  font-size: 16px;
+  box-sizing: border-box;
+  transition: all 0.3s ease;
+  background-color: #f8f9fa;
+}
+
+.modais-container .input-text:hover {
+  border-color: #2196f3;
+  background-color: #fff;
+}
+
+.modais-container .input-text:focus {
+  border-color: #2196f3;
+  outline: none;
+  box-shadow: 0 0 0 4px rgba(33, 150, 243, 0.1);
+  background-color: #fff;
+}
+
+.modais-container .botoes-formulario {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 10px;
+  width: 100%;
+  margin-top: 10px;
+  text-align: center;
+}
+
+.modais-container .btn-enviar {
+  background-color: #2196f3;
+  color: white;
+  border: none;
+  padding: 12px 0;
+  border-radius: 8px;
+  font-size: 16px;
+  font-weight: bold;
+  transition: background-color 0.3s ease;
+  display: inline-flex;
+  justify-content: center;
+  align-items: center;
+  gap: 8px;
+  cursor: pointer;
+  width: 100%;
+}
+
+.modais-container .btn-enviar:hover {
+  background-color: #1976d2;
+}
+
+.modais-container .btn-excluir {
+  width: 100%;
+  font-size: 16px;
+  font-weight: bold;
+  box-sizing: border-box;
+  background-color: #e64135ff;
+  border-radius: 8px;
+  padding: 12px 0;
+  border: none;
+  color: white;
+  cursor: pointer;
+  display: inline-flex;
+  justify-content: center;
+  align-items: center;
+  gap: 8px;
+  transition: background-color 0.3s ease;
+}
+
+.modais-container .btn-excluir:hover {
+  background-color: #c62828;
+}
+
+/* ===== FORMULÁRIO MENTOR (ADICIONAR VALORES) ===== */
+.modais-container .formulario-mentor {
+  position: fixed;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  background-color: #ffffff;
+  padding: 30px 25px;
+  border-radius: 16px;
+  box-shadow: 0 10px 25px rgba(0, 0, 0, 0.2);
+  width: 270px;
+  height: 320px;
+  text-align: center;
+  font-family: "Poppins", sans-serif;
+  z-index: 9997;
+  align-items: center;
+  display: none;
+}
+
+.modais-container .formulario-mentor .btn-fechar {
+  position: absolute;
+  top: 12px;
+  right: 15px;
+  background: none;
+  border: none;
+  font-size: 15px;
+  cursor: pointer;
+  color: #999;
+  transition: color 0.3s ease;
+}
+
+.modais-container .formulario-mentor .btn-fechar:hover {
+  color: #333;
+}
+
+.modais-container .mentor-foto-preview {
+  width: 80px;
+  height: 80px;
+  border-radius: 50%;
+  object-fit: cover;
+  border: 3px solid #00a651;
+  margin-bottom: 12px;
+}
+
+.modais-container .formulario-mentor .mentor-nome-preview {
+  font-size: 18px;
+  font-weight: bold;
+  color: #333;
+  margin-bottom: 25px;
+  margin-top: -2px;
+}
+
+.modais-container .formulario-mentor form {
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+}
+
+.modais-container .checkbox-container {
+  display: flex;
+  justify-content: center;
+  gap: 30px;
+}
+
+.modais-container .checkbox-wrapper {
+  display: flex;
+  align-items: center;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.modais-container .formulario-mentor input[type="radio"] {
+  appearance: none;
+  width: 24px;
+  height: 24px;
+  border: 2px solid #ccc;
+  border-radius: 6px;
+  transition: background-color 0.3s;
+  cursor: pointer;
+}
+
+.modais-container .formulario-mentor #green:checked {
+  background-color: #00a651;
+  border-color: #00a651;
+}
+
+.modais-container .formulario-mentor #red:checked {
+  background-color: #f44336;
+  border-color: #f44336;
+}
+
+.modais-container .checkbox-label {
+  font-weight: bold;
+  font-size: 16px;
+  color: #555;
+  transition: color 0.3s;
+}
+
+.modais-container #green:checked + .green-label {
+  color: #00a651;
+}
+
+.modais-container #red:checked + .red-label {
+  color: #f44336;
+}
+
+.modais-container .input-valor {
+  padding: 14px 18px;
+  border: 1px solid #ccc;
+  border-radius: 8px;
+  font-size: 16px;
+  outline: none;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.05);
+  transition: border-color 0.3s ease;
+  text-align: center;
+}
+
+.modais-container .input-valor:focus {
+  border-color: #4caf50;
+}
+
+.modais-container .botao-enviar {
+  background: linear-gradient(to right, #00a651, #3ac77b);
+  border: none;
+  color: white;
+  font-weight: bold;
+  font-size: 16px;
+  padding: 12px;
+  border-radius: 10px;
+  cursor: pointer;
+  transition: transform 0.2s ease, background 0.3s ease;
+}
+
+.modais-container .botao-enviar:hover {
+  transform: scale(1.04);
+  background: linear-gradient(to right, #3ac77b, #00a651);
+}
+
+/* ===== LOADER ===== */
+.modais-container #loader {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: rgba(255, 255, 255, 0.7);
+  z-index: 9999;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.modais-container #loader::after {
+  content: "";
+  width: 50px;
+  height: 50px;
+  border: 6px solid #3498db;
+  border-top-color: transparent;
+  border-radius: 50%;
+  animation: girar 1s linear infinite;
+}
+
+/* ===== ANIMAÇÕES ===== */
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+    transform: translateY(-20px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@keyframes girar {
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+/* ===== RESPONSIVIDADE ===== */
+
+/* Tablets */
+@media (max-width: 768px) {
+  .modais-container .modal-conteudo {
+    width: 85%;
+    max-width: 400px;
+    padding: 18px 20px;
+  }
+
+  .modais-container .formulario-mentor {
+    width: 250px;
+    height: 300px;
+    padding: 25px 20px;
+  }
+
+  .modais-container .tela-edicao {
+    width: 280px;
+    max-height: 80vh;
+  }
+}
+
+/* Celulares */
+@media (max-width: 480px) {
+  .modais-container #modal-confirmacao-exclusao .modal-content {
+    width: 85%;
+    padding: 18px;
+    font-size: 14px;
+  }
+
+  .modais-container #modal-confirmacao-exclusao .botao-confirmar,
+  .modais-container #modal-confirmacao-exclusao .botao-cancelar {
+    font-size: 13px;
+    padding: 6px 12px;
+  }
+
+  .modais-container .modal-conteudo {
+    width: 90%;
+    margin: 10% auto;
+    top: 40px;
+    padding: 15px;
+  }
+
+  .modais-container .formulario-mentor {
+    width: 90%;
+    max-width: 280px;
+    height: auto;
+    min-height: 300px;
+    padding: 20px 15px;
+  }
+
+  .modais-container .tela-edicao {
+    width: 90%;
+    max-width: 300px;
+    max-height: 75vh;
+    padding: 15px 20px;
+  }
+
+  .modais-container .preview-img {
+    width: 100px;
+    height: 100px;
+  }
+
+  .modais-container .mentor-foto-preview {
+    width: 70px;
+    height: 70px;
+  }
+
+  .modais-container .checkbox-container {
+    gap: 20px;
+  }
+}
+
+/* ===== TESTE TESTE TESTE TESTE  TESTE TESTE TESTE TESTE TESTE TESTE ===== */
+
+/* ===== CORREÇÃO Z-INDEX PARA MODAL DE CONFIRMAÇÃO ===== */
+
+/* Modal principal (formulário) - z-index mais baixo */
+.modais-container .modal {
+  z-index: 9999 !important;
+}
+
+.modais-container .modal-conteudo {
+  z-index: 10000 !important;
+}
+
+/* Modal de confirmação de exclusão - z-index mais alto */
+#modal-confirmacao-exclusao {
+  z-index: 99999 !important;
+  background: rgba(0, 0, 0, 0.8) !important;
+  display: none;
+  justify-content: center !important;
+  align-items: center !important;
+}
+
+#modal-confirmacao-exclusao.show {
+  display: flex !important;
+}
+
+#modal-confirmacao-exclusao .modal-content {
+  z-index: 100000 !important;
+  background: white !important;
+  padding: 40px 30px !important;
+  border-radius: 20px !important;
+  max-width: 400px !important;
+  width: 90% !important;
+  text-align: center !important;
+  box-shadow: 0 25px 50px rgba(0, 0, 0, 0.4) !important;
+  position: relative !important;
+  transform: none !important;
+}
+
+/* Garantir que o modal de confirmação fique acima de tudo */
+body > #modal-confirmacao-exclusao {
+  position: fixed !important;
+  top: 0 !important;
+  left: 0 !important;
+  width: 100vw !important;
+  height: 100vh !important;
+  z-index: 2147483647 !important; /* Valor máximo seguro */
+}
+
+body > #modal-confirmacao-exclusao .modal-content {
+  position: fixed !important;
+  top: 50% !important;
+  left: 50% !important;
+  transform: translate(-50%, -50%) !important;
+  z-index: 2147483647 !important;
+}
+/**/
+/**/
+/**/
+/**/
+/**/
+/**/
+/**/
+/**/
+/**/
+/**/
+/**/
+/* =======================================================================================================================================================
+     - MODAL DO BOTÃO DE INFORMAÇÃO - MODAL DO BOTÃO DE INFORMAÇÃO - MODAL DO BOTÃO DE INFORMAÇÃO - MODAL DO BOTÃO DE INFORMAÇÃO
+  =======================================================================================================================================================*/
+
+/* =======================================================================================================================================================
+     - MODAL DO BOTÃO DE INFORMAÇÃO - MODAL DO BOTÃO DE INFORMAÇÃO - MODAL DO BOTÃO DE INFORMAÇÃO - MODAL DO BOTÃO DE INFORMAÇÃO
+  =======================================================================================================================================================*/
+
+/* ===== TOOLTIP COMO MODAL CENTRALIZADO ===== */
+.tooltip-info {
+  position: fixed !important;
+  top: 50% !important;
+  left: 50% !important;
+  transform: translate(-50%, -50%) scale(0.9) !important;
+  opacity: 0;
+  visibility: hidden;
+  transition: all 0.3s ease;
+  pointer-events: none;
+  z-index: 9999;
+  max-width: 600px;
+  width: 90%;
+  max-height: 80vh;
+  overflow-y: auto;
+  background: #fff;
+  border-radius: 12px;
+  box-shadow: 0 10px 40px rgba(0, 0, 0, 0.3);
+  display: none;
+}
+
+/* Overlay escuro atrás do modal */
+.tooltip-info::before {
+  content: "";
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: rgba(198, 248, 215, 0.11);
+  z-index: -1;
+  opacity: 0;
+  transition: opacity 0.3s ease;
+}
+
+/* QUANDO ATIVO - PRIORIDADE MÁXIMA */
+.tooltip-info.ativo {
+  display: block !important;
+  opacity: 1 !important;
+  visibility: visible !important;
+  transform: translate(-50%, -50%) scale(1) !important;
+  pointer-events: auto !important;
+}
+
+.tooltip-info.ativo::before {
+  opacity: 1 !important;
+}
+
+/* BLOQUEAR COMPLETAMENTE QUALQUER HOVER */
+.tooltip-info:not(.ativo),
+.info-btn:hover + .tooltip-info:not(.ativo),
+.opcao-meta:hover .tooltip-info:not(.ativo),
+label:hover + .tooltip-info:not(.ativo),
+input:hover ~ .tooltip-info:not(.ativo),
+.tooltip-info:not(.ativo):hover {
+  display: none !important;
+  opacity: 0 !important;
+  visibility: hidden !important;
+  pointer-events: none !important;
+}
+
+/* ===== BOTÃO X DE FECHAR - BRANCO SEM FUNDO ===== */
+.btn-fechar-tooltip {
+  position: absolute;
+  top: 3px;
+  right: 3px;
+  background: transparent;
+  border: none;
+  font-size: 28px;
+  line-height: 1;
+  color: #ffffff;
+  cursor: pointer;
+  width: 40px;
+  height: 40px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 50%;
+  transition: all 0.3s ease;
+  z-index: 10;
+  font-weight: 300;
+  text-shadow: 0 2px 4px rgba(0, 0, 0, 0.3);
+}
+
+.btn-fechar-tooltip:hover {
+  background: rgba(255, 255, 255, 0.2);
+  color: #ffffff;
+  transform: rotate(90deg);
+  text-shadow: 0 2px 6px rgba(0, 0, 0, 0.5);
+}
+
+.btn-fechar-tooltip:active {
+  background: rgba(255, 255, 255, 0.3);
+  transform: rotate(90deg) scale(0.95);
+}
+
+/* Ajustar padding do header para acomodar o X */
+.tooltip-header {
+  padding: 20px 55px 20px 20px;
+  position: relative;
+  font-size: 18px;
+  font-weight: 600;
+  border-bottom: 1px solid #e0e0e0;
+  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  color: #fff;
+  border-radius: 12px 12px 0 0;
+}
+
+/* Conteúdo do tooltip */
+.tooltip-content {
+  padding: 25px;
+  line-height: 1.8;
+  color: #2c3e50;
+  font-size: 15px;
+}
+
+.tooltip-content p {
+  margin-bottom: 15px;
+  line-height: 1.8;
+}
+
+.tooltip-content strong {
+  color: #667eea;
+  font-weight: 600;
+}
+
+/* Caixa de exemplo com melhor destaque */
+.tooltip-exemplo {
+  background: #f8f9fa;
+  padding: 20px;
+  border-radius: 8px;
+  margin-top: 20px;
+  border-left: 4px solid #667eea;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
+}
+
+.tooltip-exemplo strong {
+  color: #667eea;
+  display: block;
+  margin-bottom: 15px;
+  font-size: 16px;
+  font-weight: 700;
+  text-align: center;
+}
+
+.tooltip-exemplo ul {
+  margin: 0;
+  padding-left: 0;
+  list-style: none;
+}
+
+.tooltip-exemplo li {
+  margin-bottom: 0;
+  color: #34495e;
+  line-height: 1.8;
+  font-size: 14px;
+  text-align: left;
+  margin-left: 0;
+  padding: 0;
+}
+
+/* NOVA FORMATAÇÃO - Título em cima, valor embaixo */
+.tooltip-exemplo li strong {
+  color: #2c3e50;
+  font-weight: 600;
+  display: inline;
+  margin-bottom: 0;
+  font-size: 14px;
+}
+
+/* Valor fica na mesma linha, sem negrito */
+.tooltip-exemplo li {
+  font-weight: normal;
+}
+
+/* Melhorar legibilidade do texto cinza */
+.tooltip-content p {
+  color: #34495e;
+}
+
+/* OBSERVAÇÃO - Tom discreto e leve */
+.tooltip-obs {
+  margin-top: 20px;
+  padding: 12px 15px;
+  background: #fff5f5;
+  border-left: 3px solid #e57373;
+  border-radius: 4px;
+  font-size: 12px;
+  line-height: 1.6;
+  color: #c62828;
+  opacity: 0.85;
+}
+
+.tooltip-obs strong {
+  color: #d32f2f;
+  font-weight: 600;
+  font-size: 12px;
+}
+
+/* Responsivo */
+@media (max-width: 768px) {
+  .tooltip-info {
+    width: 95%;
+    max-height: 90vh;
+  }
+
+  .tooltip-header {
+    font-size: 16px;
+    padding: 15px 50px 15px 15px;
+  }
+
+  .tooltip-content {
+    padding: 20px 15px;
+    font-size: 14px;
+  }
+
+  .btn-fechar-tooltip {
+    font-size: 24px;
+    width: 35px;
+    height: 35px;
+    top: 8px;
+    right: 8px;
+  }
+
+  .tooltip-obs {
+    font-size: 11px;
+    padding: 10px 12px;
+  }
+}
+
+/* =======================================================================================================================================================
+     - FIM MODAL DO BOTÃO DE INFORMAÇÃO - FIM MODAL DO BOTÃO DE INFORMAÇÃO - FIM MODAL DO BOTÃO DE INFORMAÇÃO - FIM MODAL DO BOTÃO DE INFORMAÇÃO
+  =======================================================================================================================================================*/
+/* =======================================================================================================================================================
+     - FIM MODAL DO BOTÃO DE INFORMAÇÃO - FIM MODAL DO BOTÃO DE INFORMAÇÃO - FIM MODAL DO BOTÃO DE INFORMAÇÃO - FIM MODAL DO BOTÃO DE INFORMAÇÃO
+  =======================================================================================================================================================*/

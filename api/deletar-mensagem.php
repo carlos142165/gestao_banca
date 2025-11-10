@@ -25,8 +25,6 @@ try {
     // ✅ VERIFICAR SESSÃO E PERMISSÃO
     $usuarioId = isset($_SESSION['usuario_id']) ? intval($_SESSION['usuario_id']) : 0;
     
-    error_log("🔐 Tentativa de delete - Usuário ID: $usuarioId");
-    
     if ($usuarioId !== 23) {
         http_response_code(403);
         throw new Exception('Acesso negado. Apenas admin pode deletar mensagens.');
@@ -96,7 +94,6 @@ try {
             'message_id' => $messageId,
             'user_id' => $usuarioId
         ]);
-        error_log("✅ Mensagem $messageId deletada pelo usuário $usuarioId");
     } else {
         http_response_code(404);
         echo json_encode([
@@ -108,8 +105,6 @@ try {
     $stmt->close();
 
 } catch (Exception $e) {
-    error_log("❌ Erro em deletar-mensagem.php: " . $e->getMessage());
-    
     $statusCode = http_response_code();
     if ($statusCode === 200) {
         http_response_code(500);

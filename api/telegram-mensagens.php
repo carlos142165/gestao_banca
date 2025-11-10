@@ -78,8 +78,6 @@ function getMessagesFromToday() {
     // ✅ FAZER REQUISIÇÃO AO TELEGRAM
     $url = TELEGRAM_API_URL . '/getUpdates?limit=100&timeout=30';
     
-    error_log("🔍 Conectando em: " . $url);
-    
     $context = stream_context_create([
         'http' => [
             'timeout' => 35,
@@ -90,7 +88,6 @@ function getMessagesFromToday() {
     $response = @file_get_contents($url, false, $context);
     
     if ($response === false) {
-        error_log("❌ Falha ao conectar em: $url");
         flock($lockHandle, LOCK_UN);
         fclose($lockHandle);
         
@@ -105,7 +102,6 @@ function getMessagesFromToday() {
     $data = json_decode($response, true);
     
     if ($data === null) {
-        error_log("❌ JSON inválido: " . substr($response, 0, 200));
         flock($lockHandle, LOCK_UN);
         fclose($lockHandle);
         
@@ -118,7 +114,6 @@ function getMessagesFromToday() {
     }
     
     if (!isset($data['ok']) || !$data['ok']) {
-        error_log("❌ Telegram retornou erro: " . json_encode($data));
         flock($lockHandle, LOCK_UN);
         fclose($lockHandle);
         
@@ -133,10 +128,7 @@ function getMessagesFromToday() {
     $messages = [];
     $channelId = intval(TELEGRAM_CHANNEL_ID);
     
-    error_log("✅ Conectado! Procurando mensagens do canal: $channelId para: $today");
-    
     if (isset($data['result']) && is_array($data['result'])) {
-        error_log("📊 Total de updates: " . count($data['result']));
         
         foreach ($data['result'] as $update) {
             if (isset($update['channel_post'])) {
@@ -170,8 +162,6 @@ function getMessagesFromToday() {
             }
         }
     }
-    
-    error_log("✅ Encontradas " . count($messages) . " mensagens");
     
     usort($messages, function($a, $b) {
         return $a['timestamp'] - $b['timestamp'];
@@ -247,7 +237,6 @@ function pollNewMessages() {
     $response = @file_get_contents($url, false, $context);
     
     if ($response === false) {
-        error_log("❌ Falha no polling");
         flock($lockHandle, LOCK_UN);
         fclose($lockHandle);
         
@@ -258,7 +247,6 @@ function pollNewMessages() {
     $data = json_decode($response, true);
     
     if (!isset($data['ok']) || !$data['ok']) {
-        error_log("❌ Telegram retornou erro no polling: " . json_encode($data));
         flock($lockHandle, LOCK_UN);
         fclose($lockHandle);
         
@@ -271,8 +259,6 @@ function pollNewMessages() {
     $channelId = intval(TELEGRAM_CHANNEL_ID);
     
     if (isset($data['result']) && is_array($data['result'])) {
-        error_log("📊 Polling retornou: " . count($data['result']) . " updates");
-        
         foreach ($data['result'] as $update) {
             if (isset($update['channel_post'])) {
                 $message = $update['channel_post'];
@@ -309,8 +295,6 @@ function pollNewMessages() {
         
         file_put_contents($offsetFile, $maxUpdateId);
     }
-    
-    error_log("✅ Poll retornou " . count($newMessages) . " mensagens novas");
     
     if (file_exists($cacheFile)) {
         $cached = json_decode(file_get_contents($cacheFile), true);
