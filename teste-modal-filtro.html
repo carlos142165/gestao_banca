@@ -1,0 +1,92 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Teste Modal Filtro</title>
+    <link rel="stylesheet" href="css/modal-historico-resultados.css" />
+    <style>
+      body {
+        font-family: Arial, sans-serif;
+        padding: 20px;
+        background: #f5f5f5;
+      }
+      .card {
+        background: white;
+        padding: 15px;
+        margin: 10px;
+        border-radius: 8px;
+        cursor: pointer;
+        border: 2px solid #ccc;
+        display: inline-block;
+      }
+      .card:hover {
+        background: #f0f0f0;
+        border-color: #0088cc;
+      }
+    </style>
+  </head>
+  <body>
+    <h1>Teste do Modal com Filtro de Subtipo</h1>
+
+    <div>
+      <h2>Clique em um card para abrir o modal:</h2>
+      <div class="card" onclick="testarModal(this)">
+        ⚽ Everton vs Fulham<br />
+        +0.5 GOL FT
+      </div>
+      <div class="card" onclick="testarModal(this)">
+        ⚽ Man City vs Chelsea<br />
+        +1 GOL AS
+      </div>
+      <div class="card" onclick="testarModal(this)">
+        🚩 Liverpool vs Arsenal<br />
+        +1 CANTOS AS
+      </div>
+    </div>
+
+    <script src="js/modal-historico-resultados.js"></script>
+    <script>
+      function testarModal(elemento) {
+        // Simular dados de um card de aposta
+        const texto = elemento.textContent;
+
+        let time1, time2, tipo, subtipo;
+
+        if (texto.includes("Everton")) {
+          time1 = "Everton";
+          time2 = "Fulham";
+          subtipo = "+0.5";
+          tipo = "gols";
+        } else if (texto.includes("Man City")) {
+          time1 = "Man City";
+          time2 = "Chelsea";
+          subtipo = "+1";
+          tipo = "gols";
+        } else {
+          time1 = "Liverpool";
+          time2 = "Arsenal";
+          subtipo = "+1";
+          tipo = "cantos";
+        }
+
+        // Criar elemento com data attributes
+        const mockElement = document.createElement("div");
+        mockElement.dataset.time1 = time1;
+        mockElement.dataset.time2 = time2;
+        mockElement.dataset.tipo = tipo;
+        mockElement.dataset.subtipo_aposta = subtipo;
+
+        console.log("📌 Abrindo modal para:", {
+          time1,
+          time2,
+          tipo,
+          subtipo,
+        });
+
+        // Chamar função do modal
+        abrirModalHistorico(mockElement);
+      }
+    </script>
+  </body>
+</html>

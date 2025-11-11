@@ -469,10 +469,10 @@ const TelegramMessenger = {
       if (e.target.closest(".btn-grafico-resultados")) {
         // Se clicou no gráfico, não propagate
         e.stopPropagation();
-        this.mostrarResultadosTime(msg);
+        this.mostrarResultadosTime(msg, messageEl);
       } else {
         // Clique em qualquer lugar do card
-        this.mostrarResultadosTime(msg);
+        this.mostrarResultadosTime(msg, messageEl);
       }
     });
 
@@ -490,34 +490,98 @@ const TelegramMessenger = {
   },
 
   // ✅ NOVA FUNÇÃO: Mostrar resultados do time em um modal
-  mostrarResultadosTime(msg) {
+  mostrarResultadosTime(msg, messageEl) {
     const time1 = msg.time_1 || "---";
     const time2 = msg.time_2 || "---";
-    const titulo = (msg.titulo || "").toLowerCase();
 
-    // 🔧 USAR tipo_aposta DO BANCO SE DISPONÍVEL
+    // 🔧 USAR O TÍTULO DO MSG (já tem a informação correta)
+    let titulo = (msg.titulo || msg.text || "").toLowerCase();
+
+    console.log("🔍 mostrarResultadosTime chamada:");
+    console.log("  msg.titulo:", msg.titulo);
+    console.log("  Título final (lowercase):", titulo);
+
+    // 🔧 EXTRAIR REFERÊNCIA ESPECÍFICA DO TÍTULO (+0.5GOL, +1GOL, +1CANTOS, etc)
+    // Esta função detecta o tipo exato da aposta para filtro preciso
     let tipo = "gols"; // default
+    let referencia = ""; // armazenar a referência específica
 
-    if (msg.tipo_aposta) {
-      // Campo tipo_aposta vem do banco de dados
-      tipo = msg.tipo_aposta.toLowerCase().includes("canto")
-        ? "cantos"
-        : "gols";
-    } else {
-      // Fallback: detectar pelo título
-      tipo =
-        titulo.includes("⛳") ||
-        titulo.includes("canto") ||
-        titulo.includes("escanteio")
+    // Detectar padrões específicos: +0.5 GOL, +1 GOL, +1 CANTOS, etc
+    const padroesReferencia = [
+      {
+        regex: /\+0\.?5\s*(?:⚽|gol|gols)/i,
+        ref: "+0.5GOL",
+        categoria: "gols",
+      },
+      {
+        regex: /\+1\s*(?:⚽|gol|gols)(?!\.)(?!\d)/i,
+        ref: "+1GOL",
+        categoria: "gols",
+      }, // Evita +1.5
+      {
+        regex: /\+1\s*(?:⛳|cantos?|escanteios?)/i,
+        ref: "+1CANTOS",
+        categoria: "cantos",
+      },
+      {
+        regex: /\+2\.?5\s*(?:⚽|gol|gols)/i,
+        ref: "+2.5GOL",
+        categoria: "gols",
+      },
+      {
+        regex: /\+3\.?5\s*(?:⚽|gol|gols)/i,
+        ref: "+3.5GOL",
+        categoria: "gols",
+      },
+    ];
+
+    // Procurar pelas referências específicas
+    for (const padrao of padroesReferencia) {
+      console.log(`  Testando regex: ${padrao.regex} contra: "${titulo}"`);
+      if (padrao.regex.test(titulo)) {
+        referencia = padrao.ref;
+        tipo = padrao.categoria;
+        console.log(
+          `  ✅ MATCH! Referência detectada: ${referencia} (${tipo})`
+        );
+        break;
+      }
+    }
+
+    // Fallback: se não detectou referência específica, usar detecção genérica
+    if (!referencia) {
+      if (msg.tipo_aposta) {
+        // Campo tipo_aposta vem do banco de dados
+        tipo = msg.tipo_aposta.toLowerCase().includes("canto")
           ? "cantos"
           : "gols";
+      } else {
+        // Fallback: detectar pelo título
+        tipo =
+          titulo.includes("⛳") ||
+          titulo.includes("canto") ||
+          titulo.includes("escanteio")
+            ? "cantos"
+            : "gols";
+      }
+
+      // Se não detectou tipo_aposta específico, usar genérico
+      referencia = tipo === "cantos" ? "+1CANTOS" : "+1GOL";
+      console.log(`⚠️ Usando detecção genérica: ${referencia}`);
     }
 
     // Criar elemento temporário com data attributes para a função existente usar
     const elemento = document.createElement("div");
     elemento.dataset.time1 = time1;
     elemento.dataset.time2 = time2;
-    elemento.dataset.tipo = tipo;
+    elemento.dataset.tipo = referencia; // Enviar a referência específica (+0.5GOL, +1GOL, etc)
+
+    console.log(`📊 ENVIANDO PARA MODAL:`, {
+      time1: time1,
+      time2: time2,
+      tipo: referencia,
+      titulo: titulo,
+    });
 
     // Usar a função existente de modal histórico
     if (typeof abrirModalHistorico === "function") {
@@ -527,9 +591,7 @@ const TelegramMessenger = {
         "⚠️ Função abrirModalHistorico não encontrada. Verifique se modal-historico-resultados.js foi carregado."
       );
     }
-  },
-
-  // ✅ NOVA FUNÇÃO: Atualizar mensagem existente com efeito visual
+  }, // ✅ NOVA FUNÇÃO: Atualizar mensagem existente com efeito visual
   updateMessage(msg, messageEl) {
     if (!messageEl) {
       console.warn(`⚠️ messageEl não encontrado para ID: ${msg.id}`);
@@ -642,8 +704,13 @@ const TelegramMessenger = {
 
     this.container.innerHTML = `
             <div class="telegram-empty">
-                <i class="fas fa-search"></i>
-                <p>Buscando Melhor Oportunidade</p>
+                <div class="buscando-icon-container">
+                    <i class="fas fa-search buscando-icon"></i>
+                    <span class="buscando-pulse-ring pulse-1"></span>
+                    <span class="buscando-pulse-ring pulse-2"></span>
+                    <span class="buscando-pulse-ring pulse-3"></span>
+                </div>
+                <p class="buscando-text">Buscando Melhor Oportunidade</p>
             </div>
         `;
   },

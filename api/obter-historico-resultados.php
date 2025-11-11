@@ -8,6 +8,21 @@ header('Content-Type: application/json; charset=utf-8');
 // ✅ CONFIGURAR TIMEZONE
 date_default_timezone_set('America/Sao_Paulo');
 
+// ✅ FUNÇÃO: Gerar logs em arquivo
+$LOG_FILE = __DIR__ . '/../logs/obter-historico-resultados-' . date('Y-m-d') . '.log';
+function escreverLog($mensagem) {
+    global $LOG_FILE;
+    $timestamp = date('H:i:s.u');
+    $linha = "[$timestamp] $mensagem\n";
+    file_put_contents($LOG_FILE, $linha, FILE_APPEND);
+}
+
+// ✅ LOGGING INICIAL
+escreverLog("═════════════════════════════════════════════════════════════");
+escreverLog("🔍 API CHAMADA - obter-historico-resultados.php");
+escreverLog("🔍 METHOD: " . $_SERVER['REQUEST_METHOD']);
+escreverLog("🔍 TEMPO: " . date('Y-m-d H:i:s'));
+
 // ✅ INCLUIR CONFIG CENTRALIZADA
 require_once '../config.php';
 
@@ -26,6 +41,12 @@ $time2 = isset($input['time2']) ? trim($input['time2']) : '';
 $tipo = isset($input['tipo']) ? trim($input['tipo']) : 'gols';
 $limite = isset($input['limite']) ? intval($input['limite']) : 10;
 
+escreverLog("📩 DADOS RECEBIDOS:");
+escreverLog("   time1: '$time1'");
+escreverLog("   time2: '$time2'");
+escreverLog("   tipo: '$tipo'");
+escreverLog("   limite: $limite");
+
 // 🔧 REMOVER EMOJIS DOS TIMES (alguns times têm ⚽️ no início)
 $time1 = preg_replace('/[\p{Emoji_Presentation}]/u', '', $time1);
 $time2 = preg_replace('/[\p{Emoji_Presentation}]/u', '', $time2);
@@ -39,6 +60,16 @@ if (empty($time1) || empty($time2)) {
     echo json_encode(['success' => false, 'error' => 'Times inválidos']);
     exit;
 }
+
+// ✅ DETECTAR TIPO ESPECÍFICO DA APOSTA A PARTIR DO PARÂMETRO "tipo"
+// O tipo agora pode ser: +0.5GOL, +1GOL, +1CANTOS, +2.5GOL, +3.5GOL, etc
+// Também suporta valores genéricos: gols, cantos
+$tipo_normalizado = strtoupper(trim($tipo));
+$is_cantos = false;
+$filtro_tipo = "";
+
+// 🔧 LOG DE DEBUG
+error_log("🔍 API DEBUG - Tipo recebido: '$tipo' (normalizado: '$tipo_normalizado')");
 
 // ✅ CONECTAR AO BANCO DE DADOS
 // A conexão já vem de config.php ($conexao)
@@ -57,45 +88,12 @@ if ($conexao->connect_error) {
 $conexao->set_charset("utf8mb4");
 
 try {
-    // ✅ USAR A MESMA LÓGICA DE DETECÇÃO QUE obter-placar-dia.php
-    // Esta função usa regex para detectar padrões de título como:
-    // "+1⚽GOL", "+0.5⚽GOL", "+1⛳️CANTOS"
+    // ✅ NORMALIZAR OS TIMES PARA COMPARAÇÃO
+    // Remove emojis e espaços extras
+    $time1_normalizado = trim(strtolower(preg_replace('/\s+/', ' ', $time1)));
+    $time2_normalizado = trim(strtolower(preg_replace('/\s+/', ' ', $time2)));
     
-    $tipo_cantos = strtolower(trim($tipo)) === 'cantos';
-    
-    // ✅ CONSTRUIR FILTRO INTELIGENTE (regex + tipo_aposta)
-    // Usa a mesma abordagem que extrairReferencia() de obter-placar-dia.php
-    if ($tipo_cantos) {
-        // Filtro para CANTOS: tipo_aposta + padrões LIKE (MySQL REGEXP tem problemas com emojis)
-        $filtro_tipo = "AND (
-            LOWER(tipo_aposta) LIKE '%CANTOS%'
-            OR titulo LIKE '%CANTOS%' 
-            OR titulo LIKE '%Cantos%'
-            OR titulo LIKE '%cantos%' 
-            OR titulo LIKE '%CANTO%'
-            OR titulo LIKE '%Canto%'
-            OR titulo LIKE '%canto%'
-            OR titulo LIKE '%ESCANTEIOS%'
-            OR titulo LIKE '%escanteios%'
-            OR titulo LIKE '%ESCANTEI%'
-            OR titulo LIKE '%escantei%'
-            OR titulo LIKE '%⛳%'
-        )";
-    } else {
-        // Filtro para GOLS: tipo_aposta + padrões LIKE
-        $filtro_tipo = "AND (
-            LOWER(tipo_aposta) LIKE '%GOL%'
-            OR titulo LIKE '%GOL%' 
-            OR titulo LIKE '%Gol%'
-            OR titulo LIKE '%gol%'
-            OR titulo LIKE '%GOLS%'
-            OR titulo LIKE '%Gols%'
-            OR titulo LIKE '%gols%'
-            OR titulo LIKE '%⚽%'
-        )";
-    }
-
-    // ✅ BUSCAR ÚLTIMOS JOGOS DO TIME 1 (filtrados por tipo de mensagem)
+    // ✅ BUSCAR ÚLTIMOS JOGOS DO TIME 1 (sem filtro SQL - será feito em PHP)
     $sql1 = "SELECT 
                 resultado,
                 data_criacao,
@@ -107,9 +105,9 @@ try {
                 tipo_aposta
             FROM bote 
             WHERE (
-                (LOWER(time_1) LIKE CONCAT('%', LOWER(?), '%') OR LOWER(time_2) LIKE CONCAT('%', LOWER(?), '%'))
-                $filtro_tipo
+                LOWER(time_1) LIKE CONCAT('%', LOWER(?), '%') OR LOWER(time_2) LIKE CONCAT('%', LOWER(?), '%')
             )
+            AND (LOWER(tipo_aposta) LIKE '%GOL%' OR LOWER(tipo_aposta) LIKE '%CANTO%')
             ORDER BY data_criacao DESC
             LIMIT ?";
 
@@ -137,6 +135,24 @@ try {
             continue;
         }
         
+        // ✅ FILTRAR EM PHP USANDO extrairReferencia() - MESMO MÉTODO DO JavaScript
+        $referenciaJogo = extrairReferencia($row['titulo']);
+        escreverLog("🔍 TIME1 Título: '{$row['titulo']}' -> Referência: '$referenciaJogo' | Tipo pedido: '$tipo'");
+        
+        // 🔧 FILTRAR REEMBOLSO: Apenas quando +0.5GOL foi pedido especificamente
+        if ($tipo === '+0.5GOL' || stripos($tipo, '+0.5') !== false) {
+            if ($row['resultado'] === 'REEMBOLSO' || $row['resultado'] === 'reembolso') {
+                escreverLog("🔍 TIME1 FILTRADO: é REEMBOLSO e +0.5GOL foi pedido");
+                continue;
+            }
+        }
+        
+        if (!deveMostrarResultado($referenciaJogo, $tipo)) {
+            escreverLog("🔍 TIME1 FILTRADO: não passou na validação de tipo");
+            continue;
+        }
+        escreverLog("🔍 TIME1 INCLUÍDO: passou na validação");
+        
         $historico_time1[] = [
             'resultado' => $row['resultado'],
             'data_criacao' => $row['data_criacao'],
@@ -145,12 +161,14 @@ try {
             'placar_1' => $row['placar_1'],
             'placar_2' => $row['placar_2'],
             'titulo' => $row['titulo'],
-            'tipo_aposta' => $row['tipo_aposta']
+            'tipo_aposta' => $row['tipo_aposta'],
+            'referencia_extraida' => $referenciaJogo,  // ✅ ADICIONAR REFERÊNCIA EXTRAÍDA
+            'time_filtrado' => $time1  // ✅ ADICIONAR O TIME QUE FOI FILTRADO
         ];
     }
     $stmt1->close();
 
-    // ✅ BUSCAR ÚLTIMOS JOGOS DO TIME 2 (filtrados por tipo de mensagem)
+    // ✅ BUSCAR ÚLTIMOS JOGOS DO TIME 2 (sem filtro SQL - será feito em PHP)
     $sql2 = "SELECT 
                 resultado,
                 data_criacao,
@@ -162,9 +180,9 @@ try {
                 tipo_aposta
             FROM bote
             WHERE (
-                (LOWER(time_1) LIKE CONCAT('%', LOWER(?), '%') OR LOWER(time_2) LIKE CONCAT('%', LOWER(?), '%'))
-                $filtro_tipo
+                LOWER(time_1) LIKE CONCAT('%', LOWER(?), '%') OR LOWER(time_2) LIKE CONCAT('%', LOWER(?), '%')
             )
+            AND (LOWER(tipo_aposta) LIKE '%GOL%' OR LOWER(tipo_aposta) LIKE '%CANTO%')
             ORDER BY data_criacao DESC
             LIMIT ?";
 
@@ -192,6 +210,24 @@ try {
             continue;
         }
         
+        // ✅ FILTRAR EM PHP USANDO extrairReferencia() - MESMO MÉTODO DO JavaScript
+        $referenciaJogo = extrairReferencia($row['titulo']);
+        escreverLog("🔍 TIME2 Título: '{$row['titulo']}' -> Referência: '$referenciaJogo' | Tipo pedido: '$tipo'");
+        
+        // 🔧 FILTRAR REEMBOLSO: Apenas quando +0.5GOL foi pedido especificamente
+        if ($tipo === '+0.5GOL' || stripos($tipo, '+0.5') !== false) {
+            if ($row['resultado'] === 'REEMBOLSO' || $row['resultado'] === 'reembolso') {
+                escreverLog("🔍 TIME2 FILTRADO: é REEMBOLSO e +0.5GOL foi pedido");
+                continue;
+            }
+        }
+        
+        if (!deveMostrarResultado($referenciaJogo, $tipo)) {
+            escreverLog("🔍 TIME2 FILTRADO: não passou na validação de tipo");
+            continue;
+        }
+        escreverLog("🔍 TIME2 INCLUÍDO: passou na validação");
+        
         $historico_time2[] = [
             'resultado' => $row['resultado'],
             'data_criacao' => $row['data_criacao'],
@@ -200,7 +236,9 @@ try {
             'placar_1' => $row['placar_1'],
             'placar_2' => $row['placar_2'],
             'titulo' => $row['titulo'],
-            'tipo_aposta' => $row['tipo_aposta']
+            'tipo_aposta' => $row['tipo_aposta'],
+            'referencia_extraida' => $referenciaJogo,  // ✅ ADICIONAR REFERÊNCIA EXTRAÍDA
+            'time_filtrado' => $time2  // ✅ ADICIONAR O TIME QUE FOI FILTRADO
         ];
     }
     $stmt2->close();
@@ -211,13 +249,19 @@ try {
 
     // ✅ RETORNAR SUCESSO
     http_response_code(200);
+    error_log("🔍 RESPOSTA: time1=" . count($historico_time1) . ", time2=" . count($historico_time2) . ", tipo='$tipo'");
     echo json_encode([
         'success' => true,
         'time1_historico' => $historico_time1,
         'time2_historico' => $historico_time2,
         'total_time1' => count($historico_time1),
         'total_time2' => count($historico_time2),
-        'tipo' => $tipo
+        'tipo' => $tipo,
+        'debug' => [
+            'tipo_recebido' => $tipo,
+            'total_analisados_time1' => 'ver logs',
+            'total_analisados_time2' => 'ver logs'
+        ]
     ]);
 
 } catch (Exception $e) {
@@ -226,6 +270,102 @@ try {
         'success' => false,
         'error' => 'Erro ao consultar banco de dados: ' . $e->getMessage()
     ]);
+}
+
+/**
+ * ================================================================
+ * FUNÇÃO: Deve Mostrar Resultado?
+ * ================================================================
+ * 
+ * Compara a referência extraída do titulo com o tipo pedido.
+ * Retorna true APENAS se o resultado deve ser mostrado.
+ * 
+ * Exemplo:
+ * - Se tipo pedido é "+0.5GOL" e referencia é "+0.5GOL" -> true
+ * - Se tipo pedido é "+0.5GOL" e referencia é "+1GOL" -> false
+ * - Se tipo pedido é "+1GOL" e referencia é "+1GOL" -> true
+ * - Se tipo pedido é "CANTOS" e referencia é "+1CANTOS" -> true
+ */
+function deveMostrarResultado($referenciaJogo, $tipoPedido) {
+    escreverLog("\n");
+    escreverLog("═══════════════════════════════════════════════════════════");
+    escreverLog("🔍 FUNÇÃO deveMostrarResultado CHAMADA");
+    escreverLog("   referenciaJogo: '$referenciaJogo'");
+    escreverLog("   tipoPedido: '$tipoPedido'");
+    
+    // Se não conseguiu extrair referência do jogo, REJEITAR (não aceitar tudo)
+    if (empty($referenciaJogo)) {
+        escreverLog("   ❌ REJEITAR: referenciaJogo vazio");
+        escreverLog("═══════════════════════════════════════════════════════════");
+        return false;
+    }
+    
+    // 🔧 EXTRAIR TIPO (CANTOS, GOL, etc)
+    $tipo_ref_cleaned = str_replace(['⚽', '⛳', '️', ' '], '', $referenciaJogo);
+    $tipo_pedido_cleaned = str_replace(['⚽', '⛳', '️', ' '], '', $tipoPedido);
+    $tipo_ref_upper = strtoupper($tipo_ref_cleaned);
+    $tipo_pedido_upper = strtoupper($tipo_pedido_cleaned);
+    
+    escreverLog("   Tipo ref (cleaned): '$tipo_ref_cleaned' → '$tipo_ref_upper'");
+    escreverLog("   Tipo pedido (cleaned): '$tipo_pedido_cleaned' → '$tipo_pedido_upper'");
+    
+    // 🔧 VERIFICAR SE TIPO BATE (GOL com GOL, CANTOS com CANTOS)
+    $ref_eh_cantos = stripos($tipo_ref_upper, 'CANTOS') !== false || stripos($tipo_ref_upper, 'ESCANTEIO') !== false;
+    $pedido_eh_cantos = stripos($tipo_pedido_upper, 'CANTOS') !== false || stripos($tipo_pedido_upper, 'ESCANTEIO') !== false;
+    
+    escreverLog("   Ref é CANTOS? " . ($ref_eh_cantos ? 'SIM' : 'NÃO'));
+    escreverLog("   Pedido é CANTOS? " . ($pedido_eh_cantos ? 'SIM' : 'NÃO'));
+    
+    // Se um é CANTOS e outro não, rejeitar
+    if ($ref_eh_cantos !== $pedido_eh_cantos) {
+        escreverLog("   ❌ REJEITAR: Tipo não bate (um é CANTOS, outro não)");
+        escreverLog("═══════════════════════════════════════════════════════════");
+        return false;
+    }
+    escreverLog("   ✅ Tipo bate (ambos são GOL OU ambos são CANTOS)");
+    
+    // 🔧 EXTRAIR VALOR NUMÉRICO DO TIPO PEDIDO (ex: "+0.5GOL" → 0.5)
+    $valor_tipo_pedido = null;
+    $matches_pedido = [];
+    if (preg_match('/[\+\-]?([\d\.]+)/', $tipoPedido, $matches_pedido)) {
+        $valor_tipo_pedido = floatval($matches_pedido[1]);
+        escreverLog("   Valor pedido extraído: '$matches_pedido[1]' → " . $valor_tipo_pedido);
+    } else {
+        escreverLog("   ❌ Não conseguiu extrair valor pedido com regex");
+    }
+    
+    // 🔧 EXTRAIR VALOR NUMÉRICO DA REFERÊNCIA DO JOGO (ex: "+0.5⚽GOL" → 0.5)
+    $valor_referencia_jogo = null;
+    $matches_ref = [];
+    if (preg_match('/[\+\-]?([\d\.]+)/', $referenciaJogo, $matches_ref)) {
+        $valor_referencia_jogo = floatval($matches_ref[1]);
+        escreverLog("   Valor referência extraído: '$matches_ref[1]' → " . $valor_referencia_jogo);
+    } else {
+        escreverLog("   ❌ Não conseguiu extrair valor referência com regex");
+    }
+    
+    // 🔧 COMPARAÇÃO NUMÉRICA EXATA
+    if ($valor_tipo_pedido !== null && $valor_referencia_jogo !== null) {
+        $diferenca = abs($valor_referencia_jogo - $valor_tipo_pedido);
+        escreverLog("   Diferença: |$valor_referencia_jogo - $valor_tipo_pedido| = $diferenca");
+        escreverLog("   Tolerância: 0.001");
+        
+        $resultado = $diferenca < 0.001; // Tolerância de 0.001
+        
+        if ($resultado) {
+            escreverLog("   ✅ ACEITAR: Valores batem!");
+        } else {
+            escreverLog("   ❌ REJEITAR: Valores não batem (diferença > 0.001)");
+        }
+        
+        escreverLog("═══════════════════════════════════════════════════════════");
+        return $resultado;
+    }
+    
+    // Se não conseguiu extrair valores, REJEITAR
+    escreverLog("   ❌ REJEITAR: Não conseguiu extrair valores numéricos");
+    escreverLog("═══════════════════════════════════════════════════════════");
+    return false;
 }
 
 /**

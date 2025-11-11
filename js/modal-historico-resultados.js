@@ -110,6 +110,25 @@ async function carregarHistoricoResultados(time1, time2, tipo, modal) {
 
     if (!data) return;
 
+    console.log("🔍 Dados recebidos da API:", data);
+    console.log("🔍 Time1 total:", data.time1_historico.length);
+    console.log("🔍 Time2 total:", data.time2_historico.length);
+    console.log("🔍 Tipo solicitado:", data.tipo);
+
+    // 🔍 LOG DETALHADO - Mostrar os títulos dos primeiros resultados
+    if (data.time1_historico && data.time1_historico.length > 0) {
+      console.log("🔍 Primeiros 3 títulos TIME1:");
+      data.time1_historico.slice(0, 3).forEach((r, idx) => {
+        console.log(`  [${idx}] ${r.titulo}`);
+      });
+    }
+    if (data.time2_historico && data.time2_historico.length > 0) {
+      console.log("🔍 Primeiros 3 títulos TIME2:");
+      data.time2_historico.slice(0, 3).forEach((r, idx) => {
+        console.log(`  [${idx}] ${r.titulo}`);
+      });
+    }
+
     if (data.success) {
       renderizarModalHistorico(data, modal, time1, time2, tipo);
     } else {
@@ -202,39 +221,47 @@ function renderizarModalHistorico(data, modal, time1, time2, tipo, limite = 5) {
   // Quando os dois times já se enfrentaram, colocar esse jogo em primeiro lugar com destaque
   const confrontoDireto1 = [];
   const outrosJogos1 = [];
-  
+
   resultados1.forEach((jogo) => {
-    const isConfrontoDireto = (
-      (jogo.time_1.toLowerCase() === time1.toLowerCase() && jogo.time_2.toLowerCase() === time2.toLowerCase()) ||
-      (jogo.time_1.toLowerCase() === time2.toLowerCase() && jogo.time_2.toLowerCase() === time1.toLowerCase())
-    );
-    
+    const isConfrontoDireto =
+      (jogo.time_1.toLowerCase() === time1.toLowerCase() &&
+        jogo.time_2.toLowerCase() === time2.toLowerCase()) ||
+      (jogo.time_1.toLowerCase() === time2.toLowerCase() &&
+        jogo.time_2.toLowerCase() === time1.toLowerCase());
+
     if (isConfrontoDireto) {
       confrontoDireto1.push({ ...jogo, confrontoDireto: true });
     } else {
       outrosJogos1.push({ ...jogo, confrontoDireto: false });
     }
   });
-  
+
   const confrontoDireto2 = [];
   const outrosJogos2 = [];
-  
+
   resultados2.forEach((jogo) => {
-    const isConfrontoDireto = (
-      (jogo.time_1.toLowerCase() === time1.toLowerCase() && jogo.time_2.toLowerCase() === time2.toLowerCase()) ||
-      (jogo.time_1.toLowerCase() === time2.toLowerCase() && jogo.time_2.toLowerCase() === time1.toLowerCase())
-    );
-    
+    const isConfrontoDireto =
+      (jogo.time_1.toLowerCase() === time1.toLowerCase() &&
+        jogo.time_2.toLowerCase() === time2.toLowerCase()) ||
+      (jogo.time_1.toLowerCase() === time2.toLowerCase() &&
+        jogo.time_2.toLowerCase() === time1.toLowerCase());
+
     if (isConfrontoDireto) {
       confrontoDireto2.push({ ...jogo, confrontoDireto: true });
     } else {
       outrosJogos2.push({ ...jogo, confrontoDireto: false });
     }
   });
-  
+
   // Reorganizar: confrontos diretos primeiro, depois outros jogos
   const resultados1Ordenados = [...confrontoDireto1, ...outrosJogos1];
   const resultados2Ordenados = [...confrontoDireto2, ...outrosJogos2];
+
+  // 🔧 USAR O TIPO QUE FOI ENVIADO (já foi filtrado corretamente pelo PHP)
+  // O tipo já vem do JavaScript e foi validado pelo PHP
+  let tipoExibido = tipo; // Usar direto sem tentar extrair de referencia_extraida
+
+  console.log("🔍 tipoExibido (do parâmetro tipo):", tipoExibido);
 
   // Calcular acurácia individual
   const acuracia1 = calcularAcuracia(resultados1Ordenados);
@@ -277,7 +304,9 @@ function renderizarModalHistorico(data, modal, time1, time2, tipo, limite = 5) {
                 (resultado) => `
               <div class="historico-resultado ${getClasseResultado(
                 resultado.resultado
-              )} ${resultado.confrontoDireto ? 'confronto-direto' : ''}" title="${resultado.time_1} vs ${resultado.time_2}">
+              )} ${
+                  resultado.confrontoDireto ? "confronto-direto" : ""
+                }" title="${resultado.time_1} vs ${resultado.time_2}">
                 <span class="historico-resultado-icone">${getIconeResultado(
                   resultado.resultado
                 )}</span>
@@ -320,7 +349,9 @@ function renderizarModalHistorico(data, modal, time1, time2, tipo, limite = 5) {
                 (resultado) => `
               <div class="historico-resultado ${getClasseResultado(
                 resultado.resultado
-              )} ${resultado.confrontoDireto ? 'confronto-direto' : ''}" title="${resultado.time_1} vs ${resultado.time_2}">
+              )} ${
+                  resultado.confrontoDireto ? "confronto-direto" : ""
+                }" title="${resultado.time_1} vs ${resultado.time_2}">
                 <span class="historico-resultado-icone">${getIconeResultado(
                   resultado.resultado
                 )}</span>
@@ -347,7 +378,7 @@ function renderizarModalHistorico(data, modal, time1, time2, tipo, limite = 5) {
 
       <!-- Footer com informações -->
       <div class="modal-historico-footer">
-        <p>Tipo: <strong>${tipo.toUpperCase()}</strong> | Total de jogos analisados: <strong>${
+        <p>Tipo: <strong>${tipoExibido.toUpperCase()}</strong> | Total de jogos analisados: <strong>${
     resultados1Ordenados.length + resultados2Ordenados.length
   }</strong></p>
       </div>
@@ -373,12 +404,83 @@ function getIconeResultado(resultado) {
 }
 
 function getAdversario(jogo, timePrincipal) {
-  // Retorna o adversário do time principal
-  if (jogo.time_1.toLowerCase() === timePrincipal.toLowerCase()) {
+  // Normalizar os nomes dos times para comparação (remover espaços extras, converter para minúsculas)
+  const normalizarTime = (time) =>
+    time.toLowerCase().trim().replace(/\s+/g, " ");
+
+  const timePrincipalNormalizado = normalizarTime(timePrincipal);
+  const time1Normalizado = normalizarTime(jogo.time_1);
+  const time2Normalizado = normalizarTime(jogo.time_2);
+
+  console.log(
+    `🔍 getAdversario - Procurando adversário de "${timePrincipal}" em [${jogo.time_1}, ${jogo.time_2}]`
+  );
+  console.log(
+    `   Normalizado: "${timePrincipalNormalizado}" em [${time1Normalizado}, ${time2Normalizado}]`
+  );
+
+  // ✅ MÉTODO 1: Usar o campo time_filtrado da API (mais preciso)
+  if (jogo.time_filtrado) {
+    const timeFiltradoNormalizado = normalizarTime(jogo.time_filtrado);
+
+    // Se o time_filtrado corresponde ao time_1, retornar time_2
+    if (time1Normalizado === timeFiltradoNormalizado) {
+      console.log(
+        `   ✅ Match via time_filtrado: ${jogo.time_1} é o filtrado, adversário é ${jogo.time_2}`
+      );
+      return jogo.time_2;
+    }
+
+    // Se o time_filtrado corresponde ao time_2, retornar time_1
+    if (time2Normalizado === timeFiltradoNormalizado) {
+      console.log(
+        `   ✅ Match via time_filtrado: ${jogo.time_2} é o filtrado, adversário é ${jogo.time_1}`
+      );
+      return jogo.time_1;
+    }
+  }
+
+  // ✅ MÉTODO 2: Comparação direta com o time principal
+  // Se time_1 corresponde ao time principal, retornar time_2 (adversário)
+  if (time1Normalizado === timePrincipalNormalizado) {
+    console.log(
+      `   ✅ Match direto: ${jogo.time_1} === ${timePrincipal}, adversário é ${jogo.time_2}`
+    );
     return jogo.time_2;
-  } else {
+  }
+
+  // Se time_2 corresponde ao time principal, retornar time_1 (adversário)
+  if (time2Normalizado === timePrincipalNormalizado) {
+    console.log(
+      `   ✅ Match direto: ${jogo.time_2} === ${timePrincipal}, adversário é ${jogo.time_1}`
+    );
     return jogo.time_1;
   }
+
+  // ✅ MÉTODO 3: Verificar se o time principal está contido em algum dos times (partial match)
+  // Isso é útil para times com nomes maiores que contêm o principal
+  if (
+    time1Normalizado.includes(timePrincipalNormalizado) ||
+    timePrincipalNormalizado.includes(time1Normalizado)
+  ) {
+    console.log(`   ✅ Partial match time_1: adversário é ${jogo.time_2}`);
+    return jogo.time_2;
+  }
+
+  if (
+    time2Normalizado.includes(timePrincipalNormalizado) ||
+    timePrincipalNormalizado.includes(time2Normalizado)
+  ) {
+    console.log(`   ✅ Partial match time_2: adversário é ${jogo.time_1}`);
+    return jogo.time_1;
+  }
+
+  // ❌ Se não encontrou correspondência, retornar o primeiro time (fallback)
+  // Mas logar um aviso no console para debug
+  console.warn(
+    `⚠️ AVISO: Não foi possível encontrar correspondência para "${timePrincipal}" em [${jogo.time_1}, ${jogo.time_2}]`
+  );
+  return jogo.time_1;
 }
 
 function calcularAcuracia(resultados) {
@@ -463,7 +565,14 @@ async function atualizarModalHistorico(time1, time2, tipo) {
           <span class="historico-resultado-icone">${getIconeResultado(
             resultado.resultado
           )}</span>
-          ${getTextoResultado(resultado)}
+          <div style="display: flex; flex-direction: column; gap: 2px; flex: 1;">
+            <span class="historico-data">${new Date(
+              resultado.data_criacao
+            ).toLocaleDateString("pt-BR")}</span>
+            <span style="font-size: 11px; color: #555; font-weight: 500; white-space: nowrap; overflow: hidden; text-overflow: ellipsis;">
+              ${getAdversario(resultado, time1)}
+            </span>
+          </div>
         </div>
       `
           )
@@ -479,7 +588,14 @@ async function atualizarModalHistorico(time1, time2, tipo) {
           <span class="historico-resultado-icone">${getIconeResultado(
             resultado.resultado
           )}</span>
-          ${getTextoResultado(resultado)}
+          <div style="display: flex; flex-direction: column; gap: 2px; flex: 1;">
+            <span class="historico-data">${new Date(
+              resultado.data_criacao
+            ).toLocaleDateString("pt-BR")}</span>
+            <span style="font-size: 11px; color: #555; font-weight: 500; white-space: nowrap; overflow: hidden; text-overflow: ellipsis;">
+              ${getAdversario(resultado, time2)}
+            </span>
+          </div>
         </div>
       `
           )
