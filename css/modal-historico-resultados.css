@@ -55,21 +55,8 @@
   justify-content: space-between;
   padding: 24px;
   border-bottom: 2px solid #f0f0f0;
-  background: linear-gradient(135deg, #033a08 0%, #023806 100%);
+  background: linear-gradient(135deg, #2196f3 0%, #1976d2 100%);
   border-radius: 12px 12px 0 0;
-  position: relative;
-  overflow: hidden;
-}
-
-.modal-historico-tipo-imagem {
-  position: absolute;
-  left: 0;
-  top: 0;
-  width: 100%;
-  height: 100%;
-  object-fit: cover;
-  opacity: 0.25;
-  z-index: 1;
 }
 
 .modal-historico-header h2 {
@@ -78,8 +65,6 @@
   font-weight: 700;
   margin: 0;
   letter-spacing: 0.3px;
-  position: relative;
-  z-index: 2;
 }
 
 .modal-historico-fechar {
@@ -96,8 +81,6 @@
   align-items: center;
   justify-content: center;
   font-weight: bold;
-  position: relative;
-  z-index: 2;
 }
 
 .modal-historico-fechar:hover {

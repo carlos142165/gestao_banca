@@ -25,45 +25,12 @@ $time1 = isset($input['time1']) ? trim($input['time1']) : '';
 $time2 = isset($input['time2']) ? trim($input['time2']) : '';
 $tipo = isset($input['tipo']) ? trim($input['tipo']) : 'gols';
 $limite = isset($input['limite']) ? intval($input['limite']) : 10;
-$valorOver = isset($input['valorOver']) ? trim($input['valorOver']) : null; // ✅ NOVO: filtro de over
-$filtrarSemReembolso = isset($input['filtrarSemReembolso']) && $input['filtrarSemReembolso'] === true; // ✅ MODIFICADO: Verificar se é true (não usar cast)
-
-// 🔍 DEBUG: Verificar o que recebemos
-error_log("=== DEBUG OVER ===");
-error_log("💬 INPUT RECEBIDO: " . json_encode($input));
-error_log("📌 time1='{$time1}' | time2='{$time2}' | tipo='{$tipo}' | valorOver='" . ($valorOver ?? 'NULL') . "' | filtrarSemReembolso=" . ($filtrarSemReembolso ? 'true' : 'false')); // ✅ NOVO
-error_log("🔬 valorOver isset? " . var_export(isset($input['valorOver']), true));
-error_log("🔬 valorOver is_null? " . var_export($valorOver === null, true));
-error_log("🔬 valorOver empty? " . var_export(empty($valorOver), true));
-error_log("🔬 valorOver length? " . strlen($valorOver ?? ''));
-error_log("🔬 filtrarSemReembolso isset? " . var_export(isset($input['filtrarSemReembolso']), true)); // ✅ NOVO
-error_log("🔬 filtrarSemReembolso value? " . var_export($input['filtrarSemReembolso'] ?? 'NOT SET', true)); // ✅ NOVO
-error_log("🔬 filtrarSemReembolso after check? " . var_export($filtrarSemReembolso, true)); // ✅ NOVO
-error_log("🔬 filtrarSemReembolso is true? " . var_export($filtrarSemReembolso === true, true)); // ✅ NOVO
 
 // 🔧 REMOVER EMOJIS DOS TIMES (alguns times têm ⚽️ no início)
 $time1 = preg_replace('/[\p{Emoji_Presentation}]/u', '', $time1);
 $time2 = preg_replace('/[\p{Emoji_Presentation}]/u', '', $time2);
 $time1 = trim($time1);
 $time2 = trim($time2);
-
-// ✅ FUNÇÃO: Extrair nome do time sem sigla inicial
-// Exemplo: "EC Santos" -> "Santos", "Everton" -> "Everton"
-function extrairNomeTime($timeCompleto) {
-    // Se tem espaço, pega a parte depois da sigla (geralmente a sigla é a primeira parte)
-    // Exemplo: "EC Santos" -> "Santos"
-    $partes = explode(' ', trim($timeCompleto), 2);
-    if (count($partes) > 1) {
-        // Verificar se a primeira parte é uma sigla (até 3 caracteres, sem números)
-        if (strlen($partes[0]) <= 3 && !preg_match('/\d/', $partes[0])) {
-            return trim($partes[1]);
-        }
-    }
-    return trim($timeCompleto);
-}
-
-$time1_nome = extrairNomeTime($time1);
-$time2_nome = extrairNomeTime($time2);
 
 // Validar limites
 if ($limite < 1 || $limite > 50) $limite = 10;
@@ -96,53 +63,39 @@ try {
     
     $tipo_cantos = strtolower(trim($tipo)) === 'cantos';
     
-    // ✅ NOVO: Se valorOver foi fornecido, criar filtro para buscar apenas esse valor
-    // IMPORTANTE: Deve ser EXATO - não pegar +0.5 quando quer +1, ou +1.5 quando quer +1
-    $filtro_valor_over = "";
-    $filtro_valor_over_strict = false; // Flag para fazer validação extra em PHP
-    
-    error_log("🔍 DEBUG INICIAL: valorOver recebido = '" . ($valorOver ?? 'NULL') . "'");
-    error_log("🔍 DEBUG: !empty(valorOver) = " . var_export(!empty($valorOver), true));
-    
-    if (!empty($valorOver)) {
-        // ⚠️ NÃO usar LIKE no SQL! É muito permissivo
-        // Exemplo: LIKE '%+0.5%' pega tanto "+0.5" quanto "+10.5", "+1.5", "+2.5"!
-        // Vamos fazer a validação APENAS em PHP
-        $filtro_valor_over_strict = true; // Flag para fazer validação OBRIGATÓRIA em PHP
-        error_log("📊✅ FILTRO ATIVADO: Será feita validação em PHP para valorOver='{$valorOver}'");
-    } else {
-        error_log("📊❌ FILTRO NÃO ATIVADO: valorOver está vazio/null. Será retornado TODOS os resultados");
-    }
-    
     // ✅ CONSTRUIR FILTRO INTELIGENTE (regex + tipo_aposta)
     // Usa a mesma abordagem que extrairReferencia() de obter-placar-dia.php
     if ($tipo_cantos) {
         // Filtro para CANTOS: tipo_aposta + padrões LIKE (MySQL REGEXP tem problemas com emojis)
-        // ✅ IMPORTANTE: Comparar em minúsculas - usar LOWER() em AMBOS os lados
-        // ✅ Adicionado: búsca por emoji 🚩 que também representa cantos
         $filtro_tipo = "AND (
-            LOWER(tipo_aposta) LIKE LOWER('%cantos%')
-            OR LOWER(tipo_aposta) LIKE LOWER('%canto%')
-            OR LOWER(titulo) LIKE LOWER('%cantos%') 
-            OR LOWER(titulo) LIKE LOWER('%canto%')
-            OR LOWER(titulo) LIKE LOWER('%escanteios%')
-            OR LOWER(titulo) LIKE LOWER('%escantei%')
+            LOWER(tipo_aposta) LIKE '%CANTOS%'
+            OR titulo LIKE '%CANTOS%' 
+            OR titulo LIKE '%Cantos%'
+            OR titulo LIKE '%cantos%' 
+            OR titulo LIKE '%CANTO%'
+            OR titulo LIKE '%Canto%'
+            OR titulo LIKE '%canto%'
+            OR titulo LIKE '%ESCANTEIOS%'
+            OR titulo LIKE '%escanteios%'
+            OR titulo LIKE '%ESCANTEI%'
+            OR titulo LIKE '%escantei%'
             OR titulo LIKE '%⛳%'
-            OR titulo LIKE '%🚩%'
         )";
     } else {
         // Filtro para GOLS: tipo_aposta + padrões LIKE
-        // ✅ IMPORTANTE: Comparar em minúsculas - usar LOWER() em AMBOS os lados
         $filtro_tipo = "AND (
-            LOWER(tipo_aposta) LIKE LOWER('%gol%')
-            OR LOWER(titulo) LIKE LOWER('%gol%') 
-            OR LOWER(titulo) LIKE LOWER('%gols%')
+            LOWER(tipo_aposta) LIKE '%GOL%'
+            OR titulo LIKE '%GOL%' 
+            OR titulo LIKE '%Gol%'
+            OR titulo LIKE '%gol%'
+            OR titulo LIKE '%GOLS%'
+            OR titulo LIKE '%Gols%'
+            OR titulo LIKE '%gols%'
             OR titulo LIKE '%⚽%'
         )";
     }
 
     // ✅ BUSCAR ÚLTIMOS JOGOS DO TIME 1 (filtrados por tipo de mensagem)
-    // Melhorado: Busca por ambos time_1 e time_2, considerando nome completo E nome sem sigla
     $sql1 = "SELECT 
                 resultado,
                 data_criacao,
@@ -151,12 +104,10 @@ try {
                 placar_1,
                 placar_2,
                 titulo,
-                tipo_aposta,
-                valor_over
+                tipo_aposta
             FROM bote 
             WHERE (
-                (LOWER(time_1) LIKE CONCAT('%', LOWER(?), '%') OR LOWER(time_1) LIKE CONCAT('%', LOWER(?), '%')
-                 OR LOWER(time_2) LIKE CONCAT('%', LOWER(?), '%') OR LOWER(time_2) LIKE CONCAT('%', LOWER(?), '%'))
+                (LOWER(time_1) LIKE CONCAT('%', LOWER(?), '%') OR LOWER(time_2) LIKE CONCAT('%', LOWER(?), '%'))
                 $filtro_tipo
             )
             ORDER BY data_criacao DESC
@@ -169,7 +120,7 @@ try {
         exit;
     }
     
-    $stmt1->bind_param('ssssi', $time1, $time1_nome, $time1, $time1_nome, $limite);
+    $stmt1->bind_param('ssi', $time1, $time1, $limite);
     
     if (!$stmt1->execute()) {
         http_response_code(500);
@@ -186,46 +137,6 @@ try {
             continue;
         }
         
-        // ✅ NOVO: Se filtrarSemReembolso está ativo, ignorar REEMBOLSO
-        if ($filtrarSemReembolso && strtoupper($row['resultado']) === 'REEMBOLSO') {
-            error_log("🚫 [TIME1] IGNORANDO REEMBOLSO (filtro ativo): titulo='{$row['titulo']}'");
-            continue;
-        }
-        
-        // ✅ SE FILTRO STRICT DE OVER, VALIDAR AQUI EM PHP (mais preciso que SQL LIKE)
-        if ($filtro_valor_over_strict && !empty($valorOver)) {
-            $titulo_check = strtolower($row['titulo'] ?? '');
-            $valor_over_check = $row['valor_over'] ?? '';
-            
-            // DEBUG DETALHADO
-            error_log("🔍 [TIME1] Processando: titulo='{$row['titulo']}' | valor_over_db='{$valor_over_check}'");
-            error_log("🔍 [TIME1] Esperado: valorOver='{$valorOver}'");
-            
-            // ✅ CORREÇÃO: Se valor_over_check é "0.00" ou vazio, SEMPRE extrair do título
-            if (empty($valor_over_check) || $valor_over_check === "0.00" || $valor_over_check === "0") {
-                error_log("🔍 [TIME1] ⚠️ valor_over vazio/zero no banco, extraindo do título...");
-                // Tentar extrair do título
-                if (preg_match('/\+(\d+\.?\d*)\s*(?:⚽|⛳|gol|canto|gols|cantos)/i', $titulo_check, $match)) {
-                    $valor_over_check = $match[1];
-                    error_log("🔍 [TIME1] ✅ Extraído do título: '{$valor_over_check}'");
-                } else {
-                    error_log("🔍 [TIME1] ❌ REJEITANDO: Não conseguiu extrair OVER do título");
-                    continue;
-                }
-            }
-            
-            // ✅ NORMALIZAR AMBOS os valores para comparação (float -> string)
-            $valor_normalizado_db = (string)floatval($valor_over_check);
-            $valor_normalizado_request = (string)floatval($valorOver);
-            
-            error_log("🔍 [TIME1] Comparando (normalizado): '{$valor_normalizado_db}' vs '{$valor_normalizado_request}'");
-            if ($valor_normalizado_db !== $valor_normalizado_request) {
-                error_log("🔍 [TIME1] ❌ REJEITANDO: '{$valor_normalizado_db}' ≠ '{$valor_normalizado_request}'");
-                continue;
-            }
-            error_log("🔍 [TIME1] ✅ ACEITANDO: Valores correspondem!");
-        }
-        
         $historico_time1[] = [
             'resultado' => $row['resultado'],
             'data_criacao' => $row['data_criacao'],
@@ -234,14 +145,12 @@ try {
             'placar_1' => $row['placar_1'],
             'placar_2' => $row['placar_2'],
             'titulo' => $row['titulo'],
-            'tipo_aposta' => $row['tipo_aposta'],
-            'valor_over' => $row['valor_over'] ?? null
+            'tipo_aposta' => $row['tipo_aposta']
         ];
     }
     $stmt1->close();
 
     // ✅ BUSCAR ÚLTIMOS JOGOS DO TIME 2 (filtrados por tipo de mensagem)
-    // Melhorado: Busca por ambos time_1 e time_2, considerando nome completo E nome sem sigla
     $sql2 = "SELECT 
                 resultado,
                 data_criacao,
@@ -250,12 +159,10 @@ try {
                 placar_1,
                 placar_2,
                 titulo,
-                tipo_aposta,
-                valor_over
+                tipo_aposta
             FROM bote
             WHERE (
-                (LOWER(time_1) LIKE CONCAT('%', LOWER(?), '%') OR LOWER(time_1) LIKE CONCAT('%', LOWER(?), '%')
-                 OR LOWER(time_2) LIKE CONCAT('%', LOWER(?), '%') OR LOWER(time_2) LIKE CONCAT('%', LOWER(?), '%'))
+                (LOWER(time_1) LIKE CONCAT('%', LOWER(?), '%') OR LOWER(time_2) LIKE CONCAT('%', LOWER(?), '%'))
                 $filtro_tipo
             )
             ORDER BY data_criacao DESC
@@ -268,7 +175,7 @@ try {
         exit;
     }
     
-    $stmt2->bind_param('ssssi', $time2, $time2_nome, $time2, $time2_nome, $limite);
+    $stmt2->bind_param('ssi', $time2, $time2, $limite);
 
     if (!$stmt2->execute()) {
         http_response_code(500);
@@ -285,46 +192,6 @@ try {
             continue;
         }
         
-        // ✅ NOVO: Se filtrarSemReembolso está ativo, ignorar REEMBOLSO
-        if ($filtrarSemReembolso && strtoupper($row['resultado']) === 'REEMBOLSO') {
-            error_log("🚫 [TIME2] IGNORANDO REEMBOLSO (filtro ativo): titulo='{$row['titulo']}'");
-            continue;
-        }
-        
-        // ✅ SE FILTRO STRICT DE OVER, VALIDAR AQUI EM PHP (mais preciso que SQL LIKE)
-        if ($filtro_valor_over_strict && !empty($valorOver)) {
-            $titulo_check = strtolower($row['titulo'] ?? '');
-            $valor_over_check = $row['valor_over'] ?? '';
-            
-            // DEBUG DETALHADO
-            error_log("🔍 [TIME2] Processando: titulo='{$row['titulo']}' | valor_over_db='{$valor_over_check}'");
-            error_log("🔍 [TIME2] Esperado: valorOver='{$valorOver}'");
-            
-            // ✅ CORREÇÃO: Se valor_over_check é "0.00" ou vazio, SEMPRE extrair do título
-            if (empty($valor_over_check) || $valor_over_check === "0.00" || $valor_over_check === "0") {
-                error_log("🔍 [TIME2] ⚠️ valor_over vazio/zero no banco, extraindo do título...");
-                // Tentar extrair do título
-                if (preg_match('/\+(\d+\.?\d*)\s*(?:⚽|⛳|gol|canto|gols|cantos)/i', $titulo_check, $match)) {
-                    $valor_over_check = $match[1];
-                    error_log("🔍 [TIME2] ✅ Extraído do título: '{$valor_over_check}'");
-                } else {
-                    error_log("🔍 [TIME2] ❌ REJEITANDO: Não conseguiu extrair OVER do título");
-                    continue;
-                }
-            }
-            
-            // ✅ NORMALIZAR AMBOS os valores para comparação (float -> string)
-            $valor_normalizado_db = (string)floatval($valor_over_check);
-            $valor_normalizado_request = (string)floatval($valorOver);
-            
-            error_log("🔍 [TIME2] Comparando (normalizado): '{$valor_normalizado_db}' vs '{$valor_normalizado_request}'");
-            if ($valor_normalizado_db !== $valor_normalizado_request) {
-                error_log("🔍 [TIME2] ❌ REJEITANDO: '{$valor_normalizado_db}' ≠ '{$valor_normalizado_request}'");
-                continue;
-            }
-            error_log("🔍 [TIME2] ✅ ACEITANDO: Valores correspondem!");
-        }
-        
         $historico_time2[] = [
             'resultado' => $row['resultado'],
             'data_criacao' => $row['data_criacao'],
@@ -333,37 +200,16 @@ try {
             'placar_1' => $row['placar_1'],
             'placar_2' => $row['placar_2'],
             'titulo' => $row['titulo'],
-            'tipo_aposta' => $row['tipo_aposta'],
-            'valor_over' => $row['valor_over'] ?? null
+            'tipo_aposta' => $row['tipo_aposta']
         ];
     }
     $stmt2->close();
 
-    // ✅ SINCRONIZAR RESULTADOS - APENAS se NÃO houver filtro de OVER
-    // Quando há filtro de OVER, queremos resultados DIFERENTES porque são apostas diferentes!
-    // Exemplo: +0.5 GOL é uma aposta diferente de +1 GOL, mesmo que seja o mesmo jogo
-    if (!$filtro_valor_over_strict) {
-        sincronizarResultados($historico_time1, $historico_time2);
-    }
+    // ✅ SINCRONIZAR RESULTADOS - Se um jogo foi GREEN/RED/REEMBOLSO, ambos os times devem ver o mesmo resultado
+    // Isso é importante porque quando Everton x Fulham termina GREEN, tanto Everton quanto Fulham devem mostrar GREEN
+    sincronizarResultados($historico_time1, $historico_time2);
 
-    // 📊 LOG FINAL
-    error_log("📊 RESULTADO FINAL: time1=" . count($historico_time1) . " jogos, time2=" . count($historico_time2) . " jogos");
-    if ($filtro_valor_over_strict) {
-        error_log("📊 Filtro OVER '{$valorOver}' ATIVADO - retornando APENAS resultados com este valor");
-    } else {
-        error_log("📊 Sem filtro OVER - retornando TODOS os resultados com sincronização");
-    }
-    
-    // ✅ NOVO: Debug do filtro de reembolso
-    if ($filtrarSemReembolso) {
-        error_log("🚫 FILTRO DE REEMBOLSO ATIVADO - REEMBOLSO excluído dos resultados");
-    } else {
-        error_log("✅ FILTRO DE REEMBOLSO DESATIVADO - Todos os resultados (GREEN, RED, REEMBOLSO)");
-    }
-    
-    error_log("═".str_repeat("═", 99));
-
-    // ✅ RETORNAR SUCESSO COM DEBUG INFO
+    // ✅ RETORNAR SUCESSO
     http_response_code(200);
     echo json_encode([
         'success' => true,
@@ -371,12 +217,8 @@ try {
         'time2_historico' => $historico_time2,
         'total_time1' => count($historico_time1),
         'total_time2' => count($historico_time2),
-        'tipo' => $tipo,
-        'filtro_valor_over_solicitado' => $valorOver ?? null, // ✅ NOVO: mostrar qual OVER foi solicitado
-        'filtro_ativado' => $filtro_valor_over_strict, // ✅ NOVO: mostrar se filtro está ativo
-        'filtro_reembolso_ativado' => $filtrarSemReembolso, // ✅ NOVO: mostrar se filtro de reembolso está ativo
-        'filtro_debug' => $filtro_tipo // ✅ DEBUG: mostrar qual filtro foi usado
-    ], JSON_UNESCAPED_UNICODE);
+        'tipo' => $tipo
+    ]);
 
 } catch (Exception $e) {
     http_response_code(500);

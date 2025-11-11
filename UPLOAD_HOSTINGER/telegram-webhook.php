@@ -129,17 +129,7 @@ try {
     } else if ($ehResultado) {
         // ✅ PROCESSAR RESULTADO
         file_put_contents($logFile, "🎯 Processando resultado...\n", FILE_APPEND);
-        try {
-            $processResult = processarResultado($messageText, $messageHour, $telegramMessageId);
-            if ($processResult) {
-                file_put_contents($logFile, "✅ Resultado processado com sucesso\n\n", FILE_APPEND);
-            } else {
-                file_put_contents($logFile, "⚠️ Resultado não pode ser processado (dados incompletos)\n\n", FILE_APPEND);
-            }
-        } catch (Exception $e) {
-            file_put_contents($logFile, "❌ ERRO AO PROCESSAR RESULTADO: " . $e->getMessage() . "\n\n", FILE_APPEND);
-            throw $e;
-        }
+        processarResultado($messageText, $messageHour, $telegramMessageId);
     }
     
     // ✅ RESPONDER AO TELEGRAM COM OK
@@ -299,169 +289,78 @@ function processarResultado($resultadoText, $msgTime, $telegramMessageId) {
     global $conexao, $logFile;
     
     try {
-        file_put_contents($logFile, "📝 [RESULTADO] Iniciando processamento\n", FILE_APPEND);
-        
         $lines = array_map('trim', explode("\n", $resultadoText));
         $lines = array_filter($lines);
-        
-        file_put_contents($logFile, "   Linhas extraídas: " . count($lines) . "\n", FILE_APPEND);
         
         $time_1 = "";
         $time_2 = "";
         $tipo_aposta = "";
-        $tipo_resultado = ""; // GOLS ou CANTOS
         $resultado = "";
         
         foreach ($lines as $line) {
-            file_put_contents($logFile, "   Processando linha: " . substr($line, 0, 50) . "...\n", FILE_APPEND);
-            
             if (strpos($line, '⚽') !== false && strpos($line, 'x') !== false) {
                 $line_limpa = str_replace(['⚽', '⚽️'], '', $line);
                 $parts = explode('x', $line_limpa);
                 if (count($parts) >= 2) {
                     $time_1 = trim(preg_replace('/\([^)]*\)/', '', $parts[0]));
                     $time_2 = trim(preg_replace('/\([^)]*\)/', '', $parts[1]));
-                    file_put_contents($logFile, "   ✅ Times encontrados: {$time_1} x {$time_2}\n", FILE_APPEND);
                 }
             }
             
-            // Tenta encontrar OVER com parênteses (formato oportunidade)
             if (preg_match('/OVER\s*\(\s*([\+\-]?[\d\.]+)\s*(⚽️?|⛳️?)\s*(GOLS?|CANTOS?)\s*\)/i', $line, $m)) {
                 $numero = $m[1];
-                $tipo = strtoupper($m[3]);
-                if (strpos($tipo, 'GOL') !== false) {
+                if (strpos(strtoupper($m[3]), 'GOL') !== false) {
                     $tipo_aposta = 'Gols over ' . $numero;
-                    $tipo_resultado = 'GOLS';
-                    file_put_contents($logFile, "   ✅ Tipo aposta encontrado (com parênteses): {$tipo_aposta} - Tipo: GOLS\n", FILE_APPEND);
-                } elseif (strpos($tipo, 'CANTO') !== false) {
-                    $tipo_aposta = 'Cantos over ' . $numero;
-                    $tipo_resultado = 'CANTOS';
-                    file_put_contents($logFile, "   ✅ Tipo aposta encontrado (com parênteses): {$tipo_aposta} - Tipo: CANTOS\n", FILE_APPEND);
                 }
-            }
-            // Tenta encontrar "Gols over +0.5" (formato resultado)
-            else if (preg_match('/Gols\s+over\s+([\+\-]?[\d\.]+)/i', $line, $m)) {
-                $numero = $m[1];
-                $tipo_aposta = 'Gols over ' . $numero;
-                $tipo_resultado = 'GOLS';
-                file_put_contents($logFile, "   ✅ Tipo aposta encontrado (sem parênteses): {$tipo_aposta} - Tipo: GOLS\n", FILE_APPEND);
-            }
-            // Tenta encontrar "Cantos over +0.5" (formato resultado)
-            else if (preg_match('/Cantos\s+over\s+([\+\-]?[\d\.]+)/i', $line, $m)) {
-                $numero = $m[1];
-                $tipo_aposta = 'Cantos over ' . $numero;
-                $tipo_resultado = 'CANTOS';
-                file_put_contents($logFile, "   ✅ Tipo aposta encontrado (sem parênteses): {$tipo_aposta} - Tipo: CANTOS\n", FILE_APPEND);
-            }
-            // Tenta encontrar "Escanteios over +0.5" (formato resultado alternativo)
-            else if (preg_match('/Escanteios\s+over\s+([\+\-]?[\d\.]+)/i', $line, $m)) {
-                $numero = $m[1];
-                $tipo_aposta = 'Cantos over ' . $numero;
-                $tipo_resultado = 'CANTOS';
-                file_put_contents($logFile, "   ✅ Tipo aposta encontrado (Escanteios): {$tipo_aposta} - Tipo: CANTOS\n", FILE_APPEND);
             }
             
             if (preg_match('/(GREEN|RED|REEMBOLSO)/i', $line, $m)) {
                 $resultado = strtoupper($m[1]);
-                file_put_contents($logFile, "   ✅ Resultado encontrado: {$resultado}\n", FILE_APPEND);
             }
         }
         
-        file_put_contents($logFile, "   Resumo extraído:\n", FILE_APPEND);
-        file_put_contents($logFile, "     - time_1: '{$time_1}'\n", FILE_APPEND);
-        file_put_contents($logFile, "     - time_2: '{$time_2}'\n", FILE_APPEND);
-        file_put_contents($logFile, "     - tipo_aposta: '{$tipo_aposta}'\n", FILE_APPEND);
-        file_put_contents($logFile, "     - tipo_resultado: '{$tipo_resultado}'\n", FILE_APPEND);
-        file_put_contents($logFile, "     - resultado: '{$resultado}'\n", FILE_APPEND);
-        
         if (empty($time_1) || empty($time_2) || empty($resultado)) {
-            file_put_contents($logFile, "⚠️ Resultado incompleto: time_1=" . (empty($time_1) ? "vazio" : "OK") . ", time_2=" . (empty($time_2) ? "vazio" : "OK") . ", resultado=" . (empty($resultado) ? "vazio" : "OK") . "\n", FILE_APPEND);
+            file_put_contents($logFile, "⚠️ Resultado incompleto\n", FILE_APPEND);
             return false;
         }
         
         if (preg_match('/[\+\-]?([\d\.]+)/', $tipo_aposta, $m)) {
             $valor_resultado = floatval($m[1]);
-            file_put_contents($logFile, "✅ Valor resultado extraído: {$valor_resultado}\n", FILE_APPEND);
         } else {
-            file_put_contents($logFile, "❌ Não consegui extrair valor de: {$tipo_aposta}\n", FILE_APPEND);
             return false;
         }
         
-        file_put_contents($logFile, "🔍 Procurando aposta com valor_over=" . $valor_resultado . ", tipo=" . $tipo_resultado . " e times: '{$time_1}' x '{$time_2}'\n", FILE_APPEND);
+        file_put_contents($logFile, "🔍 Procurando aposta com valor_over=" . $valor_resultado . "\n", FILE_APPEND);
         
-        $search = "SELECT id, valor_over, tipo_aposta FROM bote WHERE status_aposta='ATIVA' AND resultado IS NULL AND ((time_1 LIKE ? AND time_2 LIKE ?) OR (time_1 LIKE ? AND time_2 LIKE ?)) ORDER BY id DESC LIMIT 20";
-        
-        file_put_contents($logFile, "   Preparando search query...\n", FILE_APPEND);
-        
-        if (!$searchStmt = $conexao->prepare($search)) {
-            throw new Exception("Prepare search failed: " . $conexao->error);
-        }
-        
+        $search = "SELECT id, valor_over FROM bote WHERE status_aposta='ATIVA' AND resultado IS NULL AND ((time_1 LIKE ? AND time_2 LIKE ?) OR (time_1 LIKE ? AND time_2 LIKE ?)) ORDER BY id DESC LIMIT 20";
+        $searchStmt = $conexao->prepare($search);
         $t1 = '%' . $time_1 . '%';
         $t2 = '%' . $time_2 . '%';
-        
-        file_put_contents($logFile, "   Bind search params: t1=%{$time_1}%, t2=%{$time_2}%\n", FILE_APPEND);
-        
-        if (!$searchStmt->bind_param('ssss', $t1, $t2, $t2, $t1)) {
-            throw new Exception("Bind search failed: " . $searchStmt->error);
-        }
-        
-        if (!$searchStmt->execute()) {
-            throw new Exception("Execute search failed: " . $searchStmt->error);
-        }
-        
+        $searchStmt->bind_param('ssss', $t1, $t2, $t2, $t1);
+        $searchStmt->execute();
         $res = $searchStmt->get_result();
-        $totalRows = $res->num_rows;
-        
-        file_put_contents($logFile, "   ✅ Search retornou " . $totalRows . " registros\n", FILE_APPEND);
         
         $aposta = null;
         while ($row = $res->fetch_assoc()) {
             $vo = floatval($row['valor_over']);
-            $tipo_aposta_db = strtoupper($row['tipo_aposta']);
-            
-            // Verificar se TIPO e VALOR coincidem
-            $tipoMatch = false;
-            if ($tipo_resultado === 'GOLS' && strpos($tipo_aposta_db, 'GOL') !== false) {
-                $tipoMatch = true;
-            } elseif ($tipo_resultado === 'CANTOS' && strpos($tipo_aposta_db, 'CANTO') !== false) {
-                $tipoMatch = true;
-            }
-            
-            file_put_contents($logFile, "   Comparando: valor_over DB={$vo}, resultado={$valor_resultado}, tipo_db={$tipo_aposta_db}, tipo_resultado={$tipo_resultado}, match=" . ($tipoMatch ? "SIM" : "NÃO") . "\n", FILE_APPEND);
-            
-            if ($tipoMatch && abs($vo - $valor_resultado) < 0.001) {
+            if (abs($vo - $valor_resultado) < 0.001) {
                 $aposta = $row;
-                file_put_contents($logFile, "   ✅ MATCH ENCONTRADO! ID=" . $aposta['id'] . " (tipo e valor corretos)\n", FILE_APPEND);
                 break;
             }
         }
         $searchStmt->close();
         
         if (!$aposta) {
-            file_put_contents($logFile, "❌ Nenhuma aposta encontrada com valor_over={$valor_resultado} e tipo={$tipo_resultado}\n", FILE_APPEND);
+            file_put_contents($logFile, "❌ Nenhuma aposta encontrada\n", FILE_APPEND);
             return false;
         }
         
-        file_put_contents($logFile, "📝 Atualizando aposta ID={$aposta['id']} com resultado={$resultado}\n", FILE_APPEND);
-        
         $updateStmt = $conexao->prepare("UPDATE bote SET resultado=?, status_aposta=CASE WHEN ?='GREEN' THEN 'GANHA' WHEN ?='RED' THEN 'PERDIDA' WHEN ?='REEMBOLSO' THEN 'CANCELADA' ELSE 'ATIVA' END, updated_at=NOW() WHERE id=?");
-        
-        if (!$updateStmt) {
-            throw new Exception("Prepare update failed: " . $conexao->error);
-        }
-        
-        if (!$updateStmt->bind_param('ssssi', $resultado, $resultado, $resultado, $resultado, $aposta['id'])) {
-            throw new Exception("Bind update failed: " . $updateStmt->error);
-        }
-        
-        if (!$updateStmt->execute()) {
-            throw new Exception("Execute update failed: " . $updateStmt->error);
-        }
-        
+        $updateStmt->bind_param('ssssi', $resultado, $resultado, $resultado, $resultado, $aposta['id']);
+        $updateStmt->execute();
         $updateStmt->close();
         
-        file_put_contents($logFile, "✅✅ Resultado processado com sucesso: ID={$aposta['id']}, Resultado={$resultado}, Tipo={$tipo_resultado}\n", FILE_APPEND);
+        file_put_contents($logFile, "✅ Resultado processado: " . $resultado . "\n", FILE_APPEND);
         return true;
         
     } catch (Exception $e) {

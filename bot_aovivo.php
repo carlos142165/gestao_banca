@@ -1779,8 +1779,5 @@ if (!isset($_SESSION['usuario_id']) || empty($_SESSION['usuario_id'])) {
 
     <!-- ✅ SCRIPT CAROUSEL RESPONSIVO PARA BLOCOS -->
     <script src="js/carousel-blocos.js" defer></script>
-
-    <!-- ✅ SCRIPT PARA FILTRO DE HORA E STATUS - MEIA-NOITE -->
-    <script src="js/telegram-filtro-hora-status.js?v=<?php echo time(); ?>" defer></script>
 </body>
 </html>
