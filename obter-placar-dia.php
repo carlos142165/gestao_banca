@@ -68,13 +68,15 @@ try {
             if ($resultado_msg === 'GREEN') {
                 $apostas[$referencia]['green']++;
                 $apostas[$referencia]['registros_green'][] = $odds;
-                // Lucro GREEN = (odds - 1) por unidade
+                // Lucro GREEN = (odds - 1) = coeficiente de ganho
+                // Exemplo: odds 1.52 → coef = 0.52 → lucro = 0.52 × 100 = R$ 52
                 $apostas[$referencia]['lucro_coef_green'] += ($odds - 1);
             } elseif ($resultado_msg === 'RED') {
                 $apostas[$referencia]['red']++;
                 $apostas[$referencia]['registros_red'][] = $odds;
-                // Lucro RED = -1 por unidade (perda)
-                $apostas[$referencia]['lucro_coef_red'] -= 1;
+                // Lucro RED = -1 = coeficiente de perda (100% da entrada)
+                // Exemplo: RED → coef = -1 → perda = -1 × 100 = -R$ 100
+                $apostas[$referencia]['lucro_coef_red'] += (-1);
             }
         }
     }

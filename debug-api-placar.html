@@ -1,0 +1,50 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>DEBUG - API obter-placar-dia.php</title>
+    <style>
+        body { font-family: monospace; background: #222; color: #0f0; padding: 20px; }
+        pre { background: #000; padding: 15px; overflow-x: auto; border: 1px solid #0f0; }
+        h1 { color: #0f0; }
+        .error { color: #f00; }
+        .success { color: #0f0; }
+    </style>
+</head>
+<body>
+    <h1>🔍 DEBUG - API Placar</h1>
+    <p>Carregando dados...</p>
+    
+    <pre id="output">Aguardando...</pre>
+    
+    <script>
+        fetch('obter-placar-dia.php')
+            .then(r => r.json())
+            .then(data => {
+                const output = document.getElementById('output');
+                output.innerHTML = '<span class="success">✅ Resposta recebida:</span>\n\n' + 
+                                 JSON.stringify(data, null, 2);
+                
+                // Mostrar cálculos
+                console.log('📊 ANÁLISE:');
+                console.log('Total Green:', data.total.green);
+                console.log('Total Red:', data.total.red);
+                console.log('Coef Green:', data.total.lucro_coef_green);
+                console.log('Coef Red:', data.total.lucro_coef_red);
+                console.log('Coef Líquido:', data.total.lucro_coef_liquido);
+                
+                const und = 100;
+                const calculo = (data.total.lucro_coef_green + data.total.lucro_coef_red) * und;
+                console.log(`\nCálculo: (${data.total.lucro_coef_green} + ${data.total.lucro_coef_red}) × ${und} = ${calculo}`);
+                
+                output.innerHTML += '\n\n<span class="success">📊 Cálculo com UND=100:</span>\n';
+                output.innerHTML += `Coef Green: ${data.total.lucro_coef_green}\n`;
+                output.innerHTML += `Coef Red: ${data.total.lucro_coef_red}\n`;
+                output.innerHTML += `Coef Total: ${data.total.lucro_coef_liquido}\n`;
+                output.innerHTML += `Resultado: (${data.total.lucro_coef_green} + ${data.total.lucro_coef_red}) × 100 = ${calculo}\n`;
+            })
+            .catch(err => {
+                document.getElementById('output').innerHTML = '<span class="error">❌ Erro: ' + err.message + '</span>';
+            });
+    </script>
+</body>
+</html>
