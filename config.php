@@ -43,6 +43,41 @@ $dbUsername = DB_USERNAME;
 $dbPassword = DB_PASSWORD;
 $dbname = DB_NAME;
 
+// ✅ FUNÇÃO PARA RECONECTAR AUTOMATICAMENTE
+function obterConexao() {
+    global $conexao;
+    
+    // Verifica se conexão existe e está válida
+    if ($conexao && $conexao->ping()) {
+        return $conexao;
+    }
+    
+    // Se não está válida, reconectar
+    error_log("⚠️ Conexão perdida, reconectando...");
+    
+    try {
+        $conexao = new mysqli(DB_HOST, DB_USERNAME, DB_PASSWORD, DB_NAME);
+        
+        if ($conexao->connect_error) {
+            error_log("❌ ERRO reconexão: " . $conexao->connect_error);
+            return null;
+        }
+        
+        // Configurar após conexão
+        $conexao->set_charset("utf8mb4");
+        $conexao->query("SET time_zone = '-03:00'");
+        $conexao->query("SET SESSION max_allowed_packet = 67108864");
+        $conexao->query("SET SESSION wait_timeout = 604800"); // 7 dias
+        $conexao->query("SET SESSION interactive_timeout = 604800");
+        
+        error_log("✅ Reconexão bem-sucedida");
+        return $conexao;
+    } catch (Exception $e) {
+        error_log("❌ Erro ao reconectar: " . $e->getMessage());
+        return null;
+    }
+}
+
 // ✅ Criar conexão MySQLi global
 $conexao = new mysqli(DB_HOST, DB_USERNAME, DB_PASSWORD, DB_NAME);
 
@@ -52,10 +87,13 @@ if ($conexao->connect_error) {
     die("Erro ao conectar com o banco de dados.");
 }
 
-// ✅ Configurar timezone
+// ✅ Configurar timezone e timeouts
 date_default_timezone_set('America/Sao_Paulo');
 $conexao->set_charset("utf8mb4");
 $conexao->query("SET time_zone = '-03:00'");
+$conexao->query("SET SESSION max_allowed_packet = 67108864");
+$conexao->query("SET SESSION wait_timeout = 604800"); // 7 dias
+$conexao->query("SET SESSION interactive_timeout = 604800"); // 7 dias
 
 // ============================================
 // FUNÇÕES AUXILIARES

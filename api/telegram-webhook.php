@@ -23,6 +23,15 @@ date_default_timezone_set('America/Sao_Paulo');
 require_once '../telegram-config.php';
 require_once '../config.php';
 
+// ✅ GARANTIR QUE CONEXÃO ESTÁ ATIVA
+$conexao = obterConexao();
+if (!$conexao) {
+    header('Content-Type: application/json; charset=utf-8');
+    http_response_code(500);
+    echo json_encode(['status' => 'error', 'message' => 'Database connection failed']);
+    exit;
+}
+
 // ✅ CRIAR PASTA DE LOGS SE NÃO EXISTIR
 $logFile = __DIR__ . '/../logs/telegram-webhook.log';
 if (!is_dir(dirname($logFile))) {
@@ -163,6 +172,14 @@ function salvarNosBancoDados($dadosMensagem) {
         file_put_contents($logFile, "📝 Iniciando salvamento nos dados:\n", FILE_APPEND);
         file_put_contents($logFile, "   - valor_over: " . $dadosMensagem['valor_over'] . "\n", FILE_APPEND);
         
+        // ✅ VERIFICAR E RECONECTAR SE NECESSÁRIO
+        $conexao = obterConexao();
+        if (!$conexao) {
+            throw new Exception("Falha ao conectar ao banco de dados");
+        }
+        
+        file_put_contents($logFile, "✅ Conexão com banco verificada e ativa\n", FILE_APPEND);
+        
         $query = "INSERT INTO bote (telegram_message_id, mensagem_completa, titulo, tipo_aposta, time_1, time_2, placar_1, placar_2, escanteios_1, escanteios_2, valor_over, odds, tipo_odds, hora_mensagem, status_aposta, resultado) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)";
         
         $stmt = $conexao->prepare($query);
@@ -300,6 +317,14 @@ function processarResultado($resultadoText, $msgTime, $telegramMessageId) {
     
     try {
         file_put_contents($logFile, "📝 [RESULTADO] Iniciando processamento\n", FILE_APPEND);
+        
+        // ✅ VERIFICAR E RECONECTAR SE NECESSÁRIO
+        $conexao = obterConexao();
+        if (!$conexao) {
+            throw new Exception("Falha ao conectar ao banco de dados");
+        }
+        
+        file_put_contents($logFile, "✅ Conexão com banco verificada e ativa\n", FILE_APPEND);
         
         $lines = array_map('trim', explode("\n", $resultadoText));
         $lines = array_filter($lines);
