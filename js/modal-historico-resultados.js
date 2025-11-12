@@ -263,6 +263,21 @@ function renderizarModalHistorico(data, modal, time1, time2, tipo, limite = 5) {
 
   console.log("🔍 tipoExibido (do parâmetro tipo):", tipoExibido);
 
+  // 🔧 DETERMINAR ÍCONE E IMAGEM DE FUNDO BASEADO NO TIPO
+  let iconHeader = "⚽";
+  let tituloHeader = "Resultados de Gols";
+  let bgImage = "url('img/gol.jpg')";
+  let bgColor = "#1e5631"; // Verde escuro para gols
+
+  if (tipoExibido.toUpperCase().includes("CANTOS")) {
+    iconHeader = "🚩"; // Ícone de bandeira/escanteio
+    tituloHeader = "Resultados de Escanteios";
+    bgImage = "url('img/cantos.jpg')";
+    bgColor = "#1a472a"; // Verde mais escuro para cantos
+  }
+
+  console.log(`🔍 Header customizado: ${tituloHeader} (${iconHeader})`);
+
   // Calcular acurácia individual
   const acuracia1 = calcularAcuracia(resultados1Ordenados);
   const acuracia2 = calcularAcuracia(resultados2Ordenados);
@@ -276,9 +291,9 @@ function renderizarModalHistorico(data, modal, time1, time2, tipo, limite = 5) {
   // HTML do modal
   const html = `
     <div class="modal-historico-conteudo">
-      <!-- Header -->
-      <div class="modal-historico-header">
-        <h2>📊 Últimos Resultados</h2>
+      <!-- Header Customizado por Tipo -->
+      <div class="modal-historico-header" style="background-image: linear-gradient(135deg, ${bgColor} 0%, rgba(0,0,0,0.5) 100%), ${bgImage}; background-size: cover; background-position: center;">
+        <h2>${iconHeader} ${tituloHeader}</h2>
         <button class="modal-historico-fechar" onclick="fecharModalHistorico()">✕</button>
       </div>
 
@@ -296,7 +311,7 @@ function renderizarModalHistorico(data, modal, time1, time2, tipo, limite = 5) {
         <!-- Time 1 -->
         <div class="historico-time-coluna">
           <div class="historico-time-header">
-            <h3>${time1}</h3>
+            <h3>${time1.replace(/⚽️\s*|⚽\s*/g, "").trim()}</h3>
           </div>
           <div class="historico-resultados">
             ${resultados1Ordenados
@@ -341,7 +356,7 @@ function renderizarModalHistorico(data, modal, time1, time2, tipo, limite = 5) {
         <!-- Time 2 -->
         <div class="historico-time-coluna">
           <div class="historico-time-header">
-            <h3>${time2}</h3>
+            <h3>${time2.replace(/⚽️\s*|⚽\s*/g, "").trim()}</h3>
           </div>
           <div class="historico-resultados">
             ${resultados2Ordenados
@@ -408,6 +423,11 @@ function getAdversario(jogo, timePrincipal) {
   const normalizarTime = (time) =>
     time.toLowerCase().trim().replace(/\s+/g, " ");
 
+  // 🔧 FUNÇÃO AUXILIAR: Remover ícones de bola dos nomes de times
+  const removerIconeBola = (time) => {
+    return time.replace(/⚽️\s*|⚽\s*/g, "").trim();
+  };
+
   const timePrincipalNormalizado = normalizarTime(timePrincipal);
   const time1Normalizado = normalizarTime(jogo.time_1);
   const time2Normalizado = normalizarTime(jogo.time_2);
@@ -428,7 +448,7 @@ function getAdversario(jogo, timePrincipal) {
       console.log(
         `   ✅ Match via time_filtrado: ${jogo.time_1} é o filtrado, adversário é ${jogo.time_2}`
       );
-      return jogo.time_2;
+      return removerIconeBola(jogo.time_2);
     }
 
     // Se o time_filtrado corresponde ao time_2, retornar time_1
@@ -436,7 +456,7 @@ function getAdversario(jogo, timePrincipal) {
       console.log(
         `   ✅ Match via time_filtrado: ${jogo.time_2} é o filtrado, adversário é ${jogo.time_1}`
       );
-      return jogo.time_1;
+      return removerIconeBola(jogo.time_1);
     }
   }
 
@@ -446,7 +466,7 @@ function getAdversario(jogo, timePrincipal) {
     console.log(
       `   ✅ Match direto: ${jogo.time_1} === ${timePrincipal}, adversário é ${jogo.time_2}`
     );
-    return jogo.time_2;
+    return removerIconeBola(jogo.time_2);
   }
 
   // Se time_2 corresponde ao time principal, retornar time_1 (adversário)
@@ -454,7 +474,7 @@ function getAdversario(jogo, timePrincipal) {
     console.log(
       `   ✅ Match direto: ${jogo.time_2} === ${timePrincipal}, adversário é ${jogo.time_1}`
     );
-    return jogo.time_1;
+    return removerIconeBola(jogo.time_1);
   }
 
   // ✅ MÉTODO 3: Verificar se o time principal está contido em algum dos times (partial match)
@@ -464,7 +484,7 @@ function getAdversario(jogo, timePrincipal) {
     timePrincipalNormalizado.includes(time1Normalizado)
   ) {
     console.log(`   ✅ Partial match time_1: adversário é ${jogo.time_2}`);
-    return jogo.time_2;
+    return removerIconeBola(jogo.time_2);
   }
 
   if (
@@ -472,7 +492,7 @@ function getAdversario(jogo, timePrincipal) {
     timePrincipalNormalizado.includes(time2Normalizado)
   ) {
     console.log(`   ✅ Partial match time_2: adversário é ${jogo.time_1}`);
-    return jogo.time_1;
+    return removerIconeBola(jogo.time_1);
   }
 
   // ❌ Se não encontrou correspondência, retornar o primeiro time (fallback)
@@ -480,7 +500,7 @@ function getAdversario(jogo, timePrincipal) {
   console.warn(
     `⚠️ AVISO: Não foi possível encontrar correspondência para "${timePrincipal}" em [${jogo.time_1}, ${jogo.time_2}]`
   );
-  return jogo.time_1;
+  return removerIconeBola(jogo.time_1);
 }
 
 function calcularAcuracia(resultados) {
