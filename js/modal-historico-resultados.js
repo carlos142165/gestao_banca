@@ -1,6 +1,25 @@
 // ✅ MODAL DE HISTÓRICO DE RESULTADOS
 let modalHistoricoAberto = false;
 
+// Função para determinar a cor e texto da acurácia baseado na porcentagem
+function getCorAcuracia(porcentagem) {
+  let cor = "#ffc107"; // Padrão amarelo
+  let texto = "ATENÇÃO";
+
+  if (porcentagem < 50) {
+    cor = "#f44336"; // Vermelho para abaixo de 50%
+    texto = "ARRISCADO";
+  } else if (porcentagem < 85) {
+    cor = "#ffc107"; // Amarelo para 50-85%
+    texto = "ATENÇÃO";
+  } else {
+    cor = "#4caf50"; // Verde para 85% e acima
+    texto = "POSITIVO";
+  }
+  console.log(`🎨 Acurácia: ${porcentagem}% → Cor: ${cor} → Texto: ${texto}`);
+  return { cor, texto };
+}
+
 async function abrirModalHistorico(elemento) {
   const time1 = elemento.dataset.time1;
   const time2 = elemento.dataset.time2;
@@ -282,11 +301,40 @@ function renderizarModalHistorico(data, modal, time1, time2, tipo, limite = 5) {
   const acuracia1 = calcularAcuracia(resultados1Ordenados);
   const acuracia2 = calcularAcuracia(resultados2Ordenados);
 
-  // Média das duas acurácias
-  const acuraciaMedia =
-    resultados1Ordenados.length > 0 || resultados2Ordenados.length > 0
-      ? Math.round((acuracia1 + acuracia2) / 2)
-      : 0;
+  // Calcular acurácia média com nova lógica:
+  // - 100% apenas se ambos os times tiverem 5+ resultados E acurácia verde (>=85%)
+  // - Caso contrário, dividir pelos resultados disponíveis
+  let acuraciaMedia = 0;
+
+  if (
+    resultados1Ordenados.length >= 5 &&
+    resultados2Ordenados.length >= 5 &&
+    acuracia1 >= 85 &&
+    acuracia2 >= 85
+  ) {
+    // Ambos com 5+ resultados e verde: 100%
+    acuraciaMedia = 100;
+  } else if (
+    resultados1Ordenados.length > 0 &&
+    resultados2Ordenados.length > 0
+  ) {
+    // Dividir proporcionalmente pelos resultados
+    const totalResultados =
+      resultados1Ordenados.length + resultados2Ordenados.length;
+    acuraciaMedia = Math.round(
+      (acuracia1 * resultados1Ordenados.length +
+        acuracia2 * resultados2Ordenados.length) /
+        totalResultados
+    );
+  } else if (resultados1Ordenados.length > 0) {
+    acuraciaMedia = acuracia1;
+  } else if (resultados2Ordenados.length > 0) {
+    acuraciaMedia = acuracia2;
+  }
+
+  console.log(
+    `📊 Acurácia Média: ${acuraciaMedia}% | Acurácia 1: ${acuracia1}% | Acurácia 2: ${acuracia2}% | Res1: ${resultados1Ordenados.length} | Res2: ${resultados2Ordenados.length}`
+  );
 
   // HTML do modal
   const html = `
@@ -347,9 +395,13 @@ function renderizarModalHistorico(data, modal, time1, time2, tipo, limite = 5) {
 
         <!-- Acurácia Central -->
         <div class="historico-acuracia-container">
-          <div class="historico-acuracia">
+          <div class="historico-acuracia" style="--acuracia: ${acuraciaMedia}; --acuracia-color: ${
+    getCorAcuracia(acuraciaMedia).cor
+  };">
             <div class="acuracia-valor">${acuraciaMedia}%</div>
-            <div class="acuracia-label">Precisão</div>
+            <div class="acuracia-label">${
+              getCorAcuracia(acuraciaMedia).texto
+            }</div>
           </div>
         </div>
 
@@ -626,7 +678,20 @@ async function atualizarModalHistorico(time1, time2, tipo) {
       const acuracia2 = calcularAcuracia(resultados2);
       const mediac = Math.round((acuracia1 + acuracia2) / 2);
 
-      modal.querySelector(".acuracia-valor").textContent = mediac + "%";
+      const acuraciaElement = modal.querySelector(".acuracia-valor");
+      acuraciaElement.textContent = mediac + "%";
+
+      // Atualizar cor do círculo de acurácia
+      const acuraciaCircle = modal.querySelector(".historico-acuracia");
+      acuraciaCircle.style.setProperty("--acuracia", mediac);
+      acuraciaCircle.style.setProperty(
+        "--acuracia-color",
+        getCorAcuracia(mediac).cor
+      );
+
+      // Atualizar texto da label
+      const acuraciaLabel = modal.querySelector(".acuracia-label");
+      acuraciaLabel.textContent = getCorAcuracia(mediac).texto;
     }
   } catch (error) {
     console.error("❌ Erro ao atualizar:", error);

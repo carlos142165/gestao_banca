@@ -672,11 +672,26 @@ if (!isset($_SESSION['usuario_id']) || empty($_SESSION['usuario_id'])) {
 
         /* ===== RESPONSIVIDADE MOBILE ===== */
         @media screen and (max-width: 768px) {
+            .main-content {
+                align-items: stretch;
+                padding: 10px 0;
+            }
+
+            .container {
+                width: 100%;
+                height: 100%;
+                align-items: stretch;
+                flex-direction: column;
+                gap: 20px;
+                padding: 10px 10px;
+            }
+
             .bloco {
-                width: 90vw;
+                width: 90%;
                 max-width: 420px;
-                height: 70vh;
-                max-height: 600px;
+                height: 100%;
+                margin: 0 auto;
+                flex: 1 1 auto;
             }
 
             .header-bloco {
@@ -705,6 +720,7 @@ if (!isset($_SESSION['usuario_id']) || empty($_SESSION['usuario_id'])) {
                 width: 100%;
                 box-sizing: border-box;
                 overflow-y: auto;
+                flex: 1;
             }
 
             body > main > div > div.bloco.bloco-1 > div > div.messages-area.telegram-messages-wrapper {
@@ -722,10 +738,26 @@ if (!isset($_SESSION['usuario_id']) || empty($_SESSION['usuario_id'])) {
         }
 
         @media screen and (max-width: 480px) {
+            .main-content {
+                align-items: stretch;
+                padding: 8px 0;
+            }
+
+            .container {
+                width: 100%;
+                height: 100%;
+                align-items: stretch;
+                flex-direction: column;
+                gap: 15px;
+                padding: 8px 8px;
+            }
+
             .bloco {
-                width: 95vw;
+                width: 95%;
                 max-width: 100%;
-                height: 65vh;
+                height: 100%;
+                margin: 0 auto;
+                flex: 1 1 auto;
             }
 
             .header-bloco {
@@ -752,6 +784,7 @@ if (!isset($_SESSION['usuario_id']) || empty($_SESSION['usuario_id'])) {
                 overflow-y: scroll;
                 -ms-overflow-style: none;
                 scrollbar-width: none;
+                flex: 1;
             }
 
             body > main > div > div.bloco.bloco-1 > div > div.messages-area.telegram-messages-wrapper {
