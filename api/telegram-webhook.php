@@ -315,15 +315,23 @@ function extrairDadosMensagem($rawText, $msgTime, $telegramMessageId) {
         }
         
         // ✅ Extrair odds iniciais: "Odds iniciais: Casa: 1.9 - Emp. 3.4 - Fora: 4.1"
-        if (preg_match('/Odds iniciais:.*Casa:\s*([\d\.]+)\s*-\s*Emp[p\.]?\s*:\s*([\d\.]+)\s*-\s*Fora:\s*([\d\.]+)/i', $line, $m)) {
+        // Versão mais robusta que trata "Emp." ou "Emp" ou "Empate"
+        if (preg_match('/Odds\s+iniciais:\s*Casa:\s*([\d\.]+)\s*-\s*(?:Emp[a-z]*\.?|Empate)?\s*:?\s*([\d\.]+)\s*-\s*Fora:\s*([\d\.]+)/i', $line, $m)) {
             $odds_inicial_casa = floatval($m[1]);
             $odds_inicial_empate = floatval($m[2]);
             $odds_inicial_fora = floatval($m[3]);
+            file_put_contents($logFile, "✅ Odds iniciais detectadas: Casa={$odds_inicial_casa}, Emp={$odds_inicial_empate}, Fora={$odds_inicial_fora}\n", FILE_APPEND);
         }
         
         // ✅ Extrair estádio/competição: "🏟 Japan J-League"
-        if (preg_match('/🏟\s*(.+)/i', $line, $m)) {
+        // Usando \p{L} para caracteres Unicode e removendo caracteres especiais
+        if (preg_match('/🏟\s*(.+?)(?:\n|$)/u', $line, $m)) {
             $estadio = trim($m[1]);
+            // Limpar se tiver emoji ou símbolos extras
+            $estadio = preg_replace('/[^\p{L}\p{N}\s\-]/u', '', $estadio);
+            if (!empty($estadio)) {
+                file_put_contents($logFile, "✅ Estádio detectado: $estadio\n", FILE_APPEND);
+            }
         }
         
         // ✅ Extrair ataques perigosos: "🔥 Ataques perigosos: 57 - 25"
