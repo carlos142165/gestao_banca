@@ -82,16 +82,19 @@ try {
     }
     
     // 🎯 Calcular totais gerais
+    // ✅ IMPORTANTE: Apenas GREENs são contados no ganho total
+    // REDs (perdas) NÃO são subtraídas - apenas GREENs somam ganhos
     $total_green = 0;
     $total_red = 0;
-    $total_lucro_coef_green = 0;
-    $total_lucro_coef_red = 0;
+    $total_lucro_coef_green = 0;  // Soma apenas dos GREENs
+    $total_lucro_coef_red = 0;     // Mantém em 0 - REDs não afetam o total
     
     foreach ($apostas as $aposta) {
         $total_green += $aposta['green'];
         $total_red += $aposta['red'];
-        $total_lucro_coef_green += $aposta['lucro_coef_green'];
-        $total_lucro_coef_red += $aposta['lucro_coef_red'];
+        $total_lucro_coef_green += $aposta['lucro_coef_green'];  // Soma GREENs
+        // ✅ NÃO SOMA RED - apenas para contagem
+        // $total_lucro_coef_red += $aposta['lucro_coef_red'];
     }
     
     // 🎯 Retornar dados em JSON
