@@ -292,10 +292,11 @@ function extrairDadosMensagem($rawText, $msgTime, $telegramMessageId) {
         }
         
         // ✅ Extrair odds para CANTOS (escanteios/cantos)
-        if ((strpos($line, 'Escanteios') !== false || strpos($line, 'escanteios') !== false || strpos($line, 'Cantos') !== false) && 
-            preg_match('/(Escanteios?|Cantos?)\s*over\s*[\+\-]?[\d\.]*\s*:\s*([\d\.]+)/i', $line, $m)) {
+        // Padrão: "Escanteios over +1.0: 1.52" ou "Cantos over +1: 1.5"
+        if (preg_match('/(Escanteios?|Cantos?)\s+over\s+[\+\-]?[\d\.]+\s*:\s*([\d\.]+)/i', $line, $m)) {
             $odds = floatval($m[2]);
             $tipo_odds = "Cantos Odds";
+            file_put_contents($logFile, "✅ CANTOS Odds detectado: " . htmlspecialchars($line) . " => odds={$odds}\n", FILE_APPEND);
         }
     }
     
