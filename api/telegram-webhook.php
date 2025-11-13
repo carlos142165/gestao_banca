@@ -285,9 +285,17 @@ function extrairDadosMensagem($rawText, $msgTime, $telegramMessageId) {
             }
         }
         
+        // ✅ Extrair odds para GOLS
         if (strpos($line, 'Gols over') !== false && preg_match('/Gols over\s*[\+\-]?[\d\.]*\s*:\s*([\d\.]+)/i', $line, $m)) {
             $odds = floatval($m[1]);
             $tipo_odds = "Gols Odds";
+        }
+        
+        // ✅ Extrair odds para CANTOS (escanteios/cantos)
+        if ((strpos($line, 'Escanteios') !== false || strpos($line, 'escanteios') !== false || strpos($line, 'Cantos') !== false) && 
+            preg_match('/(Escanteios?|Cantos?)\s*over\s*[\+\-]?[\d\.]*\s*:\s*([\d\.]+)/i', $line, $m)) {
+            $odds = floatval($m[2]);
+            $tipo_odds = "Cantos Odds";
         }
     }
     
