@@ -70,7 +70,11 @@ try {
                 $apostas[$referencia]['registros_green'][] = $odds;
                 // Lucro GREEN = (odds - 1) = coeficiente de ganho
                 // Exemplo: odds 1.52 → coef = 0.52 → lucro = 0.52 × 100 = R$ 52
-                $apostas[$referencia]['lucro_coef_green'] += ($odds - 1);
+                $coef_green = ($odds - 1);
+                $apostas[$referencia]['lucro_coef_green'] += $coef_green;
+                
+                // 🔍 DEBUG: Log para verificar
+                error_log("✅ GREEN: ref=$referencia, odds=$odds, coef=$coef_green, total_coef=" . $apostas[$referencia]['lucro_coef_green']);
             } elseif ($resultado_msg === 'RED') {
                 $apostas[$referencia]['red']++;
                 $apostas[$referencia]['registros_red'][] = $odds;
