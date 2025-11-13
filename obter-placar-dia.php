@@ -106,21 +106,21 @@ try {
                 'green' => $apostas['+1⚽GOL']['green'],
                 'red' => $apostas['+1⚽GOL']['red'],
                 'lucro_coef_green' => round($apostas['+1⚽GOL']['lucro_coef_green'], 2),
-                'lucro_coef_red' => round($apostas['+1⚽GOL']['lucro_coef_red'], 2)
+                'lucro_coef_red' => 0  // ✅ Não conta RED nas apostas individuais
             ],
             'aposta_2' => [
                 'titulo' => '+0.5⚽GOL',
                 'green' => $apostas['+0.5⚽GOL']['green'],
                 'red' => $apostas['+0.5⚽GOL']['red'],
                 'lucro_coef_green' => round($apostas['+0.5⚽GOL']['lucro_coef_green'], 2),
-                'lucro_coef_red' => round($apostas['+0.5⚽GOL']['lucro_coef_red'], 2)
+                'lucro_coef_red' => 0  // ✅ Não conta RED nas apostas individuais
             ],
             'aposta_3' => [
                 'titulo' => '+1⛳️CANTOS',
                 'green' => $apostas['+1⛳️CANTOS']['green'],
                 'red' => $apostas['+1⛳️CANTOS']['red'],
                 'lucro_coef_green' => round($apostas['+1⛳️CANTOS']['lucro_coef_green'], 2),
-                'lucro_coef_red' => round($apostas['+1⛳️CANTOS']['lucro_coef_red'], 2)
+                'lucro_coef_red' => 0  // ✅ Não conta RED nas apostas individuais
             ]
         ],
         'total' => [
