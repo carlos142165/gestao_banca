@@ -1,6 +1,7 @@
 # ⚡ GUIA RÁPIDO - AÇÃO IMEDIATA
 
 ## 🎯 O QUE FOI RESOLVIDO
+
 ✅ Webhook desconectava a cada 8 horas
 ✅ Mensagens chegavam no Telegram mas não eram salvas
 ✅ Reconexão automática implementada
@@ -9,6 +10,7 @@
 ## 🚀 PRÓXIMAS 24 HORAS
 
 ### Hoje - Upload para Produção
+
 ```bash
 # Opção 1: Via Git (RECOMENDADO)
 git push origin main
@@ -19,6 +21,7 @@ git push origin main
 ```
 
 ### Hoje - Configurar Cron Job
+
 ```
 cPanel > Cron Jobs > Adicionar novo
 Comando: */5 * * * * curl -s https://analisegb.com/gestao/gestao_banca/webhook-health-check.php
@@ -26,6 +29,7 @@ Clique: Add New Cron Job
 ```
 
 ### Hoje - Testar
+
 ```
 1. Webhook Status: https://analisegb.com/gestao/gestao_banca/webhook-status.php
    → Esperado: Tudo GREEN ✅
@@ -40,10 +44,12 @@ Clique: Add New Cron Job
 ## 📋 CHECKLIST DE UPLOAD
 
 ### OBRIGATÓRIO (Sem isso continua desconectando)
+
 - [ ] Upload: `config.php`
 - [ ] Upload: `api/telegram-webhook.php`
 
 ### ALTAMENTE RECOMENDADO (Necessário para funcionar corretamente)
+
 - [ ] Upload: `obter-und.php`
 - [ ] Upload: `webhook-health-check.php`
 - [ ] Upload: `webhook-status.php`
@@ -51,6 +57,7 @@ Clique: Add New Cron Job
 - [ ] Upload: `teste-obter-conexao.php`
 
 ### CONFIGURAÇÃO
+
 - [ ] Cron job configurado (a cada 5 min)
 
 ---
@@ -58,6 +65,7 @@ Clique: Add New Cron Job
 ## 🔧 EM CASO DE ERRO
 
 ### Erro 500 no Webhook
+
 ```
 1. Verificar permissões: 755 para .php
 2. Verificar: cPanel > Error Logs
@@ -65,6 +73,7 @@ Clique: Add New Cron Job
 ```
 
 ### UND não carrega em bot_aovivo.php
+
 ```
 1. Verificar: obter-und.php foi uploadado?
 2. Testar: https://analisegb.com/gestao/gestao_banca/obter-und.php
@@ -72,6 +81,7 @@ Clique: Add New Cron Job
 ```
 
 ### Webhook continua desconectando
+
 ```
 1. Conferir: config.php foi uploadado?
 2. Testar: https://analisegb.com/gestao/gestao_banca/webhook-test.php
@@ -83,11 +93,13 @@ Clique: Add New Cron Job
 ## 📊 RESULTADOS ESPERADOS
 
 ### Após 24 horas
+
 - ✅ Mensagens chegando no Telegram
 - ✅ Mensagens sendo salvas no banco
 - ✅ Sem erros de conexão
 
 ### Após 7 dias
+
 - ✅ Webhook ainda funcionando (comprova timeout funcionou)
 - ✅ Dashboard mostrando status GREEN
 - ✅ Cron job executando regularmente
@@ -97,6 +109,7 @@ Clique: Add New Cron Job
 ## 📞 DOCUMENTAÇÃO COMPLETA
 
 Para entender melhor, leia:
+
 - `SOLUCAO_WEBHOOK_COMPLETA.md` - Explicação técnica completa
 - `UPLOAD_HOSTINGER_CHECKLIST.md` - Lista detalhada de upload
 - `WEBHOOK_FIX_SUMMARY.md` - Resumo da solução
@@ -131,7 +144,7 @@ curl https://analisegb.com/gestao/gestao_banca/teste-obter-conexao.php
 
 ---
 
-## 🎯 SUCESSO = 
+## 🎯 SUCESSO =
 
 Quando você ver:
 
@@ -145,5 +158,5 @@ Quando você ver:
 
 ---
 
-*Última atualização: 2025-11-12*
-*Status: Pronto para Deploy*
+_Última atualização: 2025-11-12_
+_Status: Pronto para Deploy_
