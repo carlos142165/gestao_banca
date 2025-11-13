@@ -180,7 +180,8 @@ function salvarNosBancoDados($dadosMensagem) {
         
         file_put_contents($logFile, "✅ Conexão com banco verificada e ativa\n", FILE_APPEND);
         
-        $query = "INSERT INTO bote (telegram_message_id, mensagem_completa, titulo, tipo_aposta, time_1, time_2, placar_1, placar_2, escanteios_1, escanteios_2, valor_over, odds, tipo_odds, hora_mensagem, status_aposta, resultado) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)";
+        $query = "INSERT INTO bote (telegram_message_id, mensagem_completa, titulo, tipo_aposta, time_1, time_2, placar_1, placar_2, escanteios_1, escanteios_2, valor_over, odds, tipo_odds, hora_mensagem, status_aposta, resultado, tempo_minuto, odds_inicial_casa, odds_inicial_empate, odds_inicial_fora, estadio, ataques_perigosos_1, ataques_perigosos_2, cartoes_amarelos_1, cartoes_amarelos_2, cartoes_vermelhos_1, cartoes_vermelhos_2, chutes_lado_1, chutes_lado_2, chutes_alvo_1, chutes_alvo_2, posse_bola_1, posse_bola_2) 
+          VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)";
         
         $stmt = $conexao->prepare($query);
         
@@ -208,12 +209,36 @@ function salvarNosBancoDados($dadosMensagem) {
         $t1 = substr($dadosMensagem['time_1'], 0, 100);
         $t2 = substr($dadosMensagem['time_2'], 0, 100);
         $tipo_odds = substr($dadosMensagem['tipo_odds'], 0, 50);
+        $estadio = isset($dadosMensagem['estadio']) ? substr($dadosMensagem['estadio'], 0, 100) : null;
         
         file_put_contents($logFile, "DEBUG: Pronto para bind_param\n", FILE_APPEND);
         file_put_contents($logFile, "DEBUG: Parâmetros - telegram_id={$telegram_id}, valor_over={$valor_over}, odds={$odds}, result={$resultado}\n", FILE_APPEND);
         
-        // i=telegram_id, s=msg, s=tit, s=tipo, s=t1, s=t2, i=placar_1, i=placar_2, i=escanteios_1, i=escanteios_2, d=valor_over, d=odds, s=tipo_odds, s=hora, s=status, s=resultado (16 params = 16 chars)
-        if (!$stmt->bind_param("isssssiiiddsssss", $telegram_id, $msg, $tit, $tipo, $t1, $t2, $placar_1, $placar_2, $escanteios_1, $escanteios_2, $valor_over, $odds, $tipo_odds, $dadosMensagem['hora_mensagem'], $dadosMensagem['status_aposta'], $resultado)) {
+        // ✅ BIND PARAMS: 33 parâmetros
+        // i=telegram_id, s=msg, s=tit, s=tipo, s=t1, s=t2, i=placar_1, i=placar_2, i=escanteios_1, i=escanteios_2, d=valor_over, d=odds, s=tipo_odds, s=hora, s=status, s=resultado, i=tempo_minuto, d=odds_inicial_casa, d=odds_inicial_empate, d=odds_inicial_fora, s=estadio, i=ataques_1, i=ataques_2, i=amarelos_1, i=amarelos_2, i=vermelhos_1, i=vermelhos_2, i=chutes_lado_1, i=chutes_lado_2, i=chutes_alvo_1, i=chutes_alvo_2, i=posse_1, i=posse_2
+        if (!$stmt->bind_param(
+            "isssssiiiddsssssiddddiiiiiiiiiiii",
+            $telegram_id, $msg, $tit, $tipo, $t1, $t2, $placar_1, $placar_2, $escanteios_1, $escanteios_2, 
+            $valor_over, $odds, $tipo_odds, $dadosMensagem['hora_mensagem'], $dadosMensagem['status_aposta'], $resultado,
+            // Novos parâmetros
+            $dadosMensagem['tempo_minuto'],
+            $dadosMensagem['odds_inicial_casa'],
+            $dadosMensagem['odds_inicial_empate'],
+            $dadosMensagem['odds_inicial_fora'],
+            $estadio,
+            $dadosMensagem['ataques_perigosos_1'],
+            $dadosMensagem['ataques_perigosos_2'],
+            $dadosMensagem['cartoes_amarelos_1'],
+            $dadosMensagem['cartoes_amarelos_2'],
+            $dadosMensagem['cartoes_vermelhos_1'],
+            $dadosMensagem['cartoes_vermelhos_2'],
+            $dadosMensagem['chutes_lado_1'],
+            $dadosMensagem['chutes_lado_2'],
+            $dadosMensagem['chutes_alvo_1'],
+            $dadosMensagem['chutes_alvo_2'],
+            $dadosMensagem['posse_bola_1'],
+            $dadosMensagem['posse_bola_2']
+        )) {
             throw new Exception("Bind failed: " . $stmt->error);
         }
         
@@ -252,6 +277,25 @@ function extrairDadosMensagem($rawText, $msgTime, $telegramMessageId) {
     $odds = 0;
     $tipo_odds = "";
     
+    // ✅ Novos campos para estatísticas da partida
+    $tempo_minuto = null;
+    $odds_inicial_casa = null;
+    $odds_inicial_empate = null;
+    $odds_inicial_fora = null;
+    $estadio = null;
+    $ataques_perigosos_1 = null;
+    $ataques_perigosos_2 = null;
+    $cartoes_amarelos_1 = null;
+    $cartoes_amarelos_2 = null;
+    $cartoes_vermelhos_1 = null;
+    $cartoes_vermelhos_2 = null;
+    $chutes_lado_1 = null;
+    $chutes_lado_2 = null;
+    $chutes_alvo_1 = null;
+    $chutes_alvo_2 = null;
+    $posse_bola_1 = null;
+    $posse_bola_2 = null;
+    
     foreach ($lines as $line) {
         if (strpos($line, '📊') !== false) {
             $titulo = trim(str_replace(['📊', '🚨'], '', $line));
@@ -263,6 +307,59 @@ function extrairDadosMensagem($rawText, $msgTime, $telegramMessageId) {
             } elseif (strpos($titulo, 'GOL') !== false) {
                 $tipo_aposta = "GOL";
             }
+        }
+        
+        // ✅ Extrair tempo: "⏰ Tempo: 82'"
+        if (preg_match('/⏰.*Tempo:\s*(\d+)/i', $line, $m)) {
+            $tempo_minuto = intval($m[1]);
+        }
+        
+        // ✅ Extrair odds iniciais: "Odds iniciais: Casa: 1.9 - Emp. 3.4 - Fora: 4.1"
+        if (preg_match('/Odds iniciais:.*Casa:\s*([\d\.]+)\s*-\s*Emp[p\.]?\s*:\s*([\d\.]+)\s*-\s*Fora:\s*([\d\.]+)/i', $line, $m)) {
+            $odds_inicial_casa = floatval($m[1]);
+            $odds_inicial_empate = floatval($m[2]);
+            $odds_inicial_fora = floatval($m[3]);
+        }
+        
+        // ✅ Extrair estádio/competição: "🏟 Japan J-League"
+        if (preg_match('/🏟\s*(.+)/i', $line, $m)) {
+            $estadio = trim($m[1]);
+        }
+        
+        // ✅ Extrair ataques perigosos: "🔥 Ataques perigosos: 57 - 25"
+        if (preg_match('/🔥.*Ataques perigosos:\s*(\d+)\s*-\s*(\d+)/i', $line, $m)) {
+            $ataques_perigosos_1 = intval($m[1]);
+            $ataques_perigosos_2 = intval($m[2]);
+        }
+        
+        // ✅ Extrair cartões amarelos: "🟨 Cartões amarelos: 1 - 1"
+        if (preg_match('/🟨.*Cartões amarelos:\s*(\d+)\s*-\s*(\d+)/i', $line, $m)) {
+            $cartoes_amarelos_1 = intval($m[1]);
+            $cartoes_amarelos_2 = intval($m[2]);
+        }
+        
+        // ✅ Extrair cartões vermelhos: "🟥 Cartões vermelhos: 0 - 0"
+        if (preg_match('/🟥.*Cartões vermelhos:\s*(\d+)\s*-\s*(\d+)/i', $line, $m)) {
+            $cartoes_vermelhos_1 = intval($m[1]);
+            $cartoes_vermelhos_2 = intval($m[2]);
+        }
+        
+        // ✅ Extrair chutes ao lado: "🎯 Chutes ao lado: 12 - 4"
+        if (preg_match('/🎯.*Chutes ao lado:\s*(\d+)\s*-\s*(\d+)/i', $line, $m)) {
+            $chutes_lado_1 = intval($m[1]);
+            $chutes_lado_2 = intval($m[2]);
+        }
+        
+        // ✅ Extrair chutes no alvo: "🎯 Chutes no alvo: 3 - 1"
+        if (preg_match('/🎯.*Chutes no alvo:\s*(\d+)\s*-\s*(\d+)/i', $line, $m)) {
+            $chutes_alvo_1 = intval($m[1]);
+            $chutes_alvo_2 = intval($m[2]);
+        }
+        
+        // ✅ Extrair posse de bola: "💯 Posse de bola: 55% - 45%"
+        if (preg_match('/💯.*Posse de bola:\s*(\d+)\%?\s*-\s*(\d+)\%?/i', $line, $m)) {
+            $posse_bola_1 = intval($m[1]);
+            $posse_bola_2 = intval($m[2]);
         }
         
         if (preg_match('/OVER\s*\(\s*\+(\d+\.?\d*)/i', $line, $m)) {
@@ -317,7 +414,25 @@ function extrairDadosMensagem($rawText, $msgTime, $telegramMessageId) {
         'odds' => $odds,
         'tipo_odds' => $tipo_odds ?: "N/A",
         'hora_mensagem' => $msgTime,
-        'status_aposta' => "ATIVA"
+        'status_aposta' => "ATIVA",
+        // ✅ Novos campos de estatísticas
+        'tempo_minuto' => $tempo_minuto,
+        'odds_inicial_casa' => $odds_inicial_casa,
+        'odds_inicial_empate' => $odds_inicial_empate,
+        'odds_inicial_fora' => $odds_inicial_fora,
+        'estadio' => $estadio,
+        'ataques_perigosos_1' => $ataques_perigosos_1,
+        'ataques_perigosos_2' => $ataques_perigosos_2,
+        'cartoes_amarelos_1' => $cartoes_amarelos_1,
+        'cartoes_amarelos_2' => $cartoes_amarelos_2,
+        'cartoes_vermelhos_1' => $cartoes_vermelhos_1,
+        'cartoes_vermelhos_2' => $cartoes_vermelhos_2,
+        'chutes_lado_1' => $chutes_lado_1,
+        'chutes_lado_2' => $chutes_lado_2,
+        'chutes_alvo_1' => $chutes_alvo_1,
+        'chutes_alvo_2' => $chutes_alvo_2,
+        'posse_bola_1' => $posse_bola_1,
+        'posse_bola_2' => $posse_bola_2
     ];
 }
 
