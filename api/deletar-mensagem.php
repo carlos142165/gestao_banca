@@ -1,9 +1,15 @@
 <?php
 /**
- * API: deletar-mensagem.php
+ * API: deletar-mensagem.php (VERSÃO FINAL - CONSOLIDADA)
  * 
  * Deleta uma mensagem da tabela 'bote'
  * RESTRIÇÃO: Apenas usuário ID 23 pode deletar
+ * 
+ * FUNCIONALIDADE:
+ * - Tenta deletar por ID primário PRIMEIRO
+ * - Se falhar, tenta por telegram_message_id
+ * - Log detalhado de cada tentativa
+ * - Debug logs para troubleshooting
  */
 
 // ✅ INICIAR SESSÃO PARA VERIFICAR USUÁRIO
@@ -58,33 +64,64 @@ try {
         throw new Exception('ID da mensagem inválido');
     }
 
-    // ✅ PREPARAR STATEMENT (SQL Injection Prevention)
-    $query = "DELETE FROM bote WHERE id = ?";
-    $stmt = $conexao->prepare($query);
+    // ✅ CREATE LOG DIR IF NOT EXISTS
+    $logDir = '../logs';
+    if (!is_dir($logDir)) {
+        mkdir($logDir, 0755, true);
+    }
+    $logFile = $logDir . '/deletar-mensagem.log';
 
-    if (!$stmt) {
-        throw new Exception('Erro ao preparar consulta: ' . $conexao->error);
+    // ✅ LOG DEBUG
+    $debugLog = "[" . date('Y-m-d H:i:s') . "] DEBUG DELETE\n";
+    $debugLog .= "  messageId: $messageId (tipo: " . gettype($messageId) . ")\n";
+    $debugLog .= "  usuarioId: $usuarioId\n";
+    $debugLog .= "  Input recebido: " . $input . "\n";
+    file_put_contents($logFile, $debugLog, FILE_APPEND);
+
+    // ✅ PASSO 1: TENTAR DELETAR POR ID PRIMÁRIO PRIMEIRO
+    $query1 = "DELETE FROM bote WHERE id = ?";
+    $stmt1 = $conexao->prepare($query1);
+
+    if (!$stmt1) {
+        throw new Exception('Erro ao preparar consulta 1: ' . $conexao->error);
     }
 
-    // ✅ BIND PARAMETER
-    $stmt->bind_param('i', $messageId);
+    $stmt1->bind_param('i', $messageId);
 
-    // ✅ EXECUTAR
-    if (!$stmt->execute()) {
-        throw new Exception('Erro ao executar consulta: ' . $stmt->error);
+    if (!$stmt1->execute()) {
+        throw new Exception('Erro ao executar consulta 1: ' . $stmt1->error);
+    }
+
+    $affectedRows = $stmt1->affected_rows;
+    $stmt1->close();
+
+    // ✅ PASSO 2: SE NÃO DELETOU, TENTAR POR telegram_message_id
+    if ($affectedRows === 0) {
+        file_put_contents($logFile, "  ⚠️ ID primário não encontrado, tentando telegram_message_id...\n", FILE_APPEND);
+        
+        $query2 = "DELETE FROM bote WHERE telegram_message_id = ?";
+        $stmt2 = $conexao->prepare($query2);
+
+        if (!$stmt2) {
+            throw new Exception('Erro ao preparar consulta 2: ' . $conexao->error);
+        }
+
+        $stmt2->bind_param('i', $messageId);
+
+        if (!$stmt2->execute()) {
+            throw new Exception('Erro ao executar consulta 2: ' . $stmt2->error);
+        }
+
+        $affectedRows = $stmt2->affected_rows;
+        $stmt2->close();
+    } else {
+        file_put_contents($logFile, "  ✅ Deletado por ID primário\n", FILE_APPEND);
     }
 
     // ✅ VERIFICAR SE DELETOU ALGO
-    if ($stmt->affected_rows > 0) {
-        // ✅ LOG
-        $logDir = '../logs';
-        if (!is_dir($logDir)) {
-            mkdir($logDir, 0755, true);
-        }
-        
-        $logFile = $logDir . '/deletar-mensagem.log';
-        $logEntry = "[" . date('Y-m-d H:i:s') . "] Usuário $usuarioId deletou mensagem ID: $messageId\n";
-        file_put_contents($logFile, $logEntry, FILE_APPEND);
+    if ($affectedRows > 0) {
+        // ✅ LOG DE SUCESSO
+        file_put_contents($logFile, "[" . date('Y-m-d H:i:s') . "] ✅ Usuário $usuarioId deletou mensagem ID: $messageId (affected_rows: $affectedRows)\n", FILE_APPEND);
 
         // ✅ RESPOSTA DE SUCESSO
         http_response_code(200);
@@ -95,14 +132,16 @@ try {
             'user_id' => $usuarioId
         ]);
     } else {
+        // ✅ NÃO ENCONTROU
+        file_put_contents($logFile, "  ❌ Mensagem ID=$messageId não encontrada em nenhuma coluna\n", FILE_APPEND);
+        
         http_response_code(404);
         echo json_encode([
             'success' => false,
-            'message' => 'Mensagem não encontrada'
+            'message' => 'Mensagem não encontrada (ID: ' . $messageId . ')',
+            'message_id' => $messageId
         ]);
     }
-
-    $stmt->close();
 
 } catch (Exception $e) {
     $statusCode = http_response_code();

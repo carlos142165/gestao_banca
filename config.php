@@ -84,44 +84,70 @@ function getMySQLiConnection() {
 }
 
 // ============================================
-// ✅ FUNÇÃO OBTER CONEXÃO COM RECONEXÃO AUTOMÁTICA
+// ✅ FUNÇÃO OBTER CONEXÃO COM RECONEXÃO AUTOMÁTICA (ROBUSTA)
 // ============================================
 function obterConexao() {
     global $conexao;
     
-    // Verificar se conexão existe e está ativa
-    if ($conexao && $conexao->ping()) {
+    // ✅ PASSO 1: Verificar se conexão global existe
+    if (!$conexao) {
+        error_log("⚠️ Conexão global é NULL - criando nova conexão");
+        return criarNovaConexao();
+    }
+    
+    // ✅ PASSO 2: Verificar com ping() - mais confiável que apenas verificar se existe
+    if ($conexao->ping()) {
+        // Conexão está ativa e respondendo
         return $conexao;
     }
     
-    // Se não existir ou desconectou, criar nova conexão
-    error_log("🔄 Reconectando ao banco de dados...");
+    // ✅ PASSO 3: Se ping falhou, reconectar
+    error_log("⚠️ Conexão perdida (ping falhou) - reconectando...");
+    return criarNovaConexao();
+}
+
+// ============================================
+// ✅ FUNÇÃO AUXILIAR: CRIAR NOVA CONEXÃO
+// ============================================
+function criarNovaConexao() {
+    global $conexao;
     
-    $novaConexao = new mysqli(
-        DB_HOST,
-        DB_USERNAME,
-        DB_PASSWORD,
-        DB_NAME
-    );
-    
-    if ($novaConexao->connect_error) {
-        error_log("❌ Erro ao reconectar: " . $novaConexao->connect_error);
+    try {
+        $novaConexao = new mysqli(
+            DB_HOST,
+            DB_USERNAME,
+            DB_PASSWORD,
+            DB_NAME
+        );
+        
+        if ($novaConexao->connect_error) {
+            error_log("❌ ERRO CRÍTICO: Falha ao conectar ao banco: " . $novaConexao->connect_error);
+            return null;
+        }
+        
+        // ✅ CONFIGURAR TIMEOUTS AGGRESSIVOS (7 dias = 604800 segundos)
+        $novaConexao->query("SET SESSION wait_timeout = 604800");
+        $novaConexao->query("SET SESSION interactive_timeout = 604800");
+        $novaConexao->query("SET SESSION net_read_timeout = 604800");
+        $novaConexao->query("SET SESSION net_write_timeout = 604800");
+        
+        // ✅ CONFIGURAR CHARSET E TIMEZONE
+        $novaConexao->set_charset("utf8mb4");
+        $novaConexao->query("SET time_zone = '-03:00'");
+        
+        // ✅ ATIVAR RECONNECT (MySQL < 5.7.3)
+        $novaConexao->query("SET SESSION autocommit = 1");
+        
+        // Atualizar variável global
+        $conexao = $novaConexao;
+        
+        error_log("✅ CONEXÃO ESTABELECIDA COM SUCESSO - Timeouts: 7 dias");
+        return $conexao;
+        
+    } catch (Exception $e) {
+        error_log("❌ EXCEÇÃO ao criar conexão: " . $e->getMessage());
         return null;
     }
-    
-    // ✅ AUMENTAR TIMEOUTS PARA 7 DIAS (604800 segundos)
-    $novaConexao->query("SET SESSION wait_timeout = 604800");
-    $novaConexao->query("SET SESSION interactive_timeout = 604800");
-    
-    // Configurar charset
-    $novaConexao->set_charset("utf8mb4");
-    $novaConexao->query("SET time_zone = '-03:00'");
-    
-    // Atualizar variável global
-    $conexao = $novaConexao;
-    
-    error_log("✅ Reconexão estabelecida com sucesso");
-    return $conexao;
 }
 
 // ✅ Configurar timeouts iniciais na conexão global (7 dias = 604800 segundos)

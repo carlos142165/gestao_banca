@@ -2,11 +2,11 @@
 clearstatcache();
 /**
  * ================================================================
- * WEBHOOK DO TELEGRAM - VERSÃO SIMPLIFICADA
+ * WEBHOOK DO TELEGRAM - VERSÃO COM RECONEXÃO ROBUSTA
  * ================================================================
  * 
  * Recebe mensagens do Telegram e salva no banco automaticamente
- * Funciona com channel_post E messages normais
+ * Com proteção contra desconexões após horas
  * 
  * ================================================================
  */
@@ -23,12 +23,22 @@ date_default_timezone_set('America/Sao_Paulo');
 require_once '../telegram-config.php';
 require_once '../config.php';
 
-// ✅ GARANTIR QUE CONEXÃO ESTÁ ATIVA
+// ✅ GARANTIR QUE CONEXÃO ESTÁ ATIVA - COM MÚLTIPLAS TENTATIVAS
 $conexao = obterConexao();
+$tentativas = 0;
+$maxTentativas = 3;
+
+while (!$conexao && $tentativas < $maxTentativas) {
+    sleep(1); // Aguardar 1 segundo antes de tentar novamente
+    $conexao = criarNovaConexao();
+    $tentativas++;
+}
+
 if (!$conexao) {
     header('Content-Type: application/json; charset=utf-8');
     http_response_code(500);
-    echo json_encode(['status' => 'error', 'message' => 'Database connection failed']);
+    echo json_encode(['status' => 'error', 'message' => 'Database connection failed after ' . $maxTentativas . ' attempts']);
+    exit;
     exit;
 }
 
@@ -172,10 +182,29 @@ function salvarNosBancoDados($dadosMensagem) {
         file_put_contents($logFile, "📝 Iniciando salvamento nos dados:\n", FILE_APPEND);
         file_put_contents($logFile, "   - valor_over: " . $dadosMensagem['valor_over'] . "\n", FILE_APPEND);
         
-        // ✅ VERIFICAR E RECONECTAR SE NECESSÁRIO
+        // ✅ VERIFICAR E RECONECTAR SE NECESSÁRIO - COM MÚLTIPLAS TENTATIVAS
         $conexao = obterConexao();
+        
+        // Se falhou, tentar reconectar até 3 vezes
+        $tentativas = 0;
+        while (!$conexao && $tentativas < 3) {
+            file_put_contents($logFile, "⚠️ Tentativa de reconexão " . ($tentativas + 1) . "/3...\n", FILE_APPEND);
+            sleep(1);
+            $conexao = criarNovaConexao();
+            $tentativas++;
+        }
+        
         if (!$conexao) {
-            throw new Exception("Falha ao conectar ao banco de dados");
+            throw new Exception("Falha ao conectar ao banco de dados após 3 tentativas");
+        }
+        
+        // ✅ Verificar com PING antes de executar
+        if (!$conexao->ping()) {
+            file_put_contents($logFile, "⚠️ Ping falhou - forçando reconexão\n", FILE_APPEND);
+            $conexao = criarNovaConexao();
+            if (!$conexao) {
+                throw new Exception("Falha ao reconectar após ping falhar");
+            }
         }
         
         file_put_contents($logFile, "✅ Conexão com banco verificada e ativa\n", FILE_APPEND);
@@ -450,10 +479,29 @@ function processarResultado($resultadoText, $msgTime, $telegramMessageId) {
     try {
         file_put_contents($logFile, "📝 [RESULTADO] Iniciando processamento\n", FILE_APPEND);
         
-        // ✅ VERIFICAR E RECONECTAR SE NECESSÁRIO
+        // ✅ VERIFICAR E RECONECTAR SE NECESSÁRIO - COM MÚLTIPLAS TENTATIVAS
         $conexao = obterConexao();
+        
+        // Se falhou, tentar reconectar até 3 vezes
+        $tentativas = 0;
+        while (!$conexao && $tentativas < 3) {
+            file_put_contents($logFile, "⚠️ [RESULTADO] Tentativa de reconexão " . ($tentativas + 1) . "/3...\n", FILE_APPEND);
+            sleep(1);
+            $conexao = criarNovaConexao();
+            $tentativas++;
+        }
+        
         if (!$conexao) {
-            throw new Exception("Falha ao conectar ao banco de dados");
+            throw new Exception("Falha ao conectar ao banco de dados após 3 tentativas");
+        }
+        
+        // ✅ Verificar com PING antes de executar
+        if (!$conexao->ping()) {
+            file_put_contents($logFile, "⚠️ [RESULTADO] Ping falhou - forçando reconexão\n", FILE_APPEND);
+            $conexao = criarNovaConexao();
+            if (!$conexao) {
+                throw new Exception("Falha ao reconectar após ping falhar");
+            }
         }
         
         file_put_contents($logFile, "✅ Conexão com banco verificada e ativa\n", FILE_APPEND);

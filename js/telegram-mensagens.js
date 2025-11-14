@@ -24,6 +24,15 @@ const TelegramMessenger = {
     // Assim, se chegar uma mensagem nova enquanto está carregando, será detectada
     this.startPolling();
 
+    // ✅ Ler ID do usuário atual a partir do container (setado em PHP)
+    try {
+      const attr = this.container?.dataset?.currentUserId;
+      this.currentUserId = attr ? parseInt(attr, 10) : 0;
+      console.log("ℹ️ Current user id (from container):", this.currentUserId);
+    } catch (err) {
+      this.currentUserId = 0;
+    }
+
     // ✅ DEPOIS carregar as mensagens
     this.loadMessages();
   },
@@ -156,6 +165,28 @@ const TelegramMessenger = {
                     <i class="fas fa-clock"></i>
                     ${msgFromDB.time}
                   </span>
+                  ${
+                    this.currentUserId === 23
+                      ? `
+                    <button class="btn-delete-message" data-message-id="${msgFromDB.id}" title="Deletar mensagem" style="
+                      margin-left: 8px;
+                      background: transparent;
+                      border: none;
+                      color: #ff4444;
+                      font-size: 15px;
+                      cursor: pointer;
+                      transition: all 0.25s ease;
+                      padding: 4px 8px;
+                      border-radius: 4px;
+                      position: relative;
+                    "
+                    onmouseover="this.style.background='rgba(255,68,68,0.15)'; this.style.transform='scale(1.15)'; this.style.color='#ff0000';"
+                    onmouseout="this.style.background='transparent'; this.style.transform='scale(1)'; this.style.color='#ff4444';">
+                      <i class="fas fa-trash"></i>
+                    </button>
+                  `
+                      : ""
+                  }
                 </div>
               </div>
               ${formattedContent}
@@ -163,6 +194,18 @@ const TelegramMessenger = {
 
             // Adicionar ao container
             this.container.appendChild(messageEl);
+
+            // Handler do botão deletar caso exista
+            const btnDel = messageEl.querySelector(".btn-delete-message");
+            if (btnDel) {
+              btnDel.addEventListener("click", (ev) => {
+                ev.stopPropagation();
+                const messageId = parseInt(btnDel.dataset.messageId, 10);
+                if (!messageId) return;
+                // Usar a mesma modal customizada
+                this.showDeleteConfirmation(messageId, messageEl);
+              });
+            }
           });
 
           console.log(
@@ -455,6 +498,28 @@ const TelegramMessenger = {
             <i class="fas fa-clock"></i>
             ${msg.time || msg.hora_mensagem || ""}
           </span>
+          ${
+            this.currentUserId === 23
+              ? `
+            <button class="btn-delete-message" data-message-id="${msg.id}" title="Deletar mensagem" style="
+              margin-left: 8px;
+              background: transparent;
+              border: none;
+              color: #ff4444;
+              font-size: 15px;
+              cursor: pointer;
+              transition: all 0.25s ease;
+              padding: 4px 8px;
+              border-radius: 4px;
+              position: relative;
+            "
+            onmouseover="this.style.background='rgba(255,68,68,0.15)'; this.style.transform='scale(1.15)'; this.style.color='#ff0000';"
+            onmouseout="this.style.background='transparent'; this.style.transform='scale(1)'; this.style.color='#ff4444';">
+              <i class="fas fa-trash"></i>
+            </button>
+          `
+              : ""
+          }
         </div>
       </div>
       ${formattedContent}
@@ -475,6 +540,19 @@ const TelegramMessenger = {
         this.mostrarResultadosTime(msg, messageEl);
       }
     });
+
+    // ✅ Handler do botão de deletar (apenas aparece para usuário 23)
+    const btnDelete = messageEl.querySelector(".btn-delete-message");
+    if (btnDelete) {
+      btnDelete.addEventListener("click", (ev) => {
+        ev.stopPropagation();
+        const messageId = parseInt(btnDelete.dataset.messageId, 10);
+        if (!messageId) return;
+
+        // ✅ Modal de confirmação customizado (em vez de confirm())
+        this.showDeleteConfirmation(messageId, messageEl);
+      });
+    }
 
     // Hover effect - mudar cursor
     messageEl.style.cursor = "pointer";
@@ -1132,6 +1210,158 @@ const TelegramMessenger = {
     // a salva imediatamente no banco de dados. Portanto, quando carregamos
     // via carregar-mensagens-banco.php, a mensagem já está salva!
     console.log("ℹ️ Mensagem já está no banco (salva via webhook):", msg.id);
+  },
+
+  // ✅ NOVA FUNÇÃO: Modal de confirmação customizado para deletar mensagem
+  showDeleteConfirmation(messageId, messageElement) {
+    // Criar overlay modal
+    const overlay = document.createElement("div");
+    overlay.style.cssText = `
+      position: fixed;
+      top: 0;
+      left: 0;
+      right: 0;
+      bottom: 0;
+      background: rgba(0,0,0,0.5);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      z-index: 10000;
+      animation: fadeIn 0.3s ease;
+    `;
+
+    // Criar modal
+    const modal = document.createElement("div");
+    modal.style.cssText = `
+      background: white;
+      border-radius: 12px;
+      padding: 32px;
+      max-width: 400px;
+      text-align: center;
+      box-shadow: 0 10px 40px rgba(0,0,0,0.3);
+      animation: slideUp 0.3s ease;
+    `;
+
+    modal.innerHTML = `
+      <div style="margin-bottom: 16px;">
+        <i class="fas fa-exclamation-circle" style="font-size: 48px; color: #ff4444;"></i>
+      </div>
+      <h3 style="margin: 16px 0; color: #333; font-size: 18px;">Deletar Mensagem?</h3>
+      <p style="color: #666; margin: 12px 0 24px 0; font-size: 14px;">Esta ação <strong>não pode ser desfeita</strong>. A mensagem será removida do banco de dados permanentemente.</p>
+      <div style="display: flex; gap: 12px; justify-content: center;">
+        <button id="btn-cancel" style="
+          padding: 10px 24px;
+          background: #e0e0e0;
+          border: none;
+          border-radius: 6px;
+          cursor: pointer;
+          font-size: 14px;
+          font-weight: 600;
+          color: #333;
+          transition: all 0.2s ease;
+        ">
+          Cancelar
+        </button>
+        <button id="btn-confirm" style="
+          padding: 10px 24px;
+          background: #ff4444;
+          border: none;
+          border-radius: 6px;
+          cursor: pointer;
+          font-size: 14px;
+          font-weight: 600;
+          color: white;
+          transition: all 0.2s ease;
+        ">
+          Sim, Deletar
+        </button>
+      </div>
+      <style>
+        @keyframes fadeIn {
+          from { opacity: 0; }
+          to { opacity: 1; }
+        }
+        @keyframes slideUp {
+          from { transform: translateY(20px); opacity: 0; }
+          to { transform: translateY(0); opacity: 1; }
+        }
+        #btn-cancel:hover {
+          background: #d0d0d0;
+          transform: translateY(-2px);
+        }
+        #btn-confirm:hover {
+          background: #ff2222;
+          transform: translateY(-2px);
+          box-shadow: 0 4px 12px rgba(255,68,68,0.3);
+        }
+      </style>
+    `;
+
+    overlay.appendChild(modal);
+    document.body.appendChild(overlay);
+
+    const btnCancel = modal.querySelector("#btn-cancel");
+    const btnConfirm = modal.querySelector("#btn-confirm");
+
+    // Fechar modal
+    const closeModal = () => {
+      overlay.style.animation = "fadeOut 0.3s ease";
+      setTimeout(() => overlay.remove(), 300);
+    };
+
+    btnCancel.addEventListener("click", closeModal);
+    overlay.addEventListener("click", (e) => {
+      if (e.target === overlay) closeModal();
+    });
+
+    // Confirmar delete
+    btnConfirm.addEventListener("click", () => {
+      btnConfirm.disabled = true;
+      btnConfirm.textContent = "⏳ Deletando...";
+
+      fetch("api/deletar-mensagem.php", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ message_id: messageId }),
+      })
+        .then((r) => r.json())
+        .then((resp) => {
+          if (resp && resp.success) {
+            // Remover do DOM com animação
+            messageElement.style.animation = "slideOut 0.3s ease";
+            setTimeout(() => {
+              messageElement.remove();
+              this.messagesCache.delete(messageId);
+              closeModal();
+              console.log("✅ Mensagem deletada:", messageId);
+            }, 300);
+          } else {
+            alert("❌ Erro: " + (resp.message || "Erro desconhecido"));
+            btnConfirm.disabled = false;
+            btnConfirm.textContent = "Sim, Deletar";
+          }
+        })
+        .catch((err) => {
+          console.error("Erro ao deletar:", err);
+          alert("❌ Erro ao deletar mensagem. Veja console para detalhes.");
+          btnConfirm.disabled = false;
+          btnConfirm.textContent = "Sim, Deletar";
+        });
+    });
+
+    // Adicionar CSS para animação de saída
+    const style = document.createElement("style");
+    style.textContent = `
+      @keyframes slideOut {
+        from { opacity: 1; transform: translateX(0); }
+        to { opacity: 0; transform: translateX(100%); }
+      }
+      @keyframes fadeOut {
+        from { opacity: 1; }
+        to { opacity: 0; }
+      }
+    `;
+    document.head.appendChild(style);
   },
 };
 

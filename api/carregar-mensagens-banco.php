@@ -139,7 +139,8 @@ function getMessagesFromDatabase() {
             }
             
             $messages[] = [
-                'id' => intval($row['telegram_message_id'] ?: $row['id']),
+                'id' => intval($row['id']),  // ✅ USA ID PRIMÁRIO (importante para delete)
+                'telegram_message_id' => intval($row['telegram_message_id'] ?: 0),
                 'text' => $row['mensagem_completa'],
                 'timestamp' => intval($row['timestamp']),
                 'time' => $row['hora_mensagem'] ?: date('H:i:s', intval($row['timestamp'])),
@@ -240,7 +241,8 @@ function pollNewMessages() {
             }
             
             $newMessages[] = [
-                'id' => intval($row['telegram_message_id'] ?: $row['id']),
+                'id' => intval($row['id']),  // ✅ USA ID PRIMÁRIO (importante para delete)
+                'telegram_message_id' => intval($row['telegram_message_id'] ?: 0),
                 'text' => $row['mensagem_completa'],
                 'timestamp' => intval($row['timestamp']),
                 'time' => $row['hora_mensagem'] ?: date('H:i:s', intval($row['timestamp'])),
@@ -341,7 +343,8 @@ function getMessagesByDate() {
             }
             
             $messages[] = [
-                'id' => intval($row['telegram_message_id'] ?: $row['id']),
+                'id' => intval($row['id']),  // ✅ USA ID PRIMÁRIO (importante para delete)
+                'telegram_message_id' => intval($row['telegram_message_id'] ?: 0),
                 'text' => $row['mensagem_completa'],
                 'timestamp' => intval($row['timestamp']),
                 'time' => $row['hora_mensagem'] ?: date('H:i:s', intval($row['timestamp'])),

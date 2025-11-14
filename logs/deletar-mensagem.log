@@ -1,0 +1,10 @@
+[2025-11-13 21:23:45] Usuário 23 deletou mensagem ID: 327
+[2025-11-13 21:24:28] Usuário 23 deletou mensagem ID: 317
+[2025-11-13 21:27:11] Usuário 23 deletou mensagem ID: 328
+[2025-11-13 21:37:48] Usuário 23 deletou mensagem ID: 329
+[2025-11-13 21:49:09] DEBUG DELETE
+  messageId: 330 (tipo: integer)
+  usuarioId: 23
+  Input recebido: {"message_id":330}
+  ✅ Deletado por ID primário
+[2025-11-13 21:49:09] ✅ Usuário 23 deletou mensagem ID: 330 (affected_rows: 1)
