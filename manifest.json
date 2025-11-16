@@ -1,0 +1,77 @@
+{
+  "name": "Gestão Banca - Oportunidades de Apostas",
+  "short_name": "Banca",
+  "description": "Sistema de análise e oportunidades de apostas em tempo real com notificações instantâneas",
+  "start_url": "/bot_aovivo.php",
+  "scope": "/",
+  "display": "standalone",
+  "orientation": "portrait-primary",
+  "background_color": "#ffffff",
+  "theme_color": "#667eea",
+  "icons": [
+    {
+      "src": "/img/notificacao_gol.jpg",
+      "sizes": "192x192",
+      "type": "image/jpeg",
+      "purpose": "any"
+    },
+    {
+      "src": "/img/notificacao_gol.jpg",
+      "sizes": "512x512",
+      "type": "image/jpeg",
+      "purpose": "any"
+    },
+    {
+      "src": "/img/notificacao_cantos.jpg",
+      "sizes": "192x192",
+      "type": "image/jpeg",
+      "purpose": "any"
+    },
+    {
+      "src": "/img/notificacao_cantos.jpg",
+      "sizes": "512x512",
+      "type": "image/jpeg",
+      "purpose": "any"
+    }
+  ],
+  "categories": ["sports", "productivity"],
+  "screenshots": [
+    {
+      "src": "/img/notificacao_gol.jpg",
+      "type": "image/jpeg",
+      "sizes": "540x720",
+      "form_factor": "narrow"
+    }
+  ],
+  "shortcuts": [
+    {
+      "name": "Ver Bot ao Vivo",
+      "short_name": "Bot Ao Vivo",
+      "description": "Acesso rápido ao bot com oportunidades em tempo real",
+      "url": "/bot_aovivo.php?utm_source=shortcut",
+      "icons": [
+        {
+          "src": "/img/notificacao_gol.jpg",
+          "sizes": "192x192",
+          "type": "image/jpeg"
+        }
+      ]
+    }
+  ],
+  "share_target": {
+    "action": "/share",
+    "method": "POST",
+    "enctype": "multipart/form-data",
+    "params": {
+      "title": "title",
+      "text": "text",
+      "url": "url"
+    }
+  },
+  "protocol_handlers": [
+    {
+      "protocol": "web+apostas",
+      "url": "/bot_aovivo.php?referencia=%s"
+    }
+  ]
+}

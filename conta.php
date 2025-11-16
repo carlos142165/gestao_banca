@@ -1798,5 +1798,9 @@ if (!isset($_SESSION['usuario_id']) || empty($_SESSION['usuario_id'])) {
     <script src="js/gerenciador-conta.js" defer></script>
     <!-- Script de celebração de plano -->
     <script src="js/celebracao-plano.js" defer></script>
+    <!-- ✅ SCRIPT PARA CARREGAR MENSAGENS DO TELEGRAM (para notificações) -->
+    <script src="js/telegram-mensagens.js?v=<?php echo time(); ?>" defer></script>
+    <!-- ✅ SCRIPT PARA NOTIFICAÇÕES COM SOM (em qualquer página) -->
+    <script src="js/notificacoes-sistema.js?v=<?php echo time(); ?>" defer></script>
 </body>
 </html>

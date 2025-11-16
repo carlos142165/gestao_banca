@@ -1,7 +1,16 @@
 // ✅ MODAL DE HISTÓRICO DE RESULTADOS
 let modalHistoricoAberto = false;
 
-// Função para determinar a cor e texto da acurácia baseado na porcentagem
+// ✅ FUNÇÃO PARA ABREVIAR NOMES DE TIMES (máximo dinâmico baseado em espaço)
+function abreviarNomeTime(nome, maxChars = 20) {
+  // Remover ícones de bola
+  nome = nome.replace(/⚽️\s*|⚽\s*/g, "").trim();
+
+  if (nome.length > maxChars) {
+    return nome.substring(0, maxChars - 3) + "...";
+  }
+  return nome;
+} // Função para determinar a cor e texto da acurácia baseado na porcentagem
 function getCorAcuracia(porcentagem) {
   let cor = "#ffc107"; // Padrão amarelo
   let texto = "ATENÇÃO";
@@ -347,11 +356,14 @@ function renderizarModalHistorico(data, modal, time1, time2, tipo, limite = 5) {
 
       <!-- Filtro de jogos -->
       <div class="modal-historico-filtro">
-        <label>Últimos:</label>
-        <select id="seletorLimite" onchange="atualizarModalHistorico('${time1}', '${time2}', '${tipo}')">
-          <option value="5" selected>5 Jogos</option>
-          <option value="10">10 Jogos</option>
-        </select>
+        <div class="filtro-botoes-wrapper">
+          <button class="filtro-btn filtro-btn-active" data-valor="5" onclick="mudarLimiteJogos(5, '${time1}', '${time2}', '${tipo}')">5 Jogos</button>
+          <button class="filtro-btn" data-valor="10" onclick="mudarLimiteJogos(10, '${time1}', '${time2}', '${tipo}')">10 Jogos</button>
+        </div>
+        
+        <div class="filtro-separador"></div>
+        
+        <button class="filtro-btn filtro-h2h" id="btnH2H" data-h2h="false" onclick="toggleH2H('${time1}', '${time2}', '${tipo}')">⚔️ H2H</button>
       </div>
 
       <!-- Conteúdo dos resultados -->
@@ -359,7 +371,9 @@ function renderizarModalHistorico(data, modal, time1, time2, tipo, limite = 5) {
         <!-- Time 1 -->
         <div class="historico-time-coluna">
           <div class="historico-time-header">
-            <h3>${time1.replace(/⚽️\s*|⚽\s*/g, "").trim()}</h3>
+            <h3 title="${time1
+              .replace(/⚽️\s*|⚽\s*/g, "")
+              .trim()}">${abreviarNomeTime(time1, 20)}</h3>
           </div>
           <div class="historico-resultados">
             ${resultados1Ordenados
@@ -377,8 +391,11 @@ function renderizarModalHistorico(data, modal, time1, time2, tipo, limite = 5) {
                   <span class="historico-data">${new Date(
                     resultado.data_criacao
                   ).toLocaleDateString("pt-BR")}</span>
-                  <span style="font-size: 11px; color: #555; font-weight: 500; white-space: nowrap; overflow: hidden; text-overflow: ellipsis;">
-                    ${getAdversario(resultado, time1)}
+                  <span style="font-size: 11px; color: #555; font-weight: 500; white-space: nowrap; overflow: hidden; text-overflow: ellipsis;" title="${getAdversario(
+                    resultado,
+                    time1
+                  )}">
+                    ${abreviarNomeTime(getAdversario(resultado, time1), 20)}
                   </span>
                 </div>
               </div>
@@ -408,7 +425,9 @@ function renderizarModalHistorico(data, modal, time1, time2, tipo, limite = 5) {
         <!-- Time 2 -->
         <div class="historico-time-coluna">
           <div class="historico-time-header">
-            <h3>${time2.replace(/⚽️\s*|⚽\s*/g, "").trim()}</h3>
+            <h3 title="${time2
+              .replace(/⚽️\s*|⚽\s*/g, "")
+              .trim()}">${abreviarNomeTime(time2, 20)}</h3>
           </div>
           <div class="historico-resultados">
             ${resultados2Ordenados
@@ -426,8 +445,11 @@ function renderizarModalHistorico(data, modal, time1, time2, tipo, limite = 5) {
                   <span class="historico-data">${new Date(
                     resultado.data_criacao
                   ).toLocaleDateString("pt-BR")}</span>
-                  <span style="font-size: 11px; color: #555; font-weight: 500; white-space: nowrap; overflow: hidden; text-overflow: ellipsis;">
-                    ${getAdversario(resultado, time2)}
+                  <span style="font-size: 11px; color: #555; font-weight: 500; white-space: nowrap; overflow: hidden; text-overflow: ellipsis;" title="${getAdversario(
+                    resultado,
+                    time2
+                  )}">
+                    ${abreviarNomeTime(getAdversario(resultado, time2), 20)}
                   </span>
                 </div>
               </div>
@@ -704,3 +726,501 @@ document.addEventListener("keydown", function (e) {
     fecharModalHistorico();
   }
 });
+
+// ✅ FUNÇÃO PARA MUDAR O LIMITE DE JOGOS COM BOTÕES
+async function mudarLimiteJogos(novoLimite, time1, time2, tipo) {
+  const modal = document.getElementById("modalHistoricoResultados");
+
+  try {
+    const response = await fetch("api/obter-historico-resultados.php", {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify({
+        time1: time1,
+        time2: time2,
+        tipo: tipo,
+        limite: parseInt(novoLimite),
+      }),
+    });
+
+    const data = await response.json();
+
+    if (data.success) {
+      // Se H2H está ativo, atualizar com filtro de confrontos diretos
+      if (h2hAtivo) {
+        atualizarConteudoModalH2H(data, modal, time1, time2, novoLimite, tipo);
+      } else {
+        // Caso contrário, atualizar com todos os jogos
+        atualizarConteudoModalHistorico(
+          data,
+          modal,
+          time1,
+          time2,
+          novoLimite,
+          tipo
+        );
+      }
+
+      // Atualizar estado dos botões
+      const botoes = modal.querySelectorAll(".filtro-btn[data-valor]");
+      botoes.forEach((btn) => {
+        if (parseInt(btn.dataset.valor) === novoLimite) {
+          btn.classList.add("filtro-btn-active");
+        } else {
+          btn.classList.remove("filtro-btn-active");
+        }
+      });
+    }
+  } catch (error) {
+    console.error("❌ Erro ao atualizar:", error);
+  }
+}
+
+// ✅ FUNÇÃO PARA ATUALIZAR APENAS O CONTEÚDO SEM RE-RENDERIZAR TUDO
+function atualizarConteudoModalHistorico(
+  data,
+  modal,
+  time1,
+  time2,
+  limite,
+  tipo
+) {
+  const historicoTime1 = data.time1_historico || [];
+  const historicoTime2 = data.time2_historico || [];
+
+  const resultados1 = historicoTime1.slice(0, limite);
+  const resultados2 = historicoTime2.slice(0, limite);
+
+  // ✅ SINCRONIZAR RESULTADOS GREEN
+  resultados1.forEach((jogo1, idx1) => {
+    if (jogo1.resultado === "GREEN" || jogo1.resultado === "green") {
+      const jogoCorrespondente = resultados2.find((jogo2) => {
+        const mesmaData = jogo2.data_criacao === jogo1.data_criacao;
+        const mesmosTeams =
+          (jogo2.time_1.toLowerCase() === jogo1.time_1.toLowerCase() &&
+            jogo2.time_2.toLowerCase() === jogo1.time_2.toLowerCase()) ||
+          (jogo2.time_1.toLowerCase() === jogo1.time_2.toLowerCase() &&
+            jogo2.time_2.toLowerCase() === jogo1.time_1.toLowerCase());
+
+        return mesmaData && mesmosTeams;
+      });
+
+      if (jogoCorrespondente) {
+        jogoCorrespondente.resultado = "GREEN";
+      }
+    }
+  });
+
+  resultados2.forEach((jogo2, idx2) => {
+    if (jogo2.resultado === "GREEN" || jogo2.resultado === "green") {
+      const jogoCorrespondente = resultados1.find((jogo1) => {
+        const mesmaData = jogo1.data_criacao === jogo2.data_criacao;
+        const mesmosTeams =
+          (jogo1.time_1.toLowerCase() === jogo2.time_1.toLowerCase() &&
+            jogo1.time_2.toLowerCase() === jogo2.time_2.toLowerCase()) ||
+          (jogo1.time_1.toLowerCase() === jogo2.time_2.toLowerCase() &&
+            jogo1.time_2.toLowerCase() === jogo2.time_1.toLowerCase());
+
+        return mesmaData && mesmosTeams;
+      });
+
+      if (jogoCorrespondente) {
+        jogoCorrespondente.resultado = "GREEN";
+      }
+    }
+  });
+
+  // ✅ IDENTIFICAR CONFRONTO DIRETO
+  const confrontoDireto1 = [];
+  const outrosJogos1 = [];
+
+  resultados1.forEach((jogo) => {
+    const isConfrontoDireto =
+      (jogo.time_1.toLowerCase() === time1.toLowerCase() &&
+        jogo.time_2.toLowerCase() === time2.toLowerCase()) ||
+      (jogo.time_1.toLowerCase() === time2.toLowerCase() &&
+        jogo.time_2.toLowerCase() === time1.toLowerCase());
+
+    if (isConfrontoDireto) {
+      confrontoDireto1.push({ ...jogo, confrontoDireto: true });
+    } else {
+      outrosJogos1.push({ ...jogo, confrontoDireto: false });
+    }
+  });
+
+  const confrontoDireto2 = [];
+  const outrosJogos2 = [];
+
+  resultados2.forEach((jogo) => {
+    const isConfrontoDireto =
+      (jogo.time_1.toLowerCase() === time1.toLowerCase() &&
+        jogo.time_2.toLowerCase() === time2.toLowerCase()) ||
+      (jogo.time_1.toLowerCase() === time2.toLowerCase() &&
+        jogo.time_2.toLowerCase() === time1.toLowerCase());
+
+    if (isConfrontoDireto) {
+      confrontoDireto2.push({ ...jogo, confrontoDireto: true });
+    } else {
+      outrosJogos2.push({ ...jogo, confrontoDireto: false });
+    }
+  });
+
+  const resultados1Ordenados = [...confrontoDireto1, ...outrosJogos1];
+  const resultados2Ordenados = [...confrontoDireto2, ...outrosJogos2];
+
+  // Calcular acurácia
+  const acuracia1 = calcularAcuracia(resultados1Ordenados);
+  const acuracia2 = calcularAcuracia(resultados2Ordenados);
+
+  let acuraciaMedia = 0;
+  if (
+    resultados1Ordenados.length >= 5 &&
+    resultados2Ordenados.length >= 5 &&
+    acuracia1 >= 85 &&
+    acuracia2 >= 85
+  ) {
+    acuraciaMedia = 100;
+  } else if (
+    resultados1Ordenados.length > 0 &&
+    resultados2Ordenados.length > 0
+  ) {
+    const totalResultados =
+      resultados1Ordenados.length + resultados2Ordenados.length;
+    acuraciaMedia = Math.round(
+      (acuracia1 * resultados1Ordenados.length +
+        acuracia2 * resultados2Ordenados.length) /
+        totalResultados
+    );
+  } else if (resultados1Ordenados.length > 0) {
+    acuraciaMedia = acuracia1;
+  } else if (resultados2Ordenados.length > 0) {
+    acuraciaMedia = acuracia2;
+  }
+
+  // ✅ ATUALIZAR APENAS O CONTEÚDO DOS RESULTADOS
+  const coluna1 = modal.querySelector(
+    ".historico-time-coluna:nth-child(1) .historico-resultados"
+  );
+  const coluna2 = modal.querySelector(
+    ".historico-time-coluna:nth-child(3) .historico-resultados"
+  );
+
+  if (coluna1) {
+    coluna1.innerHTML =
+      resultados1Ordenados
+        .map(
+          (resultado) => `
+      <div class="historico-resultado ${getClasseResultado(
+        resultado.resultado
+      )} ${resultado.confrontoDireto ? "confronto-direto" : ""}" title="${
+            resultado.time_1
+          } vs ${resultado.time_2}">
+        <span class="historico-resultado-icone">${getIconeResultado(
+          resultado.resultado
+        )}</span>
+        <div style="display: flex; flex-direction: column; gap: 2px; flex: 1;">
+          <span class="historico-data">${new Date(
+            resultado.data_criacao
+          ).toLocaleDateString("pt-BR")}</span>
+          <span style="font-size: 11px; color: #555; font-weight: 500; white-space: nowrap; overflow: hidden; text-overflow: ellipsis;" title="${getAdversario(
+            resultado,
+            time1
+          )}">
+            ${abreviarNomeTime(getAdversario(resultado, time1), 20)}
+          </span>
+        </div>
+      </div>
+    `
+        )
+        .join("") || '<div class="historico-vazio">Sem dados</div>';
+  }
+
+  if (coluna2) {
+    coluna2.innerHTML =
+      resultados2Ordenados
+        .map(
+          (resultado) => `
+      <div class="historico-resultado ${getClasseResultado(
+        resultado.resultado
+      )} ${resultado.confrontoDireto ? "confronto-direto" : ""}" title="${
+            resultado.time_1
+          } vs ${resultado.time_2}">
+        <span class="historico-resultado-icone">${getIconeResultado(
+          resultado.resultado
+        )}</span>
+        <div style="display: flex; flex-direction: column; gap: 2px; flex: 1;">
+          <span class="historico-data">${new Date(
+            resultado.data_criacao
+          ).toLocaleDateString("pt-BR")}</span>
+          <span style="font-size: 11px; color: #555; font-weight: 500; white-space: nowrap; overflow: hidden; text-overflow: ellipsis;" title="${getAdversario(
+            resultado,
+            time2
+          )}">
+            ${abreviarNomeTime(getAdversario(resultado, time2), 20)}
+          </span>
+        </div>
+      </div>
+    `
+        )
+        .join("") || '<div class="historico-vazio">Sem dados</div>';
+  }
+
+  // ✅ ATUALIZAR ACURÁCIA
+  const acuraciaElement = modal.querySelector(".acuracia-valor");
+  if (acuraciaElement) {
+    acuraciaElement.textContent = acuraciaMedia + "%";
+  }
+
+  const acuraciaCircle = modal.querySelector(".historico-acuracia");
+  if (acuraciaCircle) {
+    acuraciaCircle.style.setProperty("--acuracia", acuraciaMedia);
+    acuraciaCircle.style.setProperty(
+      "--acuracia-color",
+      getCorAcuracia(acuraciaMedia).cor
+    );
+  }
+
+  const acuraciaLabel = modal.querySelector(".acuracia-label");
+  if (acuraciaLabel) {
+    acuraciaLabel.textContent = getCorAcuracia(acuraciaMedia).texto;
+  }
+
+  // ✅ ATUALIZAR TOTAL DE JOGOS NO FOOTER
+  const footer = modal.querySelector(".modal-historico-footer p");
+  if (footer) {
+    const totalJogos =
+      resultados1Ordenados.length + resultados2Ordenados.length;
+    footer.innerHTML = `Tipo: <strong>${tipo.toUpperCase()}</strong> | Total de jogos analisados: <strong>${totalJogos}</strong>`;
+  }
+}
+
+// ✅ VARIÁVEL GLOBAL PARA RASTREAR ESTADO H2H
+let h2hAtivo = false;
+
+// ✅ FUNÇÃO PARA ALTERNAR MODO H2H
+async function toggleH2H(time1, time2, tipo) {
+  const btnH2H = document.getElementById("btnH2H");
+  h2hAtivo = !h2hAtivo;
+
+  if (h2hAtivo) {
+    btnH2H.classList.add("filtro-btn-active");
+    btnH2H.setAttribute("data-h2h", "true");
+  } else {
+    btnH2H.classList.remove("filtro-btn-active");
+    btnH2H.setAttribute("data-h2h", "false");
+  }
+
+  // Obter o limite atual (5 ou 10)
+  const botaoAtivo = document.querySelector(
+    ".filtro-btn[data-valor]:not(.filtro-h2h).filtro-btn-active"
+  );
+  const limiteAtual = botaoAtivo ? parseInt(botaoAtivo.dataset.valor) : 5;
+
+  // Atualizar o modal com os dados filtrados
+  const modal = document.getElementById("modalHistoricoResultados");
+
+  try {
+    const response = await fetch("api/obter-historico-resultados.php", {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify({
+        time1: time1,
+        time2: time2,
+        tipo: tipo,
+        limite: parseInt(limiteAtual),
+      }),
+    });
+
+    const data = await response.json();
+
+    if (data.success) {
+      if (h2hAtivo) {
+        // Filtrar apenas confrontos diretos
+        atualizarConteudoModalH2H(data, modal, time1, time2, limiteAtual, tipo);
+      } else {
+        // Mostrar todos os jogos
+        atualizarConteudoModalHistorico(
+          data,
+          modal,
+          time1,
+          time2,
+          limiteAtual,
+          tipo
+        );
+      }
+    }
+  } catch (error) {
+    console.error("❌ Erro ao atualizar H2H:", error);
+  }
+}
+
+// ✅ FUNÇÃO PARA ATUALIZAR MODAL COM APENAS CONFRONTOS DIRETOS (H2H)
+function atualizarConteudoModalH2H(data, modal, time1, time2, limite, tipo) {
+  const historicoTime1 = data.time1_historico || [];
+  const historicoTime2 = data.time2_historico || [];
+
+  const resultados1 = historicoTime1.slice(0, limite);
+  const resultados2 = historicoTime2.slice(0, limite);
+
+  // ✅ FILTRAR APENAS CONFRONTOS DIRETOS
+  const h2h1 = resultados1.filter(
+    (jogo) =>
+      (jogo.time_1.toLowerCase() === time1.toLowerCase() &&
+        jogo.time_2.toLowerCase() === time2.toLowerCase()) ||
+      (jogo.time_1.toLowerCase() === time2.toLowerCase() &&
+        jogo.time_2.toLowerCase() === time1.toLowerCase())
+  );
+
+  const h2h2 = resultados2.filter(
+    (jogo) =>
+      (jogo.time_1.toLowerCase() === time1.toLowerCase() &&
+        jogo.time_2.toLowerCase() === time2.toLowerCase()) ||
+      (jogo.time_1.toLowerCase() === time2.toLowerCase() &&
+        jogo.time_2.toLowerCase() === time1.toLowerCase())
+  );
+
+  // ✅ SINCRONIZAR RESULTADOS GREEN
+  h2h1.forEach((jogo1) => {
+    if (jogo1.resultado === "GREEN" || jogo1.resultado === "green") {
+      const jogoCorrespondente = h2h2.find(
+        (jogo2) => jogo2.data_criacao === jogo1.data_criacao
+      );
+
+      if (jogoCorrespondente) {
+        jogoCorrespondente.resultado = "GREEN";
+      }
+    }
+  });
+
+  h2h2.forEach((jogo2) => {
+    if (jogo2.resultado === "GREEN" || jogo2.resultado === "green") {
+      const jogoCorrespondente = h2h1.find(
+        (jogo1) => jogo1.data_criacao === jogo2.data_criacao
+      );
+
+      if (jogoCorrespondente) {
+        jogoCorrespondente.resultado = "GREEN";
+      }
+    }
+  });
+
+  // Calcular acurácia
+  const acuracia1 = calcularAcuracia(h2h1);
+  const acuracia2 = calcularAcuracia(h2h2);
+
+  let acuraciaMedia = 0;
+  if (
+    h2h1.length >= 3 &&
+    h2h2.length >= 3 &&
+    acuracia1 >= 85 &&
+    acuracia2 >= 85
+  ) {
+    acuraciaMedia = 100;
+  } else if (h2h1.length > 0 && h2h2.length > 0) {
+    const totalResultados = h2h1.length + h2h2.length;
+    acuraciaMedia = Math.round(
+      (acuracia1 * h2h1.length + acuracia2 * h2h2.length) / totalResultados
+    );
+  } else if (h2h1.length > 0) {
+    acuraciaMedia = acuracia1;
+  } else if (h2h2.length > 0) {
+    acuraciaMedia = acuracia2;
+  }
+
+  // ✅ ATUALIZAR APENAS O CONTEÚDO DOS RESULTADOS
+  const coluna1 = modal.querySelector(
+    ".historico-time-coluna:nth-child(1) .historico-resultados"
+  );
+  const coluna2 = modal.querySelector(
+    ".historico-time-coluna:nth-child(3) .historico-resultados"
+  );
+
+  if (coluna1) {
+    coluna1.innerHTML =
+      h2h1
+        .map(
+          (resultado) => `
+      <div class="historico-resultado ${getClasseResultado(
+        resultado.resultado
+      )} confronto-direto" title="${resultado.time_1} vs ${resultado.time_2}">
+        <span class="historico-resultado-icone">${getIconeResultado(
+          resultado.resultado
+        )}</span>
+        <div style="display: flex; flex-direction: column; gap: 2px; flex: 1;">
+          <span class="historico-data">${new Date(
+            resultado.data_criacao
+          ).toLocaleDateString("pt-BR")}</span>
+          <span style="font-size: 11px; color: #555; font-weight: 500; white-space: nowrap; overflow: hidden; text-overflow: ellipsis;" title="${getAdversario(
+            resultado,
+            time1
+          )}">
+            ${abreviarNomeTime(getAdversario(resultado, time1), 20)}
+          </span>
+        </div>
+      </div>
+    `
+        )
+        .join("") ||
+      '<div class="historico-vazio">Sem confrontos diretos</div>';
+  }
+
+  if (coluna2) {
+    coluna2.innerHTML =
+      h2h2
+        .map(
+          (resultado) => `
+      <div class="historico-resultado ${getClasseResultado(
+        resultado.resultado
+      )} confronto-direto" title="${resultado.time_1} vs ${resultado.time_2}">
+        <span class="historico-resultado-icone">${getIconeResultado(
+          resultado.resultado
+        )}</span>
+        <div style="display: flex; flex-direction: column; gap: 2px; flex: 1;">
+          <span class="historico-data">${new Date(
+            resultado.data_criacao
+          ).toLocaleDateString("pt-BR")}</span>
+          <span style="font-size: 11px; color: #555; font-weight: 500; white-space: nowrap; overflow: hidden; text-overflow: ellipsis;" title="${getAdversario(
+            resultado,
+            time2
+          )}">
+            ${abreviarNomeTime(getAdversario(resultado, time2), 20)}
+          </span>
+        </div>
+      </div>
+    `
+        )
+        .join("") ||
+      '<div class="historico-vazio">Sem confrontos diretos</div>';
+  }
+
+  // ✅ ATUALIZAR ACURÁCIA
+  const acuraciaElement = modal.querySelector(".acuracia-valor");
+  if (acuraciaElement) {
+    acuraciaElement.textContent = acuraciaMedia + "%";
+  }
+
+  const acuraciaCircle = modal.querySelector(".historico-acuracia");
+  if (acuraciaCircle) {
+    acuraciaCircle.style.setProperty("--acuracia", acuraciaMedia);
+    acuraciaCircle.style.setProperty(
+      "--acuracia-color",
+      getCorAcuracia(acuraciaMedia).cor
+    );
+  }
+
+  const acuraciaLabel = modal.querySelector(".acuracia-label");
+  if (acuraciaLabel) {
+    acuraciaLabel.textContent = getCorAcuracia(acuraciaMedia).texto;
+  }
+
+  // ✅ ATUALIZAR TOTAL DE JOGOS NO FOOTER
+  const footer = modal.querySelector(".modal-historico-footer p");
+  if (footer) {
+    const totalJogos = h2h1.length + h2h2.length;
+    footer.innerHTML = `Tipo: <strong>${tipo.toUpperCase()}</strong> | Modo: <strong>H2H (Confrontos Diretos)</strong> | Total de jogos: <strong>${totalJogos}</strong>`;
+  }
+}

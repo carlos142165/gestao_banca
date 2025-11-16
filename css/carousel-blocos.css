@@ -84,7 +84,7 @@
     scroll-snap-align: start !important;
     scroll-snap-stop: always !important;
     margin: 0 !important;
-    padding: 20px !important;
+    padding: 0 !important;
     box-sizing: border-box !important;
     overflow-y: auto !important;
     overflow-x: hidden !important;

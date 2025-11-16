@@ -1,17 +1,6 @@
 <?php
-// ✅ LIMPAR OUTPUT BUFFER (remove espaços em branco extras)
-ob_clean();
-ob_start();
-
 session_start();
-header('Content-Type: application/json; charset=utf-8');
-
-// ✅ TRATAMENTO DE ERROS - Converte warnings/notices em JSON
-set_error_handler(function($errno, $errstr, $errfile, $errline) {
-    http_response_code(500);
-    echo json_encode(['success' => false, 'message' => 'Erro: ' . $errstr, 'debug' => "$errfile:$errline"]);
-    exit();
-});
+header('Content-Type: application/json');
 
 // Incluir configuração do banco
 require_once __DIR__ . '/config.php';
@@ -88,9 +77,7 @@ if (empty($dados['mensagem_completa']) || empty($dados['titulo'])) {
 $dados['hora_mensagem'] = date('H:i:s');  // Hora atual em formato HH:MM:SS
 $dados['status_aposta'] = 'ativa';        // Status padrão
 $dados['resultado'] = null;               // Resultado vazio inicialmente
-
-// ⚠️ NÃO INCLUIR telegram_message_id - será gerado automaticamente pelo banco com AUTO_INCREMENT
-// Se o campo não tiver AUTO_INCREMENT, o banco o deixará como NULL, que é permitido
+$dados['telegram_message_id'] = (int)(microtime(true) * 1000); // ID único baseado em timestamp (milliseconds)
 
 // ✅ CONSTRUIR INSERÇÃO
 $colunas = [];
@@ -98,7 +85,7 @@ $placeholders = [];
 $tipos = '';
 $valores = [];
 
-// Adicionar campos do formulário (SEM telegram_message_id - será gerado automaticamente pelo banco)
+// Adicionar campos do formulário
 foreach ($dados as $campo => $valor) {
     $colunas[] = "`" . $campo . "`";
     $placeholders[] = "?";
@@ -108,7 +95,7 @@ foreach ($dados as $campo => $valor) {
                          'ataques_perigosos_1', 'ataques_perigosos_2', 'cartoes_amarelos_1',
                          'cartoes_amarelos_2', 'cartoes_vermelhos_1', 'cartoes_vermelhos_2',
                          'chutes_lado_1', 'chutes_lado_2', 'chutes_alvo_1', 'chutes_alvo_2',
-                         'posse_bola_1', 'posse_bola_2'])) {
+                         'posse_bola_1', 'posse_bola_2', 'telegram_message_id'])) {
         $tipos .= 'i';
         $valores[] = empty($valor) ? 0 : intval($valor);
     } elseif (in_array($campo, ['odds', 'odds_inicial_casa', 'odds_inicial_empate', 'odds_inicial_fora', 'valor_over'])) {
@@ -153,47 +140,11 @@ if ($stmt->execute()) {
     error_log("✅ Aposta salva! ID: " . $stmt->insert_id);
     echo json_encode(['success' => true, 'message' => '✅ Aposta salva com sucesso!', 'aposta_id' => $stmt->insert_id]);
 } else {
-    // Se erro for duplicate key em telegram_message_id, tenta sem esse campo
-    $erro = $stmt->error;
-    if (strpos($erro, 'telegram_message_id') !== false && strpos($erro, 'Duplicate') !== false) {
-        error_log("⚠️ Erro de duplicate telegram_message_id, tentando sem esse campo...");
-        
-        // Remover telegram_message_id dos dados
-        $colunas_sem_tg = array_filter($colunas, function($col) {
-            return $col !== '`telegram_message_id`';
-        });
-        $placeholders_sem_tg = array_slice($placeholders, 0, count($colunas_sem_tg));
-        
-        // Recriar SQL sem telegram_message_id
-        $sql_sem_tg = "INSERT INTO bote (" . implode(', ', $colunas_sem_tg) . ") VALUES (" . implode(', ', $placeholders_sem_tg) . ")";
-        
-        $stmt2 = $conexao->prepare($sql_sem_tg);
-        if ($stmt2 && $stmt2->bind_param(substr($tipos, 0, count($colunas_sem_tg)), ...array_slice($valores, 0, count($colunas_sem_tg)))) {
-            if ($stmt2->execute()) {
-                error_log("✅ Aposta salva (sem telegram_message_id)! ID: " . $stmt2->insert_id);
-                echo json_encode(['success' => true, 'message' => '✅ Aposta salva com sucesso!', 'aposta_id' => $stmt2->insert_id]);
-                $stmt2->close();
-            } else {
-                http_response_code(500);
-                error_log("❌ Erro execute (segunda tentativa): " . $stmt2->error);
-                echo json_encode(['success' => false, 'message' => 'Erro ao salvar: ' . $stmt2->error]);
-                $stmt2->close();
-            }
-        } else {
-            http_response_code(500);
-            error_log("❌ Erro na segunda tentativa: " . $conexao->error);
-            echo json_encode(['success' => false, 'message' => 'Erro ao salvar: ' . $conexao->error]);
-        }
-    } else {
-        http_response_code(500);
-        error_log("❌ Erro execute: " . $stmt->error);
-        echo json_encode(['success' => false, 'message' => 'Erro ao salvar: ' . $stmt->error]);
-    }
+    http_response_code(500);
+    error_log("❌ Erro execute: " . $stmt->error);
+    echo json_encode(['success' => false, 'message' => 'Erro ao salvar: ' . $stmt->error]);
 }
 
 $stmt->close();
 $conexao->close();
-
-// ✅ LIMPAR OUTPUT BUFFER E ENVIAR RESPOSTA
-ob_end_flush();
 ?>

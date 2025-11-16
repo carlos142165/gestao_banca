@@ -1,0 +1,1095 @@
+[2025-11-15 14:52:58] ==== INICIANDO OBTER-DIAS-MES ====
+[2025-11-15 14:52:58] Usuario ID da sessão: 23
+[2025-11-15 14:52:58] ✅ Conexão com banco de dados OK
+[2025-11-15 14:52:58] Período solicitado: 2025-11-01 a 2025-11-30 para usuario_id=23
+[2025-11-15 14:52:58] Query: SELECT titulo, resultado, odds, DATE(data_criacao) as data_dia FROM bote 
+              WHERE DATE(data_criacao) >= ? 
+              AND DATE(data_criacao) <= ?
+              ORDER BY data_criacao DESC
+[2025-11-15 14:52:58] Parâmetros: primeira_data=2025-11-01, última_data=2025-11-30
+[2025-11-15 14:52:58] ✅ Query preparada com sucesso
+[2025-11-15 14:52:58] bind_param resultado: true
+[2025-11-15 14:52:58] ✅ bind_param executado com sucesso
+[2025-11-15 14:52:58] execute() resultado: true
+[2025-11-15 14:52:58] ✅ Query executada com sucesso
+[2025-11-15 14:52:58] ✅ Resultado obtido com sucesso
+[2025-11-15 14:52:58] Total de registros encontrados: 91
+[2025-11-15 14:52:58]   ✅ GREEN: 2025-11-09 - lucro_coef += 0.5
+[2025-11-15 14:52:58]   ✅ GREEN: 2025-11-09 - lucro_coef += 0.5
+[2025-11-15 14:52:58]   ✅ GREEN: 2025-11-09 - lucro_coef += 0.52
+[2025-11-15 14:52:58]   ✅ GREEN: 2025-11-09 - lucro_coef += 0.52
+[2025-11-15 14:52:58]   ✅ GREEN: 2025-11-09 - lucro_coef += 0.51
+[2025-11-15 14:52:58]   ✅ GREEN: 2025-11-09 - lucro_coef += 0.5
+[2025-11-15 14:52:58]   ✅ GREEN: 2025-11-09 - lucro_coef += 0.51
+[2025-11-15 14:52:58]   ✅ GREEN: 2025-11-09 - lucro_coef += 0.58
+[2025-11-15 14:52:58]   ✅ GREEN: 2025-11-09 - lucro_coef += 0.5
+[2025-11-15 14:52:58]   ✅ RED: 2025-11-08 - lucro_coef -= 1
+[2025-11-15 14:52:58]   ✅ RED: 2025-11-08 - lucro_coef -= 1
+[2025-11-15 14:52:58]   ✅ GREEN: 2025-11-08 - lucro_coef += 0.5
+[2025-11-15 14:52:58]   ✅ RED: 2025-11-08 - lucro_coef -= 1
+[2025-11-15 14:52:58]   ✅ RED: 2025-11-08 - lucro_coef -= 1
+[2025-11-15 14:52:58]   ✅ RED: 2025-11-08 - lucro_coef -= 1
+[2025-11-15 14:52:58]   ✅ GREEN: 2025-11-07 - lucro_coef += 0.51
+[2025-11-15 14:52:58]   ✅ GREEN: 2025-11-07 - lucro_coef += 0.55
+[2025-11-15 14:52:58]   ✅ GREEN: 2025-11-07 - lucro_coef += 0.55
+[2025-11-15 14:52:58]   ✅ GREEN: 2025-11-07 - lucro_coef += 0.53
+[2025-11-15 14:52:58]   ✅ GREEN: 2025-11-07 - lucro_coef += 0.5
+[2025-11-15 14:52:58]   ✅ GREEN: 2025-11-07 - lucro_coef += 0.7
+[2025-11-15 14:52:58]   ✅ RED: 2025-11-07 - lucro_coef -= 1
+[2025-11-15 14:52:58]   ✅ GREEN: 2025-11-07 - lucro_coef += 0.75
+[2025-11-15 14:52:58]   ✅ GREEN: 2025-11-07 - lucro_coef += 0.75
+[2025-11-15 14:52:58]   ✅ GREEN: 2025-11-07 - lucro_coef += 0.64
+[2025-11-15 14:52:58]   ✅ GREEN: 2025-11-07 - lucro_coef += 0.51
+[2025-11-15 14:52:58]   ✅ RED: 2025-11-06 - lucro_coef -= 1
+[2025-11-15 14:52:58]   ✅ RED: 2025-11-06 - lucro_coef -= 1
+[2025-11-15 14:52:58]   ✅ GREEN: 2025-11-06 - lucro_coef += 1.05
+[2025-11-15 14:52:58]   ✅ RED: 2025-11-06 - lucro_coef -= 1
+[2025-11-15 14:52:58]   ✅ RED: 2025-11-06 - lucro_coef -= 1
+[2025-11-15 14:52:58]   ✅ GREEN: 2025-11-06 - lucro_coef += 0.5
+[2025-11-15 14:52:58]   ✅ GREEN: 2025-11-06 - lucro_coef += 0.51
+[2025-11-15 14:52:58]   ✅ GREEN: 2025-11-06 - lucro_coef += 0.63
+[2025-11-15 14:52:58]   ✅ GREEN: 2025-11-06 - lucro_coef += 0.5
+[2025-11-15 14:52:58]   ✅ GREEN: 2025-11-06 - lucro_coef += 0.51
+[2025-11-15 14:52:58]   ✅ RED: 2025-11-05 - lucro_coef -= 1
+[2025-11-15 14:52:58]   ✅ GREEN: 2025-11-05 - lucro_coef += 0.51
+[2025-11-15 14:52:58]   ✅ GREEN: 2025-11-05 - lucro_coef += 0.5
+[2025-11-15 14:52:58]   ✅ GREEN: 2025-11-02 - lucro_coef += 1.09
+[2025-11-15 14:52:58]   ✅ GREEN: 2025-11-02 - lucro_coef += 0.53
+[2025-11-15 14:52:58]   ✅ GREEN: 2025-11-02 - lucro_coef += 1
+[2025-11-15 14:52:58]   ✅ RED: 2025-11-02 - lucro_coef -= 1
+[2025-11-15 14:52:58]   ✅ RED: 2025-11-02 - lucro_coef -= 1
+[2025-11-15 14:52:58]   ✅ GREEN: 2025-11-02 - lucro_coef += 0.53
+[2025-11-15 14:52:58]   ✅ RED: 2025-11-02 - lucro_coef -= 1
+[2025-11-15 14:52:58] Dia 2025-11-14: 0G x 0R | Lucro: 0,00
+[2025-11-15 14:52:58] Dia 2025-11-12: 0G x 0R | Lucro: 0,00
+[2025-11-15 14:52:58] Dia 2025-11-09: 9G x 0R | Lucro: 464,00
+[2025-11-15 14:52:58] Dia 2025-11-08: 1G x 5R | Lucro: -450,00
+[2025-11-15 14:52:58] Dia 2025-11-07: 10G x 1R | Lucro: 499,00
+[2025-11-15 14:52:58] Dia 2025-11-06: 6G x 4R | Lucro: -30,00
+[2025-11-15 14:52:58] Dia 2025-11-05: 2G x 1R | Lucro: 1,00
+[2025-11-15 14:52:58] Dia 2025-11-04: 0G x 0R | Lucro: 0,00
+[2025-11-15 14:52:58] Dia 2025-11-03: 0G x 0R | Lucro: 0,00
+[2025-11-15 14:52:58] Dia 2025-11-02: 4G x 3R | Lucro: 15,00
+[2025-11-15 14:52:58] ✅ Total de dias processados: 10
+[2025-11-15 14:53:07] ==== INICIANDO OBTER-DIAS-MES ====
+[2025-11-15 14:53:07] Usuario ID da sessão: 23
+[2025-11-15 14:53:07] ✅ Conexão com banco de dados OK
+[2025-11-15 14:53:07] Período solicitado: 2025-11-01 a 2025-11-30 para usuario_id=23
+[2025-11-15 14:53:07] Query: SELECT titulo, resultado, odds, DATE(data_criacao) as data_dia FROM bote 
+              WHERE DATE(data_criacao) >= ? 
+              AND DATE(data_criacao) <= ?
+              ORDER BY data_criacao DESC
+[2025-11-15 14:53:07] Parâmetros: primeira_data=2025-11-01, última_data=2025-11-30
+[2025-11-15 14:53:07] ✅ Query preparada com sucesso
+[2025-11-15 14:53:07] bind_param resultado: true
+[2025-11-15 14:53:07] ✅ bind_param executado com sucesso
+[2025-11-15 14:53:07] execute() resultado: true
+[2025-11-15 14:53:07] ✅ Query executada com sucesso
+[2025-11-15 14:53:07] ✅ Resultado obtido com sucesso
+[2025-11-15 14:53:07] Total de registros encontrados: 91
+[2025-11-15 14:53:07]   ✅ GREEN: 2025-11-09 - lucro_coef += 0.5
+[2025-11-15 14:53:07]   ✅ GREEN: 2025-11-09 - lucro_coef += 0.5
+[2025-11-15 14:53:07]   ✅ GREEN: 2025-11-09 - lucro_coef += 0.52
+[2025-11-15 14:53:07]   ✅ GREEN: 2025-11-09 - lucro_coef += 0.52
+[2025-11-15 14:53:07]   ✅ GREEN: 2025-11-09 - lucro_coef += 0.51
+[2025-11-15 14:53:07]   ✅ GREEN: 2025-11-09 - lucro_coef += 0.5
+[2025-11-15 14:53:07]   ✅ GREEN: 2025-11-09 - lucro_coef += 0.51
+[2025-11-15 14:53:07]   ✅ GREEN: 2025-11-09 - lucro_coef += 0.58
+[2025-11-15 14:53:07]   ✅ GREEN: 2025-11-09 - lucro_coef += 0.5
+[2025-11-15 14:53:07]   ✅ RED: 2025-11-08 - lucro_coef -= 1
+[2025-11-15 14:53:07]   ✅ RED: 2025-11-08 - lucro_coef -= 1
+[2025-11-15 14:53:07]   ✅ GREEN: 2025-11-08 - lucro_coef += 0.5
+[2025-11-15 14:53:07]   ✅ RED: 2025-11-08 - lucro_coef -= 1
+[2025-11-15 14:53:07]   ✅ RED: 2025-11-08 - lucro_coef -= 1
+[2025-11-15 14:53:07]   ✅ RED: 2025-11-08 - lucro_coef -= 1
+[2025-11-15 14:53:07]   ✅ GREEN: 2025-11-07 - lucro_coef += 0.51
+[2025-11-15 14:53:07]   ✅ GREEN: 2025-11-07 - lucro_coef += 0.55
+[2025-11-15 14:53:07]   ✅ GREEN: 2025-11-07 - lucro_coef += 0.55
+[2025-11-15 14:53:07]   ✅ GREEN: 2025-11-07 - lucro_coef += 0.53
+[2025-11-15 14:53:07]   ✅ GREEN: 2025-11-07 - lucro_coef += 0.5
+[2025-11-15 14:53:07]   ✅ GREEN: 2025-11-07 - lucro_coef += 0.7
+[2025-11-15 14:53:07]   ✅ RED: 2025-11-07 - lucro_coef -= 1
+[2025-11-15 14:53:07]   ✅ GREEN: 2025-11-07 - lucro_coef += 0.75
+[2025-11-15 14:53:07]   ✅ GREEN: 2025-11-07 - lucro_coef += 0.75
+[2025-11-15 14:53:07]   ✅ GREEN: 2025-11-07 - lucro_coef += 0.64
+[2025-11-15 14:53:07]   ✅ GREEN: 2025-11-07 - lucro_coef += 0.51
+[2025-11-15 14:53:07]   ✅ RED: 2025-11-06 - lucro_coef -= 1
+[2025-11-15 14:53:07]   ✅ RED: 2025-11-06 - lucro_coef -= 1
+[2025-11-15 14:53:07]   ✅ GREEN: 2025-11-06 - lucro_coef += 1.05
+[2025-11-15 14:53:07]   ✅ RED: 2025-11-06 - lucro_coef -= 1
+[2025-11-15 14:53:07]   ✅ RED: 2025-11-06 - lucro_coef -= 1
+[2025-11-15 14:53:07]   ✅ GREEN: 2025-11-06 - lucro_coef += 0.5
+[2025-11-15 14:53:07]   ✅ GREEN: 2025-11-06 - lucro_coef += 0.51
+[2025-11-15 14:53:07]   ✅ GREEN: 2025-11-06 - lucro_coef += 0.63
+[2025-11-15 14:53:07]   ✅ GREEN: 2025-11-06 - lucro_coef += 0.5
+[2025-11-15 14:53:07]   ✅ GREEN: 2025-11-06 - lucro_coef += 0.51
+[2025-11-15 14:53:07]   ✅ RED: 2025-11-05 - lucro_coef -= 1
+[2025-11-15 14:53:07]   ✅ GREEN: 2025-11-05 - lucro_coef += 0.51
+[2025-11-15 14:53:07]   ✅ GREEN: 2025-11-05 - lucro_coef += 0.5
+[2025-11-15 14:53:07]   ✅ GREEN: 2025-11-02 - lucro_coef += 1.09
+[2025-11-15 14:53:07]   ✅ GREEN: 2025-11-02 - lucro_coef += 0.53
+[2025-11-15 14:53:07]   ✅ GREEN: 2025-11-02 - lucro_coef += 1
+[2025-11-15 14:53:07]   ✅ RED: 2025-11-02 - lucro_coef -= 1
+[2025-11-15 14:53:07]   ✅ RED: 2025-11-02 - lucro_coef -= 1
+[2025-11-15 14:53:07]   ✅ GREEN: 2025-11-02 - lucro_coef += 0.53
+[2025-11-15 14:53:07]   ✅ RED: 2025-11-02 - lucro_coef -= 1
+[2025-11-15 14:53:07] Dia 2025-11-14: 0G x 0R | Lucro: 0,00
+[2025-11-15 14:53:07] Dia 2025-11-12: 0G x 0R | Lucro: 0,00
+[2025-11-15 14:53:07] Dia 2025-11-09: 9G x 0R | Lucro: 464,00
+[2025-11-15 14:53:07] Dia 2025-11-08: 1G x 5R | Lucro: -450,00
+[2025-11-15 14:53:07] Dia 2025-11-07: 10G x 1R | Lucro: 499,00
+[2025-11-15 14:53:07] Dia 2025-11-06: 6G x 4R | Lucro: -30,00
+[2025-11-15 14:53:07] Dia 2025-11-05: 2G x 1R | Lucro: 1,00
+[2025-11-15 14:53:07] Dia 2025-11-04: 0G x 0R | Lucro: 0,00
+[2025-11-15 14:53:07] Dia 2025-11-03: 0G x 0R | Lucro: 0,00
+[2025-11-15 14:53:07] Dia 2025-11-02: 4G x 3R | Lucro: 15,00
+[2025-11-15 14:53:07] ✅ Total de dias processados: 10
+[2025-11-15 14:53:17] ==== INICIANDO OBTER-DIAS-MES ====
+[2025-11-15 14:53:17] Usuario ID da sessão: 23
+[2025-11-15 14:53:17] ✅ Conexão com banco de dados OK
+[2025-11-15 14:53:17] Período solicitado: 2025-11-01 a 2025-11-30 para usuario_id=23
+[2025-11-15 14:53:17] Query: SELECT titulo, resultado, odds, DATE(data_criacao) as data_dia FROM bote 
+              WHERE DATE(data_criacao) >= ? 
+              AND DATE(data_criacao) <= ?
+              ORDER BY data_criacao DESC
+[2025-11-15 14:53:17] Parâmetros: primeira_data=2025-11-01, última_data=2025-11-30
+[2025-11-15 14:53:17] ✅ Query preparada com sucesso
+[2025-11-15 14:53:17] bind_param resultado: true
+[2025-11-15 14:53:17] ✅ bind_param executado com sucesso
+[2025-11-15 14:53:17] execute() resultado: true
+[2025-11-15 14:53:17] ✅ Query executada com sucesso
+[2025-11-15 14:53:17] ✅ Resultado obtido com sucesso
+[2025-11-15 14:53:17] Total de registros encontrados: 91
+[2025-11-15 14:53:17]   ✅ GREEN: 2025-11-09 - lucro_coef += 0.5
+[2025-11-15 14:53:17]   ✅ GREEN: 2025-11-09 - lucro_coef += 0.5
+[2025-11-15 14:53:17]   ✅ GREEN: 2025-11-09 - lucro_coef += 0.52
+[2025-11-15 14:53:17]   ✅ GREEN: 2025-11-09 - lucro_coef += 0.52
+[2025-11-15 14:53:17]   ✅ GREEN: 2025-11-09 - lucro_coef += 0.51
+[2025-11-15 14:53:17]   ✅ GREEN: 2025-11-09 - lucro_coef += 0.5
+[2025-11-15 14:53:17]   ✅ GREEN: 2025-11-09 - lucro_coef += 0.51
+[2025-11-15 14:53:17]   ✅ GREEN: 2025-11-09 - lucro_coef += 0.58
+[2025-11-15 14:53:17]   ✅ GREEN: 2025-11-09 - lucro_coef += 0.5
+[2025-11-15 14:53:17]   ✅ RED: 2025-11-08 - lucro_coef -= 1
+[2025-11-15 14:53:17]   ✅ RED: 2025-11-08 - lucro_coef -= 1
+[2025-11-15 14:53:17]   ✅ GREEN: 2025-11-08 - lucro_coef += 0.5
+[2025-11-15 14:53:17]   ✅ RED: 2025-11-08 - lucro_coef -= 1
+[2025-11-15 14:53:17]   ✅ RED: 2025-11-08 - lucro_coef -= 1
+[2025-11-15 14:53:17]   ✅ RED: 2025-11-08 - lucro_coef -= 1
+[2025-11-15 14:53:17]   ✅ GREEN: 2025-11-07 - lucro_coef += 0.51
+[2025-11-15 14:53:17]   ✅ GREEN: 2025-11-07 - lucro_coef += 0.55
+[2025-11-15 14:53:17]   ✅ GREEN: 2025-11-07 - lucro_coef += 0.55
+[2025-11-15 14:53:17]   ✅ GREEN: 2025-11-07 - lucro_coef += 0.53
+[2025-11-15 14:53:17]   ✅ GREEN: 2025-11-07 - lucro_coef += 0.5
+[2025-11-15 14:53:17]   ✅ GREEN: 2025-11-07 - lucro_coef += 0.7
+[2025-11-15 14:53:17]   ✅ RED: 2025-11-07 - lucro_coef -= 1
+[2025-11-15 14:53:17]   ✅ GREEN: 2025-11-07 - lucro_coef += 0.75
+[2025-11-15 14:53:17]   ✅ GREEN: 2025-11-07 - lucro_coef += 0.75
+[2025-11-15 14:53:17]   ✅ GREEN: 2025-11-07 - lucro_coef += 0.64
+[2025-11-15 14:53:17]   ✅ GREEN: 2025-11-07 - lucro_coef += 0.51
+[2025-11-15 14:53:17]   ✅ RED: 2025-11-06 - lucro_coef -= 1
+[2025-11-15 14:53:17]   ✅ RED: 2025-11-06 - lucro_coef -= 1
+[2025-11-15 14:53:17]   ✅ GREEN: 2025-11-06 - lucro_coef += 1.05
+[2025-11-15 14:53:17]   ✅ RED: 2025-11-06 - lucro_coef -= 1
+[2025-11-15 14:53:17]   ✅ RED: 2025-11-06 - lucro_coef -= 1
+[2025-11-15 14:53:17]   ✅ GREEN: 2025-11-06 - lucro_coef += 0.5
+[2025-11-15 14:53:17]   ✅ GREEN: 2025-11-06 - lucro_coef += 0.51
+[2025-11-15 14:53:17]   ✅ GREEN: 2025-11-06 - lucro_coef += 0.63
+[2025-11-15 14:53:17]   ✅ GREEN: 2025-11-06 - lucro_coef += 0.5
+[2025-11-15 14:53:17]   ✅ GREEN: 2025-11-06 - lucro_coef += 0.51
+[2025-11-15 14:53:17]   ✅ RED: 2025-11-05 - lucro_coef -= 1
+[2025-11-15 14:53:17]   ✅ GREEN: 2025-11-05 - lucro_coef += 0.51
+[2025-11-15 14:53:17]   ✅ GREEN: 2025-11-05 - lucro_coef += 0.5
+[2025-11-15 14:53:17]   ✅ GREEN: 2025-11-02 - lucro_coef += 1.09
+[2025-11-15 14:53:17]   ✅ GREEN: 2025-11-02 - lucro_coef += 0.53
+[2025-11-15 14:53:17]   ✅ GREEN: 2025-11-02 - lucro_coef += 1
+[2025-11-15 14:53:17]   ✅ RED: 2025-11-02 - lucro_coef -= 1
+[2025-11-15 14:53:17]   ✅ RED: 2025-11-02 - lucro_coef -= 1
+[2025-11-15 14:53:17]   ✅ GREEN: 2025-11-02 - lucro_coef += 0.53
+[2025-11-15 14:53:17]   ✅ RED: 2025-11-02 - lucro_coef -= 1
+[2025-11-15 14:53:17] Dia 2025-11-14: 0G x 0R | Lucro: 0,00
+[2025-11-15 14:53:17] Dia 2025-11-12: 0G x 0R | Lucro: 0,00
+[2025-11-15 14:53:17] Dia 2025-11-09: 9G x 0R | Lucro: 464,00
+[2025-11-15 14:53:17] Dia 2025-11-08: 1G x 5R | Lucro: -450,00
+[2025-11-15 14:53:17] Dia 2025-11-07: 10G x 1R | Lucro: 499,00
+[2025-11-15 14:53:17] Dia 2025-11-06: 6G x 4R | Lucro: -30,00
+[2025-11-15 14:53:17] Dia 2025-11-05: 2G x 1R | Lucro: 1,00
+[2025-11-15 14:53:17] Dia 2025-11-04: 0G x 0R | Lucro: 0,00
+[2025-11-15 14:53:17] Dia 2025-11-03: 0G x 0R | Lucro: 0,00
+[2025-11-15 14:53:17] Dia 2025-11-02: 4G x 3R | Lucro: 15,00
+[2025-11-15 14:53:17] ✅ Total de dias processados: 10
+[2025-11-15 14:53:27] ==== INICIANDO OBTER-DIAS-MES ====
+[2025-11-15 14:53:27] Usuario ID da sessão: 23
+[2025-11-15 14:53:27] ✅ Conexão com banco de dados OK
+[2025-11-15 14:53:27] Período solicitado: 2025-11-01 a 2025-11-30 para usuario_id=23
+[2025-11-15 14:53:27] Query: SELECT titulo, resultado, odds, DATE(data_criacao) as data_dia FROM bote 
+              WHERE DATE(data_criacao) >= ? 
+              AND DATE(data_criacao) <= ?
+              ORDER BY data_criacao DESC
+[2025-11-15 14:53:27] Parâmetros: primeira_data=2025-11-01, última_data=2025-11-30
+[2025-11-15 14:53:27] ✅ Query preparada com sucesso
+[2025-11-15 14:53:27] bind_param resultado: true
+[2025-11-15 14:53:27] ✅ bind_param executado com sucesso
+[2025-11-15 14:53:27] execute() resultado: true
+[2025-11-15 14:53:27] ✅ Query executada com sucesso
+[2025-11-15 14:53:27] ✅ Resultado obtido com sucesso
+[2025-11-15 14:53:27] Total de registros encontrados: 91
+[2025-11-15 14:53:27]   ✅ GREEN: 2025-11-09 - lucro_coef += 0.5
+[2025-11-15 14:53:27]   ✅ GREEN: 2025-11-09 - lucro_coef += 0.5
+[2025-11-15 14:53:27]   ✅ GREEN: 2025-11-09 - lucro_coef += 0.52
+[2025-11-15 14:53:27]   ✅ GREEN: 2025-11-09 - lucro_coef += 0.52
+[2025-11-15 14:53:27]   ✅ GREEN: 2025-11-09 - lucro_coef += 0.51
+[2025-11-15 14:53:27]   ✅ GREEN: 2025-11-09 - lucro_coef += 0.5
+[2025-11-15 14:53:27]   ✅ GREEN: 2025-11-09 - lucro_coef += 0.51
+[2025-11-15 14:53:27]   ✅ GREEN: 2025-11-09 - lucro_coef += 0.58
+[2025-11-15 14:53:27]   ✅ GREEN: 2025-11-09 - lucro_coef += 0.5
+[2025-11-15 14:53:27]   ✅ RED: 2025-11-08 - lucro_coef -= 1
+[2025-11-15 14:53:27]   ✅ RED: 2025-11-08 - lucro_coef -= 1
+[2025-11-15 14:53:27]   ✅ GREEN: 2025-11-08 - lucro_coef += 0.5
+[2025-11-15 14:53:27]   ✅ RED: 2025-11-08 - lucro_coef -= 1
+[2025-11-15 14:53:27]   ✅ RED: 2025-11-08 - lucro_coef -= 1
+[2025-11-15 14:53:27]   ✅ RED: 2025-11-08 - lucro_coef -= 1
+[2025-11-15 14:53:27]   ✅ GREEN: 2025-11-07 - lucro_coef += 0.51
+[2025-11-15 14:53:27]   ✅ GREEN: 2025-11-07 - lucro_coef += 0.55
+[2025-11-15 14:53:27]   ✅ GREEN: 2025-11-07 - lucro_coef += 0.55
+[2025-11-15 14:53:27]   ✅ GREEN: 2025-11-07 - lucro_coef += 0.53
+[2025-11-15 14:53:27]   ✅ GREEN: 2025-11-07 - lucro_coef += 0.5
+[2025-11-15 14:53:27]   ✅ GREEN: 2025-11-07 - lucro_coef += 0.7
+[2025-11-15 14:53:27]   ✅ RED: 2025-11-07 - lucro_coef -= 1
+[2025-11-15 14:53:27]   ✅ GREEN: 2025-11-07 - lucro_coef += 0.75
+[2025-11-15 14:53:27]   ✅ GREEN: 2025-11-07 - lucro_coef += 0.75
+[2025-11-15 14:53:27]   ✅ GREEN: 2025-11-07 - lucro_coef += 0.64
+[2025-11-15 14:53:27]   ✅ GREEN: 2025-11-07 - lucro_coef += 0.51
+[2025-11-15 14:53:27]   ✅ RED: 2025-11-06 - lucro_coef -= 1
+[2025-11-15 14:53:27]   ✅ RED: 2025-11-06 - lucro_coef -= 1
+[2025-11-15 14:53:27]   ✅ GREEN: 2025-11-06 - lucro_coef += 1.05
+[2025-11-15 14:53:27]   ✅ RED: 2025-11-06 - lucro_coef -= 1
+[2025-11-15 14:53:27]   ✅ RED: 2025-11-06 - lucro_coef -= 1
+[2025-11-15 14:53:27]   ✅ GREEN: 2025-11-06 - lucro_coef += 0.5
+[2025-11-15 14:53:27]   ✅ GREEN: 2025-11-06 - lucro_coef += 0.51
+[2025-11-15 14:53:27]   ✅ GREEN: 2025-11-06 - lucro_coef += 0.63
+[2025-11-15 14:53:27]   ✅ GREEN: 2025-11-06 - lucro_coef += 0.5
+[2025-11-15 14:53:27]   ✅ GREEN: 2025-11-06 - lucro_coef += 0.51
+[2025-11-15 14:53:27]   ✅ RED: 2025-11-05 - lucro_coef -= 1
+[2025-11-15 14:53:27]   ✅ GREEN: 2025-11-05 - lucro_coef += 0.51
+[2025-11-15 14:53:27]   ✅ GREEN: 2025-11-05 - lucro_coef += 0.5
+[2025-11-15 14:53:27]   ✅ GREEN: 2025-11-02 - lucro_coef += 1.09
+[2025-11-15 14:53:27]   ✅ GREEN: 2025-11-02 - lucro_coef += 0.53
+[2025-11-15 14:53:27]   ✅ GREEN: 2025-11-02 - lucro_coef += 1
+[2025-11-15 14:53:27]   ✅ RED: 2025-11-02 - lucro_coef -= 1
+[2025-11-15 14:53:27]   ✅ RED: 2025-11-02 - lucro_coef -= 1
+[2025-11-15 14:53:27]   ✅ GREEN: 2025-11-02 - lucro_coef += 0.53
+[2025-11-15 14:53:27]   ✅ RED: 2025-11-02 - lucro_coef -= 1
+[2025-11-15 14:53:27] Dia 2025-11-14: 0G x 0R | Lucro: 0,00
+[2025-11-15 14:53:27] Dia 2025-11-12: 0G x 0R | Lucro: 0,00
+[2025-11-15 14:53:27] Dia 2025-11-09: 9G x 0R | Lucro: 464,00
+[2025-11-15 14:53:27] Dia 2025-11-08: 1G x 5R | Lucro: -450,00
+[2025-11-15 14:53:27] Dia 2025-11-07: 10G x 1R | Lucro: 499,00
+[2025-11-15 14:53:27] Dia 2025-11-06: 6G x 4R | Lucro: -30,00
+[2025-11-15 14:53:27] Dia 2025-11-05: 2G x 1R | Lucro: 1,00
+[2025-11-15 14:53:27] Dia 2025-11-04: 0G x 0R | Lucro: 0,00
+[2025-11-15 14:53:27] Dia 2025-11-03: 0G x 0R | Lucro: 0,00
+[2025-11-15 14:53:27] Dia 2025-11-02: 4G x 3R | Lucro: 15,00
+[2025-11-15 14:53:27] ✅ Total de dias processados: 10
+[2025-11-15 14:53:37] ==== INICIANDO OBTER-DIAS-MES ====
+[2025-11-15 14:53:37] Usuario ID da sessão: 23
+[2025-11-15 14:53:37] ✅ Conexão com banco de dados OK
+[2025-11-15 14:53:37] Período solicitado: 2025-11-01 a 2025-11-30 para usuario_id=23
+[2025-11-15 14:53:37] Query: SELECT titulo, resultado, odds, DATE(data_criacao) as data_dia FROM bote 
+              WHERE DATE(data_criacao) >= ? 
+              AND DATE(data_criacao) <= ?
+              ORDER BY data_criacao DESC
+[2025-11-15 14:53:37] Parâmetros: primeira_data=2025-11-01, última_data=2025-11-30
+[2025-11-15 14:53:37] ✅ Query preparada com sucesso
+[2025-11-15 14:53:37] bind_param resultado: true
+[2025-11-15 14:53:37] ✅ bind_param executado com sucesso
+[2025-11-15 14:53:37] execute() resultado: true
+[2025-11-15 14:53:37] ✅ Query executada com sucesso
+[2025-11-15 14:53:37] ✅ Resultado obtido com sucesso
+[2025-11-15 14:53:37] Total de registros encontrados: 91
+[2025-11-15 14:53:37]   ✅ GREEN: 2025-11-09 - lucro_coef += 0.5
+[2025-11-15 14:53:37]   ✅ GREEN: 2025-11-09 - lucro_coef += 0.5
+[2025-11-15 14:53:37]   ✅ GREEN: 2025-11-09 - lucro_coef += 0.52
+[2025-11-15 14:53:37]   ✅ GREEN: 2025-11-09 - lucro_coef += 0.52
+[2025-11-15 14:53:37]   ✅ GREEN: 2025-11-09 - lucro_coef += 0.51
+[2025-11-15 14:53:37]   ✅ GREEN: 2025-11-09 - lucro_coef += 0.5
+[2025-11-15 14:53:37]   ✅ GREEN: 2025-11-09 - lucro_coef += 0.51
+[2025-11-15 14:53:37]   ✅ GREEN: 2025-11-09 - lucro_coef += 0.58
+[2025-11-15 14:53:37]   ✅ GREEN: 2025-11-09 - lucro_coef += 0.5
+[2025-11-15 14:53:37]   ✅ RED: 2025-11-08 - lucro_coef -= 1
+[2025-11-15 14:53:37]   ✅ RED: 2025-11-08 - lucro_coef -= 1
+[2025-11-15 14:53:37]   ✅ GREEN: 2025-11-08 - lucro_coef += 0.5
+[2025-11-15 14:53:37]   ✅ RED: 2025-11-08 - lucro_coef -= 1
+[2025-11-15 14:53:37]   ✅ RED: 2025-11-08 - lucro_coef -= 1
+[2025-11-15 14:53:37]   ✅ RED: 2025-11-08 - lucro_coef -= 1
+[2025-11-15 14:53:37]   ✅ GREEN: 2025-11-07 - lucro_coef += 0.51
+[2025-11-15 14:53:37]   ✅ GREEN: 2025-11-07 - lucro_coef += 0.55
+[2025-11-15 14:53:37]   ✅ GREEN: 2025-11-07 - lucro_coef += 0.55
+[2025-11-15 14:53:37]   ✅ GREEN: 2025-11-07 - lucro_coef += 0.53
+[2025-11-15 14:53:37]   ✅ GREEN: 2025-11-07 - lucro_coef += 0.5
+[2025-11-15 14:53:37]   ✅ GREEN: 2025-11-07 - lucro_coef += 0.7
+[2025-11-15 14:53:37]   ✅ RED: 2025-11-07 - lucro_coef -= 1
+[2025-11-15 14:53:37]   ✅ GREEN: 2025-11-07 - lucro_coef += 0.75
+[2025-11-15 14:53:37]   ✅ GREEN: 2025-11-07 - lucro_coef += 0.75
+[2025-11-15 14:53:37]   ✅ GREEN: 2025-11-07 - lucro_coef += 0.64
+[2025-11-15 14:53:37]   ✅ GREEN: 2025-11-07 - lucro_coef += 0.51
+[2025-11-15 14:53:37]   ✅ RED: 2025-11-06 - lucro_coef -= 1
+[2025-11-15 14:53:37]   ✅ RED: 2025-11-06 - lucro_coef -= 1
+[2025-11-15 14:53:37]   ✅ GREEN: 2025-11-06 - lucro_coef += 1.05
+[2025-11-15 14:53:37]   ✅ RED: 2025-11-06 - lucro_coef -= 1
+[2025-11-15 14:53:37]   ✅ RED: 2025-11-06 - lucro_coef -= 1
+[2025-11-15 14:53:37]   ✅ GREEN: 2025-11-06 - lucro_coef += 0.5
+[2025-11-15 14:53:37]   ✅ GREEN: 2025-11-06 - lucro_coef += 0.51
+[2025-11-15 14:53:37]   ✅ GREEN: 2025-11-06 - lucro_coef += 0.63
+[2025-11-15 14:53:37]   ✅ GREEN: 2025-11-06 - lucro_coef += 0.5
+[2025-11-15 14:53:37]   ✅ GREEN: 2025-11-06 - lucro_coef += 0.51
+[2025-11-15 14:53:37]   ✅ RED: 2025-11-05 - lucro_coef -= 1
+[2025-11-15 14:53:37]   ✅ GREEN: 2025-11-05 - lucro_coef += 0.51
+[2025-11-15 14:53:37]   ✅ GREEN: 2025-11-05 - lucro_coef += 0.5
+[2025-11-15 14:53:37]   ✅ GREEN: 2025-11-02 - lucro_coef += 1.09
+[2025-11-15 14:53:37]   ✅ GREEN: 2025-11-02 - lucro_coef += 0.53
+[2025-11-15 14:53:37]   ✅ GREEN: 2025-11-02 - lucro_coef += 1
+[2025-11-15 14:53:37]   ✅ RED: 2025-11-02 - lucro_coef -= 1
+[2025-11-15 14:53:37]   ✅ RED: 2025-11-02 - lucro_coef -= 1
+[2025-11-15 14:53:37]   ✅ GREEN: 2025-11-02 - lucro_coef += 0.53
+[2025-11-15 14:53:37]   ✅ RED: 2025-11-02 - lucro_coef -= 1
+[2025-11-15 14:53:37] Dia 2025-11-14: 0G x 0R | Lucro: 0,00
+[2025-11-15 14:53:37] Dia 2025-11-12: 0G x 0R | Lucro: 0,00
+[2025-11-15 14:53:37] Dia 2025-11-09: 9G x 0R | Lucro: 464,00
+[2025-11-15 14:53:37] Dia 2025-11-08: 1G x 5R | Lucro: -450,00
+[2025-11-15 14:53:37] Dia 2025-11-07: 10G x 1R | Lucro: 499,00
+[2025-11-15 14:53:37] Dia 2025-11-06: 6G x 4R | Lucro: -30,00
+[2025-11-15 14:53:37] Dia 2025-11-05: 2G x 1R | Lucro: 1,00
+[2025-11-15 14:53:37] Dia 2025-11-04: 0G x 0R | Lucro: 0,00
+[2025-11-15 14:53:37] Dia 2025-11-03: 0G x 0R | Lucro: 0,00
+[2025-11-15 14:53:37] Dia 2025-11-02: 4G x 3R | Lucro: 15,00
+[2025-11-15 14:53:37] ✅ Total de dias processados: 10
+[2025-11-15 14:53:40] ==== INICIANDO OBTER-DIAS-MES ====
+[2025-11-15 14:53:40] Usuario ID da sessão: 23
+[2025-11-15 14:53:40] ✅ Conexão com banco de dados OK
+[2025-11-15 14:53:40] Período solicitado: 2025-11-01 a 2025-11-30 para usuario_id=23
+[2025-11-15 14:53:40] Query: SELECT titulo, resultado, odds, DATE(data_criacao) as data_dia FROM bote 
+              WHERE DATE(data_criacao) >= ? 
+              AND DATE(data_criacao) <= ?
+              ORDER BY data_criacao DESC
+[2025-11-15 14:53:40] Parâmetros: primeira_data=2025-11-01, última_data=2025-11-30
+[2025-11-15 14:53:40] ✅ Query preparada com sucesso
+[2025-11-15 14:53:40] bind_param resultado: true
+[2025-11-15 14:53:40] ✅ bind_param executado com sucesso
+[2025-11-15 14:53:40] execute() resultado: true
+[2025-11-15 14:53:40] ✅ Query executada com sucesso
+[2025-11-15 14:53:40] ✅ Resultado obtido com sucesso
+[2025-11-15 14:53:40] Total de registros encontrados: 91
+[2025-11-15 14:53:40]   ✅ GREEN: 2025-11-09 - lucro_coef += 0.5
+[2025-11-15 14:53:40]   ✅ GREEN: 2025-11-09 - lucro_coef += 0.5
+[2025-11-15 14:53:40]   ✅ GREEN: 2025-11-09 - lucro_coef += 0.52
+[2025-11-15 14:53:40]   ✅ GREEN: 2025-11-09 - lucro_coef += 0.52
+[2025-11-15 14:53:40]   ✅ GREEN: 2025-11-09 - lucro_coef += 0.51
+[2025-11-15 14:53:40]   ✅ GREEN: 2025-11-09 - lucro_coef += 0.5
+[2025-11-15 14:53:40]   ✅ GREEN: 2025-11-09 - lucro_coef += 0.51
+[2025-11-15 14:53:40]   ✅ GREEN: 2025-11-09 - lucro_coef += 0.58
+[2025-11-15 14:53:40]   ✅ GREEN: 2025-11-09 - lucro_coef += 0.5
+[2025-11-15 14:53:40]   ✅ RED: 2025-11-08 - lucro_coef -= 1
+[2025-11-15 14:53:40]   ✅ RED: 2025-11-08 - lucro_coef -= 1
+[2025-11-15 14:53:40]   ✅ GREEN: 2025-11-08 - lucro_coef += 0.5
+[2025-11-15 14:53:40]   ✅ RED: 2025-11-08 - lucro_coef -= 1
+[2025-11-15 14:53:40]   ✅ RED: 2025-11-08 - lucro_coef -= 1
+[2025-11-15 14:53:40]   ✅ RED: 2025-11-08 - lucro_coef -= 1
+[2025-11-15 14:53:40]   ✅ GREEN: 2025-11-07 - lucro_coef += 0.51
+[2025-11-15 14:53:40]   ✅ GREEN: 2025-11-07 - lucro_coef += 0.55
+[2025-11-15 14:53:40]   ✅ GREEN: 2025-11-07 - lucro_coef += 0.55
+[2025-11-15 14:53:40]   ✅ GREEN: 2025-11-07 - lucro_coef += 0.53
+[2025-11-15 14:53:40]   ✅ GREEN: 2025-11-07 - lucro_coef += 0.5
+[2025-11-15 14:53:40]   ✅ GREEN: 2025-11-07 - lucro_coef += 0.7
+[2025-11-15 14:53:40]   ✅ RED: 2025-11-07 - lucro_coef -= 1
+[2025-11-15 14:53:40]   ✅ GREEN: 2025-11-07 - lucro_coef += 0.75
+[2025-11-15 14:53:40]   ✅ GREEN: 2025-11-07 - lucro_coef += 0.75
+[2025-11-15 14:53:40]   ✅ GREEN: 2025-11-07 - lucro_coef += 0.64
+[2025-11-15 14:53:40]   ✅ GREEN: 2025-11-07 - lucro_coef += 0.51
+[2025-11-15 14:53:40]   ✅ RED: 2025-11-06 - lucro_coef -= 1
+[2025-11-15 14:53:40]   ✅ RED: 2025-11-06 - lucro_coef -= 1
+[2025-11-15 14:53:40]   ✅ GREEN: 2025-11-06 - lucro_coef += 1.05
+[2025-11-15 14:53:40]   ✅ RED: 2025-11-06 - lucro_coef -= 1
+[2025-11-15 14:53:40]   ✅ RED: 2025-11-06 - lucro_coef -= 1
+[2025-11-15 14:53:40]   ✅ GREEN: 2025-11-06 - lucro_coef += 0.5
+[2025-11-15 14:53:40]   ✅ GREEN: 2025-11-06 - lucro_coef += 0.51
+[2025-11-15 14:53:40]   ✅ GREEN: 2025-11-06 - lucro_coef += 0.63
+[2025-11-15 14:53:40]   ✅ GREEN: 2025-11-06 - lucro_coef += 0.5
+[2025-11-15 14:53:40]   ✅ GREEN: 2025-11-06 - lucro_coef += 0.51
+[2025-11-15 14:53:40]   ✅ RED: 2025-11-05 - lucro_coef -= 1
+[2025-11-15 14:53:40]   ✅ GREEN: 2025-11-05 - lucro_coef += 0.51
+[2025-11-15 14:53:40]   ✅ GREEN: 2025-11-05 - lucro_coef += 0.5
+[2025-11-15 14:53:40]   ✅ GREEN: 2025-11-02 - lucro_coef += 1.09
+[2025-11-15 14:53:40]   ✅ GREEN: 2025-11-02 - lucro_coef += 0.53
+[2025-11-15 14:53:40]   ✅ GREEN: 2025-11-02 - lucro_coef += 1
+[2025-11-15 14:53:40]   ✅ RED: 2025-11-02 - lucro_coef -= 1
+[2025-11-15 14:53:40]   ✅ RED: 2025-11-02 - lucro_coef -= 1
+[2025-11-15 14:53:40]   ✅ GREEN: 2025-11-02 - lucro_coef += 0.53
+[2025-11-15 14:53:40]   ✅ RED: 2025-11-02 - lucro_coef -= 1
+[2025-11-15 14:53:40] Dia 2025-11-14: 0G x 0R | Lucro: 0,00
+[2025-11-15 14:53:40] Dia 2025-11-12: 0G x 0R | Lucro: 0,00
+[2025-11-15 14:53:40] Dia 2025-11-09: 9G x 0R | Lucro: 464,00
+[2025-11-15 14:53:40] Dia 2025-11-08: 1G x 5R | Lucro: -450,00
+[2025-11-15 14:53:40] Dia 2025-11-07: 10G x 1R | Lucro: 499,00
+[2025-11-15 14:53:40] Dia 2025-11-06: 6G x 4R | Lucro: -30,00
+[2025-11-15 14:53:40] Dia 2025-11-05: 2G x 1R | Lucro: 1,00
+[2025-11-15 14:53:40] Dia 2025-11-04: 0G x 0R | Lucro: 0,00
+[2025-11-15 14:53:40] Dia 2025-11-03: 0G x 0R | Lucro: 0,00
+[2025-11-15 14:53:40] Dia 2025-11-02: 4G x 3R | Lucro: 15,00
+[2025-11-15 14:53:40] ✅ Total de dias processados: 10
+[2025-11-15 14:53:42] ==== INICIANDO OBTER-DIAS-MES ====
+[2025-11-15 14:53:42] Usuario ID da sessão: 23
+[2025-11-15 14:53:42] ✅ Conexão com banco de dados OK
+[2025-11-15 14:53:42] Período solicitado: 2025-11-01 a 2025-11-30 para usuario_id=23
+[2025-11-15 14:53:42] Query: SELECT titulo, resultado, odds, DATE(data_criacao) as data_dia FROM bote 
+              WHERE DATE(data_criacao) >= ? 
+              AND DATE(data_criacao) <= ?
+              ORDER BY data_criacao DESC
+[2025-11-15 14:53:42] Parâmetros: primeira_data=2025-11-01, última_data=2025-11-30
+[2025-11-15 14:53:42] ✅ Query preparada com sucesso
+[2025-11-15 14:53:42] bind_param resultado: true
+[2025-11-15 14:53:42] ✅ bind_param executado com sucesso
+[2025-11-15 14:53:42] execute() resultado: true
+[2025-11-15 14:53:42] ✅ Query executada com sucesso
+[2025-11-15 14:53:42] ✅ Resultado obtido com sucesso
+[2025-11-15 14:53:42] Total de registros encontrados: 91
+[2025-11-15 14:53:42]   ✅ GREEN: 2025-11-09 - lucro_coef += 0.5
+[2025-11-15 14:53:42]   ✅ GREEN: 2025-11-09 - lucro_coef += 0.5
+[2025-11-15 14:53:42]   ✅ GREEN: 2025-11-09 - lucro_coef += 0.52
+[2025-11-15 14:53:42]   ✅ GREEN: 2025-11-09 - lucro_coef += 0.52
+[2025-11-15 14:53:42]   ✅ GREEN: 2025-11-09 - lucro_coef += 0.51
+[2025-11-15 14:53:42]   ✅ GREEN: 2025-11-09 - lucro_coef += 0.5
+[2025-11-15 14:53:42]   ✅ GREEN: 2025-11-09 - lucro_coef += 0.51
+[2025-11-15 14:53:42]   ✅ GREEN: 2025-11-09 - lucro_coef += 0.58
+[2025-11-15 14:53:42]   ✅ GREEN: 2025-11-09 - lucro_coef += 0.5
+[2025-11-15 14:53:42]   ✅ RED: 2025-11-08 - lucro_coef -= 1
+[2025-11-15 14:53:42]   ✅ RED: 2025-11-08 - lucro_coef -= 1
+[2025-11-15 14:53:42]   ✅ GREEN: 2025-11-08 - lucro_coef += 0.5
+[2025-11-15 14:53:42]   ✅ RED: 2025-11-08 - lucro_coef -= 1
+[2025-11-15 14:53:42]   ✅ RED: 2025-11-08 - lucro_coef -= 1
+[2025-11-15 14:53:42]   ✅ RED: 2025-11-08 - lucro_coef -= 1
+[2025-11-15 14:53:42]   ✅ GREEN: 2025-11-07 - lucro_coef += 0.51
+[2025-11-15 14:53:42]   ✅ GREEN: 2025-11-07 - lucro_coef += 0.55
+[2025-11-15 14:53:42]   ✅ GREEN: 2025-11-07 - lucro_coef += 0.55
+[2025-11-15 14:53:42]   ✅ GREEN: 2025-11-07 - lucro_coef += 0.53
+[2025-11-15 14:53:42]   ✅ GREEN: 2025-11-07 - lucro_coef += 0.5
+[2025-11-15 14:53:42]   ✅ GREEN: 2025-11-07 - lucro_coef += 0.7
+[2025-11-15 14:53:42]   ✅ RED: 2025-11-07 - lucro_coef -= 1
+[2025-11-15 14:53:42]   ✅ GREEN: 2025-11-07 - lucro_coef += 0.75
+[2025-11-15 14:53:42]   ✅ GREEN: 2025-11-07 - lucro_coef += 0.75
+[2025-11-15 14:53:42]   ✅ GREEN: 2025-11-07 - lucro_coef += 0.64
+[2025-11-15 14:53:42]   ✅ GREEN: 2025-11-07 - lucro_coef += 0.51
+[2025-11-15 14:53:42]   ✅ RED: 2025-11-06 - lucro_coef -= 1
+[2025-11-15 14:53:42]   ✅ RED: 2025-11-06 - lucro_coef -= 1
+[2025-11-15 14:53:42]   ✅ GREEN: 2025-11-06 - lucro_coef += 1.05
+[2025-11-15 14:53:42]   ✅ RED: 2025-11-06 - lucro_coef -= 1
+[2025-11-15 14:53:42]   ✅ RED: 2025-11-06 - lucro_coef -= 1
+[2025-11-15 14:53:42]   ✅ GREEN: 2025-11-06 - lucro_coef += 0.5
+[2025-11-15 14:53:42]   ✅ GREEN: 2025-11-06 - lucro_coef += 0.51
+[2025-11-15 14:53:42]   ✅ GREEN: 2025-11-06 - lucro_coef += 0.63
+[2025-11-15 14:53:42]   ✅ GREEN: 2025-11-06 - lucro_coef += 0.5
+[2025-11-15 14:53:42]   ✅ GREEN: 2025-11-06 - lucro_coef += 0.51
+[2025-11-15 14:53:42]   ✅ RED: 2025-11-05 - lucro_coef -= 1
+[2025-11-15 14:53:42]   ✅ GREEN: 2025-11-05 - lucro_coef += 0.51
+[2025-11-15 14:53:42]   ✅ GREEN: 2025-11-05 - lucro_coef += 0.5
+[2025-11-15 14:53:42]   ✅ GREEN: 2025-11-02 - lucro_coef += 1.09
+[2025-11-15 14:53:42]   ✅ GREEN: 2025-11-02 - lucro_coef += 0.53
+[2025-11-15 14:53:42]   ✅ GREEN: 2025-11-02 - lucro_coef += 1
+[2025-11-15 14:53:42]   ✅ RED: 2025-11-02 - lucro_coef -= 1
+[2025-11-15 14:53:42]   ✅ RED: 2025-11-02 - lucro_coef -= 1
+[2025-11-15 14:53:42]   ✅ GREEN: 2025-11-02 - lucro_coef += 0.53
+[2025-11-15 14:53:42]   ✅ RED: 2025-11-02 - lucro_coef -= 1
+[2025-11-15 14:53:42] Dia 2025-11-14: 0G x 0R | Lucro: 0,00
+[2025-11-15 14:53:42] Dia 2025-11-12: 0G x 0R | Lucro: 0,00
+[2025-11-15 14:53:42] Dia 2025-11-09: 9G x 0R | Lucro: 464,00
+[2025-11-15 14:53:42] Dia 2025-11-08: 1G x 5R | Lucro: -450,00
+[2025-11-15 14:53:42] Dia 2025-11-07: 10G x 1R | Lucro: 499,00
+[2025-11-15 14:53:42] Dia 2025-11-06: 6G x 4R | Lucro: -30,00
+[2025-11-15 14:53:42] Dia 2025-11-05: 2G x 1R | Lucro: 1,00
+[2025-11-15 14:53:42] Dia 2025-11-04: 0G x 0R | Lucro: 0,00
+[2025-11-15 14:53:42] Dia 2025-11-03: 0G x 0R | Lucro: 0,00
+[2025-11-15 14:53:42] Dia 2025-11-02: 4G x 3R | Lucro: 15,00
+[2025-11-15 14:53:42] ✅ Total de dias processados: 10
+[2025-11-15 14:53:52] ==== INICIANDO OBTER-DIAS-MES ====
+[2025-11-15 14:53:52] Usuario ID da sessão: 23
+[2025-11-15 14:53:52] ✅ Conexão com banco de dados OK
+[2025-11-15 14:53:52] Período solicitado: 2025-11-01 a 2025-11-30 para usuario_id=23
+[2025-11-15 14:53:52] Query: SELECT titulo, resultado, odds, DATE(data_criacao) as data_dia FROM bote 
+              WHERE DATE(data_criacao) >= ? 
+              AND DATE(data_criacao) <= ?
+              ORDER BY data_criacao DESC
+[2025-11-15 14:53:52] Parâmetros: primeira_data=2025-11-01, última_data=2025-11-30
+[2025-11-15 14:53:52] ✅ Query preparada com sucesso
+[2025-11-15 14:53:52] bind_param resultado: true
+[2025-11-15 14:53:52] ✅ bind_param executado com sucesso
+[2025-11-15 14:53:52] execute() resultado: true
+[2025-11-15 14:53:52] ✅ Query executada com sucesso
+[2025-11-15 14:53:52] ✅ Resultado obtido com sucesso
+[2025-11-15 14:53:52] Total de registros encontrados: 91
+[2025-11-15 14:53:52]   ✅ GREEN: 2025-11-09 - lucro_coef += 0.5
+[2025-11-15 14:53:52]   ✅ GREEN: 2025-11-09 - lucro_coef += 0.5
+[2025-11-15 14:53:52]   ✅ GREEN: 2025-11-09 - lucro_coef += 0.52
+[2025-11-15 14:53:52]   ✅ GREEN: 2025-11-09 - lucro_coef += 0.52
+[2025-11-15 14:53:52]   ✅ GREEN: 2025-11-09 - lucro_coef += 0.51
+[2025-11-15 14:53:52]   ✅ GREEN: 2025-11-09 - lucro_coef += 0.5
+[2025-11-15 14:53:52]   ✅ GREEN: 2025-11-09 - lucro_coef += 0.51
+[2025-11-15 14:53:52]   ✅ GREEN: 2025-11-09 - lucro_coef += 0.58
+[2025-11-15 14:53:52]   ✅ GREEN: 2025-11-09 - lucro_coef += 0.5
+[2025-11-15 14:53:52]   ✅ RED: 2025-11-08 - lucro_coef -= 1
+[2025-11-15 14:53:52]   ✅ RED: 2025-11-08 - lucro_coef -= 1
+[2025-11-15 14:53:52]   ✅ GREEN: 2025-11-08 - lucro_coef += 0.5
+[2025-11-15 14:53:52]   ✅ RED: 2025-11-08 - lucro_coef -= 1
+[2025-11-15 14:53:52]   ✅ RED: 2025-11-08 - lucro_coef -= 1
+[2025-11-15 14:53:52]   ✅ RED: 2025-11-08 - lucro_coef -= 1
+[2025-11-15 14:53:52]   ✅ GREEN: 2025-11-07 - lucro_coef += 0.51
+[2025-11-15 14:53:52]   ✅ GREEN: 2025-11-07 - lucro_coef += 0.55
+[2025-11-15 14:53:52]   ✅ GREEN: 2025-11-07 - lucro_coef += 0.55
+[2025-11-15 14:53:52]   ✅ GREEN: 2025-11-07 - lucro_coef += 0.53
+[2025-11-15 14:53:52]   ✅ GREEN: 2025-11-07 - lucro_coef += 0.5
+[2025-11-15 14:53:52]   ✅ GREEN: 2025-11-07 - lucro_coef += 0.7
+[2025-11-15 14:53:52]   ✅ RED: 2025-11-07 - lucro_coef -= 1
+[2025-11-15 14:53:52]   ✅ GREEN: 2025-11-07 - lucro_coef += 0.75
+[2025-11-15 14:53:52]   ✅ GREEN: 2025-11-07 - lucro_coef += 0.75
+[2025-11-15 14:53:52]   ✅ GREEN: 2025-11-07 - lucro_coef += 0.64
+[2025-11-15 14:53:52]   ✅ GREEN: 2025-11-07 - lucro_coef += 0.51
+[2025-11-15 14:53:52]   ✅ RED: 2025-11-06 - lucro_coef -= 1
+[2025-11-15 14:53:52]   ✅ RED: 2025-11-06 - lucro_coef -= 1
+[2025-11-15 14:53:52]   ✅ GREEN: 2025-11-06 - lucro_coef += 1.05
+[2025-11-15 14:53:52]   ✅ RED: 2025-11-06 - lucro_coef -= 1
+[2025-11-15 14:53:52]   ✅ RED: 2025-11-06 - lucro_coef -= 1
+[2025-11-15 14:53:52]   ✅ GREEN: 2025-11-06 - lucro_coef += 0.5
+[2025-11-15 14:53:52]   ✅ GREEN: 2025-11-06 - lucro_coef += 0.51
+[2025-11-15 14:53:52]   ✅ GREEN: 2025-11-06 - lucro_coef += 0.63
+[2025-11-15 14:53:52]   ✅ GREEN: 2025-11-06 - lucro_coef += 0.5
+[2025-11-15 14:53:52]   ✅ GREEN: 2025-11-06 - lucro_coef += 0.51
+[2025-11-15 14:53:52]   ✅ RED: 2025-11-05 - lucro_coef -= 1
+[2025-11-15 14:53:52]   ✅ GREEN: 2025-11-05 - lucro_coef += 0.51
+[2025-11-15 14:53:52]   ✅ GREEN: 2025-11-05 - lucro_coef += 0.5
+[2025-11-15 14:53:52]   ✅ GREEN: 2025-11-02 - lucro_coef += 1.09
+[2025-11-15 14:53:52]   ✅ GREEN: 2025-11-02 - lucro_coef += 0.53
+[2025-11-15 14:53:52]   ✅ GREEN: 2025-11-02 - lucro_coef += 1
+[2025-11-15 14:53:52]   ✅ RED: 2025-11-02 - lucro_coef -= 1
+[2025-11-15 14:53:52]   ✅ RED: 2025-11-02 - lucro_coef -= 1
+[2025-11-15 14:53:52]   ✅ GREEN: 2025-11-02 - lucro_coef += 0.53
+[2025-11-15 14:53:52]   ✅ RED: 2025-11-02 - lucro_coef -= 1
+[2025-11-15 14:53:52] Dia 2025-11-14: 0G x 0R | Lucro: 0,00
+[2025-11-15 14:53:52] Dia 2025-11-12: 0G x 0R | Lucro: 0,00
+[2025-11-15 14:53:52] Dia 2025-11-09: 9G x 0R | Lucro: 464,00
+[2025-11-15 14:53:52] Dia 2025-11-08: 1G x 5R | Lucro: -450,00
+[2025-11-15 14:53:52] Dia 2025-11-07: 10G x 1R | Lucro: 499,00
+[2025-11-15 14:53:52] Dia 2025-11-06: 6G x 4R | Lucro: -30,00
+[2025-11-15 14:53:52] Dia 2025-11-05: 2G x 1R | Lucro: 1,00
+[2025-11-15 14:53:52] Dia 2025-11-04: 0G x 0R | Lucro: 0,00
+[2025-11-15 14:53:52] Dia 2025-11-03: 0G x 0R | Lucro: 0,00
+[2025-11-15 14:53:52] Dia 2025-11-02: 4G x 3R | Lucro: 15,00
+[2025-11-15 14:53:52] ✅ Total de dias processados: 10
+[2025-11-15 14:54:02] ==== INICIANDO OBTER-DIAS-MES ====
+[2025-11-15 14:54:02] Usuario ID da sessão: 23
+[2025-11-15 14:54:02] ✅ Conexão com banco de dados OK
+[2025-11-15 14:54:02] Período solicitado: 2025-11-01 a 2025-11-30 para usuario_id=23
+[2025-11-15 14:54:02] Query: SELECT titulo, resultado, odds, DATE(data_criacao) as data_dia FROM bote 
+              WHERE DATE(data_criacao) >= ? 
+              AND DATE(data_criacao) <= ?
+              ORDER BY data_criacao DESC
+[2025-11-15 14:54:02] Parâmetros: primeira_data=2025-11-01, última_data=2025-11-30
+[2025-11-15 14:54:02] ✅ Query preparada com sucesso
+[2025-11-15 14:54:02] bind_param resultado: true
+[2025-11-15 14:54:02] ✅ bind_param executado com sucesso
+[2025-11-15 14:54:02] execute() resultado: true
+[2025-11-15 14:54:02] ✅ Query executada com sucesso
+[2025-11-15 14:54:02] ✅ Resultado obtido com sucesso
+[2025-11-15 14:54:02] Total de registros encontrados: 91
+[2025-11-15 14:54:02]   ✅ GREEN: 2025-11-09 - lucro_coef += 0.5
+[2025-11-15 14:54:02]   ✅ GREEN: 2025-11-09 - lucro_coef += 0.5
+[2025-11-15 14:54:02]   ✅ GREEN: 2025-11-09 - lucro_coef += 0.52
+[2025-11-15 14:54:02]   ✅ GREEN: 2025-11-09 - lucro_coef += 0.52
+[2025-11-15 14:54:02]   ✅ GREEN: 2025-11-09 - lucro_coef += 0.51
+[2025-11-15 14:54:02]   ✅ GREEN: 2025-11-09 - lucro_coef += 0.5
+[2025-11-15 14:54:02]   ✅ GREEN: 2025-11-09 - lucro_coef += 0.51
+[2025-11-15 14:54:02]   ✅ GREEN: 2025-11-09 - lucro_coef += 0.58
+[2025-11-15 14:54:02]   ✅ GREEN: 2025-11-09 - lucro_coef += 0.5
+[2025-11-15 14:54:02]   ✅ RED: 2025-11-08 - lucro_coef -= 1
+[2025-11-15 14:54:02]   ✅ RED: 2025-11-08 - lucro_coef -= 1
+[2025-11-15 14:54:02]   ✅ GREEN: 2025-11-08 - lucro_coef += 0.5
+[2025-11-15 14:54:02]   ✅ RED: 2025-11-08 - lucro_coef -= 1
+[2025-11-15 14:54:02]   ✅ RED: 2025-11-08 - lucro_coef -= 1
+[2025-11-15 14:54:02]   ✅ RED: 2025-11-08 - lucro_coef -= 1
+[2025-11-15 14:54:02]   ✅ GREEN: 2025-11-07 - lucro_coef += 0.51
+[2025-11-15 14:54:02]   ✅ GREEN: 2025-11-07 - lucro_coef += 0.55
+[2025-11-15 14:54:02]   ✅ GREEN: 2025-11-07 - lucro_coef += 0.55
+[2025-11-15 14:54:02]   ✅ GREEN: 2025-11-07 - lucro_coef += 0.53
+[2025-11-15 14:54:02]   ✅ GREEN: 2025-11-07 - lucro_coef += 0.5
+[2025-11-15 14:54:02]   ✅ GREEN: 2025-11-07 - lucro_coef += 0.7
+[2025-11-15 14:54:02]   ✅ RED: 2025-11-07 - lucro_coef -= 1
+[2025-11-15 14:54:02]   ✅ GREEN: 2025-11-07 - lucro_coef += 0.75
+[2025-11-15 14:54:02]   ✅ GREEN: 2025-11-07 - lucro_coef += 0.75
+[2025-11-15 14:54:02]   ✅ GREEN: 2025-11-07 - lucro_coef += 0.64
+[2025-11-15 14:54:02]   ✅ GREEN: 2025-11-07 - lucro_coef += 0.51
+[2025-11-15 14:54:02]   ✅ RED: 2025-11-06 - lucro_coef -= 1
+[2025-11-15 14:54:02]   ✅ RED: 2025-11-06 - lucro_coef -= 1
+[2025-11-15 14:54:02]   ✅ GREEN: 2025-11-06 - lucro_coef += 1.05
+[2025-11-15 14:54:02]   ✅ RED: 2025-11-06 - lucro_coef -= 1
+[2025-11-15 14:54:02]   ✅ RED: 2025-11-06 - lucro_coef -= 1
+[2025-11-15 14:54:02]   ✅ GREEN: 2025-11-06 - lucro_coef += 0.5
+[2025-11-15 14:54:02]   ✅ GREEN: 2025-11-06 - lucro_coef += 0.51
+[2025-11-15 14:54:02]   ✅ GREEN: 2025-11-06 - lucro_coef += 0.63
+[2025-11-15 14:54:02]   ✅ GREEN: 2025-11-06 - lucro_coef += 0.5
+[2025-11-15 14:54:02]   ✅ GREEN: 2025-11-06 - lucro_coef += 0.51
+[2025-11-15 14:54:02]   ✅ RED: 2025-11-05 - lucro_coef -= 1
+[2025-11-15 14:54:02]   ✅ GREEN: 2025-11-05 - lucro_coef += 0.51
+[2025-11-15 14:54:02]   ✅ GREEN: 2025-11-05 - lucro_coef += 0.5
+[2025-11-15 14:54:02]   ✅ GREEN: 2025-11-02 - lucro_coef += 1.09
+[2025-11-15 14:54:02]   ✅ GREEN: 2025-11-02 - lucro_coef += 0.53
+[2025-11-15 14:54:02]   ✅ GREEN: 2025-11-02 - lucro_coef += 1
+[2025-11-15 14:54:02]   ✅ RED: 2025-11-02 - lucro_coef -= 1
+[2025-11-15 14:54:02]   ✅ RED: 2025-11-02 - lucro_coef -= 1
+[2025-11-15 14:54:02]   ✅ GREEN: 2025-11-02 - lucro_coef += 0.53
+[2025-11-15 14:54:02]   ✅ RED: 2025-11-02 - lucro_coef -= 1
+[2025-11-15 14:54:02] Dia 2025-11-14: 0G x 0R | Lucro: 0,00
+[2025-11-15 14:54:02] Dia 2025-11-12: 0G x 0R | Lucro: 0,00
+[2025-11-15 14:54:02] Dia 2025-11-09: 9G x 0R | Lucro: 464,00
+[2025-11-15 14:54:02] Dia 2025-11-08: 1G x 5R | Lucro: -450,00
+[2025-11-15 14:54:02] Dia 2025-11-07: 10G x 1R | Lucro: 499,00
+[2025-11-15 14:54:02] Dia 2025-11-06: 6G x 4R | Lucro: -30,00
+[2025-11-15 14:54:02] Dia 2025-11-05: 2G x 1R | Lucro: 1,00
+[2025-11-15 14:54:02] Dia 2025-11-04: 0G x 0R | Lucro: 0,00
+[2025-11-15 14:54:02] Dia 2025-11-03: 0G x 0R | Lucro: 0,00
+[2025-11-15 14:54:02] Dia 2025-11-02: 4G x 3R | Lucro: 15,00
+[2025-11-15 14:54:02] ✅ Total de dias processados: 10
+[2025-11-15 14:54:12] ==== INICIANDO OBTER-DIAS-MES ====
+[2025-11-15 14:54:12] Usuario ID da sessão: 23
+[2025-11-15 14:54:12] ✅ Conexão com banco de dados OK
+[2025-11-15 14:54:12] Período solicitado: 2025-11-01 a 2025-11-30 para usuario_id=23
+[2025-11-15 14:54:12] Query: SELECT titulo, resultado, odds, DATE(data_criacao) as data_dia FROM bote 
+              WHERE DATE(data_criacao) >= ? 
+              AND DATE(data_criacao) <= ?
+              ORDER BY data_criacao DESC
+[2025-11-15 14:54:12] Parâmetros: primeira_data=2025-11-01, última_data=2025-11-30
+[2025-11-15 14:54:12] ✅ Query preparada com sucesso
+[2025-11-15 14:54:12] bind_param resultado: true
+[2025-11-15 14:54:12] ✅ bind_param executado com sucesso
+[2025-11-15 14:54:12] execute() resultado: true
+[2025-11-15 14:54:12] ✅ Query executada com sucesso
+[2025-11-15 14:54:12] ✅ Resultado obtido com sucesso
+[2025-11-15 14:54:12] Total de registros encontrados: 91
+[2025-11-15 14:54:12]   ✅ GREEN: 2025-11-09 - lucro_coef += 0.5
+[2025-11-15 14:54:12]   ✅ GREEN: 2025-11-09 - lucro_coef += 0.5
+[2025-11-15 14:54:12]   ✅ GREEN: 2025-11-09 - lucro_coef += 0.52
+[2025-11-15 14:54:12]   ✅ GREEN: 2025-11-09 - lucro_coef += 0.52
+[2025-11-15 14:54:12]   ✅ GREEN: 2025-11-09 - lucro_coef += 0.51
+[2025-11-15 14:54:12]   ✅ GREEN: 2025-11-09 - lucro_coef += 0.5
+[2025-11-15 14:54:12]   ✅ GREEN: 2025-11-09 - lucro_coef += 0.51
+[2025-11-15 14:54:12]   ✅ GREEN: 2025-11-09 - lucro_coef += 0.58
+[2025-11-15 14:54:12]   ✅ GREEN: 2025-11-09 - lucro_coef += 0.5
+[2025-11-15 14:54:12]   ✅ RED: 2025-11-08 - lucro_coef -= 1
+[2025-11-15 14:54:12]   ✅ RED: 2025-11-08 - lucro_coef -= 1
+[2025-11-15 14:54:12]   ✅ GREEN: 2025-11-08 - lucro_coef += 0.5
+[2025-11-15 14:54:12]   ✅ RED: 2025-11-08 - lucro_coef -= 1
+[2025-11-15 14:54:12]   ✅ RED: 2025-11-08 - lucro_coef -= 1
+[2025-11-15 14:54:12]   ✅ RED: 2025-11-08 - lucro_coef -= 1
+[2025-11-15 14:54:12]   ✅ GREEN: 2025-11-07 - lucro_coef += 0.51
+[2025-11-15 14:54:12]   ✅ GREEN: 2025-11-07 - lucro_coef += 0.55
+[2025-11-15 14:54:12]   ✅ GREEN: 2025-11-07 - lucro_coef += 0.55
+[2025-11-15 14:54:12]   ✅ GREEN: 2025-11-07 - lucro_coef += 0.53
+[2025-11-15 14:54:12]   ✅ GREEN: 2025-11-07 - lucro_coef += 0.5
+[2025-11-15 14:54:12]   ✅ GREEN: 2025-11-07 - lucro_coef += 0.7
+[2025-11-15 14:54:12]   ✅ RED: 2025-11-07 - lucro_coef -= 1
+[2025-11-15 14:54:12]   ✅ GREEN: 2025-11-07 - lucro_coef += 0.75
+[2025-11-15 14:54:12]   ✅ GREEN: 2025-11-07 - lucro_coef += 0.75
+[2025-11-15 14:54:12]   ✅ GREEN: 2025-11-07 - lucro_coef += 0.64
+[2025-11-15 14:54:12]   ✅ GREEN: 2025-11-07 - lucro_coef += 0.51
+[2025-11-15 14:54:12]   ✅ RED: 2025-11-06 - lucro_coef -= 1
+[2025-11-15 14:54:12]   ✅ RED: 2025-11-06 - lucro_coef -= 1
+[2025-11-15 14:54:12]   ✅ GREEN: 2025-11-06 - lucro_coef += 1.05
+[2025-11-15 14:54:12]   ✅ RED: 2025-11-06 - lucro_coef -= 1
+[2025-11-15 14:54:12]   ✅ RED: 2025-11-06 - lucro_coef -= 1
+[2025-11-15 14:54:12]   ✅ GREEN: 2025-11-06 - lucro_coef += 0.5
+[2025-11-15 14:54:12]   ✅ GREEN: 2025-11-06 - lucro_coef += 0.51
+[2025-11-15 14:54:12]   ✅ GREEN: 2025-11-06 - lucro_coef += 0.63
+[2025-11-15 14:54:12]   ✅ GREEN: 2025-11-06 - lucro_coef += 0.5
+[2025-11-15 14:54:12]   ✅ GREEN: 2025-11-06 - lucro_coef += 0.51
+[2025-11-15 14:54:12]   ✅ RED: 2025-11-05 - lucro_coef -= 1
+[2025-11-15 14:54:12]   ✅ GREEN: 2025-11-05 - lucro_coef += 0.51
+[2025-11-15 14:54:12]   ✅ GREEN: 2025-11-05 - lucro_coef += 0.5
+[2025-11-15 14:54:12]   ✅ GREEN: 2025-11-02 - lucro_coef += 1.09
+[2025-11-15 14:54:12]   ✅ GREEN: 2025-11-02 - lucro_coef += 0.53
+[2025-11-15 14:54:12]   ✅ GREEN: 2025-11-02 - lucro_coef += 1
+[2025-11-15 14:54:12]   ✅ RED: 2025-11-02 - lucro_coef -= 1
+[2025-11-15 14:54:12]   ✅ RED: 2025-11-02 - lucro_coef -= 1
+[2025-11-15 14:54:12]   ✅ GREEN: 2025-11-02 - lucro_coef += 0.53
+[2025-11-15 14:54:12]   ✅ RED: 2025-11-02 - lucro_coef -= 1
+[2025-11-15 14:54:12] Dia 2025-11-14: 0G x 0R | Lucro: 0,00
+[2025-11-15 14:54:12] Dia 2025-11-12: 0G x 0R | Lucro: 0,00
+[2025-11-15 14:54:12] Dia 2025-11-09: 9G x 0R | Lucro: 464,00
+[2025-11-15 14:54:12] Dia 2025-11-08: 1G x 5R | Lucro: -450,00
+[2025-11-15 14:54:12] Dia 2025-11-07: 10G x 1R | Lucro: 499,00
+[2025-11-15 14:54:12] Dia 2025-11-06: 6G x 4R | Lucro: -30,00
+[2025-11-15 14:54:12] Dia 2025-11-05: 2G x 1R | Lucro: 1,00
+[2025-11-15 14:54:12] Dia 2025-11-04: 0G x 0R | Lucro: 0,00
+[2025-11-15 14:54:12] Dia 2025-11-03: 0G x 0R | Lucro: 0,00
+[2025-11-15 14:54:12] Dia 2025-11-02: 4G x 3R | Lucro: 15,00
+[2025-11-15 14:54:12] ✅ Total de dias processados: 10
+[2025-11-15 14:54:22] ==== INICIANDO OBTER-DIAS-MES ====
+[2025-11-15 14:54:22] Usuario ID da sessão: 23
+[2025-11-15 14:54:22] ✅ Conexão com banco de dados OK
+[2025-11-15 14:54:22] Período solicitado: 2025-11-01 a 2025-11-30 para usuario_id=23
+[2025-11-15 14:54:22] Query: SELECT titulo, resultado, odds, DATE(data_criacao) as data_dia FROM bote 
+              WHERE DATE(data_criacao) >= ? 
+              AND DATE(data_criacao) <= ?
+              ORDER BY data_criacao DESC
+[2025-11-15 14:54:22] Parâmetros: primeira_data=2025-11-01, última_data=2025-11-30
+[2025-11-15 14:54:22] ✅ Query preparada com sucesso
+[2025-11-15 14:54:22] bind_param resultado: true
+[2025-11-15 14:54:22] ✅ bind_param executado com sucesso
+[2025-11-15 14:54:22] execute() resultado: true
+[2025-11-15 14:54:22] ✅ Query executada com sucesso
+[2025-11-15 14:54:22] ✅ Resultado obtido com sucesso
+[2025-11-15 14:54:22] Total de registros encontrados: 91
+[2025-11-15 14:54:22]   ✅ GREEN: 2025-11-09 - lucro_coef += 0.5
+[2025-11-15 14:54:22]   ✅ GREEN: 2025-11-09 - lucro_coef += 0.5
+[2025-11-15 14:54:22]   ✅ GREEN: 2025-11-09 - lucro_coef += 0.52
+[2025-11-15 14:54:22]   ✅ GREEN: 2025-11-09 - lucro_coef += 0.52
+[2025-11-15 14:54:22]   ✅ GREEN: 2025-11-09 - lucro_coef += 0.51
+[2025-11-15 14:54:22]   ✅ GREEN: 2025-11-09 - lucro_coef += 0.5
+[2025-11-15 14:54:22]   ✅ GREEN: 2025-11-09 - lucro_coef += 0.51
+[2025-11-15 14:54:22]   ✅ GREEN: 2025-11-09 - lucro_coef += 0.58
+[2025-11-15 14:54:22]   ✅ GREEN: 2025-11-09 - lucro_coef += 0.5
+[2025-11-15 14:54:22]   ✅ RED: 2025-11-08 - lucro_coef -= 1
+[2025-11-15 14:54:22]   ✅ RED: 2025-11-08 - lucro_coef -= 1
+[2025-11-15 14:54:22]   ✅ GREEN: 2025-11-08 - lucro_coef += 0.5
+[2025-11-15 14:54:22]   ✅ RED: 2025-11-08 - lucro_coef -= 1
+[2025-11-15 14:54:22]   ✅ RED: 2025-11-08 - lucro_coef -= 1
+[2025-11-15 14:54:22]   ✅ RED: 2025-11-08 - lucro_coef -= 1
+[2025-11-15 14:54:22]   ✅ GREEN: 2025-11-07 - lucro_coef += 0.51
+[2025-11-15 14:54:22]   ✅ GREEN: 2025-11-07 - lucro_coef += 0.55
+[2025-11-15 14:54:22]   ✅ GREEN: 2025-11-07 - lucro_coef += 0.55
+[2025-11-15 14:54:22]   ✅ GREEN: 2025-11-07 - lucro_coef += 0.53
+[2025-11-15 14:54:22]   ✅ GREEN: 2025-11-07 - lucro_coef += 0.5
+[2025-11-15 14:54:22]   ✅ GREEN: 2025-11-07 - lucro_coef += 0.7
+[2025-11-15 14:54:22]   ✅ RED: 2025-11-07 - lucro_coef -= 1
+[2025-11-15 14:54:22]   ✅ GREEN: 2025-11-07 - lucro_coef += 0.75
+[2025-11-15 14:54:22]   ✅ GREEN: 2025-11-07 - lucro_coef += 0.75
+[2025-11-15 14:54:22]   ✅ GREEN: 2025-11-07 - lucro_coef += 0.64
+[2025-11-15 14:54:22]   ✅ GREEN: 2025-11-07 - lucro_coef += 0.51
+[2025-11-15 14:54:22]   ✅ RED: 2025-11-06 - lucro_coef -= 1
+[2025-11-15 14:54:22]   ✅ RED: 2025-11-06 - lucro_coef -= 1
+[2025-11-15 14:54:22]   ✅ GREEN: 2025-11-06 - lucro_coef += 1.05
+[2025-11-15 14:54:22]   ✅ RED: 2025-11-06 - lucro_coef -= 1
+[2025-11-15 14:54:22]   ✅ RED: 2025-11-06 - lucro_coef -= 1
+[2025-11-15 14:54:22]   ✅ GREEN: 2025-11-06 - lucro_coef += 0.5
+[2025-11-15 14:54:22]   ✅ GREEN: 2025-11-06 - lucro_coef += 0.51
+[2025-11-15 14:54:22]   ✅ GREEN: 2025-11-06 - lucro_coef += 0.63
+[2025-11-15 14:54:22]   ✅ GREEN: 2025-11-06 - lucro_coef += 0.5
+[2025-11-15 14:54:22]   ✅ GREEN: 2025-11-06 - lucro_coef += 0.51
+[2025-11-15 14:54:22]   ✅ RED: 2025-11-05 - lucro_coef -= 1
+[2025-11-15 14:54:22]   ✅ GREEN: 2025-11-05 - lucro_coef += 0.51
+[2025-11-15 14:54:22]   ✅ GREEN: 2025-11-05 - lucro_coef += 0.5
+[2025-11-15 14:54:22]   ✅ GREEN: 2025-11-02 - lucro_coef += 1.09
+[2025-11-15 14:54:22]   ✅ GREEN: 2025-11-02 - lucro_coef += 0.53
+[2025-11-15 14:54:22]   ✅ GREEN: 2025-11-02 - lucro_coef += 1
+[2025-11-15 14:54:22]   ✅ RED: 2025-11-02 - lucro_coef -= 1
+[2025-11-15 14:54:22]   ✅ RED: 2025-11-02 - lucro_coef -= 1
+[2025-11-15 14:54:22]   ✅ GREEN: 2025-11-02 - lucro_coef += 0.53
+[2025-11-15 14:54:22]   ✅ RED: 2025-11-02 - lucro_coef -= 1
+[2025-11-15 14:54:22] Dia 2025-11-14: 0G x 0R | Lucro: 0,00
+[2025-11-15 14:54:22] Dia 2025-11-12: 0G x 0R | Lucro: 0,00
+[2025-11-15 14:54:22] Dia 2025-11-09: 9G x 0R | Lucro: 464,00
+[2025-11-15 14:54:22] Dia 2025-11-08: 1G x 5R | Lucro: -450,00
+[2025-11-15 14:54:22] Dia 2025-11-07: 10G x 1R | Lucro: 499,00
+[2025-11-15 14:54:22] Dia 2025-11-06: 6G x 4R | Lucro: -30,00
+[2025-11-15 14:54:22] Dia 2025-11-05: 2G x 1R | Lucro: 1,00
+[2025-11-15 14:54:22] Dia 2025-11-04: 0G x 0R | Lucro: 0,00
+[2025-11-15 14:54:22] Dia 2025-11-03: 0G x 0R | Lucro: 0,00
+[2025-11-15 14:54:22] Dia 2025-11-02: 4G x 3R | Lucro: 15,00
+[2025-11-15 14:54:22] ✅ Total de dias processados: 10
+[2025-11-15 14:54:32] ==== INICIANDO OBTER-DIAS-MES ====
+[2025-11-15 14:54:32] Usuario ID da sessão: 23
+[2025-11-15 14:54:32] ✅ Conexão com banco de dados OK
+[2025-11-15 14:54:32] Período solicitado: 2025-11-01 a 2025-11-30 para usuario_id=23
+[2025-11-15 14:54:32] Query: SELECT titulo, resultado, odds, DATE(data_criacao) as data_dia FROM bote 
+              WHERE DATE(data_criacao) >= ? 
+              AND DATE(data_criacao) <= ?
+              ORDER BY data_criacao DESC
+[2025-11-15 14:54:32] Parâmetros: primeira_data=2025-11-01, última_data=2025-11-30
+[2025-11-15 14:54:32] ✅ Query preparada com sucesso
+[2025-11-15 14:54:32] bind_param resultado: true
+[2025-11-15 14:54:32] ✅ bind_param executado com sucesso
+[2025-11-15 14:54:32] execute() resultado: true
+[2025-11-15 14:54:32] ✅ Query executada com sucesso
+[2025-11-15 14:54:32] ✅ Resultado obtido com sucesso
+[2025-11-15 14:54:32] Total de registros encontrados: 91
+[2025-11-15 14:54:32]   ✅ GREEN: 2025-11-09 - lucro_coef += 0.5
+[2025-11-15 14:54:32]   ✅ GREEN: 2025-11-09 - lucro_coef += 0.5
+[2025-11-15 14:54:32]   ✅ GREEN: 2025-11-09 - lucro_coef += 0.52
+[2025-11-15 14:54:32]   ✅ GREEN: 2025-11-09 - lucro_coef += 0.52
+[2025-11-15 14:54:32]   ✅ GREEN: 2025-11-09 - lucro_coef += 0.51
+[2025-11-15 14:54:32]   ✅ GREEN: 2025-11-09 - lucro_coef += 0.5
+[2025-11-15 14:54:32]   ✅ GREEN: 2025-11-09 - lucro_coef += 0.51
+[2025-11-15 14:54:32]   ✅ GREEN: 2025-11-09 - lucro_coef += 0.58
+[2025-11-15 14:54:32]   ✅ GREEN: 2025-11-09 - lucro_coef += 0.5
+[2025-11-15 14:54:32]   ✅ RED: 2025-11-08 - lucro_coef -= 1
+[2025-11-15 14:54:32]   ✅ RED: 2025-11-08 - lucro_coef -= 1
+[2025-11-15 14:54:32]   ✅ GREEN: 2025-11-08 - lucro_coef += 0.5
+[2025-11-15 14:54:32]   ✅ RED: 2025-11-08 - lucro_coef -= 1
+[2025-11-15 14:54:32]   ✅ RED: 2025-11-08 - lucro_coef -= 1
+[2025-11-15 14:54:32]   ✅ RED: 2025-11-08 - lucro_coef -= 1
+[2025-11-15 14:54:32]   ✅ GREEN: 2025-11-07 - lucro_coef += 0.51
+[2025-11-15 14:54:32]   ✅ GREEN: 2025-11-07 - lucro_coef += 0.55
+[2025-11-15 14:54:32]   ✅ GREEN: 2025-11-07 - lucro_coef += 0.55
+[2025-11-15 14:54:32]   ✅ GREEN: 2025-11-07 - lucro_coef += 0.53
+[2025-11-15 14:54:32]   ✅ GREEN: 2025-11-07 - lucro_coef += 0.5
+[2025-11-15 14:54:32]   ✅ GREEN: 2025-11-07 - lucro_coef += 0.7
+[2025-11-15 14:54:32]   ✅ RED: 2025-11-07 - lucro_coef -= 1
+[2025-11-15 14:54:32]   ✅ GREEN: 2025-11-07 - lucro_coef += 0.75
+[2025-11-15 14:54:32]   ✅ GREEN: 2025-11-07 - lucro_coef += 0.75
+[2025-11-15 14:54:32]   ✅ GREEN: 2025-11-07 - lucro_coef += 0.64
+[2025-11-15 14:54:32]   ✅ GREEN: 2025-11-07 - lucro_coef += 0.51
+[2025-11-15 14:54:32]   ✅ RED: 2025-11-06 - lucro_coef -= 1
+[2025-11-15 14:54:32]   ✅ RED: 2025-11-06 - lucro_coef -= 1
+[2025-11-15 14:54:32]   ✅ GREEN: 2025-11-06 - lucro_coef += 1.05
+[2025-11-15 14:54:32]   ✅ RED: 2025-11-06 - lucro_coef -= 1
+[2025-11-15 14:54:32]   ✅ RED: 2025-11-06 - lucro_coef -= 1
+[2025-11-15 14:54:32]   ✅ GREEN: 2025-11-06 - lucro_coef += 0.5
+[2025-11-15 14:54:32]   ✅ GREEN: 2025-11-06 - lucro_coef += 0.51
+[2025-11-15 14:54:32]   ✅ GREEN: 2025-11-06 - lucro_coef += 0.63
+[2025-11-15 14:54:32]   ✅ GREEN: 2025-11-06 - lucro_coef += 0.5
+[2025-11-15 14:54:32]   ✅ GREEN: 2025-11-06 - lucro_coef += 0.51
+[2025-11-15 14:54:32]   ✅ RED: 2025-11-05 - lucro_coef -= 1
+[2025-11-15 14:54:32]   ✅ GREEN: 2025-11-05 - lucro_coef += 0.51
+[2025-11-15 14:54:32]   ✅ GREEN: 2025-11-05 - lucro_coef += 0.5
+[2025-11-15 14:54:32]   ✅ GREEN: 2025-11-02 - lucro_coef += 1.09
+[2025-11-15 14:54:32]   ✅ GREEN: 2025-11-02 - lucro_coef += 0.53
+[2025-11-15 14:54:32]   ✅ GREEN: 2025-11-02 - lucro_coef += 1
+[2025-11-15 14:54:32]   ✅ RED: 2025-11-02 - lucro_coef -= 1
+[2025-11-15 14:54:32]   ✅ RED: 2025-11-02 - lucro_coef -= 1
+[2025-11-15 14:54:32]   ✅ GREEN: 2025-11-02 - lucro_coef += 0.53
+[2025-11-15 14:54:32]   ✅ RED: 2025-11-02 - lucro_coef -= 1
+[2025-11-15 14:54:32] Dia 2025-11-14: 0G x 0R | Lucro: 0,00
+[2025-11-15 14:54:32] Dia 2025-11-12: 0G x 0R | Lucro: 0,00
+[2025-11-15 14:54:32] Dia 2025-11-09: 9G x 0R | Lucro: 464,00
+[2025-11-15 14:54:32] Dia 2025-11-08: 1G x 5R | Lucro: -450,00
+[2025-11-15 14:54:32] Dia 2025-11-07: 10G x 1R | Lucro: 499,00
+[2025-11-15 14:54:32] Dia 2025-11-06: 6G x 4R | Lucro: -30,00
+[2025-11-15 14:54:32] Dia 2025-11-05: 2G x 1R | Lucro: 1,00
+[2025-11-15 14:54:32] Dia 2025-11-04: 0G x 0R | Lucro: 0,00
+[2025-11-15 14:54:32] Dia 2025-11-03: 0G x 0R | Lucro: 0,00
+[2025-11-15 14:54:32] Dia 2025-11-02: 4G x 3R | Lucro: 15,00
+[2025-11-15 14:54:32] ✅ Total de dias processados: 10
+[2025-11-15 14:54:42] ==== INICIANDO OBTER-DIAS-MES ====
+[2025-11-15 14:54:42] Usuario ID da sessão: 23
+[2025-11-15 14:54:42] ✅ Conexão com banco de dados OK
+[2025-11-15 14:54:42] Período solicitado: 2025-11-01 a 2025-11-30 para usuario_id=23
+[2025-11-15 14:54:42] Query: SELECT titulo, resultado, odds, DATE(data_criacao) as data_dia FROM bote 
+              WHERE DATE(data_criacao) >= ? 
+              AND DATE(data_criacao) <= ?
+              ORDER BY data_criacao DESC
+[2025-11-15 14:54:42] Parâmetros: primeira_data=2025-11-01, última_data=2025-11-30
+[2025-11-15 14:54:42] ✅ Query preparada com sucesso
+[2025-11-15 14:54:42] bind_param resultado: true
+[2025-11-15 14:54:42] ✅ bind_param executado com sucesso
+[2025-11-15 14:54:42] execute() resultado: true
+[2025-11-15 14:54:42] ✅ Query executada com sucesso
+[2025-11-15 14:54:42] ✅ Resultado obtido com sucesso
+[2025-11-15 14:54:42] Total de registros encontrados: 91
+[2025-11-15 14:54:42]   ✅ GREEN: 2025-11-09 - lucro_coef += 0.5
+[2025-11-15 14:54:42]   ✅ GREEN: 2025-11-09 - lucro_coef += 0.5
+[2025-11-15 14:54:42]   ✅ GREEN: 2025-11-09 - lucro_coef += 0.52
+[2025-11-15 14:54:42]   ✅ GREEN: 2025-11-09 - lucro_coef += 0.52
+[2025-11-15 14:54:42]   ✅ GREEN: 2025-11-09 - lucro_coef += 0.51
+[2025-11-15 14:54:42]   ✅ GREEN: 2025-11-09 - lucro_coef += 0.5
+[2025-11-15 14:54:42]   ✅ GREEN: 2025-11-09 - lucro_coef += 0.51
+[2025-11-15 14:54:42]   ✅ GREEN: 2025-11-09 - lucro_coef += 0.58
+[2025-11-15 14:54:42]   ✅ GREEN: 2025-11-09 - lucro_coef += 0.5
+[2025-11-15 14:54:42]   ✅ RED: 2025-11-08 - lucro_coef -= 1
+[2025-11-15 14:54:42]   ✅ RED: 2025-11-08 - lucro_coef -= 1
+[2025-11-15 14:54:42]   ✅ GREEN: 2025-11-08 - lucro_coef += 0.5
+[2025-11-15 14:54:42]   ✅ RED: 2025-11-08 - lucro_coef -= 1
+[2025-11-15 14:54:42]   ✅ RED: 2025-11-08 - lucro_coef -= 1
+[2025-11-15 14:54:42]   ✅ RED: 2025-11-08 - lucro_coef -= 1
+[2025-11-15 14:54:42]   ✅ GREEN: 2025-11-07 - lucro_coef += 0.51
+[2025-11-15 14:54:42]   ✅ GREEN: 2025-11-07 - lucro_coef += 0.55
+[2025-11-15 14:54:42]   ✅ GREEN: 2025-11-07 - lucro_coef += 0.55
+[2025-11-15 14:54:42]   ✅ GREEN: 2025-11-07 - lucro_coef += 0.53
+[2025-11-15 14:54:42]   ✅ GREEN: 2025-11-07 - lucro_coef += 0.5
+[2025-11-15 14:54:42]   ✅ GREEN: 2025-11-07 - lucro_coef += 0.7
+[2025-11-15 14:54:42]   ✅ RED: 2025-11-07 - lucro_coef -= 1
+[2025-11-15 14:54:42]   ✅ GREEN: 2025-11-07 - lucro_coef += 0.75
+[2025-11-15 14:54:42]   ✅ GREEN: 2025-11-07 - lucro_coef += 0.75
+[2025-11-15 14:54:42]   ✅ GREEN: 2025-11-07 - lucro_coef += 0.64
+[2025-11-15 14:54:42]   ✅ GREEN: 2025-11-07 - lucro_coef += 0.51
+[2025-11-15 14:54:42]   ✅ RED: 2025-11-06 - lucro_coef -= 1
+[2025-11-15 14:54:42]   ✅ RED: 2025-11-06 - lucro_coef -= 1
+[2025-11-15 14:54:42]   ✅ GREEN: 2025-11-06 - lucro_coef += 1.05
+[2025-11-15 14:54:42]   ✅ RED: 2025-11-06 - lucro_coef -= 1
+[2025-11-15 14:54:42]   ✅ RED: 2025-11-06 - lucro_coef -= 1
+[2025-11-15 14:54:42]   ✅ GREEN: 2025-11-06 - lucro_coef += 0.5
+[2025-11-15 14:54:42]   ✅ GREEN: 2025-11-06 - lucro_coef += 0.51
+[2025-11-15 14:54:42]   ✅ GREEN: 2025-11-06 - lucro_coef += 0.63
+[2025-11-15 14:54:42]   ✅ GREEN: 2025-11-06 - lucro_coef += 0.5
+[2025-11-15 14:54:42]   ✅ GREEN: 2025-11-06 - lucro_coef += 0.51
+[2025-11-15 14:54:42]   ✅ RED: 2025-11-05 - lucro_coef -= 1
+[2025-11-15 14:54:42]   ✅ GREEN: 2025-11-05 - lucro_coef += 0.51
+[2025-11-15 14:54:42]   ✅ GREEN: 2025-11-05 - lucro_coef += 0.5
+[2025-11-15 14:54:42]   ✅ GREEN: 2025-11-02 - lucro_coef += 1.09
+[2025-11-15 14:54:42]   ✅ GREEN: 2025-11-02 - lucro_coef += 0.53
+[2025-11-15 14:54:42]   ✅ GREEN: 2025-11-02 - lucro_coef += 1
+[2025-11-15 14:54:42]   ✅ RED: 2025-11-02 - lucro_coef -= 1
+[2025-11-15 14:54:42]   ✅ RED: 2025-11-02 - lucro_coef -= 1
+[2025-11-15 14:54:42]   ✅ GREEN: 2025-11-02 - lucro_coef += 0.53
+[2025-11-15 14:54:42]   ✅ RED: 2025-11-02 - lucro_coef -= 1
+[2025-11-15 14:54:42] Dia 2025-11-14: 0G x 0R | Lucro: 0,00
+[2025-11-15 14:54:42] Dia 2025-11-12: 0G x 0R | Lucro: 0,00
+[2025-11-15 14:54:42] Dia 2025-11-09: 9G x 0R | Lucro: 464,00
+[2025-11-15 14:54:42] Dia 2025-11-08: 1G x 5R | Lucro: -450,00
+[2025-11-15 14:54:42] Dia 2025-11-07: 10G x 1R | Lucro: 499,00
+[2025-11-15 14:54:42] Dia 2025-11-06: 6G x 4R | Lucro: -30,00
+[2025-11-15 14:54:42] Dia 2025-11-05: 2G x 1R | Lucro: 1,00
+[2025-11-15 14:54:42] Dia 2025-11-04: 0G x 0R | Lucro: 0,00
+[2025-11-15 14:54:42] Dia 2025-11-03: 0G x 0R | Lucro: 0,00
+[2025-11-15 14:54:42] Dia 2025-11-02: 4G x 3R | Lucro: 15,00
+[2025-11-15 14:54:42] ✅ Total de dias processados: 10
+[2025-11-15 14:54:52] ==== INICIANDO OBTER-DIAS-MES ====
+[2025-11-15 14:54:52] Usuario ID da sessão: 23
+[2025-11-15 14:54:52] ✅ Conexão com banco de dados OK
+[2025-11-15 14:54:52] Período solicitado: 2025-11-01 a 2025-11-30 para usuario_id=23
+[2025-11-15 14:54:52] Query: SELECT titulo, resultado, odds, DATE(data_criacao) as data_dia FROM bote 
+              WHERE DATE(data_criacao) >= ? 
+              AND DATE(data_criacao) <= ?
+              ORDER BY data_criacao DESC
+[2025-11-15 14:54:52] Parâmetros: primeira_data=2025-11-01, última_data=2025-11-30
+[2025-11-15 14:54:52] ✅ Query preparada com sucesso
+[2025-11-15 14:54:52] bind_param resultado: true
+[2025-11-15 14:54:52] ✅ bind_param executado com sucesso
+[2025-11-15 14:54:52] execute() resultado: true
+[2025-11-15 14:54:52] ✅ Query executada com sucesso
+[2025-11-15 14:54:52] ✅ Resultado obtido com sucesso
+[2025-11-15 14:54:52] Total de registros encontrados: 91
+[2025-11-15 14:54:52]   ✅ GREEN: 2025-11-09 - lucro_coef += 0.5
+[2025-11-15 14:54:52]   ✅ GREEN: 2025-11-09 - lucro_coef += 0.5
+[2025-11-15 14:54:52]   ✅ GREEN: 2025-11-09 - lucro_coef += 0.52
+[2025-11-15 14:54:52]   ✅ GREEN: 2025-11-09 - lucro_coef += 0.52
+[2025-11-15 14:54:52]   ✅ GREEN: 2025-11-09 - lucro_coef += 0.51
+[2025-11-15 14:54:52]   ✅ GREEN: 2025-11-09 - lucro_coef += 0.5
+[2025-11-15 14:54:52]   ✅ GREEN: 2025-11-09 - lucro_coef += 0.51
+[2025-11-15 14:54:52]   ✅ GREEN: 2025-11-09 - lucro_coef += 0.58
+[2025-11-15 14:54:52]   ✅ GREEN: 2025-11-09 - lucro_coef += 0.5
+[2025-11-15 14:54:52]   ✅ RED: 2025-11-08 - lucro_coef -= 1
+[2025-11-15 14:54:52]   ✅ RED: 2025-11-08 - lucro_coef -= 1
+[2025-11-15 14:54:52]   ✅ GREEN: 2025-11-08 - lucro_coef += 0.5
+[2025-11-15 14:54:52]   ✅ RED: 2025-11-08 - lucro_coef -= 1
+[2025-11-15 14:54:52]   ✅ RED: 2025-11-08 - lucro_coef -= 1
+[2025-11-15 14:54:52]   ✅ RED: 2025-11-08 - lucro_coef -= 1
+[2025-11-15 14:54:52]   ✅ GREEN: 2025-11-07 - lucro_coef += 0.51
+[2025-11-15 14:54:52]   ✅ GREEN: 2025-11-07 - lucro_coef += 0.55
+[2025-11-15 14:54:52]   ✅ GREEN: 2025-11-07 - lucro_coef += 0.55
+[2025-11-15 14:54:52]   ✅ GREEN: 2025-11-07 - lucro_coef += 0.53
+[2025-11-15 14:54:52]   ✅ GREEN: 2025-11-07 - lucro_coef += 0.5
+[2025-11-15 14:54:52]   ✅ GREEN: 2025-11-07 - lucro_coef += 0.7
+[2025-11-15 14:54:52]   ✅ RED: 2025-11-07 - lucro_coef -= 1
+[2025-11-15 14:54:52]   ✅ GREEN: 2025-11-07 - lucro_coef += 0.75
+[2025-11-15 14:54:52]   ✅ GREEN: 2025-11-07 - lucro_coef += 0.75
+[2025-11-15 14:54:52]   ✅ GREEN: 2025-11-07 - lucro_coef += 0.64
+[2025-11-15 14:54:52]   ✅ GREEN: 2025-11-07 - lucro_coef += 0.51
+[2025-11-15 14:54:52]   ✅ RED: 2025-11-06 - lucro_coef -= 1
+[2025-11-15 14:54:52]   ✅ RED: 2025-11-06 - lucro_coef -= 1
+[2025-11-15 14:54:52]   ✅ GREEN: 2025-11-06 - lucro_coef += 1.05
+[2025-11-15 14:54:52]   ✅ RED: 2025-11-06 - lucro_coef -= 1
+[2025-11-15 14:54:52]   ✅ RED: 2025-11-06 - lucro_coef -= 1
+[2025-11-15 14:54:52]   ✅ GREEN: 2025-11-06 - lucro_coef += 0.5
+[2025-11-15 14:54:52]   ✅ GREEN: 2025-11-06 - lucro_coef += 0.51
+[2025-11-15 14:54:52]   ✅ GREEN: 2025-11-06 - lucro_coef += 0.63
+[2025-11-15 14:54:52]   ✅ GREEN: 2025-11-06 - lucro_coef += 0.5
+[2025-11-15 14:54:52]   ✅ GREEN: 2025-11-06 - lucro_coef += 0.51
+[2025-11-15 14:54:52]   ✅ RED: 2025-11-05 - lucro_coef -= 1
+[2025-11-15 14:54:52]   ✅ GREEN: 2025-11-05 - lucro_coef += 0.51
+[2025-11-15 14:54:52]   ✅ GREEN: 2025-11-05 - lucro_coef += 0.5
+[2025-11-15 14:54:52]   ✅ GREEN: 2025-11-02 - lucro_coef += 1.09
+[2025-11-15 14:54:52]   ✅ GREEN: 2025-11-02 - lucro_coef += 0.53
+[2025-11-15 14:54:52]   ✅ GREEN: 2025-11-02 - lucro_coef += 1
+[2025-11-15 14:54:52]   ✅ RED: 2025-11-02 - lucro_coef -= 1
+[2025-11-15 14:54:52]   ✅ RED: 2025-11-02 - lucro_coef -= 1
+[2025-11-15 14:54:52]   ✅ GREEN: 2025-11-02 - lucro_coef += 0.53
+[2025-11-15 14:54:52]   ✅ RED: 2025-11-02 - lucro_coef -= 1
+[2025-11-15 14:54:52] Dia 2025-11-14: 0G x 0R | Lucro: 0,00
+[2025-11-15 14:54:52] Dia 2025-11-12: 0G x 0R | Lucro: 0,00
+[2025-11-15 14:54:52] Dia 2025-11-09: 9G x 0R | Lucro: 464,00
+[2025-11-15 14:54:52] Dia 2025-11-08: 1G x 5R | Lucro: -450,00
+[2025-11-15 14:54:52] Dia 2025-11-07: 10G x 1R | Lucro: 499,00
+[2025-11-15 14:54:52] Dia 2025-11-06: 6G x 4R | Lucro: -30,00
+[2025-11-15 14:54:52] Dia 2025-11-05: 2G x 1R | Lucro: 1,00
+[2025-11-15 14:54:52] Dia 2025-11-04: 0G x 0R | Lucro: 0,00
+[2025-11-15 14:54:52] Dia 2025-11-03: 0G x 0R | Lucro: 0,00
+[2025-11-15 14:54:52] Dia 2025-11-02: 4G x 3R | Lucro: 15,00
+[2025-11-15 14:54:52] ✅ Total de dias processados: 10
+[2025-11-15 14:55:05] ==== INICIANDO OBTER-DIAS-MES ====
+[2025-11-15 14:55:05] Usuario ID da sessão: 23
+[2025-11-15 14:55:05] ✅ Conexão com banco de dados OK
+[2025-11-15 14:55:05] Período solicitado: 2025-11-01 a 2025-11-30 para usuario_id=23
+[2025-11-15 14:55:05] Query: SELECT titulo, resultado, odds, DATE(data_criacao) as data_dia FROM bote 
+              WHERE DATE(data_criacao) >= ? 
+              AND DATE(data_criacao) <= ?
+              ORDER BY data_criacao DESC
+[2025-11-15 14:55:05] Parâmetros: primeira_data=2025-11-01, última_data=2025-11-30
+[2025-11-15 14:55:05] ✅ Query preparada com sucesso
+[2025-11-15 14:55:05] bind_param resultado: true
+[2025-11-15 14:55:05] ✅ bind_param executado com sucesso
+[2025-11-15 14:55:05] execute() resultado: true
+[2025-11-15 14:55:05] ✅ Query executada com sucesso
+[2025-11-15 14:55:05] ✅ Resultado obtido com sucesso
+[2025-11-15 14:55:05] Total de registros encontrados: 91
+[2025-11-15 14:55:05]   ✅ GREEN: 2025-11-09 - lucro_coef += 0.5
+[2025-11-15 14:55:05]   ✅ GREEN: 2025-11-09 - lucro_coef += 0.5
+[2025-11-15 14:55:05]   ✅ GREEN: 2025-11-09 - lucro_coef += 0.52
+[2025-11-15 14:55:05]   ✅ GREEN: 2025-11-09 - lucro_coef += 0.52
+[2025-11-15 14:55:05]   ✅ GREEN: 2025-11-09 - lucro_coef += 0.51
+[2025-11-15 14:55:05]   ✅ GREEN: 2025-11-09 - lucro_coef += 0.5
+[2025-11-15 14:55:05]   ✅ GREEN: 2025-11-09 - lucro_coef += 0.51
+[2025-11-15 14:55:05]   ✅ GREEN: 2025-11-09 - lucro_coef += 0.58
+[2025-11-15 14:55:05]   ✅ GREEN: 2025-11-09 - lucro_coef += 0.5
+[2025-11-15 14:55:05]   ✅ RED: 2025-11-08 - lucro_coef -= 1
+[2025-11-15 14:55:05]   ✅ RED: 2025-11-08 - lucro_coef -= 1
+[2025-11-15 14:55:05]   ✅ GREEN: 2025-11-08 - lucro_coef += 0.5
+[2025-11-15 14:55:05]   ✅ RED: 2025-11-08 - lucro_coef -= 1
+[2025-11-15 14:55:05]   ✅ RED: 2025-11-08 - lucro_coef -= 1
+[2025-11-15 14:55:05]   ✅ RED: 2025-11-08 - lucro_coef -= 1
+[2025-11-15 14:55:05]   ✅ GREEN: 2025-11-07 - lucro_coef += 0.51
+[2025-11-15 14:55:05]   ✅ GREEN: 2025-11-07 - lucro_coef += 0.55
+[2025-11-15 14:55:05]   ✅ GREEN: 2025-11-07 - lucro_coef += 0.55
+[2025-11-15 14:55:05]   ✅ GREEN: 2025-11-07 - lucro_coef += 0.53
+[2025-11-15 14:55:05]   ✅ GREEN: 2025-11-07 - lucro_coef += 0.5
+[2025-11-15 14:55:05]   ✅ GREEN: 2025-11-07 - lucro_coef += 0.7
+[2025-11-15 14:55:05]   ✅ RED: 2025-11-07 - lucro_coef -= 1
+[2025-11-15 14:55:05]   ✅ GREEN: 2025-11-07 - lucro_coef += 0.75
+[2025-11-15 14:55:05]   ✅ GREEN: 2025-11-07 - lucro_coef += 0.75
+[2025-11-15 14:55:05]   ✅ GREEN: 2025-11-07 - lucro_coef += 0.64
+[2025-11-15 14:55:05]   ✅ GREEN: 2025-11-07 - lucro_coef += 0.51
+[2025-11-15 14:55:05]   ✅ RED: 2025-11-06 - lucro_coef -= 1
+[2025-11-15 14:55:05]   ✅ RED: 2025-11-06 - lucro_coef -= 1
+[2025-11-15 14:55:05]   ✅ GREEN: 2025-11-06 - lucro_coef += 1.05
+[2025-11-15 14:55:05]   ✅ RED: 2025-11-06 - lucro_coef -= 1
+[2025-11-15 14:55:05]   ✅ RED: 2025-11-06 - lucro_coef -= 1
+[2025-11-15 14:55:05]   ✅ GREEN: 2025-11-06 - lucro_coef += 0.5
+[2025-11-15 14:55:05]   ✅ GREEN: 2025-11-06 - lucro_coef += 0.51
+[2025-11-15 14:55:05]   ✅ GREEN: 2025-11-06 - lucro_coef += 0.63
+[2025-11-15 14:55:05]   ✅ GREEN: 2025-11-06 - lucro_coef += 0.5
+[2025-11-15 14:55:05]   ✅ GREEN: 2025-11-06 - lucro_coef += 0.51
+[2025-11-15 14:55:05]   ✅ RED: 2025-11-05 - lucro_coef -= 1
+[2025-11-15 14:55:05]   ✅ GREEN: 2025-11-05 - lucro_coef += 0.51
+[2025-11-15 14:55:05]   ✅ GREEN: 2025-11-05 - lucro_coef += 0.5
+[2025-11-15 14:55:05]   ✅ GREEN: 2025-11-02 - lucro_coef += 1.09
+[2025-11-15 14:55:05]   ✅ GREEN: 2025-11-02 - lucro_coef += 0.53
+[2025-11-15 14:55:05]   ✅ GREEN: 2025-11-02 - lucro_coef += 1
+[2025-11-15 14:55:05]   ✅ RED: 2025-11-02 - lucro_coef -= 1
+[2025-11-15 14:55:05]   ✅ RED: 2025-11-02 - lucro_coef -= 1
+[2025-11-15 14:55:05]   ✅ GREEN: 2025-11-02 - lucro_coef += 0.53
+[2025-11-15 14:55:05]   ✅ RED: 2025-11-02 - lucro_coef -= 1
+[2025-11-15 14:55:05] Dia 2025-11-14: 0G x 0R | Lucro: 0,00
+[2025-11-15 14:55:05] Dia 2025-11-12: 0G x 0R | Lucro: 0,00
+[2025-11-15 14:55:05] Dia 2025-11-09: 9G x 0R | Lucro: 464,00
+[2025-11-15 14:55:05] Dia 2025-11-08: 1G x 5R | Lucro: -450,00
+[2025-11-15 14:55:05] Dia 2025-11-07: 10G x 1R | Lucro: 499,00
+[2025-11-15 14:55:05] Dia 2025-11-06: 6G x 4R | Lucro: -30,00
+[2025-11-15 14:55:05] Dia 2025-11-05: 2G x 1R | Lucro: 1,00
+[2025-11-15 14:55:05] Dia 2025-11-04: 0G x 0R | Lucro: 0,00
+[2025-11-15 14:55:05] Dia 2025-11-03: 0G x 0R | Lucro: 0,00
+[2025-11-15 14:55:05] Dia 2025-11-02: 4G x 3R | Lucro: 15,00
+[2025-11-15 14:55:05] ✅ Total de dias processados: 10

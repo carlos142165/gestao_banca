@@ -1,0 +1,207 @@
+<!-- 
+PREVIEW - Como a LISTA DE DIAS ficará no BLOCO 2
+Arquivo: bot_aovivo.php
+Container ID: lista-dias-bloco2
+Localização: Após o total do mês no Bloco 2
+Margem Superior: 15px
+-->
+
+<div class="bloco-conteudo" style="margin-top: 30px">
+  <h3 class="titulo-bloco">📊 Mês - Novembro 2025</h3>
+
+  <!-- ... CONTEÚDO DO BLOCO 2 ... -->
+
+  <!-- ✅ LISTA DE DIAS DO MÊS COM RESULTADOS -->
+  <div class="lista-dias" id="lista-dias-bloco2" style="margin-top: 15px">
+    <!-- EXEMPLO 1: DIA COM RESULTADO POSITIVO -->
+    <div
+      class="gd-linha-dia valor-positivo"
+      data-date="2025-11-15"
+      data-saldo="145.00"
+      data-green="5"
+      data-red="2"
+      data-hoje="false"
+    >
+      <div class="data">15/11/2025</div>
+      <div class="placar-dia">
+        <span class="placar">5</span>
+        <span class="separador">×</span>
+        <span class="placar">2</span>
+      </div>
+      <div class="valor">R$ 145,00</div>
+      <div class="icone">
+        <i class="fas fa-check" style="color: #059669"></i>
+      </div>
+    </div>
+
+    <!-- EXEMPLO 2: DIA COM RESULTADO NEGATIVO -->
+    <div
+      class="gd-linha-dia valor-negativo"
+      data-date="2025-11-14"
+      data-saldo="-75.00"
+      data-green="3"
+      data-red="4"
+      data-hoje="false"
+    >
+      <div class="data">14/11/2025</div>
+      <div class="placar-dia">
+        <span class="placar">3</span>
+        <span class="separador">×</span>
+        <span class="placar">4</span>
+      </div>
+      <div class="valor">-R$ 75,00</div>
+      <div class="icone">
+        <i class="fas fa-check" style="color: #dc2626"></i>
+      </div>
+    </div>
+
+    <!-- EXEMPLO 3: DIA COM RESULTADO ZERO/EMPATE -->
+    <div
+      class="gd-linha-dia valor-zero"
+      data-date="2025-11-13"
+      data-saldo="0.00"
+      data-green="2"
+      data-red="2"
+      data-hoje="false"
+    >
+      <div class="data">13/11/2025</div>
+      <div class="placar-dia">
+        <span class="placar">2</span>
+        <span class="separador">×</span>
+        <span class="placar">2</span>
+      </div>
+      <div class="valor">R$ 0,00</div>
+      <div class="icone">
+        <i class="fas fa-check" style="color: #6b7280"></i>
+      </div>
+    </div>
+
+    <!-- EXEMPLO 4: DIA ATUAL (HOJE) COM RESULTADO POSITIVO -->
+    <div
+      class="gd-linha-dia valor-positivo gd-dia-hoje"
+      data-date="2025-11-12"
+      data-saldo="320.50"
+      data-green="7"
+      data-red="1"
+      data-hoje="true"
+    >
+      <div class="data">12/11/2025</div>
+      <div class="placar-dia">
+        <span class="placar">7</span>
+        <span class="separador">×</span>
+        <span class="placar">1</span>
+      </div>
+      <div class="valor">R$ 320,50</div>
+      <div class="icone">
+        <i class="fas fa-check" style="color: #058b32"></i>
+      </div>
+    </div>
+
+    <!-- EXEMPLO 5: DIA ANTERIOR COM RESULTADO NEGATIVO -->
+    <div
+      class="gd-linha-dia valor-negativo"
+      data-date="2025-11-11"
+      data-saldo="-120.00"
+      data-green="1"
+      data-red="6"
+      data-hoje="false"
+    >
+      <div class="data">11/11/2025</div>
+      <div class="placar-dia">
+        <span class="placar">1</span>
+        <span class="separador">×</span>
+        <span class="placar">6</span>
+      </div>
+      <div class="valor">-R$ 120,00</div>
+      <div class="icone">
+        <i class="fas fa-check" style="color: #dc2626"></i>
+      </div>
+    </div>
+  </div>
+  <!-- FIM: LISTA DE DIAS DO MÊS -->
+</div>
+
+<!-- 
+
+=== VISUAL ESPERADO ===
+
+┌─────────────────────────────────────────────────────────────────┐
+│ 📊 Mês - Novembro 2025                                          │
+├─────────────────────────────────────────────────────────────────┤
+│                                                                  │
+│  Aposta 1 (+1⚽GOL):    5 Green    ×    3 Red    R$ 145,00     │
+│  Aposta 2 (+0.5⚽GOL):  3 Green    ×    1 Red    R$ 85,50      │
+│  Aposta 3 (+1⛳CANTOS): 2 Green    ×    2 Red    R$ 0,00       │
+│  ─────────────────────────────────────────────────────────────  │
+│  TOTAL DO MÊS:        10 Green    ×    6 Red    R$ 230,50     │
+│                                                                  │
+│  ┌───────────────────────────────────────────────────────────┐  │
+│  │ 15/11/2025        5 × 2       R$ 145,00       ✓          │  │ ← Verde
+│  │ 14/11/2025        3 × 4       -R$ 75,00       ✓          │  │ ← Vermelho
+│  │ 13/11/2025        2 × 2       R$ 0,00         ✓          │  │ ← Cinza
+│  │ 12/11/2025        7 × 1       R$ 320,50       ✓ HOJE     │  │ ← Destaque
+│  │ 11/11/2025        1 × 6       -R$ 120,00      ✓          │  │ ← Vermelho
+│  │ ... (mais dias)                                           │  │
+│  └───────────────────────────────────────────────────────────┘  │
+│                                                                  │
+└─────────────────────────────────────────────────────────────────┘
+
+=== CORES ===
+
+✓ VERDE (Positivo): #059669
+  - Background: rgba(141,219,170,0.12)
+  - Border-left: 3px solid #059669
+  - Texto: #059669 bold
+  - Ícone: #059669
+
+✓ VERMELHO (Negativo): #dc2626
+  - Background: rgba(247,224,224,0.6)
+  - Border-left: 3px solid #dc2626
+  - Texto: #dc2626 bold
+  - Ícone: #dc2626
+
+✓ CINZA (Zero/Neutro): #6b7280
+  - Background: rgba(255,255,255,0.95)
+  - Border-left: 3px solid #9ca3b8
+  - Texto: #6b7280
+  - Ícone: #6b7280
+
+✓ DESTAQUE (Hoje): Depende do resultado
+  - Se positivo: gradient verde + border #058b32
+  - Se negativo: gradient vermelho + border #ec0606
+  - Texto sempre: #111827 (quase preto)
+
+=== LAYOUT DAS LINHAS ===
+
+Cada linha tem exatamente 32px de altura com:
+
+[85px]       [60px]        [80px]       [18px]
+ Data      ×  Placar      Valor        Ícone
+ 
+DD/MM/YYYY   green×red    R$ 0,00.00     ✓
+
+Gaps:        4px entre linhas
+Padding:     12px esquerda/direita
+Margin-top:  15px do container
+
+=== ATUALIZAÇÃO ===
+
+- Executa ao carregar a página
+- Atualiza a cada 10 segundos
+- Sincronizado com Bloco 1
+- Sem recarregar a página
+
+=== JAVASCRIPT GERADO ===
+
+O JavaScript atualizarListaDias() gerará automaticamente:
+
+1. Busca dados via AJAX (obter-placar-dias.php)
+2. Para cada dia do mês:
+   - Determina classe CSS (valor-positivo/negativo/zero)
+   - Destaca dia atual (gd-dia-hoje)
+   - Calcula cor do ícone
+   - Formata valor em R$
+3. Renderiza HTML final
+4. Insere no DOM (#lista-dias-bloco2)
+
+-->

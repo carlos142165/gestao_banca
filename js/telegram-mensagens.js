@@ -346,6 +346,14 @@ const TelegramMessenger = {
                   // ✅ MENSAGEM NUNCA FOI VISTA - ADICIONAR AO DOM
                   console.log(`[NEW] 🆕 Nova mensagem detectada: ID ${msg.id}`);
                   this.addMessage(msg);
+
+                  // 🔔 NOTIFICAR NOVA MENSAGEM (em qualquer página)
+                  if (
+                    typeof NotificacoesSistema !== "undefined" &&
+                    NotificacoesSistema.notificarNovaMensagem
+                  ) {
+                    NotificacoesSistema.notificarNovaMensagem(msg);
+                  }
                 } else if (exists && cached.resultado !== msg.resultado) {
                   // ✅ MENSAGEM EXISTE E RESULTADO MUDOU - ATUALIZAR
                   console.warn(

@@ -874,6 +874,41 @@ session_start();
                     <!-- Botão hambúrguer para menu mobile -->
                     <button class="menu-button" onclick="toggleMenu()">☰</button>
 
+                    <!-- ✅ BOTÃO DE NOTIFICAÇÕES COM SINO -->
+                    <button class="notificacao-btn" id="btnNotificacoes" onclick="toggleNotificacaoMenu(event)">
+                        <i class="fas fa-bell"></i>
+                        <span class="notificacao-badge" id="notificacao-badge"></span>
+                    </button>
+
+                    <!-- ✅ MENU DE NOTIFICAÇÕES -->
+                    <div class="notificacao-menu" id="notificacao-menu">
+                        <div class="notificacao-menu-header">
+                            <i class="fas fa-bell"></i> Notificações
+                        </div>
+                        <div class="notificacao-menu-body">
+                            <!-- Opção: Permitir Notificações -->
+                            <div class="notificacao-opcao" onclick="permitirNotificacoes()" id="opcao-permitir">
+                                <i class="fas fa-check-circle"></i>
+                                <div class="opcao-texto">
+                                    <div class="opcao-titulo">Permitir Notificações</div>
+                                    <div class="opcao-descricao">Som e alertas ativados</div>
+                                </div>
+                            </div>
+
+                            <!-- Opção: Negar Notificações -->
+                            <div class="notificacao-opcao" onclick="negarNotificacoes()" id="opcao-negar">
+                                <i class="fas fa-ban"></i>
+                                <div class="opcao-texto">
+                                    <div class="opcao-titulo">Desativar Notificações</div>
+                                    <div class="opcao-descricao">Sem som e alertas</div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="permissao-status" id="permissao-status">
+                            ⏳ Verificando...
+                        </div>
+                    </div>
+
                     <!-- Menu dropdown de navegação -->
                     <div id="menu" class="menu-content">
                         <a href="home.php">
@@ -1477,6 +1512,100 @@ session_start();
       }
     });
 
+    // ===== FUNÇÕES DE NOTIFICAÇÕES =====
+    /**
+     * Alternar visibilidade do menu de notificações
+     */
+    function toggleNotificacaoMenu(event) {
+      event.stopPropagation();
+      const menu = document.getElementById('notificacao-menu');
+      if (menu) {
+        menu.classList.toggle('ativo');
+        atualizarStatusNotificacoes();
+      }
+    }
+
+    /**
+     * Permitir notificações
+     */
+    function permitirNotificacoes() {
+      if (Notification.permission !== 'granted') {
+        Notification.requestPermission().then((permission) => {
+          atualizarStatusNotificacoes();
+        });
+      } else {
+        // Já tem permissão
+        atualizarStatusNotificacoes();
+      }
+    }
+
+    /**
+     * Desativar notificações (rejeitar)
+     */
+    function negarNotificacoes() {
+      // Informar ao usuário que precisa limpar os dados do site
+      alert('Para desativar notificações, você pode:\n1. Clicar no ícone de cadeado/informações na barra de endereço\n2. Mudar "Notificações" para "Bloquear"\n3. Limpar cookies deste site');
+      atualizarStatusNotificacoes();
+    }
+
+    /**
+     * Atualizar status e aparência das opções de notificação
+     */
+    function atualizarStatusNotificacoes() {
+      const perm = Notification.permission;
+      const statusDiv = document.getElementById('permissao-status');
+      const badge = document.getElementById('notificacao-badge');
+      const opcaoPermitir = document.getElementById('opcao-permitir');
+      const opcaoNegar = document.getElementById('opcao-negar');
+
+      // Atualizar badge
+      if (perm === 'granted') {
+        badge.classList.remove('desativada');
+        statusDiv.className = 'permissao-status permitida';
+        statusDiv.innerHTML = '✅ Notificações ATIVADAS';
+        opcaoPermitir.style.opacity = '0.5';
+        opcaoPermitir.style.pointerEvents = 'none';
+        opcaoNegar.style.opacity = '1';
+        opcaoNegar.style.pointerEvents = 'auto';
+      } else if (perm === 'denied') {
+        badge.classList.add('desativada');
+        statusDiv.className = 'permissao-status negada';
+        statusDiv.innerHTML = '❌ Notificações BLOQUEADAS';
+        opcaoPermitir.style.opacity = '1';
+        opcaoPermitir.style.pointerEvents = 'auto';
+        opcaoNegar.style.opacity = '0.5';
+        opcaoNegar.style.pointerEvents = 'none';
+      } else {
+        // default - não solicitada ainda
+        badge.classList.add('desativada');
+        statusDiv.className = 'permissao-status';
+        statusDiv.innerHTML = '⏳ Clique em "Permitir" para ativar';
+        opcaoPermitir.style.opacity = '1';
+        opcaoPermitir.style.pointerEvents = 'auto';
+        opcaoNegar.style.opacity = '1';
+        opcaoNegar.style.pointerEvents = 'auto';
+      }
+    }
+
+    /**
+     * Fechar menu de notificações ao clicar fora
+     */
+    document.addEventListener('click', function(event) {
+      const notificacaoMenu = document.getElementById('notificacao-menu');
+      const btnNotificacoes = document.getElementById('btnNotificacoes');
+
+      if (notificacaoMenu && !notificacaoMenu.contains(event.target) && !btnNotificacoes.contains(event.target)) {
+        notificacaoMenu.classList.remove('ativo');
+      }
+    });
+
+    // Atualizar status quando página carrega
+    document.addEventListener('DOMContentLoaded', function() {
+      setTimeout(() => {
+        atualizarStatusNotificacoes();
+      }, 500);
+    });
+
     // ===== FUNÇÕES DO MODAL DE REGISTRO =====
     function abrirModalRegistro() {
       document.getElementById("modalRegistro").classList.add("show");
@@ -1856,6 +1985,12 @@ session_start();
 
     <!-- Sistema Global de Celebração de Plano -->
     <script src="js/celebracao-plano.js" defer></script>
+
+    <!-- ✅ SCRIPT PARA CARREGAR MENSAGENS DO TELEGRAM (para notificações) -->
+    <script src="js/telegram-mensagens.js?v=<?php echo time(); ?>" defer></script>
+
+    <!-- ✅ SCRIPT PARA NOTIFICAÇÕES COM SOM (em qualquer página) -->
+    <script src="js/notificacoes-sistema.js?v=<?php echo time(); ?>" defer></script>
 </body>
 </html>
 

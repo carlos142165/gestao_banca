@@ -1,0 +1,553 @@
+<!-- 
+=================================================================================
+DOCUMENTO VISUAL - LISTA DE DIAS BLOCO 2 (VERSÃO FINAL)
+Clone 100% idêntico ao padrão de gestao-diaria.php
+=================================================================================
+-->
+
+<div
+  style="
+    background: #f5f5f5;
+    padding: 20px;
+    font-family: monospace;
+    color: #333;
+  "
+>
+  <!-- ============================================= -->
+  <!-- ANTES (CSS INCORRETO) -->
+  <!-- ============================================= -->
+
+  <h3>❌ ANTES (CSS Incorreto)</h3>
+  <div
+    style="
+      background: white;
+      border: 1px solid #ddd;
+      padding: 15px;
+      margin-bottom: 20px;
+      border-radius: 8px;
+    "
+  >
+    <pre
+      style="
+        background: rgba(247, 246, 246, 0.95);
+        padding: 12px;
+        border-radius: 12px;
+        overflow-y: auto;
+        max-height: 300px;
+      "
+    >
+┌─────────────────────────────────────────────────┐
+│ Bloco 2 - Novembro 2025                         │
+├─────────────────────────────────────────────────┤
+│ +1⚽GOL:    25 × 13  R$ 168,00                  │
+│ +0.5⚽GOL:  17 × 7   R$ 393,00                  │
+│ +1⛳CANTOS:  5 × 3   R$ 15,00                   │
+│ TOTAL:      47 × 23  R$ 576,00                 │
+├─────────────────────────────────────────────────┤
+│ LISTA DE DIAS (ANTES - INCORRETA)               │
+├─────────────────────────────────────────────────┤
+
+  [PROBLEMAS]
+  ❌ Height: 32px (muito grande)
+  ❌ Gap: 4px (muito espaçado)
+  ❌ Dia zero sem opacidade clara
+  ❌ Scrollbar deixa espaço em branco
+  ❌ Padding desigual
+  ❌ Cores não exatas
+  ❌ Font sizes inconsistentes
+
+│ 01/11/2025    0 × 0    R$ 0,00      ✓          │ ← Sem opacidade reduzida
+│ 02/11/2025    4 × 3    R$ 15,00     ✓          │ ← Cores diferentes do padrão
+│ 03/11/2025    2 × 0    R$ 217,00    ✓          │ ← Height grande demais
+│ 04/11/2025    1 × 0    R$ 198,00    ✓          │ ← Gap amplo demais
+│ 05/11/2025    3 × 1    R$ 51,00     ✓          │
+│ 06/11/2025    6 × 4    -R$ 30,00    ✓          │
+│ 07/11/2025    10 × 1   R$ 499,00    ✓          │
+│ 08/11/2025    2 × 5    -R$ 393,00   ✓          │
+│ 09/11/2025    19 × 9   R$ 111,00    ✓          │
+│ 10/11/2025    0 × 0    R$ 0,00      ✓          │
+│ 11/11/2025    0 × 0    R$ 0,00      ✓          │
+│ 12/11/2025    0 × 0    R$ 0,00      ✓          │ ← Hoje (sem destaque)
+│ 13/11/2025    0 × 0    R$ 0,00      ✓          │
+│ 14/11/2025    0 × 0    R$ 0,00      ✓          │
+│ 15/11/2025    0 × 1    R$ 12,00     ✓          │ ← Dia atual
+│                                                 │
+│                    [BARRA DE ROLAGEM]           │
+│                                                 │
+└─────────────────────────────────────────────────┘
+</pre
+    >
+  </div>
+
+  <!-- ============================================= -->
+  <!-- DEPOIS (CSS CORRETO) -->
+  <!-- ============================================= -->
+
+  <h3>✅ DEPOIS (CSS Correto - Clone de ano.css)</h3>
+  <div
+    style="
+      background: white;
+      border: 2px solid #00cc44;
+      padding: 15px;
+      margin-bottom: 20px;
+      border-radius: 8px;
+    "
+  >
+    <pre
+      style="
+        background: rgba(247, 246, 246, 0.95);
+        padding: 12px;
+        border-radius: 12px;
+        overflow-y: auto;
+        max-height: 300px;
+      "
+    >
+┌─────────────────────────────────────────────────┐
+│ Bloco 2 - Novembro 2025                         │
+├─────────────────────────────────────────────────┤
+│ +1⚽GOL:    25 × 13  R$ 168,00                  │
+│ +0.5⚽GOL:  17 × 7   R$ 393,00                  │
+│ +1⛳CANTOS:  5 × 3   R$ 15,00                   │
+│ TOTAL:      47 × 23  R$ 576,00                 │
+├─────────────────────────────────────────────────┤
+│ LISTA DE DIAS (DEPOIS - CORRETA)                │
+├─────────────────────────────────────────────────┤
+
+  [MELHORIAS]
+  ✅ Height: 28px (compacto e consistente)
+  ✅ Gap: 2px (espaçamento justo)
+  ✅ Dia zero com opacidade: 0.42 (desbotado)
+  ✅ Scrollbar sem espaço extra
+  ✅ Padding uniforme: 12px
+  ✅ Cores 100% conforme ano.css
+  ✅ Font sizes e weights corretos
+  ✅ Hover suave implementado
+  ✅ Identico ao gestao-diaria.php
+
+│01/11/2025  0 × 0  R$ 0,00        ✓│ ← Opacidade: 0.42 (cinza desbotado)
+│02/11/2025  4 × 3  R$ 15,00       ✓│ ← Verde: #059669
+│03/11/2025  2 × 0  R$ 217,00      ✓│ ← Verde: #059669
+│04/11/2025  1 × 0  R$ 198,00      ✓│ ← Verde: #059669
+│05/11/2025  3 × 1  R$ 51,00       ✓│ ← Verde: #059669
+│06/11/2025  6 × 4  -R$ 30,00      ✓│ ← Vermelho: #dc2626
+│07/11/2025  10 × 1 R$ 499,00      ✓│ ← Verde: #059669
+│08/11/2025  2 × 5  -R$ 393,00     ✓│ ← Vermelho: #dc2626
+│09/11/2025  19 × 9 R$ 111,00      ✓│ ← Verde: #059669
+│10/11/2025  0 × 0  R$ 0,00        ✓│ ← Cinza: opacity 0.42
+│11/11/2025  0 × 0  R$ 0,00        ✓│ ← Cinza: opacity 0.42
+│12/11/2025  0 × 0  R$ 0,00        ✓│ ← Cinza: opacity 0.42
+│13/11/2025  0 × 0  R$ 0,00        ✓│ ← Cinza: opacity 0.42
+│14/11/2025  0 × 0  R$ 0,00        ✓│ ← Cinza: opacity 0.42
+│15/11/2025  0 × 1  R$ 12,00       ✓│ ← HOJE: gradient + border #ec0606
+│                                  │
+│                 [SEM ESPAÇO]      │ ← scrollbar-gutter: stable
+│                                  │
+└─────────────────────────────────────────────────┘
+</pre
+    >
+  </div>
+
+  <!-- ============================================= -->
+  <!-- COMPARAÇÃO LADO A LADO -->
+  <!-- ============================================= -->
+
+  <h3>📊 Comparação Técnica</h3>
+  <table
+    border="1"
+    cellpadding="10"
+    cellspacing="0"
+    style="width: 100%; border-collapse: collapse; margin-bottom: 20px"
+  >
+    <thead>
+      <tr style="background: #f0f0f0">
+        <th>Propriedade</th>
+        <th>❌ Antes</th>
+        <th>✅ Depois</th>
+        <th>Melhoria</th>
+      </tr>
+    </thead>
+    <tbody>
+      <!-- Container -->
+      <tr>
+        <td><strong>Container Height</strong></td>
+        <td>Auto (sem limite)</td>
+        <td>max-height: 400px</td>
+        <td>✅ Scroll limitado</td>
+      </tr>
+      <tr>
+        <td><strong>scrollbar-gutter</strong></td>
+        <td>Não tinha</td>
+        <td>stable both-edges</td>
+        <td>✅ Sem espaço extra</td>
+      </tr>
+      <tr>
+        <td><strong>Container Background</strong></td>
+        <td>transparent</td>
+        <td>rgba(247,246,246,0.95)</td>
+        <td>✅ Fundo como padrão</td>
+      </tr>
+
+      <!-- Linhas -->
+      <tr>
+        <td><strong>Linha Height</strong></td>
+        <td>32px</td>
+        <td>28px</td>
+        <td>✅ Mais compacto</td>
+      </tr>
+      <tr>
+        <td><strong>Linha Gap</strong></td>
+        <td>4px</td>
+        <td>2px</td>
+        <td>✅ Espaçamento justo</td>
+      </tr>
+      <tr>
+        <td><strong>Linha Padding</strong></td>
+        <td>0 12px</td>
+        <td>0 12px (com padding-left 10px)</td>
+        <td>✅ Compensa border</td>
+      </tr>
+
+      <!-- Cores -->
+      <tr>
+        <td><strong>Positivo Background</strong></td>
+        <td>rgba(141,219,170,0.12)</td>
+        <td>rgba(141,219,170,0.12)</td>
+        <td>✅ Igual</td>
+      </tr>
+      <tr>
+        <td><strong>Negativo Background</strong></td>
+        <td>rgba(247,224,224,0.6)</td>
+        <td>rgb(247,224,224)</td>
+        <td>✅ Mais sólido</td>
+      </tr>
+      <tr>
+        <td><strong>Zero Opacity</strong></td>
+        <td>1.0 (normal)</td>
+        <td>0.42 (desbotado)</td>
+        <td>✅ Bem mais claro</td>
+      </tr>
+      <tr>
+        <td><strong>Hoje Background</strong></td>
+        <td>Sem gradient</td>
+        <td>linear-gradient(90deg, ...)</td>
+        <td>✅ Com destaque</td>
+      </tr>
+
+      <!-- Fonts -->
+      <tr>
+        <td><strong>Font Family</strong></td>
+        <td>Rajdhani, Arial</td>
+        <td>Rajdhani, sans-serif</td>
+        <td>✅ Mais consistente</td>
+      </tr>
+      <tr>
+        <td><strong>Data Font-Size</strong></td>
+        <td>13px</td>
+        <td>13px</td>
+        <td>✅ Igual</td>
+      </tr>
+      <tr>
+        <td><strong>Placar Font-Size</strong></td>
+        <td>12px</td>
+        <td>12px</td>
+        <td>✅ Igual</td>
+      </tr>
+      <tr>
+        <td><strong>Hover Effect</strong></td>
+        <td>Sem suavidade</td>
+        <td>transition: all 0.12s ease</td>
+        <td>✅ Animação suave</td>
+      </tr>
+    </tbody>
+  </table>
+
+  <!-- ============================================= -->
+  <!-- ESPECIFICAÇÕES CSS FINAIS -->
+  <!-- ============================================= -->
+
+  <h3>🎨 Especificações CSS Finais</h3>
+  <pre
+    style="
+      background: #f5f5f5;
+      padding: 15px;
+      border-radius: 8px;
+      overflow-x: auto;
+    "
+  >
+/* CONTAINER */
+.lista-dias {
+  width: 100%;
+  padding: 12px 16px;
+  margin: 15px 0 0 0;
+  background: rgba(247, 246, 246, 0.95);
+  border-radius: 12px;
+  overflow-y: auto;
+  scrollbar-gutter: stable both-edges; ← KEY!
+  scrollbar-width: thin;
+  scrollbar-color: rgba(148, 163, 184, 0.3) transparent;
+  max-height: 400px;
+  gap: 0;
+  row-gap: 2px;
+}
+
+/* LINHA */
+.gd-linha-dia {
+  display: flex;
+  height: 28px; ← Fixed (não 32px)
+  min-height: 28px;
+  max-height: 28px;
+  padding: 0 12px;
+  margin: 0 0 2px 0;
+  background: rgba(255, 255, 255, 0.7);
+  border: 1px solid rgba(226, 232, 240, 0.5);
+  border-left: 3px solid [color];
+  border-radius: 6px;
+  transition: all 0.12s ease;
+  overflow: hidden;
+}
+
+.gd-linha-dia:hover {
+  background: rgba(255, 255, 255, 0.9);
+  transform: translateY(-0.5px);
+  box-shadow: 0 1px 4px rgba(0, 0, 0, 0.04);
+}
+
+/* COLUNAS */
+.gd-linha-dia .data         { width: 70px; min-width: 70px; order: 1; }
+.gd-linha-dia .placar-dia   { width: 60px; min-width: 60px; order: 2; }
+.gd-linha-dia .valor        { width: 70px; min-width: 70px; order: 3; }
+.gd-linha-dia .icone        { width: 18px; min-width: 18px; order: 4; }
+
+/* ESTADOS DE COR */
+.gd-linha-dia.valor-positivo {
+  background: rgba(141, 219, 170, 0.12);
+  border-left: 3px solid #059669;
+  padding-left: 10px;
+}
+
+.gd-linha-dia.valor-negativo {
+  background: rgb(247, 224, 224);
+  border-left: 3px solid #dc2626;
+  padding-left: 10px;
+}
+
+.gd-linha-dia.valor-zero {
+  background: rgba(255, 255, 255, 0.95);
+  border-left: 3px solid rgba(156, 163, 175, 0.3);
+  padding-left: 10px;
+  opacity: 0.42; ← IMPORTANTE!
+}
+
+.gd-linha-dia.gd-dia-hoje {
+  background: linear-gradient(90deg, rgba(255,255,255,0.98), rgba(248,249,250,0.98));
+  border-left: 3px solid #43464d;
+  padding-left: 10px;
+  opacity: 1;
+}
+
+.gd-linha-dia.gd-dia-hoje.valor-positivo {
+  background: linear-gradient(90deg, #edfcf0fa, rgba(230, 253, 242, 0.98));
+  border-left: 3px solid #058b32;
+}
+
+.gd-linha-dia.gd-dia-hoje.valor-negativo {
+  background: linear-gradient(90deg, rgba(255,242,242,0.98), rgba(255,238,238,0.98));
+  border-left: 3px solid #ec0606;
+}
+
+/* SCROLLBAR WEBKIT */
+.lista-dias::-webkit-scrollbar {
+  width: 6px;
+}
+
+.lista-dias::-webkit-scrollbar-thumb {
+  background-color: rgba(148, 163, 184, 0.3);
+  border-radius: 3px;
+}
+
+.lista-dias::-webkit-scrollbar-thumb:hover {
+  background-color: rgba(148, 163, 184, 0.5);
+}
+</pre
+  >
+
+  <!-- ============================================= -->
+  <!-- RESULTADO VISUAL FINAL -->
+  <!-- ============================================= -->
+
+  <h3>🎯 Resultado Visual Final</h3>
+  <div
+    style="
+      background: white;
+      border: 2px solid #00cc44;
+      padding: 15px;
+      border-radius: 8px;
+    "
+  >
+    <p style="color: #00cc44; font-weight: bold; margin: 0 0 10px 0">
+      ✅ 100% Idêntico ao padrão de gestao-diaria.php
+    </p>
+
+    <div
+      style="
+        background: rgba(247, 246, 246, 0.95);
+        padding: 12px;
+        border-radius: 12px;
+        font-family: 'Rajdhani', monospace;
+        font-size: 13px;
+      "
+    >
+      <div
+        style="
+          display: flex;
+          height: 28px;
+          align-items: center;
+          padding: 0 12px;
+          margin: 0 0 2px 0;
+          background: rgba(141, 219, 170, 0.12);
+          border: 1px solid rgba(226, 232, 240, 0.5);
+          border-left: 3px solid #059669;
+          border-radius: 6px;
+          transition: all 0.12s ease;
+        "
+      >
+        <div style="width: 70px; font-weight: 600">02/11/2025</div>
+        <div style="width: 60px; text-align: center; font-weight: 500">
+          4 × 3
+        </div>
+        <div style="width: 70px; font-weight: 600; color: #059669">
+          R$ 15,00
+        </div>
+        <div
+          style="
+            width: 18px;
+            text-align: center;
+            color: #059669;
+            font-weight: 900;
+          "
+        >
+          ✓
+        </div>
+      </div>
+
+      <div
+        style="
+          display: flex;
+          height: 28px;
+          align-items: center;
+          padding: 0 12px;
+          margin: 0 0 2px 0;
+          background: rgb(247, 224, 224);
+          border: 1px solid rgba(226, 232, 240, 0.5);
+          border-left: 3px solid #dc2626;
+          border-radius: 6px;
+        "
+      >
+        <div style="width: 70px; font-weight: 600">06/11/2025</div>
+        <div style="width: 60px; text-align: center; font-weight: 500">
+          6 × 4
+        </div>
+        <div style="width: 70px; font-weight: 600; color: #dc2626">
+          -R$ 30,00
+        </div>
+        <div
+          style="
+            width: 18px;
+            text-align: center;
+            color: #dc2626;
+            font-weight: 900;
+          "
+        >
+          ✓
+        </div>
+      </div>
+
+      <div
+        style="
+          display: flex;
+          height: 28px;
+          align-items: center;
+          padding: 0 12px;
+          margin: 0 0 2px 0;
+          background: rgba(255, 255, 255, 0.95);
+          border: 1px solid rgba(226, 232, 240, 0.5);
+          border-left: 3px solid rgba(156, 163, 175, 0.3);
+          border-radius: 6px;
+          opacity: 0.42;
+        "
+      >
+        <div style="width: 70px; font-weight: 600">10/11/2025</div>
+        <div style="width: 60px; text-align: center; font-weight: 500">
+          0 × 0
+        </div>
+        <div style="width: 70px; font-weight: 500; color: #6b7280">R$ 0,00</div>
+        <div
+          style="
+            width: 18px;
+            text-align: center;
+            color: #6b7280;
+            font-weight: 900;
+          "
+        >
+          ✓
+        </div>
+      </div>
+
+      <div
+        style="
+          display: flex;
+          height: 28px;
+          align-items: center;
+          padding: 0 12px;
+          margin: 0;
+          background: linear-gradient(
+            90deg,
+            #edfcf0fa,
+            rgba(230, 253, 242, 0.98)
+          );
+          border: 1px solid rgba(226, 232, 240, 0.5);
+          border-left: 3px solid #058b32;
+          border-radius: 6px;
+          box-shadow: 0 1px 4px rgba(67, 70, 77, 0.08) inset;
+        "
+      >
+        <div style="width: 70px; font-weight: 700; color: #111827">
+          15/11/2025
+        </div>
+        <div
+          style="
+            width: 60px;
+            text-align: center;
+            font-weight: 700;
+            color: #111827;
+          "
+        >
+          0 × 1
+        </div>
+        <div style="width: 70px; font-weight: 700; color: #111827">
+          R$ 12,00
+        </div>
+        <div
+          style="
+            width: 18px;
+            text-align: center;
+            color: #058b32;
+            font-weight: 900;
+          "
+        >
+          ✓
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- 
+=================================================================================
+FIM DO DOCUMENTO VISUAL
+=================================================================================
+Arquivo: PREVIEW-LISTA-DIAS-FINAL.html
+Data: 15 de Novembro de 2025
+Status: ✅ PRONTO PARA VISUALIZAÇÃO
+=================================================================================
+-->

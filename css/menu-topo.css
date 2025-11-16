@@ -424,3 +424,171 @@
   outline: 2px solid #004080;
   outline-offset: -2px;
 }
+
+/* ===== BOTÃO DE NOTIFICAÇÕES ===== */
+.menu-topo-container .notificacao-btn {
+  background: none;
+  border: none;
+  color: #eff1f1;
+  font-size: 22px;
+  cursor: pointer;
+  padding: 5px 12px;
+  transition: all 0.3s ease;
+  position: relative;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 8px;
+  margin-left: 10px;
+}
+
+.menu-topo-container .notificacao-btn:hover {
+  color: #ffffff;
+  background-color: rgba(255, 255, 255, 0.1);
+  transform: scale(1.1);
+}
+
+.menu-topo-container .notificacao-btn:focus {
+  outline: none;
+  box-shadow: none;
+}
+
+/* Badge para indicador de permissão */
+.menu-topo-container .notificacao-badge {
+  position: absolute;
+  top: 0;
+  right: 0;
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  background-color: #4caf50;
+  animation: pulso 2s infinite;
+}
+
+.menu-topo-container .notificacao-badge.desativada {
+  background-color: #f44336;
+  animation: none;
+}
+
+@keyframes pulso {
+  0%,
+  100% {
+    opacity: 1;
+  }
+  50% {
+    opacity: 0.5;
+  }
+}
+
+/* ===== MENU DE NOTIFICAÇÕES ===== */
+.menu-topo-container .notificacao-menu {
+  display: none;
+  position: absolute;
+  top: 60px;
+  right: 15px;
+  background-color: white;
+  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.2);
+  z-index: 1000022;
+  border-radius: 12px;
+  overflow: hidden;
+  min-width: 280px;
+  animation: slideDown 0.3s ease;
+}
+
+.menu-topo-container .notificacao-menu.ativo {
+  display: block;
+}
+
+@keyframes slideDown {
+  from {
+    opacity: 0;
+    transform: translateY(-10px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+/* Header do menu de notificações */
+.menu-topo-container .notificacao-menu-header {
+  padding: 16px;
+  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  color: white;
+  font-weight: 600;
+  font-size: 14px;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+/* Corpo do menu de notificações */
+.menu-topo-container .notificacao-menu-body {
+  padding: 16px;
+}
+
+/* Opções de notificação */
+.menu-topo-container .notificacao-opcao {
+  padding: 14px;
+  background-color: #f5f5f5;
+  border-radius: 8px;
+  margin-bottom: 12px;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  border: 2px solid transparent;
+}
+
+.menu-topo-container .notificacao-opcao:hover {
+  background-color: #e8e8e8;
+  border-color: #667eea;
+}
+
+.menu-topo-container .notificacao-opcao i {
+  font-size: 18px;
+  color: #667eea;
+  flex-shrink: 0;
+}
+
+.menu-topo-container .notificacao-opcao .opcao-texto {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+
+.menu-topo-container .notificacao-opcao .opcao-titulo {
+  font-weight: 600;
+  color: #333;
+  font-size: 13px;
+}
+
+.menu-topo-container .notificacao-opcao .opcao-descricao {
+  font-size: 11px;
+  color: #666;
+}
+
+/* Status da permissão */
+.menu-topo-container .permissao-status {
+  padding: 12px 16px;
+  background-color: #f0f0f0;
+  border-top: 1px solid #e0e0e0;
+  text-align: center;
+  font-size: 12px;
+  color: #666;
+  font-weight: 500;
+}
+
+.menu-topo-container .permissao-status.permitida {
+  background-color: #d4edda;
+  color: #155724;
+  border-top-color: #c3e6cb;
+}
+
+.menu-topo-container .permissao-status.negada {
+  background-color: #f8d7da;
+  color: #721c24;
+  border-top-color: #f5c6cb;
+}

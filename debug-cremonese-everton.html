@@ -1,0 +1,201 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Debug Cremonese Everton</title>
+    <style>
+      body {
+        font-family: monospace;
+        padding: 20px;
+        background: #1a1a1a;
+        color: #0f0;
+      }
+      .container {
+        max-width: 1200px;
+        margin: 0 auto;
+      }
+      .section {
+        margin: 20px 0;
+        padding: 15px;
+        background: #222;
+        border-left: 3px solid #0f0;
+      }
+      h1 {
+        color: #0ff;
+      }
+      h2 {
+        color: #0f0;
+        margin-top: 20px;
+      }
+      pre {
+        background: #111;
+        padding: 10px;
+        overflow-x: auto;
+        border: 1px solid #0f0;
+      }
+      .test-btn {
+        padding: 10px 20px;
+        margin: 5px;
+        background: #0f0;
+        color: #000;
+        border: none;
+        cursor: pointer;
+        font-weight: bold;
+      }
+      .test-btn:hover {
+        background: #0ff;
+      }
+      .result {
+        margin-top: 10px;
+        padding: 10px;
+        background: #1a3a1a;
+        border-left: 3px solid #0f0;
+      }
+      .error {
+        background: #3a1a1a;
+        border-left-color: #f00;
+        color: #ff6666;
+      }
+    </style>
+  </head>
+  <body>
+    <div class="container">
+      <h1>🔍 Debug: Cremonese vs Everton (OVER +0.5)</h1>
+
+      <div class="section">
+        <h2>Teste 1: Buscar Everton com OVER +0.5</h2>
+        <p>Time1: Everton | Time2: Cremonese | OVER: 0.5</p>
+        <button class="test-btn" onclick="testeEverton()">Test</button>
+        <div id="result1" class="result"></div>
+      </div>
+
+      <div class="section">
+        <h2>Teste 2: Buscar Cremonese com OVER +0.5</h2>
+        <p>Time1: Cremonese | Time2: Everton | OVER: 0.5</p>
+        <button class="test-btn" onclick="testeCremonese()">Test</button>
+        <div id="result2" class="result"></div>
+      </div>
+
+      <div class="section">
+        <h2>Teste 3: Debug Raw - Ver exatamente o que vem do banco</h2>
+        <button class="test-btn" onclick="testeDebugRaw()">Test</button>
+        <div id="result3" class="result"></div>
+      </div>
+    </div>
+
+    <script>
+      async function testeEverton() {
+        const payload = {
+          time1: "Everton",
+          time2: "Cremonese",
+          tipo: "gols",
+          valorOver: "0.5",
+          limite: 10,
+        };
+
+        console.log("📤 Enviando Teste 1:", JSON.stringify(payload));
+        const res = await fetch("api/obter-historico-resultados.php", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify(payload),
+        });
+
+        const data = await res.json();
+        document.getElementById("result1").innerHTML = `
+                <strong>Status:</strong> ${
+                  data.success ? "✅ OK" : "❌ ERROR"
+                }<br>
+                <strong>Time1 resultados:</strong> ${
+                  data.time1_historico?.length || 0
+                }<br>
+                <strong>Time2 resultados:</strong> ${
+                  data.time2_historico?.length || 0
+                }<br>
+                <strong>Filtro ativado:</strong> ${data.filtro_ativado}<br>
+                <pre>${JSON.stringify(data, null, 2)}</pre>
+            `;
+        console.log("📨 Resposta Teste 1:", data);
+      }
+
+      async function testeCremonese() {
+        const payload = {
+          time1: "Cremonese",
+          time2: "Everton",
+          tipo: "gols",
+          valorOver: "0.5",
+          limite: 10,
+        };
+
+        console.log("📤 Enviando Teste 2:", JSON.stringify(payload));
+        const res = await fetch("api/obter-historico-resultados.php", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify(payload),
+        });
+
+        const data = await res.json();
+        document.getElementById("result2").innerHTML = `
+                <strong>Status:</strong> ${
+                  data.success ? "✅ OK" : "❌ ERROR"
+                }<br>
+                <strong>Time1 resultados:</strong> ${
+                  data.time1_historico?.length || 0
+                }<br>
+                <strong>Time2 resultados:</strong> ${
+                  data.time2_historico?.length || 0
+                }<br>
+                <strong>Filtro ativado:</strong> ${data.filtro_ativado}<br>
+                <pre>${JSON.stringify(data, null, 2)}</pre>
+            `;
+        console.log("📨 Resposta Teste 2:", data);
+      }
+
+      async function testeDebugRaw() {
+        const payload = {
+          time1: "Everton",
+          time2: "Cremonese",
+          tipo: "gols",
+          limite: 10,
+          // SEM valorOver para ver ALL resultados
+        };
+
+        console.log(
+          "📤 Enviando Teste 3 (sem filtro):",
+          JSON.stringify(payload)
+        );
+        const res = await fetch("api/obter-historico-resultados.php", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify(payload),
+        });
+
+        const data = await res.json();
+
+        let html = `<strong>Todos os resultados (SEM filtro OVER):</strong><br><br>`;
+        html += `<strong>Time1 (Everton):</strong><br>`;
+        if (data.time1_historico && data.time1_historico.length > 0) {
+          data.time1_historico.forEach((r, i) => {
+            html += `[${i}] ${r.titulo} | valor_over: "${r.valor_over}" | over_under: "${r.over_under_value}"<br>`;
+          });
+        } else {
+          html += "❌ Nenhum resultado<br>";
+        }
+
+        html += `<br><strong>Time2 (Cremonese):</strong><br>`;
+        if (data.time2_historico && data.time2_historico.length > 0) {
+          data.time2_historico.forEach((r, i) => {
+            html += `[${i}] ${r.titulo} | valor_over: "${r.valor_over}" | over_under: "${r.over_under_value}"<br>`;
+          });
+        } else {
+          html += "❌ Nenhum resultado<br>";
+        }
+
+        html += `<br><pre>Raw JSON:\n${JSON.stringify(data, null, 2)}</pre>`;
+
+        document.getElementById("result3").innerHTML = html;
+        console.log("📨 Resposta Teste 3:", data);
+      }
+    </script>
+  </body>
+</html>

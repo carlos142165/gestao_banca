@@ -1,0 +1,62 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <title>Debug: Everton +0.5</title>
+    <style>
+        body { font-family: monospace; padding: 20px; background: #1a1a1a; color: #0f0; }
+        pre { background: #111; padding: 10px; overflow-x: auto; border: 1px solid #0f0; max-height: 700px; overflow-y: auto; }
+        .test-btn { padding: 10px 20px; background: #0f0; color: #000; border: none; cursor: pointer; font-weight: bold; }
+        .test-btn:hover { background: #0ff; }
+        h1 { color: #0ff; }
+        h2 { color: #0f0; }
+        .correct { color: #0f0; }
+        .wrong { color: #ff6666; }
+    </style>
+</head>
+<body>
+    <h1>🔍 Debug: Everton com +0.5 (como TIME2)</h1>
+    <p>Teste: time1=Cremonese, time2=Everton, valorOver=0.5</p>
+    <button class="test-btn" onclick="teste()">Testar</button>
+    <div id="result"></div>
+
+    <script>
+        async function teste() {
+            const payload = {
+                time1: "Cremonese",
+                time2: "Everton",
+                tipo: "gols",
+                valorOver: "0.5",
+                limite: 20
+            };
+
+            console.log("📤 Enviando:", JSON.stringify(payload));
+            const res = await fetch("api/obter-historico-resultados.php", {
+                method: "POST",
+                headers: { "Content-Type": "application/json" },
+                body: JSON.stringify(payload)
+            });
+
+            const data = await res.json();
+            
+            let html = `<h2>TIME2 (Everton) com filtro +0.5:</h2>`;
+            if (data.time2_historico && data.time2_historico.length > 0) {
+                html += `<p>✅ Retornou ${data.time2_historico.length} resultado(s):</p>`;
+                data.time2_historico.forEach((r, i) => {
+                    const isCorrect = r.titulo.includes("+0.5");
+                    const classe = isCorrect ? "correct" : "wrong";
+                    const icon = isCorrect ? "✅" : "❌";
+                    html += `<p class="${classe}">${icon} [${i}] ${r.titulo} | valor_over: "${r.valor_over}"</p>`;
+                });
+            } else {
+                html += `<p>❌ Sem resultados</p>`;
+            }
+            
+            html += `<h2>Dados completos:</h2>`;
+            html += `<pre>${JSON.stringify(data, null, 2)}</pre>`;
+            
+            document.getElementById("result").innerHTML = html;
+        }
+    </script>
+</body>
+</html>

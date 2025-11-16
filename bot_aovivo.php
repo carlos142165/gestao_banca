@@ -29,7 +29,8 @@ if (!isset($_SESSION['usuario_id']) || empty($_SESSION['usuario_id'])) {
         .telegram-container {
             display: flex;
             flex-direction: column;
-            height: 100%;
+            height: auto;
+            min-height: 100%;
             gap: 0;
         }
         
@@ -89,8 +90,8 @@ if (!isset($_SESSION['usuario_id']) || empty($_SESSION['usuario_id'])) {
         }
 
         .linha-separadora {
-            border-top: 1px solid rgba(255, 255, 255, 0.25);
-            margin: 6px 0;
+            border-top: 0.5px solid rgba(255, 255, 255, 0.25);
+            margin: 3px 0;
         }
 
         /* Container de Mensagens */
@@ -153,7 +154,7 @@ if (!isset($_SESSION['usuario_id']) || empty($_SESSION['usuario_id'])) {
             bottom: 80px;
             left: 0;
             right: 0;
-            padding: 20px 20px 20px 20px;
+            padding: 0px 0px 0px 0px;
             display: flex;
             justify-content: center;
             align-items: stretch;
@@ -161,11 +162,11 @@ if (!isset($_SESSION['usuario_id']) || empty($_SESSION['usuario_id'])) {
 
         .container {
             width: 100%;
-            max-width: 1320px;
+            max-width: 100%;
             display: flex;
-            justify-content: center;
+            justify-content: flex-start;
             align-items: stretch;
-            gap: 30px;
+            gap: 0px;
             height: 100%;
         }
 
@@ -174,13 +175,14 @@ if (!isset($_SESSION['usuario_id']) || empty($_SESSION['usuario_id'])) {
             height: 100%;
             background-color: #f5f5f5;
             border: 2px solid #ddd;
-            border-radius: 8px;
+            border-radius: 0px;
             padding: 0;
-            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
-            overflow: hidden;
+            box-shadow: none;
+            overflow: visible;
             flex-shrink: 0;
             display: flex;
             flex-direction: column;
+            margin: 0;
         }
 
         /* Classes específicas dos blocos do seu código */
@@ -674,24 +676,33 @@ if (!isset($_SESSION['usuario_id']) || empty($_SESSION['usuario_id'])) {
         @media screen and (max-width: 768px) {
             .main-content {
                 align-items: stretch;
-                padding: 10px 0;
+                padding: 0px 0 0px 0;
+                top: 80px;
+                bottom: 80px;
             }
 
             .container {
                 width: 100%;
                 height: 100%;
+                min-height: 100%;
                 align-items: stretch;
                 flex-direction: column;
-                gap: 20px;
-                padding: 10px 10px;
+                gap: 0px;
+                padding: 0px 0px;
             }
 
             .bloco {
-                width: 90%;
-                max-width: 420px;
+                width: 100%;
+                max-width: 100%;
                 height: 100%;
-                margin: 0 auto;
+                min-height: 100%;
+                margin: 0;
                 flex: 1 1 auto;
+            }
+
+            .telegram-container {
+                height: 100%;
+                min-height: 100%;
             }
 
             .header-bloco {
@@ -870,14 +881,17 @@ if (!isset($_SESSION['usuario_id']) || empty($_SESSION['usuario_id'])) {
             
             .main-content {
                 top: 70px;
-                bottom: 70px;
-                padding: 10px;
+                bottom: auto;
+                padding: 10px 10px 30px 10px;
+                height: auto;
+                min-height: calc(100vh - 140px);
             }
             
             .bloco {
                 padding: 12px;
-                height: calc(33.33vh - 30px);
-                min-height: 150px;
+                height: auto;
+                min-height: 300px;
+                margin-bottom: 5px;
             }
         }
 
@@ -893,6 +907,227 @@ if (!isset($_SESSION['usuario_id']) || empty($_SESSION['usuario_id'])) {
                 padding: 0 25px;
             }
         }
+
+        /* ===== CSS GRÁFICO BLOCO 3 - CLONE DE GESTAO-DIARIA.PHP ===== */
+
+        /* RESET COMPLETO */
+        .grafico-mensal-container-bloco3,
+        .grafico-mensal-bloco3,
+        .grafico-canvas-bloco3,
+        .grafico-grid-bloco3,
+        .grafico-barras-bloco3,
+        .grafico-labels-bloco3,
+        .barra-mes-bloco3,
+        .label-mes-bloco3 {
+            all: unset !important;
+        }
+
+        /* CONTAINER PRINCIPAL */
+        .grafico-mensal-container-bloco3 {
+            position: relative !important;
+            display: block !important;
+            width: calc(100% - 32px) !important;
+            height: 130px !important;
+            margin: 12px auto !important;
+            padding: 12px !important;
+            background: #f3f5f4 !important;
+            border-radius: 12px !important;
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.06) !important;
+            overflow: hidden !important;
+            box-sizing: border-box !important;
+            font-family: "Rajdhani", sans-serif !important;
+        }
+
+        .grafico-mensal-bloco3 {
+            position: relative !important;
+            display: flex !important;
+            flex-direction: column !important;
+            width: 100% !important;
+            height: 100% !important;
+        }
+
+        .grafico-canvas-bloco3 {
+            position: relative !important;
+            display: block !important;
+            width: 100% !important;
+            height: calc(100% - 18px) !important;
+            background: linear-gradient(to top, rgba(248, 250, 252, 0.8) 0%, rgba(241, 245, 249, 0.4) 100%) !important;
+            border-radius: 8px !important;
+            overflow: hidden !important;
+        }
+
+        /* GRID DE FUNDO */
+        .grafico-grid-bloco3 {
+            position: absolute !important;
+            top: 0 !important;
+            left: 0 !important;
+            right: 0 !important;
+            bottom: 0 !important;
+            background-image: 
+                linear-gradient(to top, rgba(148, 163, 184, 0.1) 1px, transparent 1px),
+                linear-gradient(to right, rgba(148, 163, 184, 0.1) 1px, transparent 1px) !important;
+            background-size: 100% 20%, 8.33% 100% !important;
+            pointer-events: none !important;
+            display: block !important;
+        }
+
+        /* CONTAINER DAS BARRAS */
+        .grafico-barras-bloco3 {
+            position: relative !important;
+            display: flex !important;
+            align-items: flex-end !important;
+            justify-content: space-between !important;
+            width: 100% !important;
+            height: 100% !important;
+            padding: 6px !important;
+            box-sizing: border-box !important;
+            gap: 2px !important;
+            flex-wrap: nowrap !important;
+        }
+
+        /* CONTAINER INDIVIDUAL DE CADA MÊS */
+        .barra-mes-bloco3 {
+            position: relative !important;
+            display: flex !important;
+            flex-direction: row !important;
+            align-items: flex-end !important;
+            justify-content: center !important;
+            flex: 1 !important;
+            height: 100% !important;
+            max-width: calc(100% / 12) !important;
+            min-width: 20px !important;
+            gap: 2px !important;
+            flex-shrink: 0 !important;
+            flex-grow: 1 !important;
+        }
+
+        /* BARRAS INDIVIDUAIS */
+        .barra-verde-bloco3,
+        .barra-vermelha-bloco3 {
+            position: relative !important;
+            display: block !important;
+            width: 7px !important;
+            border-radius: 2px 2px 0 0 !important;
+            transition: all 0.3s ease !important;
+            min-height: 0 !important;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.15) !important;
+            flex-shrink: 0 !important;
+        }
+
+        .barra-verde-bloco3 {
+            background: linear-gradient(to top, #10b981, #34d399) !important;
+        }
+
+        .barra-vermelha-bloco3 {
+            background: linear-gradient(to top, #ef4444, #f87171) !important;
+        }
+
+        /* HOVER NAS BARRAS */
+        .barra-verde-bloco3:hover,
+        .barra-vermelha-bloco3:hover {
+            transform: scale(1.1) !important;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.25) !important;
+        }
+
+        /* CONTAINER DOS LABELS */
+        .grafico-labels-bloco3 {
+            position: relative !important;
+            display: flex !important;
+            align-items: center !important;
+            justify-content: space-between !important;
+            width: 100% !important;
+            height: 18px !important;
+            padding: 1px 6px 0 6px !important;
+            margin-top: 0px !important;
+            box-sizing: border-box !important;
+        }
+
+        /* LABELS INDIVIDUAIS DOS MESES */
+        .label-mes-bloco3 {
+            position: relative !important;
+            display: block !important;
+            flex: 1 !important;
+            text-align: center !important;
+            font-family: "Rajdhani", sans-serif !important;
+            font-size: 8px !important;
+            font-weight: 600 !important;
+            color: #64748b !important;
+            text-transform: uppercase !important;
+            letter-spacing: 0.5px !important;
+            max-width: calc(100% / 12) !important;
+            line-height: 1 !important;
+            padding: 0 !important;
+            margin: 0 !important;
+            border: none !important;
+            background: transparent !important;
+        }
+
+        .label-mes-bloco3.atual {
+            color: #10b981 !important;
+            font-weight: 700 !important;
+        }
+
+        /* RESPONSIVIDADE DO GRÁFICO */
+        @media (max-width: 768px) {
+            .grafico-mensal-container-bloco3 {
+                height: 160px !important;
+                margin: 10px auto !important;
+                padding: 10px !important;
+                width: 100% !important;
+            }
+            .barra-verde-bloco3, .barra-vermelha-bloco3 {
+                width: 7px !important;
+            }
+            .barra-mes-bloco3 {
+                min-width: 15px !important;
+                gap: 2px !important;
+            }
+            .label-mes-bloco3 {
+                font-size: 9px !important;
+                font-weight: 600 !important;
+                letter-spacing: 1px !important;
+                padding: 0 2px !important;
+            }
+            .grafico-labels-bloco3 {
+                height: 16px !important;
+                padding: 1px 4px 0 4px !important;
+                gap: 2px !important;
+            }
+        }
+
+        @media (max-width: 480px) {
+            .grafico-mensal-container-bloco3 {
+                height: 160px !important;
+                margin: 8px auto !important;
+                padding: 8px !important;
+                width: 100% !important;
+            }
+            .barra-verde-bloco3, .barra-vermelha-bloco3 {
+                width: 6px !important;
+            }
+            .barra-mes-bloco3 {
+                min-width: 12px !important;
+                gap: 2px !important;
+            }
+            .label-mes-bloco3 {
+                font-size: 8px !important;
+                font-weight: 600 !important;
+                letter-spacing: 1px !important;
+                padding: 0 2px !important;
+            }
+            .grafico-labels-bloco3 {
+                height: 14px !important;
+                padding: 1px 2px 0 2px !important;
+                gap: 1px !important;
+            }
+        }
+
+        /* GARANTIR VISIBILIDADE */
+        .grafico-mensal-container-bloco3 * {
+            visibility: visible !important;
+            opacity: 1 !important;
+        }
+
         /* ===== ÍCONE AO VIVO PISCANDO ===== */
         .ao-vivo-icon {
           display: inline-block !important;
@@ -1480,6 +1715,460 @@ if (!isset($_SESSION['usuario_id']) || empty($_SESSION['usuario_id'])) {
         select option:checked {
             background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
         }
+
+        /* ===================================================================
+           CSS - LISTA DE DIAS DO MÊS - BLOCO 2 (CLONE DE ANO.CSS)
+           Idêntico ao padrão de .gd-linha-mes, mas para .gd-linha-dia
+           =================================================================== */
+
+        /* CONTAINER PRINCIPAL DA LISTA DE DIAS */
+        .lista-dias {
+            width: calc(100% - 20px) !important;
+            max-width: calc(100% - 20px) !important;
+            margin: 5px 10px 10px 10px !important;
+            overflow-x: hidden !important;
+            overflow-y: auto !important;
+            padding: 12px 12px !important;
+            background: rgba(247, 246, 246, 0.95) !important;
+            border-radius: 12px !important;
+            scrollbar-width: none !important;
+            scrollbar-color: rgba(148, 163, 184, 0.5) transparent !important;
+            flex: 1 !important;
+            box-sizing: border-box !important;
+            gap: 0 !important;
+            row-gap: 2px !important;
+            display: flex !important;
+            flex-direction: column !important;
+            min-height: 100px;
+        }
+        
+        /* SCROLLBAR APARECE AO PASSAR O MOUSE */
+        .lista-dias:hover {
+            scrollbar-width: thin !important;
+        }
+        
+        /* MOBILE: AJUSTA ALTURA E MANTÉM ROLAGEM */
+        @media screen and (max-width: 768px) {
+            .lista-dias {
+                max-height: calc(100vh - 480px) !important;
+                flex: 0 1 auto !important;
+                max-width: 100% !important;
+                margin: 5px 0px 10px 0px !important;
+                width: 100% !important;
+                overflow-y: auto !important;
+            }
+        }
+
+        /* SCROLLBAR CUSTOMIZADA PARA LISTA DE DIAS */
+        .lista-dias::-webkit-scrollbar {
+            width: 6px;
+        }
+
+        .lista-dias::-webkit-scrollbar-track {
+            background: transparent;
+        }
+
+        .lista-dias::-webkit-scrollbar-thumb {
+            background-color: rgba(148, 163, 184, 0.3);
+            border-radius: 3px;
+        }
+
+        .lista-dias::-webkit-scrollbar-thumb:hover {
+            background-color: rgba(148, 163, 184, 0.5);
+        }
+
+        /* ===================================================================
+           LINHA DO DIA - LAYOUT HORIZONTAL (IDÊNTICO AO gd-linha-mes)
+           =================================================================== */
+
+        .gd-linha-dia {
+            display: flex !important;
+            flex-direction: row !important;
+            align-items: center !important;
+            justify-content: space-between !important;
+            flex-wrap: nowrap !important;
+
+            width: 100% !important;
+            height: 26px !important;
+            min-height: 26px !important;
+            max-height: 26px !important;
+
+            padding: 0 10px !important;
+            margin: 0 0 1px 0 !important;
+
+            background: rgba(255, 255, 255, 0.7) !important;
+            border: 1px solid rgba(226, 232, 240, 0.5) !important;
+            border-radius: 6px !important;
+
+            font-family: "Rajdhani", sans-serif !important;
+            font-weight: 500 !important;
+            font-size: 13px !important;
+            line-height: 1.1 !important;
+
+            transition: all 0.12s ease !important;
+            box-sizing: border-box !important;
+            overflow: visible !important;
+        }
+
+        /* HOVER SUTIL NAS LINHAS DOS DIAS */
+        .gd-linha-dia:hover {
+            background: rgba(255, 255, 255, 0.9) !important;
+            border-color: rgba(148, 163, 184, 0.3) !important;
+            transform: translateY(-0.5px) !important;
+            box-shadow: 0 1px 4px rgba(0, 0, 0, 0.04) !important;
+        }
+
+        /* FORÇAR ELEMENTOS FILHOS LADO A LADO */
+        .gd-linha-dia > *,
+        .gd-linha-dia .data,
+        .gd-linha-dia .placar-dia,
+        .gd-linha-dia .valor,
+        .gd-linha-dia .icone {
+            display: inline-flex !important;
+            align-items: center !important;
+            flex-shrink: 0 !important;
+            white-space: nowrap !important;
+            overflow: hidden !important;
+            text-overflow: ellipsis !important;
+            vertical-align: middle !important;
+        }
+
+        /* ===================================================================
+           COLUNA 1: DATA DO DIA (COMPACTO)
+           =================================================================== */
+
+        .gd-linha-dia .data {
+            display: inline-flex !important;
+            align-items: center !important;
+            font-family: "Rajdhani", sans-serif !important;
+            font-weight: 600 !important;
+            font-size: 12px !important;
+            color: #374151 !important;
+            text-align: left !important;
+            justify-content: flex-start !important;
+            width: 65px !important;
+            min-width: 65px !important;
+            max-width: 65px !important;
+            letter-spacing: 0.2px !important;
+            font-variant-numeric: normal !important;
+            order: 1 !important;
+            margin-right: 6px !important;
+            margin-left: 0px !important;
+        }
+
+        /* ===================================================================
+           COLUNA 2: PLACAR DO DIA (COMPACTO)
+           =================================================================== */
+
+        .gd-linha-dia .placar-dia {
+            display: inline-flex !important;
+            align-items: center !important;
+            justify-content: center !important;
+            font-family: "Rajdhani", sans-serif !important;
+            font-weight: 500 !important;
+            font-size: 11px !important;
+            line-height: 1 !important;
+            width: 65px !important;
+            min-width: 65px !important;
+            max-width: 65px !important;
+            gap: 2px !important;
+            padding: 0px 2px !important;
+            order: 2 !important;
+            margin-top: 0px !important;
+            margin-bottom: 0px !important;
+            margin-right: 4px !important;
+            margin-left: 0px !important;
+            overflow: visible !important;
+        }
+
+        .gd-linha-dia .placar-dia .placar,
+        .gd-linha-dia .placar-dia .separador {
+            display: inline !important;
+            font-family: inherit !important;
+            font-weight: inherit !important;
+            font-size: inherit !important;
+            line-height: inherit !important;
+        }
+
+        .gd-linha-dia .placar-dia .placar.green {
+            color: #10b981 !important;
+            font-weight: 700 !important;
+        }
+
+        .gd-linha-dia .placar-dia .placar.red {
+            color: #ef4444 !important;
+            font-weight: 700 !important;
+        }
+
+        .gd-linha-dia .placar-dia .placar.gray {
+            color: #94a3b8 !important;
+            font-weight: 700 !important;
+        }
+
+        .gd-linha-dia .placar-dia .separador {
+            padding: 0 8px !important;
+            margin: 0 8px !important;
+            color: #94a3b8 !important;
+            font-weight: 400 !important;
+        }
+
+        .gd-linha-dia .placar-dia .texto-cinza {
+            color: #94a3b8 !important;
+        }
+
+        /* ===================================================================
+           COLUNA 3: VALOR (SALDO DO DIA) - COMPACTO
+           =================================================================== */
+
+        .gd-linha-dia .valor {
+            font-family: "Rajdhani", sans-serif !important;
+            font-weight: 600 !important;
+            font-size: 11px !important;
+            line-height: 1 !important;
+            text-align: left !important;
+            justify-content: flex-start !important;
+            font-variant-numeric: tabular-nums !important;
+            letter-spacing: -0.01em !important;
+            width: 60px !important;
+            min-width: 60px !important;
+            max-width: 60px !important;
+            order: 3 !important;
+            margin-right: 6px !important;
+            margin-left: 0px !important;
+        }
+
+        .gd-linha-dia .valor.verde-bold {
+            color: #10b981 !important;
+            font-weight: 600 !important;
+        }
+
+        .gd-linha-dia .valor.vermelho-bold {
+            color: #dc2626 !important;
+            font-weight: 600 !important;
+        }
+
+        .gd-linha-dia .valor.texto-cinza {
+            color: #6b7280 !important;
+            font-weight: 500 !important;
+        }
+
+        /* ===================================================================
+           COLUNA 4: ÍCONE (CHECK) - COMPACTO
+           =================================================================== */
+
+        .gd-linha-dia .icone {
+            display: inline-flex !important;
+            align-items: center !important;
+            justify-content: center !important;
+            width: 18px !important;
+            height: 18px !important;
+            min-width: 18px !important;
+            max-width: 18px !important;
+            margin-left: 0px !important;
+            margin-right: 0px !important;
+            position: relative !important;
+            z-index: 6 !important;
+            order: 4 !important;
+        }
+
+        .gd-linha-dia .icone i {
+            font-size: 10px !important;
+            line-height: 1 !important;
+            width: 14px !important;
+            height: 14px !important;
+            display: inline-flex !important;
+            align-items: center !important;
+            justify-content: center !important;
+            font-family: "Font Awesome 6 Free" !important;
+            font-weight: 900 !important;
+        }
+
+        /* GARANTIR ÍCONES APARECEM CORRETAMENTE */
+        .gd-linha-dia .icone i::before {
+            font-family: "Font Awesome 6 Free" !important;
+            font-weight: 900 !important;
+        }
+
+        /* ÍCONE CHECK PADRÃO */
+        .gd-linha-dia .icone i.fa-check {
+            color: #6b7280 !important;
+        }
+
+        .gd-linha-dia .icone i.fa-check::before {
+            content: "\f00c" !important;
+        }
+
+        .gd-linha-dia .icone .texto-cinza {
+            color: #94a3b8 !important;
+        }
+
+        /* ===================================================================
+           ESTADOS VISUAIS DAS LINHAS DOS DIAS (IDÊNTICO AO gd-linha-mes)
+           =================================================================== */
+
+        /* DIA POSITIVO - Verde com borda esquerda */
+        .gd-linha-dia.valor-positivo {
+            background: rgba(141, 219, 170, 0.12) !important;
+            border-left: 3px solid #10b981 !important;
+            padding-left: 10px !important;
+            opacity: 1 !important;
+        }
+
+        .gd-linha-dia.valor-positivo .data,
+        .gd-linha-dia.valor-positivo .valor,
+        .gd-linha-dia.valor-positivo .placar-dia {
+            color: #10b981 !important;
+            font-weight: 600 !important;
+            opacity: 1 !important;
+        }
+
+        .gd-linha-dia.valor-positivo .placar {
+            color: #10b981 !important;
+            font-weight: 700 !important;
+            opacity: 1 !important;
+        }
+
+        .gd-linha-dia.valor-positivo .icone i {
+            color: #10b981 !important;
+            opacity: 1 !important;
+        }
+
+        /* DIA NEGATIVO - Vermelho com borda esquerda */
+        .gd-linha-dia.valor-negativo {
+            background: rgb(247, 224, 224) !important;
+            border-left: 3px solid #dc2626 !important;
+            padding-left: 10px !important;
+            opacity: 1 !important;
+        }
+
+        .gd-linha-dia.valor-negativo .data,
+        .gd-linha-dia.valor-negativo .valor,
+        .gd-linha-dia.valor-negativo .placar-dia {
+            color: #dc2626 !important;
+            font-weight: 600 !important;
+            opacity: 1 !important;
+        }
+
+        .gd-linha-dia.valor-negativo .placar {
+            color: #ef4444 !important;
+            font-weight: 700 !important;
+            opacity: 1 !important;
+        }
+
+        .gd-linha-dia.valor-negativo .icone i {
+            color: #dc2626 !important;
+            opacity: 1 !important;
+        }
+
+        /* DIA ZERO - Branco com borda cinza (OPACIDADE REDUZIDA) */
+        .gd-linha-dia.valor-zero {
+            background: rgba(255, 255, 255, 0.95) !important;
+            border-left: 3px solid rgba(156, 163, 175, 0.3) !important;
+            padding-left: 10px !important;
+            opacity: 0.42 !important;
+        }
+
+        .gd-linha-dia.valor-zero .data,
+        .gd-linha-dia.valor-zero .valor,
+        .gd-linha-dia.valor-zero .placar-dia {
+            color: #6b7280 !important;
+            font-weight: 500 !important;
+        }
+
+        .gd-linha-dia.valor-zero .icone i {
+            color: #6b7280 !important;
+        }
+
+        /* DIA ATUAL - DESTAQUE ESPECIAL COMPACTO */
+        .gd-linha-dia.gd-dia-hoje,
+        .gd-linha-dia.dia-atual {
+            background: linear-gradient(
+                90deg,
+                rgba(255, 255, 255, 0.98),
+                rgba(248, 249, 250, 0.98)
+            ) !important;
+            border-left: 3px solid #43464d !important;
+            box-shadow: 0 1px 4px rgba(67, 70, 77, 0.08) inset !important;
+            transform: translateZ(0) !important;
+            transition: background 160ms ease, box-shadow 160ms ease,
+                border-left-color 160ms ease !important;
+            padding-left: 10px !important;
+            opacity: 1 !important;
+        }
+
+        /* TEXTO DO DIA ATUAL COM CONTRASTE */
+        .gd-linha-dia.gd-dia-hoje .data,
+        .gd-linha-dia.gd-dia-hoje .valor,
+        .gd-linha-dia.gd-dia-hoje .placar-dia,
+        .gd-linha-dia.gd-dia-hoje .icone i {
+            color: #111827 !important;
+            font-weight: 700 !important;
+            opacity: 1 !important;
+        }
+
+        /* DIA ATUAL POSITIVO */
+        .gd-linha-dia.gd-dia-hoje.valor-positivo {
+            background: linear-gradient(
+                90deg,
+                #edfcf0fa,
+                rgba(230, 253, 242, 0.98)
+            ) !important;
+            border-left: 3px solid #058b32 !important;
+            box-shadow: none !important;
+        }
+
+        .gd-linha-dia.gd-dia-hoje.valor-positivo .data,
+        .gd-linha-dia.gd-dia-hoje.valor-positivo .valor,
+        .gd-linha-dia.gd-dia-hoje.valor-positivo .placar-dia,
+        .gd-linha-dia.gd-dia-hoje.valor-positivo .icone i {
+            color: #058b32 !important;
+            font-weight: 700 !important;
+        }
+
+        /* DIA ATUAL NEGATIVO */
+        .gd-linha-dia.gd-dia-hoje.valor-negativo {
+            background: linear-gradient(
+                90deg,
+                rgba(255, 242, 242, 0.98),
+                rgba(255, 238, 238, 0.98)
+            ) !important;
+            border-left: 3px solid #ec0606 !important;
+            box-shadow: none !important;
+        }
+
+        .gd-linha-dia.gd-dia-hoje.valor-negativo .data,
+        .gd-linha-dia.gd-dia-hoje.valor-negativo .valor,
+        .gd-linha-dia.gd-dia-hoje.valor-negativo .placar-dia,
+        .gd-linha-dia.gd-dia-hoje.valor-negativo .icone i {
+            color: #ec0606 !important;
+            font-weight: 700 !important;
+        }
+
+        /* MÊS ZERO - Cinza quando não tem saldo */
+        .gd-linha-dia.valor-zero {
+            background: rgba(241, 245, 249, 0.5) !important;
+            border-left: 3px solid rgba(156, 163, 175, 0.3) !important;
+            padding-left: 10px !important;
+            opacity: 0.5 !important;
+        }
+
+        .gd-linha-dia.valor-zero .data,
+        .gd-linha-dia.valor-zero .valor,
+        .gd-linha-dia.valor-zero .placar-dia {
+            color: #94a3b8 !important;
+            font-weight: 500 !important;
+            opacity: 1 !important;
+        }
+
+        .gd-linha-dia.valor-zero .placar {
+            color: #94a3b8 !important;
+            opacity: 1 !important;
+        }
+
+        .gd-linha-dia.valor-zero .icone i {
+            color: #94a3b8 !important;
+            opacity: 1 !important;
+        }
     </style>
 </head>
 <body <?php echo isset($_SESSION['usuario_id']) ? 'data-user-id="' . intval($_SESSION['usuario_id']) . '"' : ''; ?>>
@@ -1489,6 +2178,41 @@ if (!isset($_SESSION['usuario_id']) || empty($_SESSION['usuario_id'])) {
                 <div class="menu-container">
                     <!-- Botão hambúrguer para menu mobile -->
                     <button class="menu-button" onclick="toggleMenu()">☰</button>
+
+                    <!-- ✅ BOTÃO DE NOTIFICAÇÕES COM SINO -->
+                    <button class="notificacao-btn" id="btnNotificacoes" onclick="toggleNotificacaoMenu(event)">
+                        <i class="fas fa-bell"></i>
+                        <span class="notificacao-badge" id="notificacao-badge"></span>
+                    </button>
+
+                    <!-- ✅ MENU DE NOTIFICAÇÕES -->
+                    <div class="notificacao-menu" id="notificacao-menu">
+                        <div class="notificacao-menu-header">
+                            <i class="fas fa-bell"></i> Notificações
+                        </div>
+                        <div class="notificacao-menu-body">
+                            <!-- Opção: Permitir Notificações -->
+                            <div class="notificacao-opcao" onclick="permitirNotificacoes()" id="opcao-permitir">
+                                <i class="fas fa-check-circle"></i>
+                                <div class="opcao-texto">
+                                    <div class="opcao-titulo">Permitir Notificações</div>
+                                    <div class="opcao-descricao">Som e alertas ativados</div>
+                                </div>
+                            </div>
+
+                            <!-- Opção: Negar Notificações -->
+                            <div class="notificacao-opcao" onclick="negarNotificacoes()" id="opcao-negar">
+                                <i class="fas fa-ban"></i>
+                                <div class="opcao-texto">
+                                    <div class="opcao-titulo">Desativar Notificações</div>
+                                    <div class="opcao-descricao">Sem som e alertas</div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="permissao-status" id="permissao-status">
+                            ⏳ Verificando...
+                        </div>
+                    </div>
 
                     <!-- Menu dropdown de navegação -->
                     <div id="menu" class="menu-content">
@@ -1660,7 +2384,7 @@ if (!isset($_SESSION['usuario_id']) || empty($_SESSION['usuario_id'])) {
                         <!-- Linhas de Apostas - Com colunas alinhadas -->
                         <div
                             style="
-                                margin-top: 6px;
+                                margin-top: 3px !important;
                                 font-family: 'JetBrains Mono', monospace;
                                 font-size: 12px;
                                 line-height: 1.6;
@@ -1676,30 +2400,30 @@ if (!isset($_SESSION['usuario_id']) || empty($_SESSION['usuario_id'])) {
                         >
                             <!-- Linha 1: +1 Gols asiaticos -->
                             <div>⚽ +1 Gols asiaticos</div>
-                            <div style="text-align: center;">
-                                <span style="color: #4ade80" id="placar-1-green">0</span>
-                                <span style="color: #c0d0e0; font-size: 10px;"> X </span>
-                                <span style="color: #eea7ad" id="placar-1-red">0</span>
+                            <div style="display: grid; grid-template-columns: 15px 12px 15px; gap: 0px; align-items: center; justify-items: center; font-family: 'JetBrains Mono', monospace;">
+                                <span style="color: #4ade80; font-variant-numeric: tabular-nums; text-align: right; width: 100%;" id="placar-1-green">0</span>
+                                <span style="color: #c0d0e0; font-size: 10px; margin: 0 4px;">X</span>
+                                <span style="color: #eea7ad; font-variant-numeric: tabular-nums; text-align: left; width: 100%;" id="placar-1-red">0</span>
                             </div>
-                            <div style="text-align: left; color: #cfcdcd" id="valor-1-final">R$ 0,00</div>
+                            <div style="text-align: right; color: #cfcdcd; min-width: 80px;" id="valor-1-final">R$ 0,00</div>
 
                             <!-- Linha 2: +0.5 Gols ft -->
                             <div>⚽ +0.5 Gols ft</div>
-                            <div style="text-align: center;">
-                                <span style="color: #4ade80" id="placar-2-green">0</span>
-                                <span style="color: #c0d0e0; font-size: 10px;"> X </span>
-                                <span style="color: #eea7ad" id="placar-2-red">0</span>
+                            <div style="display: grid; grid-template-columns: 15px 12px 15px; gap: 0px; align-items: center; justify-items: center; font-family: 'JetBrains Mono', monospace;">
+                                <span style="color: #4ade80; font-variant-numeric: tabular-nums; text-align: right; width: 100%;" id="placar-2-green">0</span>
+                                <span style="color: #c0d0e0; font-size: 10px; margin: 0 4px;">X</span>
+                                <span style="color: #eea7ad; font-variant-numeric: tabular-nums; text-align: left; width: 100%;" id="placar-2-red">0</span>
                             </div>
-                            <div style="text-align: left; color: #4ade80" id="valor-2-final">R$ 50,00</div>
+                            <div style="text-align: right; color: #4ade80; min-width: 80px;" id="valor-2-final">R$ 50,00</div>
 
                             <!-- Linha 3: +1 Cantos asiaticos -->
                             <div>🚩 +1 Cantos asiaticos</div>
-                            <div style="text-align: center;">
-                                <span style="color: #4ade80" id="placar-3-green">0</span>
-                                <span style="color: #c0d0e0; font-size: 10px;"> X </span>
-                                <span style="color: #eea7ad" id="placar-3-red">0</span>
+                            <div style="display: grid; grid-template-columns: 15px 12px 15px; gap: 0px; align-items: center; justify-items: center; font-family: 'JetBrains Mono', monospace;">
+                                <span style="color: #4ade80; font-variant-numeric: tabular-nums; text-align: right; width: 100%;" id="placar-3-green">0</span>
+                                <span style="color: #c0d0e0; font-size: 10px; margin: 0 4px;">X</span>
+                                <span style="color: #eea7ad; font-variant-numeric: tabular-nums; text-align: left; width: 100%;" id="placar-3-red">0</span>
                             </div>
-                            <div style="text-align: left; color: #eea7ad" id="valor-3-final">R$ -25,00</div>
+                            <div style="text-align: right; color: #eea7ad; min-width: 80px;" id="valor-3-final">R$ -25,00</div>
                         </div>
 
                         <!-- Separador 2 - Acima do Total -->
@@ -1720,13 +2444,13 @@ if (!isset($_SESSION['usuario_id']) || empty($_SESSION['usuario_id'])) {
                                 margin-bottom: 12px;
                             "
                         >
-                            <div>📊 Total:</div>
-                            <div style="text-align: center;">
-                                <span style="color: #4ade80" id="placar-total-green">0</span>
-                                <span style="color: #c0d0e0; font-size: 10px;"> X </span>
-                                <span style="color: #eea7ad" id="placar-total-red">0</span>
+                            <div><i class="fas fa-chart-column" style="color: #60a5fa; margin-right: 6px;"></i>Total:</div>
+                            <div style="display: grid; grid-template-columns: 15px 12px 15px; gap: 0px; align-items: center; justify-items: center; font-family: 'JetBrains Mono', monospace;">
+                                <span style="color: #4ade80; font-variant-numeric: tabular-nums; text-align: right; width: 100%;" id="placar-total-green">0</span>
+                                <span style="color: #c0d0e0; font-size: 10px; margin: 0 4px;">X</span>
+                                <span style="color: #eea7ad; font-variant-numeric: tabular-nums; text-align: left; width: 100%;" id="placar-total-red">0</span>
                             </div>
-                            <div style="text-align: left; color: #4ade80" id="valor-total-final">R$ 25,00</div>
+                            <div style="text-align: right; color: #4ade80; min-width: 80px;" id="valor-total-final">R$ 25,00</div>
                         </div>
                     </div>
 
@@ -1763,8 +2487,95 @@ if (!isset($_SESSION['usuario_id']) || empty($_SESSION['usuario_id'])) {
             
             <!-- BLOCO 2 -->
             <div class="bloco bloco-2">
+                <div class="telegram-container">
+                    <!-- HEADER AZUL - TUDO COMPACTO (MÊS INTEIRO) -->
+                    <div class="header-bloco">
+                        <!-- Linha 1: Mês e Ano -->
+                        <div class="linha-data" style="justify-content: flex-start">
+                            <span>📅 <span id="resumo-mes-data">Carregando...</span></span>
+                        </div>
 
-                
+                        <!-- Separador 1 - Abaixo da data -->
+                        <div class="linha-separadora"></div>
+
+                        <!-- Linhas de Apostas - Com colunas alinhadas (MÊS) -->
+                        <div
+                            style="
+                                margin-top: 3px !important;
+                                font-family: 'JetBrains Mono', monospace;
+                                font-size: 12px;
+                                line-height: 1.6;
+                                color: white;
+                                letter-spacing: 0.5px;
+                                font-weight: 500;
+                                display: grid;
+                                grid-template-columns: 2.2fr 0.9fr 1fr;
+                                gap: 6px;
+                                align-items: start;
+                                grid-auto-flow: row;
+                            "
+                        >
+                            <!-- Linha 1: +1 Gols asiaticos (MÊS) -->
+                            <div>⚽ +1 Gols asiaticos</div>
+                            <div style="display: grid; grid-template-columns: 15px 12px 15px; gap: 0px; align-items: center; justify-items: center; font-family: 'JetBrains Mono', monospace;">
+                                <span style="color: #4ade80; font-variant-numeric: tabular-nums; text-align: right; width: 100%;" id="placar-mes-1-green">0</span>
+                                <span style="color: #c0d0e0; font-size: 10px; margin: 0 4px;">X</span>
+                                <span style="color: #eea7ad; font-variant-numeric: tabular-nums; text-align: left; width: 100%;" id="placar-mes-1-red">0</span>
+                            </div>
+                            <div style="text-align: right; color: #cfcdcd; min-width: 80px;" id="valor-mes-1-final">R$ 0,00</div>
+
+                            <!-- Linha 2: +0.5 Gols asiaticos (MÊS) -->
+                            <div>⚽ +0.5 Gols asiaticos</div>
+                            <div style="display: grid; grid-template-columns: 15px 12px 15px; gap: 0px; align-items: center; justify-items: center; font-family: 'JetBrains Mono', monospace;">
+                                <span style="color: #4ade80; font-variant-numeric: tabular-nums; text-align: right; width: 100%;" id="placar-mes-2-green">0</span>
+                                <span style="color: #c0d0e0; font-size: 10px; margin: 0 4px;">X</span>
+                                <span style="color: #eea7ad; font-variant-numeric: tabular-nums; text-align: left; width: 100%;" id="placar-mes-2-red">0</span>
+                            </div>
+                            <div style="text-align: right; color: #4ade80; min-width: 80px;" id="valor-mes-2-final">R$ 0,00</div>
+
+                            <!-- Linha 3: +1 Cantos asiaticos (MÊS) -->
+                            <div>🚩 +1 Cantos asiaticos</div>
+                            <div style="display: grid; grid-template-columns: 15px 12px 15px; gap: 0px; align-items: center; justify-items: center; font-family: 'JetBrains Mono', monospace;">
+                                <span style="color: #4ade80; font-variant-numeric: tabular-nums; text-align: right; width: 100%;" id="placar-mes-3-green">0</span>
+                                <span style="color: #c0d0e0; font-size: 10px; margin: 0 4px;">X</span>
+                                <span style="color: #eea7ad; font-variant-numeric: tabular-nums; text-align: left; width: 100%;" id="placar-mes-3-red">0</span>
+                            </div>
+                            <div style="text-align: right; color: #eea7ad; min-width: 80px;" id="valor-mes-3-final">R$ 0,00</div>
+                        </div>
+
+                        <!-- Separador 2 - Acima do Total -->
+                        <div class="linha-separadora"></div>
+
+                        <!-- Total - Com mesmo layout (MÊS) -->
+                        <div
+                            style="
+                                font-family: 'JetBrains Mono', monospace;
+                                font-size: 12px;
+                                color: white;
+                                letter-spacing: 0.5px;
+                                font-weight: 600;
+                                display: grid;
+                                grid-template-columns: 2.2fr 0.9fr 1fr;
+                                gap: 6px;
+                                align-items: center;
+                                margin-bottom: 12px;
+                            "
+                        >
+                            <div><i class="fas fa-chart-column" style="color: #60a5fa; margin-right: 6px;"></i>Total:</div>
+                            <div style="display: grid; grid-template-columns: 15px 12px 15px; gap: 0px; align-items: center; justify-items: center; font-family: 'JetBrains Mono', monospace;">
+                                <span style="color: #4ade80; font-variant-numeric: tabular-nums; text-align: right; width: 100%;" id="placar-mes-total-green">0</span>
+                                <span style="color: #c0d0e0; font-size: 10px; margin: 0 4px;">X</span>
+                                <span style="color: #eea7ad; font-variant-numeric: tabular-nums; text-align: left; width: 100%;" id="placar-mes-total-red">0</span>
+                            </div>
+                            <div style="text-align: right; color: #4ade80; min-width: 80px;" id="valor-mes-total-final">R$ 0,00</div>
+                        </div>
+                    </div>
+
+                    <!-- ✅ LISTA DE DIAS DO MÊS COM RESULTADOS -->
+                    <div class="lista-dias" id="lista-dias-bloco2" style="margin-top: 15px; flex: 1;">
+                        <!-- Será preenchida pelo JavaScript -->
+                    </div>
+                </div>
             </div>
             
             <!-- ==================================================================================================================== -->
@@ -1788,9 +2599,113 @@ if (!isset($_SESSION['usuario_id']) || empty($_SESSION['usuario_id'])) {
             <!-- ========================== BLOCO 3 - BLOCO 3 - BLOCO 3 - BLOCO 3 - BLOCO 3 ======================== -->
             <!-- ==================================================================================================================== -->
             
-            <!-- BLOCO 3 -->
+            <!-- BLOCO 3 - CLONE DO BLOCO 2 COM DADOS DE TODO O PERÍODO -->
             <div class="bloco bloco-3">
+                <div class="telegram-container">
+                    <!-- HEADER AZUL - TUDO COMPACTO (PERÍODO TOTAL) -->
+                    <div class="header-bloco">
+                        <!-- Linha 1: Período Total com Ano -->
+                        <div class="linha-data" style="justify-content: flex-start">
+                            <span>📅 <span id="resumo-periodo-data">Ano 2025</span></span>
+                        </div>
 
+                        <!-- Separador 1 - Abaixo da data -->
+                        <div class="linha-separadora"></div>
+
+                        <!-- Linhas de Apostas - Com colunas alinhadas (PERÍODO) -->
+                        <div
+                            style="
+                                margin-top: 3px !important;
+                                font-family: 'JetBrains Mono', monospace;
+                                font-size: 12px;
+                                line-height: 1.6;
+                                color: white;
+                                letter-spacing: 0.5px;
+                                font-weight: 500;
+                                display: grid;
+                                grid-template-columns: 2.2fr 0.9fr 1fr;
+                                gap: 6px;
+                                align-items: start;
+                                grid-auto-flow: row;
+                            "
+                        >
+                            <!-- Linha 1: +1 Gols asiaticos (PERÍODO) -->
+                            <div>⚽ +1 Gols asiaticos</div>
+                            <div style="display: grid; grid-template-columns: 15px 12px 15px; gap: 0px; align-items: center; justify-items: center; font-family: 'JetBrains Mono', monospace;">
+                                <span style="color: #4ade80; font-variant-numeric: tabular-nums; text-align: right; width: 100%;" id="placar-periodo-1-green">0</span>
+                                <span style="color: #c0d0e0; font-size: 10px; margin: 0 4px;">X</span>
+                                <span style="color: #eea7ad; font-variant-numeric: tabular-nums; text-align: left; width: 100%;" id="placar-periodo-1-red">0</span>
+                            </div>
+                            <div style="text-align: right; color: #cfcdcd; min-width: 80px;" id="valor-periodo-1-final">R$ 0,00</div>
+
+                            <!-- Linha 2: +0.5 Gols asiaticos (PERÍODO) -->
+                            <div>⚽ +0.5 Gols asiaticos</div>
+                            <div style="display: grid; grid-template-columns: 15px 12px 15px; gap: 0px; align-items: center; justify-items: center; font-family: 'JetBrains Mono', monospace;">
+                                <span style="color: #4ade80; font-variant-numeric: tabular-nums; text-align: right; width: 100%;" id="placar-periodo-2-green">0</span>
+                                <span style="color: #c0d0e0; font-size: 10px; margin: 0 4px;">X</span>
+                                <span style="color: #eea7ad; font-variant-numeric: tabular-nums; text-align: left; width: 100%;" id="placar-periodo-2-red">0</span>
+                            </div>
+                            <div style="text-align: right; color: #4ade80; min-width: 80px;" id="valor-periodo-2-final">R$ 0,00</div>
+
+                            <!-- Linha 3: +1 Cantos asiaticos (PERÍODO) -->
+                            <div>🚩 +1 Cantos asiaticos</div>
+                            <div style="display: grid; grid-template-columns: 15px 12px 15px; gap: 0px; align-items: center; justify-items: center; font-family: 'JetBrains Mono', monospace;">
+                                <span style="color: #4ade80; font-variant-numeric: tabular-nums; text-align: right; width: 100%;" id="placar-periodo-3-green">0</span>
+                                <span style="color: #c0d0e0; font-size: 10px; margin: 0 4px;">X</span>
+                                <span style="color: #eea7ad; font-variant-numeric: tabular-nums; text-align: left; width: 100%;" id="placar-periodo-3-red">0</span>
+                            </div>
+                            <div style="text-align: right; color: #eea7ad; min-width: 80px;" id="valor-periodo-3-final">R$ 0,00</div>
+                        </div>
+
+                        <!-- Separador 2 - Acima do Total -->
+                        <div class="linha-separadora"></div>
+
+                        <!-- Total - Com mesmo layout (PERÍODO) -->
+                        <div
+                            style="
+                                font-family: 'JetBrains Mono', monospace;
+                                font-size: 12px;
+                                color: white;
+                                letter-spacing: 0.5px;
+                                font-weight: 600;
+                                display: grid;
+                                grid-template-columns: 2.2fr 0.9fr 1fr;
+                                gap: 6px;
+                                align-items: center;
+                                margin-bottom: 12px;
+                            "
+                        >
+                            <div><i class="fas fa-chart-column" style="color: #60a5fa; margin-right: 6px;"></i>Total:</div>
+                            <div style="display: grid; grid-template-columns: 15px 12px 15px; gap: 0px; align-items: center; justify-items: center; font-family: 'JetBrains Mono', monospace;">
+                                <span style="color: #4ade80; font-variant-numeric: tabular-nums; text-align: right; width: 100%;" id="placar-periodo-total-green">0</span>
+                                <span style="color: #c0d0e0; font-size: 10px; margin: 0 4px;">X</span>
+                                <span style="color: #eea7ad; font-variant-numeric: tabular-nums; text-align: left; width: 100%;" id="placar-periodo-total-red">0</span>
+                            </div>
+                            <div style="text-align: right; color: #4ade80; min-width: 80px;" id="valor-periodo-total-final">R$ 0,00</div>
+                        </div>
+                    </div>
+
+                    <!-- ===== GRÁFICO DE TOTAIS MENSAIS - CLONE DE GESTAO-DIARIA.PHP ===== -->
+                    <div class="grafico-mensal-container-bloco3">
+                        <div class="grafico-mensal-bloco3" id="grafico-mensal-bloco3">
+                            <div class="grafico-canvas-bloco3">
+                                <div class="grafico-grid-bloco3"></div>
+                                <div class="grafico-barras-bloco3" id="grafico-barras-bloco3">
+                                    <!-- Barras serão geradas via JavaScript -->
+                                </div>
+                            </div>
+                            
+                            <div class="grafico-labels-bloco3" id="grafico-labels-bloco3">
+                                <!-- Labels serão gerados via JavaScript -->
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- ✅ LISTA DE MESES DO PERÍODO COM RESULTADOS -->
+                    <div class="lista-dias" id="lista-meses-bloco3" style="margin-top: 5px; flex: 1;">
+                        <!-- Será preenchida pelo JavaScript -->
+                    </div>
+                </div>
             </div>
             
             <!-- ==================================================================================================================== -->
@@ -3040,6 +3955,100 @@ if (!isset($_SESSION['usuario_id']) || empty($_SESSION['usuario_id'])) {
       }
     });
 
+    // ===== FUNÇÕES DE NOTIFICAÇÕES =====
+    /**
+     * Alternar visibilidade do menu de notificações
+     */
+    function toggleNotificacaoMenu(event) {
+      event.stopPropagation();
+      const menu = document.getElementById('notificacao-menu');
+      if (menu) {
+        menu.classList.toggle('ativo');
+        atualizarStatusNotificacoes();
+      }
+    }
+
+    /**
+     * Permitir notificações
+     */
+    function permitirNotificacoes() {
+      if (Notification.permission !== 'granted') {
+        Notification.requestPermission().then((permission) => {
+          atualizarStatusNotificacoes();
+        });
+      } else {
+        // Já tem permissão
+        atualizarStatusNotificacoes();
+      }
+    }
+
+    /**
+     * Desativar notificações (rejeitar)
+     */
+    function negarNotificacoes() {
+      // Informar ao usuário que precisa limpar os dados do site
+      alert('Para desativar notificações, você pode:\n1. Clicar no ícone de cadeado/informações na barra de endereço\n2. Mudar "Notificações" para "Bloquear"\n3. Limpar cookies deste site');
+      atualizarStatusNotificacoes();
+    }
+
+    /**
+     * Atualizar status e aparência das opções de notificação
+     */
+    function atualizarStatusNotificacoes() {
+      const perm = Notification.permission;
+      const statusDiv = document.getElementById('permissao-status');
+      const badge = document.getElementById('notificacao-badge');
+      const opcaoPermitir = document.getElementById('opcao-permitir');
+      const opcaoNegar = document.getElementById('opcao-negar');
+
+      // Atualizar badge
+      if (perm === 'granted') {
+        badge.classList.remove('desativada');
+        statusDiv.className = 'permissao-status permitida';
+        statusDiv.innerHTML = '✅ Notificações ATIVADAS';
+        opcaoPermitir.style.opacity = '0.5';
+        opcaoPermitir.style.pointerEvents = 'none';
+        opcaoNegar.style.opacity = '1';
+        opcaoNegar.style.pointerEvents = 'auto';
+      } else if (perm === 'denied') {
+        badge.classList.add('desativada');
+        statusDiv.className = 'permissao-status negada';
+        statusDiv.innerHTML = '❌ Notificações BLOQUEADAS';
+        opcaoPermitir.style.opacity = '1';
+        opcaoPermitir.style.pointerEvents = 'auto';
+        opcaoNegar.style.opacity = '0.5';
+        opcaoNegar.style.pointerEvents = 'none';
+      } else {
+        // default - não solicitada ainda
+        badge.classList.add('desativada');
+        statusDiv.className = 'permissao-status';
+        statusDiv.innerHTML = '⏳ Clique em "Permitir" para ativar';
+        opcaoPermitir.style.opacity = '1';
+        opcaoPermitir.style.pointerEvents = 'auto';
+        opcaoNegar.style.opacity = '1';
+        opcaoNegar.style.pointerEvents = 'auto';
+      }
+    }
+
+    /**
+     * Fechar menu de notificações ao clicar fora
+     */
+    document.addEventListener('click', function(event) {
+      const notificacaoMenu = document.getElementById('notificacao-menu');
+      const btnNotificacoes = document.getElementById('btnNotificacoes');
+
+      if (notificacaoMenu && !notificacaoMenu.contains(event.target) && !btnNotificacoes.contains(event.target)) {
+        notificacaoMenu.classList.remove('ativo');
+      }
+    });
+
+    // Atualizar status quando página carrega
+    document.addEventListener('DOMContentLoaded', function() {
+      setTimeout(() => {
+        atualizarStatusNotificacoes();
+      }, 500);
+    });
+
     // ===== FUNÇÕES DO MODAL DE REGISTRO =====
     function abrirModalRegistro() {
       document.getElementById("modalRegistro").classList.add("show");
@@ -3736,8 +4745,591 @@ if (!isset($_SESSION['usuario_id']) || empty($_SESSION['usuario_id'])) {
     }, 30000);
     </script>
 
+    <!-- ✅ SCRIPT PARA CARREGAR DADOS DO MÊS NO BLOCO 2 (MESMO MÉTODO BLOCO 1) -->
+    <script>
+      // ✅ FUNÇÃO PARA ATUALIZAR DATA DO MÊS NO BLOCO 2
+      function atualizarDataMes() {
+        const mesesPortugues = [
+          "Janeiro", "Fevereiro", "Março", "Abril", "Maio", "Junho",
+          "Julho", "Agosto", "Setembro", "Outubro", "Novembro", "Dezembro"
+        ];
+        
+        const hoje = new Date();
+        const mesAtual = mesesPortugues[hoje.getMonth()];
+        const anoAtual = hoje.getFullYear();
+        
+        const resumoMesData = document.getElementById('resumo-mes-data');
+        if (resumoMesData) {
+          resumoMesData.textContent = `${mesAtual} ${anoAtual}`;
+        }
+      }
+
+      // ✅ FUNÇÃO PARA ATUALIZAR PLACAR DO MÊS (IDÊNTICO AO BLOCO 1)
+      function atualizarPlacarMes() {
+        // Função auxiliar para formatar moeda (MESMO DO BLOCO 1)
+        function formatarMoeda(valor) {
+          return new Intl.NumberFormat('pt-BR', {
+            style: 'currency',
+            currency: 'BRL',
+            minimumFractionDigits: 2,
+            maximumFractionDigits: 2
+          }).format(valor);
+        }
+        
+        console.log('🔄 Iniciando atualizarPlacarMes()...');
+        
+        // 📤 Buscar dados do MÊS INTEIRO via obter-placar-mes.php
+        fetch('obter-placar-mes.php')
+          .then(response => {
+            console.log('📡 Resposta recebida:', response.status);
+            return response.json();
+          })
+          .then(data => {
+            console.log('📊 JSON parseado:', data);
+            
+            if (data.success && data.apostas) {
+              console.log('✅ Dados do mês COMPLETO recebidos:', data.apostas);
+              console.log('📊 Utilizando MESMO método de cálculo do Bloco 1');
+              
+              // ========== ATUALIZAR APOSTA 1: +1⚽GOL ==========
+              const aposta1 = data.apostas.aposta_1;
+              if (aposta1) {
+                console.log('🔍 Preenchendo aposta_1:', aposta1);
+                const elem1Green = document.getElementById('placar-mes-1-green');
+                const elem1Red = document.getElementById('placar-mes-1-red');
+                const elem1Valor = document.getElementById('valor-mes-1-final');
+                
+                console.log('📍 IDs encontrados:', { elem1Green, elem1Red, elem1Valor });
+                
+                document.getElementById('placar-mes-1-green').textContent = aposta1.green;
+                document.getElementById('placar-mes-1-red').textContent = aposta1.red;
+                
+                // MESMO CÁLCULO DO BLOCO 1: (lucro_coef_green + lucro_coef_red) * valor_und
+                // Para o mês, usar 100 como valor fixo de referência
+                const lucro1 = (aposta1.lucro_coef_green + aposta1.lucro_coef_red) * 100;
+                const valor1Elem = document.getElementById('valor-mes-1-final');
+                if (valor1Elem) {
+                  valor1Elem.textContent = formatarMoeda(lucro1);
+                  valor1Elem.style.color = lucro1 >= 0 ? '#4ade80' : '#eea7ad';
+                  console.log('✅ Aposta 1 atualizada:', formatarMoeda(lucro1));
+                }
+                
+                console.log(`📊 Aposta 1 (+1⚽GOL) do mês: ${aposta1.green} Green, ${aposta1.red} Red | Lucro Coef: ${aposta1.lucro_coef_green} + (${aposta1.lucro_coef_red}) = ${formatarMoeda(lucro1)}`);
+              }
+              
+              // ========== ATUALIZAR APOSTA 2: +0.5⚽GOL ==========
+              const aposta2 = data.apostas.aposta_2;
+              if (aposta2) {
+                document.getElementById('placar-mes-2-green').textContent = aposta2.green;
+                document.getElementById('placar-mes-2-red').textContent = aposta2.red;
+                
+                // MESMO CÁLCULO DO BLOCO 1
+                const lucro2 = (aposta2.lucro_coef_green + aposta2.lucro_coef_red) * 100;
+                const valor2Elem = document.getElementById('valor-mes-2-final');
+                if (valor2Elem) {
+                  valor2Elem.textContent = formatarMoeda(lucro2);
+                  valor2Elem.style.color = lucro2 >= 0 ? '#4ade80' : '#eea7ad';
+                }
+                
+                console.log(`📊 Aposta 2 (+0.5⚽GOL) do mês: ${aposta2.green} Green, ${aposta2.red} Red | Lucro Coef: ${aposta2.lucro_coef_green} + (${aposta2.lucro_coef_red}) = ${formatarMoeda(lucro2)}`);
+              }
+              
+              // ========== ATUALIZAR APOSTA 3: +1⛳️CANTOS ==========
+              const aposta3 = data.apostas.aposta_3;
+              if (aposta3) {
+                document.getElementById('placar-mes-3-green').textContent = aposta3.green;
+                document.getElementById('placar-mes-3-red').textContent = aposta3.red;
+                
+                // MESMO CÁLCULO DO BLOCO 1
+                const lucro3 = (aposta3.lucro_coef_green + aposta3.lucro_coef_red) * 100;
+                const valor3Elem = document.getElementById('valor-mes-3-final');
+                if (valor3Elem) {
+                  valor3Elem.textContent = formatarMoeda(lucro3);
+                  valor3Elem.style.color = lucro3 >= 0 ? '#4ade80' : '#eea7ad';
+                }
+                
+                console.log(`📊 Aposta 3 (+1⛳️CANTOS) do mês: ${aposta3.green} Green, ${aposta3.red} Red | Lucro Coef: ${aposta3.lucro_coef_green} + (${aposta3.lucro_coef_red}) = ${formatarMoeda(lucro3)}`);
+              }
+              
+              // ========== ATUALIZAR TOTAL DO MÊS ==========
+              if (data.total) {
+                document.getElementById('placar-mes-total-green').textContent = data.total.green;
+                document.getElementById('placar-mes-total-red').textContent = data.total.red;
+                
+                // MESMO CÁLCULO DO BLOCO 1 para o total
+                const lucroTotal = (data.total.lucro_coef_green + data.total.lucro_coef_red) * 100;
+                const valorTotalElem = document.getElementById('valor-mes-total-final');
+                if (valorTotalElem) {
+                  valorTotalElem.textContent = formatarMoeda(lucroTotal);
+                  valorTotalElem.style.color = lucroTotal >= 0 ? '#4ade80' : '#eea7ad';
+                }
+                
+                console.log(`📊 TOTAL DO MÊS: ${data.total.green} Green, ${data.total.red} Red | Lucro Total: ${data.total.lucro_coef_green} + (${data.total.lucro_coef_red}) = ${formatarMoeda(lucroTotal)}`);
+              }
+            } else {
+              console.warn('⚠️ Dados inválidos ou sem sucesso:', data);
+              console.error('❌ Response success:', data.success);
+              console.error('❌ Apostas existem:', !!data.apostas);
+            }
+          })
+          .catch(error => {
+            console.error('❌ Erro ao carregar placar do mês:', error);
+            console.error('❌ Erro completo:', error.stack);
+          });
+      }
+
+      // ===================================================================
+      // FUNÇÃO PARA ATUALIZAR LISTA DE DIAS DO MÊS (BLOCO 2)
+      // ===================================================================
+      
+      function atualizarListaDias() {
+        console.log('🔄 Iniciando atualizarListaDias()...');
+        
+        // Função auxiliar para formatar moeda
+        function formatarMoeda(valor) {
+          return new Intl.NumberFormat('pt-BR', {
+            style: 'currency',
+            currency: 'BRL',
+            minimumFractionDigits: 2,
+            maximumFractionDigits: 2
+          }).format(valor);
+        }
+
+        // Buscar dados dos DIAS DO MÊS via obter-placar-dias.php
+        fetch('obter-placar-dias.php')
+          .then(response => {
+            console.log('📡 Resposta recebida para dias:', response.status);
+            return response.json();
+          })
+          .then(data => {
+            console.log('📊 JSON dias parseado:', data);
+            
+            if (data.success && data.dias && Array.isArray(data.dias)) {
+              console.log('✅ Dados dos dias recebidos:', data.dias.length, 'dias');
+              
+              // Obter data de hoje para comparação
+              const hoje = new Date().toISOString().split('T')[0];
+              console.log('📅 Data de hoje para comparação:', hoje);
+              
+              // Limpar container anterior
+              const container = document.getElementById('lista-dias-bloco2');
+              if (!container) {
+                console.warn('⚠️ Elemento #lista-dias-bloco2 não encontrado!');
+                return;
+              }
+              
+              container.innerHTML = '';
+              
+              // Renderizar cada dia
+              let diasRendeidos = 0;
+              data.dias.forEach((diaObj, index) => {
+                if (!diaObj || !diaObj.data_exibicao) {
+                  console.warn(`⚠️ Dia ${index} sem dados válidos:`, diaObj);
+                  return;
+                }
+                
+                const dataMysql = diaObj.data_mysql || '';
+                const dataExibicao = diaObj.data_exibicao || '';
+                const green = diaObj.green || 0;
+                const red = diaObj.red || 0;
+                const saldo = diaObj.saldo || 0;
+                
+                // Determinar classes de cor com base no saldo
+                let classesCor = 'valor-zero';
+                if (saldo > 0) {
+                  classesCor = 'valor-positivo';
+                } else if (saldo < 0) {
+                  classesCor = 'valor-negativo';
+                }
+                
+                // Verificar se é hoje
+                const ehHoje = dataMysql === hoje;
+                const classesHoje = ehHoje ? 'gd-dia-hoje' : '';
+                
+                // Determinar cor do ícone
+                let corIcone = '#6b7280'; // cinza padrão
+                if (saldo > 0) {
+                  corIcone = '#059669'; // verde
+                } else if (saldo < 0) {
+                  corIcone = '#dc2626'; // vermelho
+                }
+                
+                // Criar HTML da linha do dia
+                const html = `
+                  <div class="gd-linha-dia ${classesCor} ${classesHoje}" data-date="${dataMysql}" data-saldo="${saldo}" data-green="${green}" data-red="${red}" data-hoje="${ehHoje ? 'true' : 'false'}">
+                    <div class="data">${dataExibicao}</div>
+                    <div class="placar-dia">
+                      <span class="placar">${green}</span>
+                      <span class="separador">×</span>
+                      <span class="placar">${red}</span>
+                    </div>
+                    <div class="valor">${formatarMoeda(saldo)}</div>
+                    <div class="icone">
+                      <i class="fas fa-check" style="color: ${corIcone};"></i>
+                    </div>
+                  </div>
+                `;
+                
+                container.innerHTML += html;
+                diasRendeidos++;
+              });
+              
+              console.log(`✅ Lista de dias atualizada: ${diasRendeidos} dias renderizados`);
+            } else {
+              console.warn('⚠️ Dados inválidos ou sem sucesso:', data);
+              console.error('❌ Response success:', data.success);
+              console.error('❌ Dias existem:', !!data.dias);
+            }
+          })
+          .catch(error => {
+            console.error('❌ Erro ao carregar lista de dias:', error);
+            console.error('❌ Erro completo:', error.stack);
+          });
+      }
+
+      // ✅ ATUALIZAR DATA E DADOS DO MÊS AO CARREGAR A PÁGINA
+      document.addEventListener('DOMContentLoaded', function() {
+        atualizarDataMes();
+        atualizarListaDias();
+        setTimeout(() => {
+          atualizarPlacarMes();
+        }, 500);
+      });
+
+      // ✅ ATUALIZAR A CADA 10 SEGUNDOS (MESMO INTERVALO DO BLOCO 1)
+      setInterval(function() {
+        console.log('🔄 Atualizando placar do mês e lista de dias...');
+        atualizarPlacarMes();
+        atualizarListaDias();
+      }, 10000);
+    </script>
+
+    <!-- ✅ SCRIPT PARA CARREGAR DADOS DO PERÍODO TOTAL NO BLOCO 3 -->
+    <script>
+      // ✅ FUNÇÃO PARA ATUALIZAR ANO DO PERÍODO NO BLOCO 3
+      function atualizarDataPeriodo() {
+        const hoje = new Date();
+        const anoAtual = hoje.getFullYear();
+        
+        const resumoPeriodoData = document.getElementById('resumo-periodo-data');
+        if (resumoPeriodoData) {
+          resumoPeriodoData.textContent = `Ano ${anoAtual}`;
+        }
+      }
+
+      // ✅ FUNÇÃO PARA ATUALIZAR PLACAR DO PERÍODO TOTAL (BLOCO 3)
+      function atualizarPlacarPeriodo() {
+        // Função auxiliar para formatar moeda
+        function formatarMoeda(valor) {
+          return new Intl.NumberFormat('pt-BR', {
+            style: 'currency',
+            currency: 'BRL',
+            minimumFractionDigits: 2,
+            maximumFractionDigits: 2
+          }).format(valor);
+        }
+        
+        console.log('🔄 Iniciando atualizarPlacarPeriodo()...');
+        
+        // 📤 Buscar dados de TODO O PERÍODO
+        fetch('obter-placar-periodo.php')
+          .then(response => {
+            console.log('📡 Resposta recebida (período):', response.status);
+            return response.json();
+          })
+          .then(data => {
+            console.log('📊 JSON período parseado:', data);
+            
+            if (data.success && data.apostas) {
+              console.log('✅ Dados do período COMPLETO recebidos:', data.apostas);
+              
+              // ========== ATUALIZAR APOSTA 1: +1⚽GOL ==========
+              const aposta1 = data.apostas.aposta_1;
+              if (aposta1) {
+                document.getElementById('placar-periodo-1-green').textContent = aposta1.green;
+                document.getElementById('placar-periodo-1-red').textContent = aposta1.red;
+                
+                const lucro1 = (aposta1.lucro_coef_green + aposta1.lucro_coef_red) * 100;
+                const valor1Elem = document.getElementById('valor-periodo-1-final');
+                if (valor1Elem) {
+                  valor1Elem.textContent = formatarMoeda(lucro1);
+                  valor1Elem.style.color = lucro1 >= 0 ? '#4ade80' : '#eea7ad';
+                }
+              }
+              
+              // ========== ATUALIZAR APOSTA 2: +0.5⚽GOL ==========
+              const aposta2 = data.apostas.aposta_2;
+              if (aposta2) {
+                document.getElementById('placar-periodo-2-green').textContent = aposta2.green;
+                document.getElementById('placar-periodo-2-red').textContent = aposta2.red;
+                
+                const lucro2 = (aposta2.lucro_coef_green + aposta2.lucro_coef_red) * 100;
+                const valor2Elem = document.getElementById('valor-periodo-2-final');
+                if (valor2Elem) {
+                  valor2Elem.textContent = formatarMoeda(lucro2);
+                  valor2Elem.style.color = lucro2 >= 0 ? '#4ade80' : '#eea7ad';
+                }
+              }
+              
+              // ========== ATUALIZAR APOSTA 3: +1⛳️CANTOS ==========
+              const aposta3 = data.apostas.aposta_3;
+              if (aposta3) {
+                document.getElementById('placar-periodo-3-green').textContent = aposta3.green;
+                document.getElementById('placar-periodo-3-red').textContent = aposta3.red;
+                
+                const lucro3 = (aposta3.lucro_coef_green + aposta3.lucro_coef_red) * 100;
+                const valor3Elem = document.getElementById('valor-periodo-3-final');
+                if (valor3Elem) {
+                  valor3Elem.textContent = formatarMoeda(lucro3);
+                  valor3Elem.style.color = lucro3 >= 0 ? '#4ade80' : '#eea7ad';
+                }
+              }
+              
+              // ========== ATUALIZAR TOTAL DO PERÍODO ==========
+              if (data.total) {
+                document.getElementById('placar-periodo-total-green').textContent = data.total.green;
+                document.getElementById('placar-periodo-total-red').textContent = data.total.red;
+                
+                const lucroTotal = (data.total.lucro_coef_green + data.total.lucro_coef_red) * 100;
+                const valorTotalElem = document.getElementById('valor-periodo-total-final');
+                if (valorTotalElem) {
+                  valorTotalElem.textContent = formatarMoeda(lucroTotal);
+                  valorTotalElem.style.color = lucroTotal >= 0 ? '#4ade80' : '#eea7ad';
+                }
+              }
+            }
+          })
+          .catch(error => console.error('❌ Erro ao carregar placar do período:', error));
+      }
+
+      // ===================================================================
+      // FUNÇÃO PARA ATUALIZAR LISTA DE MESES DO PERÍODO (BLOCO 3)
+      // ===================================================================
+      
+      function atualizarListaMeses() {
+        console.log('🔄 Iniciando atualizarListaMeses()...');
+        
+        // Função auxiliar para formatar moeda
+        function formatarMoeda(valor) {
+          return new Intl.NumberFormat('pt-BR', {
+            style: 'currency',
+            currency: 'BRL',
+            minimumFractionDigits: 2,
+            maximumFractionDigits: 2
+          }).format(valor);
+        }
+
+        // Nomes dos meses capitalizados
+        const nomesMeses = {
+          'JANEIRO': 'Janeiro',
+          'FEVEREIRO': 'Fevereiro',
+          'MARÇO': 'Março',
+          'ABRIL': 'Abril',
+          'MAIO': 'Maio',
+          'JUNHO': 'Junho',
+          'JULHO': 'Julho',
+          'AGOSTO': 'Agosto',
+          'SETEMBRO': 'Setembro',
+          'OUTUBRO': 'Outubro',
+          'NOVEMBRO': 'Novembro',
+          'DEZEMBRO': 'Dezembro'
+        };
+
+        // Buscar dados dos MESES DO PERÍODO via obter-placar-meses.php
+        fetch('obter-placar-meses.php')
+          .then(response => {
+            console.log('📡 Resposta recebida para meses:', response.status);
+            return response.json();
+          })
+          .then(data => {
+            console.log('📊 JSON meses parseado:', data);
+            
+            const container = document.getElementById('lista-meses-bloco3');
+            if (!container) {
+              console.warn('⚠️ Elemento #lista-meses-bloco3 não encontrado!');
+              return;
+            }
+
+            container.innerHTML = ''; // Limpar lista anterior
+
+            if (data.success && data.meses && Array.isArray(data.meses)) {
+              console.log('✅ Dados dos meses recebidos:', data.meses);
+
+              data.meses.forEach((mes, index) => {
+                const linha = document.createElement('div');
+                linha.className = 'gd-linha-dia';
+
+                // Capitalizar nome do mês
+                const nomeMesCapitalizado = nomesMeses[mes.nome_mes] || mes.nome_mes;
+
+                // Verificar se mês tem saldo zero (sem dados positivos ou negativos)
+                const temSaldoZero = mes.valor_final === 0 && mes.green === 0 && mes.red === 0;
+
+                // Determinar classe de cor baseado no valor
+                if (mes.valor_final > 0) {
+                  linha.classList.add('valor-positivo');
+                } else if (mes.valor_final < 0) {
+                  linha.classList.add('valor-negativo');
+                } else {
+                  linha.classList.add('valor-zero');
+                }
+
+                // Determinar cores para valor e ícone baseado no saldo
+                let corValor = 'verde-bold';
+                let corIcone = '#4ade80';
+
+                if (temSaldoZero) {
+                  // Mês sem dados: valor e ícone cinza
+                  corValor = 'texto-cinza';
+                  corIcone = '#94a3b8';
+                } else if (mes.valor_final < 0) {
+                  // Mês com saldo negativo: valor e ícone vermelho
+                  corValor = 'vermelho-bold';
+                  corIcone = '#eea7ad';
+                }
+
+                // Classes do PLACAR: green sempre para GREEN, red sempre para RED
+                const classPlacarGreen = temSaldoZero ? 'gray' : 'green';
+                const classPlacarRed = temSaldoZero ? 'gray' : 'red';
+
+                // HTML da linha do mês
+                linha.innerHTML = `
+                  <div class="data">${nomeMesCapitalizado}</div>
+                  <div class="placar-dia">
+                    <span class="placar ${classPlacarGreen}">${mes.green}</span>
+                    <span class="separador">x</span>
+                    <span class="placar ${classPlacarRed}">${mes.red}</span>
+                  </div>
+                  <div class="valor ${corValor}">${formatarMoeda(mes.valor_final)}</div>
+                  <div class="icone">
+                    <i class="fas fa-check" style="color: ${corIcone};"></i>
+                  </div>
+                `;
+
+                container.appendChild(linha);
+              });
+
+              console.log(`✅ ${data.meses.length} meses carregados`);
+            } else {
+              console.warn('⚠️ Dados inválidos ou sem meses:', data);
+              container.innerHTML = '<div style="padding: 20px; text-align: center; color: #999;">Nenhum mês encontrado</div>';
+            }
+          })
+          .catch(error => {
+            console.error('❌ Erro ao carregar lista de meses:', error);
+          });
+      }
+
+      // ===================================================================
+      // ✅ FUNÇÃO PARA ATUALIZAR GRÁFICO DO PERÍODO (BLOCO 3)
+      // ===================================================================
+      
+      function atualizarGraficoBloco3() {
+        console.log('📊 Iniciando atualizarGraficoBloco3()...');
+        
+        let containerBarras = document.getElementById('grafico-barras-bloco3');
+        let containerLabels = document.getElementById('grafico-labels-bloco3');
+        
+        if (!containerBarras || !containerLabels) {
+          console.warn('⚠️ Elementos do gráfico não encontrados!');
+          return;
+        }
+        
+        // Buscar dados dos meses via obter-placar-meses.php
+        fetch('obter-placar-meses.php')
+          .then(response => {
+            if (!response.ok) throw new Error('Erro ao buscar dados dos meses');
+            return response.json();
+          })
+          .then(data => {
+            console.log('📊 Dados dos meses recebidos para gráfico:', data);
+            
+            if (!data.success || !data.meses || !Array.isArray(data.meses)) {
+              console.warn('⚠️ Dados inválidos para gráfico:', data);
+              return;
+            }
+            
+            // Limpar containers
+            containerBarras.innerHTML = '';
+            containerLabels.innerHTML = '';
+            
+            // Calcular valor máximo para normalização
+            let valorMax = 100;
+            data.meses.forEach(mes => {
+              const abs_valor = Math.abs(mes.valor_final);
+              if (abs_valor > valorMax) {
+                valorMax = abs_valor;
+              }
+            });
+            
+            // Mês atual
+            const mesAtual = new Date().getMonth() + 1;
+            
+            // Abreviaturas dos meses
+            const abrev = ['JAN', 'FEV', 'MAR', 'ABR', 'MAI', 'JUN', 'JUL', 'AGO', 'SET', 'OUT', 'NOV', 'DEZ'];
+            
+            // Renderizar barras e labels
+            data.meses.forEach((mes, index) => {
+              // Container do mês
+              const containerMes = document.createElement('div');
+              containerMes.className = 'barra-mes-bloco3';
+              
+              // Determinar cor baseado no valor
+              const cor = mes.valor_final > 0 ? 'verde' : (mes.valor_final < 0 ? 'vermelha' : 'neutro');
+              
+              // Renderizar barras se tem dados
+              if (mes.valor_final !== 0) {
+                const altura = Math.max(5, Math.min(95, (Math.abs(mes.valor_final) / valorMax) * 100));
+                const barra = document.createElement('div');
+                barra.className = cor === 'verde' ? 'barra-verde-bloco3' : 'barra-vermelha-bloco3';
+                barra.style.height = altura + '%';
+                barra.title = `${mes.nome_mes} - Saldo: R$ ${mes.valor_final.toFixed(2)} | ${mes.green}x${mes.red}`;
+                containerMes.appendChild(barra);
+              }
+              
+              containerBarras.appendChild(containerMes);
+              
+              // Renderizar label
+              const label = document.createElement('div');
+              label.className = 'label-mes-bloco3';
+              label.textContent = abrev[index];
+              if (index + 1 === mesAtual) {
+                label.classList.add('atual');
+              }
+              containerLabels.appendChild(label);
+            });
+            
+            console.log('✅ Gráfico atualizado com sucesso!');
+          })
+          .catch(error => {
+            console.error('❌ Erro ao carregar gráfico:', error);
+          });
+      }
+
+      // ✅ INICIALIZAR BLOCO 3 AO CARREGAR
+      document.addEventListener('DOMContentLoaded', function() {
+        console.log('📡 Carregando dados do bloco 3...');
+        atualizarDataPeriodo();
+        atualizarPlacarPeriodo();
+        atualizarListaMeses();
+        atualizarGraficoBloco3();
+      });
+
+      // ✅ ATUALIZAR A CADA 10 SEGUNDOS
+      setInterval(function() {
+        console.log('🔄 Atualizando placar do período, lista de meses e gráfico...');
+        atualizarDataPeriodo();
+        atualizarPlacarPeriodo();
+        atualizarListaMeses();
+        atualizarGraficoBloco3();
+      }, 10000);
+    </script>
+
     <!-- ✅ SCRIPT PARA MODAL DE HISTÓRICO DE RESULTADOS -->
     <script src="js/modal-historico-resultados.js?v=<?php echo time(); ?>" defer></script>
+
+    <!-- ✅ SCRIPT PARA NOTIFICAÇÕES COM SOM -->
+    <script src="js/notificacoes-sistema.js?v=<?php echo time(); ?>" defer></script>
 
     <!-- ✅ SCRIPT CAROUSEL RESPONSIVO PARA BLOCOS -->
     <script src="js/carousel-blocos.js" defer></script>

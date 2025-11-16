@@ -68,37 +68,28 @@ try {
             if ($resultado_msg === 'GREEN') {
                 $apostas[$referencia]['green']++;
                 $apostas[$referencia]['registros_green'][] = $odds;
-                // Lucro GREEN = (odds - 1) = coeficiente de ganho
-                // Exemplo: odds 1.52 → coef = 0.52 → lucro = 0.52 × 100 = R$ 52
-                $coef_green = ($odds - 1);
-                $apostas[$referencia]['lucro_coef_green'] += $coef_green;
-                
-                // 🔍 DEBUG: Log para verificar
-                error_log("✅ GREEN: ref=$referencia, odds=$odds, coef=$coef_green, total_coef=" . $apostas[$referencia]['lucro_coef_green']);
+                // Lucro GREEN = (odds - 1) por unidade
+                $apostas[$referencia]['lucro_coef_green'] += ($odds - 1);
             } elseif ($resultado_msg === 'RED') {
                 $apostas[$referencia]['red']++;
                 $apostas[$referencia]['registros_red'][] = $odds;
-                // Lucro RED = -1 = coeficiente de perda (100% da entrada)
-                // Exemplo: RED → coef = -1 → perda = -1 × 100 = -R$ 100
-                $apostas[$referencia]['lucro_coef_red'] += (-1);
+                // Lucro RED = -1 por unidade (perda)
+                $apostas[$referencia]['lucro_coef_red'] -= 1;
             }
         }
     }
     
     // 🎯 Calcular totais gerais
-    // ✅ IMPORTANTE: Apenas GREENs são contados no ganho total
-    // REDs (perdas) NÃO são subtraídas - apenas GREENs somam ganhos
     $total_green = 0;
     $total_red = 0;
-    $total_lucro_coef_green = 0;  // Soma apenas dos GREENs
-    $total_lucro_coef_red = 0;     // Mantém em 0 - REDs não afetam o total
+    $total_lucro_coef_green = 0;
+    $total_lucro_coef_red = 0;
     
     foreach ($apostas as $aposta) {
         $total_green += $aposta['green'];
         $total_red += $aposta['red'];
-        $total_lucro_coef_green += $aposta['lucro_coef_green'];  // Soma GREENs
-        // ✅ NÃO SOMA RED - apenas para contagem
-        // $total_lucro_coef_red += $aposta['lucro_coef_red'];
+        $total_lucro_coef_green += $aposta['lucro_coef_green'];
+        $total_lucro_coef_red += $aposta['lucro_coef_red'];
     }
     
     // 🎯 Retornar dados em JSON
@@ -110,21 +101,21 @@ try {
                 'green' => $apostas['+1⚽GOL']['green'],
                 'red' => $apostas['+1⚽GOL']['red'],
                 'lucro_coef_green' => round($apostas['+1⚽GOL']['lucro_coef_green'], 2),
-                'lucro_coef_red' => 0  // ✅ Não conta RED nas apostas individuais
+                'lucro_coef_red' => round($apostas['+1⚽GOL']['lucro_coef_red'], 2)
             ],
             'aposta_2' => [
                 'titulo' => '+0.5⚽GOL',
                 'green' => $apostas['+0.5⚽GOL']['green'],
                 'red' => $apostas['+0.5⚽GOL']['red'],
                 'lucro_coef_green' => round($apostas['+0.5⚽GOL']['lucro_coef_green'], 2),
-                'lucro_coef_red' => 0  // ✅ Não conta RED nas apostas individuais
+                'lucro_coef_red' => round($apostas['+0.5⚽GOL']['lucro_coef_red'], 2)
             ],
             'aposta_3' => [
                 'titulo' => '+1⛳️CANTOS',
                 'green' => $apostas['+1⛳️CANTOS']['green'],
                 'red' => $apostas['+1⛳️CANTOS']['red'],
                 'lucro_coef_green' => round($apostas['+1⛳️CANTOS']['lucro_coef_green'], 2),
-                'lucro_coef_red' => 0  // ✅ Não conta RED nas apostas individuais
+                'lucro_coef_red' => round($apostas['+1⛳️CANTOS']['lucro_coef_red'], 2)
             ]
         ],
         'total' => [
