@@ -5089,10 +5089,16 @@ if (!isset($_SESSION['usuario_id']) || empty($_SESSION['usuario_id'])) {
                 
                 // Determinar classes de cor com base no saldo
                 let classesCor = 'valor-zero';
+                let classePlacarGreen = 'gray';
+                let classePlacarRed = 'gray';
                 if (saldo > 0) {
                   classesCor = 'valor-positivo';
+                  classePlacarGreen = 'green';
+                  classePlacarRed = 'red';
                 } else if (saldo < 0) {
                   classesCor = 'valor-negativo';
+                  classePlacarGreen = 'green';
+                  classePlacarRed = 'red';
                 }
                 
                 // Verificar se é hoje
@@ -5112,9 +5118,9 @@ if (!isset($_SESSION['usuario_id']) || empty($_SESSION['usuario_id'])) {
                   <div class="gd-linha-dia ${classesCor} ${classesHoje}" data-date="${dataMysql}" data-saldo="${saldo}" data-green="${green}" data-red="${red}" data-hoje="${ehHoje ? 'true' : 'false'}">
                     <div class="data">${dataExibicao}</div>
                     <div class="placar-dia">
-                      <span class="placar">${green}</span>
+                      <span class="placar ${classePlacarGreen}">${green}</span>
                       <span class="separador">×</span>
-                      <span class="placar">${red}</span>
+                      <span class="placar ${classePlacarRed}">${red}</span>
                     </div>
                     <div class="valor">${formatarMoeda(saldo)}</div>
                     <div class="icone">
