@@ -15,6 +15,16 @@ if (!isset($_SESSION['usuario_id']) || empty($_SESSION['usuario_id'])) {
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Bot ao Vivo</title>
+    
+    <!-- ✅ PWA MANIFEST -->
+    <link rel="manifest" href="manifest.json">
+    <meta name="theme-color" content="#667eea">
+    <meta name="mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+    <meta name="apple-mobile-web-app-title" content="Banca">
+    <link rel="apple-touch-icon" href="img/notificacao_gol.jpg">
+    
     <!-- ✅ Carregar CSS ANTES dos estilos inline -->
     <link rel="stylesheet" href="css/menu-topo.css?v=<?php echo time(); ?>">
     <link rel="stylesheet" href="css/telegram-mensagens.css?v=<?php echo time(); ?>">
@@ -1894,33 +1904,56 @@ if (!isset($_SESSION['usuario_id']) || empty($_SESSION['usuario_id'])) {
            =================================================================== */
 
         .gd-linha-dia .placar-dia {
-            display: inline-flex !important;
+            display: grid !important;
+            grid-template-columns: 24px 12px 24px !important; /* número esquerdo | separador | número direito */
+            column-gap: 10px !important; /* 10px de cada lado do separador */
             align-items: center !important;
-            justify-content: center !important;
-            font-family: "Rajdhani", sans-serif !important;
-            font-weight: 500 !important;
+            justify-items: center !important;
+            font-family: "JetBrains Mono", ui-monospace, SFMono-Regular, Menlo, monospace !important;
+            font-weight: 600 !important;
             font-size: 11px !important;
             line-height: 1 !important;
-            width: 65px !important;
-            min-width: 65px !important;
-            max-width: 65px !important;
-            gap: 2px !important;
-            padding: 0px 2px !important;
+            width: 80px !important;  /* 24 + 10 + 12 + 10 + 24 = 80 */
+            min-width: 80px !important;
+            max-width: 80px !important;
+            padding: 0 !important;
             order: 2 !important;
             margin-top: 0px !important;
             margin-bottom: 0px !important;
             margin-right: 4px !important;
             margin-left: 0px !important;
             overflow: visible !important;
+            font-variant-numeric: tabular-nums !important; /* dígitos de largura fixa */
         }
 
         .gd-linha-dia .placar-dia .placar,
         .gd-linha-dia .placar-dia .separador {
-            display: inline !important;
+            display: block !important;
             font-family: inherit !important;
             font-weight: inherit !important;
             font-size: inherit !important;
             line-height: inherit !important;
+        }
+
+        .gd-linha-dia .placar-dia .placar:first-child { /* número à esquerda */
+            justify-self: end !important;
+            text-align: right !important;
+            margin-right: 0 !important; /* gap controla o espaçamento */
+        }
+
+        .gd-linha-dia .placar-dia .separador { /* coluna central sempre centralizada */
+            justify-self: center !important;
+            text-align: center !important;
+            padding: 0 !important;
+            margin: 0 !important;
+            color: #94a3b8 !important;
+            font-weight: 600 !important;
+        }
+
+        .gd-linha-dia .placar-dia .placar:last-child { /* número à direita */
+            justify-self: start !important;
+            text-align: left !important;
+            margin-left: 0 !important; /* gap controla o espaçamento */
         }
 
         .gd-linha-dia .placar-dia .placar.green {
@@ -1939,8 +1972,8 @@ if (!isset($_SESSION['usuario_id']) || empty($_SESSION['usuario_id'])) {
         }
 
         .gd-linha-dia .placar-dia .separador {
-            padding: 0 8px !important;
-            margin: 0 8px !important;
+            padding: 0 6px !important;
+            margin: 0 4px !important;
             color: #94a3b8 !important;
             font-weight: 400 !important;
         }
@@ -5038,14 +5071,20 @@ if (!isset($_SESSION['usuario_id']) || empty($_SESSION['usuario_id'])) {
       function atualizarListaDias() {
         console.log('🔄 Iniciando atualizarListaDias()...');
         
-        // Função auxiliar para formatar moeda
+        // Função auxiliar para formatar moeda com sinal negativo depois de R$
         function formatarMoeda(valor) {
-          return new Intl.NumberFormat('pt-BR', {
+          const formatado = new Intl.NumberFormat('pt-BR', {
             style: 'currency',
             currency: 'BRL',
             minimumFractionDigits: 2,
             maximumFractionDigits: 2
-          }).format(valor);
+          }).format(Math.abs(valor));
+          
+          // Se o valor é negativo, colocar o sinal depois de "R$ "
+          if (valor < 0) {
+            return formatado.replace('R$', 'R$ -');
+          }
+          return formatado;
         }
 
         // Buscar dados dos DIAS DO MÊS via obter-placar-dias.php
@@ -5119,7 +5158,7 @@ if (!isset($_SESSION['usuario_id']) || empty($_SESSION['usuario_id'])) {
                     <div class="data">${dataExibicao}</div>
                     <div class="placar-dia">
                       <span class="placar ${classePlacarGreen}">${green}</span>
-                      <span class="separador">×</span>
+                      <span class="separador">x</span>
                       <span class="placar ${classePlacarRed}">${red}</span>
                     </div>
                     <div class="valor">${formatarMoeda(saldo)}</div>
@@ -5492,5 +5531,28 @@ if (!isset($_SESSION['usuario_id']) || empty($_SESSION['usuario_id'])) {
 
     <!-- ✅ SCRIPT CAROUSEL RESPONSIVO PARA BLOCOS -->
     <script src="js/carousel-blocos.js" defer></script>
+
+    <!-- ✅ REGISTRAR SERVICE WORKER PARA NOTIFICAÇÕES MOBILE -->
+    <script>
+        // 🔔 Registrar Service Worker para notificações funcionarem no mobile
+        if ('serviceWorker' in navigator) {
+            window.addEventListener('load', () => {
+                navigator.serviceWorker.register('./service-worker.js')
+                    .then(registration => {
+                        console.log('✅ Service Worker registrado:', registration.scope);
+                        
+                        // Verificar se há update
+                        registration.addEventListener('updatefound', () => {
+                            console.log('🔄 Nova versão do Service Worker disponível');
+                        });
+                    })
+                    .catch(error => {
+                        console.log('❌ Erro ao registrar Service Worker:', error);
+                    });
+            });
+        } else {
+            console.log('ℹ️ Service Worker não suportado neste navegador');
+        }
+    </script>
 </body>
 </html>

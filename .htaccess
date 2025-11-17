@@ -1,4 +1,7 @@
-# Remover redirecionamentos em loop
+# ===========================================================================
+# CONFIGURAÇÃO DE REWRITE E API
+# ===========================================================================
+
 <IfModule mod_rewrite.c>
     RewriteEngine On
     
@@ -14,6 +17,43 @@
     # Desabilitar redirecionamentos para carregar-mensagens-banco
     RewriteCond %{REQUEST_URI} ^/api/carregar-mensagens-banco\.php$
     RewriteRule ^ - [L]
+</IfModule>
+
+# ===========================================================================
+# PWA E NOTIFICAÇÕES MOBILE
+# ===========================================================================
+
+<IfModule mod_mime.c>
+    # Service Worker
+    AddType application/javascript .js
+    
+    # Manifest
+    AddType application/manifest+json .webmanifest
+    AddType application/json .json
+    
+    # Imagens
+    AddType image/jpeg .jpg .jpeg
+    AddType image/png .png
+</IfModule>
+
+<IfModule mod_headers.c>
+    # Service Worker - NUNCA cachear
+    <FilesMatch "service-worker\.js$">
+        Header set Cache-Control "no-cache, no-store, must-revalidate"
+        Header set Pragma "no-cache"
+        Header set Expires "0"
+    </FilesMatch>
+    
+    # Manifest - cache curto
+    <FilesMatch "manifest\.json$">
+        Header set Cache-Control "public, max-age=3600"
+    </FilesMatch>
+    
+    # Permitir notificações
+    Header set Permissions-Policy "notifications=(*)"
+    
+    # X-Content-Type-Options
+    Header set X-Content-Type-Options "nosniff"
 </IfModule>
 
 # Instruções para limpar cookies

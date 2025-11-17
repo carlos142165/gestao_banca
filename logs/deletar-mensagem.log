@@ -58,3 +58,147 @@
   Input recebido: {"message_id":351}
   ✅ Deletado por ID primário
 [2025-11-16 08:29:20] ✅ Usuário 23 deletou mensagem ID: 351 (affected_rows: 1)
+[2025-11-16 17:50:44] DEBUG DELETE
+  messageId: 351 (tipo: integer)
+  usuarioId: 23
+  Input recebido: {"message_id":351}
+  ✅ Deletado por ID primário
+[2025-11-16 17:50:44] ✅ Usuário 23 deletou mensagem ID: 351 (affected_rows: 1)
+[2025-11-16 19:27:54] DEBUG DELETE
+  messageId: 354 (tipo: integer)
+  usuarioId: 23
+  Input recebido: {"message_id":354}
+  ✅ Deletado por ID primário
+[2025-11-16 19:27:54] ✅ Usuário 23 deletou mensagem ID: 354 (affected_rows: 1)
+[2025-11-16 21:03:19] DEBUG DELETE
+  messageId: 356 (tipo: integer)
+  usuarioId: 23
+  Input recebido: {"message_id":356}
+  ✅ Deletado por ID primário
+[2025-11-16 21:03:19] ✅ Usuário 23 deletou mensagem ID: 356 (affected_rows: 1)
+[2025-11-17 00:56:33] DEBUG DELETE
+  messageId: 357 (tipo: integer)
+  usuarioId: 23
+  Input recebido: {"message_id":357}
+  ✅ Deletado por ID primário
+[2025-11-17 00:56:33] ✅ Usuário 23 deletou mensagem ID: 357 (affected_rows: 1)
+[2025-11-17 00:58:00] DEBUG DELETE
+  messageId: 358 (tipo: integer)
+  usuarioId: 23
+  Input recebido: {"message_id":358}
+  ✅ Deletado por ID primário
+[2025-11-17 00:58:00] ✅ Usuário 23 deletou mensagem ID: 358 (affected_rows: 1)
+[2025-11-17 01:10:37] DEBUG DELETE
+  messageId: 360 (tipo: integer)
+  usuarioId: 23
+  Input recebido: {"message_id":360}
+  ✅ Deletado por ID primário
+[2025-11-17 01:10:37] ✅ Usuário 23 deletou mensagem ID: 360 (affected_rows: 1)
+[2025-11-17 01:10:39] DEBUG DELETE
+  messageId: 359 (tipo: integer)
+  usuarioId: 23
+  Input recebido: {"message_id":359}
+  ✅ Deletado por ID primário
+[2025-11-17 01:10:39] ✅ Usuário 23 deletou mensagem ID: 359 (affected_rows: 1)
+[2025-11-17 01:11:57] DEBUG DELETE
+  messageId: 363 (tipo: integer)
+  usuarioId: 23
+  Input recebido: {"message_id":363}
+  ✅ Deletado por ID primário
+[2025-11-17 01:11:57] ✅ Usuário 23 deletou mensagem ID: 363 (affected_rows: 1)
+[2025-11-17 01:12:00] DEBUG DELETE
+  messageId: 362 (tipo: integer)
+  usuarioId: 23
+  Input recebido: {"message_id":362}
+  ✅ Deletado por ID primário
+[2025-11-17 01:12:00] ✅ Usuário 23 deletou mensagem ID: 362 (affected_rows: 1)
+[2025-11-17 01:12:02] DEBUG DELETE
+  messageId: 361 (tipo: integer)
+  usuarioId: 23
+  Input recebido: {"message_id":361}
+  ✅ Deletado por ID primário
+[2025-11-17 01:12:02] ✅ Usuário 23 deletou mensagem ID: 361 (affected_rows: 1)
+[2025-11-17 01:16:02] DEBUG DELETE
+  messageId: 364 (tipo: integer)
+  usuarioId: 23
+  Input recebido: {"message_id":364}
+  ✅ Deletado por ID primário
+[2025-11-17 01:16:02] ✅ Usuário 23 deletou mensagem ID: 364 (affected_rows: 1)
+[2025-11-17 01:21:32] DEBUG DELETE
+  messageId: 366 (tipo: integer)
+  usuarioId: 23
+  Input recebido: {"message_id":366}
+  ✅ Deletado por ID primário
+[2025-11-17 01:21:32] ✅ Usuário 23 deletou mensagem ID: 366 (affected_rows: 1)
+[2025-11-17 01:21:36] DEBUG DELETE
+  messageId: 365 (tipo: integer)
+  usuarioId: 23
+  Input recebido: {"message_id":365}
+  ✅ Deletado por ID primário
+[2025-11-17 01:21:36] ✅ Usuário 23 deletou mensagem ID: 365 (affected_rows: 1)
+[2025-11-17 01:26:29] DEBUG DELETE
+  messageId: 367 (tipo: integer)
+  usuarioId: 23
+  Input recebido: {"message_id":367}
+  ✅ Deletado por ID primário
+[2025-11-17 01:26:29] ✅ Usuário 23 deletou mensagem ID: 367 (affected_rows: 1)
+[2025-11-17 01:29:32] DEBUG DELETE
+  messageId: 368 (tipo: integer)
+  usuarioId: 23
+  Input recebido: {"message_id":368}
+  ✅ Deletado por ID primário
+[2025-11-17 01:29:32] ✅ Usuário 23 deletou mensagem ID: 368 (affected_rows: 1)
+[2025-11-17 01:29:34] DEBUG DELETE
+  messageId: 369 (tipo: integer)
+  usuarioId: 23
+  Input recebido: {"message_id":369}
+  ✅ Deletado por ID primário
+[2025-11-17 01:29:34] ✅ Usuário 23 deletou mensagem ID: 369 (affected_rows: 1)
+[2025-11-17 01:48:08] DEBUG DELETE
+  messageId: 371 (tipo: integer)
+  usuarioId: 23
+  Input recebido: {"message_id":371}
+  ✅ Deletado por ID primário
+[2025-11-17 01:48:08] ✅ Usuário 23 deletou mensagem ID: 371 (affected_rows: 1)
+[2025-11-17 01:48:14] DEBUG DELETE
+  messageId: 370 (tipo: integer)
+  usuarioId: 23
+  Input recebido: {"message_id":370}
+  ✅ Deletado por ID primário
+[2025-11-17 01:48:14] ✅ Usuário 23 deletou mensagem ID: 370 (affected_rows: 1)
+[2025-11-17 12:48:58] DEBUG DELETE
+  messageId: 372 (tipo: integer)
+  usuarioId: 23
+  Input recebido: {"message_id":372}
+  ✅ Deletado por ID primário
+[2025-11-17 12:48:58] ✅ Usuário 23 deletou mensagem ID: 372 (affected_rows: 1)
+[2025-11-17 15:55:17] DEBUG DELETE
+  messageId: 374 (tipo: integer)
+  usuarioId: 23
+  Input recebido: {"message_id":374}
+  ✅ Deletado por ID primário
+[2025-11-17 15:55:17] ✅ Usuário 23 deletou mensagem ID: 374 (affected_rows: 1)
+[2025-11-17 15:55:19] DEBUG DELETE
+  messageId: 373 (tipo: integer)
+  usuarioId: 23
+  Input recebido: {"message_id":373}
+  ✅ Deletado por ID primário
+[2025-11-17 15:55:19] ✅ Usuário 23 deletou mensagem ID: 373 (affected_rows: 1)
+[2025-11-17 16:43:33] DEBUG DELETE
+  messageId: 383 (tipo: integer)
+  usuarioId: 23
+  Input recebido: {"message_id":383}
+  ✅ Deletado por ID primário
+[2025-11-17 16:43:33] ✅ Usuário 23 deletou mensagem ID: 383 (affected_rows: 1)
+[2025-11-17 16:43:35] DEBUG DELETE
+  messageId: 384 (tipo: integer)
+  usuarioId: 23
+  Input recebido: {"message_id":384}
+  ✅ Deletado por ID primário
+[2025-11-17 16:43:35] ✅ Usuário 23 deletou mensagem ID: 384 (affected_rows: 1)
+[2025-11-17 16:53:32] DEBUG DELETE
+  messageId: 385 (tipo: integer)
+  usuarioId: 23
+  Input recebido: {"message_id":385}
+  ✅ Deletado por ID primário
+[2025-11-17 16:53:32] ✅ Usuário 23 deletou mensagem ID: 385 (affected_rows: 1)

@@ -1,0 +1,209 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>🔧 Verificação de Notificações</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+            margin: 0;
+            padding: 20px;
+        }
+        .container {
+            background: white;
+            border-radius: 12px;
+            padding: 32px;
+            max-width: 700px;
+            box-shadow: 0 20px 60px rgba(0,0,0,0.3);
+        }
+        h1 { color: #333; margin-top: 0; }
+        .check { 
+            padding: 12px; 
+            margin: 8px 0; 
+            border-radius: 6px;
+            border-left: 4px solid #ddd;
+        }
+        .check.ok { 
+            background: #e8f5e9; 
+            border-left-color: #4caf50;
+            color: #2e7d32;
+        }
+        .check.error { 
+            background: #ffebee; 
+            border-left-color: #f44336;
+            color: #c62828;
+        }
+        .check.warning { 
+            background: #fff3e0; 
+            border-left-color: #ff9800;
+            color: #e65100;
+        }
+        code {
+            background: #f5f5f5;
+            padding: 2px 6px;
+            border-radius: 3px;
+            font-family: 'Courier New', monospace;
+        }
+        button {
+            background: #667eea;
+            color: white;
+            border: none;
+            padding: 12px 24px;
+            border-radius: 6px;
+            cursor: pointer;
+            font-weight: 600;
+            margin-top: 16px;
+            width: 100%;
+        }
+        button:hover {
+            background: #764ba2;
+        }
+        .section {
+            margin-top: 24px;
+            padding-top: 24px;
+            border-top: 1px solid #eee;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>🔧 Verificação de Notificações</h1>
+        
+        <div id="checks"></div>
+        
+        <div class="section">
+            <h2>🧹 Limpeza de Cache</h2>
+            <button onclick="limparCache()">🗑️ Limpar Cache do Navegador</button>
+            <button onclick="recarregar()">🔄 Recarregar bot_aovivo.php</button>
+        </div>
+    </div>
+
+    <script>
+        function addCheck(mensagem, ok = true, detalhes = '') {
+            const checksDiv = document.getElementById('checks');
+            const checkDiv = document.createElement('div');
+            checkDiv.className = 'check ' + (ok ? 'ok' : 'error');
+            checkDiv.innerHTML = `
+                <strong>${ok ? '✅' : '❌'} ${mensagem}</strong>
+                ${detalhes ? '<div style="margin-top: 8px; font-size: 13px;">' + detalhes + '</div>' : ''}
+            `;
+            checksDiv.appendChild(checkDiv);
+        }
+
+        function verificar() {
+            const checks = document.getElementById('checks');
+            checks.innerHTML = '<div class="check warning">🔍 Verificando...</div>';
+
+            // 1. Verificar se NotificacoesSistema está carregado
+            const temNotificacoes = typeof NotificacoesSistema !== 'undefined';
+            addCheck(
+                'NotificacoesSistema carregado',
+                temNotificacoes,
+                temNotificacoes ? 
+                    'Objeto está definido no window' :
+                    'PROBLEMA: Script não foi carregado ou há erro de sintaxe'
+            );
+
+            // 2. Verificar se TelegramMessenger está carregado
+            const temTelegram = typeof TelegramMessenger !== 'undefined';
+            addCheck(
+                'TelegramMessenger carregado',
+                temTelegram,
+                temTelegram ?
+                    'Objeto está definido no window' :
+                    'PROBLEMA: Script não foi carregado ou há erro de sintaxe'
+            );
+
+            // 3. Verificar se NotificacoesSistema tem o método correto
+            if (temNotificacoes) {
+                const temMetodo = typeof NotificacoesSistema.notificarNovaMensagem === 'function';
+                addCheck(
+                    'Método notificarNovaMensagem existe',
+                    temMetodo,
+                    temMetodo ?
+                        'Método está pronto para ser chamado' :
+                        'ERRO: Método não foi encontrado'
+                );
+
+                // 4. Verificar cache de duplicatas
+                const cacheSize = NotificacoesSistema.ultimasNotificacoes?.size || 0;
+                addCheck(
+                    'Sistema de cache de duplicatas',
+                    true,
+                    `Entradas no cache: ${cacheSize}`
+                );
+
+                // 5. Verificar se está usando msgId
+                const metodoString = NotificacoesSistema.mostrarNotificacao?.toString() || '';
+                const usaMsgId = metodoString.includes('msgId');
+                addCheck(
+                    'Usando msg.id para duplicatas',
+                    usaMsgId,
+                    usaMsgId ?
+                        'Sistema corrigido ✅' :
+                        'Pode estar usando hash antigo ⚠️'
+                );
+            }
+
+            // 6. Verificar permissão de notificações
+            if ('Notification' in window) {
+                const perm = Notification.permission;
+                const ok = perm === 'granted';
+                addCheck(
+                    'Permissão de notificações',
+                    ok,
+                    `Status: ${perm === 'granted' ? 'Concedida ✅' : perm === 'denied' ? 'Negada ❌' : 'Padrão (será pedida) ⏳'}`
+                );
+            }
+
+            // 7. Verificar version dos scripts (cache-busting)
+            const scripts = document.querySelectorAll('script[src]');
+            let temVersioning = false;
+            scripts.forEach(s => {
+                if (s.src.includes('?v=') && (s.src.includes('notificacoes') || s.src.includes('telegram'))) {
+                    temVersioning = true;
+                }
+            });
+            addCheck(
+                'Cache-busting com versão',
+                temVersioning,
+                'Scripts carregam com ?v=timestamp para evitar cache ✅'
+            );
+        }
+
+        function limparCache() {
+            if ('caches' in window) {
+                caches.keys().then(names => {
+                    names.forEach(name => {
+                        caches.delete(name);
+                    });
+                });
+            }
+
+            // Force refresh
+            location.href = location.href.split('?')[0] + '?cache_clear=' + Date.now();
+        }
+
+        function recarregar() {
+            // Força recarregamento sem cache
+            location.href = 'bot_aovivo.php?' + Date.now();
+        }
+
+        // Executar verificação ao carregar
+        window.addEventListener('load', verificar);
+
+        // Se estiver em iframe, tentar chamar do pai
+        if (window.self !== window.top) {
+            setTimeout(() => {
+                console.log('Em iframe, tentando acessar do parent...');
+            }, 100);
+        }
+    </script>
+</body>
+</html>

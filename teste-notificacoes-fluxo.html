@@ -1,0 +1,500 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Teste de Fluxo de Notificações</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Arial', sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 20px;
+        }
+
+        .container {
+            background: white;
+            border-radius: 12px;
+            padding: 32px;
+            max-width: 600px;
+            width: 100%;
+            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
+        }
+
+        h1 {
+            color: #333;
+            margin-bottom: 24px;
+            text-align: center;
+            font-size: 24px;
+        }
+
+        .section {
+            margin-bottom: 24px;
+            padding-bottom: 24px;
+            border-bottom: 1px solid #eee;
+        }
+
+        .section:last-child {
+            border-bottom: none;
+        }
+
+        h2 {
+            color: #667eea;
+            font-size: 16px;
+            margin-bottom: 12px;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .status-box {
+            background: #f5f5f5;
+            padding: 12px;
+            border-radius: 6px;
+            margin-bottom: 12px;
+            font-size: 14px;
+            line-height: 1.6;
+            font-family: 'Courier New', monospace;
+        }
+
+        .status-box.success {
+            background: #e8f5e9;
+            color: #2e7d32;
+            border-left: 4px solid #4caf50;
+        }
+
+        .status-box.error {
+            background: #ffebee;
+            color: #c62828;
+            border-left: 4px solid #f44336;
+        }
+
+        .status-box.warning {
+            background: #fff3e0;
+            color: #e65100;
+            border-left: 4px solid #ff9800;
+        }
+
+        .status-box.info {
+            background: #e3f2fd;
+            color: #1565c0;
+            border-left: 4px solid #2196f3;
+        }
+
+        button {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            border: none;
+            padding: 12px 24px;
+            border-radius: 6px;
+            cursor: pointer;
+            font-weight: 600;
+            font-size: 14px;
+            transition: all 0.3s ease;
+            width: 100%;
+            margin-bottom: 8px;
+        }
+
+        button:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 16px rgba(102, 126, 234, 0.3);
+        }
+
+        button:active {
+            transform: translateY(0);
+        }
+
+        .button-group {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 8px;
+        }
+
+        .button-group button {
+            margin-bottom: 0;
+        }
+
+        .log {
+            background: #f5f5f5;
+            padding: 12px;
+            border-radius: 6px;
+            height: 200px;
+            overflow-y: auto;
+            font-size: 12px;
+            font-family: 'Courier New', monospace;
+            line-height: 1.4;
+        }
+
+        .log-entry {
+            margin-bottom: 4px;
+            padding: 4px;
+            border-radius: 3px;
+        }
+
+        .log-entry.info {
+            background: #e3f2fd;
+            color: #1565c0;
+        }
+
+        .log-entry.success {
+            background: #e8f5e9;
+            color: #2e7d32;
+        }
+
+        .log-entry.error {
+            background: #ffebee;
+            color: #c62828;
+        }
+
+        .log-entry.warning {
+            background: #fff3e0;
+            color: #e65100;
+        }
+
+        input[type="text"], select {
+            width: 100%;
+            padding: 10px;
+            border: 2px solid #eee;
+            border-radius: 6px;
+            font-size: 14px;
+            margin-bottom: 12px;
+            font-family: inherit;
+            transition: all 0.3s ease;
+        }
+
+        input[type="text"]:focus, select:focus {
+            outline: none;
+            border-color: #667eea;
+            box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.1);
+        }
+
+        .indicator {
+            display: inline-block;
+            width: 12px;
+            height: 12px;
+            border-radius: 50%;
+            margin-right: 6px;
+        }
+
+        .indicator.success {
+            background: #4caf50;
+        }
+
+        .indicator.error {
+            background: #f44336;
+        }
+
+        .indicator.warning {
+            background: #ff9800;
+        }
+
+        @media (max-width: 600px) {
+            .button-group {
+                grid-template-columns: 1fr;
+            }
+
+            .container {
+                padding: 20px;
+            }
+
+            h1 {
+                font-size: 20px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>🔔 Teste de Notificações</h1>
+
+        <!-- Seção: Status do Sistema -->
+        <div class="section">
+            <h2><span class="indicator error" id="indicator-notificacoes"></span>Status do Sistema</h2>
+            <div class="status-box info" id="status-notificacoes">Carregando...</div>
+            <div class="status-box info" id="status-permissao">Verificando permissão...</div>
+            <div class="status-box info" id="status-cache">Cache vazio</div>
+        </div>
+
+        <!-- Seção: Permissões -->
+        <div class="section">
+            <h2>🔐 Permissões</h2>
+            <div class="button-group">
+                <button onclick="pedirPermissao()">📍 Pedir Permissão</button>
+                <button onclick="verificarPermissao()">🔍 Verificar</button>
+            </div>
+        </div>
+
+        <!-- Seção: Testar Notificação Duplicada -->
+        <div class="section">
+            <h2>🧪 Teste de Duplicatas</h2>
+            <label>ID da Mensagem (para teste):</label>
+            <input type="text" id="msgId" placeholder="Ex: 12345" value="12345">
+            
+            <label>Título da Notificação:</label>
+            <input type="text" id="titulo" placeholder="Ex: ⚽ +2.5 GOLS - Flamengo vs Vasco" value="⚽ +2.5 GOLS - Flamengo vs Vasco">
+            
+            <div class="button-group">
+                <button onclick="testarNotificacao1()">Enviar 1ª vez</button>
+                <button onclick="testarNotificacao2()">Enviar novamente (3s)</button>
+            </div>
+            <div class="status-box warning">
+                Se a 2ª notificação aparecer em 3 segundos, o sistema está funcionando corretamente.
+                Se não aparecer, há um problema de duplicatas.
+            </div>
+        </div>
+
+        <!-- Seção: Simular Mensagens -->
+        <div class="section">
+            <h2>📨 Simular Mensagens do Bot</h2>
+            <label>Tipo de Aposta:</label>
+            <select id="tipoAposta">
+                <option value="gols">⚽ GOLS</option>
+                <option value="cantos">🚩 CANTOS</option>
+            </select>
+            
+            <label>Times:</label>
+            <input type="text" id="times" placeholder="Ex: Flamengo vs Vasco" value="Flamengo vs Vasco">
+            
+            <label>OVER/UNDER:</label>
+            <input type="text" id="overUnder" placeholder="Ex: +2.5" value="+2.5">
+            
+            <div class="button-group">
+                <button onclick="simularMensagem1()">Mensagem 1</button>
+                <button onclick="simularMensagem2()">Mensagem 2</button>
+            </div>
+        </div>
+
+        <!-- Seção: Verificar Cache -->
+        <div class="section">
+            <h2>💾 Cache de Notificações</h2>
+            <div class="button-group">
+                <button onclick="verificarCache()">Verificar Cache</button>
+                <button onclick="limparCache()">Limpar Cache</button>
+            </div>
+        </div>
+
+        <!-- Seção: Log -->
+        <div class="section">
+            <h2>📋 Log de Testes</h2>
+            <div class="log" id="log"></div>
+            <button onclick="limparLog()" style="margin-top: 12px;">Limpar Log</button>
+        </div>
+    </div>
+
+    <script>
+        // Variáveis globais para rastrear estado
+        let testLog = [];
+
+        function log(mensagem, tipo = 'info') {
+            const timestamp = new Date().toLocaleTimeString('pt-BR');
+            const entry = `[${timestamp}] ${mensagem}`;
+            testLog.push({ msg: entry, tipo });
+
+            const logEl = document.getElementById('log');
+            const entryEl = document.createElement('div');
+            entryEl.className = `log-entry ${tipo}`;
+            entryEl.textContent = entry;
+            logEl.appendChild(entryEl);
+            logEl.scrollTop = logEl.scrollHeight;
+
+            console.log(entry);
+        }
+
+        function limparLog() {
+            testLog = [];
+            document.getElementById('log').innerHTML = '';
+            log('Log limpo', 'info');
+        }
+
+        function atualizarStatus() {
+            // Status do NotificacoesSistema
+            if (typeof NotificacoesSistema !== 'undefined') {
+                document.getElementById('status-notificacoes').innerHTML = 
+                    '<span class="indicator success"></span>NotificacoesSistema: ✅ Carregado';
+                document.getElementById('indicator-notificacoes').className = 'indicator success';
+            } else {
+                document.getElementById('status-notificacoes').innerHTML = 
+                    '<span class="indicator error"></span>NotificacoesSistema: ❌ Não carregado';
+                document.getElementById('indicator-notificacoes').className = 'indicator error';
+            }
+
+            // Permissão
+            if ('Notification' in window) {
+                const perm = Notification.permission;
+                const status = perm === 'granted' ? '✅ Concedida' : perm === 'denied' ? '❌ Negada' : '⏳ Padrão';
+                document.getElementById('status-permissao').innerHTML = 
+                    `<span class="indicator ${perm === 'granted' ? 'success' : perm === 'denied' ? 'error' : 'warning'}"></span>Permissão: ${status}`;
+            }
+
+            // Cache
+            if (typeof NotificacoesSistema !== 'undefined') {
+                const cacheSize = NotificacoesSistema.ultimasNotificacoes.size;
+                document.getElementById('status-cache').innerHTML = 
+                    `Cache de duplicatas: ${cacheSize} entrada(s)`;
+            }
+        }
+
+        function pedirPermissao() {
+            log('🔐 Pedindo permissão de notificações...', 'info');
+            if ('Notification' in window) {
+                Notification.requestPermission().then(permission => {
+                    log(`Resultado: ${permission}`, permission === 'granted' ? 'success' : 'error');
+                    atualizarStatus();
+                });
+            } else {
+                log('❌ Navegador não suporta Web Notifications', 'error');
+            }
+        }
+
+        function verificarPermissao() {
+            log('🔍 Verificando permissão...', 'info');
+            if ('Notification' in window) {
+                const perm = Notification.permission;
+                log(`Permissão atual: ${perm}`, perm === 'granted' ? 'success' : 'warning');
+            } else {
+                log('❌ Navegador não suporta Web Notifications', 'error');
+            }
+        }
+
+        function testarNotificacao1() {
+            const msgId = document.getElementById('msgId').value || '12345';
+            const titulo = document.getElementById('titulo').value || '⚽ GOLS';
+            
+            log(`📤 Enviando 1ª notificação (ID: ${msgId})`, 'info');
+            
+            if (typeof NotificacoesSistema !== 'undefined' && NotificacoesSistema.notificarNovaMensagem) {
+                NotificacoesSistema.notificarNovaMensagem({
+                    id: msgId,
+                    titulo: titulo,
+                    text: titulo,
+                    time_1: 'Time A',
+                    time_2: 'Time B',
+                    tipo_aposta: 'gols'
+                });
+                log('✅ Notificação enviada (1ª)', 'success');
+            } else {
+                log('❌ NotificacoesSistema não carregado', 'error');
+            }
+        }
+
+        function testarNotificacao2() {
+            const msgId = document.getElementById('msgId').value || '12345';
+            const titulo = document.getElementById('titulo').value || '⚽ GOLS';
+            
+            setTimeout(() => {
+                log(`📤 Enviando 2ª notificação (ID: ${msgId})`, 'info');
+                
+                if (typeof NotificacoesSistema !== 'undefined' && NotificacoesSistema.notificarNovaMensagem) {
+                    NotificacoesSistema.notificarNovaMensagem({
+                        id: msgId,
+                        titulo: titulo,
+                        text: titulo,
+                        time_1: 'Time A',
+                        time_2: 'Time B',
+                        tipo_aposta: 'gols'
+                    });
+                    log('✅ Notificação enviada (2ª)', 'success');
+                } else {
+                    log('❌ NotificacoesSistema não carregado', 'error');
+                }
+            }, 3000);
+            
+            log('⏳ Agendado para 3 segundos...', 'warning');
+        }
+
+        function simularMensagem1() {
+            const tipo = document.getElementById('tipoAposta').value;
+            const times = document.getElementById('times').value || 'Time A vs Time B';
+            const overUnder = document.getElementById('overUnder').value || '+2.5';
+            const msgId = Math.floor(Math.random() * 100000);
+            
+            const titulo = `${tipo === 'cantos' ? '🚩' : '⚽'} ${overUnder} ${tipo.toUpperCase()} - ${times}`;
+            
+            log(`📨 Simulando mensagem 1 (ID: ${msgId}): ${titulo}`, 'info');
+            
+            if (typeof NotificacoesSistema !== 'undefined' && NotificacoesSistema.notificarNovaMensagem) {
+                NotificacoesSistema.notificarNovaMensagem({
+                    id: msgId,
+                    titulo: titulo,
+                    text: titulo,
+                    time_1: times.split(' vs ')[0],
+                    time_2: times.split(' vs ')[1] || 'Time B',
+                    tipo_aposta: tipo
+                });
+                log('✅ Mensagem 1 enviada', 'success');
+            }
+        }
+
+        function simularMensagem2() {
+            const tipo = document.getElementById('tipoAposta').value;
+            const times = document.getElementById('times').value || 'Time A vs Time B';
+            const overUnder = document.getElementById('overUnder').value || '+2.5';
+            const msgId = Math.floor(Math.random() * 100000);
+            
+            const titulo = `${tipo === 'cantos' ? '🚩' : '⚽'} ${overUnder} ${tipo.toUpperCase()} - ${times}`;
+            
+            log(`📨 Simulando mensagem 2 (ID: ${msgId}): ${titulo}`, 'info');
+            
+            if (typeof NotificacoesSistema !== 'undefined' && NotificacoesSistema.notificarNovaMensagem) {
+                NotificacoesSistema.notificarNovaMensagem({
+                    id: msgId,
+                    titulo: titulo,
+                    text: titulo,
+                    time_1: times.split(' vs ')[0],
+                    time_2: times.split(' vs ')[1] || 'Time B',
+                    tipo_aposta: tipo
+                });
+                log('✅ Mensagem 2 enviada', 'success');
+            }
+        }
+
+        function verificarCache() {
+            log('🔍 Verificando cache de duplicatas...', 'info');
+            
+            if (typeof NotificacoesSistema !== 'undefined') {
+                const cache = NotificacoesSistema.ultimasNotificacoes;
+                log(`Tamanho do cache: ${cache.size}`, cache.size > 0 ? 'warning' : 'success');
+                
+                if (cache.size > 0) {
+                    let idx = 1;
+                    cache.forEach(item => {
+                        log(`  ${idx}. ${item}`, 'info');
+                        idx++;
+                    });
+                }
+            } else {
+                log('❌ NotificacoesSistema não carregado', 'error');
+            }
+        }
+
+        function limparCache() {
+            log('🗑️ Limpando cache de duplicatas...', 'warning');
+            
+            if (typeof NotificacoesSistema !== 'undefined') {
+                NotificacoesSistema.ultimasNotificacoes.clear();
+                log('✅ Cache limpo', 'success');
+            } else {
+                log('❌ NotificacoesSistema não carregado', 'error');
+            }
+        }
+
+        // Inicializar
+        window.addEventListener('load', () => {
+            log('🚀 Página carregada', 'success');
+            setTimeout(atualizarStatus, 1000);
+        });
+
+        // Auto-atualizar status a cada 2 segundos
+        setInterval(atualizarStatus, 2000);
+    </script>
+</body>
+</html>

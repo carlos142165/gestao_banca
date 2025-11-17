@@ -1,0 +1,166 @@
+🚀 COMEÇAR A USAR - PASSO A PASSO
+═════════════════════════════════════════════════════════════════════════════
+
+✅ PASSO 1: VERIFICAR SE ESTÁ FUNCIONANDO
+
+Abra no navegador:
+→ http://localhost/gestao/gestao_banca/teste-logging.php
+
+Você deve ver:
+✓ Página verde com "Sistema de Logging Ativo!"
+✓ Botão "Abrir Visualizador de Logs"
+✓ Caminho do arquivo de log
+
+Se NÃO aparecer:
+- Verifique se XAMPP está rodando
+- Tente: http://localhost/gestao_banca/teste-logging.php
+- Ou: http://127.0.0.1/gestao_banca/teste-logging.php
+
+
+═════════════════════════════════════════════════════════════════════════════
+
+✅ PASSO 2: ABRIR O VISUALIZADOR
+
+Abra em UMA NOVA ABA:
+→ http://localhost/gestao/gestao_banca/visualizador-logs-notificacoes.html
+
+Você deve ver:
+✓ Tela preta com logs (VS Code style)
+✓ Informações do arquivo de log
+✓ Botões: 🔄 Recarregar, ⏱️ Auto-Atualizar, 🗑️ Limpar
+
+
+═════════════════════════════════════════════════════════════════════════════
+
+✅ PASSO 3: ATIVAR AUTO-REFRESH
+
+Na página do visualizador:
+
+Clique no botão:
+→ ⏱️ Auto-Atualizar (5s)
+
+O botão mudará para:
+→ ⏱️ Auto (5s) - indicando que está ativo
+
+Agora a página atualizará automaticamente a cada 5 segundos
+
+
+═════════════════════════════════════════════════════════════════════════════
+
+✅ PASSO 4: ESPERAR UMA NOTIFICAÇÃO
+
+Cenário de teste:
+1. Abra bot_aovivo.php em outra aba
+2. Aguarde uma mensagem de CANTOS chegar
+3. Quando chegar, a notificação será exibida normalmente
+4. Volte para o visualizador de logs
+5. Você verá os logs registrados automaticamente
+
+
+═════════════════════════════════════════════════════════════════════════════
+
+✅ PASSO 5: ANALISAR OS LOGS
+
+O que você verá no visualizador:
+
+[2025-11-17 14:30:45] [DEBUG] [DETECTAR_TIPO] [192.168.1.100]
+{
+  "titulo": "OVER ( +1⛳ CANTOS ) Fluminense vs Botafogo",
+  "tipo_detectado": "cantos",    ← TIPO DETECTADO
+  ...
+}
+
+[2025-11-17 14:30:45] [INFO] [NOTIFICACAO_ENVIADA] [192.168.1.100]
+{
+  "titulo": "🚩 CANTOS - Fluminense vs Botafogo",
+  "tipo_detectado": "cantos",
+  "icone_url": "/img/notificacao_cantos.jpg",  ← IMAGEM USADA
+  ...
+}
+
+Análise:
+- Se tipo_detectado = "cantos" E icone_url = "notificacao_cantos.jpg" ✓ CORRETO
+- Se tipo_detectado = "cantos" MAS icone_url = "notificacao_gol.jpg"  ✗ ERRADO
+- Se tipo_detectado = "gols" E icone_url = "notificacao_gol.jpg" ✓ CORRETO
+
+
+═════════════════════════════════════════════════════════════════════════════
+
+🔍 LENDO OS LOGS MANUALMENTE
+
+Se preferir, pode abrir o arquivo direto:
+
+Windows:
+1. Abra: C:\xampp\htdocs\gestao\gestao_banca\logs\
+2. Procure: notificacoes-2025-11-17.log (data de hoje)
+3. Abra com: Bloco de Notas ou VS Code
+4. Procure por: DETECTAR_TIPO e NOTIFICACAO_ENVIADA
+
+
+═════════════════════════════════════════════════════════════════════════════
+
+📊 ESTRUTURA DOS LOGS
+
+Cada entrada tem:
+
+[DATA HORA] [NÍVEL] [TIPO] [IP]
+========================================
+{dados em formato JSON}
+
+Significados:
+- [DATA HORA]: Quando aconteceu
+- [NÍVEL]:     INFO, DEBUG, ERRO, AVISO
+- [TIPO]:      DETECTAR_TIPO, NOTIFICACAO_ENVIADA, ERRO
+- [IP]:        IP de onde veio (127.0.0.1 = local)
+
+
+═════════════════════════════════════════════════════════════════════════════
+
+🎯 PRÓXIMOS PASSOS
+
+1. Execute teste-logging.php (confirmar funcionamento)
+2. Abra visualizador em aba separada
+3. Ative auto-refresh (⏱️)
+4. Aguarde notificação CANTOS chegar
+5. Verifique logs no visualizador
+6. Analise qual é o problema (se houver)
+
+Com isso você terá:
+✓ Dados exatos do que chegou
+✓ Qual tipo foi detectado
+✓ Qual imagem foi usada
+✓ Histórico completo do evento
+
+
+═════════════════════════════════════════════════════════════════════════════
+
+❓ DÚVIDAS FREQUENTES
+
+P: Por que abro o visualizador mas não vejo logs?
+R: Abra primeiro teste-logging.php para popular com teste
+
+P: Os logs desaparecem?
+R: Não, eles ficam no arquivo. Pode limpar com "🗑️ Limpar Logs"
+
+P: Pode importar esses logs para Excel?
+R: Sim! O arquivo é JSON, pode abrir em qualquer ferramenta
+
+P: O arquivo fica muito grande?
+R: Cada dia tem um arquivo novo (notificacoes-YYYY-MM-DD.log)
+
+P: Preciso fechar o visualizador?
+R: Não, você pode deixar aberto em outra aba rodando em background
+
+
+═════════════════════════════════════════════════════════════════════════════
+
+💡 DICAS
+
+✓ Use CTRL+F no visualizador para filtrar por palavra
+✓ Mantenha auto-refresh ligado durante o teste
+✓ Screenshot dos logs ajuda a compartilhar problema
+✓ Arquivo de log é texto simples, fácil de compartilhar
+✓ Cada 24h um novo arquivo é criado automaticamente
+
+
+═════════════════════════════════════════════════════════════════════════════

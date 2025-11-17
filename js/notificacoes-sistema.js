@@ -176,9 +176,29 @@ const NotificacoesSistema = {
       this.ultimasNotificacoes.delete(hash);
     }, 3000);
 
+    // ✅ MOBILE: Tentar usar Service Worker se disponível (melhor para mobile)
+    if ("serviceWorker" in navigator && navigator.serviceWorker.controller) {
+      console.log("📱 Usando Service Worker para notificação (modo mobile)");
+      navigator.serviceWorker.controller.postMessage({
+        tipo: "mostrar-notificacao",
+        titulo: titulo,
+        body: opcoes.body || "",
+        icon:
+          opcoes.icon ||
+          'data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100"><circle cx="50" cy="50" r="45" fill="%23ff6b6b"/></svg>',
+      });
+      console.log("🔔 Notificação enviada via Service Worker");
+      return;
+    }
+
+    // ✅ DESKTOP: Usar Notification API padrão
+    console.log("💻 Usando Notification API padrão (modo desktop)");
     const notificacao = new Notification(titulo, {
-      icon: "data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><circle cx='50' cy='50' r='45' fill='%23ff6b6b'/><path d='M40 30 L60 30 L58 55 L42 55 Z' fill='white'/><circle cx='50' cy='70' r='3' fill='white'/></svg>",
+      icon:
+        opcoes.icon ||
+        "data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><circle cx='50' cy='50' r='45' fill='%23ff6b6b'/><path d='M40 30 L60 30 L58 55 L42 55 Z' fill='white'/><circle cx='50' cy='70' r='3' fill='white'/></svg>",
       badge:
+        opcoes.badge ||
         "data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><circle cx='50' cy='50' r='45' fill='%23ff6b6b'/></svg>",
       ...opcoes,
     });
@@ -194,25 +214,107 @@ const NotificacoesSistema = {
   },
 
   /**
-   * Detectar tipo de oportunidade (CANTO ou GOLS)
-   * @param {string} texto - Texto da mensagem
+   * Detectar tipo de oportunidade (CANTO ou GOLS) - ANALISANDO MELHOR
+   * @param {string} texto - Texto da mensagem (título completo)
+   * @param {object} msg - Objeto da mensagem com dados adicionais
    * @returns {string} - 'cantos' ou 'gols'
    */
-  detectarTipo(texto) {
-    if (!texto) return "gols";
-    const textoLower = texto.toLowerCase();
-    if (textoLower.includes("canto") || textoLower.includes("escanteio")) {
+  detectarTipo(texto, msg = {}) {
+    // ✅ ESTRATÉGIA: Procurar em múltiplas fontes de dados
+
+    // 1️⃣ PRIMEIRA OPÇÃO: Verificar campo titulo do msg
+    let tituloParaAnalisar = msg.titulo || "";
+
+    // 2️⃣ SE não tem titulo, pegar primeira linha do texto
+    if (!tituloParaAnalisar && texto) {
+      const primeiraLinha = texto.split("\n")[0];
+      tituloParaAnalisar = primeiraLinha;
+    }
+
+    // 3️⃣ SE ainda não tem nada, usar todo o texto
+    if (!tituloParaAnalisar) {
+      tituloParaAnalisar = texto || "";
+    }
+
+    const textoAnalise = tituloParaAnalisar.toLowerCase();
+
+    console.log("🔍 Detectando tipo. Texto para análise:", textoAnalise);
+
+    // ✅ REGRA 1: Procurar por padrão "⛳" + "CANTOS" juntos = CANTOS
+    // Isso é mais específico e confiável
+    if (textoAnalise.includes("⛳") && textoAnalise.includes("cantos")) {
+      console.log("✅ Detectado: CANTOS (por ⛳ + cantos)");
       return "cantos";
     }
+
+    // ✅ REGRA 2: Procurar por padrão "⚽" + "GOL" juntos = GOLS
+    // Isso é mais específico e confiável
+    if (textoAnalise.includes("⚽") && textoAnalise.includes("gol")) {
+      console.log("✅ Detectado: GOLS (por ⚽ + gol)");
+      return "gols";
+    }
+
+    // ✅ REGRA 3: Se só tem "⛳" sem "gol" = CANTOS (emoji é o indicador principal)
+    if (textoAnalise.includes("⛳")) {
+      console.log("✅ Detectado: CANTOS (por ⛳)");
+      return "cantos";
+    }
+
+    // ✅ REGRA 4: Se só tem "⚽" sem "cantos" = GOLS (emoji é o indicador principal)
+    if (textoAnalise.includes("⚽")) {
+      console.log("✅ Detectado: GOLS (por ⚽)");
+      return "gols";
+    }
+
+    // ✅ REGRA 5: Se não tem emoji, procurar por palavra inteira
+    // Procurar "cantos" (mas não em "escant")
+    if (/\bcantos?\b|\bescanteio/.test(textoAnalise)) {
+      console.log("✅ Detectado: CANTOS (por palavra 'cantos')");
+      return "cantos";
+    }
+
+    // ✅ REGRA 6: Se não tem emoji, procurar por "gol" (mas não em "escant")
+    if (/\bgols?\b/.test(textoAnalise)) {
+      console.log("✅ Detectado: GOLS (por palavra 'gol')");
+      return "gols";
+    }
+
+    // ✅ FALLBACK: Verificar campo tipo_aposta (ou type da API)
+    const tipoApostaField = msg.tipo_aposta || msg.type;
+    if (tipoApostaField) {
+      const tipoAposta = tipoApostaField.toLowerCase();
+      console.log("📋 Verificando tipo_aposta/type:", tipoAposta);
+
+      // Verificar se contém palavras-chave para CANTOS
+      if (
+        tipoAposta.includes("⛳") ||
+        tipoAposta.includes("canto") ||
+        /\bcantos?\b/.test(tipoAposta)
+      ) {
+        console.log("✅ Detectado por tipo_aposta/type: CANTOS");
+        return "cantos";
+      }
+
+      // Verificar se contém palavras-chave para GOLS
+      if (
+        tipoAposta.includes("⚽") ||
+        tipoAposta.includes("gol") ||
+        /\bgols?\b/.test(tipoAposta)
+      ) {
+        console.log("✅ Detectado por tipo_aposta/type: GOLS");
+        return "gols";
+      }
+    }
+
+    // ✅ ÚLTIMO FALLBACK: Padrão é GOLS
+    console.log("⚠️ Nenhuma detecção específica, usando default: GOLS");
     return "gols";
   },
-
   /**
    * Gerar ícone para o tipo (usando imagens da pasta img)
    * @param {string} tipo - 'cantos' ou 'gols'
    * @returns {string} - URL absoluta da imagem
-   */
-  gerarIconoTipo(tipo) {
+   */ gerarIconoTipo(tipo) {
     // Obter protocolo e host
     const protocolo = window.location.protocol;
     const host = window.location.host;
@@ -230,14 +332,14 @@ const NotificacoesSistema = {
 
     let imagemUrl = "";
     if (tipo === "cantos") {
-      // Imagem de cantos - notificacao_cantos
+      // Imagem de cantos - notificacao_cantos.jpg
       imagemUrl = url + "/img/notificacao_cantos.jpg";
     } else {
-      // Imagem de gols - notificacao_gol
+      // Imagem de gols - notificacao_gol.jpg
       imagemUrl = url + "/img/notificacao_gol.jpg";
     }
 
-    console.log("🖼️ Imagem gerada:", imagemUrl);
+    console.log("🖼️ Imagem gerada:", imagemUrl, "Tipo:", tipo);
     return imagemUrl;
   },
 
@@ -291,8 +393,8 @@ const NotificacoesSistema = {
       return;
     }
 
-    // Detectar tipo de oportunidade
-    const tipo = this.detectarTipo(msg.titulo || msg.text);
+    // Detectar tipo de oportunidade - PASSANDO O OBJETO COMPLETO
+    const tipo = this.detectarTipo(msg.titulo || msg.text, msg);
     const tipoTexto = tipo === "cantos" ? "🚩 CANTOS" : "⚽ GOLS";
 
     // Extrair times
@@ -315,6 +417,7 @@ const NotificacoesSistema = {
       titulo,
       body: bodyTruncado,
       icon: icone,
+      tipo: tipo,
     });
 
     this.registrarLog("info", "Preparando notificação", {

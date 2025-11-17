@@ -1,0 +1,331 @@
+╔════════════════════════════════════════════════════════════════════════════════╗
+║          🧪 GUIA DE TESTES - BOT AO VIVO (ADD+ E RESULTADO)                    ║
+╚════════════════════════════════════════════════════════════════════════════════╝
+
+═══════════════════════════════════════════════════════════════════════════════
+
+🔧 PRÉ-REQUISITOS ANTES DE TESTAR
+
+  1. ✅ Arquivo bot_aovivo.php foi modificado
+  2. ✅ Arquivo salvar-aposta.php foi criado
+  3. ✅ Arquivo 004-create-bote-table.sql foi criado
+  4. ✅ Migration SQL foi executada (tabela 'bote' existe)
+  5. ✅ Você está usando usuário ID 23
+
+═══════════════════════════════════════════════════════════════════════════════
+
+📋 TESTE 1: VERIFICAR VISIBILIDADE DOS BOTÕES
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+PASSO 1: Abrir bot_aovivo.php COM USUÁRIO ID 23
+  └─ URL: http://seu-site.com/bot_aovivo.php
+
+RESULTADO ESPERADO:
+  ✓ Ver dois botões no topo (lado direito do menu de 4 traços)
+  ✓ Botão 1: "ADD+" (verde com ícone de +)
+  ✓ Botão 2: "Resultado" (azul com ícone de bandeira)
+  ✓ Ambos com efeito hover (elevam um pouco ao passar mouse)
+
+PASSO 2: Abrir bot_aovivo.php COM OUTRO USUÁRIO (não ID 23)
+  └─ Fazer logout e login com outro usuário
+
+RESULTADO ESPERADO:
+  ✓ Os botões "ADD+" e "Resultado" devem estar OCULTOS
+  ✓ Menu de navegação normal visível
+
+═══════════════════════════════════════════════════════════════════════════════
+
+📋 TESTE 2: ABRIR MODAL DE ADICIONAR APOSTA
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+PASSO 1: Com usuário ID 23, clicar no botão "ADD+"
+  └─ Localizado no topo da página ao lado do menu
+
+RESULTADO ESPERADO:
+  ✓ Modal se abre com animação (desliza para baixo)
+  ✓ Título: "Nova Aposta" com ícone de "+circulado"
+  ✓ Existe um botão X para fechar no canto superior direito
+  ✓ Modal tem tema roxo/azul
+
+PASSO 2: Verificar elemento de seleção de modelo
+  └─ Procurar por "Escolha o Modelo de Cadastro:"
+
+RESULTADO ESPERADO:
+  ✓ Dropdown com 3 opções:
+    • 🚩 CANTOS
+    • ⚽ +1 GOLS
+    • ⚽ +0.5 GOL
+
+═══════════════════════════════════════════════════════════════════════════════
+
+📋 TESTE 3: PREENCHIMENTO AUTOMÁTICO - MODELO CANTOS
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+PASSO 1: Com o modal aberto, clicar no dropdown e selecionar "🚩 CANTOS"
+
+RESULTADO ESPERADO:
+  Campos preenchidos automaticamente:
+  ✓ Mensagem Completa: "📊 🚨 OVER ( +1⛳ CANTOS ) AS.."
+  ✓ Título: "OVER ( +1⛳ CANTOS ) AS.."
+  ✓ Tipo de Aposta: "CANTOS"
+  ✓ Demais campos vazios (prontos para preenchimento manual)
+
+═══════════════════════════════════════════════════════════════════════════════
+
+📋 TESTE 4: PREENCHIMENTO AUTOMÁTICO - MODELO +1 GOLS
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+PASSO 1: Limpar formulário e selecionar "⚽ +1 GOLS"
+
+RESULTADO ESPERADO:
+  Campos preenchidos automaticamente:
+  ✓ Mensagem Completa: "📊 🚨 OVER ( +1 ⚽️GOL  ) AS.."
+  ✓ Título: "OVER ( +1 ⚽️GOL  ) AS.."
+  ✓ Tipo de Aposta: "GOL"
+  ✓ Demais campos vazios
+
+═══════════════════════════════════════════════════════════════════════════════
+
+📋 TESTE 5: PREENCHIMENTO AUTOMÁTICO - MODELO +0.5 GOL
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+PASSO 1: Limpar formulário e selecionar "⚽ +0.5 GOL"
+
+RESULTADO ESPERADO:
+  Campos preenchidos automaticamente:
+  ✓ Mensagem Completa: "📊 🚨 OVER ( +0.5 ⚽️GOL  ) FT"
+  ✓ Título: "OVER ( +0.5 ⚽️GOL  ) FT"
+  ✓ Tipo de Aposta: "GOL"
+  ✓ Demais campos vazios
+
+═══════════════════════════════════════════════════════════════════════════════
+
+📋 TESTE 6: PREENCHER CAMPOS MANUALMENTE
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+PASSO 1: Selecionar modelo "CANTOS" (ou qualquer outro)
+
+PASSO 2: Preencher alguns campos manualmente:
+  ├─ Time 1: "Flamengo"
+  ├─ Time 2: "Palmeiras"
+  ├─ Placar 1: "2"
+  ├─ Placar 2: "1"
+  ├─ Escanteios 1: "8"
+  ├─ Escanteios 2: "5"
+  ├─ Odds: "1.85"
+  ├─ Tempo Minuto: "45"
+  ├─ Odds Casa: "2.10"
+  ├─ Odds Empate: "3.20"
+  ├─ Odds Fora: "3.40"
+  └─ (pode deixar demais vazios para este teste)
+
+RESULTADO ESPERADO:
+  ✓ Todos os campos aceitam entrada (sem erros)
+  ✓ Campos numéricos aceitam apenas números
+  ✓ Campos de decimal (odds) aceitam valores com ponto
+
+═══════════════════════════════════════════════════════════════════════════════
+
+📋 TESTE 7: VALIDAÇÃO - CAMPOS OBRIGATÓRIOS
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+PASSO 1: Abrir modal e clicar em "Salvar Aposta" SEM preencher nada
+
+RESULTADO ESPERADO:
+  ✓ Mensagem de erro: "Mensagem Completa e Título são obrigatórios"
+  ✓ Aposta NÃO é salva
+  ✓ Modal continua aberto
+
+PASSO 2: Preencher apenas "Mensagem Completa" e tentar salvar
+
+RESULTADO ESPERADO:
+  ✓ Mensagem de erro: "Mensagem Completa e Título são obrigatórios"
+  ✓ Aposta NÃO é salva
+
+PASSO 3: Preencher apenas "Título" e tentar salvar
+
+RESULTADO ESPERADO:
+  ✓ Mensagem de erro: "Mensagem Completa e Título são obrigatórios"
+  ✓ Aposta NÃO é salva
+
+═══════════════════════════════════════════════════════════════════════════════
+
+📋 TESTE 8: SALVAR APOSTA COM SUCESSO
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+PASSO 1: Selecionar modelo "CANTOS"
+  └─ Campos serão preenchidos automaticamente
+
+PASSO 2: Preencher alguns campos adicionais:
+  ├─ Time 1: "Flamengo"
+  ├─ Time 2: "Palmeiras"
+  ├─ Placar 1: "2"
+  └─ Placar 2: "1"
+
+PASSO 3: Clicar em "Salvar Aposta"
+
+RESULTADO ESPERADO:
+  ✓ Alert com mensagem: "✅ Aposta salva com sucesso!"
+  ✓ Modal fecha automaticamente
+  ✓ Página recarrega após ~1 segundo
+  ✓ Nenhuma mensagem de erro no console (F12)
+
+═══════════════════════════════════════════════════════════════════════════════
+
+📋 TESTE 9: VERIFICAR DADOS NO BANCO
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+PASSO 1: Abrir phpMyAdmin
+
+PASSO 2: Acessar banco 'u857325944_formu' (ou 'formulario-carlos' se local)
+
+PASSO 3: Abrir tabela 'bote'
+
+PASSO 4: Procurar pela aposta que foi salva
+  └─ Ordem decrescente de data_criacao
+
+RESULTADO ESPERADO:
+  ✓ Tabela 'bote' existe
+  ✓ Último registro tem:
+    • usuario_id: 23
+    • mensagem_completa: "📊 🚨 OVER ( +1⛳ CANTOS ) AS.."
+    • titulo: "OVER ( +1⛳ CANTOS ) AS.."
+    • tipo_aposta: "CANTOS"
+    • time_1: "Flamengo"
+    • time_2: "Palmeiras"
+    • placar_1: 2
+    • placar_2: 1
+    • data_criacao: data/hora atual
+    • status: "ativa"
+
+═══════════════════════════════════════════════════════════════════════════════
+
+📋 TESTE 10: TESTAR MÚLTIPLAS APOSTAS
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+PASSO 1: Repetir TESTE 8 várias vezes com diferentes modelos:
+  ├─ 1ª: Modelo CANTOS
+  ├─ 2ª: Modelo +1 GOLS
+  ├─ 3ª: Modelo +0.5 GOL
+  └─ 4ª: Modelo CANTOS novamente
+
+PASSO 2: Verificar banco
+  └─ SELECT * FROM bote WHERE usuario_id = 23 ORDER BY data_criacao DESC;
+
+RESULTADO ESPERADO:
+  ✓ 4 registros aparecem (ou mais se houver outras apostas)
+  ✓ Tipos_aposta corretos (CANTOS, GOL, etc)
+  ✓ Datas em ordem cronológica reversa
+  ✓ Todos com usuario_id = 23
+
+═══════════════════════════════════════════════════════════════════════════════
+
+📋 TESTE 11: FECHAR MODAL MANEIRAS
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+TESTE A: Clicar no botão X
+
+RESULTADO ESPERADO:
+  ✓ Modal fecha com animação
+  ✓ Formulário é resetado (campos vazios)
+
+TESTE B: Pressionar tecla ESC
+
+RESULTADO ESPERADO:
+  ✓ Modal fecha
+  ✓ Formulário é resetado
+
+TESTE C: Clicar fora do modal (na área escura)
+
+RESULTADO ESPERADO:
+  ✓ Modal fecha
+  ✓ Formulário é resetado
+
+═══════════════════════════════════════════════════════════════════════════════
+
+📋 TESTE 12: RESPONSIVIDADE EM MOBILE
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+PASSO 1: Abrir DevTools (F12)
+
+PASSO 2: Ativar modo responsivo (Ctrl+Shift+M)
+
+PASSO 3: Testar em diferentes tamanhos:
+  ├─ Mobile (375px)
+  ├─ Tablet (768px)
+  └─ Desktop (1920px)
+
+RESULTADO ESPERADO:
+  ✓ Botões permanecem visíveis e funcionais
+  ✓ Modal se adapta ao tamanho da tela
+  ✓ Formulário com campos em layout responsivo
+  ✓ Scrolling funciona se conteúdo exceder altura
+
+═══════════════════════════════════════════════════════════════════════════════
+
+🐛 TESTE 13: CONSOLE DE ERRO
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+PASSO 1: Abrir Console (F12 → Console)
+
+PASSO 2: Executar todas as ações acima
+
+RESULTADO ESPERADO:
+  ✓ Nenhum erro em vermelho (com exceção de possíveis avisos do navegador)
+  ✓ Se houver erro: anotar a mensagem e verificar salvar-aposta.php
+
+═══════════════════════════════════════════════════════════════════════════════
+
+✅ TESTE 14: BOTÃO "RESULTADO" PLACEHOLDER
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+PASSO 1: Com usuário ID 23, clicar no botão "Resultado"
+
+RESULTADO ESPERADO:
+  ✓ Alert: "Modal Resultado ainda será implementado!"
+  ✓ Botão funciona sem erros
+
+═══════════════════════════════════════════════════════════════════════════════
+
+📊 RESUMO DE TESTES
+
+Total de Testes: 14
+Teste de Verificação: ✓ Botões visíveis
+Teste de Funcionalidade: ✓ Modal abre/fecha
+Teste de Lógica: ✓ Preenchimento automático
+Teste de Validação: ✓ Campos obrigatórios
+Teste de Persistência: ✓ Dados salvos no banco
+Teste de Responsividade: ✓ Mobile/Tablet/Desktop
+Teste de Console: ✓ Sem erros críticos
+
+═══════════════════════════════════════════════════════════════════════════════
+
+❌ SOLUÇÃO DE PROBLEMAS
+
+Problema: Botões não aparecem
+├─ Verificar: Você está com usuário ID 23?
+├─ Verificar: bot_aovivo.php foi atualizado?
+└─ Solução: Limpar cache do navegador (Ctrl+Shift+Del)
+
+Problema: Modal não abre
+├─ Verificar: Console do navegador (F12)
+├─ Verificar: Arquivo bot_aovivo.php tem as funções JS?
+└─ Solução: Recarregar página (Ctrl+F5)
+
+Problema: Aposta não salva
+├─ Verificar: Tabela 'bote' existe (execute migration)
+├─ Verificar: Arquivo salvar-aposta.php existe
+├─ Verificar: Console para mensagem de erro
+└─ Solução: Executar: DESCRIBE bote; no banco
+
+Problema: Campos não preenchem automaticamente
+├─ Verificar: Dropdown 'selectModelo' tem value correto
+├─ Verificar: Console para erros de JS
+└─ Solução: Limpar cache e recarregar
+
+═══════════════════════════════════════════════════════════════════════════════
+
+✨ TODOS OS TESTES PASSARAM? PARABÉNS! 🎉
+
+A implementação do sistema de adicionar apostas está funcional e pronta para uso!
+

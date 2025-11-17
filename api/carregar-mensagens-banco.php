@@ -148,6 +148,7 @@ function getMessagesFromDatabase() {
                 'update_id' => intval($row['id']),
                 'title' => $row['titulo'],
                 'type' => $row['tipo_aposta'],
+                'tipo_aposta' => $row['tipo_aposta'],  // ✅ DUPLICAR para compatibilidade com notificações
                 'status' => $row['status_aposta'],
                 'resultado' => $row['resultado'],
                 'time_1' => $row['time_1'],
@@ -250,6 +251,7 @@ function pollNewMessages() {
                 'update_id' => intval($row['id']),
                 'title' => $row['titulo'],
                 'type' => $row['tipo_aposta'],
+                'tipo_aposta' => $row['tipo_aposta'],  // ✅ DUPLICAR para compatibilidade com notificações
                 'status' => $row['status_aposta'],
                 'resultado' => $row['resultado'],
                 'time_1' => $row['time_1'],
@@ -352,6 +354,7 @@ function getMessagesByDate() {
                 'update_id' => intval($row['id']),
                 'title' => $row['titulo'],
                 'type' => $row['tipo_aposta'],
+                'tipo_aposta' => $row['tipo_aposta'],  // ✅ DUPLICAR para compatibilidade com notificações
                 'status' => $row['status_aposta'],
                 'resultado' => $row['resultado'],
                 'time_1' => $row['time_1'],

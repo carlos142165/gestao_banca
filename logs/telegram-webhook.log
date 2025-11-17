@@ -64,3 +64,864 @@ DEBUG: Parâmetros - telegram_id=1351, valor_over=1, odds=1.73, result=
 ✅ Insert executado com sucesso - ID: 342
 ✅ Oportunidade salva com sucesso
 
+
+================================================================================
+[2025-11-16 11:46:59] Webhook acionado (VERSÃO NOVA COMPLETA)
+Dados recebidos: {"update_id":213069167,"channel_post":{"message_id":1361,"sender_chat":{"id":-1002047004959,"title":"Bateubet_VIP","type":"channel"},"chat":{"id":-1002047004959,"title":"Bateubet_VIP","type":"channel"},"date":1763304418,"text":"Oportunidade! \ud83d\udea8\n\n\ud83d\udcca \ud83d\udea8 OVER ( +0.5 \u26bd\ufe0fGOL  ) FT\n\n\n\u26bd\ufe0f CRB (H) x Vila Nova (A) (ao vivo)\n\n\u23f0 Tempo: 64'\nOdds iniciais: Casa: 1.444 - Emp. 4.5 - Fora: 7.0\n\ud83c\udfdf Brazil Serie B\n\n\ud83e\udd45 Placar: 1 - 0  \n\u21aa\ufe0f \u00daltimo gol: 38' - \u00f8\nGols over +0.5: 1.57 \nStake: 1%\n    \n\u26f3\ufe0f Escanteios: 7 - 2  \n\u21aa\ufe0f \u00daltimo escanteio: 62' - 57'\n\ud83d\udd25 Ataques perigosos: 44 - 25\n\ud83d\udd25 Ataques perigosos\/min. (5min.): 0.4 - 0.4\n\ud83d\udd25 Ataques perigosos\/min. (Total): 0.68 - 0.39\n\ud83d\udfe8 Cart\u00f5es amarelos: 1 - 1\n\u21aa\ufe0f \u00daltimo cart\u00e3o amarelo: 56' - 13'\n\ud83d\udfe5 Cart\u00f5es vermelhos: 0 - 0\n\ud83c\udfaf Chutes ao lado: 5 - 3\n\u21aa\ufe0f \u00daltimo chute ao lado: 56' - 35'\n\ud83c\udfaf Chutes no alvo: 7 - 1\n\u21aa\ufe0f \u00daltimo chute no alvo: 47' - 52'\n\ud83d\udcaf Posse de bola: 58% - 42%\n\ud83e\udde0 PI 1: 11.6 - 8.4\n\u26a1\ufe0f PI 2: 4 - 4\n\n\nLinks da partida:\n\nBet365 | Betfair","entities":[{"offset":720,"length":6,"type":"text_link","url":"https:\/\/www.bet365.bet.br\/#\/AX\/K%5ECRB"},{"offset":720,"length":6,"type":"bold"},{"offset":729,"length":7,"type":"text_link","url":"https:\/\/betfair.bet.br\/exchange\/plus\/en\/football\/brazilian-serie-b\/crb-v-vila-nova-betting-34943836"},{"offset":729,"length":7,"type":"bold"}],"link_preview_options":{"url":"https:\/\/www.bet365.bet.br\/"}}}
+✅ Tipo: CHANNEL_POST
+Texto extraído: Oportunidade! 🚨
+
+📊 🚨 OVER ( +0.5 ⚽️GOL  ) FT
+
+
+⚽️ CRB (H) x Vila Nova (A) (ao vivo)...
+É oportunidade? SIM
+É resultado? NÃO
+📨 Mensagem válida recebida
+   ID: 1361
+   Hora: 11:46:58
+   Tipo: OPORTUNIDADE
+💾 Salvando oportunidade...
+✅ OVER detectado: valor extraído = 0.5
+✅ Odds iniciais detectadas: Casa=1.444, Emp=4.5, Fora=7
+✅ Estádio detectado: Brazil Serie B
+✅ Extração concluída: valor_over=0.5, odds=1.57
+📝 Iniciando salvamento nos dados:
+   - valor_over: 0.5
+✅ Conexão com banco verificada e ativa
+✅ Query preparada com sucesso
+DEBUG: valor_over=0.5 (tipo: double)
+DEBUG: Pronto para bind_param
+DEBUG: Parâmetros - telegram_id=1361, valor_over=0.5, odds=1.57, result=
+✅ bind_param executado com sucesso
+✅ Insert executado com sucesso - ID: 351
+✅ Oportunidade salva com sucesso
+
+
+================================================================================
+[2025-11-16 17:43:17] Webhook acionado (VERSÃO NOVA COMPLETA)
+Dados recebidos: {"update_id":213069168,"channel_post":{"message_id":1362,"sender_chat":{"id":-1002047004959,"title":"Bateubet_VIP","type":"channel"},"chat":{"id":-1002047004959,"title":"Bateubet_VIP","type":"channel"},"date":1763325796,"text":"Oportunidade! \ud83d\udea8\n\n\ud83d\udcca \ud83d\udea8 OVER ( +1 \u26bdGOL  ) AS..\n\n\n\u26bd\ufe0f Ferroviaria SP (H) x Athletico Paranaense (A) (ao vivo)\n\n\u23f0 Tempo: 47'\nOdds iniciais: Casa: 4.75 - Emp. 3.6 - Fora: 1.75\n\ud83c\udfdf Brazil Serie B\n\n\ud83e\udd45 Placar: 0 - 0  \nGols over +1.0: 1.52 \nStake: 1%\n    \n\u26f3\ufe0f Escanteios: 1 - 2  \n\u21aa\ufe0f \u00daltimo escanteio: 38' - 40'\n\ud83d\udd25 Ataques perigosos: 17 - 17\n\ud83d\udd25 Ataques perigosos\/min. (5min.): 0.4 - 0.8\n\ud83d\udd25 Ataques perigosos\/min. (Total): 0.36 - 0.36\n\ud83d\udfe8 Cart\u00f5es amarelos: 1 - 3\n\u21aa\ufe0f \u00daltimo cart\u00e3o amarelo: 2' - 36'\n\ud83d\udfe5 Cart\u00f5es vermelhos: 0 - 0\n\ud83c\udfaf Chutes ao lado: 7 - 7\n\u21aa\ufe0f \u00daltimo chute ao lado: 48' - 44'\n\ud83c\udfaf Chutes no alvo: 0 - 3\n\u21aa\ufe0f \u00daltimo chute no alvo: \u00f8 - 40'\n\ud83d\udcaf Posse de bola: 52% - 48%\n\ud83e\udde0 PI 1: 30.4 - 49.6\n\u26a1\ufe0f PI 2: 4 - 8\n\n\nLinks da partida:\n\nBet365 | Betfair","entities":[{"offset":716,"length":6,"type":"text_link","url":"https:\/\/www.bet365.bet.br\/#\/AX\/K%5EFerroviaria%20SP"},{"offset":716,"length":6,"type":"bold"},{"offset":725,"length":7,"type":"text_link","url":"https:\/\/betfair.bet.br\/exchange\/plus\/en\/football\/brazilian-serie-b\/ferroviaria-v-athletico-pr-betting-34943500"},{"offset":725,"length":7,"type":"bold"}],"link_preview_options":{"is_disabled":true}}}
+✅ Tipo: CHANNEL_POST
+Texto extraído: Oportunidade! 🚨
+
+📊 🚨 OVER ( +1 ⚽GOL  ) AS..
+
+
+⚽️ Ferroviaria SP (H) x Athletico Paran...
+É oportunidade? SIM
+É resultado? NÃO
+📨 Mensagem válida recebida
+   ID: 1362
+   Hora: 17:43:16
+   Tipo: OPORTUNIDADE
+💾 Salvando oportunidade...
+✅ OVER detectado: valor extraído = 1
+✅ Odds iniciais detectadas: Casa=4.75, Emp=3.6, Fora=1.75
+✅ Estádio detectado: Brazil Serie B
+✅ Extração concluída: valor_over=1, odds=1.52
+📝 Iniciando salvamento nos dados:
+   - valor_over: 1
+✅ Conexão com banco verificada e ativa
+✅ Query preparada com sucesso
+DEBUG: valor_over=1 (tipo: double)
+DEBUG: Pronto para bind_param
+DEBUG: Parâmetros - telegram_id=1362, valor_over=1, odds=1.52, result=
+✅ bind_param executado com sucesso
+✅ Insert executado com sucesso - ID: 352
+✅ Oportunidade salva com sucesso
+
+
+================================================================================
+[2025-11-16 17:59:30] Webhook acionado (VERSÃO NOVA COMPLETA)
+Dados recebidos: {"update_id":213069169,"channel_post":{"message_id":1363,"sender_chat":{"id":-1002047004959,"title":"Bateubet_VIP","type":"channel"},"chat":{"id":-1002047004959,"title":"Bateubet_VIP","type":"channel"},"date":1763326769,"text":"Oportunidade! \ud83d\udea8\n\n\ud83d\udcca \ud83d\udea8 OVER ( +0.5 \u26bdGOL  ) FT\n\n\n\u26bd\ufe0f Ferroviaria SP (H) x Athletico Paranaense (A) (ao vivo)\n\n\u23f0 Tempo: 63'\nOdds iniciais: Casa: 4.75 - Emp. 3.6 - Fora: 1.75\n\ud83c\udfdf Brazil Serie B\n\n\ud83e\udd45 Placar: 0 - 0  \nGols over +0.5: 1.58 \nStake: 1%\n    \n\u26f3\ufe0f Escanteios: 1 - 6  \n\u21aa\ufe0f \u00daltimo escanteio: 38' - 61'\n\ud83d\udd25 Ataques perigosos: 17 - 31\n\ud83d\udd25 Ataques perigosos\/min. (5min.): 0 - 1.4\n\ud83d\udd25 Ataques perigosos\/min. (Total): 0.26 - 0.49\n\ud83d\udfe8 Cart\u00f5es amarelos: 1 - 3\n\u21aa\ufe0f \u00daltimo cart\u00e3o amarelo: 2' - 36'\n\ud83d\udfe5 Cart\u00f5es vermelhos: 0 - 0\n\ud83c\udfaf Chutes ao lado: 8 - 8\n\u21aa\ufe0f \u00daltimo chute ao lado: 53' - 57'\n\ud83c\udfaf Chutes no alvo: 0 - 6\n\u21aa\ufe0f \u00daltimo chute no alvo: \u00f8 - 61'\n\ud83d\udcaf Posse de bola: 50% - 50%\n\ud83e\udde0 PI 1: 10 - 90\n\u26a1\ufe0f PI 2: 0 - 14\n\n\nLinks da partida:\n\nBet365 | Betfair","entities":[{"offset":711,"length":6,"type":"text_link","url":"https:\/\/www.bet365.bet.br\/#\/AX\/K%5EFerroviaria%20SP"},{"offset":711,"length":6,"type":"bold"},{"offset":720,"length":7,"type":"text_link","url":"https:\/\/betfair.bet.br\/exchange\/plus\/en\/football\/brazilian-serie-b\/ferroviaria-v-athletico-pr-betting-34943500"},{"offset":720,"length":7,"type":"bold"}],"link_preview_options":{"is_disabled":true}}}
+✅ Tipo: CHANNEL_POST
+Texto extraído: Oportunidade! 🚨
+
+📊 🚨 OVER ( +0.5 ⚽GOL  ) FT
+
+
+⚽️ Ferroviaria SP (H) x Athletico Paran...
+É oportunidade? SIM
+É resultado? NÃO
+📨 Mensagem válida recebida
+   ID: 1363
+   Hora: 17:59:29
+   Tipo: OPORTUNIDADE
+💾 Salvando oportunidade...
+✅ OVER detectado: valor extraído = 0.5
+✅ Odds iniciais detectadas: Casa=4.75, Emp=3.6, Fora=1.75
+✅ Estádio detectado: Brazil Serie B
+✅ Extração concluída: valor_over=0.5, odds=1.58
+📝 Iniciando salvamento nos dados:
+   - valor_over: 0.5
+✅ Conexão com banco verificada e ativa
+✅ Query preparada com sucesso
+DEBUG: valor_over=0.5 (tipo: double)
+DEBUG: Pronto para bind_param
+DEBUG: Parâmetros - telegram_id=1363, valor_over=0.5, odds=1.58, result=
+✅ bind_param executado com sucesso
+✅ Insert executado com sucesso - ID: 353
+✅ Oportunidade salva com sucesso
+
+
+================================================================================
+[2025-11-16 18:35:24] Webhook acionado (VERSÃO NOVA COMPLETA)
+Dados recebidos: {"update_id":213069170,"channel_post":{"message_id":1364,"sender_chat":{"id":-1002047004959,"title":"Bateubet_VIP","type":"channel"},"chat":{"id":-1002047004959,"title":"Bateubet_VIP","type":"channel"},"date":1763328923,"text":"Resultado dispon\u00edvel!\n\u26bd\ufe0f Ferroviaria SP (H) x Athletico Paranaense (A) (ao vivo)\nGols over +1.0 - ODD: 1.52 - GREEN\n\u2705"}}
+✅ Tipo: CHANNEL_POST
+Texto extraído: Resultado disponível!
+⚽️ Ferroviaria SP (H) x Athletico Paranaense (A) (ao vivo)
+Gols over +1.0...
+É oportunidade? NÃO
+É resultado? SIM
+📨 Mensagem válida recebida
+   ID: 1364
+   Hora: 18:35:23
+   Tipo: RESULTADO
+🎯 Processando resultado...
+📝 [RESULTADO] Iniciando processamento
+✅ Conexão com banco verificada e ativa
+   Linhas extraídas: 4
+   Processando linha: Resultado disponível!...
+   Processando linha: ⚽️ Ferroviaria SP (H) x Athletico Paranaense (...
+   ✅ Times encontrados: ️ Ferroviaria SP x Athletico Paranaense
+   Processando linha: Gols over +1.0 - ODD: 1.52 - GREEN...
+   ✅ Tipo aposta encontrado (sem parênteses): Gols over +1.0 - Tipo: GOLS
+   ✅ Resultado encontrado: GREEN
+   Processando linha: ✅...
+   Resumo extraído:
+     - time_1: '️ Ferroviaria SP'
+     - time_2: 'Athletico Paranaense'
+     - tipo_aposta: 'Gols over +1.0'
+     - tipo_resultado: 'GOLS'
+     - resultado: 'GREEN'
+✅ Valor resultado extraído: 1
+🔍 Procurando aposta com valor_over=1, tipo=GOLS e times: '️ Ferroviaria SP' x 'Athletico Paranaense'
+   Preparando search query...
+   Bind search params: t1=%️ Ferroviaria SP%, t2=%Athletico Paranaense%
+   ✅ Search retornou 2 registros
+   Comparando: valor_over DB=0.5, resultado=1, tipo_db=GOL, tipo_resultado=GOLS, match=SIM
+   Comparando: valor_over DB=1, resultado=1, tipo_db=GOL, tipo_resultado=GOLS, match=SIM
+   ✅ MATCH ENCONTRADO! ID=352 (tipo e valor corretos)
+📝 Atualizando aposta ID=352 com resultado=GREEN
+✅✅ Resultado processado com sucesso: ID=352, Resultado=GREEN, Tipo=GOLS
+✅ Resultado processado com sucesso
+
+
+================================================================================
+[2025-11-16 18:35:26] Webhook acionado (VERSÃO NOVA COMPLETA)
+Dados recebidos: {"update_id":213069171,"channel_post":{"message_id":1365,"sender_chat":{"id":-1002047004959,"title":"Bateubet_VIP","type":"channel"},"chat":{"id":-1002047004959,"title":"Bateubet_VIP","type":"channel"},"date":1763328925,"text":"Resultado dispon\u00edvel!\n\u26bd\ufe0f Ferroviaria SP (H) x Athletico Paranaense (A) (ao vivo)\nGols over +0.5 - ODD: 1.584 - GREEN\n\u2705"}}
+✅ Tipo: CHANNEL_POST
+Texto extraído: Resultado disponível!
+⚽️ Ferroviaria SP (H) x Athletico Paranaense (A) (ao vivo)
+Gols over +0.5...
+É oportunidade? NÃO
+É resultado? SIM
+📨 Mensagem válida recebida
+   ID: 1365
+   Hora: 18:35:25
+   Tipo: RESULTADO
+🎯 Processando resultado...
+📝 [RESULTADO] Iniciando processamento
+✅ Conexão com banco verificada e ativa
+   Linhas extraídas: 4
+   Processando linha: Resultado disponível!...
+   Processando linha: ⚽️ Ferroviaria SP (H) x Athletico Paranaense (...
+   ✅ Times encontrados: ️ Ferroviaria SP x Athletico Paranaense
+   Processando linha: Gols over +0.5 - ODD: 1.584 - GREEN...
+   ✅ Tipo aposta encontrado (sem parênteses): Gols over +0.5 - Tipo: GOLS
+   ✅ Resultado encontrado: GREEN
+   Processando linha: ✅...
+   Resumo extraído:
+     - time_1: '️ Ferroviaria SP'
+     - time_2: 'Athletico Paranaense'
+     - tipo_aposta: 'Gols over +0.5'
+     - tipo_resultado: 'GOLS'
+     - resultado: 'GREEN'
+✅ Valor resultado extraído: 0.5
+🔍 Procurando aposta com valor_over=0.5, tipo=GOLS e times: '️ Ferroviaria SP' x 'Athletico Paranaense'
+   Preparando search query...
+   Bind search params: t1=%️ Ferroviaria SP%, t2=%Athletico Paranaense%
+   ✅ Search retornou 1 registros
+   Comparando: valor_over DB=0.5, resultado=0.5, tipo_db=GOL, tipo_resultado=GOLS, match=SIM
+   ✅ MATCH ENCONTRADO! ID=353 (tipo e valor corretos)
+📝 Atualizando aposta ID=353 com resultado=GREEN
+✅✅ Resultado processado com sucesso: ID=353, Resultado=GREEN, Tipo=GOLS
+✅ Resultado processado com sucesso
+
+
+================================================================================
+[2025-11-16 19:45:54] Webhook acionado (VERSÃO NOVA COMPLETA)
+Dados recebidos: {"update_id":213069172,"channel_post":{"message_id":1366,"sender_chat":{"id":-1002047004959,"title":"Bateubet_VIP","type":"channel"},"chat":{"id":-1002047004959,"title":"Bateubet_VIP","type":"channel"},"date":1763333153,"text":"Oportunidade! \ud83d\udea8\n\n\ud83d\udcca \ud83d\udea8 OVER ( +1 \u26bdGOL  ) AS..\n\n\n\u26bd\ufe0f Bragantino (H) x Atletico Mineiro (A) (ao vivo)\n\n\u23f0 Tempo: 45'\nOdds iniciais: Casa: 2.25 - Emp. 3.2 - Fora: 3.3\n\ud83c\udfdf Brazil Serie A\n\n\ud83e\udd45 Placar: 0 - 0  \nGols over +1.0: 1.51 \nStake: 1%\n    \n\u26f3\ufe0f Escanteios: 2 - 3  \n\u21aa\ufe0f \u00daltimo escanteio: 28' - 19'\n\ud83d\udd25 Ataques perigosos: 14 - 11\n\ud83d\udd25 Ataques perigosos\/min. (5min.): 0.6 - 0\n\ud83d\udd25 Ataques perigosos\/min. (Total): 0.31 - 0.24\n\ud83d\udfe8 Cart\u00f5es amarelos: 1 - 0\n\u21aa\ufe0f \u00daltimo cart\u00e3o amarelo: 18' - \u00f8\n\ud83d\udfe5 Cart\u00f5es vermelhos: 0 - 0\n\ud83c\udfaf Chutes ao lado: 9 - 4\n\u21aa\ufe0f \u00daltimo chute ao lado: 42' - 36'\n\ud83c\udfaf Chutes no alvo: 2 - 2\n\u21aa\ufe0f \u00daltimo chute no alvo: 26' - 15'\n\ud83d\udcaf Posse de bola: 59% - 41%\n\ud83e\udde0 PI 1: 71.8 - 8.2\n\u26a1\ufe0f PI 2: 6 - 0\n\n\nLinks da partida:\n\nBet365 | Betfair","entities":[{"offset":705,"length":6,"type":"text_link","url":"https:\/\/www.bet365.bet.br\/#\/AX\/K%5EBragantino"},{"offset":705,"length":6,"type":"bold"},{"offset":714,"length":7,"type":"text_link","url":"https:\/\/betfair.bet.br\/exchange\/plus\/en\/football\/brazilian-serie-a\/red-bull-bragantino-v-atletico-mg-betting-34947294"},{"offset":714,"length":7,"type":"bold"}],"link_preview_options":{"is_disabled":true}}}
+✅ Tipo: CHANNEL_POST
+Texto extraído: Oportunidade! 🚨
+
+📊 🚨 OVER ( +1 ⚽GOL  ) AS..
+
+
+⚽️ Bragantino (H) x Atletico Mineiro (A...
+É oportunidade? SIM
+É resultado? NÃO
+📨 Mensagem válida recebida
+   ID: 1366
+   Hora: 19:45:53
+   Tipo: OPORTUNIDADE
+💾 Salvando oportunidade...
+✅ OVER detectado: valor extraído = 1
+✅ Odds iniciais detectadas: Casa=2.25, Emp=3.2, Fora=3.3
+✅ Estádio detectado: Brazil Serie A
+✅ Extração concluída: valor_over=1, odds=1.51
+📝 Iniciando salvamento nos dados:
+   - valor_over: 1
+✅ Conexão com banco verificada e ativa
+✅ Query preparada com sucesso
+DEBUG: valor_over=1 (tipo: double)
+DEBUG: Pronto para bind_param
+DEBUG: Parâmetros - telegram_id=1366, valor_over=1, odds=1.51, result=
+✅ bind_param executado com sucesso
+✅ Insert executado com sucesso - ID: 355
+✅ Oportunidade salva com sucesso
+
+
+================================================================================
+[2025-11-16 20:53:32] Webhook acionado (VERSÃO NOVA COMPLETA)
+Dados recebidos: {"update_id":213069173,"channel_post":{"message_id":1367,"sender_chat":{"id":-1002047004959,"title":"Bateubet_VIP","type":"channel"},"chat":{"id":-1002047004959,"title":"Bateubet_VIP","type":"channel"},"date":1763337211,"text":"Resultado dispon\u00edvel!\n\u26bd\ufe0f Bragantino (H) x Atletico Mineiro (A) (ao vivo)\nGols over +1.0 - ODD: 1.515 - GREEN\n\u2705"}}
+✅ Tipo: CHANNEL_POST
+Texto extraído: Resultado disponível!
+⚽️ Bragantino (H) x Atletico Mineiro (A) (ao vivo)
+Gols over +1.0 - ODD: ...
+É oportunidade? NÃO
+É resultado? SIM
+📨 Mensagem válida recebida
+   ID: 1367
+   Hora: 20:53:31
+   Tipo: RESULTADO
+🎯 Processando resultado...
+📝 [RESULTADO] Iniciando processamento
+✅ Conexão com banco verificada e ativa
+   Linhas extraídas: 4
+   Processando linha: Resultado disponível!...
+   Processando linha: ⚽️ Bragantino (H) x Atletico Mineiro (A) (ao v...
+   ✅ Times encontrados: ️ Bragantino x Atletico Mineiro
+   Processando linha: Gols over +1.0 - ODD: 1.515 - GREEN...
+   ✅ Tipo aposta encontrado (sem parênteses): Gols over +1.0 - Tipo: GOLS
+   ✅ Resultado encontrado: GREEN
+   Processando linha: ✅...
+   Resumo extraído:
+     - time_1: '️ Bragantino'
+     - time_2: 'Atletico Mineiro'
+     - tipo_aposta: 'Gols over +1.0'
+     - tipo_resultado: 'GOLS'
+     - resultado: 'GREEN'
+✅ Valor resultado extraído: 1
+🔍 Procurando aposta com valor_over=1, tipo=GOLS e times: '️ Bragantino' x 'Atletico Mineiro'
+   Preparando search query...
+   Bind search params: t1=%️ Bragantino%, t2=%Atletico Mineiro%
+   ✅ Search retornou 1 registros
+   Comparando: valor_over DB=1, resultado=1, tipo_db=GOL, tipo_resultado=GOLS, match=SIM
+   ✅ MATCH ENCONTRADO! ID=355 (tipo e valor corretos)
+📝 Atualizando aposta ID=355 com resultado=GREEN
+✅✅ Resultado processado com sucesso: ID=355, Resultado=GREEN, Tipo=GOLS
+✅ Resultado processado com sucesso
+
+
+================================================================================
+[2025-11-16 21:02:54] Webhook acionado (VERSÃO NOVA COMPLETA)
+Dados recebidos: {"update_id":213069174,"channel_post":{"message_id":1368,"sender_chat":{"id":-1002047004959,"title":"Bateubet_VIP","type":"channel"},"chat":{"id":-1002047004959,"title":"Bateubet_VIP","type":"channel"},"date":1763337774,"text":"Oportunidade! \ud83d\udea8\n\n\ud83d\udcca \ud83d\udea8 OVER ( +0.5 \u26bd\ufe0fGOL  ) FT\n\n\n\u26bd\ufe0f Ferroviaria SP (H) x Athletico Paranaense (A) (ao vivo)\n\n\u23f0 Tempo: 63'\nOdds iniciais: Casa: 4.75 - Emp. 3.6 - Fora: 1.75\n\ud83c\udfdf Brazil Serie B\n\n\ud83e\udd45 Placar: 0 - 0  \nGols over +0.5: 1.58 \nStake: 1%\n    \n\u26f3\ufe0f Escanteios: 1 - 6  \n\u21aa\ufe0f \u00daltimo escanteio: 38' - 61'\n\ud83d\udd25 Ataques perigosos: 17 - 31\n\ud83d\udd25 Ataques perigosos\/min. (5min.): 0 - 1.4\n\ud83d\udd25 Ataques perigosos\/min. (Total): 0.26 - 0.49\n\ud83d\udfe8 Cart\u00f5es amarelos: 1 - 3\n\u21aa\ufe0f \u00daltimo cart\u00e3o amarelo: 2' - 36'\n\ud83d\udfe5 Cart\u00f5es vermelhos: 0 - 0\n\ud83c\udfaf Chutes ao lado: 8 - 8\n\u21aa\ufe0f \u00daltimo chute ao lado: 53' - 57'\n\ud83c\udfaf Chutes no alvo: 0 - 6\n\u21aa\ufe0f \u00daltimo chute no alvo: \u00f8 - 61'\n\ud83d\udcaf Posse de bola: 50% - 50%\n\ud83e\udde0 PI 1: 10 - 90\n\u26a1\ufe0f PI 2: 0 - 14\n\n\nLinks da partida:\n\nBet365 | Betfair","entities":[{"offset":712,"length":6,"type":"text_link","url":"https:\/\/www.bet365.bet.br\/#\/AX\/K%5EFerroviaria%20SP"},{"offset":712,"length":6,"type":"bold"},{"offset":721,"length":7,"type":"text_link","url":"https:\/\/betfair.bet.br\/exchange\/plus\/en\/football\/brazilian-serie-b\/ferroviaria-v-athletico-pr-betting-34943500"},{"offset":721,"length":7,"type":"bold"}],"link_preview_options":{"url":"https:\/\/www.bet365.bet.br\/"}}}
+✅ Tipo: CHANNEL_POST
+Texto extraído: Oportunidade! 🚨
+
+📊 🚨 OVER ( +0.5 ⚽️GOL  ) FT
+
+
+⚽️ Ferroviaria SP (H) x Athletico Pa...
+É oportunidade? SIM
+É resultado? NÃO
+📨 Mensagem válida recebida
+   ID: 1368
+   Hora: 21:02:54
+   Tipo: OPORTUNIDADE
+💾 Salvando oportunidade...
+✅ OVER detectado: valor extraído = 0.5
+✅ Odds iniciais detectadas: Casa=4.75, Emp=3.6, Fora=1.75
+✅ Estádio detectado: Brazil Serie B
+✅ Extração concluída: valor_over=0.5, odds=1.58
+📝 Iniciando salvamento nos dados:
+   - valor_over: 0.5
+✅ Conexão com banco verificada e ativa
+✅ Query preparada com sucesso
+DEBUG: valor_over=0.5 (tipo: double)
+DEBUG: Pronto para bind_param
+DEBUG: Parâmetros - telegram_id=1368, valor_over=0.5, odds=1.58, result=
+✅ bind_param executado com sucesso
+✅ Insert executado com sucesso - ID: 356
+✅ Oportunidade salva com sucesso
+
+
+================================================================================
+[2025-11-17 00:56:09] Webhook acionado (VERSÃO NOVA COMPLETA)
+Dados recebidos: {"update_id":213069175,"channel_post":{"message_id":1369,"sender_chat":{"id":-1002047004959,"title":"Bateubet_VIP","type":"channel"},"chat":{"id":-1002047004959,"title":"Bateubet_VIP","type":"channel"},"date":1763351769,"text":"Oportunidade! \ud83d\udea8\n\n\ud83d\udcca \ud83d\udea8 OVER ( +1 \u26bd\ufe0fGOL  ) AS..\n\n\n\u26bd\ufe0f Ferroviaria SP (H) x Athletico Paranaense (A) (ao vivo)\n\n\u23f0 Tempo: 47'\nOdds iniciais: Casa: 4.75 - Emp. 3.6 - Fora: 1.75\n\ud83c\udfdf Brazil Serie B\n\n\ud83e\udd45 Placar: 0 - 0  \nGols over +1.0: 1.52 \nStake: 1%\n    \n\u26f3\ufe0f Escanteios: 1 - 2  \n\u21aa\ufe0f \u00daltimo escanteio: 38' - 40'\n\ud83d\udd25 Ataques perigosos: 17 - 17\n\ud83d\udd25 Ataques perigosos\/min. (5min.): 0.4 - 0.8\n\ud83d\udd25 Ataques perigosos\/min. (Total): 0.36 - 0.36\n\ud83d\udfe8 Cart\u00f5es amarelos: 1 - 3\n\u21aa\ufe0f \u00daltimo cart\u00e3o amarelo: 2' - 36'\n\ud83d\udfe5 Cart\u00f5es vermelhos: 0 - 0\n\ud83c\udfaf Chutes ao lado: 7 - 7\n\u21aa\ufe0f \u00daltimo chute ao lado: 48' - 44'\n\ud83c\udfaf Chutes no alvo: 0 - 3\n\u21aa\ufe0f \u00daltimo chute no alvo: \u00f8 - 40'\n\ud83d\udcaf Posse de bola: 52% - 48%\n\ud83e\udde0 PI 1: 30.4 - 49.6\n\u26a1\ufe0f PI 2: 4 - 8\n\n\nLinks da partida:\n\nBet365 | Betfair","entities":[{"offset":717,"length":6,"type":"text_link","url":"https:\/\/www.bet365.bet.br\/#\/AX\/K%5EFerroviaria%20SP"},{"offset":717,"length":6,"type":"bold"},{"offset":726,"length":7,"type":"text_link","url":"https:\/\/betfair.bet.br\/exchange\/plus\/en\/football\/brazilian-serie-b\/ferroviaria-v-athletico-pr-betting-34943500"},{"offset":726,"length":7,"type":"bold"}],"link_preview_options":{"url":"https:\/\/www.bet365.bet.br\/"}}}
+✅ Tipo: CHANNEL_POST
+Texto extraído: Oportunidade! 🚨
+
+📊 🚨 OVER ( +1 ⚽️GOL  ) AS..
+
+
+⚽️ Ferroviaria SP (H) x Athletico Pa...
+É oportunidade? SIM
+É resultado? NÃO
+📨 Mensagem válida recebida
+   ID: 1369
+   Hora: 00:56:09
+   Tipo: OPORTUNIDADE
+💾 Salvando oportunidade...
+✅ OVER detectado: valor extraído = 1
+✅ Odds iniciais detectadas: Casa=4.75, Emp=3.6, Fora=1.75
+✅ Estádio detectado: Brazil Serie B
+✅ Extração concluída: valor_over=1, odds=1.52
+📝 Iniciando salvamento nos dados:
+   - valor_over: 1
+✅ Conexão com banco verificada e ativa
+✅ Query preparada com sucesso
+DEBUG: valor_over=1 (tipo: double)
+DEBUG: Pronto para bind_param
+DEBUG: Parâmetros - telegram_id=1369, valor_over=1, odds=1.52, result=
+✅ bind_param executado com sucesso
+✅ Insert executado com sucesso - ID: 357
+✅ Oportunidade salva com sucesso
+
+
+================================================================================
+[2025-11-17 00:57:00] Webhook acionado (VERSÃO NOVA COMPLETA)
+Dados recebidos: {"update_id":213069176,"channel_post":{"message_id":1370,"sender_chat":{"id":-1002047004959,"title":"Bateubet_VIP","type":"channel"},"chat":{"id":-1002047004959,"title":"Bateubet_VIP","type":"channel"},"date":1763351820,"text":"Oportunidade! \ud83d\udea8\n\n\ud83d\udcca \ud83d\udea8 OVER ( +1\u26f3\ufe0f CANTOS ) AS..\n\n\n\u26bd\ufe0f Corinthians (H) x Ceara (A) (ao vivo)\n\n\u23f0 Tempo: 84'\nOdds iniciais: Casa: 1.7 - Emp. 3.4 - Fora: 6.0\n\ud83c\udfdf Brazil Serie A\n\n\ud83e\udd45 Placar: 0 - 1  \n\u21aa\ufe0f \u00daltimo gol: \u00f8 - 31'\nEscanteios over +1.0: 1.52 \nStake: 1%\n    \n\u26f3\ufe0f Escanteios: 9 - 4  \n\u21aa\ufe0f \u00daltimo escanteio: 76' - 83'\n\ud83d\udd25 Ataques perigosos: 69 - 17\n\ud83d\udd25 Ataques perigosos\/min. (5min.): 0.2 - 0.6\n\ud83d\udd25 Ataques perigosos\/min. (Total): 0.82 - 0.2\n\ud83d\udfe8 Cart\u00f5es amarelos: 0 - 5\n\u21aa\ufe0f \u00daltimo cart\u00e3o amarelo: \u00f8 - 81'\n\ud83d\udfe5 Cart\u00f5es vermelhos: 0 - 0\n\ud83c\udfaf Chutes ao lado: 10 - 3\n\u21aa\ufe0f \u00daltimo chute ao lado: 82' - 83'\n\ud83c\udfaf Chutes no alvo: 5 - 3\n\u21aa\ufe0f \u00daltimo chute no alvo: 70' - 67'\n\ud83d\udcaf Posse de bola: 77% - 23%\n\ud83e\udde0 PI 1: 55.4 - 24.6\n\u26a1\ufe0f PI 2: 2 - 6\n\n\nLinks da partida:\n\nBet365 | Betfair","entities":[{"offset":729,"length":6,"type":"text_link","url":"https:\/\/www.bet365.bet.br\/#\/AX\/K%5ECorinthians"},{"offset":729,"length":6,"type":"bold"},{"offset":738,"length":7,"type":"text_link","url":"https:\/\/betfair.bet.br\/exchange\/plus\/en\/football\/brazilian-serie-a\/corinthians-v-ceara-sc-fortaleza-betting-34920543"},{"offset":738,"length":7,"type":"bold"}],"link_preview_options":{"url":"https:\/\/www.bet365.bet.br\/"}}}
+✅ Tipo: CHANNEL_POST
+Texto extraído: Oportunidade! 🚨
+
+📊 🚨 OVER ( +1⛳️ CANTOS ) AS..
+
+
+⚽️ Corinthians (H) x Ceara (A) (ao...
+É oportunidade? SIM
+É resultado? NÃO
+📨 Mensagem válida recebida
+   ID: 1370
+   Hora: 00:57:00
+   Tipo: OPORTUNIDADE
+💾 Salvando oportunidade...
+✅ OVER detectado: valor extraído = 1
+✅ Odds iniciais detectadas: Casa=1.7, Emp=3.4, Fora=6
+✅ Estádio detectado: Brazil Serie A
+✅ CANTOS Odds detectado: Escanteios over +1.0: 1.52 => odds=1.52
+✅ Extração concluída: valor_over=1, odds=1.52
+📝 Iniciando salvamento nos dados:
+   - valor_over: 1
+✅ Conexão com banco verificada e ativa
+✅ Query preparada com sucesso
+DEBUG: valor_over=1 (tipo: double)
+DEBUG: Pronto para bind_param
+DEBUG: Parâmetros - telegram_id=1370, valor_over=1, odds=1.52, result=
+✅ bind_param executado com sucesso
+✅ Insert executado com sucesso - ID: 358
+✅ Oportunidade salva com sucesso
+
+
+================================================================================
+[2025-11-17 00:58:20] Webhook acionado (VERSÃO NOVA COMPLETA)
+Dados recebidos: {"update_id":213069177,"channel_post":{"message_id":1371,"sender_chat":{"id":-1002047004959,"title":"Bateubet_VIP","type":"channel"},"chat":{"id":-1002047004959,"title":"Bateubet_VIP","type":"channel"},"date":1763351900,"text":"Oportunidade! \ud83d\udea8\n\n\ud83d\udcca \ud83d\udea8 OVER ( +1 \u26bd\ufe0fGOL  ) AS..\n\n\n\u26bd\ufe0f Ferroviaria SP (H) x Athletico Paranaense (A) (ao vivo)\n\n\u23f0 Tempo: 47'\nOdds iniciais: Casa: 4.75 - Emp. 3.6 - Fora: 1.75\n\ud83c\udfdf Brazil Serie B\n\n\ud83e\udd45 Placar: 0 - 0  \nGols over +1.0: 1.52 \nStake: 1%\n    \n\u26f3\ufe0f Escanteios: 1 - 2  \n\u21aa\ufe0f \u00daltimo escanteio: 38' - 40'\n\ud83d\udd25 Ataques perigosos: 17 - 17\n\ud83d\udd25 Ataques perigosos\/min. (5min.): 0.4 - 0.8\n\ud83d\udd25 Ataques perigosos\/min. (Total): 0.36 - 0.36\n\ud83d\udfe8 Cart\u00f5es amarelos: 1 - 3\n\u21aa\ufe0f \u00daltimo cart\u00e3o amarelo: 2' - 36'\n\ud83d\udfe5 Cart\u00f5es vermelhos: 0 - 0\n\ud83c\udfaf Chutes ao lado: 7 - 7\n\u21aa\ufe0f \u00daltimo chute ao lado: 48' - 44'\n\ud83c\udfaf Chutes no alvo: 0 - 3\n\u21aa\ufe0f \u00daltimo chute no alvo: \u00f8 - 40'\n\ud83d\udcaf Posse de bola: 52% - 48%\n\ud83e\udde0 PI 1: 30.4 - 49.6\n\u26a1\ufe0f PI 2: 4 - 8\n\n\nLinks da partida:\n\nBet365 | Betfair","entities":[{"offset":717,"length":6,"type":"text_link","url":"https:\/\/www.bet365.bet.br\/#\/AX\/K%5EFerroviaria%20SP"},{"offset":717,"length":6,"type":"bold"},{"offset":726,"length":7,"type":"text_link","url":"https:\/\/betfair.bet.br\/exchange\/plus\/en\/football\/brazilian-serie-b\/ferroviaria-v-athletico-pr-betting-34943500"},{"offset":726,"length":7,"type":"bold"}],"link_preview_options":{"url":"https:\/\/www.bet365.bet.br\/"}}}
+✅ Tipo: CHANNEL_POST
+Texto extraído: Oportunidade! 🚨
+
+📊 🚨 OVER ( +1 ⚽️GOL  ) AS..
+
+
+⚽️ Ferroviaria SP (H) x Athletico Pa...
+É oportunidade? SIM
+É resultado? NÃO
+📨 Mensagem válida recebida
+   ID: 1371
+   Hora: 00:58:20
+   Tipo: OPORTUNIDADE
+💾 Salvando oportunidade...
+✅ OVER detectado: valor extraído = 1
+✅ Odds iniciais detectadas: Casa=4.75, Emp=3.6, Fora=1.75
+✅ Estádio detectado: Brazil Serie B
+✅ Extração concluída: valor_over=1, odds=1.52
+📝 Iniciando salvamento nos dados:
+   - valor_over: 1
+✅ Conexão com banco verificada e ativa
+✅ Query preparada com sucesso
+DEBUG: valor_over=1 (tipo: double)
+DEBUG: Pronto para bind_param
+DEBUG: Parâmetros - telegram_id=1371, valor_over=1, odds=1.52, result=
+✅ bind_param executado com sucesso
+✅ Insert executado com sucesso - ID: 359
+✅ Oportunidade salva com sucesso
+
+
+================================================================================
+[2025-11-17 00:59:44] Webhook acionado (VERSÃO NOVA COMPLETA)
+Dados recebidos: {"update_id":213069178,"channel_post":{"message_id":1372,"sender_chat":{"id":-1002047004959,"title":"Bateubet_VIP","type":"channel"},"chat":{"id":-1002047004959,"title":"Bateubet_VIP","type":"channel"},"date":1763351983,"text":"Oportunidade! \ud83d\udea8\n\n\ud83d\udcca \ud83d\udea8 OVER ( +0.5 \u26bd\ufe0fGOL  ) FT\n\n\n\u26bd\ufe0f Once Caldas (H) x Deportivo Pasto (A) (ao vivo)\n\n\u23f0 Tempo: 63'\nOdds iniciais: Casa: 1.6 - Emp. 3.75 - Fora: 5.75\n\ud83c\udfdf Colombia Primera A\n\n\ud83e\udd45 Placar: 1 - 0  \n\u21aa\ufe0f \u00daltimo gol: 9' - \u00f8\nGols over +0.5: 1.54 \nStake: 1%\n    \nLinks da partida:\n\nBet365 | Betfair","entities":[{"offset":285,"length":6,"type":"text_link","url":"https:\/\/www.bet365.bet.br\/#\/AX\/K%5EOnce%20Caldas"},{"offset":285,"length":6,"type":"bold"},{"offset":294,"length":7,"type":"text_link","url":"https:\/\/betfair.bet.br\/exchange\/plus\/en\/football\/colombian-primera-a\/once-caldas-v-deportivo-pasto-betting-34918581"},{"offset":294,"length":7,"type":"bold"}],"link_preview_options":{"url":"https:\/\/www.bet365.bet.br\/"}}}
+✅ Tipo: CHANNEL_POST
+Texto extraído: Oportunidade! 🚨
+
+📊 🚨 OVER ( +0.5 ⚽️GOL  ) FT
+
+
+⚽️ Once Caldas (H) x Deportivo Pasto...
+É oportunidade? SIM
+É resultado? NÃO
+📨 Mensagem válida recebida
+   ID: 1372
+   Hora: 00:59:43
+   Tipo: OPORTUNIDADE
+💾 Salvando oportunidade...
+✅ OVER detectado: valor extraído = 0.5
+✅ Odds iniciais detectadas: Casa=1.6, Emp=3.75, Fora=5.75
+✅ Estádio detectado: Colombia Primera A
+✅ Extração concluída: valor_over=0.5, odds=1.54
+📝 Iniciando salvamento nos dados:
+   - valor_over: 0.5
+✅ Conexão com banco verificada e ativa
+✅ Query preparada com sucesso
+DEBUG: valor_over=0.5 (tipo: double)
+DEBUG: Pronto para bind_param
+DEBUG: Parâmetros - telegram_id=1372, valor_over=0.5, odds=1.54, result=
+✅ bind_param executado com sucesso
+✅ Insert executado com sucesso - ID: 360
+✅ Oportunidade salva com sucesso
+
+
+================================================================================
+[2025-11-17 01:10:53] Webhook acionado (VERSÃO NOVA COMPLETA)
+Dados recebidos: {"update_id":213069179,"channel_post":{"message_id":1373,"sender_chat":{"id":-1002047004959,"title":"Bateubet_VIP","type":"channel"},"chat":{"id":-1002047004959,"title":"Bateubet_VIP","type":"channel"},"date":1763352653,"text":"Oportunidade! \ud83d\udea8\n\n\ud83d\udcca \ud83d\udea8 OVER ( +1 \u26bd\ufe0fGOL  ) AS..\n\n\n\u26bd\ufe0f Ferroviaria SP (H) x Athletico Paranaense (A) (ao vivo)\n\n\u23f0 Tempo: 47'\nOdds iniciais: Casa: 4.75 - Emp. 3.6 - Fora: 1.75\n\ud83c\udfdf Brazil Serie B\n\n\ud83e\udd45 Placar: 0 - 0  \nGols over +1.0: 1.52 \nStake: 1%\n    \n\u26f3\ufe0f Escanteios: 1 - 2  \n\u21aa\ufe0f \u00daltimo escanteio: 38' - 40'\n\ud83d\udd25 Ataques perigosos: 17 - 17\n\ud83d\udd25 Ataques perigosos\/min. (5min.): 0.4 - 0.8\n\ud83d\udd25 Ataques perigosos\/min. (Total): 0.36 - 0.36\n\ud83d\udfe8 Cart\u00f5es amarelos: 1 - 3\n\u21aa\ufe0f \u00daltimo cart\u00e3o amarelo: 2' - 36'\n\ud83d\udfe5 Cart\u00f5es vermelhos: 0 - 0\n\ud83c\udfaf Chutes ao lado: 7 - 7\n\u21aa\ufe0f \u00daltimo chute ao lado: 48' - 44'\n\ud83c\udfaf Chutes no alvo: 0 - 3\n\u21aa\ufe0f \u00daltimo chute no alvo: \u00f8 - 40'\n\ud83d\udcaf Posse de bola: 52% - 48%\n\ud83e\udde0 PI 1: 30.4 - 49.6\n\u26a1\ufe0f PI 2: 4 - 8\n\n\nLinks da partida:\n\nBet365 | Betfair","entities":[{"offset":717,"length":6,"type":"text_link","url":"https:\/\/www.bet365.bet.br\/#\/AX\/K%5EFerroviaria%20SP"},{"offset":717,"length":6,"type":"bold"},{"offset":726,"length":7,"type":"text_link","url":"https:\/\/betfair.bet.br\/exchange\/plus\/en\/football\/brazilian-serie-b\/ferroviaria-v-athletico-pr-betting-34943500"},{"offset":726,"length":7,"type":"bold"}],"link_preview_options":{"url":"https:\/\/www.bet365.bet.br\/"}}}
+✅ Tipo: CHANNEL_POST
+Texto extraído: Oportunidade! 🚨
+
+📊 🚨 OVER ( +1 ⚽️GOL  ) AS..
+
+
+⚽️ Ferroviaria SP (H) x Athletico Pa...
+É oportunidade? SIM
+É resultado? NÃO
+📨 Mensagem válida recebida
+   ID: 1373
+   Hora: 01:10:53
+   Tipo: OPORTUNIDADE
+💾 Salvando oportunidade...
+✅ OVER detectado: valor extraído = 1
+✅ Odds iniciais detectadas: Casa=4.75, Emp=3.6, Fora=1.75
+✅ Estádio detectado: Brazil Serie B
+✅ Extração concluída: valor_over=1, odds=1.52
+📝 Iniciando salvamento nos dados:
+   - valor_over: 1
+✅ Conexão com banco verificada e ativa
+✅ Query preparada com sucesso
+DEBUG: valor_over=1 (tipo: double)
+DEBUG: Pronto para bind_param
+DEBUG: Parâmetros - telegram_id=1373, valor_over=1, odds=1.52, result=
+✅ bind_param executado com sucesso
+✅ Insert executado com sucesso - ID: 361
+✅ Oportunidade salva com sucesso
+
+
+================================================================================
+[2025-11-17 01:11:31] Webhook acionado (VERSÃO NOVA COMPLETA)
+Dados recebidos: {"update_id":213069180,"channel_post":{"message_id":1374,"sender_chat":{"id":-1002047004959,"title":"Bateubet_VIP","type":"channel"},"chat":{"id":-1002047004959,"title":"Bateubet_VIP","type":"channel"},"date":1763352691,"text":"Oportunidade! \ud83d\udea8\n\n\ud83d\udcca \ud83d\udea8 OVER ( +1\u26f3\ufe0f CANTOS ) AS..\n\n\n\u26bd\ufe0f Corinthians (H) x Ceara (A) (ao vivo)\n\n\u23f0 Tempo: 84'\nOdds iniciais: Casa: 1.7 - Emp. 3.4 - Fora: 6.0\n\ud83c\udfdf Brazil Serie A\n\n\ud83e\udd45 Placar: 0 - 1  \n\u21aa\ufe0f \u00daltimo gol: \u00f8 - 31'\nEscanteios over +1.0: 1.52 \nStake: 1%\n    \n\u26f3\ufe0f Escanteios: 9 - 4  \n\u21aa\ufe0f \u00daltimo escanteio: 76' - 83'\n\ud83d\udd25 Ataques perigosos: 69 - 17\n\ud83d\udd25 Ataques perigosos\/min. (5min.): 0.2 - 0.6\n\ud83d\udd25 Ataques perigosos\/min. (Total): 0.82 - 0.2\n\ud83d\udfe8 Cart\u00f5es amarelos: 0 - 5\n\u21aa\ufe0f \u00daltimo cart\u00e3o amarelo: \u00f8 - 81'\n\ud83d\udfe5 Cart\u00f5es vermelhos: 0 - 0\n\ud83c\udfaf Chutes ao lado: 10 - 3\n\u21aa\ufe0f \u00daltimo chute ao lado: 82' - 83'\n\ud83c\udfaf Chutes no alvo: 5 - 3\n\u21aa\ufe0f \u00daltimo chute no alvo: 70' - 67'\n\ud83d\udcaf Posse de bola: 77% - 23%\n\ud83e\udde0 PI 1: 55.4 - 24.6\n\u26a1\ufe0f PI 2: 2 - 6\n\n\nLinks da partida:\n\nBet365 | Betfair","entities":[{"offset":729,"length":6,"type":"text_link","url":"https:\/\/www.bet365.bet.br\/#\/AX\/K%5ECorinthians"},{"offset":729,"length":6,"type":"bold"},{"offset":738,"length":7,"type":"text_link","url":"https:\/\/betfair.bet.br\/exchange\/plus\/en\/football\/brazilian-serie-a\/corinthians-v-ceara-sc-fortaleza-betting-34920543"},{"offset":738,"length":7,"type":"bold"}],"link_preview_options":{"url":"https:\/\/www.bet365.bet.br\/"}}}
+✅ Tipo: CHANNEL_POST
+Texto extraído: Oportunidade! 🚨
+
+📊 🚨 OVER ( +1⛳️ CANTOS ) AS..
+
+
+⚽️ Corinthians (H) x Ceara (A) (ao...
+É oportunidade? SIM
+É resultado? NÃO
+📨 Mensagem válida recebida
+   ID: 1374
+   Hora: 01:11:31
+   Tipo: OPORTUNIDADE
+💾 Salvando oportunidade...
+✅ OVER detectado: valor extraído = 1
+✅ Odds iniciais detectadas: Casa=1.7, Emp=3.4, Fora=6
+✅ Estádio detectado: Brazil Serie A
+✅ CANTOS Odds detectado: Escanteios over +1.0: 1.52 => odds=1.52
+✅ Extração concluída: valor_over=1, odds=1.52
+📝 Iniciando salvamento nos dados:
+   - valor_over: 1
+✅ Conexão com banco verificada e ativa
+✅ Query preparada com sucesso
+DEBUG: valor_over=1 (tipo: double)
+DEBUG: Pronto para bind_param
+DEBUG: Parâmetros - telegram_id=1374, valor_over=1, odds=1.52, result=
+✅ bind_param executado com sucesso
+✅ Insert executado com sucesso - ID: 362
+✅ Oportunidade salva com sucesso
+
+
+================================================================================
+[2025-11-17 01:11:44] Webhook acionado (VERSÃO NOVA COMPLETA)
+Dados recebidos: {"update_id":213069181,"channel_post":{"message_id":1375,"sender_chat":{"id":-1002047004959,"title":"Bateubet_VIP","type":"channel"},"chat":{"id":-1002047004959,"title":"Bateubet_VIP","type":"channel"},"date":1763352704,"text":"Oportunidade! \ud83d\udea8\n\n\ud83d\udcca \ud83d\udea8 OVER ( +0.5 \u26bd\ufe0fGOL  ) FT\n\n\n\u26bd\ufe0f Once Caldas (H) x Deportivo Pasto (A) (ao vivo)\n\n\u23f0 Tempo: 63'\nOdds iniciais: Casa: 1.6 - Emp. 3.75 - Fora: 5.75\n\ud83c\udfdf Colombia Primera A\n\n\ud83e\udd45 Placar: 1 - 0  \n\u21aa\ufe0f \u00daltimo gol: 9' - \u00f8\nGols over +0.5: 1.54 \nStake: 1%\n    \nLinks da partida:\n\nBet365 | Betfair","entities":[{"offset":285,"length":6,"type":"text_link","url":"https:\/\/www.bet365.bet.br\/#\/AX\/K%5EOnce%20Caldas"},{"offset":285,"length":6,"type":"bold"},{"offset":294,"length":7,"type":"text_link","url":"https:\/\/betfair.bet.br\/exchange\/plus\/en\/football\/colombian-primera-a\/once-caldas-v-deportivo-pasto-betting-34918581"},{"offset":294,"length":7,"type":"bold"}],"link_preview_options":{"url":"https:\/\/www.bet365.bet.br\/"}}}
+✅ Tipo: CHANNEL_POST
+Texto extraído: Oportunidade! 🚨
+
+📊 🚨 OVER ( +0.5 ⚽️GOL  ) FT
+
+
+⚽️ Once Caldas (H) x Deportivo Pasto...
+É oportunidade? SIM
+É resultado? NÃO
+📨 Mensagem válida recebida
+   ID: 1375
+   Hora: 01:11:44
+   Tipo: OPORTUNIDADE
+💾 Salvando oportunidade...
+✅ OVER detectado: valor extraído = 0.5
+✅ Odds iniciais detectadas: Casa=1.6, Emp=3.75, Fora=5.75
+✅ Estádio detectado: Colombia Primera A
+✅ Extração concluída: valor_over=0.5, odds=1.54
+📝 Iniciando salvamento nos dados:
+   - valor_over: 0.5
+✅ Conexão com banco verificada e ativa
+✅ Query preparada com sucesso
+DEBUG: valor_over=0.5 (tipo: double)
+DEBUG: Pronto para bind_param
+DEBUG: Parâmetros - telegram_id=1375, valor_over=0.5, odds=1.54, result=
+✅ bind_param executado com sucesso
+✅ Insert executado com sucesso - ID: 363
+✅ Oportunidade salva com sucesso
+
+
+================================================================================
+[2025-11-17 01:15:20] Webhook acionado (VERSÃO NOVA COMPLETA)
+Dados recebidos: {"update_id":213069182,"channel_post":{"message_id":1376,"sender_chat":{"id":-1002047004959,"title":"Bateubet_VIP","type":"channel"},"chat":{"id":-1002047004959,"title":"Bateubet_VIP","type":"channel"},"date":1763352919,"text":"Oportunidade! \ud83d\udea8\n\n\ud83d\udcca \ud83d\udea8 OVER ( +1 \u26bd\ufe0fGOL  ) AS..\n\n\n\u26bd\ufe0f Ferroviaria SP (H) x Athletico Paranaense (A) (ao vivo)\n\n\u23f0 Tempo: 47'\nOdds iniciais: Casa: 4.75 - Emp. 3.6 - Fora: 1.75\n\ud83c\udfdf Brazil Serie B\n\n\ud83e\udd45 Placar: 0 - 0  \nGols over +1.0: 1.52 \nStake: 1%\n    \n\u26f3\ufe0f Escanteios: 1 - 2  \n\u21aa\ufe0f \u00daltimo escanteio: 38' - 40'\n\ud83d\udd25 Ataques perigosos: 17 - 17\n\ud83d\udd25 Ataques perigosos\/min. (5min.): 0.4 - 0.8\n\ud83d\udd25 Ataques perigosos\/min. (Total): 0.36 - 0.36\n\ud83d\udfe8 Cart\u00f5es amarelos: 1 - 3\n\u21aa\ufe0f \u00daltimo cart\u00e3o amarelo: 2' - 36'\n\ud83d\udfe5 Cart\u00f5es vermelhos: 0 - 0\n\ud83c\udfaf Chutes ao lado: 7 - 7\n\u21aa\ufe0f \u00daltimo chute ao lado: 48' - 44'\n\ud83c\udfaf Chutes no alvo: 0 - 3\n\u21aa\ufe0f \u00daltimo chute no alvo: \u00f8 - 40'\n\ud83d\udcaf Posse de bola: 52% - 48%\n\ud83e\udde0 PI 1: 30.4 - 49.6\n\u26a1\ufe0f PI 2: 4 - 8\n\n\nLinks da partida:\n\nBet365 | Betfair","entities":[{"offset":717,"length":6,"type":"text_link","url":"https:\/\/www.bet365.bet.br\/#\/AX\/K%5EFerroviaria%20SP"},{"offset":717,"length":6,"type":"bold"},{"offset":726,"length":7,"type":"text_link","url":"https:\/\/betfair.bet.br\/exchange\/plus\/en\/football\/brazilian-serie-b\/ferroviaria-v-athletico-pr-betting-34943500"},{"offset":726,"length":7,"type":"bold"}],"link_preview_options":{"url":"https:\/\/www.bet365.bet.br\/"}}}
+✅ Tipo: CHANNEL_POST
+Texto extraído: Oportunidade! 🚨
+
+📊 🚨 OVER ( +1 ⚽️GOL  ) AS..
+
+
+⚽️ Ferroviaria SP (H) x Athletico Pa...
+É oportunidade? SIM
+É resultado? NÃO
+📨 Mensagem válida recebida
+   ID: 1376
+   Hora: 01:15:19
+   Tipo: OPORTUNIDADE
+💾 Salvando oportunidade...
+✅ OVER detectado: valor extraído = 1
+✅ Odds iniciais detectadas: Casa=4.75, Emp=3.6, Fora=1.75
+✅ Estádio detectado: Brazil Serie B
+✅ Extração concluída: valor_over=1, odds=1.52
+📝 Iniciando salvamento nos dados:
+   - valor_over: 1
+✅ Conexão com banco verificada e ativa
+✅ Query preparada com sucesso
+DEBUG: valor_over=1 (tipo: double)
+DEBUG: Pronto para bind_param
+DEBUG: Parâmetros - telegram_id=1376, valor_over=1, odds=1.52, result=
+✅ bind_param executado com sucesso
+✅ Insert executado com sucesso - ID: 364
+✅ Oportunidade salva com sucesso
+
+
+================================================================================
+[2025-11-17 01:17:51] Webhook acionado (VERSÃO NOVA COMPLETA)
+Dados recebidos: {"update_id":213069183,"channel_post":{"message_id":1377,"sender_chat":{"id":-1002047004959,"title":"Bateubet_VIP","type":"channel"},"chat":{"id":-1002047004959,"title":"Bateubet_VIP","type":"channel"},"date":1763353070,"text":"Oportunidade! \ud83d\udea8\n\n\ud83d\udcca \ud83d\udea8 OVER ( +1 \u26bd\ufe0fGOL  ) AS..\n\n\n\u26bd\ufe0f Ferroviaria SP (H) x Athletico Paranaense (A) (ao vivo)\n\n\u23f0 Tempo: 47'\nOdds iniciais: Casa: 4.75 - Emp. 3.6 - Fora: 1.75\n\ud83c\udfdf Brazil Serie B\n\n\ud83e\udd45 Placar: 0 - 0  \nGols over +1.0: 1.52 \nStake: 1%\n    \n\u26f3\ufe0f Escanteios: 1 - 2  \n\u21aa\ufe0f \u00daltimo escanteio: 38' - 40'\n\ud83d\udd25 Ataques perigosos: 17 - 17\n\ud83d\udd25 Ataques perigosos\/min. (5min.): 0.4 - 0.8\n\ud83d\udd25 Ataques perigosos\/min. (Total): 0.36 - 0.36\n\ud83d\udfe8 Cart\u00f5es amarelos: 1 - 3\n\u21aa\ufe0f \u00daltimo cart\u00e3o amarelo: 2' - 36'\n\ud83d\udfe5 Cart\u00f5es vermelhos: 0 - 0\n\ud83c\udfaf Chutes ao lado: 7 - 7\n\u21aa\ufe0f \u00daltimo chute ao lado: 48' - 44'\n\ud83c\udfaf Chutes no alvo: 0 - 3\n\u21aa\ufe0f \u00daltimo chute no alvo: \u00f8 - 40'\n\ud83d\udcaf Posse de bola: 52% - 48%\n\ud83e\udde0 PI 1: 30.4 - 49.6\n\u26a1\ufe0f PI 2: 4 - 8\n\n\nLinks da partida:\n\nBet365 | Betfair","entities":[{"offset":717,"length":6,"type":"text_link","url":"https:\/\/www.bet365.bet.br\/#\/AX\/K%5EFerroviaria%20SP"},{"offset":717,"length":6,"type":"bold"},{"offset":726,"length":7,"type":"text_link","url":"https:\/\/betfair.bet.br\/exchange\/plus\/en\/football\/brazilian-serie-b\/ferroviaria-v-athletico-pr-betting-34943500"},{"offset":726,"length":7,"type":"bold"}],"link_preview_options":{"url":"https:\/\/www.bet365.bet.br\/"}}}
+✅ Tipo: CHANNEL_POST
+Texto extraído: Oportunidade! 🚨
+
+📊 🚨 OVER ( +1 ⚽️GOL  ) AS..
+
+
+⚽️ Ferroviaria SP (H) x Athletico Pa...
+É oportunidade? SIM
+É resultado? NÃO
+📨 Mensagem válida recebida
+   ID: 1377
+   Hora: 01:17:50
+   Tipo: OPORTUNIDADE
+💾 Salvando oportunidade...
+✅ OVER detectado: valor extraído = 1
+✅ Odds iniciais detectadas: Casa=4.75, Emp=3.6, Fora=1.75
+✅ Estádio detectado: Brazil Serie B
+✅ Extração concluída: valor_over=1, odds=1.52
+📝 Iniciando salvamento nos dados:
+   - valor_over: 1
+✅ Conexão com banco verificada e ativa
+✅ Query preparada com sucesso
+DEBUG: valor_over=1 (tipo: double)
+DEBUG: Pronto para bind_param
+DEBUG: Parâmetros - telegram_id=1377, valor_over=1, odds=1.52, result=
+✅ bind_param executado com sucesso
+✅ Insert executado com sucesso - ID: 365
+✅ Oportunidade salva com sucesso
+
+
+================================================================================
+[2025-11-17 01:18:08] Webhook acionado (VERSÃO NOVA COMPLETA)
+Dados recebidos: {"update_id":213069184,"channel_post":{"message_id":1378,"sender_chat":{"id":-1002047004959,"title":"Bateubet_VIP","type":"channel"},"chat":{"id":-1002047004959,"title":"Bateubet_VIP","type":"channel"},"date":1763353087,"text":"Oportunidade! \ud83d\udea8\n\n\ud83d\udcca \ud83d\udea8 OVER ( +1\u26f3\ufe0f CANTOS ) AS..\n\n\n\u26bd\ufe0f Corinthians (H) x Ceara (A) (ao vivo)\n\n\u23f0 Tempo: 84'\nOdds iniciais: Casa: 1.7 - Emp. 3.4 - Fora: 6.0\n\ud83c\udfdf Brazil Serie A\n\n\ud83e\udd45 Placar: 0 - 1  \n\u21aa\ufe0f \u00daltimo gol: \u00f8 - 31'\nEscanteios over +1.0: 1.52 \nStake: 1%\n    \n\u26f3\ufe0f Escanteios: 9 - 4  \n\u21aa\ufe0f \u00daltimo escanteio: 76' - 83'\n\ud83d\udd25 Ataques perigosos: 69 - 17\n\ud83d\udd25 Ataques perigosos\/min. (5min.): 0.2 - 0.6\n\ud83d\udd25 Ataques perigosos\/min. (Total): 0.82 - 0.2\n\ud83d\udfe8 Cart\u00f5es amarelos: 0 - 5\n\u21aa\ufe0f \u00daltimo cart\u00e3o amarelo: \u00f8 - 81'\n\ud83d\udfe5 Cart\u00f5es vermelhos: 0 - 0\n\ud83c\udfaf Chutes ao lado: 10 - 3\n\u21aa\ufe0f \u00daltimo chute ao lado: 82' - 83'\n\ud83c\udfaf Chutes no alvo: 5 - 3\n\u21aa\ufe0f \u00daltimo chute no alvo: 70' - 67'\n\ud83d\udcaf Posse de bola: 77% - 23%\n\ud83e\udde0 PI 1: 55.4 - 24.6\n\u26a1\ufe0f PI 2: 2 - 6\n\n\nLinks da partida:\n\nBet365 | Betfair","entities":[{"offset":729,"length":6,"type":"text_link","url":"https:\/\/www.bet365.bet.br\/#\/AX\/K%5ECorinthians"},{"offset":729,"length":6,"type":"bold"},{"offset":738,"length":7,"type":"text_link","url":"https:\/\/betfair.bet.br\/exchange\/plus\/en\/football\/brazilian-serie-a\/corinthians-v-ceara-sc-fortaleza-betting-34920543"},{"offset":738,"length":7,"type":"bold"}],"link_preview_options":{"url":"https:\/\/www.bet365.bet.br\/"}}}
+✅ Tipo: CHANNEL_POST
+Texto extraído: Oportunidade! 🚨
+
+📊 🚨 OVER ( +1⛳️ CANTOS ) AS..
+
+
+⚽️ Corinthians (H) x Ceara (A) (ao...
+É oportunidade? SIM
+É resultado? NÃO
+📨 Mensagem válida recebida
+   ID: 1378
+   Hora: 01:18:07
+   Tipo: OPORTUNIDADE
+💾 Salvando oportunidade...
+✅ OVER detectado: valor extraído = 1
+✅ Odds iniciais detectadas: Casa=1.7, Emp=3.4, Fora=6
+✅ Estádio detectado: Brazil Serie A
+✅ CANTOS Odds detectado: Escanteios over +1.0: 1.52 => odds=1.52
+✅ Extração concluída: valor_over=1, odds=1.52
+📝 Iniciando salvamento nos dados:
+   - valor_over: 1
+✅ Conexão com banco verificada e ativa
+✅ Query preparada com sucesso
+DEBUG: valor_over=1 (tipo: double)
+DEBUG: Pronto para bind_param
+DEBUG: Parâmetros - telegram_id=1378, valor_over=1, odds=1.52, result=
+✅ bind_param executado com sucesso
+✅ Insert executado com sucesso - ID: 366
+✅ Oportunidade salva com sucesso
+
+
+================================================================================
+[2025-11-17 01:21:46] Webhook acionado (VERSÃO NOVA COMPLETA)
+Dados recebidos: {"update_id":213069185,"channel_post":{"message_id":1379,"sender_chat":{"id":-1002047004959,"title":"Bateubet_VIP","type":"channel"},"chat":{"id":-1002047004959,"title":"Bateubet_VIP","type":"channel"},"date":1763353305,"text":"Oportunidade! \ud83d\udea8\n\n\ud83d\udcca \ud83d\udea8 OVER ( +1\u26f3\ufe0f CANTOS ) AS..\n\n\n\u26bd\ufe0f Corinthians (H) x Ceara (A) (ao vivo)\n\n\u23f0 Tempo: 84'\nOdds iniciais: Casa: 1.7 - Emp. 3.4 - Fora: 6.0\n\ud83c\udfdf Brazil Serie A\n\n\ud83e\udd45 Placar: 0 - 1  \n\u21aa\ufe0f \u00daltimo gol: \u00f8 - 31'\nEscanteios over +1.0: 1.52 \nStake: 1%\n    \n\u26f3\ufe0f Escanteios: 9 - 4  \n\u21aa\ufe0f \u00daltimo escanteio: 76' - 83'\n\ud83d\udd25 Ataques perigosos: 69 - 17\n\ud83d\udd25 Ataques perigosos\/min. (5min.): 0.2 - 0.6\n\ud83d\udd25 Ataques perigosos\/min. (Total): 0.82 - 0.2\n\ud83d\udfe8 Cart\u00f5es amarelos: 0 - 5\n\u21aa\ufe0f \u00daltimo cart\u00e3o amarelo: \u00f8 - 81'\n\ud83d\udfe5 Cart\u00f5es vermelhos: 0 - 0\n\ud83c\udfaf Chutes ao lado: 10 - 3\n\u21aa\ufe0f \u00daltimo chute ao lado: 82' - 83'\n\ud83c\udfaf Chutes no alvo: 5 - 3\n\u21aa\ufe0f \u00daltimo chute no alvo: 70' - 67'\n\ud83d\udcaf Posse de bola: 77% - 23%\n\ud83e\udde0 PI 1: 55.4 - 24.6\n\u26a1\ufe0f PI 2: 2 - 6\n\n\nLinks da partida:\n\nBet365 | Betfair","entities":[{"offset":729,"length":6,"type":"text_link","url":"https:\/\/www.bet365.bet.br\/#\/AX\/K%5ECorinthians"},{"offset":729,"length":6,"type":"bold"},{"offset":738,"length":7,"type":"text_link","url":"https:\/\/betfair.bet.br\/exchange\/plus\/en\/football\/brazilian-serie-a\/corinthians-v-ceara-sc-fortaleza-betting-34920543"},{"offset":738,"length":7,"type":"bold"}],"link_preview_options":{"url":"https:\/\/www.bet365.bet.br\/"}}}
+✅ Tipo: CHANNEL_POST
+Texto extraído: Oportunidade! 🚨
+
+📊 🚨 OVER ( +1⛳️ CANTOS ) AS..
+
+
+⚽️ Corinthians (H) x Ceara (A) (ao...
+É oportunidade? SIM
+É resultado? NÃO
+📨 Mensagem válida recebida
+   ID: 1379
+   Hora: 01:21:45
+   Tipo: OPORTUNIDADE
+💾 Salvando oportunidade...
+✅ OVER detectado: valor extraído = 1
+✅ Odds iniciais detectadas: Casa=1.7, Emp=3.4, Fora=6
+✅ Estádio detectado: Brazil Serie A
+✅ CANTOS Odds detectado: Escanteios over +1.0: 1.52 => odds=1.52
+✅ Extração concluída: valor_over=1, odds=1.52
+📝 Iniciando salvamento nos dados:
+   - valor_over: 1
+✅ Conexão com banco verificada e ativa
+✅ Query preparada com sucesso
+DEBUG: valor_over=1 (tipo: double)
+DEBUG: Pronto para bind_param
+DEBUG: Parâmetros - telegram_id=1379, valor_over=1, odds=1.52, result=
+✅ bind_param executado com sucesso
+✅ Insert executado com sucesso - ID: 367
+✅ Oportunidade salva com sucesso
+
+
+================================================================================
+[2025-11-17 01:26:37] Webhook acionado (VERSÃO NOVA COMPLETA)
+Dados recebidos: {"update_id":213069186,"channel_post":{"message_id":1380,"sender_chat":{"id":-1002047004959,"title":"Bateubet_VIP","type":"channel"},"chat":{"id":-1002047004959,"title":"Bateubet_VIP","type":"channel"},"date":1763353596,"text":"Oportunidade! \ud83d\udea8\n\n\ud83d\udcca \ud83d\udea8 OVER ( +1\u26f3\ufe0f CANTOS ) AS..\n\n\n\u26bd\ufe0f Corinthians (H) x Ceara (A) (ao vivo)\n\n\u23f0 Tempo: 84'\nOdds iniciais: Casa: 1.7 - Emp. 3.4 - Fora: 6.0\n\ud83c\udfdf Brazil Serie A\n\n\ud83e\udd45 Placar: 0 - 1  \n\u21aa\ufe0f \u00daltimo gol: \u00f8 - 31'\nEscanteios over +1.0: 1.52 \nStake: 1%\n    \n\u26f3\ufe0f Escanteios: 9 - 4  \n\u21aa\ufe0f \u00daltimo escanteio: 76' - 83'\n\ud83d\udd25 Ataques perigosos: 69 - 17\n\ud83d\udd25 Ataques perigosos\/min. (5min.): 0.2 - 0.6\n\ud83d\udd25 Ataques perigosos\/min. (Total): 0.82 - 0.2\n\ud83d\udfe8 Cart\u00f5es amarelos: 0 - 5\n\u21aa\ufe0f \u00daltimo cart\u00e3o amarelo: \u00f8 - 81'\n\ud83d\udfe5 Cart\u00f5es vermelhos: 0 - 0\n\ud83c\udfaf Chutes ao lado: 10 - 3\n\u21aa\ufe0f \u00daltimo chute ao lado: 82' - 83'\n\ud83c\udfaf Chutes no alvo: 5 - 3\n\u21aa\ufe0f \u00daltimo chute no alvo: 70' - 67'\n\ud83d\udcaf Posse de bola: 77% - 23%\n\ud83e\udde0 PI 1: 55.4 - 24.6\n\u26a1\ufe0f PI 2: 2 - 6\n\n\nLinks da partida:\n\nBet365 | Betfair","entities":[{"offset":729,"length":6,"type":"text_link","url":"https:\/\/www.bet365.bet.br\/#\/AX\/K%5ECorinthians"},{"offset":729,"length":6,"type":"bold"},{"offset":738,"length":7,"type":"text_link","url":"https:\/\/betfair.bet.br\/exchange\/plus\/en\/football\/brazilian-serie-a\/corinthians-v-ceara-sc-fortaleza-betting-34920543"},{"offset":738,"length":7,"type":"bold"}],"link_preview_options":{"url":"https:\/\/www.bet365.bet.br\/"}}}
+✅ Tipo: CHANNEL_POST
+Texto extraído: Oportunidade! 🚨
+
+📊 🚨 OVER ( +1⛳️ CANTOS ) AS..
+
+
+⚽️ Corinthians (H) x Ceara (A) (ao...
+É oportunidade? SIM
+É resultado? NÃO
+📨 Mensagem válida recebida
+   ID: 1380
+   Hora: 01:26:36
+   Tipo: OPORTUNIDADE
+💾 Salvando oportunidade...
+✅ OVER detectado: valor extraído = 1
+✅ Odds iniciais detectadas: Casa=1.7, Emp=3.4, Fora=6
+✅ Estádio detectado: Brazil Serie A
+✅ CANTOS Odds detectado: Escanteios over +1.0: 1.52 => odds=1.52
+✅ Extração concluída: valor_over=1, odds=1.52
+📝 Iniciando salvamento nos dados:
+   - valor_over: 1
+✅ Conexão com banco verificada e ativa
+✅ Query preparada com sucesso
+DEBUG: valor_over=1 (tipo: double)
+DEBUG: Pronto para bind_param
+DEBUG: Parâmetros - telegram_id=1380, valor_over=1, odds=1.52, result=
+✅ bind_param executado com sucesso
+✅ Insert executado com sucesso - ID: 368
+✅ Oportunidade salva com sucesso
+
+
+================================================================================
+[2025-11-17 01:27:54] Webhook acionado (VERSÃO NOVA COMPLETA)
+Dados recebidos: {"update_id":213069187,"channel_post":{"message_id":1381,"sender_chat":{"id":-1002047004959,"title":"Bateubet_VIP","type":"channel"},"chat":{"id":-1002047004959,"title":"Bateubet_VIP","type":"channel"},"date":1763353673,"text":"Oportunidade! \ud83d\udea8\n\n\ud83d\udcca \ud83d\udea8 OVER ( +1 \u26bd\ufe0fGOL  ) AS..\n\n\n\u26bd\ufe0f Ferroviaria SP (H) x Athletico Paranaense (A) (ao vivo)\n\n\u23f0 Tempo: 47'\nOdds iniciais: Casa: 4.75 - Emp. 3.6 - Fora: 1.75\n\ud83c\udfdf Brazil Serie B\n\n\ud83e\udd45 Placar: 0 - 0  \nGols over +1.0: 1.52 \nStake: 1%\n    \n\u26f3\ufe0f Escanteios: 1 - 2  \n\u21aa\ufe0f \u00daltimo escanteio: 38' - 40'\n\ud83d\udd25 Ataques perigosos: 17 - 17\n\ud83d\udd25 Ataques perigosos\/min. (5min.): 0.4 - 0.8\n\ud83d\udd25 Ataques perigosos\/min. (Total): 0.36 - 0.36\n\ud83d\udfe8 Cart\u00f5es amarelos: 1 - 3\n\u21aa\ufe0f \u00daltimo cart\u00e3o amarelo: 2' - 36'\n\ud83d\udfe5 Cart\u00f5es vermelhos: 0 - 0\n\ud83c\udfaf Chutes ao lado: 7 - 7\n\u21aa\ufe0f \u00daltimo chute ao lado: 48' - 44'\n\ud83c\udfaf Chutes no alvo: 0 - 3\n\u21aa\ufe0f \u00daltimo chute no alvo: \u00f8 - 40'\n\ud83d\udcaf Posse de bola: 52% - 48%\n\ud83e\udde0 PI 1: 30.4 - 49.6\n\u26a1\ufe0f PI 2: 4 - 8\n\n\nLinks da partida:\n\nBet365 | Betfair","entities":[{"offset":717,"length":6,"type":"text_link","url":"https:\/\/www.bet365.bet.br\/#\/AX\/K%5EFerroviaria%20SP"},{"offset":717,"length":6,"type":"bold"},{"offset":726,"length":7,"type":"text_link","url":"https:\/\/betfair.bet.br\/exchange\/plus\/en\/football\/brazilian-serie-b\/ferroviaria-v-athletico-pr-betting-34943500"},{"offset":726,"length":7,"type":"bold"}],"link_preview_options":{"url":"https:\/\/www.bet365.bet.br\/"}}}
+✅ Tipo: CHANNEL_POST
+Texto extraído: Oportunidade! 🚨
+
+📊 🚨 OVER ( +1 ⚽️GOL  ) AS..
+
+
+⚽️ Ferroviaria SP (H) x Athletico Pa...
+É oportunidade? SIM
+É resultado? NÃO
+📨 Mensagem válida recebida
+   ID: 1381
+   Hora: 01:27:53
+   Tipo: OPORTUNIDADE
+💾 Salvando oportunidade...
+✅ OVER detectado: valor extraído = 1
+✅ Odds iniciais detectadas: Casa=4.75, Emp=3.6, Fora=1.75
+✅ Estádio detectado: Brazil Serie B
+✅ Extração concluída: valor_over=1, odds=1.52
+📝 Iniciando salvamento nos dados:
+   - valor_over: 1
+✅ Conexão com banco verificada e ativa
+✅ Query preparada com sucesso
+DEBUG: valor_over=1 (tipo: double)
+DEBUG: Pronto para bind_param
+DEBUG: Parâmetros - telegram_id=1381, valor_over=1, odds=1.52, result=
+✅ bind_param executado com sucesso
+✅ Insert executado com sucesso - ID: 369
+✅ Oportunidade salva com sucesso
+
+
+================================================================================
+[2025-11-17 01:42:31] Webhook acionado (VERSÃO NOVA COMPLETA)
+Dados recebidos: {"update_id":213069188,"channel_post":{"message_id":1382,"sender_chat":{"id":-1002047004959,"title":"Bateubet_VIP","type":"channel"},"chat":{"id":-1002047004959,"title":"Bateubet_VIP","type":"channel"},"date":1763354550,"text":"Oportunidade! \ud83d\udea8\n\n\ud83d\udcca \ud83d\udea8 OVER ( +1\u26f3\ufe0f CANTOS ) AS..\n\n\n\u26bd\ufe0f Corinthians (H) x Ceara (A) (ao vivo)\n\n\u23f0 Tempo: 84'\nOdds iniciais: Casa: 1.7 - Emp. 3.4 - Fora: 6.0\n\ud83c\udfdf Brazil Serie A\n\n\ud83e\udd45 Placar: 0 - 1  \n\u21aa\ufe0f \u00daltimo gol: \u00f8 - 31'\nEscanteios over +1.0: 1.52 \nStake: 1%\n    \n\u26f3\ufe0f Escanteios: 9 - 4  \n\u21aa\ufe0f \u00daltimo escanteio: 76' - 83'\n\ud83d\udd25 Ataques perigosos: 69 - 17\n\ud83d\udd25 Ataques perigosos\/min. (5min.): 0.2 - 0.6\n\ud83d\udd25 Ataques perigosos\/min. (Total): 0.82 - 0.2\n\ud83d\udfe8 Cart\u00f5es amarelos: 0 - 5\n\u21aa\ufe0f \u00daltimo cart\u00e3o amarelo: \u00f8 - 81'\n\ud83d\udfe5 Cart\u00f5es vermelhos: 0 - 0\n\ud83c\udfaf Chutes ao lado: 10 - 3\n\u21aa\ufe0f \u00daltimo chute ao lado: 82' - 83'\n\ud83c\udfaf Chutes no alvo: 5 - 3\n\u21aa\ufe0f \u00daltimo chute no alvo: 70' - 67'\n\ud83d\udcaf Posse de bola: 77% - 23%\n\ud83e\udde0 PI 1: 55.4 - 24.6\n\u26a1\ufe0f PI 2: 2 - 6\n\n\nLinks da partida:\n\nBet365 | Betfair","entities":[{"offset":729,"length":6,"type":"text_link","url":"https:\/\/www.bet365.bet.br\/#\/AX\/K%5ECorinthians"},{"offset":729,"length":6,"type":"bold"},{"offset":738,"length":7,"type":"text_link","url":"https:\/\/betfair.bet.br\/exchange\/plus\/en\/football\/brazilian-serie-a\/corinthians-v-ceara-sc-fortaleza-betting-34920543"},{"offset":738,"length":7,"type":"bold"}],"link_preview_options":{"url":"https:\/\/www.bet365.bet.br\/"}}}
+✅ Tipo: CHANNEL_POST
+Texto extraído: Oportunidade! 🚨
+
+📊 🚨 OVER ( +1⛳️ CANTOS ) AS..
+
+
+⚽️ Corinthians (H) x Ceara (A) (ao...
+É oportunidade? SIM
+É resultado? NÃO
+📨 Mensagem válida recebida
+   ID: 1382
+   Hora: 01:42:30
+   Tipo: OPORTUNIDADE
+💾 Salvando oportunidade...
+✅ OVER detectado: valor extraído = 1
+✅ Odds iniciais detectadas: Casa=1.7, Emp=3.4, Fora=6
+✅ Estádio detectado: Brazil Serie A
+✅ CANTOS Odds detectado: Escanteios over +1.0: 1.52 => odds=1.52
+✅ Extração concluída: valor_over=1, odds=1.52
+📝 Iniciando salvamento nos dados:
+   - valor_over: 1
+✅ Conexão com banco verificada e ativa
+✅ Query preparada com sucesso
+DEBUG: valor_over=1 (tipo: double)
+DEBUG: Pronto para bind_param
+DEBUG: Parâmetros - telegram_id=1382, valor_over=1, odds=1.52, result=
+✅ bind_param executado com sucesso
+✅ Insert executado com sucesso - ID: 370
+✅ Oportunidade salva com sucesso
+
+
+================================================================================
+[2025-11-17 01:47:42] Webhook acionado (VERSÃO NOVA COMPLETA)
+Dados recebidos: {"update_id":213069189,"channel_post":{"message_id":1383,"sender_chat":{"id":-1002047004959,"title":"Bateubet_VIP","type":"channel"},"chat":{"id":-1002047004959,"title":"Bateubet_VIP","type":"channel"},"date":1763354862,"text":"Oportunidade! \ud83d\udea8\n\n\ud83d\udcca \ud83d\udea8 OVER ( +1\u26f3\ufe0f CANTOS ) AS..\n\n\n\u26bd\ufe0f Corinthians (H) x Ceara (A) (ao vivo)\n\n\u23f0 Tempo: 84'\nOdds iniciais: Casa: 1.7 - Emp. 3.4 - Fora: 6.0\n\ud83c\udfdf Brazil Serie A\n\n\ud83e\udd45 Placar: 0 - 1  \n\u21aa\ufe0f \u00daltimo gol: \u00f8 - 31'\nEscanteios over +1.0: 1.52 \nStake: 1%\n    \n\u26f3\ufe0f Escanteios: 9 - 4  \n\u21aa\ufe0f \u00daltimo escanteio: 76' - 83'\n\ud83d\udd25 Ataques perigosos: 69 - 17\n\ud83d\udd25 Ataques perigosos\/min. (5min.): 0.2 - 0.6\n\ud83d\udd25 Ataques perigosos\/min. (Total): 0.82 - 0.2\n\ud83d\udfe8 Cart\u00f5es amarelos: 0 - 5\n\u21aa\ufe0f \u00daltimo cart\u00e3o amarelo: \u00f8 - 81'\n\ud83d\udfe5 Cart\u00f5es vermelhos: 0 - 0\n\ud83c\udfaf Chutes ao lado: 10 - 3\n\u21aa\ufe0f \u00daltimo chute ao lado: 82' - 83'\n\ud83c\udfaf Chutes no alvo: 5 - 3\n\u21aa\ufe0f \u00daltimo chute no alvo: 70' - 67'\n\ud83d\udcaf Posse de bola: 77% - 23%\n\ud83e\udde0 PI 1: 55.4 - 24.6\n\u26a1\ufe0f PI 2: 2 - 6\n\n\nLinks da partida:\n\nBet365 | Betfair","entities":[{"offset":729,"length":6,"type":"text_link","url":"https:\/\/www.bet365.bet.br\/#\/AX\/K%5ECorinthians"},{"offset":729,"length":6,"type":"bold"},{"offset":738,"length":7,"type":"text_link","url":"https:\/\/betfair.bet.br\/exchange\/plus\/en\/football\/brazilian-serie-a\/corinthians-v-ceara-sc-fortaleza-betting-34920543"},{"offset":738,"length":7,"type":"bold"}],"link_preview_options":{"url":"https:\/\/www.bet365.bet.br\/"}}}
+✅ Tipo: CHANNEL_POST
+Texto extraído: Oportunidade! 🚨
+
+📊 🚨 OVER ( +1⛳️ CANTOS ) AS..
+
+
+⚽️ Corinthians (H) x Ceara (A) (ao...
+É oportunidade? SIM
+É resultado? NÃO
+📨 Mensagem válida recebida
+   ID: 1383
+   Hora: 01:47:42
+   Tipo: OPORTUNIDADE
+💾 Salvando oportunidade...
+✅ OVER detectado: valor extraído = 1
+✅ Odds iniciais detectadas: Casa=1.7, Emp=3.4, Fora=6
+✅ Estádio detectado: Brazil Serie A
+✅ CANTOS Odds detectado: Escanteios over +1.0: 1.52 => odds=1.52
+✅ Extração concluída: valor_over=1, odds=1.52
+📝 Iniciando salvamento nos dados:
+   - valor_over: 1
+✅ Conexão com banco verificada e ativa
+✅ Query preparada com sucesso
+DEBUG: valor_over=1 (tipo: double)
+DEBUG: Pronto para bind_param
+DEBUG: Parâmetros - telegram_id=1383, valor_over=1, odds=1.52, result=
+✅ bind_param executado com sucesso
+✅ Insert executado com sucesso - ID: 371
+✅ Oportunidade salva com sucesso
+
+
+================================================================================
+[2025-11-17 15:54:36] Webhook acionado (VERSÃO NOVA COMPLETA)
+Dados recebidos: {"update_id":213069190,"channel_post":{"message_id":1384,"sender_chat":{"id":-1002047004959,"title":"Bateubet_VIP","type":"channel"},"chat":{"id":-1002047004959,"title":"Bateubet_VIP","type":"channel"},"date":1763405675,"text":"Oportunidade! \ud83d\udea8\n\n\ud83d\udcca \ud83d\udea8 OVER ( +1 \u26bd\ufe0fGOL  ) AS..\n\n\n\u26bd\ufe0f Ferroviaria SP (H) x Athletico Paranaense (A) (ao vivo)\n\n\u23f0 Tempo: 47'\nOdds iniciais: Casa: 4.75 - Emp. 3.6 - Fora: 1.75\n\ud83c\udfdf Brazil Serie B\n\n\ud83e\udd45 Placar: 0 - 0  \nGols over +1.0: 1.52 \nStake: 1%\n    \n\u26f3\ufe0f Escanteios: 1 - 2  \n\u21aa\ufe0f \u00daltimo escanteio: 38' - 40'\n\ud83d\udd25 Ataques perigosos: 17 - 17\n\ud83d\udd25 Ataques perigosos\/min. (5min.): 0.4 - 0.8\n\ud83d\udd25 Ataques perigosos\/min. (Total): 0.36 - 0.36\n\ud83d\udfe8 Cart\u00f5es amarelos: 1 - 3\n\u21aa\ufe0f \u00daltimo cart\u00e3o amarelo: 2' - 36'\n\ud83d\udfe5 Cart\u00f5es vermelhos: 0 - 0\n\ud83c\udfaf Chutes ao lado: 7 - 7\n\u21aa\ufe0f \u00daltimo chute ao lado: 48' - 44'\n\ud83c\udfaf Chutes no alvo: 0 - 3\n\u21aa\ufe0f \u00daltimo chute no alvo: \u00f8 - 40'\n\ud83d\udcaf Posse de bola: 52% - 48%\n\ud83e\udde0 PI 1: 30.4 - 49.6\n\u26a1\ufe0f PI 2: 4 - 8\n\n\nLinks da partida:\n\nBet365 | Betfair","entities":[{"offset":717,"length":6,"type":"text_link","url":"https:\/\/www.bet365.bet.br\/#\/AX\/K%5EFerroviaria%20SP"},{"offset":717,"length":6,"type":"bold"},{"offset":726,"length":7,"type":"text_link","url":"https:\/\/betfair.bet.br\/exchange\/plus\/en\/football\/brazilian-serie-b\/ferroviaria-v-athletico-pr-betting-34943500"},{"offset":726,"length":7,"type":"bold"}],"link_preview_options":{"url":"https:\/\/www.bet365.bet.br\/"}}}
+✅ Tipo: CHANNEL_POST
+Texto extraído: Oportunidade! 🚨
+
+📊 🚨 OVER ( +1 ⚽️GOL  ) AS..
+
+
+⚽️ Ferroviaria SP (H) x Athletico Pa...
+É oportunidade? SIM
+É resultado? NÃO
+📨 Mensagem válida recebida
+   ID: 1384
+   Hora: 15:54:35
+   Tipo: OPORTUNIDADE
+💾 Salvando oportunidade...
+✅ OVER detectado: valor extraído = 1
+✅ Odds iniciais detectadas: Casa=4.75, Emp=3.6, Fora=1.75
+✅ Estádio detectado: Brazil Serie B
+✅ Extração concluída: valor_over=1, odds=1.52
+📝 Iniciando salvamento nos dados:
+   - valor_over: 1
+✅ Conexão com banco verificada e ativa
+✅ Query preparada com sucesso
+DEBUG: valor_over=1 (tipo: double)
+DEBUG: Pronto para bind_param
+DEBUG: Parâmetros - telegram_id=1384, valor_over=1, odds=1.52, result=
+✅ bind_param executado com sucesso
+✅ Insert executado com sucesso - ID: 373
+✅ Oportunidade salva com sucesso
+
+
+================================================================================
+[2025-11-17 15:55:03] Webhook acionado (VERSÃO NOVA COMPLETA)
+Dados recebidos: {"update_id":213069191,"channel_post":{"message_id":1385,"sender_chat":{"id":-1002047004959,"title":"Bateubet_VIP","type":"channel"},"chat":{"id":-1002047004959,"title":"Bateubet_VIP","type":"channel"},"date":1763405703,"text":"Oportunidade! \ud83d\udea8\n\n\ud83d\udcca \ud83d\udea8 OVER ( +1\u26f3\ufe0f CANTOS ) AS..\n\n\n\u26bd\ufe0f Corinthians (H) x Ceara (A) (ao vivo)\n\n\u23f0 Tempo: 84'\nOdds iniciais: Casa: 1.7 - Emp. 3.4 - Fora: 6.0\n\ud83c\udfdf Brazil Serie A\n\n\ud83e\udd45 Placar: 0 - 1  \n\u21aa\ufe0f \u00daltimo gol: \u00f8 - 31'\nEscanteios over +1.0: 1.52 \nStake: 1%\n    \n\u26f3\ufe0f Escanteios: 9 - 4  \n\u21aa\ufe0f \u00daltimo escanteio: 76' - 83'\n\ud83d\udd25 Ataques perigosos: 69 - 17\n\ud83d\udd25 Ataques perigosos\/min. (5min.): 0.2 - 0.6\n\ud83d\udd25 Ataques perigosos\/min. (Total): 0.82 - 0.2\n\ud83d\udfe8 Cart\u00f5es amarelos: 0 - 5\n\u21aa\ufe0f \u00daltimo cart\u00e3o amarelo: \u00f8 - 81'\n\ud83d\udfe5 Cart\u00f5es vermelhos: 0 - 0\n\ud83c\udfaf Chutes ao lado: 10 - 3\n\u21aa\ufe0f \u00daltimo chute ao lado: 82' - 83'\n\ud83c\udfaf Chutes no alvo: 5 - 3\n\u21aa\ufe0f \u00daltimo chute no alvo: 70' - 67'\n\ud83d\udcaf Posse de bola: 77% - 23%\n\ud83e\udde0 PI 1: 55.4 - 24.6\n\u26a1\ufe0f PI 2: 2 - 6\n\n\nLinks da partida:\n\nBet365 | Betfair","entities":[{"offset":729,"length":6,"type":"text_link","url":"https:\/\/www.bet365.bet.br\/#\/AX\/K%5ECorinthians"},{"offset":729,"length":6,"type":"bold"},{"offset":738,"length":7,"type":"text_link","url":"https:\/\/betfair.bet.br\/exchange\/plus\/en\/football\/brazilian-serie-a\/corinthians-v-ceara-sc-fortaleza-betting-34920543"},{"offset":738,"length":7,"type":"bold"}],"link_preview_options":{"url":"https:\/\/www.bet365.bet.br\/"}}}
+✅ Tipo: CHANNEL_POST
+Texto extraído: Oportunidade! 🚨
+
+📊 🚨 OVER ( +1⛳️ CANTOS ) AS..
+
+
+⚽️ Corinthians (H) x Ceara (A) (ao...
+É oportunidade? SIM
+É resultado? NÃO
+📨 Mensagem válida recebida
+   ID: 1385
+   Hora: 15:55:03
+   Tipo: OPORTUNIDADE
+💾 Salvando oportunidade...
+✅ OVER detectado: valor extraído = 1
+✅ Odds iniciais detectadas: Casa=1.7, Emp=3.4, Fora=6
+✅ Estádio detectado: Brazil Serie A
+✅ CANTOS Odds detectado: Escanteios over +1.0: 1.52 => odds=1.52
+✅ Extração concluída: valor_over=1, odds=1.52
+📝 Iniciando salvamento nos dados:
+   - valor_over: 1
+✅ Conexão com banco verificada e ativa
+✅ Query preparada com sucesso
+DEBUG: valor_over=1 (tipo: double)
+DEBUG: Pronto para bind_param
+DEBUG: Parâmetros - telegram_id=1385, valor_over=1, odds=1.52, result=
+✅ bind_param executado com sucesso
+✅ Insert executado com sucesso - ID: 374
+✅ Oportunidade salva com sucesso
+
