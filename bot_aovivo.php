@@ -112,9 +112,22 @@ if (!isset($_SESSION['usuario_id']) || empty($_SESSION['usuario_id'])) {
             box-sizing: border-box !important;
         }
 
-        /* Remove scrollbar em navegadores webkit */
+        /* Mostrar scrollbar com estilo customizado */
         .messages-area::-webkit-scrollbar {
-            display: none;
+            width: 6px;
+        }
+
+        .messages-area::-webkit-scrollbar-track {
+            background: transparent;
+        }
+
+        .messages-area::-webkit-scrollbar-thumb {
+            background: #cbd5e1;
+            border-radius: 3px;
+        }
+
+        .messages-area::-webkit-scrollbar-thumb:hover {
+            background: #94a3b8;
         }
     </style>
     <style>
@@ -728,6 +741,7 @@ if (!isset($_SESSION['usuario_id']) || empty($_SESSION['usuario_id'])) {
 
             .messages-area {
                 padding: 15px;
+                padding-bottom: 60px !important;
                 width: 100%;
                 box-sizing: border-box;
                 overflow-y: auto;
@@ -737,6 +751,7 @@ if (!isset($_SESSION['usuario_id']) || empty($_SESSION['usuario_id'])) {
             body > main > div > div.bloco.bloco-1 > div > div.messages-area.telegram-messages-wrapper {
                 width: 100% !important;
                 padding: 15px !important;
+                padding-bottom: 60px !important;
                 box-sizing: border-box !important;
             }
 
@@ -759,15 +774,15 @@ if (!isset($_SESSION['usuario_id']) || empty($_SESSION['usuario_id'])) {
                 height: 100%;
                 align-items: stretch;
                 flex-direction: column;
-                gap: 15px;
-                padding: 8px 8px;
+                gap: 0px !important;
+                padding: 0px !important;
             }
 
             .bloco {
-                width: 95%;
+                width: 100%;
                 max-width: 100%;
                 height: 100%;
-                margin: 0 auto;
+                margin: 0;
                 flex: 1 1 auto;
             }
 
@@ -790,25 +805,36 @@ if (!isset($_SESSION['usuario_id']) || empty($_SESSION['usuario_id'])) {
 
             .messages-area {
                 padding: 12px;
+                padding-bottom: 60px !important;
                 width: 100%;
                 box-sizing: border-box;
                 overflow-y: scroll;
-                -ms-overflow-style: none;
-                scrollbar-width: none;
                 flex: 1;
             }
 
             body > main > div > div.bloco.bloco-1 > div > div.messages-area.telegram-messages-wrapper {
                 width: 100% !important;
                 padding: 12px !important;
+                padding-bottom: 60px !important;
                 box-sizing: border-box !important;
                 overflow-y: scroll !important;
-                -ms-overflow-style: none !important;
-                scrollbar-width: none !important;
             }
 
             .messages-area::-webkit-scrollbar {
-                display: none;
+                width: 4px;
+            }
+
+            .messages-area::-webkit-scrollbar-track {
+                background: transparent;
+            }
+
+            .messages-area::-webkit-scrollbar-thumb {
+                background: #cbd5e1;
+                border-radius: 2px;
+            }
+
+            .messages-area::-webkit-scrollbar-thumb:hover {
+                background: #94a3b8;
             }
 
             /* Grid das apostas mobile pequeno */
@@ -864,34 +890,39 @@ if (!isset($_SESSION['usuario_id']) || empty($_SESSION['usuario_id'])) {
 
         @media screen and (max-width: 768px) {
             .main-content {
-                padding: 15px;
+                padding: 0 !important;
+                top: 56px !important;
+                bottom: 0 !important;
             }
             
             .bloco {
-                padding: 15px;
-                height: calc(33.33vh - 35px);
-                min-height: 180px;
+                padding: 0 !important;
+                height: auto !important;
+                min-height: calc(100vh - 56px) !important;
+                gap: 0 !important;
+                margin: 0 !important;
             }
         }
 
         @media screen and (max-width: 480px) {
             .header, .footer {
-                height: 70px;
+                height: 56px;
             }
             
             .main-content {
-                top: 70px;
-                bottom: auto;
-                padding: 10px 10px 30px 10px;
-                height: auto;
-                min-height: calc(100vh - 140px);
+                top: 56px !important;
+                bottom: 0 !important;
+                padding: 0 !important;
+                height: auto !important;
+                min-height: calc(100vh - 56px) !important;
             }
             
             .bloco {
-                padding: 12px;
-                height: auto;
-                min-height: 300px;
-                margin-bottom: 5px;
+                padding: 0 !important;
+                height: auto !important;
+                min-height: calc(100vh - 56px) !important;
+                margin: 0 !important;
+                gap: 0 !important;
             }
         }
 
@@ -1070,7 +1101,7 @@ if (!isset($_SESSION['usuario_id']) || empty($_SESSION['usuario_id'])) {
         /* RESPONSIVIDADE DO GRÁFICO */
         @media (max-width: 768px) {
             .grafico-mensal-container-bloco3 {
-                height: 160px !important;
+                height: 120px !important;
                 margin: 10px auto !important;
                 padding: 10px !important;
                 width: 100% !important;
@@ -1097,7 +1128,7 @@ if (!isset($_SESSION['usuario_id']) || empty($_SESSION['usuario_id'])) {
 
         @media (max-width: 480px) {
             .grafico-mensal-container-bloco3 {
-                height: 160px !important;
+                height: 120px !important;
                 margin: 8px auto !important;
                 padding: 8px !important;
                 width: 100% !important;
@@ -1750,12 +1781,14 @@ if (!isset($_SESSION['usuario_id']) || empty($_SESSION['usuario_id'])) {
         /* MOBILE: AJUSTA ALTURA E MANTÉM ROLAGEM */
         @media screen and (max-width: 768px) {
             .lista-dias {
-                max-height: calc(100vh - 480px) !important;
-                flex: 0 1 auto !important;
+                max-height: calc(100vh - 140px) !important;
+                height: calc(100vh - 140px) !important;
+                flex: 1 !important;
                 max-width: 100% !important;
                 margin: 5px 0px 10px 0px !important;
                 width: 100% !important;
                 overflow-y: auto !important;
+                padding-bottom: 60px !important;
             }
         }
 
@@ -2169,6 +2202,123 @@ if (!isset($_SESSION['usuario_id']) || empty($_SESSION['usuario_id'])) {
             color: #94a3b8 !important;
             opacity: 1 !important;
         }
+
+        /* ===== RESPONSIVIDADE - BOTÕES E SINO ===== */
+        @media (max-width: 768px) {
+            /* Header e Footer - Menores em mobile */
+            .header, .footer {
+                height: 56px;
+            }
+
+            .main-content {
+                top: 56px;
+                bottom: 0;
+            }
+
+            /* Blocos com altura dinâmica */
+            .bloco {
+                height: auto !important;
+                min-height: calc(100vh - 56px - 20px) !important;
+            }
+
+            /* Header dos blocos com margem top */
+            .header-bloco {
+                margin-top: 10px !important;
+            }
+
+            /* Adicionar espaço no fim dos blocos 1 e 2 para rolagem */
+            .bloco-1,
+            .bloco-2 {
+                padding-bottom: 40px !important;
+            }
+
+            /* Botões ADD+ e Resultado - Menores em mobile */
+            #botoes-admin-bot button {
+                padding: 8px 12px !important;
+                font-size: 11px !important;
+            }
+
+            /* Ícone do sino - Menor e mais próximo do menu */
+            .notificacao-btn {
+                margin-left: -5px !important;
+            }
+
+            .notificacao-btn i {
+                font-size: 16px !important;
+            }
+
+            /* Reduzir margem top do campo de banca/saldo */
+            .valor-item-menu {
+                margin-top: -10px !important;
+            }
+
+            /* Ocultar indicadores do carousel/blocos no rodapé em mobile */
+            .carousel-indicators,
+            .carousel-nav,
+            .carousel-dots,
+            [class*="carousel"],
+            [class*="indicator"],
+            [class*="dot"],
+            [class*="nav-"] {
+                display: none !important;
+            }
+
+            /* Ocultar footer em mobile */
+            .footer {
+                display: none !important;
+            }
+
+            /* Ajustar main-content para ocupar até o final sem footer */
+            .main-content {
+                bottom: 0 !important;
+            }
+
+            /* Modal de Resultado compacto em mobile */
+            #modalResultado .modal-content-registro {
+                padding: 20px !important;
+                max-width: 95% !important;
+            }
+
+            #modalResultado h2 {
+                font-size: 20px !important;
+                margin-bottom: 15px !important;
+            }
+
+            #modalResultado .inputbox {
+                margin-bottom: 15px !important;
+            }
+
+            #modalResultado .inputbox select {
+                padding: 10px 12px !important;
+                font-size: 13px !important;
+            }
+
+            #modalResultado [style*="background: #e8e8e8"] {
+                padding: 12px !important;
+                margin-bottom: 15px !important;
+                min-height: 40px !important;
+            }
+
+            #modalResultado #detalhesJogo {
+                padding: 12px !important;
+                margin: 15px 0 !important;
+            }
+
+            #modalResultado [style*="🏆 Selecione"] {
+                margin: 15px 0 !important;
+            }
+
+            #modalResultado .resultado-btn {
+                padding: 12px 8px !important;
+                font-size: 12px !important;
+            }
+
+            #modalResultado #submit-salvar-resultado {
+                margin-top: 15px !important;
+                padding: 12px !important;
+                font-size: 14px !important;
+            }
+        }
     </style>
 </head>
 <body <?php echo isset($_SESSION['usuario_id']) ? 'data-user-id="' . intval($_SESSION['usuario_id']) . '"' : ''; ?>>
@@ -2392,38 +2542,38 @@ if (!isset($_SESSION['usuario_id']) || empty($_SESSION['usuario_id'])) {
                                 letter-spacing: 0.5px;
                                 font-weight: 500;
                                 display: grid;
-                                grid-template-columns: 2.2fr 0.9fr 1fr;
-                                gap: 6px;
-                                align-items: start;
+                                grid-template-columns: 2.5fr 1.2fr 1fr;
+                                gap: 8px;
+                                align-items: center;
                                 grid-auto-flow: row;
                             "
                         >
                             <!-- Linha 1: +1 Gols asiaticos -->
                             <div>⚽ +1 Gols asiaticos</div>
-                            <div style="display: grid; grid-template-columns: 15px 12px 15px; gap: 0px; align-items: center; justify-items: center; font-family: 'JetBrains Mono', monospace;">
-                                <span style="color: #4ade80; font-variant-numeric: tabular-nums; text-align: right; width: 100%;" id="placar-1-green">0</span>
-                                <span style="color: #c0d0e0; font-size: 10px; margin: 0 4px;">X</span>
-                                <span style="color: #eea7ad; font-variant-numeric: tabular-nums; text-align: left; width: 100%;" id="placar-1-red">0</span>
+                            <div style="display: flex; align-items: center; justify-content: center; gap: 10px; font-family: 'JetBrains Mono', monospace;">
+                                <span style="color: #4ade80; font-variant-numeric: tabular-nums; text-align: right; width: 24px;" id="placar-1-green">0</span>
+                                <span style="color: #94a3b8; font-size: 11px; font-weight: 400;">x</span>
+                                <span style="color: #eea7ad; font-variant-numeric: tabular-nums; text-align: left; width: 24px;" id="placar-1-red">0</span>
                             </div>
-                            <div style="text-align: right; color: #cfcdcd; min-width: 80px;" id="valor-1-final">R$ 0,00</div>
+                            <div style="color: #cfcdcd; font-variant-numeric: tabular-nums;" id="valor-1-final">R$ 0,00</div>
 
                             <!-- Linha 2: +0.5 Gols ft -->
                             <div>⚽ +0.5 Gols ft</div>
-                            <div style="display: grid; grid-template-columns: 15px 12px 15px; gap: 0px; align-items: center; justify-items: center; font-family: 'JetBrains Mono', monospace;">
-                                <span style="color: #4ade80; font-variant-numeric: tabular-nums; text-align: right; width: 100%;" id="placar-2-green">0</span>
-                                <span style="color: #c0d0e0; font-size: 10px; margin: 0 4px;">X</span>
-                                <span style="color: #eea7ad; font-variant-numeric: tabular-nums; text-align: left; width: 100%;" id="placar-2-red">0</span>
+                            <div style="display: flex; align-items: center; justify-content: center; gap: 10px; font-family: 'JetBrains Mono', monospace;">
+                                <span style="color: #4ade80; font-variant-numeric: tabular-nums; text-align: right; width: 24px;" id="placar-2-green">0</span>
+                                <span style="color: #94a3b8; font-size: 11px; font-weight: 400;">x</span>
+                                <span style="color: #eea7ad; font-variant-numeric: tabular-nums; text-align: left; width: 24px;" id="placar-2-red">0</span>
                             </div>
-                            <div style="text-align: right; color: #4ade80; min-width: 80px;" id="valor-2-final">R$ 50,00</div>
+                            <div style="color: #4ade80; font-variant-numeric: tabular-nums;" id="valor-2-final">R$ 50,00</div>
 
                             <!-- Linha 3: +1 Cantos asiaticos -->
                             <div>🚩 +1 Cantos asiaticos</div>
-                            <div style="display: grid; grid-template-columns: 15px 12px 15px; gap: 0px; align-items: center; justify-items: center; font-family: 'JetBrains Mono', monospace;">
-                                <span style="color: #4ade80; font-variant-numeric: tabular-nums; text-align: right; width: 100%;" id="placar-3-green">0</span>
-                                <span style="color: #c0d0e0; font-size: 10px; margin: 0 4px;">X</span>
-                                <span style="color: #eea7ad; font-variant-numeric: tabular-nums; text-align: left; width: 100%;" id="placar-3-red">0</span>
+                            <div style="display: flex; align-items: center; justify-content: center; gap: 10px; font-family: 'JetBrains Mono', monospace;">
+                                <span style="color: #4ade80; font-variant-numeric: tabular-nums; text-align: right; width: 24px;" id="placar-3-green">0</span>
+                                <span style="color: #94a3b8; font-size: 11px; font-weight: 400;">x</span>
+                                <span style="color: #eea7ad; font-variant-numeric: tabular-nums; text-align: left; width: 24px;" id="placar-3-red">0</span>
                             </div>
-                            <div style="text-align: right; color: #eea7ad; min-width: 80px;" id="valor-3-final">R$ -25,00</div>
+                            <div style="color: #eea7ad; font-variant-numeric: tabular-nums;" id="valor-3-final">R$ -25,00</div>
                         </div>
 
                         <!-- Separador 2 - Acima do Total -->
@@ -2438,19 +2588,20 @@ if (!isset($_SESSION['usuario_id']) || empty($_SESSION['usuario_id'])) {
                                 letter-spacing: 0.5px;
                                 font-weight: 600;
                                 display: grid;
-                                grid-template-columns: 2.2fr 0.9fr 1fr;
-                                gap: 6px;
+                                grid-template-columns: 2.5fr 1.2fr 1fr;
+                                gap: 8px;
                                 align-items: center;
                                 margin-bottom: 12px;
+                                line-height: 1.6;
                             "
                         >
                             <div><i class="fas fa-chart-column" style="color: #60a5fa; margin-right: 6px;"></i>Total:</div>
-                            <div style="display: grid; grid-template-columns: 15px 12px 15px; gap: 0px; align-items: center; justify-items: center; font-family: 'JetBrains Mono', monospace;">
-                                <span style="color: #4ade80; font-variant-numeric: tabular-nums; text-align: right; width: 100%;" id="placar-total-green">0</span>
-                                <span style="color: #c0d0e0; font-size: 10px; margin: 0 4px;">X</span>
-                                <span style="color: #eea7ad; font-variant-numeric: tabular-nums; text-align: left; width: 100%;" id="placar-total-red">0</span>
+                            <div style="display: flex; align-items: center; justify-content: center; gap: 10px; font-family: 'JetBrains Mono', monospace;">
+                                <span style="color: #4ade80; font-variant-numeric: tabular-nums; text-align: right; width: 24px;" id="placar-total-green">0</span>
+                                <span style="color: #94a3b8; font-size: 11px; font-weight: 400;">x</span>
+                                <span style="color: #eea7ad; font-variant-numeric: tabular-nums; text-align: left; width: 24px;" id="placar-total-red">0</span>
                             </div>
-                            <div style="text-align: right; color: #4ade80; min-width: 80px;" id="valor-total-final">R$ 25,00</div>
+                            <div style="color: #4ade80; font-variant-numeric: tabular-nums;" id="valor-total-final">R$ 25,00</div>
                         </div>
                     </div>
 
@@ -2509,38 +2660,38 @@ if (!isset($_SESSION['usuario_id']) || empty($_SESSION['usuario_id'])) {
                                 letter-spacing: 0.5px;
                                 font-weight: 500;
                                 display: grid;
-                                grid-template-columns: 2.2fr 0.9fr 1fr;
-                                gap: 6px;
-                                align-items: start;
+                                grid-template-columns: 2.5fr 1.2fr 1fr;
+                                gap: 8px;
+                                align-items: center;
                                 grid-auto-flow: row;
                             "
                         >
                             <!-- Linha 1: +1 Gols asiaticos (MÊS) -->
                             <div>⚽ +1 Gols asiaticos</div>
-                            <div style="display: grid; grid-template-columns: 15px 12px 15px; gap: 0px; align-items: center; justify-items: center; font-family: 'JetBrains Mono', monospace;">
-                                <span style="color: #4ade80; font-variant-numeric: tabular-nums; text-align: right; width: 100%;" id="placar-mes-1-green">0</span>
-                                <span style="color: #c0d0e0; font-size: 10px; margin: 0 4px;">X</span>
-                                <span style="color: #eea7ad; font-variant-numeric: tabular-nums; text-align: left; width: 100%;" id="placar-mes-1-red">0</span>
+                            <div style="display: flex; align-items: center; justify-content: center; gap: 10px; font-family: 'JetBrains Mono', monospace;">
+                                <span style="color: #4ade80; font-variant-numeric: tabular-nums; text-align: right; width: 24px;" id="placar-mes-1-green">0</span>
+                                <span style="color: #94a3b8; font-size: 11px; font-weight: 400;">x</span>
+                                <span style="color: #eea7ad; font-variant-numeric: tabular-nums; text-align: left; width: 24px;" id="placar-mes-1-red">0</span>
                             </div>
-                            <div style="text-align: right; color: #cfcdcd; min-width: 80px;" id="valor-mes-1-final">R$ 0,00</div>
+                            <div style="color: #cfcdcd; font-variant-numeric: tabular-nums;" id="valor-mes-1-final">R$ 0,00</div>
 
                             <!-- Linha 2: +0.5 Gols asiaticos (MÊS) -->
                             <div>⚽ +0.5 Gols asiaticos</div>
-                            <div style="display: grid; grid-template-columns: 15px 12px 15px; gap: 0px; align-items: center; justify-items: center; font-family: 'JetBrains Mono', monospace;">
-                                <span style="color: #4ade80; font-variant-numeric: tabular-nums; text-align: right; width: 100%;" id="placar-mes-2-green">0</span>
-                                <span style="color: #c0d0e0; font-size: 10px; margin: 0 4px;">X</span>
-                                <span style="color: #eea7ad; font-variant-numeric: tabular-nums; text-align: left; width: 100%;" id="placar-mes-2-red">0</span>
+                            <div style="display: flex; align-items: center; justify-content: center; gap: 10px; font-family: 'JetBrains Mono', monospace;">
+                                <span style="color: #4ade80; font-variant-numeric: tabular-nums; text-align: right; width: 24px;" id="placar-mes-2-green">0</span>
+                                <span style="color: #94a3b8; font-size: 11px; font-weight: 400;">x</span>
+                                <span style="color: #eea7ad; font-variant-numeric: tabular-nums; text-align: left; width: 24px;" id="placar-mes-2-red">0</span>
                             </div>
-                            <div style="text-align: right; color: #4ade80; min-width: 80px;" id="valor-mes-2-final">R$ 0,00</div>
+                            <div style="color: #4ade80; font-variant-numeric: tabular-nums;" id="valor-mes-2-final">R$ 0,00</div>
 
                             <!-- Linha 3: +1 Cantos asiaticos (MÊS) -->
                             <div>🚩 +1 Cantos asiaticos</div>
-                            <div style="display: grid; grid-template-columns: 15px 12px 15px; gap: 0px; align-items: center; justify-items: center; font-family: 'JetBrains Mono', monospace;">
-                                <span style="color: #4ade80; font-variant-numeric: tabular-nums; text-align: right; width: 100%;" id="placar-mes-3-green">0</span>
-                                <span style="color: #c0d0e0; font-size: 10px; margin: 0 4px;">X</span>
-                                <span style="color: #eea7ad; font-variant-numeric: tabular-nums; text-align: left; width: 100%;" id="placar-mes-3-red">0</span>
+                            <div style="display: flex; align-items: center; justify-content: center; gap: 10px; font-family: 'JetBrains Mono', monospace;">
+                                <span style="color: #4ade80; font-variant-numeric: tabular-nums; text-align: right; width: 24px;" id="placar-mes-3-green">0</span>
+                                <span style="color: #94a3b8; font-size: 11px; font-weight: 400;">x</span>
+                                <span style="color: #eea7ad; font-variant-numeric: tabular-nums; text-align: left; width: 24px;" id="placar-mes-3-red">0</span>
                             </div>
-                            <div style="text-align: right; color: #eea7ad; min-width: 80px;" id="valor-mes-3-final">R$ 0,00</div>
+                            <div style="color: #eea7ad; font-variant-numeric: tabular-nums;" id="valor-mes-3-final">R$ 0,00</div>
                         </div>
 
                         <!-- Separador 2 - Acima do Total -->
@@ -2555,19 +2706,20 @@ if (!isset($_SESSION['usuario_id']) || empty($_SESSION['usuario_id'])) {
                                 letter-spacing: 0.5px;
                                 font-weight: 600;
                                 display: grid;
-                                grid-template-columns: 2.2fr 0.9fr 1fr;
-                                gap: 6px;
+                                grid-template-columns: 2.5fr 1.2fr 1fr;
+                                gap: 8px;
                                 align-items: center;
                                 margin-bottom: 12px;
+                                line-height: 1.6;
                             "
                         >
                             <div><i class="fas fa-chart-column" style="color: #60a5fa; margin-right: 6px;"></i>Total:</div>
-                            <div style="display: grid; grid-template-columns: 15px 12px 15px; gap: 0px; align-items: center; justify-items: center; font-family: 'JetBrains Mono', monospace;">
-                                <span style="color: #4ade80; font-variant-numeric: tabular-nums; text-align: right; width: 100%;" id="placar-mes-total-green">0</span>
-                                <span style="color: #c0d0e0; font-size: 10px; margin: 0 4px;">X</span>
-                                <span style="color: #eea7ad; font-variant-numeric: tabular-nums; text-align: left; width: 100%;" id="placar-mes-total-red">0</span>
+                            <div style="display: flex; align-items: center; justify-content: center; gap: 10px; font-family: 'JetBrains Mono', monospace;">
+                                <span style="color: #4ade80; font-variant-numeric: tabular-nums; text-align: right; width: 24px;" id="placar-mes-total-green">0</span>
+                                <span style="color: #94a3b8; font-size: 11px; font-weight: 400;">x</span>
+                                <span style="color: #eea7ad; font-variant-numeric: tabular-nums; text-align: left; width: 24px;" id="placar-mes-total-red">0</span>
                             </div>
-                            <div style="text-align: right; color: #4ade80; min-width: 80px;" id="valor-mes-total-final">R$ 0,00</div>
+                            <div style="color: #4ade80; font-variant-numeric: tabular-nums;" id="valor-mes-total-final">R$ 0,00</div>
                         </div>
                     </div>
 
@@ -2623,38 +2775,38 @@ if (!isset($_SESSION['usuario_id']) || empty($_SESSION['usuario_id'])) {
                                 letter-spacing: 0.5px;
                                 font-weight: 500;
                                 display: grid;
-                                grid-template-columns: 2.2fr 0.9fr 1fr;
-                                gap: 6px;
-                                align-items: start;
+                                grid-template-columns: 2.5fr 1.2fr 1fr;
+                                gap: 8px;
+                                align-items: center;
                                 grid-auto-flow: row;
                             "
                         >
                             <!-- Linha 1: +1 Gols asiaticos (PERÍODO) -->
                             <div>⚽ +1 Gols asiaticos</div>
-                            <div style="display: grid; grid-template-columns: 15px 12px 15px; gap: 0px; align-items: center; justify-items: center; font-family: 'JetBrains Mono', monospace;">
-                                <span style="color: #4ade80; font-variant-numeric: tabular-nums; text-align: right; width: 100%;" id="placar-periodo-1-green">0</span>
-                                <span style="color: #c0d0e0; font-size: 10px; margin: 0 4px;">X</span>
-                                <span style="color: #eea7ad; font-variant-numeric: tabular-nums; text-align: left; width: 100%;" id="placar-periodo-1-red">0</span>
+                            <div style="display: flex; align-items: center; justify-content: center; gap: 10px; font-family: 'JetBrains Mono', monospace;">
+                                <span style="color: #4ade80; font-variant-numeric: tabular-nums; text-align: right; width: 24px;" id="placar-periodo-1-green">0</span>
+                                <span style="color: #94a3b8; font-size: 11px; font-weight: 400;">x</span>
+                                <span style="color: #eea7ad; font-variant-numeric: tabular-nums; text-align: left; width: 24px;" id="placar-periodo-1-red">0</span>
                             </div>
-                            <div style="text-align: right; color: #cfcdcd; min-width: 80px;" id="valor-periodo-1-final">R$ 0,00</div>
+                            <div style="color: #cfcdcd; font-variant-numeric: tabular-nums;" id="valor-periodo-1-final">R$ 0,00</div>
 
                             <!-- Linha 2: +0.5 Gols asiaticos (PERÍODO) -->
                             <div>⚽ +0.5 Gols asiaticos</div>
-                            <div style="display: grid; grid-template-columns: 15px 12px 15px; gap: 0px; align-items: center; justify-items: center; font-family: 'JetBrains Mono', monospace;">
-                                <span style="color: #4ade80; font-variant-numeric: tabular-nums; text-align: right; width: 100%;" id="placar-periodo-2-green">0</span>
-                                <span style="color: #c0d0e0; font-size: 10px; margin: 0 4px;">X</span>
-                                <span style="color: #eea7ad; font-variant-numeric: tabular-nums; text-align: left; width: 100%;" id="placar-periodo-2-red">0</span>
+                            <div style="display: flex; align-items: center; justify-content: center; gap: 10px; font-family: 'JetBrains Mono', monospace;">
+                                <span style="color: #4ade80; font-variant-numeric: tabular-nums; text-align: right; width: 24px;" id="placar-periodo-2-green">0</span>
+                                <span style="color: #94a3b8; font-size: 11px; font-weight: 400;">x</span>
+                                <span style="color: #eea7ad; font-variant-numeric: tabular-nums; text-align: left; width: 24px;" id="placar-periodo-2-red">0</span>
                             </div>
-                            <div style="text-align: right; color: #4ade80; min-width: 80px;" id="valor-periodo-2-final">R$ 0,00</div>
+                            <div style="color: #4ade80; font-variant-numeric: tabular-nums;" id="valor-periodo-2-final">R$ 0,00</div>
 
                             <!-- Linha 3: +1 Cantos asiaticos (PERÍODO) -->
                             <div>🚩 +1 Cantos asiaticos</div>
-                            <div style="display: grid; grid-template-columns: 15px 12px 15px; gap: 0px; align-items: center; justify-items: center; font-family: 'JetBrains Mono', monospace;">
-                                <span style="color: #4ade80; font-variant-numeric: tabular-nums; text-align: right; width: 100%;" id="placar-periodo-3-green">0</span>
-                                <span style="color: #c0d0e0; font-size: 10px; margin: 0 4px;">X</span>
-                                <span style="color: #eea7ad; font-variant-numeric: tabular-nums; text-align: left; width: 100%;" id="placar-periodo-3-red">0</span>
+                            <div style="display: flex; align-items: center; justify-content: center; gap: 10px; font-family: 'JetBrains Mono', monospace;">
+                                <span style="color: #4ade80; font-variant-numeric: tabular-nums; text-align: right; width: 24px;" id="placar-periodo-3-green">0</span>
+                                <span style="color: #94a3b8; font-size: 11px; font-weight: 400;">x</span>
+                                <span style="color: #eea7ad; font-variant-numeric: tabular-nums; text-align: left; width: 24px;" id="placar-periodo-3-red">0</span>
                             </div>
-                            <div style="text-align: right; color: #eea7ad; min-width: 80px;" id="valor-periodo-3-final">R$ 0,00</div>
+                            <div style="color: #eea7ad; font-variant-numeric: tabular-nums;" id="valor-periodo-3-final">R$ 0,00</div>
                         </div>
 
                         <!-- Separador 2 - Acima do Total -->
@@ -2669,19 +2821,20 @@ if (!isset($_SESSION['usuario_id']) || empty($_SESSION['usuario_id'])) {
                                 letter-spacing: 0.5px;
                                 font-weight: 600;
                                 display: grid;
-                                grid-template-columns: 2.2fr 0.9fr 1fr;
-                                gap: 6px;
+                                grid-template-columns: 2.5fr 1.2fr 1fr;
+                                gap: 8px;
                                 align-items: center;
                                 margin-bottom: 12px;
+                                line-height: 1.6;
                             "
                         >
                             <div><i class="fas fa-chart-column" style="color: #60a5fa; margin-right: 6px;"></i>Total:</div>
-                            <div style="display: grid; grid-template-columns: 15px 12px 15px; gap: 0px; align-items: center; justify-items: center; font-family: 'JetBrains Mono', monospace;">
-                                <span style="color: #4ade80; font-variant-numeric: tabular-nums; text-align: right; width: 100%;" id="placar-periodo-total-green">0</span>
-                                <span style="color: #c0d0e0; font-size: 10px; margin: 0 4px;">X</span>
-                                <span style="color: #eea7ad; font-variant-numeric: tabular-nums; text-align: left; width: 100%;" id="placar-periodo-total-red">0</span>
+                            <div style="display: flex; align-items: center; justify-content: center; gap: 10px; font-family: 'JetBrains Mono', monospace;">
+                                <span style="color: #4ade80; font-variant-numeric: tabular-nums; text-align: right; width: 24px;" id="placar-periodo-total-green">0</span>
+                                <span style="color: #94a3b8; font-size: 11px; font-weight: 400;">x</span>
+                                <span style="color: #eea7ad; font-variant-numeric: tabular-nums; text-align: left; width: 24px;" id="placar-periodo-total-red">0</span>
                             </div>
-                            <div style="text-align: right; color: #4ade80; min-width: 80px;" id="valor-periodo-total-final">R$ 0,00</div>
+                            <div style="color: #4ade80; font-variant-numeric: tabular-nums;" id="valor-periodo-total-final">R$ 0,00</div>
                         </div>
                     </div>
 

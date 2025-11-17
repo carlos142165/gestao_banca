@@ -1,0 +1,494 @@
+[21:20:21.000000] ═════════════════════════════════════════════════════════════
+[21:20:21.000000] 🔍 API CHAMADA - obter-historico-resultados.php
+[21:20:21.000000] 🔍 METHOD: POST
+[21:20:21.000000] 🔍 TEMPO: 2025-11-16 21:20:21
+[21:20:21.000000] 📩 DADOS RECEBIDOS:
+[21:20:21.000000]    time1: 'Flamengo'
+[21:20:21.000000]    time2: '⚽️ Palmeiras'
+[21:20:21.000000]    tipo: '+0.5GOL'
+[21:20:21.000000]    limite: 10
+[21:20:21.000000] 🔍 TIME1 Título: 'OVER ( +0.5 ⚽ GOL )' -> Referência: '+0.5⚽GOL' | Tipo pedido: '+0.5GOL'
+[21:20:21.000000] 
+
+[21:20:21.000000] ═══════════════════════════════════════════════════════════
+[21:20:21.000000] 🔍 FUNÇÃO deveMostrarResultado CHAMADA
+[21:20:21.000000]    referenciaJogo: '+0.5⚽GOL'
+[21:20:21.000000]    tipoPedido: '+0.5GOL'
+[21:20:21.000000]    Tipo ref (cleaned): '+0.5GOL' → '+0.5GOL'
+[21:20:21.000000]    Tipo pedido (cleaned): '+0.5GOL' → '+0.5GOL'
+[21:20:21.000000]    Ref é CANTOS? NÃO
+[21:20:21.000000]    Pedido é CANTOS? NÃO
+[21:20:21.000000]    ✅ Tipo bate (ambos são GOL OU ambos são CANTOS)
+[21:20:21.000000]    Valor pedido extraído: '0.5' → 0.5
+[21:20:21.000000]    Valor referência extraído: '0.5' → 0.5
+[21:20:21.000000]    Diferença: |0.5 - 0.5| = 0
+[21:20:21.000000]    Tolerância: 0.001
+[21:20:21.000000]    ✅ ACEITAR: Valores batem!
+[21:20:21.000000] ═══════════════════════════════════════════════════════════
+[21:20:21.000000] 🔍 TIME1 INCLUÍDO: passou na validação
+[21:20:21.000000] 🔍 TIME1 Título: 'OVER ( +1⛳ CANTOS )' -> Referência: '+1⛳️CANTOS' | Tipo pedido: '+0.5GOL'
+[21:20:21.000000] 
+
+[21:20:21.000000] ═══════════════════════════════════════════════════════════
+[21:20:21.000000] 🔍 FUNÇÃO deveMostrarResultado CHAMADA
+[21:20:21.000000]    referenciaJogo: '+1⛳️CANTOS'
+[21:20:21.000000]    tipoPedido: '+0.5GOL'
+[21:20:21.000000]    Tipo ref (cleaned): '+1CANTOS' → '+1CANTOS'
+[21:20:21.000000]    Tipo pedido (cleaned): '+0.5GOL' → '+0.5GOL'
+[21:20:21.000000]    Ref é CANTOS? SIM
+[21:20:21.000000]    Pedido é CANTOS? NÃO
+[21:20:21.000000]    ❌ REJEITAR: Tipo não bate (um é CANTOS, outro não)
+[21:20:21.000000] ═══════════════════════════════════════════════════════════
+[21:20:21.000000] 🔍 TIME1 FILTRADO: não passou na validação de tipo
+[21:20:21.000000] 🔍 TIME1 Título: 'OVER ( +1⚽GOL  ) AS..' -> Referência: '+1⚽GOL' | Tipo pedido: '+0.5GOL'
+[21:20:21.000000] 
+
+[21:20:21.000000] ═══════════════════════════════════════════════════════════
+[21:20:21.000000] 🔍 FUNÇÃO deveMostrarResultado CHAMADA
+[21:20:21.000000]    referenciaJogo: '+1⚽GOL'
+[21:20:21.000000]    tipoPedido: '+0.5GOL'
+[21:20:21.000000]    Tipo ref (cleaned): '+1GOL' → '+1GOL'
+[21:20:21.000000]    Tipo pedido (cleaned): '+0.5GOL' → '+0.5GOL'
+[21:20:21.000000]    Ref é CANTOS? NÃO
+[21:20:21.000000]    Pedido é CANTOS? NÃO
+[21:20:21.000000]    ✅ Tipo bate (ambos são GOL OU ambos são CANTOS)
+[21:20:21.000000]    Valor pedido extraído: '0.5' → 0.5
+[21:20:21.000000]    Valor referência extraído: '1' → 1
+[21:20:21.000000]    Diferença: |1 - 0.5| = 0.5
+[21:20:21.000000]    Tolerância: 0.001
+[21:20:21.000000]    ❌ REJEITAR: Valores não batem (diferença > 0.001)
+[21:20:21.000000] ═══════════════════════════════════════════════════════════
+[21:20:21.000000] 🔍 TIME1 FILTRADO: não passou na validação de tipo
+[21:20:21.000000] 🔍 TIME2 Título: 'OVER ( +0.5 ⚽ GOL )' -> Referência: '+0.5⚽GOL' | Tipo pedido: '+0.5GOL'
+[21:20:21.000000] 
+
+[21:20:21.000000] ═══════════════════════════════════════════════════════════
+[21:20:21.000000] 🔍 FUNÇÃO deveMostrarResultado CHAMADA
+[21:20:21.000000]    referenciaJogo: '+0.5⚽GOL'
+[21:20:21.000000]    tipoPedido: '+0.5GOL'
+[21:20:21.000000]    Tipo ref (cleaned): '+0.5GOL' → '+0.5GOL'
+[21:20:21.000000]    Tipo pedido (cleaned): '+0.5GOL' → '+0.5GOL'
+[21:20:21.000000]    Ref é CANTOS? NÃO
+[21:20:21.000000]    Pedido é CANTOS? NÃO
+[21:20:21.000000]    ✅ Tipo bate (ambos são GOL OU ambos são CANTOS)
+[21:20:21.000000]    Valor pedido extraído: '0.5' → 0.5
+[21:20:21.000000]    Valor referência extraído: '0.5' → 0.5
+[21:20:21.000000]    Diferença: |0.5 - 0.5| = 0
+[21:20:21.000000]    Tolerância: 0.001
+[21:20:21.000000]    ✅ ACEITAR: Valores batem!
+[21:20:21.000000] ═══════════════════════════════════════════════════════════
+[21:20:21.000000] 🔍 TIME2 INCLUÍDO: passou na validação
+[21:20:21.000000] 🔍 TIME2 Título: 'OVER ( +0.5 ⚽GOL  ) FT' -> Referência: '+0.5⚽GOL' | Tipo pedido: '+0.5GOL'
+[21:20:21.000000] 
+
+[21:20:21.000000] ═══════════════════════════════════════════════════════════
+[21:20:21.000000] 🔍 FUNÇÃO deveMostrarResultado CHAMADA
+[21:20:21.000000]    referenciaJogo: '+0.5⚽GOL'
+[21:20:21.000000]    tipoPedido: '+0.5GOL'
+[21:20:21.000000]    Tipo ref (cleaned): '+0.5GOL' → '+0.5GOL'
+[21:20:21.000000]    Tipo pedido (cleaned): '+0.5GOL' → '+0.5GOL'
+[21:20:21.000000]    Ref é CANTOS? NÃO
+[21:20:21.000000]    Pedido é CANTOS? NÃO
+[21:20:21.000000]    ✅ Tipo bate (ambos são GOL OU ambos são CANTOS)
+[21:20:21.000000]    Valor pedido extraído: '0.5' → 0.5
+[21:20:21.000000]    Valor referência extraído: '0.5' → 0.5
+[21:20:21.000000]    Diferença: |0.5 - 0.5| = 0
+[21:20:21.000000]    Tolerância: 0.001
+[21:20:21.000000]    ✅ ACEITAR: Valores batem!
+[21:20:21.000000] ═══════════════════════════════════════════════════════════
+[21:20:21.000000] 🔍 TIME2 INCLUÍDO: passou na validação
+[21:20:21.000000] 🔍 TIME2 Título: 'OVER ( +1 ⚽GOL  ) AS..' -> Referência: '+1⚽GOL' | Tipo pedido: '+0.5GOL'
+[21:20:21.000000] 
+
+[21:20:21.000000] ═══════════════════════════════════════════════════════════
+[21:20:21.000000] 🔍 FUNÇÃO deveMostrarResultado CHAMADA
+[21:20:21.000000]    referenciaJogo: '+1⚽GOL'
+[21:20:21.000000]    tipoPedido: '+0.5GOL'
+[21:20:21.000000]    Tipo ref (cleaned): '+1GOL' → '+1GOL'
+[21:20:21.000000]    Tipo pedido (cleaned): '+0.5GOL' → '+0.5GOL'
+[21:20:21.000000]    Ref é CANTOS? NÃO
+[21:20:21.000000]    Pedido é CANTOS? NÃO
+[21:20:21.000000]    ✅ Tipo bate (ambos são GOL OU ambos são CANTOS)
+[21:20:21.000000]    Valor pedido extraído: '0.5' → 0.5
+[21:20:21.000000]    Valor referência extraído: '1' → 1
+[21:20:21.000000]    Diferença: |1 - 0.5| = 0.5
+[21:20:21.000000]    Tolerância: 0.001
+[21:20:21.000000]    ❌ REJEITAR: Valores não batem (diferença > 0.001)
+[21:20:21.000000] ═══════════════════════════════════════════════════════════
+[21:20:21.000000] 🔍 TIME2 FILTRADO: não passou na validação de tipo
+[21:20:25.000000] ═════════════════════════════════════════════════════════════
+[21:20:25.000000] 🔍 API CHAMADA - obter-historico-resultados.php
+[21:20:25.000000] 🔍 METHOD: POST
+[21:20:25.000000] 🔍 TEMPO: 2025-11-16 21:20:25
+[21:20:25.000000] 📩 DADOS RECEBIDOS:
+[21:20:25.000000]    time1: 'Flamengo'
+[21:20:25.000000]    time2: '⚽️ Corinthians'
+[21:20:25.000000]    tipo: '+1CANTOS'
+[21:20:25.000000]    limite: 10
+[21:20:25.000000] 🔍 TIME1 Título: 'OVER ( +0.5 ⚽ GOL )' -> Referência: '+0.5⚽GOL' | Tipo pedido: '+1CANTOS'
+[21:20:25.000000] 
+
+[21:20:25.000000] ═══════════════════════════════════════════════════════════
+[21:20:25.000000] 🔍 FUNÇÃO deveMostrarResultado CHAMADA
+[21:20:25.000000]    referenciaJogo: '+0.5⚽GOL'
+[21:20:25.000000]    tipoPedido: '+1CANTOS'
+[21:20:25.000000]    Tipo ref (cleaned): '+0.5GOL' → '+0.5GOL'
+[21:20:25.000000]    Tipo pedido (cleaned): '+1CANTOS' → '+1CANTOS'
+[21:20:25.000000]    Ref é CANTOS? NÃO
+[21:20:25.000000]    Pedido é CANTOS? SIM
+[21:20:25.000000]    ❌ REJEITAR: Tipo não bate (um é CANTOS, outro não)
+[21:20:25.000000] ═══════════════════════════════════════════════════════════
+[21:20:25.000000] 🔍 TIME1 FILTRADO: não passou na validação de tipo
+[21:20:25.000000] 🔍 TIME1 Título: 'OVER ( +1⛳ CANTOS )' -> Referência: '+1⛳️CANTOS' | Tipo pedido: '+1CANTOS'
+[21:20:25.000000] 
+
+[21:20:25.000000] ═══════════════════════════════════════════════════════════
+[21:20:25.000000] 🔍 FUNÇÃO deveMostrarResultado CHAMADA
+[21:20:25.000000]    referenciaJogo: '+1⛳️CANTOS'
+[21:20:25.000000]    tipoPedido: '+1CANTOS'
+[21:20:25.000000]    Tipo ref (cleaned): '+1CANTOS' → '+1CANTOS'
+[21:20:25.000000]    Tipo pedido (cleaned): '+1CANTOS' → '+1CANTOS'
+[21:20:25.000000]    Ref é CANTOS? SIM
+[21:20:25.000000]    Pedido é CANTOS? SIM
+[21:20:25.000000]    ✅ Tipo bate (ambos são GOL OU ambos são CANTOS)
+[21:20:25.000000]    Valor pedido extraído: '1' → 1
+[21:20:25.000000]    Valor referência extraído: '1' → 1
+[21:20:25.000000]    Diferença: |1 - 1| = 0
+[21:20:25.000000]    Tolerância: 0.001
+[21:20:25.000000]    ✅ ACEITAR: Valores batem!
+[21:20:25.000000] ═══════════════════════════════════════════════════════════
+[21:20:25.000000] 🔍 TIME1 INCLUÍDO: passou na validação
+[21:20:25.000000] 🔍 TIME1 Título: 'OVER ( +1⚽GOL  ) AS..' -> Referência: '+1⚽GOL' | Tipo pedido: '+1CANTOS'
+[21:20:25.000000] 
+
+[21:20:25.000000] ═══════════════════════════════════════════════════════════
+[21:20:25.000000] 🔍 FUNÇÃO deveMostrarResultado CHAMADA
+[21:20:25.000000]    referenciaJogo: '+1⚽GOL'
+[21:20:25.000000]    tipoPedido: '+1CANTOS'
+[21:20:25.000000]    Tipo ref (cleaned): '+1GOL' → '+1GOL'
+[21:20:25.000000]    Tipo pedido (cleaned): '+1CANTOS' → '+1CANTOS'
+[21:20:25.000000]    Ref é CANTOS? NÃO
+[21:20:25.000000]    Pedido é CANTOS? SIM
+[21:20:25.000000]    ❌ REJEITAR: Tipo não bate (um é CANTOS, outro não)
+[21:20:25.000000] ═══════════════════════════════════════════════════════════
+[21:20:25.000000] 🔍 TIME1 FILTRADO: não passou na validação de tipo
+[21:20:25.000000] 🔍 TIME2 Título: 'OVER ( +1⛳ CANTOS )' -> Referência: '+1⛳️CANTOS' | Tipo pedido: '+1CANTOS'
+[21:20:25.000000] 
+
+[21:20:25.000000] ═══════════════════════════════════════════════════════════
+[21:20:25.000000] 🔍 FUNÇÃO deveMostrarResultado CHAMADA
+[21:20:25.000000]    referenciaJogo: '+1⛳️CANTOS'
+[21:20:25.000000]    tipoPedido: '+1CANTOS'
+[21:20:25.000000]    Tipo ref (cleaned): '+1CANTOS' → '+1CANTOS'
+[21:20:25.000000]    Tipo pedido (cleaned): '+1CANTOS' → '+1CANTOS'
+[21:20:25.000000]    Ref é CANTOS? SIM
+[21:20:25.000000]    Pedido é CANTOS? SIM
+[21:20:25.000000]    ✅ Tipo bate (ambos são GOL OU ambos são CANTOS)
+[21:20:25.000000]    Valor pedido extraído: '1' → 1
+[21:20:25.000000]    Valor referência extraído: '1' → 1
+[21:20:25.000000]    Diferença: |1 - 1| = 0
+[21:20:25.000000]    Tolerância: 0.001
+[21:20:25.000000]    ✅ ACEITAR: Valores batem!
+[21:20:25.000000] ═══════════════════════════════════════════════════════════
+[21:20:25.000000] 🔍 TIME2 INCLUÍDO: passou na validação
+[21:20:25.000000] 🔍 TIME2 Título: 'OVER ( +1⛳️ CANTOS ) AS..' -> Referência: '+1⛳️CANTOS' | Tipo pedido: '+1CANTOS'
+[21:20:25.000000] 
+
+[21:20:25.000000] ═══════════════════════════════════════════════════════════
+[21:20:25.000000] 🔍 FUNÇÃO deveMostrarResultado CHAMADA
+[21:20:25.000000]    referenciaJogo: '+1⛳️CANTOS'
+[21:20:25.000000]    tipoPedido: '+1CANTOS'
+[21:20:25.000000]    Tipo ref (cleaned): '+1CANTOS' → '+1CANTOS'
+[21:20:25.000000]    Tipo pedido (cleaned): '+1CANTOS' → '+1CANTOS'
+[21:20:25.000000]    Ref é CANTOS? SIM
+[21:20:25.000000]    Pedido é CANTOS? SIM
+[21:20:25.000000]    ✅ Tipo bate (ambos são GOL OU ambos são CANTOS)
+[21:20:25.000000]    Valor pedido extraído: '1' → 1
+[21:20:25.000000]    Valor referência extraído: '1' → 1
+[21:20:25.000000]    Diferença: |1 - 1| = 0
+[21:20:25.000000]    Tolerância: 0.001
+[21:20:25.000000]    ✅ ACEITAR: Valores batem!
+[21:20:25.000000] ═══════════════════════════════════════════════════════════
+[21:20:25.000000] 🔍 TIME2 INCLUÍDO: passou na validação
+[21:21:49.000000] ═════════════════════════════════════════════════════════════
+[21:21:49.000000] 🔍 API CHAMADA - obter-historico-resultados.php
+[21:21:49.000000] 🔍 METHOD: POST
+[21:21:49.000000] 🔍 TEMPO: 2025-11-16 21:21:49
+[21:21:49.000000] 📩 DADOS RECEBIDOS:
+[21:21:49.000000]    time1: 'Flamengo'
+[21:21:49.000000]    time2: '⚽️ Corinthians'
+[21:21:49.000000]    tipo: '+1CANTOS'
+[21:21:49.000000]    limite: 10
+[21:21:49.000000] 🔍 TIME1 Título: 'OVER ( +0.5 ⚽ GOL )' -> Referência: '+0.5⚽GOL' | Tipo pedido: '+1CANTOS'
+[21:21:49.000000] 
+
+[21:21:49.000000] ═══════════════════════════════════════════════════════════
+[21:21:49.000000] 🔍 FUNÇÃO deveMostrarResultado CHAMADA
+[21:21:49.000000]    referenciaJogo: '+0.5⚽GOL'
+[21:21:49.000000]    tipoPedido: '+1CANTOS'
+[21:21:49.000000]    Tipo ref (cleaned): '+0.5GOL' → '+0.5GOL'
+[21:21:49.000000]    Tipo pedido (cleaned): '+1CANTOS' → '+1CANTOS'
+[21:21:49.000000]    Ref é CANTOS? NÃO
+[21:21:49.000000]    Pedido é CANTOS? SIM
+[21:21:49.000000]    ❌ REJEITAR: Tipo não bate (um é CANTOS, outro não)
+[21:21:49.000000] ═══════════════════════════════════════════════════════════
+[21:21:49.000000] 🔍 TIME1 FILTRADO: não passou na validação de tipo
+[21:21:49.000000] 🔍 TIME1 Título: 'OVER ( +1⛳ CANTOS )' -> Referência: '+1⛳️CANTOS' | Tipo pedido: '+1CANTOS'
+[21:21:49.000000] 
+
+[21:21:49.000000] ═══════════════════════════════════════════════════════════
+[21:21:49.000000] 🔍 FUNÇÃO deveMostrarResultado CHAMADA
+[21:21:49.000000]    referenciaJogo: '+1⛳️CANTOS'
+[21:21:49.000000]    tipoPedido: '+1CANTOS'
+[21:21:49.000000]    Tipo ref (cleaned): '+1CANTOS' → '+1CANTOS'
+[21:21:49.000000]    Tipo pedido (cleaned): '+1CANTOS' → '+1CANTOS'
+[21:21:49.000000]    Ref é CANTOS? SIM
+[21:21:49.000000]    Pedido é CANTOS? SIM
+[21:21:49.000000]    ✅ Tipo bate (ambos são GOL OU ambos são CANTOS)
+[21:21:49.000000]    Valor pedido extraído: '1' → 1
+[21:21:49.000000]    Valor referência extraído: '1' → 1
+[21:21:49.000000]    Diferença: |1 - 1| = 0
+[21:21:49.000000]    Tolerância: 0.001
+[21:21:49.000000]    ✅ ACEITAR: Valores batem!
+[21:21:49.000000] ═══════════════════════════════════════════════════════════
+[21:21:49.000000] 🔍 TIME1 INCLUÍDO: passou na validação
+[21:21:49.000000] 🔍 TIME1 Título: 'OVER ( +1⚽GOL  ) AS..' -> Referência: '+1⚽GOL' | Tipo pedido: '+1CANTOS'
+[21:21:49.000000] 
+
+[21:21:49.000000] ═══════════════════════════════════════════════════════════
+[21:21:49.000000] 🔍 FUNÇÃO deveMostrarResultado CHAMADA
+[21:21:49.000000]    referenciaJogo: '+1⚽GOL'
+[21:21:49.000000]    tipoPedido: '+1CANTOS'
+[21:21:49.000000]    Tipo ref (cleaned): '+1GOL' → '+1GOL'
+[21:21:49.000000]    Tipo pedido (cleaned): '+1CANTOS' → '+1CANTOS'
+[21:21:49.000000]    Ref é CANTOS? NÃO
+[21:21:49.000000]    Pedido é CANTOS? SIM
+[21:21:49.000000]    ❌ REJEITAR: Tipo não bate (um é CANTOS, outro não)
+[21:21:49.000000] ═══════════════════════════════════════════════════════════
+[21:21:49.000000] 🔍 TIME1 FILTRADO: não passou na validação de tipo
+[21:21:49.000000] 🔍 TIME2 Título: 'OVER ( +1⛳ CANTOS )' -> Referência: '+1⛳️CANTOS' | Tipo pedido: '+1CANTOS'
+[21:21:49.000000] 
+
+[21:21:49.000000] ═══════════════════════════════════════════════════════════
+[21:21:49.000000] 🔍 FUNÇÃO deveMostrarResultado CHAMADA
+[21:21:49.000000]    referenciaJogo: '+1⛳️CANTOS'
+[21:21:49.000000]    tipoPedido: '+1CANTOS'
+[21:21:49.000000]    Tipo ref (cleaned): '+1CANTOS' → '+1CANTOS'
+[21:21:49.000000]    Tipo pedido (cleaned): '+1CANTOS' → '+1CANTOS'
+[21:21:49.000000]    Ref é CANTOS? SIM
+[21:21:49.000000]    Pedido é CANTOS? SIM
+[21:21:49.000000]    ✅ Tipo bate (ambos são GOL OU ambos são CANTOS)
+[21:21:49.000000]    Valor pedido extraído: '1' → 1
+[21:21:49.000000]    Valor referência extraído: '1' → 1
+[21:21:49.000000]    Diferença: |1 - 1| = 0
+[21:21:49.000000]    Tolerância: 0.001
+[21:21:49.000000]    ✅ ACEITAR: Valores batem!
+[21:21:49.000000] ═══════════════════════════════════════════════════════════
+[21:21:49.000000] 🔍 TIME2 INCLUÍDO: passou na validação
+[21:21:49.000000] 🔍 TIME2 Título: 'OVER ( +1⛳️ CANTOS ) AS..' -> Referência: '+1⛳️CANTOS' | Tipo pedido: '+1CANTOS'
+[21:21:49.000000] 
+
+[21:21:49.000000] ═══════════════════════════════════════════════════════════
+[21:21:49.000000] 🔍 FUNÇÃO deveMostrarResultado CHAMADA
+[21:21:49.000000]    referenciaJogo: '+1⛳️CANTOS'
+[21:21:49.000000]    tipoPedido: '+1CANTOS'
+[21:21:49.000000]    Tipo ref (cleaned): '+1CANTOS' → '+1CANTOS'
+[21:21:49.000000]    Tipo pedido (cleaned): '+1CANTOS' → '+1CANTOS'
+[21:21:49.000000]    Ref é CANTOS? SIM
+[21:21:49.000000]    Pedido é CANTOS? SIM
+[21:21:49.000000]    ✅ Tipo bate (ambos são GOL OU ambos são CANTOS)
+[21:21:49.000000]    Valor pedido extraído: '1' → 1
+[21:21:49.000000]    Valor referência extraído: '1' → 1
+[21:21:49.000000]    Diferença: |1 - 1| = 0
+[21:21:49.000000]    Tolerância: 0.001
+[21:21:49.000000]    ✅ ACEITAR: Valores batem!
+[21:21:49.000000] ═══════════════════════════════════════════════════════════
+[21:21:49.000000] 🔍 TIME2 INCLUÍDO: passou na validação
+[21:22:07.000000] ═════════════════════════════════════════════════════════════
+[21:22:07.000000] 🔍 API CHAMADA - obter-historico-resultados.php
+[21:22:07.000000] 🔍 METHOD: POST
+[21:22:07.000000] 🔍 TEMPO: 2025-11-16 21:22:07
+[21:22:07.000000] 📩 DADOS RECEBIDOS:
+[21:22:07.000000]    time1: 'Flamengo'
+[21:22:07.000000]    time2: '⚽️ Corinthians'
+[21:22:07.000000]    tipo: '+1CANTOS'
+[21:22:07.000000]    limite: 5
+[21:22:07.000000] 🔍 TIME1 Título: 'OVER ( +0.5 ⚽ GOL )' -> Referência: '+0.5⚽GOL' | Tipo pedido: '+1CANTOS'
+[21:22:07.000000] 
+
+[21:22:07.000000] ═══════════════════════════════════════════════════════════
+[21:22:07.000000] 🔍 FUNÇÃO deveMostrarResultado CHAMADA
+[21:22:07.000000]    referenciaJogo: '+0.5⚽GOL'
+[21:22:07.000000]    tipoPedido: '+1CANTOS'
+[21:22:07.000000]    Tipo ref (cleaned): '+0.5GOL' → '+0.5GOL'
+[21:22:07.000000]    Tipo pedido (cleaned): '+1CANTOS' → '+1CANTOS'
+[21:22:07.000000]    Ref é CANTOS? NÃO
+[21:22:07.000000]    Pedido é CANTOS? SIM
+[21:22:07.000000]    ❌ REJEITAR: Tipo não bate (um é CANTOS, outro não)
+[21:22:07.000000] ═══════════════════════════════════════════════════════════
+[21:22:07.000000] 🔍 TIME1 FILTRADO: não passou na validação de tipo
+[21:22:07.000000] 🔍 TIME1 Título: 'OVER ( +1⛳ CANTOS )' -> Referência: '+1⛳️CANTOS' | Tipo pedido: '+1CANTOS'
+[21:22:07.000000] 
+
+[21:22:07.000000] ═══════════════════════════════════════════════════════════
+[21:22:07.000000] 🔍 FUNÇÃO deveMostrarResultado CHAMADA
+[21:22:07.000000]    referenciaJogo: '+1⛳️CANTOS'
+[21:22:07.000000]    tipoPedido: '+1CANTOS'
+[21:22:07.000000]    Tipo ref (cleaned): '+1CANTOS' → '+1CANTOS'
+[21:22:07.000000]    Tipo pedido (cleaned): '+1CANTOS' → '+1CANTOS'
+[21:22:07.000000]    Ref é CANTOS? SIM
+[21:22:07.000000]    Pedido é CANTOS? SIM
+[21:22:07.000000]    ✅ Tipo bate (ambos são GOL OU ambos são CANTOS)
+[21:22:07.000000]    Valor pedido extraído: '1' → 1
+[21:22:07.000000]    Valor referência extraído: '1' → 1
+[21:22:07.000000]    Diferença: |1 - 1| = 0
+[21:22:07.000000]    Tolerância: 0.001
+[21:22:07.000000]    ✅ ACEITAR: Valores batem!
+[21:22:07.000000] ═══════════════════════════════════════════════════════════
+[21:22:07.000000] 🔍 TIME1 INCLUÍDO: passou na validação
+[21:22:07.000000] 🔍 TIME1 Título: 'OVER ( +1⚽GOL  ) AS..' -> Referência: '+1⚽GOL' | Tipo pedido: '+1CANTOS'
+[21:22:07.000000] 
+
+[21:22:07.000000] ═══════════════════════════════════════════════════════════
+[21:22:07.000000] 🔍 FUNÇÃO deveMostrarResultado CHAMADA
+[21:22:07.000000]    referenciaJogo: '+1⚽GOL'
+[21:22:07.000000]    tipoPedido: '+1CANTOS'
+[21:22:07.000000]    Tipo ref (cleaned): '+1GOL' → '+1GOL'
+[21:22:07.000000]    Tipo pedido (cleaned): '+1CANTOS' → '+1CANTOS'
+[21:22:07.000000]    Ref é CANTOS? NÃO
+[21:22:07.000000]    Pedido é CANTOS? SIM
+[21:22:07.000000]    ❌ REJEITAR: Tipo não bate (um é CANTOS, outro não)
+[21:22:07.000000] ═══════════════════════════════════════════════════════════
+[21:22:07.000000] 🔍 TIME1 FILTRADO: não passou na validação de tipo
+[21:22:07.000000] 🔍 TIME2 Título: 'OVER ( +1⛳ CANTOS )' -> Referência: '+1⛳️CANTOS' | Tipo pedido: '+1CANTOS'
+[21:22:07.000000] 
+
+[21:22:07.000000] ═══════════════════════════════════════════════════════════
+[21:22:07.000000] 🔍 FUNÇÃO deveMostrarResultado CHAMADA
+[21:22:07.000000]    referenciaJogo: '+1⛳️CANTOS'
+[21:22:07.000000]    tipoPedido: '+1CANTOS'
+[21:22:07.000000]    Tipo ref (cleaned): '+1CANTOS' → '+1CANTOS'
+[21:22:07.000000]    Tipo pedido (cleaned): '+1CANTOS' → '+1CANTOS'
+[21:22:07.000000]    Ref é CANTOS? SIM
+[21:22:07.000000]    Pedido é CANTOS? SIM
+[21:22:07.000000]    ✅ Tipo bate (ambos são GOL OU ambos são CANTOS)
+[21:22:07.000000]    Valor pedido extraído: '1' → 1
+[21:22:07.000000]    Valor referência extraído: '1' → 1
+[21:22:07.000000]    Diferença: |1 - 1| = 0
+[21:22:07.000000]    Tolerância: 0.001
+[21:22:07.000000]    ✅ ACEITAR: Valores batem!
+[21:22:07.000000] ═══════════════════════════════════════════════════════════
+[21:22:07.000000] 🔍 TIME2 INCLUÍDO: passou na validação
+[21:22:07.000000] 🔍 TIME2 Título: 'OVER ( +1⛳️ CANTOS ) AS..' -> Referência: '+1⛳️CANTOS' | Tipo pedido: '+1CANTOS'
+[21:22:07.000000] 
+
+[21:22:07.000000] ═══════════════════════════════════════════════════════════
+[21:22:07.000000] 🔍 FUNÇÃO deveMostrarResultado CHAMADA
+[21:22:07.000000]    referenciaJogo: '+1⛳️CANTOS'
+[21:22:07.000000]    tipoPedido: '+1CANTOS'
+[21:22:07.000000]    Tipo ref (cleaned): '+1CANTOS' → '+1CANTOS'
+[21:22:07.000000]    Tipo pedido (cleaned): '+1CANTOS' → '+1CANTOS'
+[21:22:07.000000]    Ref é CANTOS? SIM
+[21:22:07.000000]    Pedido é CANTOS? SIM
+[21:22:07.000000]    ✅ Tipo bate (ambos são GOL OU ambos são CANTOS)
+[21:22:07.000000]    Valor pedido extraído: '1' → 1
+[21:22:07.000000]    Valor referência extraído: '1' → 1
+[21:22:07.000000]    Diferença: |1 - 1| = 0
+[21:22:07.000000]    Tolerância: 0.001
+[21:22:07.000000]    ✅ ACEITAR: Valores batem!
+[21:22:07.000000] ═══════════════════════════════════════════════════════════
+[21:22:07.000000] 🔍 TIME2 INCLUÍDO: passou na validação
+[21:22:12.000000] ═════════════════════════════════════════════════════════════
+[21:22:12.000000] 🔍 API CHAMADA - obter-historico-resultados.php
+[21:22:12.000000] 🔍 METHOD: POST
+[21:22:12.000000] 🔍 TEMPO: 2025-11-16 21:22:12
+[21:22:12.000000] 📩 DADOS RECEBIDOS:
+[21:22:12.000000]    time1: 'Flamengo'
+[21:22:12.000000]    time2: '⚽️ Corinthians'
+[21:22:12.000000]    tipo: '+1CANTOS'
+[21:22:12.000000]    limite: 5
+[21:22:12.000000] 🔍 TIME1 Título: 'OVER ( +0.5 ⚽ GOL )' -> Referência: '+0.5⚽GOL' | Tipo pedido: '+1CANTOS'
+[21:22:12.000000] 
+
+[21:22:12.000000] ═══════════════════════════════════════════════════════════
+[21:22:12.000000] 🔍 FUNÇÃO deveMostrarResultado CHAMADA
+[21:22:12.000000]    referenciaJogo: '+0.5⚽GOL'
+[21:22:12.000000]    tipoPedido: '+1CANTOS'
+[21:22:12.000000]    Tipo ref (cleaned): '+0.5GOL' → '+0.5GOL'
+[21:22:12.000000]    Tipo pedido (cleaned): '+1CANTOS' → '+1CANTOS'
+[21:22:12.000000]    Ref é CANTOS? NÃO
+[21:22:12.000000]    Pedido é CANTOS? SIM
+[21:22:12.000000]    ❌ REJEITAR: Tipo não bate (um é CANTOS, outro não)
+[21:22:12.000000] ═══════════════════════════════════════════════════════════
+[21:22:12.000000] 🔍 TIME1 FILTRADO: não passou na validação de tipo
+[21:22:12.000000] 🔍 TIME1 Título: 'OVER ( +1⛳ CANTOS )' -> Referência: '+1⛳️CANTOS' | Tipo pedido: '+1CANTOS'
+[21:22:12.000000] 
+
+[21:22:12.000000] ═══════════════════════════════════════════════════════════
+[21:22:12.000000] 🔍 FUNÇÃO deveMostrarResultado CHAMADA
+[21:22:12.000000]    referenciaJogo: '+1⛳️CANTOS'
+[21:22:12.000000]    tipoPedido: '+1CANTOS'
+[21:22:12.000000]    Tipo ref (cleaned): '+1CANTOS' → '+1CANTOS'
+[21:22:12.000000]    Tipo pedido (cleaned): '+1CANTOS' → '+1CANTOS'
+[21:22:12.000000]    Ref é CANTOS? SIM
+[21:22:12.000000]    Pedido é CANTOS? SIM
+[21:22:12.000000]    ✅ Tipo bate (ambos são GOL OU ambos são CANTOS)
+[21:22:12.000000]    Valor pedido extraído: '1' → 1
+[21:22:12.000000]    Valor referência extraído: '1' → 1
+[21:22:12.000000]    Diferença: |1 - 1| = 0
+[21:22:12.000000]    Tolerância: 0.001
+[21:22:12.000000]    ✅ ACEITAR: Valores batem!
+[21:22:12.000000] ═══════════════════════════════════════════════════════════
+[21:22:12.000000] 🔍 TIME1 INCLUÍDO: passou na validação
+[21:22:12.000000] 🔍 TIME1 Título: 'OVER ( +1⚽GOL  ) AS..' -> Referência: '+1⚽GOL' | Tipo pedido: '+1CANTOS'
+[21:22:12.000000] 
+
+[21:22:12.000000] ═══════════════════════════════════════════════════════════
+[21:22:12.000000] 🔍 FUNÇÃO deveMostrarResultado CHAMADA
+[21:22:12.000000]    referenciaJogo: '+1⚽GOL'
+[21:22:12.000000]    tipoPedido: '+1CANTOS'
+[21:22:12.000000]    Tipo ref (cleaned): '+1GOL' → '+1GOL'
+[21:22:12.000000]    Tipo pedido (cleaned): '+1CANTOS' → '+1CANTOS'
+[21:22:12.000000]    Ref é CANTOS? NÃO
+[21:22:12.000000]    Pedido é CANTOS? SIM
+[21:22:12.000000]    ❌ REJEITAR: Tipo não bate (um é CANTOS, outro não)
+[21:22:12.000000] ═══════════════════════════════════════════════════════════
+[21:22:12.000000] 🔍 TIME1 FILTRADO: não passou na validação de tipo
+[21:22:12.000000] 🔍 TIME2 Título: 'OVER ( +1⛳ CANTOS )' -> Referência: '+1⛳️CANTOS' | Tipo pedido: '+1CANTOS'
+[21:22:12.000000] 
+
+[21:22:12.000000] ═══════════════════════════════════════════════════════════
+[21:22:12.000000] 🔍 FUNÇÃO deveMostrarResultado CHAMADA
+[21:22:12.000000]    referenciaJogo: '+1⛳️CANTOS'
+[21:22:12.000000]    tipoPedido: '+1CANTOS'
+[21:22:12.000000]    Tipo ref (cleaned): '+1CANTOS' → '+1CANTOS'
+[21:22:12.000000]    Tipo pedido (cleaned): '+1CANTOS' → '+1CANTOS'
+[21:22:12.000000]    Ref é CANTOS? SIM
+[21:22:12.000000]    Pedido é CANTOS? SIM
+[21:22:12.000000]    ✅ Tipo bate (ambos são GOL OU ambos são CANTOS)
+[21:22:12.000000]    Valor pedido extraído: '1' → 1
+[21:22:12.000000]    Valor referência extraído: '1' → 1
+[21:22:12.000000]    Diferença: |1 - 1| = 0
+[21:22:12.000000]    Tolerância: 0.001
+[21:22:12.000000]    ✅ ACEITAR: Valores batem!
+[21:22:12.000000] ═══════════════════════════════════════════════════════════
+[21:22:12.000000] 🔍 TIME2 INCLUÍDO: passou na validação
+[21:22:12.000000] 🔍 TIME2 Título: 'OVER ( +1⛳️ CANTOS ) AS..' -> Referência: '+1⛳️CANTOS' | Tipo pedido: '+1CANTOS'
+[21:22:12.000000] 
+
+[21:22:12.000000] ═══════════════════════════════════════════════════════════
+[21:22:12.000000] 🔍 FUNÇÃO deveMostrarResultado CHAMADA
+[21:22:12.000000]    referenciaJogo: '+1⛳️CANTOS'
+[21:22:12.000000]    tipoPedido: '+1CANTOS'
+[21:22:12.000000]    Tipo ref (cleaned): '+1CANTOS' → '+1CANTOS'
+[21:22:12.000000]    Tipo pedido (cleaned): '+1CANTOS' → '+1CANTOS'
+[21:22:12.000000]    Ref é CANTOS? SIM
+[21:22:12.000000]    Pedido é CANTOS? SIM
+[21:22:12.000000]    ✅ Tipo bate (ambos são GOL OU ambos são CANTOS)
+[21:22:12.000000]    Valor pedido extraído: '1' → 1
+[21:22:12.000000]    Valor referência extraído: '1' → 1
+[21:22:12.000000]    Diferença: |1 - 1| = 0
+[21:22:12.000000]    Tolerância: 0.001
+[21:22:12.000000]    ✅ ACEITAR: Valores batem!
+[21:22:12.000000] ═══════════════════════════════════════════════════════════
+[21:22:12.000000] 🔍 TIME2 INCLUÍDO: passou na validação
